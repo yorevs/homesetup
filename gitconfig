@@ -1,0 +1,132 @@
+[user]
+    name = Hugo Saporetti Junior
+    email = yorevs@gmail.com
+
+[apply]
+    # Detect whitespace errors when applying a patch
+    whitespace = fix
+
+[core]
+    editor = vim
+    whitespace = fix,-ident-with-non-tab,trailing-space,cr-at-eol
+    excludesFile = **/.DS_Store,**/.gitignore,**/.gitattributes,**/Icon?
+    trustctime = false
+    precomposeunicode = false
+    untrackedCache = true
+
+[sendemail]
+    smtpencryption = tls
+    smtpserver = smtp.gmail.com
+    smtpuser = yorevs@gmail.com
+    smtppass = password
+    smtpserverport = 587
+
+[web]
+    browser = google-chrome
+
+[alias]
+    # List aliases
+    aliases = config --get-regexp alias
+    a   = add
+    aa  = add --all
+    b   = branch
+    c   = commit -m
+    ca  = commit --amend --no-edit
+    d   = diff
+    f   = fetch
+    g   = grep -p
+    s   = status -s
+    p   = pull
+    prb = pull --rebase
+    cm  = commit -m
+    ca  = commit --amend --no-edit
+    co  = checkout
+    l   = log --oneline --graph --decorate
+    ls  = ls-files
+    p   = pull
+    ps  = push
+    s   = status
+    # Find branches containing commit
+    fb  = "!f() { git branch -a --contains $1; }; f"
+    # Find tags containing commit
+    ft  = "!f() { git describe --always --contains $1; }; f"
+    # Find commits by source code
+    fc  = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short -S$1; }; f"
+    # Find commits by commit message
+    fm  = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+
+[merge]
+    tool = opendiff
+    guitool = opendiff
+    
+[mergetool]
+    prompt = false
+
+[mergetool "opendiff"]
+    name = opendiff
+    prompt = false
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = true
+
+[diff]
+    tool = opendiff
+    guitool = opendiff
+    # Detect copies as well as renames
+    renames = copies
+	external = ~/bin/git-diff-cmd.sh
+
+[diff "bin"]
+    # Use `hexdump` to diff binary files
+    textconv = hexdump -v -C
+
+[difftool "opendiff"]
+    name = opendiff
+    prompt = false
+    keepBackup = false
+    keepTemporaries = false
+    trustExitCode = true
+
+[help]
+    # Automatically correct and execute mistyped commands
+    autocorrect = 1
+
+[color]
+    diff = true
+    status = true
+    branch = true
+    interactive = true
+    ui = auto
+    pager = true
+    decorate = true
+    showbranch = true
+    grep = true
+
+[color "interactive"]
+    error = red bold
+
+[color "grep"]
+    match = normal
+
+[color "status"]
+    header = white bold
+    added = green bold
+    changed = red bold
+    untracked = magenta bold
+    updated = green bold
+    nobranch = red reverse bold
+
+[color "branch"]
+    current = cyan bold
+    local = blue bold
+    remote = red bold
+    plain = normal
+
+[color "diff"]
+    plain = normal
+    meta = white bold
+    frag = yellow bold
+    old = red bold
+    new = green bold
+    commit = blue bold
+    whitespace = white reverse
