@@ -36,6 +36,7 @@
     f   = fetch
     g   = grep -p
     s   = status -s
+    f   = fetch
     p   = pull
     prb = pull --rebase
     cm  = commit -m
