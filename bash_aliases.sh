@@ -122,7 +122,7 @@ alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
 alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
 alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
 
-# Gradle Stuff
+# Gradle
 alias gwb='gradle clean build -x test'
 alias gwr='gradle bootRun'
 alias gwi='gradle init'
@@ -130,6 +130,9 @@ alias gww='gradle wrapper --gradle-version'
 
 # Docker
 alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+
+# Node
+alias serve='npm run serve'
 
 # Directory Shortcuts
 alias work='cd $WORKSPACE'

@@ -17,6 +17,7 @@ db/
 .classpath
 .factorypath
 .project
+.cproject
 .settings
 .springBeans
 
