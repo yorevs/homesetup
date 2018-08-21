@@ -1,22 +1,32 @@
 ### Build ###
-target/
-build/
-bin/
-dist/
-db/
+/target/
+/build/
+/bin/
+/dist/
+/db/
+
+### Maven ###
 !.mvn/wrapper/maven-wrapper.jar
 
 ### Gradle ###
 .gradle/
 
-## VSCode ##
+### VSCode ###
 .vscode
+
+### Node ###
+node_modules/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
 ### Eclipse ###
 .apt_generated
 .classpath
 .factorypath
 .project
+.cproject
 .settings
 .springBeans
 
@@ -39,8 +49,10 @@ nbdist/
 *.dll
 *.exe
 *.o
+*.a
 *.so
 *.pyc
+*.dSYM/
 
 # Packages #
 ############
@@ -58,16 +70,23 @@ nbdist/
 # Logs and databases #
 ######################
 *.log
-log/
+/log/
+/lib/
 
 # OS generated files #
 ######################
 .DS_Store
 .DS_Store?
-Icon[]
+Icon[
+]
 ._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
 Desktop.ini
+
+### Project specific ###
+gitconfig
+gitignore
+viminfo
