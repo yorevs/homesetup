@@ -100,9 +100,6 @@ alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 alias urldecode='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
-# Print each PATH entry on a separate line
-alias paths='echo -e ${PATH//:/\\n}'
-
 # Git Stuff
 alias gs='git s'
 alias gf='git f'
@@ -131,8 +128,9 @@ alias gww='gradle wrapper --gradle-version'
 # Docker
 alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 
-# Node
-alias serve='npm run serve'
+# Vue
+alias vue-run='npm run dev'
+alias vue-init='vue init webpack '
 
 # Directory Shortcuts
 alias work='cd $WORKSPACE'
