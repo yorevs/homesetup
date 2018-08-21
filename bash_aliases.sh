@@ -114,10 +114,10 @@ alias gl='git l'
 alias gcm='git cm'
 alias gca='git ca'
 alias gtps='git ps origin HEAD'
-alias git-show='git diff-tree --no-commit-id --name-status -r'
-alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
 alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
 alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
+alias git-show='git diff-tree --no-commit-id --name-status -r'
+alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
 
 # Gradle
 alias gwb='gradle clean build -x test'
