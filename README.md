@@ -36,7 +36,7 @@ TODO: Include the aliases
 ### 4. Functions
 
 This project adds many script functions the shell.
-**Please check: [bash_aliases](./bash_functions.sh) for all functions**
+**Please check: [bash_functions](./bash_functions.sh) for all functions**
 
 TODO: Include the functions
 
