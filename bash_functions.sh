@@ -121,28 +121,29 @@ function port-check () {
 
 # Check all environment variables
 function envs () {
-
+    
     local pad=$(printf '%0.1s' "."{1..60})
     local pad_len=35
     ( IFS=$'\n'
-    for v in $(env)
-    do
-        local name=$(echo $v | cut -d '=' -f1)
-        local value=$(echo $v | cut -d '=' -f2-)
-        test "$1" != "-h" && local re="^[a-zA-Z0-9_]*.*"
-        test "$1" = "-h" && local re=".*_HOME$"
-        if [[ $name =~ $re ]]
-        then
-            printf "${BLUE}${name}${NC} "
-            printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-            printf " => ${value} \n"
-        fi
-    done
+        for v in $(env)
+        do
+            local name=$(echo $v | cut -d '=' -f1)
+            local value=$(echo $v | cut -d '=' -f2-)
+            test "$1" != "-h" && local re="^[a-zA-Z0-9_]*.*"
+            test "$1" = "-h" && local re=".*_HOME$"
+            if [[ $name =~ $re ]]
+            then
+                printf "${BLUE}${name}${NC} "
+                printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+                printf " => ${value} \n"
+            fi
+        done
     )
 }
 
 # Print each PATH entry on a separate line
 function paths () {
+    
     local pad=$(printf '%0.1s' "."{1..60})
     local pad_len=60
     for path in $(echo -e ${PATH//:/\\n})
@@ -181,7 +182,7 @@ function tc () {
 # Check if the development tools are installed on the system.
 function tools () {
     
-    DEV_APPS="brew jenv tree vim pcregrep git svn gcc javac python ruby make qmake ant mvn gradle node npm doxygen vue"
+    DEV_APPS="brew tree vim pcregrep jenv git svn gcc make qmake java ant mvn gradle python doxygen ruby node npm vue"
     for app in $DEV_APPS
     do
         tc $app
@@ -222,19 +223,19 @@ function ver () {
 
 # Save the current directory for later use
 function save-dir () {
-
+    
     if test -z "$1" -o "$1" = "" -o ! -d "$1"; then
         curDir=$(pwd)
     else
         curDir="$1"
     fi
-
+    
     export SAVED_DIR="$curDir"
     echo "SAVED_DIR=$curDir" > "$HOME/.saved_dir"
 }
 
 function load-dir () {
-
+    
     test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
     SAVED_DIR="${SAVED_DIR:-`pwd`}"
     test -d "$SAVED_DIR" && cd "$SAVED_DIR"
