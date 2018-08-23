@@ -31,7 +31,7 @@ alias lll="ls -lhd .?* ${colorflag}"
 alias ls="command ls ${colorflag}"
 
 # List all directories recursively (Nth level depth) as a tree
-alias lt='function _() { test -n "$1" && tree -L $1; test -z "$1" && tree; };_'
+alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2; test -z "$1" && tree $1; };_'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
@@ -68,7 +68,7 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 # Mac Stuff
 # Delete all .DS_store files
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
-alias edit='open -t'
+alias edit='function _() { vi $1; source $1; };_'
 alias dots='ls -la $HOME | grep ".bash.*\|.git.*"'
 
 # Flush Directory Service cache

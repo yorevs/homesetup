@@ -1,7 +1,6 @@
 ### Build ###
 /target/
 /build/
-/bin/
 /dist/
 /db/
 

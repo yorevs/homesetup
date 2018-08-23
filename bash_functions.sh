@@ -144,7 +144,7 @@ function envs () {
 # Print each PATH entry on a separate line
 function paths () {
     local pad=$(printf '%0.1s' "."{1..60})
-    local pad_len=50
+    local pad_len=60
     for path in $(echo -e ${PATH//:/\\n})
     do
         printf "$path "
