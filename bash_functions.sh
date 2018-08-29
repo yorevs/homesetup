@@ -251,7 +251,7 @@ function load-dir () {
     echo "SAVED_DIR=$SAVED_DIR" > "$HOME/.saved_dir"
 }
 
-# Punch the Clock: Format = 29-08-2018 HH:mm:ss
+# Punch the Clock: Format = dd-mm-yyyy => HH:mm:ss
 function punch() {
     ( IFS=$'\n'
         OPT="$1"
