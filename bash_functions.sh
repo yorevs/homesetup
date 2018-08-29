@@ -242,10 +242,36 @@ function save-dir () {
     echo "SAVED_DIR=$curDir" > "$HOME/.saved_dir"
 }
 
+# Load the directory prviously saved
 function load-dir () {
     
     test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
     SAVED_DIR="${SAVED_DIR:-`pwd`}"
     test -d "$SAVED_DIR" && cd "$SAVED_DIR"
     echo "SAVED_DIR=$SAVED_DIR" > "$HOME/.saved_dir"
+}
+
+# Punch the Clock: Format = 29-08-2018 HH:mm:ss
+function punch() {
+
+    ( IFS=$'\n'
+        PUNCH_FILE="$1"
+        PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+        local dateStamp="$(date +'%d-%m-%Y')"
+        local timeStamp="$(date +'%T')"
+        local re="($dateStamp).*"
+        test -f "$PUNCH_FILE" || echo "$dateStamp => " > "$PUNCH_FILE"
+        lines=$(cat "$PUNCH_FILE")
+        success=0
+        for line in $lines
+        do
+            if [[ "$line" =~ $re ]]
+            then
+                sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                success=1
+            fi
+        done
+        test "$success" = "1" || echo "$dateStamp => $timeStamp " >> "$PUNCH_FILE"
+        echo "$(cat "$PUNCH_FILE")"
+    )
 }
