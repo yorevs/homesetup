@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
+#  Script: bash_profile.sh
+# Purpose: Main shell configuration file
+# Created: Aug 26, 2008
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+#
+# Original project: https://github.com/mathiasbynens/dotfiles
+
 HOME=${HOME:-~/}
-USER=${USER:-hugo}
+USER=${USER:-`whoami`}
 
 unset USERNAME
 
@@ -24,10 +32,10 @@ fi;
 
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
-# * ~/.extra can be used for other settings you don’t want to commit.
-# * ~/.aliases can be used to extend .bash_aliases
-# * ~/.profile can be used to extend .bash_profile
-for file in ~/.{path,extra,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env}; do
+# * ~/.aliases can be used to extend/override .bash_aliases
+# * ~/.profile can be used to extend/override .bash_profile
+# * ~/.env can be used to extend/override .bash_env
+for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;

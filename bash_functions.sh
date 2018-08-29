@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+#  Script: bash_functions.sh
+# Purpose: Configure some shell tools
+# Created: Aug 26, 2008
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+
 # Search for files recursivelly
 function search-files () {
     if test -z "$1" -o -z "$2"; then

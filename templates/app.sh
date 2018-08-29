@@ -4,7 +4,7 @@
 # Purpose: ${purpose}
 # Created: Mon DD, YYYY
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@gmail.com
+#  Mailto: yorevs@hotmail.com
 
 # Current script version.
 VERSION=0.9.0

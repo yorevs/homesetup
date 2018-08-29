@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+#  Script: bash_prompt.sh
+# Purpose: Shell prompt configuration file
+# Created: Aug 26, 2008
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+#
+# Original project: https://github.com/mathiasbynens/dotfiles
+
 # Shell prompt based.
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
 # iTerm → Profiles → Text → use 13pt Monaco with 1.1 vertical spacing.
@@ -10,6 +18,7 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
     export TERM='xterm-256color';
 fi;
 
+# Configure git stuff
 prompt_git() {
     local s='';
     local branchName='';

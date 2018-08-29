@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+#  Script: bash_colors.sh
+# Purpose: Configure shell and command colors
+# Created: Aug 26, 2008
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+#
+# Original project: https://github.com/mathiasbynens/dotfiles
+
 # Detect which `ls` flavor is in use
 # LS_Colors builder: https://geoff.greer.fm/lscolors/
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -10,6 +18,8 @@ else # macOS `ls`
     export CLICOLOR=1
     export LSCOLORS='ExgxfxdxCxegedabagacad'
 fi
+
+# TODO Add grep colors
 
 if tput setaf 1 &> /dev/null; then
     tput sgr0; # NC colors

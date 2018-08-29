@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#  Script: ${app.sh}
-# Purpose: ${purpose}
-# Created: Mon DD, YYYY
+#  Script: install.sh
+# Purpose: Install and configure all dofiles
+# Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@gmail.com
 
@@ -14,9 +14,9 @@ PROC_NAME="$(basename $0)"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <home_setup_dir> [all]
+Usage: $PROC_NAME [-t|--type <all>] [-d|--dir <home_setup_dir>]
 
-    *** [all]: Install all scripts into the home folder.
+    *** [all]: Install all scripts into the user home folder.
 "
 
 # Purpose: Quit the program and exhibits an exit message if specified.
@@ -24,11 +24,7 @@ Usage: $PROC_NAME <home_setup_dir> [all]
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
     
-    if test -n "$2" -o "$2" != ""; then
-        echo -e "$2"
-    fi
-
-    echo ''
+    test -n "$2" -o "$2" != "" && echo -e "$2"
     echo ''
     exit $1
 }
@@ -38,13 +34,48 @@ usage() {
     quit 1 "$USAGE"
 }
 
-HOME_SETUP=${:-$1}
-
 # Check if the user passed the help parameters.
-test "$1" = '-h' -o "$1" = '--help' -o -z "$HOME_SETUP" -o "$HOME_SETUP" = "" && usage
+test "$1" = '-h' -o "$1" = '--help' -o -z "$1" -o "$1" = "" && usage
+
+# Loop through the command line options.
+# Short opts: -<C>, Long opts: --<Word>
+while test -n "$1"
+do
+    case "$1" in
+        -t | --type)
+            shift
+            OPT="$1"
+        ;;
+        -d | --dir)
+            shift
+            DIR="$1"
+        ;;
+        
+        *)
+            quit 1 "Invalid option: \"$1\""
+        ;;
+    esac
+    shift
+done
+
+test -z "$DIR" && DIR=`pwd`
+
+# HomeSetup folder
+HOME_SETUP=${HOME_SETUP:-$DIR}
+
+echo ''
+echo '-- Install settings:'
+echo "HOME_SETUP: $HOME_SETUP"
+echo "OPTTIONS: $OPT"
+echo ''
+
+read -n 1 -p "Continue [y]/n ?" ANS
+test "$ANS" = "n" -o "$ANS" = "N" && quit 0
+echo ''
+echo ''
 
 # If all option is used, do it at once
-if test "$2" = "all" -o "$2" = "ALL"
+if test "$OPT" = "all" -o "$OPT" = "ALL"
 then
     # Bin directory
     echo -n "Linking: " && ln -sfv $HOME_SETUP/bin ~/
@@ -65,69 +96,44 @@ then
     test -f ~/.bash_colors && echo -e '[ OK ]\n'
     echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_functions.sh ~/.bash_functions
     test -f ~/.bash_functions && echo -e '[ OK ]\n'
+else
+    # Bin directory
+    echo ''
+    read -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bin ~/ && test -d ~/bin && echo '[ OK ]'
 
-    # Git dotfiles
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/gitconfig ~/.gitconfig
-    test -f ~/.gitconfig && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/gitconfig ~/.gitconfig_global
-    test -f ~/.gitconfig_global && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/gitignore ~/.gitignore
-    test -f ~/.gitignore && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/gitignore ~/.gitignore_global
-    test -f ~/.gitignore_global && echo -e '[ OK ]\n'
-
-    # Vim dotfile
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/viminfo ~/.viminfo
-    test -f ~/.viminfo && echo -e '[ OK ]\n'
-    
-    quit 0
+    # Bash
+    echo ''
+    read -n 1 -sp 'Link .bashrc (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bashrc.sh ~/.bashrc && test -f ~/.bashrc && echo '[ OK ]'
+    echo ''
+    read -n 1 -sp 'Link .bash_profile (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_profile.sh ~/.bash_profile && test -f ~/.bash_profile && echo '[ OK ]'
+    echo ''
+    read -n 1 -sp 'Link .bash_aliases (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_aliases.sh ~/.bash_aliases && test -f ~/.bash_aliases && echo '[ OK ]'
+    echo ''
+    read -n 1 -sp 'Link .bash_prompt (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_prompt.sh ~/.bash_prompt && test -f ~/.bash_prompt && echo '[ OK ]'
+    echo ''
+    read -n 1 -sp 'Link .bash_env (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_env.sh ~/.bash_env && test -f ~/.bash_env && echo '[ OK ]'
+    echo ''
+    read -n 1 -sp 'Link .bash_colors (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_colors.sh ~/.bash_colors && test -f ~/.bash_colors && echo '[ OK ]'
+    echo ''
+    read -n 1 -sp 'Link .bash_functions (y/[n])? ' ANS
+    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_functions.sh ~/.bash_functions && test -f ~/.bash_functions && echo '[ OK ]'
 fi
 
-# Bin directory
 echo ''
-read -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bin ~/ && test -d ~/bin && echo '[ OK ]'
+echo 'ww      ww   EEEEEEEEEE   LL           cCCCCCCc    oOOOOOOo    mm      mm   EEEEEEEEEE'
+echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
+echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
+echo 'WW W  W WW   EE           LL      L   Cc          OO      Oo   MM      MM   EE        '
+echo 'ww      ww   EEEEEEEEEE   LLLLLLLLL    cCCCCCCc    oOOOOOOo    mm      mm   EEEEEEEEEE'
+echo ''
 
-# Bash
+echo "? To apply all settings on this shell type: source ~/.bashrc" 
 echo ''
-read -n 1 -sp 'Link .bashrc (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bashrc.sh ~/.bashrc && test -f ~/.bashrc && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .bash_profile (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_profile.sh ~/.bash_profile && test -f ~/.bash_profile && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .bash_aliases (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_aliases.sh ~/.bash_aliases && test -f ~/.bash_aliases && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .bash_prompt (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_prompt.sh ~/.bash_prompt && test -f ~/.bash_prompt && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .bash_env (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_env.sh ~/.bash_env && test -f ~/.bash_env && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .bash_colors (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_colors.sh ~/.bash_colors && test -f ~/.bash_colors && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .bash_functions (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_functions.sh ~/.bash_functions && test -f ~/.bash_functions && echo '[ OK ]'
-
-# Git
-echo ''
-read -n 1 -sp 'Link .gitconfig (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/gitconfig ~/.gitconfig && test -f ~/.gitconfig && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .gitconfig_global (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/gitconfig ~/.gitconfig_global && test -f ~/.gitconfig_global && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .gitignore_global (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/gitignore ~/.gitignore_global && test -f ~/.gitignore_global && echo '[ OK ]'
-echo ''
-read -n 1 -sp 'Link .gitignore (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/gitignore ~/.gitignore && test -f ~/.gitignore && echo '[ OK ]'
-
-# Vim
-echo ''
-read -n 1 -sp 'Link .viminfo (y/[n])? ' ANS
-test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/viminfo ~/.viminfo && test -f ~/.viminfo && echo '[ OK ]'
-
 quit 0
