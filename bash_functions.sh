@@ -255,23 +255,35 @@ function load-dir () {
 function punch() {
 
     ( IFS=$'\n'
-        PUNCH_FILE="$1"
+        OPT="$1"
         PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
         local dateStamp="$(date +'%d-%m-%Y')"
         local timeStamp="$(date +'%T')"
+        local weekStamp="$(date +%V)"
         local re="($dateStamp).*"
+        # Create the punch file if it does not exist
         test -f "$PUNCH_FILE" || echo "$dateStamp => " > "$PUNCH_FILE"
-        lines=$(cat "$PUNCH_FILE")
-        success=0
-        for line in $lines
-        do
-            if [[ "$line" =~ $re ]]
-            then
-                sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-                success=1
-            fi
-        done
-        test "$success" = "1" || echo "$dateStamp => $timeStamp " >> "$PUNCH_FILE"
-        echo "$(cat "$PUNCH_FILE")"
+        # List punchs
+        test "-l" = "$OPT" && cat "$PUNCH_FILE"
+        # Edit punchs
+        test "-e" = "$OPT" && vi "$PUNCH_FILE"
+        # Reset punchs (backup as week-N.punch)
+        test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch"
+        # Do the punch
+        if test -z "$OPT"
+        then
+            lines=$(grep . "$PUNCH_FILE")
+            success=0
+            for line in $lines
+            do
+                if [[ "$line" =~ $re ]]
+                then
+                    sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                    success=1
+                fi
+            done
+            test "$success" = "1" || echo "$dateStamp => $timeStamp " >> "$PUNCH_FILE"
+            grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+        fi
     )
 }
