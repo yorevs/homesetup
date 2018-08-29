@@ -253,7 +253,6 @@ function load-dir () {
 
 # Punch the Clock: Format = 29-08-2018 HH:mm:ss
 function punch() {
-
     ( IFS=$'\n'
         OPT="$1"
         PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
