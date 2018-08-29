@@ -69,8 +69,8 @@ echo "HOME_SETUP: $HOME_SETUP"
 echo "OPTTIONS: $OPT"
 echo ''
 
-read -n 1 -p "Continue [y]/n ?" ANS
-test "$ANS" = "n" -o "$ANS" = "N" && quit 0
+read -n 1 -p "Your .dotfiles will be replced. Continue y/[n] ?" ANS
+test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && quit 0
 echo ''
 echo ''
 
@@ -127,11 +127,11 @@ else
 fi
 
 echo ''
-echo 'ww      ww   EEEEEEEEEE   LL           cCCCCCCc    oOOOOOOo    mm      mm   EEEEEEEEEE'
+echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
 echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
 echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
-echo 'WW W  W WW   EE           LL      L   Cc          OO      Oo   MM      MM   EE        '
-echo 'ww      ww   EEEEEEEEEE   LLLLLLLLL    cCCCCCCc    oOOOOOOo    mm      mm   EEEEEEEEEE'
+echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
+echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
 echo ''
 
 echo "? To apply all settings on this shell type: source ~/.bashrc" 

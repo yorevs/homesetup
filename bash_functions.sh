@@ -152,13 +152,15 @@ function paths () {
     
     local pad=$(printf '%0.1s' "."{1..60})
     local pad_len=60
-    for path in $(echo -e ${PATH//:/\\n})
-    do
-        printf "$path "
-        printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-        test -d "$path" && printf "${BLUE}OK${NC}\n"
-        test -d "$path" || printf "${RED}NOT FOUND${NC}\n"
-    done
+    ( IFS=$'\n'
+        for path in $(echo -e ${PATH//:/\\n})
+        do
+            printf "$path "
+            printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+            test -d "$path" && printf "${BLUE}OK${NC}\n"
+            test -d "$path" || printf "${RED}NOT FOUND${NC}\n"
+        done
+    )
 }
 
 # Check if the required tool is installed on the system.

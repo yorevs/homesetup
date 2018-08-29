@@ -17,9 +17,10 @@ alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 alias ?="pwd"
 alias q="exit"
-alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
+
 alias save='save-dir'
 alias load='load-dir'
+alias reload='source $HOME/.bashrc'
 
 # General
 
@@ -88,6 +89,9 @@ alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/L
 # Show/hide hidden files in Finder
 alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
 alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+# set JAVA_HOME using jenv
+alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Canonical hex dump; some systems have this symlinked
 command -v hd > /dev/null || alias hd="hexdump -C"
