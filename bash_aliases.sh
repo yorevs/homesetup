@@ -27,6 +27,9 @@ alias reload='source $HOME/.bashrc'
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
 
+# Always use color output for `ls`
+alias ls="command ls ${colorflag}"
+
 # List all files colorized in long format
 alias l="ls -lhF ${colorflag}"
 
@@ -34,10 +37,10 @@ alias l="ls -lhF ${colorflag}"
 alias ll="ls -lahF ${colorflag}"
 
 # List all dotfiles
-alias lll="ls -lhd .?* ${colorflag}"
+alias lll="ls -lhdF .?*!(d) ${colorflag}"
 
-# Always use color output for `ls`
-alias ls="command ls ${colorflag}"
+# List all dotdirs
+alias lld="ls -lhd .?*/ ${colorflag}"
 
 # List all directories recursively (Nth level depth) as a tree
 alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2; test -z "$1" && tree $1; };_'
@@ -70,7 +73,7 @@ alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
 # External
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
 # Local
-alias ip-local='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP: $(ipconfig getifaddr $iface)"; done'
+alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP: $(ipconfig getifaddr $iface)"; done'
 # All IPs
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
@@ -78,7 +81,7 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 # Delete all .DS_store files
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
 alias edit='function _() { vi $1; source $1; };_'
-alias dots='ls -la $HOME | grep ".bash.*\|.git.*"'
+alias dots='ls -lhadF .?*'
 
 # Flush Directory Service cache
 alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"

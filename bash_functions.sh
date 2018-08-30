@@ -253,36 +253,45 @@ function load-dir () {
 
 # Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 function punch() {
-    ( IFS=$'\n'
-        OPT="$1"
-        PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
-        local dateStamp="$(date +'%a %d-%m-%Y')"
-        local timeStamp="$(date +'%H:%M')"
-        local weekStamp="$(date +%V)"
-        local re="($dateStamp).*"
-        # Create the punch file if it does not exist
-        test -f "$PUNCH_FILE" || echo "$dateStamp => " > "$PUNCH_FILE"
-        # List punchs
-        test "-l" = "$OPT" && cat "$PUNCH_FILE"
-        # Edit punchs
-        test "-e" = "$OPT" && vi "$PUNCH_FILE"
-        # Reset punchs (backup as week-N.punch)
-        test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch"
-        # Do the punch
-        if test -z "$OPT"
-        then
-            lines=$(grep . "$PUNCH_FILE")
-            success=0
-            for line in $lines
-            do
-                if [[ "$line" =~ $re ]]
-                then
-                    sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-                    success=1
-                fi
-            done
-            test "$success" = "1" || echo "$dateStamp => $timeStamp " >> "$PUNCH_FILE"
-            grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
-        fi
-    )
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: punch [-l,-e,-r]"
+        echo "Options: "
+        echo "    -l : List punches"
+        echo "    -e : Edit punches"
+        echo "    -r : Reset punches"
+        return 1
+    else
+        ( IFS=$'\n'
+            OPT="$1"
+            PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+            local dateStamp="$(date +'%a %d-%m-%Y')"
+            local timeStamp="$(date +'%H:%M')"
+            local weekStamp="$(date +%V)"
+            local re="($dateStamp).*"
+            # Create the punch file if it does not exist
+            test -f "$PUNCH_FILE" || echo "$dateStamp => " > "$PUNCH_FILE"
+            # List punchs
+            test "-l" = "$OPT" && cat "$PUNCH_FILE"
+            # Edit punchs
+            test "-e" = "$OPT" && vi "$PUNCH_FILE"
+            # Reset punchs (backup as week-N.punch)
+            test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch"
+            # Do the punch
+            if test -z "$OPT"
+            then
+                lines=$(grep . "$PUNCH_FILE")
+                success=0
+                for line in $lines
+                do
+                    if [[ "$line" =~ $re ]]
+                    then
+                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                        success=1
+                    fi
+                done
+                test "$success" = "1" || echo "$dateStamp => $timeStamp " >> "$PUNCH_FILE"
+                grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+            fi
+        )
+    fi
 }
