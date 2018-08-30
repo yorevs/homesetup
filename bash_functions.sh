@@ -251,13 +251,13 @@ function load-dir () {
     echo "SAVED_DIR=$SAVED_DIR" > "$HOME/.saved_dir"
 }
 
-# Punch the Clock: Format = dd-mm-yyyy => HH:mm:ss
+# Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 function punch() {
     ( IFS=$'\n'
         OPT="$1"
         PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
-        local dateStamp="$(date +'%d-%m-%Y')"
-        local timeStamp="$(date +'%T')"
+        local dateStamp="$(date +'%a %d-%m-%Y')"
+        local timeStamp="$(date +'%H:%M')"
         local weekStamp="$(date +%V)"
         local re="($dateStamp).*"
         # Create the punch file if it does not exist
