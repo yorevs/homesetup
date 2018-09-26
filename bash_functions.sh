@@ -6,7 +6,9 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 
-# Search for files recursivelly
+# Purpose: Search for files recursivelly.
+# @param $1 [Req] : The base search path.
+# @param $2 [Req] : The GLOB expression of the file search.
 function search-files() {
   if test -z "$1" -o -z "$2"; then
     echo "Usage: search-files <search_path> <glob_exp_files>"
@@ -16,7 +18,9 @@ function search-files() {
   fi
 }
 
-# Search for directories recursivelly
+# Purpose: Search for directories recursivelly.
+# @param $1 [Req] : The base search path.
+# @param $2 [Req] : The GLOB expression of the directory search.
 function search-directories() {
   if test -z "$1" -o -z "$2"; then
     echo "Usage: search-directories <search_path> <glob_exp_folders>"
@@ -26,7 +30,10 @@ function search-directories() {
   fi
 }
 
-# Search for strings recursivelly
+# Purpose: Search for strings in files recursivelly
+# @param $1 [Req] : The base search path.
+# @param $2 [Req] : The searching string.
+# @param $3 [Req] : The GLOB expression of the file search.
 function search-string() {
   if test -z "$1" -o -z "$2" -o -z "$3"; then
     echo "Usage: search-string <search_path> <string> <glob_exp_files>"
@@ -36,7 +43,8 @@ function search-string() {
   fi
 }
 
-# Search for a command from the history
+# Purpose: Search for a previous command from the bash history
+# @param $1 [Req] : The searching command.
 function hist() {
   if test -z "$1"; then
     echo "Usage: hist <command>"
@@ -45,7 +53,8 @@ function hist() {
   fi
 }
 
-# Delete the files recursivelly
+# Purpose: Delete the files recursivelly, seding them to Trash
+# @param $1 [Req] : The GLOB expression of the file/directory search.
 function del-tree() {
   if test -n "$1" -a "$1" != "/" -a -d "$1"; then
     # Find all files and folders matching the <glob_exp>
@@ -72,7 +81,8 @@ function del-tree() {
   fi
 }
 
-# Pritty print json string
+# Purpose: Pritty print (format) json string
+# @param $1 [Req] : The unformatted json string
 function json-pprint() {
   if test -n "$1"; then
     echo $1 | json_pp -f json -t json -json_opt pretty indent escape_slash
@@ -81,7 +91,8 @@ function json-pprint() {
   fi
 }
 
-# Check information about an IP
+# Purpose: Check information about an IP
+# @param $1 [Req] : The IP to get information about
 function ip-info() {
   if test -z "$1"; then
     echo "Usage: ip-info <IPv4_address>"
@@ -91,7 +102,8 @@ function ip-info() {
   fi
 }
 
-# Resolve domain names associated to the IP
+# Purpose: Resolve domain names associated with the IP
+# @param $1 [Req] : The IP address to resolve
 function ip-resolve() {
   if test -z "$1"; then
     echo "Usage: ip-resolve <IPv4_address>"
@@ -100,7 +112,8 @@ function ip-resolve() {
   fi
 }
 
-# Lokup the DNS to determine the associated IP address
+# Purpose: Lokup the DNS to determine the associated IP address
+# @param $1 [Req] : The domain name to lookup
 function ip-lookup() {
   if test -z "$1"; then
     echo "Usage: ip-lookup <domain_name>"
@@ -109,7 +122,9 @@ function ip-lookup() {
   fi
 }
 
-# Check the state of a local port
+# Purpose: Check the state of a local port
+# @param $1 [Req] : The port number regex
+# @param $2 [Opt] : The port state to match. One of: CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN
 function port-check() {
   if test -z "$1" -a -z "$2"; then
     echo "Usage: port-check <portnum_regex> [state]"
@@ -125,7 +140,7 @@ function port-check() {
   fi
 }
 
-# Check all environment variables
+# Purpose: Check all environment variables
 function envs() {
 
   local pad=$(printf '%0.1s' "."{1..60})
@@ -146,7 +161,7 @@ function envs() {
   )
 }
 
-# Print each PATH entry on a separate line
+# Purpose: Print each PATH entry on a separate line
 function paths() {
 
   local pad=$(printf '%0.1s' "."{1..60})
@@ -162,7 +177,7 @@ function paths() {
   )
 }
 
-# Check if the required tool is installed on the system.
+# Purpose: Check if the required tool is installed on the system.
 function tc() {
 
   if test -z "$1"; then
@@ -186,7 +201,7 @@ function tc() {
   fi
 }
 
-# Check if the development tools are installed on the system.
+# Purpose: Check if the development tools are installed on the system.
 function tools() {
 
   DEV_APPS="brew tree vim pcregrep shfmt jenv git svn gcc make qmake java ant mvn gradle python doxygen ruby node npm vue"
@@ -195,7 +210,7 @@ function tools() {
   done
 }
 
-# Check the version of the specified app.
+# Purpose: Check the version of the specified app.
 function ver() {
 
   if test -z "$1"; then
@@ -227,7 +242,7 @@ function ver() {
   fi
 }
 
-# Save the current directory for later use
+# Purpose: Save the current directory for later use
 function save-dir() {
 
   if test -z "$1" -o "$1" = "" -o ! -d "$1"; then
@@ -240,7 +255,7 @@ function save-dir() {
   echo "SAVED_DIR=$curDir" >"$HOME/.saved_dir"
 }
 
-# Load the directory prviously saved
+# Purpose: Load the directory prviously saved
 function load-dir() {
 
   test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
@@ -249,7 +264,7 @@ function load-dir() {
   echo "SAVED_DIR=$SAVED_DIR" >"$HOME/.saved_dir"
 }
 
-# Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
+# Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 function punch() {
   if test "$1" = "-h" -o "$1" = "--help"; then
     echo "Usage: punch [-l,-e,-r]"

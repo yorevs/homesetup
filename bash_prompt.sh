@@ -24,7 +24,8 @@ prompt_git() {
     local branchName='';
 
     # Check if the current directory is in a Git repository.
-    if [ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]; then
+    if test -n $(command -v git) -a $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0'
+    then
 
         # check if the current directory is in .git before running git checks
         if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]; then
@@ -86,7 +87,7 @@ fi;
 # Set the terminal title and prompt.
 PS1="\[\033]0;\W\007\]"; # working directory base name
 PS1+="\[${BOLD}\]"; # newline
-PS1+="(\#) \[${userStyle}\]\u"; # username
+PS1+="(\!) \[${userStyle}\]\u"; # username
 PS1+="\[${WHITE}\]@";
 PS1+="\[${hostStyle}\]\h"; # host
 PS1+="\[${WHITE}\]:";

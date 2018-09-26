@@ -38,7 +38,7 @@ usage() {
 test "$1" = '-h' -o "$1" = '--help' -o -z "$1" -o "$1" = "" && usage
 
 # Loop through the command line options.
-# Short opts: -<C>, Long opts: --<Word>
+# Short opts: -w, Long opts: --Word
 while test -n "$1"
 do
     case "$1" in
@@ -62,14 +62,17 @@ test -z "$DIR" && DIR=`pwd`
 
 # HomeSetup folder
 HOME_SETUP=${HOME_SETUP:-$DIR}
+test -d "$HOME_SETUP" || mkdir -p "$DIR"
 
 echo ''
-echo '-- Install settings:'
-echo "HOME_SETUP: $HOME_SETUP"
-echo "OPTTIONS: $OPT"
+echo '#'
+echo '# Install settings:'
+echo "# - HOME_SETUP: $HOME_SETUP"
+echo "# - OPTTIONS: $OPT"
+echo '#'
 echo ''
 
-read -n 1 -p "Your .dotfiles will be replced. Continue y/[n] ?" ANS
+read -n 1 -p "Your .dotfiles will be replaced. Continue y/[n] ?" ANS
 test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && quit 0
 echo ''
 echo ''
@@ -136,4 +139,5 @@ echo ''
 
 echo "? To apply all settings on this shell type: source ~/.bashrc" 
 echo ''
+
 quit 0
