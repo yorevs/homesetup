@@ -58,6 +58,7 @@ alias mv='mv -i'
 alias cls='clear'
 alias vi='vim'
 alias tl='tail -F'
+alias kk='function _() { test -n "$1" && pl=$(pgrep "$1"); test -n "$pl" && kill -9 "$pl"; };_'
 
 # Dates
 # Get week number
