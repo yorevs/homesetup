@@ -8,7 +8,8 @@
 #
 # Original project: https://github.com/mathiasbynens/dotfiles
 
-# Navigation
+# -----------------------------------------------------------------------------------
+# Navigational
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -16,13 +17,15 @@ alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 alias ?="pwd"
-alias q="exit"
 
+# -----------------------------------------------------------------------------------
 # General
+alias q="exit"
+alias reload='source $HOME/.bashrc'
 alias save='save-dir'
 alias load='load-dir'
-alias reload='source $HOME/.bashrc'
 
+# Kills all process specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
 
 # Enable aliases to be sudo’ed
@@ -52,24 +55,24 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-# Commands
+# For safety, by default those commands will input for confirmation
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+
 alias cls='clear'
 alias vi='vim'
 alias tl='tail -F'
 
-# Dates
-# Get week number
 alias week='date +%V'
 alias now='date +"%d-%m-%Y %T"'
 alias now-ms='date "+%s%S"'
 
+# -----------------------------------------------------------------------------------
+# IP related
+
 # Show active network interfaces
 alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
-
-# IP addresses
 
 # External
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"

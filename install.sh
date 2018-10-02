@@ -14,9 +14,9 @@ PROC_NAME="$(basename $0)"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME [-t|--type <all>] [-d|--dir <home_setup_dir>]
+Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
 
-    *** [all]: Install all scripts into the user home folder.
+    *** [all]: Install all scripts into the user HomeSetup folder.
 "
 
 # Purpose: Quit the program and exhibits an exit message if specified.
@@ -35,16 +35,16 @@ usage() {
 }
 
 # Check if the user passed the help parameters.
-test "$1" = '-h' -o "$1" = '--help' -o -z "$1" -o "$1" = "" && usage
+test "$1" = '-h' -o "$1" = '--help' && usage
 
 # Loop through the command line options.
 # Short opts: -w, Long opts: --Word
 while test -n "$1"
 do
     case "$1" in
-        -t | --type)
+        -a | --all)
             shift
-            OPT="$1"
+            OPT="all"
         ;;
         -d | --dir)
             shift
@@ -64,80 +64,92 @@ test -z "$DIR" && DIR=`pwd`
 HOME_SETUP=${HOME_SETUP:-$DIR}
 test -d "$HOME_SETUP" || mkdir -p "$DIR"
 
-echo ''
+source bash_colors.sh
+
+ALL_DOTFILES=( 
+    "bashrc" 
+    "bash_profile" 
+    "bash_aliases" 
+    "bash_prompt" 
+    "bash_env" 
+    "bash_colors" 
+    "bash_functions" 
+)
+
+echo "${BLUE}"
 echo '#'
 echo '# Install settings:'
 echo "# - HOME_SETUP: $HOME_SETUP"
 echo "# - OPTTIONS: $OPT"
+echo "# - FILES: ${ALL_DOTFILES[@]}"
 echo '#'
-echo ''
+echo "${RED}"
 
-read -n 1 -p "Your .dotfiles will be replaced. Continue y/[n] ?" ANS
-test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && quit 0
+read -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && echo "${NC}" && quit 0
 echo ''
-echo ''
+echo "${NC}"
 
 # If all option is used, do it at once
 if test "$OPT" = "all" -o "$OPT" = "ALL"
 then
-    # Bin directory
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bin ~/
-    test -d ~/bin && echo -e '[ OK ]\n'
+    if ! test -d ~/bin
+    then
+        # Bin directory
+        echo -n "Linking: " && ln -sfv $HOME_SETUP/bin ~/
+        test -d ~/bin && echo -e '[   OK   ]\n'
+    else
+        cp $HOME_SETUP/bin/* ~/bin
+    fi
 
     # Bash dotfiles
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bashrc.sh ~/.bashrc
-    test -f ~/.bashrc && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_profile.sh ~/.bash_profile
-    test -f ~/.bash_profile && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_aliases.sh ~/.bash_aliases
-    test -f ~/.bash_aliases && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_prompt.sh ~/.bash_prompt
-    test -f ~/.bash_prompt && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_env.sh ~/.bash_env
-    test -f ~/.bash_env && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_colors.sh ~/.bash_colors
-    test -f ~/.bash_colors && echo -e '[ OK ]\n'
-    echo -n "Linking: " && ln -sfv $HOME_SETUP/bash_functions.sh ~/.bash_functions
-    test -f ~/.bash_functions && echo -e '[ OK ]\n'
+    for next in ${ALL_DOTFILES[@]}
+    do
+        dotfile=~/.${next}
+        if test -f $dotfile; then test -h $dotfile || mv $dotfile ${dotfile}.bak; fi
+        echo -n "Linking: " && ln -sfv $HOME_SETUP/${next}.sh $dotfile
+        test -f $dotfile && echo -e "${GREEN}[   OK   ]${NC}\n"
+        test -f $dotfile || echo -e "${RED}[ FAILED ]${NC}\n"
+    done
 else
-    # Bin directory
-    echo ''
-    read -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bin ~/ && test -d ~/bin && echo '[ OK ]'
+    if ! test -d $HOME_SETUP/bin
+    then
+        # Bin directory
+        echo ''
+        read -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
+        test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bin ~/ && test -d ~/bin && echo '[ OK ]'
+    else
+        cp $HOME_SETUP/bin/* ~/bin
+    fi
 
-    # Bash
-    echo ''
-    read -n 1 -sp 'Link .bashrc (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bashrc.sh ~/.bashrc && test -f ~/.bashrc && echo '[ OK ]'
-    echo ''
-    read -n 1 -sp 'Link .bash_profile (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_profile.sh ~/.bash_profile && test -f ~/.bash_profile && echo '[ OK ]'
-    echo ''
-    read -n 1 -sp 'Link .bash_aliases (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_aliases.sh ~/.bash_aliases && test -f ~/.bash_aliases && echo '[ OK ]'
-    echo ''
-    read -n 1 -sp 'Link .bash_prompt (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_prompt.sh ~/.bash_prompt && test -f ~/.bash_prompt && echo '[ OK ]'
-    echo ''
-    read -n 1 -sp 'Link .bash_env (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_env.sh ~/.bash_env && test -f ~/.bash_env && echo '[ OK ]'
-    echo ''
-    read -n 1 -sp 'Link .bash_colors (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_colors.sh ~/.bash_colors && test -f ~/.bash_colors && echo '[ OK ]'
-    echo ''
-    read -n 1 -sp 'Link .bash_functions (y/[n])? ' ANS
-    test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bash_functions.sh ~/.bash_functions && test -f ~/.bash_functions && echo '[ OK ]'
+    # Bash dotfiles
+    for next in ${ALL_DOTFILES[@]}
+    do
+        dotfile=~/.${next}
+        echo ''
+        read -n 1 -sp "Link $dotfile (y/[n])? " ANS
+        test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
+        echo ''
+        echo -n "Linking: " && ln -sfv $HOME_SETUP/${next}.sh $dotfile
+        test -f $dotfile && echo -e "${GREEN}[   OK   ]${NC}\n"
+        test -f $dotfile || echo -e "${RED}[ FAILED ]${NC}\n"
+    done
 fi
 
-echo ''
+echo "${CYAN}"
 echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
 echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
 echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
 echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
 echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
 echo ''
+echo "${YELLOW}Dotfiles v$(cat $HOME_SETUP/version) installed!"
+echo -n "${NC}"
 
-echo "? To apply all settings on this shell type: source ~/.bashrc" 
-echo ''
+echo "${WHITE}"
+echo '? To reload settings and check for updates type: #> reload'
+echo -n "${NC}"
+
+source ~/.bashrc
 
 quit 0
