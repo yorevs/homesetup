@@ -12,8 +12,8 @@
 if [ -f "$HOME_SETUP/VERSION" ]
 then
     export DOTFILES_VERSION=$(cat "$HOME_SETUP/VERSION")
-    v=$(curl -s -m 2 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
-    test "$DOTFILES_VERSION" != "$v" && echo "${RED}You have a different version of HomeSetup (Repo: $v , Yours: $DOTFILES_VERSION). Pull the repository to get updated!${NC}"
+    v=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
+    test -n "$v" -a -n "$DOTFILES_VERSION" -a "$DOTFILES_VERSION" != "$v" && echo -e "${YELLOW}You have an outdated version of HomeSetup:\n  => Repository: ${v} , Yours: ${DOTFILES_VERSION}.${NC}"
 fi
 
 if [ -f /etc/bashrc ]
