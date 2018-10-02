@@ -18,11 +18,12 @@ alias -- -="cd -"
 alias ?="pwd"
 alias q="exit"
 
+# General
 alias save='save-dir'
 alias load='load-dir'
 alias reload='source $HOME/.bashrc'
 
-# General
+alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -58,7 +59,6 @@ alias mv='mv -i'
 alias cls='clear'
 alias vi='vim'
 alias tl='tail -F'
-alias kk='function _() { test -n "$1" && pl=$(pgrep "$1"); test -n "$pl" && kill -9 "$pl"; };_'
 
 # Dates
 # Get week number

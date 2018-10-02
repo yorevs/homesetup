@@ -308,6 +308,7 @@ function punch() {
   fi
 }
 
+#TODO Change to set-alias and improve with -e, -l, etc
 function add-alias() {
   if test -z "$1" -o -z "$2" -o "$1" = "-h" -o "$1" = "--help"; then
     echo "Usage: add-alias <name> <alias_expr>"
@@ -315,5 +316,29 @@ function add-alias() {
   else
     test -f "$HOME/.aliases" || touch "$HOME/.aliases"
     echo "alias $1='$2'" >>"$HOME/.aliases"
+  fi
+}
+
+function plist() {
+  if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
+    echo "Usage: plist <process_name> [kill]"
+    return 1
+  else
+    local pids=$(ps -efc | grep "$1" | awk '{ print $1, $2,$3 }' )
+    if test -n "$pids"; then
+      test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\n---------------------------${NC}"
+      test "$2" = "kill" && echo ''
+      (
+        IFS=$'\n'
+        for next in $pids; do
+          local p=$(echo $next | awk '{ print $2 }' )
+          test "$2" = "kill" || echo -e "${GREEN}$next${NC}" | tr ' ' '\t'
+          test -n "$p" -a "$2" = "kill" && kill -9 "$p" && echo "${RED}Killed process with PID = $p ${NC}"
+        done
+      )
+      echo ''
+    else
+      echo "${YELLOW}No active PIDs for process named: $1 ${NC}"
+    fi
   fi
 }
