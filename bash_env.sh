@@ -23,8 +23,9 @@ export SVN_REPOS="$HOME/SVN-Repository"
 export WORKSPACE="$HOME/Workspace"
 export DESKTOP="$HOME/Desktop"
 export DOWNLOADS="$HOME/Downloads"
-export TEMP="/tmp"
+export TEMP="$TMPDIR"
 export TRASH="$HOME/.Trash/"
+export DOTFILES_VERSION=$(cat "$HOME_SETUP/VERSION")
 
 # Setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 export HISTSIZE=1000

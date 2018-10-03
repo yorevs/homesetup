@@ -358,6 +358,18 @@ function plist() {
   fi
 }
 
+# Check the latest dotfiles version
+function dv() {
+  if test -n "$DOTFILES_VERSION"; then
+    local v=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
+    local newer=$(test -n "$v" -a "$DOTFILES_VERSION" != "$v" && echo 1)
+    test -n "$newer" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${v} , Yours: ${DOTFILES_VERSION}.${NC}"
+    test -n "$newer" || echo -e "${GREEN}You version is up to date: ${v} !${NC}"
+      else
+    echo "${RED}DOTFILES_VERSION is not defined${NC}"
+  fi
+}
+
 #TODO Change to set-alias and improve with -e, -l, etc
 function add-alias() {
   if test -z "$1" -o -z "$2" -o "$1" = "-h" -o "$1" = "--help"; then

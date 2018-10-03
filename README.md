@@ -123,6 +123,7 @@ save       | Save the current directory to be loaded by `load`
 load       | cd into the saved directory issued by `save`
 punch      | Punch the clock. Add, edit and list punches
 plist      | Display (kill?) a process list, given process name
+dv         | Check the latest dotfiles version
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 
