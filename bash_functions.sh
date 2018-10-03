@@ -7,39 +7,39 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 
-# Purpose: Search for files recursivelly.
+# Purpose: Search for files recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the file search.
-function search-files() {
+function sf() {
   if test -z "$1" -o -z "$2"; then
-    echo "Usage: search-files <search_path> <glob_exp_files>"
+    echo "Usage: sf <search_path> <glob_exp_files>"
   else
     echo "Searching for files matching: \"$2\" in \"$1\""
     find "$1" -type f -iname "*""$2"
   fi
 }
 
-# Purpose: Search for directories recursivelly.
+# Purpose: Search for directories recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the directory search.
-function search-directories() {
+function sd() {
   if test -z "$1" -o -z "$2"; then
-    echo "Usage: search-directories <search_path> <glob_exp_folders>"
+    echo "Usage: sd <search_path> <glob_exp_folders>"
   else
     echo "Searching for folders matching: \"$2\" in \"$1\""
     find "$1" -type d -iname "*""$2"
   fi
 }
 
-# Purpose: Search for strings in files recursivelly.
+# Purpose: Search for strings in files recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The searching string.
 # @param $3 [Req] : The GLOB expression of the file search.
 # @param $4 [Opt] : Whether to replace the findings.
 # @param $5 [Con] : Required if $4 is provided. This is the replacement string.
-function search-string() {
+function ss() {
   if test -z "$1" -o -z "$2" -o -z "$3"; then
-    echo "Usage: search-string <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
+    echo "Usage: ss <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
   else
     local gflags="-HEn"
     test "$4" = "--replace" -a -n "$5" && local replace=1
@@ -52,7 +52,7 @@ function search-string() {
   fi
 }
 
-# Purpose: Search for a previous command from the bash history.
+# Purpose: Search for a previous issued command from history.
 # @param $1 [Req] : The searching command.
 function hist() {
   if test -z "$1"; then
@@ -62,7 +62,7 @@ function hist() {
   fi
 }
 
-# Purpose: Delete the files recursivelly, seding them to Trash.
+# Purpose: Send files recursively to Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function del-tree() {
   if test -n "$1" -a "$1" != "/" -a -d "$1"; then
@@ -70,7 +70,7 @@ function del-tree() {
     local all=$(find "$1" -name "*$2")
     # Move all to trash
     if test -n "$all"; then
-      read -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursivelly to trash (y/[n]) ? " ANS
+      read -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
       if test "$ANS" = 'y' -o "$ANS" = 'Y'; then
         echo "${RED}"
         for next in $all; do
@@ -90,24 +90,24 @@ function del-tree() {
   fi
 }
 
-# Purpose: Pritty print (format) json string.
-# @param $1 [Req] : The unformatted json string
-function json-pprint() {
+# Purpose: Pretty print (format) JSON string.
+# @param $1 [Req] : The unformatted JSON string
+function jp() {
   if test -n "$1"; then
     echo $1 | json_pp -f json -t json -json_opt pretty indent escape_slash
   else
-    echo "Usage: json-pprint <json_string>"
+    echo "Usage: jp <json_string>"
   fi
 }
 
-# Purpose: Check information about an IP.
+# Purpose: Check information about the IP.
 # @param $1 [Req] : The IP to get information about
 function ip-info() {
   if test -z "$1"; then
     echo "Usage: ip-info <IPv4_address>"
   else
     local ipinfo=$(curl --basic ip-api.com/json/$1 2>/dev/null | tr ' ' '_')
-    test -n "$ipinfo" && json-pprint $ipinfo
+    test -n "$ipinfo" && jp $ipinfo
   fi
 }
 
@@ -121,7 +121,7 @@ function ip-resolve() {
   fi
 }
 
-# Purpose: Lokup the DNS to determine the associated IP address.
+# Purpose: Lookup the DNS to determine the associated IP address.
 # @param $1 [Req] : The domain name to lookup
 function ip-lookup() {
   if test -z "$1"; then
@@ -149,7 +149,7 @@ function port-check() {
   fi
 }
 
-# Purpose: Prints all environment variables.
+# Purpose: Print all environment variables.
 function envs() {
 
   local pad=$(printf '%0.1s' "."{1..60})
@@ -170,7 +170,7 @@ function envs() {
   )
 }
 
-# Purpose: Prints each PATH entry on a separate line.
+# Purpose: Print each PATH entry on a separate line.
 function paths() {
 
   local pad=$(printf '%0.1s' "."{1..60})
@@ -188,7 +188,7 @@ function paths() {
   echo ''
 }
 
-# Purpose: Check the version of the specified app.
+# Purpose: Check the version of the app using common ways.
 # @param $1 [Req] : The app to check
 function ver() {
 
@@ -265,8 +265,8 @@ function tools() {
   echo ''
 }
 
-# Purpose: Save the current directory for later use
-function save-dir() {
+# Purpose: Save the current directory to be loaded by `load`
+function save() {
 
   if test -z "$1" -o "$1" = "" -o ! -d "$1"; then
     curDir=$(pwd)
@@ -278,8 +278,8 @@ function save-dir() {
   echo "SAVED_DIR=$curDir" >"$HOME/.saved_dir"
 }
 
-# Purpose: CD to the previously saved directory
-function load-dir() {
+# Purpose: cd into the saved directory issued by `save`
+function load() {
 
   test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
   SAVED_DIR="${SAVED_DIR:-$(pwd)}"

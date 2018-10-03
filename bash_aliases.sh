@@ -15,7 +15,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-alias ~="cd ~" # `cd` is probably faster to type though
+alias ~="cd ~"
 alias -- -="cd -"
 alias ?="pwd"
 
@@ -23,8 +23,6 @@ alias ?="pwd"
 # General
 alias q="exit"
 alias reload='source $HOME/.bashrc'
-alias save='save-dir'
-alias load='load-dir'
 
 # Kills all process specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
@@ -69,6 +67,16 @@ alias week='date +%V'
 alias now='date +"%d-%m-%Y %T"'
 alias now-ms='date "+%s%S"'
 
+# macOS has no `wget, so using curl instead`
+alias wget='curl -O'
+
+# Evaluate mathematical expression
+alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'
+
+# URL-encode strings
+alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+
 # -----------------------------------------------------------------------------------
 # IP related
 
@@ -82,11 +90,11 @@ alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($
 # All IPs
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
+# -----------------------------------------------------------------------------------
 # Mac Stuff
+
 # Delete all .DS_store files
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
-alias edit='function _() { vi $1; source $1; };_'
-alias dots='ls -lhadF .?*'
 
 # Flush Directory Service cache
 alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
@@ -108,17 +116,7 @@ command -v hd > /dev/null || alias hd="hexdump -C"
 command -v md5sum > /dev/null || alias md5sum="md5"
 
 # macOS has no `sha1sum`, so use `shasum` as a fallback
-command -v sha1sum > /dev/null || alias sha1sum="shasum"
-
-# macOS has no `wget, co using curl instead`
-alias wget='curl -O'
-
-# Evaluate mathemathical expression
-alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'
-
-# URL-encode strings
-alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-alias urldecode='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+command -v sha1sum > /dev/null || alias sha1sum="sha1"
 
 # Git Stuff
 alias gs='git s'
@@ -134,10 +132,8 @@ alias gl='git l'
 alias gcm='git cm'
 alias gca='git ca'
 alias gtps='git ps origin HEAD'
-
 alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
 alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
-
 alias git-show='git diff-tree --no-commit-id --name-status -r'
 alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
 
@@ -152,7 +148,8 @@ alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing 
 
 # Vue
 alias vue-run='npm run dev'
-alias vue-init='vue init webpack '
+alias vue-serv='npm run serve'
+alias vue-init='vue init webpack'
 
 # Directory Shortcuts
 alias work='cd $WORKSPACE'
@@ -163,8 +160,3 @@ alias db='cd $DROPBOX'
 alias dl='cd $DOWNLOADS'
 alias dev='cd $DEV_FILES'
 alias hhs='cd $HOME_SETUP'
-
-# Functions Shortcuts
-alias sf="search-files"
-alias sd="search-directories"
-alias ss="search-string"
