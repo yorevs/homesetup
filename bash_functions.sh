@@ -31,20 +31,28 @@ function search-directories() {
   fi
 }
 
-# Purpose: Search for strings in files recursivelly
+# Purpose: Search for strings in files recursivelly.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The searching string.
 # @param $3 [Req] : The GLOB expression of the file search.
+# @param $4 [Opt] : Whether to replace the findings.
+# @param $5 [Con] : Required if $4 is provided. This is the replacement string.
 function search-string() {
   if test -z "$1" -o -z "$2" -o -z "$3"; then
-    echo "Usage: search-string <search_path> <string> <glob_exp_files>"
+    echo "Usage: search-string <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
   else
-    echo "Searching for string matching: \"$2\" in \"$1\" , filenames = [$3]"
-    find "$1" -type f -iname "*""$3" -exec grep -HEni "$2" {} \; | grep "$2"
+    local gflags="-HEn"
+    test "$4" = "--replace" -a -n "$5" && local replace=1
+    local extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
+    echo "${YELLOW}Searching for string matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+    test -n "$replace" && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
+    test -n "$replace" || result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
+    test -n "$replace" && echo "${result//$2/$5}" | grep $gflags "$5"
+    test -n "$replace" || echo "${result}" | grep $gflags "$2"
   fi
 }
 
-# Purpose: Search for a previous command from the bash history
+# Purpose: Search for a previous command from the bash history.
 # @param $1 [Req] : The searching command.
 function hist() {
   if test -z "$1"; then
@@ -54,7 +62,7 @@ function hist() {
   fi
 }
 
-# Purpose: Delete the files recursivelly, seding them to Trash
+# Purpose: Delete the files recursivelly, seding them to Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function del-tree() {
   if test -n "$1" -a "$1" != "/" -a -d "$1"; then
@@ -82,7 +90,7 @@ function del-tree() {
   fi
 }
 
-# Purpose: Pritty print (format) json string
+# Purpose: Pritty print (format) json string.
 # @param $1 [Req] : The unformatted json string
 function json-pprint() {
   if test -n "$1"; then
@@ -92,7 +100,7 @@ function json-pprint() {
   fi
 }
 
-# Purpose: Check information about an IP
+# Purpose: Check information about an IP.
 # @param $1 [Req] : The IP to get information about
 function ip-info() {
   if test -z "$1"; then
@@ -103,7 +111,7 @@ function ip-info() {
   fi
 }
 
-# Purpose: Resolve domain names associated with the IP
+# Purpose: Resolve domain names associated with the IP.
 # @param $1 [Req] : The IP address to resolve
 function ip-resolve() {
   if test -z "$1"; then
@@ -113,7 +121,7 @@ function ip-resolve() {
   fi
 }
 
-# Purpose: Lokup the DNS to determine the associated IP address
+# Purpose: Lokup the DNS to determine the associated IP address.
 # @param $1 [Req] : The domain name to lookup
 function ip-lookup() {
   if test -z "$1"; then
@@ -123,7 +131,7 @@ function ip-lookup() {
   fi
 }
 
-# Purpose: Check the state of a local port
+# Purpose: Check the state of a local port.
 # @param $1 [Req] : The port number regex
 # @param $2 [Opt] : The port state to match. One of: CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN
 function port-check() {
@@ -141,7 +149,7 @@ function port-check() {
   fi
 }
 
-# Purpose: Check all environment variables
+# Purpose: Prints all environment variables.
 function envs() {
 
   local pad=$(printf '%0.1s' "."{1..60})
@@ -162,7 +170,7 @@ function envs() {
   )
 }
 
-# Purpose: Print each PATH entry on a separate line
+# Purpose: Prints each PATH entry on a separate line.
 function paths() {
 
   local pad=$(printf '%0.1s' "."{1..60})
@@ -181,6 +189,7 @@ function paths() {
 }
 
 # Purpose: Check the version of the specified app.
+# @param $1 [Req] : The app to check
 function ver() {
 
   if test -z "$1"; then
@@ -213,6 +222,7 @@ function ver() {
 }
 
 # Purpose: Check if the required tool is installed on the system.
+# @param $1 [Req] : The tool to check
 function tc() {
 
   if test -z "$1"; then
@@ -239,8 +249,8 @@ function tc() {
 # Purpose: Check if the development tools are installed on the system.
 function tools() {
 
-  DEFAULT_TOOLS=( 
-    "brew" "tree" "vim" "pcregrep" "shfmt" "jenv" 
+  DEFAULT_TOOLS=(
+    "brew" "tree" "vim" "pcregrep" "shfmt" "jenv"
     "node" "java" "python" "ruby" "gcc" "make" "qmake"
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
     "nvm" "npm"
@@ -268,7 +278,7 @@ function save-dir() {
   echo "SAVED_DIR=$curDir" >"$HOME/.saved_dir"
 }
 
-# Purpose: Load the directory prviously saved
+# Purpose: CD to the previously saved directory
 function load-dir() {
 
   test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
@@ -321,31 +331,22 @@ function punch() {
   fi
 }
 
-#TODO Change to set-alias and improve with -e, -l, etc
-function add-alias() {
-  if test -z "$1" -o -z "$2" -o "$1" = "-h" -o "$1" = "--help"; then
-    echo "Usage: add-alias <name> <alias_expr>"
-    return 1
-  else
-    test -f "$HOME/.aliases" || touch "$HOME/.aliases"
-    echo "alias $1='$2'" >>"$HOME/.aliases"
-  fi
-}
-
-#Display the uid, pid, parent pid, recent CPU usage, process start time, controlling tty, elapsed CPU usage, and the associated command
+# Purpose: Display a process list of the given process name, killing them if specified.
+# @param $1 [Req] : The process name to check
+# @param $2 [Opt] : Whether to kill all found processes
 function plist() {
   if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
     echo "Usage: plist <process_name> [kill]"
     return 1
   else
-    local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$4,$8 }' )
+    local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$4,$8 }')
     if test -n "$pids"; then
       test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCPU\tCOMMAND\n---------------------------------------------------------------------------------"
       test "$2" = "kill" && echo ''
       (
         IFS=$'\n'
         for next in $pids; do
-          local p=$(echo $next | awk '{ print $2 }' )
+          local p=$(echo $next | awk '{ print $2 }')
           test "$2" = "kill" || echo -e "${GREEN}$next${NC}" | tr ' ' '\t'
           test -n "$p" -a "$2" = "kill" && kill -9 "$p" && echo "${RED}Killed process with PID = $p ${NC}"
         done
@@ -354,5 +355,16 @@ function plist() {
     else
       echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
     fi
+  fi
+}
+
+#TODO Change to set-alias and improve with -e, -l, etc
+function add-alias() {
+  if test -z "$1" -o -z "$2" -o "$1" = "-h" -o "$1" = "--help"; then
+    echo "Usage: add-alias <name> <alias_expr>"
+    return 1
+  else
+    test -f "$HOME/.aliases" || touch "$HOME/.aliases"
+    echo "alias $1='$2'" >>"$HOME/.aliases"
   fi
 }

@@ -5,9 +5,7 @@
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@gmail.com
-
-# Current script version.
-VERSION=0.9.0
+#    Site: https://github.com/yorevs/homesetup
 
 # This script name.
 PROC_NAME="$(basename $0)"
