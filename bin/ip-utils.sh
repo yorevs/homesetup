@@ -14,7 +14,7 @@ PROC_NAME="$(basename $0)"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME [--extra-info] <IP>
+Usage: $PROC_NAME <IP>
 "
 
 # Purpose: Quit the program and exhibits an exit message if specified.
@@ -39,16 +39,9 @@ test "$1" = '-h' -o "$1" = '--help' -o -z "$1" -o "$1" = "" && usage
 
 # The IP to be validated.
 IP="$1"
-IP_INFO=''
 IP_VALID=''
 IP_CLASS=''
 IP_TYPE=''
-
-EXTRA_INFO=0
-if test "$1" = "--extra-info"; then
-    EXTRA_INFO=1
-    shift
-fi
 
 # Test if the Ip parameter is not empty
 if test -z "$IP"; then
@@ -56,9 +49,10 @@ if test -z "$IP"; then
 fi
 
 # Purpose: Find the IP class.
+# @param $1 [Req] : The IP to get information about
 checkIpClass() {
 
-    octet_1=$(echo $IP | cut -d '.' -f1)
+    octet_1=$(echo $1 | cut -d '.' -f1)
 
     if test "$((octet_1))" -le 127; then
         IP_CLASS="A"
@@ -88,10 +82,10 @@ checkIpClass() {
 # IP<reserved>  Class(D): 240.0.0.0/4    -> [ 240.0.0.1 to 255.255.255.254 ].
 # IP<broadcast> Class(D): 255.255.255.255/32 .
 #
-checkIpInfo() {
+checkIpType() {
 
-    octet_1=$(echo $IP | cut -d '.' -f1)
-    octet_2=$(echo $IP | cut -d '.' -f2)
+    octet_1=$(echo $1 | cut -d '.' -f1)
+    octet_2=$(echo $1 | cut -d '.' -f2)
 
     if test $((octet_1)) -eq 0; then
         IP_TYPE="'This' Network"
@@ -114,12 +108,6 @@ checkIpInfo() {
     fi
 }
 
-# Purpose: Check the IP Location information.
-checkIpLocation() {
-
-    IP_INFO=$(curl --basic freegeoip.net/csv/$IP 2>/dev/null | tr '"' ' ' | tr ',' '\t' | cut -f 2-)
-}
-
 # Purpose: Validate the IP. Required format [0-255].[0-255].[0-255].[0-255] .
 checkIpValid() {
 
@@ -140,11 +128,9 @@ checkIpValid() {
 checkIpValid
 
 if test -z "$IP_VALID"; then
-    checkIpClass
-    checkIpInfo
-    test "$EXTRA_INFO" = '1' && checkIpLocation
+    checkIpClass $IP
+    checkIpType $IP
     echo "Valid IP: $IP, Class: $IP_CLASS, Type: $IP_TYPE"
-    test "$EXTRA_INFO" = '1' && echo " |=> $IP_INFO"
 else
     echo "$IP_VALID"
     quit 1

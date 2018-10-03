@@ -98,7 +98,7 @@ function ip-info() {
   if test -z "$1"; then
     echo "Usage: ip-info <IPv4_address>"
   else
-    local ipinfo=$(curl --basic freegeoip.net/json/$1 2>/dev/null | tr ' ' '_')
+    local ipinfo=$(curl --basic ip-api.com/json/$1 2>/dev/null | tr ' ' '_')
     test -n "$ipinfo" && json-pprint $ipinfo
   fi
 }
@@ -167,6 +167,7 @@ function paths() {
 
   local pad=$(printf '%0.1s' "."{1..60})
   local pad_len=60
+  echo ''
   (
     IFS=$'\n'
     for path in $(echo -e ${PATH//:/\\n}); do
@@ -176,39 +177,7 @@ function paths() {
       test -d "$path" || printf "${RED}NOT FOUND${NC}\n"
     done
   )
-}
-
-# Purpose: Check if the required tool is installed on the system.
-function tc() {
-
-  if test -z "$1"; then
-    echo "Usage: version <app>"
-    return 1
-  else
-    local pad=$(printf '%0.1s' "."{1..60})
-    local pad_len=20
-    local tool_name="$1"
-    local check=$(command -v ${tool_name})
-    printf "${ORANGE}($(uname -s))${NC} "
-    printf "Checking: ${YELLOW}${tool_name}${NC} "
-    printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
-    if test -n "${check}"; then
-      printf "${GREEN}INSTALLED${NC} at ${check}\n"
-      return 0
-    else
-      printf "${RED}NOT INSTALLED${NC}\n"
-      return 2
-    fi
-  fi
-}
-
-# Purpose: Check if the development tools are installed on the system.
-function tools() {
-
-  DEV_APPS="brew tree vim pcregrep shfmt jenv git svn gcc make qmake java ant mvn gradle python doxygen ruby node npm vue"
-  for app in $DEV_APPS; do
-    tc $app
-  done
+  echo ''
 }
 
 # Purpose: Check the version of the specified app.
@@ -241,6 +210,49 @@ function ver() {
     fi
     printf "${VER}\n"
   fi
+}
+
+# Purpose: Check if the required tool is installed on the system.
+function tc() {
+
+  if test -z "$1"; then
+    echo "Usage: version <app>"
+    return 1
+  else
+    local pad=$(printf '%0.1s' "."{1..60})
+    local pad_len=20
+    local tool_name="$1"
+    local check=$(command -v ${tool_name})
+    printf "${ORANGE}($(uname -s))${NC} "
+    printf "Checking: ${YELLOW}${tool_name}${NC} "
+    printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
+    if test -n "${check}"; then
+      printf "${GREEN}INSTALLED${NC} at ${check}\n"
+      return 0
+    else
+      printf "${RED}NOT INSTALLED${NC}\n"
+      return 2
+    fi
+  fi
+}
+
+# Purpose: Check if the development tools are installed on the system.
+function tools() {
+
+  DEFAULT_TOOLS=( 
+    "brew" "tree" "vim" "pcregrep" "shfmt" "jenv" 
+    "node" "java" "python" "ruby" "gcc" "make" "qmake"
+    "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
+    "nvm" "npm"
+  )
+  DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
+  echo ''
+  for app in ${DEV_APPS[@]}; do
+    tc $app
+  done
+  echo ''
+  echo "${CYAN}To check the current installed version type: ver <tool_name>${NC}"
+  echo ''
 }
 
 # Purpose: Save the current directory for later use
@@ -320,14 +332,15 @@ function add-alias() {
   fi
 }
 
+#Display the uid, pid, parent pid, recent CPU usage, process start time, controlling tty, elapsed CPU usage, and the associated command
 function plist() {
   if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
     echo "Usage: plist <process_name> [kill]"
     return 1
   else
-    local pids=$(ps -efc | grep "$1" | awk '{ print $1, $2,$3 }' )
+    local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$4,$8 }' )
     if test -n "$pids"; then
-      test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\n---------------------------${NC}"
+      test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCPU\tCOMMAND\n---------------------------------------------------------------------------------"
       test "$2" = "kill" && echo ''
       (
         IFS=$'\n'
@@ -339,7 +352,7 @@ function plist() {
       )
       echo ''
     else
-      echo "${YELLOW}No active PIDs for process named: $1 ${NC}"
+      echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
     fi
   fi
 }
