@@ -1,7 +1,5 @@
 # TODOs Home Setup
 
-## 1. Create the script 'dot'
-
 * [ ] Create a management script '#> dot -t <type> [options]' for types:
     * [ ] * :: all
     * [ ] a :: aliases
@@ -16,8 +14,6 @@
     * [ ] a :: Add a custom dot file or edit if it already exists.
     * [ ] r :: Reload (source) selected dotfile.
     
-## 2. Improve the save and load functions
-
-* [ ] Add parameter to specify which is the alias for the saved dir ( e.g:. save myDir / load myDir )
+* [ ] Create the command 'go' to find the first firectory with the matching name and cd into it.
 
 

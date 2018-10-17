@@ -22,7 +22,7 @@ alias ?="pwd"
 # -----------------------------------------------------------------------------------
 # General
 alias q="exit"
-alias reload='source $HOME/.bashrc'
+alias reload='source $HOME/.bashrc && clear'
 
 # Kills all process specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
