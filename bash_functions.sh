@@ -319,27 +319,32 @@ function save() {
     local dirAlias="SAVED_DIR"
     local savedDirs="$HOME/.saved_dir"
 
+    test -n "$2" && dirAlias=$(echo -n "$2" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+    test -z "$dirAlias" && dirAlias="SAVED_DIR"
+
     if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: save [-e,-c] | [dir_to_save] [dir_alias]"
+        echo "Usage: save [-e,-r,-c] | [dir_to_save] [dir_alias]"
         echo "Options: "
         echo "    -e : Edit saved dirs."
+        echo "    -r : Remove saved dir."
         echo "    -c : Clear all saved dirs."
         return 1
     elif test "$1" = "-e"; then
         vi "$savedDirs"
         return 0
+    elif test "$1" = "-r"; then
+        sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
+        return 0
     elif test "$1" = "-c"; then
         echo '' > "$savedDirs"
+        echo "${YELLOW}All saved directories removed!${NC}"
         return 0
     elif test -n "$1"; then
-        echo "$OLDPWD"
         test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
         test -n "$1" -a "$1" = ".." && dir=${1//../`pwd`}
-        test -n "$1" -a "$1" = "-" && dir=${1//-/`echo $OLDPWD`}
+        test -n "$1" -a "$1" = "-" && dir=${1//-/$OLDPWD}
     fi
 
-    test -n "$2" && dirAlias=$(echo -n "$2" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
-    test -z "$dirAlias" && dirAlias="SAVED_DIR"
     touch "$savedDirs"
     sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
     echo "$dirAlias=$dir" >> "$savedDirs"
