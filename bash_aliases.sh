@@ -40,7 +40,7 @@ alias l="ls -lhF ${colorflag}"
 alias ll="ls -lahF ${colorflag}"
 
 # List all dotfiles
-alias lll="ls -lhdF .?*!(d) ${colorflag}"
+alias lll="ls -lhd .?* ${colorflag}"
 
 # List all dotdirs
 alias lld="ls -lhd .?*/ ${colorflag}"
@@ -110,13 +110,13 @@ alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false 
 alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Canonical hex dump; some systems have this symlinked
-command -v hd > /dev/null || alias hd="hexdump -C"
+command -v hd >/dev/null || alias hd="hexdump -C"
 
 # macOS has no `md5sum`, so use `md5` as a fallback
-command -v md5sum > /dev/null || alias md5sum="md5"
+command -v md5sum >/dev/null || alias md5sum="md5"
 
 # macOS has no `sha1sum`, so use `shasum` as a fallback
-command -v sha1sum > /dev/null || alias sha1sum="sha1"
+command -v sha1sum >/dev/null || alias sha1sum="sha1"
 
 # Git Stuff
 alias gs='git s'
@@ -127,7 +127,7 @@ alias gb='git b'
 alias gd='git d'
 alias gp='git p'
 alias gprb='git prb'
-alias gpr='git pull --rebase' 
+alias gpr='git pull --rebase'
 alias gl='git l'
 alias gcm='git cm'
 alias gca='git ca'

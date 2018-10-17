@@ -21,7 +21,7 @@ Usage: $PROC_NAME <IP>
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-    
+
     if test -n "$2" -o "$2" != ""; then
         echo -e "$2"
     fi
@@ -112,7 +112,7 @@ checkIpType() {
 checkIpValid() {
 
     ip_regex="((2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))\.){3}(2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))"
-    
+
     # On Mac option -r does not exist, -E on linux option does not exist
     extRegexFlag='-r'
     test $(uname -s) = "Darwin" && extRegexFlag='-E'

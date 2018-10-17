@@ -12,13 +12,18 @@
 HOME=${HOME:-~/}
 USER=${USER:-`whoami`}
 
-unset USERNAME
-
 # Add `~/bin` to the `$PATH`
 export PATH="$HOME/bin:$PATH";
 
+# Languages and encodings
+export LANG=en_US.UTF-8
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob;
+
+# Use extended globbing
+shopt -s extglob
 
 # Append to the Bash history file, rather than overwriting it
 shopt -s histappend;
@@ -27,8 +32,16 @@ shopt -s histappend;
 shopt -s cdspell;
 
 # Enable tab completion for `g` by marking it as an alias for `git`
-if type _git &> /dev/null && [ -f ~/bin/git-completion.sh ]; then
-    complete -o default -o nospace -F _git g;
+if test -n "$(command -v git)"; then
+    if type _git &> /dev/null && [ -f ~/bin/git-completion.sh ]; then
+        complete -o default -o nospace -F _git g;
+    fi;
+fi;
+
+# Enable jenv to take care of JAVA_HOME
+if test -n "$(command -v jenv)"; then
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
 fi;
 
 # Load the shell dotfiles, and then some:

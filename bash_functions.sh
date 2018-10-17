@@ -11,24 +11,24 @@
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the file search.
 function sf() {
-  if test -z "$1" -o -z "$2"; then
-    echo "Usage: sf <search_path> <glob_exp_files>"
-  else
-    echo "Searching for files matching: \"$2\" in \"$1\""
-    find "$1" -type f -iname "*""$2"
-  fi
+    if test -z "$1" -o -z "$2"; then
+        echo "Usage: sf <search_path> <glob_exp_files>"
+    else
+        echo "Searching for files matching: \"$2\" in \"$1\""
+        find "$1" -type f -iname "*""$2"
+    fi
 }
 
 # Purpose: Search for directories recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the directory search.
 function sd() {
-  if test -z "$1" -o -z "$2"; then
-    echo "Usage: sd <search_path> <glob_exp_folders>"
-  else
-    echo "Searching for folders matching: \"$2\" in \"$1\""
-    find "$1" -type d -iname "*""$2"
-  fi
+    if test -z "$1" -o -z "$2"; then
+        echo "Usage: sd <search_path> <glob_exp_folders>"
+    else
+        echo "Searching for folders matching: \"$2\" in \"$1\""
+        find "$1" -type d -iname "*""$2"
+    fi
 }
 
 # Purpose: Search for strings in files recursively.
@@ -38,345 +38,345 @@ function sd() {
 # @param $4 [Opt] : Whether to replace the findings.
 # @param $5 [Con] : Required if $4 is provided. This is the replacement string.
 function ss() {
-  if test -z "$1" -o -z "$2" -o -z "$3"; then
-    echo "Usage: ss <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
-  else
-    local gflags="-HEn"
-    test "$4" = "--replace" -a -n "$5" && local replace=1
-    local extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
-    echo "${YELLOW}Searching for string matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
-    test -n "$replace" && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
-    test -n "$replace" || result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
-    test -n "$replace" && echo "${result//$2/$5}" | grep $gflags "$5"
-    test -n "$replace" || echo "${result}" | grep $gflags "$2"
-  fi
+    if test -z "$1" -o -z "$2" -o -z "$3"; then
+        echo "Usage: ss <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
+    else
+        local gflags="-HEn"
+        test "$4" = "--replace" -a -n "$5" && local replace=1
+        local extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
+        echo "${YELLOW}Searching for string matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+        test -n "$replace" && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
+        test -n "$replace" || result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
+        test -n "$replace" && echo "${result//$2/$5}" | grep $gflags "$5"
+        test -n "$replace" || echo "${result}" | grep $gflags "$2"
+    fi
 }
 
 # Purpose: Search for a previous issued command from history.
 # @param $1 [Req] : The searching command.
 function hist() {
-  if test -z "$1"; then
-    echo "Usage: hist <command>"
-  else
-    history | grep "$1"
-  fi
+    if test -z "$1"; then
+        echo "Usage: hist <command>"
+    else
+        history | grep "$1"
+    fi
 }
 
 # Purpose: Send files recursively to Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function del-tree() {
-  if test -n "$1" -a "$1" != "/" -a -d "$1"; then
-    # Find all files and folders matching the <glob_exp>
-    local all=$(find "$1" -name "*$2")
-    # Move all to trash
-    if test -n "$all"; then
-      read -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
-      if test "$ANS" = 'y' -o "$ANS" = 'Y'; then
-        echo "${RED}"
-        for next in $all; do
-          local dst=${next##*/}
-          while [ -e "${TRASH}/$dst" ]; do
-            dst="${next##*/}-$(now-ms)"
-          done
-          mv -v "$next" ${TRASH}/"$dst"
-        done
-        echo -n "${NC}"
-      else
-        echo "${NC}"
-      fi
+    if test -n "$1" -a "$1" != "/" -a -d "$1"; then
+        # Find all files and folders matching the <glob_exp>
+        local all=$(find "$1" -name "*$2")
+        # Move all to trash
+        if test -n "$all"; then
+            read -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
+            if test "$ANS" = 'y' -o "$ANS" = 'Y'; then
+                echo "${RED}"
+                for next in $all; do
+                    local dst=${next##*/}
+                    while [ -e "${TRASH}/$dst" ]; do
+                        dst="${next##*/}-$(now-ms)"
+                    done
+                    mv -v "$next" ${TRASH}/"$dst"
+                done
+                echo -n "${NC}"
+            else
+                echo "${NC}"
+            fi
+        fi
+    else
+        echo "Usage: del-tree <search_path> <glob_exp>"
     fi
-  else
-    echo "Usage: del-tree <search_path> <glob_exp>"
-  fi
 }
 
 # Purpose: Pretty print (format) JSON string.
 # @param $1 [Req] : The unformatted JSON string
 function jp() {
-  if test -n "$1"; then
-    echo $1 | json_pp -f json -t json -json_opt pretty indent escape_slash
-  else
-    echo "Usage: jp <json_string>"
-  fi
+    if test -n "$1"; then
+        echo $1 | json_pp -f json -t json -json_opt pretty indent escape_slash
+    else
+        echo "Usage: jp <json_string>"
+    fi
 }
 
 # Purpose: Check information about the IP.
 # @param $1 [Req] : The IP to get information about
 function ip-info() {
-  if test -z "$1"; then
-    echo "Usage: ip-info <IPv4_address>"
-  else
-    local ipinfo=$(curl --basic ip-api.com/json/$1 2>/dev/null | tr ' ' '_')
-    test -n "$ipinfo" && jp $ipinfo
-  fi
+    if test -z "$1"; then
+        echo "Usage: ip-info <IPv4_address>"
+    else
+        local ipinfo=$(curl --basic ip-api.com/json/$1 2>/dev/null | tr ' ' '_')
+        test -n "$ipinfo" && jp $ipinfo
+    fi
 }
 
 # Purpose: Resolve domain names associated with the IP.
 # @param $1 [Req] : The IP address to resolve
 function ip-resolve() {
-  if test -z "$1"; then
-    echo "Usage: ip-resolve <IPv4_address>"
-  else
-    dig +short -x "$1"
-  fi
+    if test -z "$1"; then
+        echo "Usage: ip-resolve <IPv4_address>"
+    else
+        dig +short -x "$1"
+    fi
 }
 
 # Purpose: Lookup the DNS to determine the associated IP address.
 # @param $1 [Req] : The domain name to lookup
 function ip-lookup() {
-  if test -z "$1"; then
-    echo "Usage: ip-lookup <domain_name>"
-  else
-    host "$1"
-  fi
+    if test -z "$1"; then
+        echo "Usage: ip-lookup <domain_name>"
+    else
+        host "$1"
+    fi
 }
 
 # Purpose: Check the state of a local port.
 # @param $1 [Req] : The port number regex
 # @param $2 [Opt] : The port state to match. One of: CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN
 function port-check() {
-  if test -z "$1" -a -z "$2"; then
-    echo "Usage: port-check <portnum_regex> [state]"
-    echo "States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
-  elif test -n "$1" -a -z "$2"; then
-    echo "Checking port \"$1\" state: \"ALL\""
-    echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
-    netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$1"
-  else
-    echo "Checking port \"$1\" state: \"$2\""
-    echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
-    netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$2"
-  fi
+    if test -z "$1" -a -z "$2"; then
+        echo "Usage: port-check <portnum_regex> [state]"
+        echo "States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
+    elif test -n "$1" -a -z "$2"; then
+        echo "Checking port \"$1\" state: \"ALL\""
+        echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
+        netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$1"
+    else
+        echo "Checking port \"$1\" state: \"$2\""
+        echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
+        netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$2"
+    fi
 }
 
 # Purpose: Print all environment variables.
 function envs() {
 
-  local pad=$(printf '%0.1s' "."{1..60})
-  local pad_len=35
-  (
-    IFS=$'\n'
-    for v in $(env); do
-      local name=$(echo $v | cut -d '=' -f1)
-      local value=$(echo $v | cut -d '=' -f2-)
-      test "$1" != "-h" && local re="^[a-zA-Z0-9_]*.*"
-      test "$1" = "-h" && local re=".*_HOME$"
-      if [[ $name =~ $re ]]; then
-        printf "${BLUE}${name}${NC} "
-        printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-        printf " => ${value} \n"
-      fi
-    done
-  )
+    local pad=$(printf '%0.1s' "."{1..60})
+    local pad_len=35
+    (
+        IFS=$'\n'
+        for v in $(env | sort); do
+            local name=$(echo $v | cut -d '=' -f1)
+            local value=$(echo $v | cut -d '=' -f2-)
+            test "$1" != "-h" && local re="^[a-zA-Z0-9_]*.*"
+            test "$1" = "-h" && local re=".*_HOME$"
+            if [[ $name =~ $re ]]; then
+                printf "${BLUE}${name}${NC} "
+                printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+                printf " => ${value} \n"
+            fi
+        done
+    )
 }
 
 # Purpose: Print each PATH entry on a separate line.
 function paths() {
 
-  local pad=$(printf '%0.1s' "."{1..60})
-  local pad_len=60
-  echo ''
-  (
-    IFS=$'\n'
-    for path in $(echo -e ${PATH//:/\\n}); do
-      printf "$path "
-      printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-      test -d "$path" && printf "${BLUE}OK${NC}\n"
-      test -d "$path" || printf "${RED}NOT FOUND${NC}\n"
-    done
-  )
-  echo ''
+    local pad=$(printf '%0.1s' "."{1..60})
+    local pad_len=60
+    echo ''
+    (
+        IFS=$'\n'
+        for path in $(echo -e ${PATH//:/\\n}); do
+            printf "$path "
+            printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+            test -d "$path" && printf "${BLUE}OK${NC}\n"
+            test -d "$path" || printf "${RED}NOT FOUND${NC}\n"
+        done
+    )
+    echo ''
 }
 
 # Purpose: Check the version of the app using common ways.
 # @param $1 [Req] : The app to check
 function ver() {
 
-  if test -z "$1"; then
-    echo "Usage: version <app>"
-    return 1
-  else
-    # First attempt: app --version
-    APP=$1
-    tc ${APP}
-    test $? -ne 0 && return 2
-    VER=$(${APP} --version 2>&1)
-    if test $? -ne 0; then
-      # Second attempt: app -version
-      VER=$(${APP} -version 2>&1)
-      if test $? -ne 0; then
-        # Third attempt: app -V
-        VER=$(${APP} -V 2>&1)
+    if test -z "$1"; then
+        echo "Usage: version <app>"
+        return 1
+    else
+        # First attempt: app --version
+        APP=$1
+        tc ${APP}
+        test $? -ne 0 && return 2
+        VER=$(${APP} --version 2>&1)
         if test $? -ne 0; then
-          # Last attempt: app -v
-          VER=$(${APP} -v 2>&1)
-          if test $? -ne 0; then
-            printf "${RED}Unable to find $APP version using common methods (--version, -version, -V and -v) ${NC}\n"
-            return 2
-          fi
+            # Second attempt: app -version
+            VER=$(${APP} -version 2>&1)
+            if test $? -ne 0; then
+                # Third attempt: app -V
+                VER=$(${APP} -V 2>&1)
+                if test $? -ne 0; then
+                    # Last attempt: app -v
+                    VER=$(${APP} -v 2>&1)
+                    if test $? -ne 0; then
+                        printf "${RED}Unable to find $APP version using common methods (--version, -version, -V and -v) ${NC}\n"
+                        return 2
+                    fi
+                fi
+            fi
         fi
-      fi
+        printf "${VER}\n"
     fi
-    printf "${VER}\n"
-  fi
 }
 
 # Purpose: Check if the required tool is installed on the system.
 # @param $1 [Req] : The tool to check
 function tc() {
 
-  if test -z "$1"; then
-    echo "Usage: version <app>"
-    return 1
-  else
-    local pad=$(printf '%0.1s' "."{1..60})
-    local pad_len=20
-    local tool_name="$1"
-    local check=$(command -v ${tool_name})
-    printf "${ORANGE}($(uname -s))${NC} "
-    printf "Checking: ${YELLOW}${tool_name}${NC} "
-    printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
-    if test -n "${check}"; then
-      printf "${GREEN}INSTALLED${NC} at ${check}\n"
-      return 0
+    if test -z "$1"; then
+        echo "Usage: version <app>"
+        return 1
     else
-      printf "${RED}NOT INSTALLED${NC}\n"
-      return 2
+        local pad=$(printf '%0.1s' "."{1..60})
+        local pad_len=20
+        local tool_name="$1"
+        local check=$(command -v ${tool_name})
+        printf "${ORANGE}($(uname -s))${NC} "
+        printf "Checking: ${YELLOW}${tool_name}${NC} "
+        printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
+        if test -n "${check}"; then
+            printf "${GREEN}INSTALLED${NC} at ${check}\n"
+            return 0
+        else
+            printf "${RED}NOT INSTALLED${NC}\n"
+            return 2
+        fi
     fi
-  fi
 }
 
 # Purpose: Check if the development tools are installed on the system.
 function tools() {
 
-  DEFAULT_TOOLS=(
-    "brew" "tree" "vim" "pcregrep" "shfmt" "jenv"
-    "node" "java" "python" "ruby" "gcc" "make" "qmake"
-    "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
-    "nvm" "npm"
-  )
-  DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
-  echo ''
-  for app in ${DEV_APPS[@]}; do
-    tc $app
-  done
-  echo ''
-  echo "${CYAN}To check the current installed version type: ver <tool_name>${NC}"
-  echo ''
+    DEFAULT_TOOLS=(
+        "brew" "tree" "vim" "pcregrep" "shfmt" "jenv"
+        "node" "java" "python" "ruby" "gcc" "make" "qmake"
+        "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
+        "nvm" "npm"
+    )
+    DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
+    echo ''
+    for app in ${DEV_APPS[@]}; do
+        tc $app
+    done
+    echo ''
+    echo "${CYAN}To check the current installed version type: ver <tool_name>${NC}"
+    echo ''
 }
 
 # Purpose: Save the current directory to be loaded by `load`
 function save() {
 
-  if test -z "$1" -o "$1" = "" -o ! -d "$1"; then
-    curDir=$(pwd)
-  else
-    curDir="$1"
-  fi
+    if test -z "$1" -o "$1" = "" -o ! -d "$1"; then
+        curDir=$(pwd)
+    else
+        curDir="$1"
+    fi
 
-  export SAVED_DIR="$curDir"
-  echo "SAVED_DIR=$curDir" >"$HOME/.saved_dir"
+    export SAVED_DIR="$curDir"
+    echo "SAVED_DIR=$curDir" >"$HOME/.saved_dir"
 }
 
 # Purpose: cd into the saved directory issued by `save`
 function load() {
 
-  test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
-  SAVED_DIR="${SAVED_DIR:-$(pwd)}"
-  test -d "$SAVED_DIR" && cd "$SAVED_DIR"
-  echo "SAVED_DIR=$SAVED_DIR" >"$HOME/.saved_dir"
+    test -f "$HOME/.saved_dir" && source "$HOME/.saved_dir"
+    SAVED_DIR="${SAVED_DIR:-$(pwd)}"
+    test -d "$SAVED_DIR" && cd "$SAVED_DIR"
+    echo "SAVED_DIR=$SAVED_DIR" >"$HOME/.saved_dir"
 }
 
 # Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 function punch() {
-  if test "$1" = "-h" -o "$1" = "--help"; then
-    echo "Usage: punch [-l,-e,-r]"
-    echo "Options: "
-    echo "       : !!Do the punch!! (When no option s provided)."
-    echo "    -l : List all registered punches."
-    echo "    -e : Edit current punch file."
-    echo "    -r : Reset punches for the next week."
-    return 1
-  else
-    (
-      IFS=$'\n'
-      OPT="$1"
-      PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
-      local dateStamp="$(date +'%a %d-%m-%Y')"
-      local timeStamp="$(date +'%H:%M')"
-      local weekStamp="$(date +%V)"
-      local re="($dateStamp).*"
-      # Create the punch file if it does not exist
-      test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
-      # List punchs
-      test "-l" = "$OPT" && cat "$PUNCH_FILE"
-      # Edit punchs
-      test "-e" = "$OPT" && vi "$PUNCH_FILE"
-      # Reset punchs (backup as week-N.punch)
-      test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch"
-      # Do the punch
-      if test -z "$OPT"; then
-        lines=$(grep . "$PUNCH_FILE")
-        success=0
-        for line in $lines; do
-          if [[ "$line" =~ $re ]]; then
-            sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-            success=1
-          fi
-        done
-        test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
-        grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
-      fi
-    )
-  fi
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: punch [-l,-e,-r]"
+        echo "Options: "
+        echo "       : !!Do the punch!! (When no option s provided)."
+        echo "    -l : List all registered punches."
+        echo "    -e : Edit current punch file."
+        echo "    -r : Reset punches for the next week."
+        return 1
+    else
+        (
+            IFS=$'\n'
+            OPT="$1"
+            PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+            local dateStamp="$(date +'%a %d-%m-%Y')"
+            local timeStamp="$(date +'%H:%M')"
+            local weekStamp="$(date +%V)"
+            local re="($dateStamp).*"
+            # Create the punch file if it does not exist
+            test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
+            # List punchs
+            test "-l" = "$OPT" && cat "$PUNCH_FILE"
+            # Edit punchs
+            test "-e" = "$OPT" && vi "$PUNCH_FILE"
+            # Reset punchs (backup as week-N.punch)
+            test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch"
+            # Do the punch
+            if test -z "$OPT"; then
+                lines=$(grep . "$PUNCH_FILE")
+                success=0
+                for line in $lines; do
+                    if [[ "$line" =~ $re ]]; then
+                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                        success=1
+                    fi
+                done
+                test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+                grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+            fi
+        )
+    fi
 }
 
 # Purpose: Display a process list of the given process name, killing them if specified.
 # @param $1 [Req] : The process name to check
 # @param $2 [Opt] : Whether to kill all found processes
 function plist() {
-  if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
-    echo "Usage: plist <process_name> [kill]"
-    return 1
-  else
-    local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$4,$8 }')
-    if test -n "$pids"; then
-      test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCPU\tCOMMAND\n---------------------------------------------------------------------------------"
-      test "$2" = "kill" && echo ''
-      (
-        IFS=$'\n'
-        for next in $pids; do
-          local p=$(echo $next | awk '{ print $2 }')
-          test "$2" = "kill" || echo -e "${GREEN}$next${NC}" | tr ' ' '\t'
-          test -n "$p" -a "$2" = "kill" && kill -9 "$p" && echo "${RED}Killed process with PID = $p ${NC}"
-        done
-      )
-      echo ''
+    if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: plist <process_name> [kill]"
+        return 1
     else
-      echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
+        local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$4,$8 }')
+        if test -n "$pids"; then
+            test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCPU\tCOMMAND\n---------------------------------------------------------------------------------"
+            test "$2" = "kill" && echo ''
+            (
+                IFS=$'\n'
+                for next in $pids; do
+                    local p=$(echo $next | awk '{ print $2 }')
+                    test "$2" = "kill" || echo -e "${GREEN}$next${NC}" | tr ' ' '\t'
+                    test -n "$p" -a "$2" = "kill" && kill -9 "$p" && echo "${RED}Killed process with PID = $p ${NC}"
+                done
+            )
+            echo ''
+        else
+            echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
+        fi
     fi
-  fi
 }
 
 # Check the latest dotfiles version
 function dv() {
-  if test -n "$DOTFILES_VERSION"; then
-    local v=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
-    local newer=$(test -n "$v" -a "$DOTFILES_VERSION" != "$v" && echo 1)
-    test -n "$newer" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${v} , Yours: ${DOTFILES_VERSION}.${NC}"
-    test -n "$newer" || echo -e "${GREEN}You version is up to date: ${v} !${NC}"
-      else
-    echo "${RED}DOTFILES_VERSION is not defined${NC}"
-  fi
+    if test -n "$DOTFILES_VERSION"; then
+        local v=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
+        local newer=$(test -n "$v" -a "$DOTFILES_VERSION" != "$v" && echo 1)
+        test -n "$newer" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${v} , Yours: ${DOTFILES_VERSION}.${NC}"
+        test -n "$newer" || echo -e "${GREEN}You version is up to date: ${v} !${NC}"
+    else
+        echo "${RED}DOTFILES_VERSION is not defined${NC}"
+    fi
 }
 
 #TODO Change to set-alias and improve with -e, -l, etc
 function add-alias() {
-  if test -z "$1" -o -z "$2" -o "$1" = "-h" -o "$1" = "--help"; then
-    echo "Usage: add-alias <name> <alias_expr>"
-    return 1
-  else
-    test -f "$HOME/.aliases" || touch "$HOME/.aliases"
-    echo "alias $1='$2'" >>"$HOME/.aliases"
-  fi
+    if test -z "$1" -o -z "$2" -o "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: add-alias <name> <alias_expr>"
+        return 1
+    else
+        test -f "$HOME/.aliases" || touch "$HOME/.aliases"
+        echo "alias $1='$2'" >>"$HOME/.aliases"
+    fi
 }
