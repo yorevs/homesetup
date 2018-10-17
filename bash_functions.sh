@@ -331,10 +331,11 @@ function save() {
     elif test "$1" = "-c"; then
         echo '' > "$savedDirs"
         return 0
-    elif test -n "$1" -a -d "$1"; then
-        test "$1" = "." && dir=${1//./`pwd`}
-        test "$1" = ".." && dir=${dir//../`pwd`}
-        test "$1" = "-" && dir=${dir//-/$OLDPWD}
+    elif test -n "$1"; then
+        echo "$OLDPWD"
+        test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
+        test -n "$1" -a "$1" = ".." && dir=${1//../`pwd`}
+        test -n "$1" -a "$1" = "-" && dir=${1//-/`echo $OLDPWD`}
     fi
 
     test -n "$2" && dirAlias=$(echo -n "$2" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
