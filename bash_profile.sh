@@ -17,6 +17,7 @@ export PATH="$PATH:$HOME/bin";
 
 # Languages and encodings
 export LANG=en_US.UTF-8
+export LC_CTYPE=UTF-8
 export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
 
 # Case-insensitive globbing (used in pathname expansion)

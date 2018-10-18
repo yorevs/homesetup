@@ -168,7 +168,7 @@ function ip-lookup() {
 }
 
 # Purpose: Check the state of a local port.
-# @param $1 [Req] : The port number regex
+# @param $1 [Req] : The port number regex.
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
 function port-check() {
 
@@ -190,27 +190,34 @@ function port-check() {
 }
 
 # Purpose: Print all environment variables.
+# @param $1 [Opt] : Filter environments.
 function envs() {
 
-    local pad=$(printf '%0.1s' "."{1..60})
-    local pad_len=35
-    echo ' '
-    echo 'Listing all exported environment variables:'
-    echo ' '
-    (
-        IFS=$'\n'
-        for v in $(env | sort); do
-            local name=$(echo $v | cut -d '=' -f1)
-            local value=$(echo $v | cut -d '=' -f2-)
-            test "$1" != "-h" && local re="^[a-zA-Z0-9_]*.*"
-            test "$1" = "-h" && local re=".*_HOME$"
-            if [[ $name =~ $re ]]; then
-                printf "${BLUE}${name}${NC} "
-                printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                printf " => ${value} \n"
-            fi
-        done
-    )
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: envs [filter]"
+        return 1
+    else
+        local pad=$(printf '%0.1s' "."{1..60})
+        local pad_len=35
+        local filter="$*"
+        test -z "$filter" && filter="^[a-zA-Z0-9_]*.*"
+        echo ' '
+        echo "Listing all exported environment variables matching [ $filter ]:"
+        echo ' '
+        (
+            IFS=$'\n'
+            for v in $(env | sort); do
+                local name=$(echo $v | cut -d '=' -f1)
+                local value=$(echo $v | cut -d '=' -f2-)
+                if [[ $name =~ $filter ]]; then
+                    printf "${BLUE}${name}${NC} "
+                    printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+                    printf " => ${value} \n"
+                fi
+            done
+        )
+        echo ' '
+    fi
 
     return 0
 }
@@ -371,6 +378,10 @@ function aa() {
         fi
     fi
 
+    # Remove all duplicates
+    local contents=$(cat "$aliasFile" | awk '!arr[$0]++')
+    echo "$contents" > "$aliasFile"
+
     return 0
 }
 
@@ -397,20 +408,24 @@ function save() {
         vi "$savedDirs"
     elif test "$1" = "-r"; then
         sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
+        echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     elif test "$1" = "-c"; then
         echo '' > "$savedDirs"
-        echo "${YELLOW}All saved directories removed!${NC}"
-    elif test -n "$1"; then
+        echo "${YELLOW}All saved directories have been removed!${NC}"
+    else
         test -n "$1" -a ! -d "$1" && echo "${RED}Directory \"$1\" is not a valid!${NC}" && return 1
         test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
         test -n "$1" -a "$1" = ".." && dir=${1//../`pwd`}
         test -n "$1" -a "$1" = "-" && dir=${1//-/$OLDPWD}
-    else
         touch "$savedDirs"
         sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
         echo "$dirAlias=$dir" >> "$savedDirs"
         echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
+
+    # Remove all duplicates
+    local contents=$(cat "$savedDirs" | awk '!arr[$0]++')
+    echo "$contents" > "$savedDirs"
 
     return 0
 }
