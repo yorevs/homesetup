@@ -359,11 +359,14 @@ function aa() {
                     echo 'Available custom aliases:'
                     echo ' '
                     for next in $allAliases; do
-                        aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                        aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                        printf "${BLUE}${aliasName//alias /}"
-                        printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
-                        echo "${WHITE} is ${aliasExpr}"
+                        local re='^[^#].+'
+                        if [[ $next =~ $re ]]; then
+                            aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                            aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                            printf "${BLUE}${aliasName//alias /}"
+                            printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
+                            echo "${WHITE} is ${aliasExpr}"
+                        fi
                     done
                     echo "${NC}"
                 )
