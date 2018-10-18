@@ -37,12 +37,14 @@ The following directory will be linked to your HOME folder:
 
 If this folder already exists, the install script will copy all files into it.
 
-To override or add customised aliases, profile stuff and environment variables, you need to create a custom file as follows:
+To override or add customised stuff, you need to create a custom file as follows:
 
 ```
 ~/.aliases # For aliases customisation
 ~/.profile # For profile customisation
 ~/.env # For environment variables customisation
+~/.colors # For bash color customisation
+~/.functions # For functions customisation
 ```
 
 ### 3. Aliases
@@ -125,7 +127,7 @@ load       | cd into a saved directory issued by `save`
 punch      | Punch the clock. Add, edit and list punches
 plist      | Display (kill?) a process list, given process name
 cmd        | Add/Remove/List/Execute saved bash commands
-dv         | Check the latest dotfiles version
+dv         | Check the latest HomeSetup version
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 
