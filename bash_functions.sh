@@ -225,21 +225,27 @@ function envs() {
 # Purpose: Print each PATH entry on a separate line.
 function paths() {
 
-    local pad=$(printf '%0.1s' "."{1..60})
-    local pad_len=60
-    echo ' '
-    echo 'Listing all PATH entries:'
-    echo ' '
-    (
-        IFS=$'\n'
-        for path in $(echo -e ${PATH//:/\\n}); do
-            printf "$path "
-            printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-            test -d "$path" && printf "${BLUE}OK${NC}\n"
-            test -d "$path" || printf "${RED}DOES NOT EXIST${NC}\n"
-        done
-    )
-    echo ''
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: paths"
+        return 1
+    elif test -z "$1"; then
+        local pad=$(printf '%0.1s' "."{1..60})
+        local pad_len=60
+        echo ' '
+        echo 'Listing all PATH entries:'
+        echo ' '
+        (
+            IFS=$'\n'
+            for path in $(echo -e ${PATH//:/\\n}); do
+                printf "$path "
+                printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+                test -d "$path" && printf "${BLUE}OK${NC}\n"
+                test -d "$path" || printf "${RED}DOES NOT EXIST${NC}\n"
+            done
+        )
+        echo ''
+    fi
+
     return 0
 }
 
@@ -340,7 +346,7 @@ function aa() {
         local aliasName="$1"
         shift
         local aliasExpr="$*"
-        
+
         if test -z "$aliasName" -a -z "$aliasExpr"; then
             # List all aliases
             local allAliases=$(cat "$aliasFile" | sort)
@@ -367,7 +373,7 @@ function aa() {
         elif test -n "$aliasName" -a -n "$aliasExpr"; then
             # Add/Set one alias
             sed -i '' -E -e "s#(alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
-            echo "alias $aliasName='$aliasExpr'" >> "$aliasFile"
+            echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
             echo "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
             source "$aliasFile"
         elif test -n "$aliasName" -a -z "$aliasExpr"; then
@@ -380,7 +386,7 @@ function aa() {
 
     # Remove all duplicates
     local contents=$(cat "$aliasFile" | awk '!arr[$0]++')
-    echo "$contents" > "$aliasFile"
+    echo "$contents" >"$aliasFile"
 
     return 0
 }
@@ -410,22 +416,22 @@ function save() {
         sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     elif test "$1" = "-c"; then
-        echo '' > "$savedDirs"
+        echo '' >"$savedDirs"
         echo "${YELLOW}All saved directories have been removed!${NC}"
     else
         test -n "$1" -a ! -d "$1" && echo "${RED}Directory \"$1\" is not a valid!${NC}" && return 1
-        test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
-        test -n "$1" -a "$1" = ".." && dir=${1//../`pwd`}
+        test -z "$1" -o "$1" = "." && dir=${1//./$(pwd)}
+        test -n "$1" -a "$1" = ".." && dir=${1//../$(pwd)}
         test -n "$1" -a "$1" = "-" && dir=${1//-/$OLDPWD}
         touch "$savedDirs"
         sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
-        echo "$dirAlias=$dir" >> "$savedDirs"
+        echo "$dirAlias=$dir" >>"$savedDirs"
         echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
 
     # Remove all duplicates
     local contents=$(cat "$savedDirs" | awk '!arr[$0]++')
-    echo "$contents" > "$savedDirs"
+    echo "$contents" >"$savedDirs"
 
     return 0
 }
@@ -521,7 +527,7 @@ function punch() {
             fi
         )
     fi
-    
+
     return 0
 }
 

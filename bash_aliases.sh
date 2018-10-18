@@ -151,5 +151,4 @@ alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing 
 
 # Directory Shortcuts
 alias desk='cd $DESKTOP'
-alias dl='cd $DOWNLOADS'
 alias hhs='cd $HOME_SETUP'

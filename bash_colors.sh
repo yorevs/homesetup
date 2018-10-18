@@ -20,6 +20,8 @@ else # macOS `ls`
     export LSCOLORS='ExgxfxdxCxegedabagacad'
 fi
 
+export GREP_COLOR='1;31'
+
 # TODO Add grep colors
 
 if tput setaf 1 &> /dev/null; then

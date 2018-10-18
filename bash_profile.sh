@@ -12,9 +12,6 @@
 export HOME=${HOME:-~/}
 export USER=${USER:-`whoami`}
 
-# Add `~/bin` to the `$PATH`
-export PATH="$PATH:$HOME/bin";
-
 # Languages and encodings
 export LANG=en_US.UTF-8
 export LC_CTYPE=UTF-8
@@ -32,6 +29,16 @@ shopt -s histappend;
 # Autocorrect typos in path names when using `cd`
 shopt -s cdspell;
 
+# Load the shell dotfiles, and then some:
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.aliases can be used to extend/override .bash_aliases
+# * ~/.profile can be used to extend/override .bash_profile
+# * ~/.env can be used to extend/override .bash_env
+for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env}; do
+    [ -r "$file" ] && [ -f "$file" ] && source "$file";
+done;
+unset file;
+
 # Enable tab completion for `g` by marking it as an alias for `git`
 if test -n "$(command -v git)"; then
     if type _git &> /dev/null && [ -f ~/bin/git-completion.sh ]; then
@@ -45,15 +52,8 @@ if test -n "$(command -v jenv)"; then
     eval "$(jenv init -)"
 fi;
 
-# Load the shell dotfiles, and then some:
-# * ~/.path can be used to extend `$PATH`.
-# * ~/.aliases can be used to extend/override .bash_aliases
-# * ~/.profile can be used to extend/override .bash_profile
-# * ~/.env can be used to extend/override .bash_env
-for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file";
-done;
-unset file;
+# Add `~/bin` to the `$PATH`
+export PATH="$PATH:$HOME/bin";
 
 # Remove all PATH duplicates
 export PATH=$(echo -n $PATH | awk -v RS=: -v ORS=: '!arr[$0]++')
