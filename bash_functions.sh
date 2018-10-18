@@ -447,6 +447,18 @@ function save() {
     return 0
 }
 
+# Purpose: Highlight words matching pattern.
+function hl() {
+    HIGHLIGHT_COLOR='\\e[4;37;104m'
+    NORMAL='\\e[0m'
+    local word="${HIGHLIGHT_COLOR}${1}${NORMAL}"
+    while read data; do
+        #local hlWord=$(echo "$data" | sed "s#$1#$word#g")
+        #printf "$hlWord"
+        printf "$data"
+    done
+}
+
 # Purpose: cd into the saved directory issued by `save`.
 # @param $1 [Opt] : The alias to access the directory saved.
 function load() {
@@ -518,14 +530,14 @@ function punch() {
             # Create the punch file if it does not exist
             test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
             # List punchs
-            test "-l" = "$OPT" && grep . "$PUNCH_FILE" && return 0
+            test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
             # Edit punchs
             test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
             # Reset punchs (backup as week-N.punch)
             test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch" && return 0
             # Do the punch
             if test -z "$OPT"; then
-                lines=$(cat "$PUNCH_FILE")
+                lines=$(grep . "$PUNCH_FILE")
                 success=0
                 for line in $lines; do
                     if [[ "$line" =~ $re ]]; then
@@ -587,64 +599,64 @@ function cmd() {
     else
         local cmdFile="$HOME/.myCommands"
         touch "$cmdFile"
-        
+
         case "$1" in
-            -e | --edit)
-                vi "$cmdFile"
-                return 0
+        -e | --edit)
+            vi "$cmdFile"
+            return 0
             ;;
-            -a | --add)
-                shift
-                local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
-                shift
-                local cmdExpr="$*"
-                test -z "cmdName" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
-                sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
-                echo "Command $cmdName: $cmdExpr" >> "$cmdFile"
+        -a | --add)
+            shift
+            local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+            shift
+            local cmdExpr="$*"
+            test -z "cmdName" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
+            sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
+            echo "Command $cmdName: $cmdExpr" >>"$cmdFile"
             ;;
-            -r | --remove)
-                shift
-                local cmdId=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
-                local re='^[1-9]+$'
-                if [[ $cmdId =~ $re ]]; then
-                    cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $0 }')
-                    sed -i '' -E -e "s#($cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
-                else
-                    test -z "cmdId" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
-                    sed -i '' -E -e "s#(Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
-                fi
+        -r | --remove)
+            shift
+            local cmdId=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+            local re='^[1-9]+$'
+            if [[ $cmdId =~ $re ]]; then
+                cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $0 }')
+                sed -i '' -E -e "s#($cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
+            else
+                test -z "cmdId" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
+                sed -i '' -E -e "s#(Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
+            fi
             ;;
-            -l | --list)
-                local allCmds=$(grep . "$cmdFile")
-                if test -n "$allCmds"; then
-                    local pad=$(printf '%0.1s' "."{1..60})
-                    local pad_len=20
-                    (
-                        IFS=$'\n'
-                        echo ' '
-                        echo 'Available saved commands:'
-                        echo ' '
-                        local index=1
-                        for next in $allCmds; do
-                            local cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
-                            local cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
-                            printf "${BLUE}${cmdName}"
-                            printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                            echo "${WHITE}'${cmdExpr}'"
-                            index=$((index+1))
-                        done
-                        echo "${NC}"
-                    )
-                fi
+        -l | --list)
+            local allCmds=$(grep . "$cmdFile")
+            if test -n "$allCmds"; then
+                local pad=$(printf '%0.1s' "."{1..60})
+                local pad_len=20
+                (
+                    IFS=$'\n'
+                    echo ' '
+                    echo 'Available saved commands:'
+                    echo ' '
+                    local index=1
+                    for next in $allCmds; do
+                        local cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
+                        local cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
+                        printf "${BLUE}${cmdName}"
+                        printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
+                        echo "${WHITE}'${cmdExpr}'"
+                        index=$((index + 1))
+                    done
+                    echo "${NC}"
+                )
+            fi
             ;;
-            [1-9]*)
-                cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $2 }')
-                echo "#> $cmdExpr"
-                eval "$cmdExpr"
+        [1-9]*)
+            cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $2 }')
+            echo "#> $cmdExpr"
+            eval "$cmdExpr"
             ;;
-            *)
-                echo "${RED}Invalid arguments: \"$1\"${NC}"
-                return 1
+        *)
+            echo "${RED}Invalid arguments: \"$1\"${NC}"
+            return 1
             ;;
         esac
     fi
