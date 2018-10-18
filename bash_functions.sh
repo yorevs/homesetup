@@ -561,6 +561,79 @@ function plist() {
     return 0
 }
 
+# Purpose: Display a process list of the given process name, killing them if specified.
+# @param $1 [Opt] : The command options
+function cmd() {
+
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: cmd [options <args>] | [cmd_index]"
+        echo "Options: "
+        echo "       : Execute the command specified by <cmd_index> (When no option s provided)."
+        echo "    -a : Store a command."
+        echo "    -r : Remove a command."
+        echo "    -l : List all stored commands."
+        return 1
+    else
+        local cmdFile="$HOME/.myCommands"
+        touch "$cmdFile"
+        
+        case "$1" in
+            -a | --add)
+                shift
+                local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+                shift
+                local cmdExpr="$*"
+                test -z "cmdName" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
+                sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
+                echo "Command $cmdName: $cmdExpr" >> "$cmdFile"
+            ;;
+            -r | --remove)
+                shift
+                local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+                test -z "cmdName" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
+                sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
+            ;;
+            -l | --list)
+                local allCmds=$(cat "$cmdFile")
+                if test -n "$allCmds"; then
+                    local pad=$(printf '%0.1s' "."{1..60})
+                    local pad_len=20
+                    (
+                        IFS=$'\n'
+                        echo ' '
+                        echo 'Available saved commands:'
+                        echo ' '
+                        local index=1
+                        for next in $allCmds; do
+                            local cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
+                            local cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
+                            printf "${BLUE}${cmdName}"
+                            printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
+                            echo "${WHITE}'${cmdExpr}'"
+                            index=$((index+1))
+                        done
+                        echo "${NC}"
+                    )
+                fi
+            ;;
+            [1-9]*)
+                cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $2 }')
+                echo "#> $cmdExpr"
+                eval "$cmdExpr"
+            ;;
+            *)
+                echo "${RED}Invalid arguments: \"$1\"${NC}"
+                return 1
+            ;;
+        esac
+
+        if test -z "$1"; then
+            local allCmds=$(cat "$cmdFile")
+            # TODO Auto complete with index and execute
+        fi
+    fi
+}
+
 # Check the latest dotfiles version
 function dv() {
 
