@@ -194,7 +194,7 @@ function port-check() {
 function envs() {
 
     if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: envs [filter]"
+        echo "Usage: envs [regex_filter]"
         return 1
     else
         local pad=$(printf '%0.1s' "."{1..60})

@@ -12,11 +12,6 @@
 export HOME=${HOME:-~/}
 export USER=${USER:-`whoami`}
 
-# Languages and encodings
-export LANG=en_US.UTF-8
-export LC_CTYPE=UTF-8
-export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
-
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob;
 
@@ -34,7 +29,9 @@ shopt -s cdspell;
 # * ~/.aliases can be used to extend/override .bash_aliases
 # * ~/.profile can be used to extend/override .bash_profile
 # * ~/.env can be used to extend/override .bash_env
-for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env}; do
+# * ~/.colors can be used to extend/override .bash_colors
+# * ~/.functions can be used to extend/override .bash_functions
+for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env,colors,functions}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;

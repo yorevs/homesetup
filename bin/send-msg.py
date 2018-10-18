@@ -23,10 +23,10 @@ NET_TYPE_TCP    = 'TCP'
 MAX_DISPLAYED_MSG_LEN = 500
 
 USAGE = """
-UDP Message Sender v{}
+IP Message Sender v{}
 Usage: {} [opts]
 
-    opts:
+    Options:
         -m, --message    <message/filename> : The message to be sent. If the message matches a filename, then the
                                               file is read and the content sent instead.
         -p, --port       <port_num>         : The port number [1-65535] ( default is 12345).

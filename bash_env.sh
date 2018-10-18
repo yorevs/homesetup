@@ -15,6 +15,7 @@ export QT_HOME="$HOME/Applications/Current/clang_64"
 export XCODE_HOME="/Applications/Xcode.app/Contents/Developer"
 export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
+
 # Other environment variables
 export DROPBOX="$HOME/Dropbox"
 export HOME_SETUP="$HOME/HomeSetup"
@@ -27,6 +28,11 @@ export TEMP="$TMPDIR"
 export TRASH="$HOME/.Trash/"
 export DOTFILES_VERSION=$(cat "$HOME_SETUP/VERSION")
 
-# Setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+# Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
 export HISTSIZE=500
 export HISTFILESIZE=500
+
+# Languages and encodings
+export LANG=en_US.UTF-8
+export LC_CTYPE=UTF-8
+export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
