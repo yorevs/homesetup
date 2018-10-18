@@ -359,7 +359,7 @@ function aa() {
                     echo 'Available custom aliases:'
                     echo ' '
                     for next in $allAliases; do
-                        local re='^[^#].+'
+                        local re='^alias.+'
                         if [[ $next =~ $re ]]; then
                             aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
                             aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
