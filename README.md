@@ -1,4 +1,4 @@
-# HomeSetup
+# ![](logo.png) HomeSetup
 ## Terminal .dotfiles and bash improvements for MacOs
 
 ### 1. Installation
@@ -148,4 +148,15 @@ toolcheck.sh            | Check if the a tool is installed on the system
 
 **Please check: [bin](./bin) for all scripts**
 
+### 5. HomeSetup Terminal
+
+HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
+
+* [x] Install the terminal font 'Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
+* [x] Import the HomeSetup.terminal from "$HOME_SETUP/misc/HomeSetup.terminal" to your Terminal App.
+* [x] Set HomeSetup as the default profile.
+
+Done! Now you have your terminal just like mine.
+
+**To keep your HomeSetup updated, don't forget to run `#> dv` sometimes and update (git pull) the code**
 
