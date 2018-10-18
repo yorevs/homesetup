@@ -561,7 +561,7 @@ function plist() {
     return 0
 }
 
-# Purpose: Display a process list of the given process name, killing them if specified.
+# Purpose: Add/Remove/List/Execute saved bash commands.
 # @param $1 [Opt] : The command options
 function cmd() {
 
