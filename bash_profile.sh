@@ -9,11 +9,11 @@
 #
 # Original project: https://github.com/mathiasbynens/dotfiles
 
-HOME=${HOME:-~/}
-USER=${USER:-`whoami`}
+export HOME=${HOME:-~/}
+export USER=${USER:-`whoami`}
 
 # Add `~/bin` to the `$PATH`
-export PATH="$HOME/bin:$PATH";
+export PATH="$PATH:$HOME/bin";
 
 # Languages and encodings
 export LANG=en_US.UTF-8
@@ -40,7 +40,7 @@ fi;
 
 # Enable jenv to take care of JAVA_HOME
 if test -n "$(command -v jenv)"; then
-    export PATH="$HOME/.jenv/bin:$PATH"
+    export PATH="$PATH:$HOME/.jenv/bin"
     eval "$(jenv init -)"
 fi;
 
@@ -53,3 +53,6 @@ for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_function
     [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;
+
+# Remove all PATH duplicates
+export PATH=$(echo -n $PATH | awk -v RS=: -v ORS=: '!arr[$0]++')

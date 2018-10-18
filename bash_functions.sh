@@ -217,14 +217,16 @@ function paths() {
 
     local pad=$(printf '%0.1s' "."{1..60})
     local pad_len=60
-    echo ''
+    echo ' '
+    echo 'Listing all PATH entries:'
+    echo ' '
     (
         IFS=$'\n'
         for path in $(echo -e ${PATH//:/\\n}); do
             printf "$path "
             printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
             test -d "$path" && printf "${BLUE}OK${NC}\n"
-            test -d "$path" || printf "${RED}NOT FOUND${NC}\n"
+            test -d "$path" || printf "${RED}DOES NOT EXIST${NC}\n"
         done
     )
     echo ''
