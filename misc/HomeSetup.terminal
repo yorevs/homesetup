@@ -105,14 +105,32 @@
 	<real>1.1000000000000001</real>
 	<key>ProfileCurrentVersion</key>
 	<real>2.0499999999999998</real>
+	<key>SetLanguageEnvironmentVariables</key>
+	<false/>
 	<key>ShouldLimitScrollback</key>
 	<integer>1</integer>
 	<key>ShouldRestoreContent</key>
 	<false/>
-	<key>ShowRepresentedURLPathInTitle</key>
+	<key>ShowActiveProcessInTitle</key>
+	<false/>
+	<key>ShowCommandKeyInTitle</key>
+	<false/>
+	<key>ShowDimensionsInTitle</key>
+	<false/>
+	<key>ShowRepresentedURLInTabTitle</key>
 	<true/>
+	<key>ShowRepresentedURLInTitle</key>
+	<true/>
+	<key>ShowRepresentedURLPathInTabTitle</key>
+	<true/>
+	<key>ShowRepresentedURLPathInTitle</key>
+	<false/>
 	<key>ShowShellCommandInTitle</key>
 	<true/>
+	<key>ShowTerminalInDockIcon</key>
+	<false/>
+	<key>ShowWindowSettingsNameInTitle</key>
+	<false/>
 	<key>TextBoldColor</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGKyxYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3AS
@@ -268,11 +286,11 @@
 	<key>UseBrightBold</key>
 	<false/>
 	<key>WindowTitle</key>
-	<string>~</string>
+	<string>Terminal</string>
 	<key>columnCount</key>
 	<integer>202</integer>
 	<key>name</key>
-	<string>Hugs</string>
+	<string>HomeSetup</string>
 	<key>noWarnProcesses</key>
 	<array>
 		<dict>
