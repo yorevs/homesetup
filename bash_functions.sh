@@ -194,6 +194,9 @@ function envs() {
 
     local pad=$(printf '%0.1s' "."{1..60})
     local pad_len=35
+    echo ' '
+    echo 'Listing all exported environment variables:'
+    echo ' '
     (
         IFS=$'\n'
         for v in $(env | sort); do
@@ -402,12 +405,12 @@ function save() {
         test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
         test -n "$1" -a "$1" = ".." && dir=${1//../`pwd`}
         test -n "$1" -a "$1" = "-" && dir=${1//-/$OLDPWD}
+    else
+        touch "$savedDirs"
+        sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
+        echo "$dirAlias=$dir" >> "$savedDirs"
+        echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
-
-    touch "$savedDirs"
-    sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
-    echo "$dirAlias=$dir" >> "$savedDirs"
-    echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
 
     return 0
 }
@@ -516,15 +519,15 @@ function plist() {
         echo "Usage: plist <process_name> [kill]"
         return 1
     else
-        local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$4,$8 }')
+        local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
         if test -n "$pids"; then
-            test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCPU\tCOMMAND\n---------------------------------------------------------------------------------"
+            test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCOMMAND\n---------------------------------------------------------------------------------"
             test "$2" = "kill" && echo ''
             (
                 IFS=$'\n'
                 for next in $pids; do
                     local p=$(echo $next | awk '{ print $2 }')
-                    test "$2" = "kill" || echo -e "${GREEN}$next${NC}" | tr ' ' '\t'
+                    test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
                     test -n "$p" -a "$2" = "kill" && kill -9 "$p" && echo "${RED}Killed process with PID = $p ${NC}"
                 done
             )
