@@ -333,7 +333,7 @@ function aa() {
         
         if test -z "$aliasName" -a -z "$aliasExpr"; then
             # List all aliases
-            local allAliases=$(cat "$aliasFile")
+            local allAliases=$(cat "$aliasFile" | sort)
             if test -n "$allAliases"; then
                 local pad=$(printf '%0.1s' "."{1..60})
                 local pad_len=30
@@ -425,7 +425,7 @@ function load() {
         echo "    -l : List all saved dirs."
         return 1
     elif test "$1" = "-l"; then
-        local allDirs=$(cat "$savedDirs")
+        local allDirs=$(cat "$savedDirs" | sort)
         if test -n "$allDirs"; then
             local pad=$(printf '%0.1s' "."{1..60})
             local pad_len=20
