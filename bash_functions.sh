@@ -589,9 +589,15 @@ function cmd() {
             ;;
             -r | --remove)
                 shift
-                local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
-                test -z "cmdName" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
-                sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
+                local cmdId=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+                local re='^[1-9]+$'
+                if [[ $cmdId =~ $re ]]; then
+                    cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $0 }')
+                    sed -i '' -E -e "s#($cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
+                else
+                    test -z "cmdId" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
+                    sed -i '' -E -e "s#(Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
+                fi
             ;;
             -l | --list)
                 local allCmds=$(cat "$cmdFile")
@@ -626,12 +632,9 @@ function cmd() {
                 return 1
             ;;
         esac
-
-        if test -z "$1"; then
-            local allCmds=$(cat "$cmdFile")
-            # TODO Auto complete with index and execute
-        fi
     fi
+
+    return 0
 }
 
 # Check the latest dotfiles version
