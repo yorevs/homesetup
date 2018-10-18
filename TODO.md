@@ -10,4 +10,4 @@
     
 * [ ] Create the command 'go' to find the first firectory with the matching name and cd into it.
 
-* [ ] Create the command cmd to execute/list/add/remove commands.
+* [ ] Improve the command cmd to accept auto-complete
