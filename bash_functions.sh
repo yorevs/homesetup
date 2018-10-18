@@ -72,7 +72,7 @@ function hist() {
         echo "Usage: hist <command>"
         return 1
     else
-        history | grep "$1"
+        history | grep "$*"
     fi
 
     return 0
