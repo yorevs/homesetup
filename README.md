@@ -124,7 +124,7 @@ save       | Save the one directory to be loaded by `load`
 load       | cd into a saved directory issued by `save`
 punch      | Punch the clock. Add, edit and list punches
 plist      | Display (kill?) a process list, given process name
-cmd        | Add/Remove/List/Execute saved bash commands.
+cmd        | Add/Remove/List/Execute saved bash commands
 dv         | Check the latest dotfiles version
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
@@ -132,6 +132,19 @@ dv         | Check the latest dotfiles version
 ### 5. Scripts
 
 The project contains some useful scripts that can be used directly from shell. It is also added to your path variable.
+
+Function                | Purpose
+----------------------- | -----------------------
+build-java-hierarchy.py | This is a python application to help understanding a Java project and it's class hierarchies
+calc.py                 | Simple app to do mathematical calculations
+git-completion.sh       | bash/zsh completion support for core Git
+git-diff-cmd            | Enable opendiff to be used with git instead of normal diff
+git-pull-all            | Pull all projects within the specified path to the given repository/branch
+hostname-change.sh      | Change the hostname permanently
+ip-utils.sh             | Validate an IP and check details about it
+send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads
+tcalc.py                | Simple app to do mathematical calculations with time 
+toolcheck.sh            | Check if the a tool is installed on the system
 
 **Please check: [bin](./bin) for all scripts**
 

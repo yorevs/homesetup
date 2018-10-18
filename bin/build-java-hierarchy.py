@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""@package This is a python application to help understanding a Java project
+"""@package This is a python application to help understanding a Java project and it's class hierarchies
    @script: build-java-hierarchy.py
   @purpose: Build a hierarchy of a Java project
   @created: Mar 20, 2008

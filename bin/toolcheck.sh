@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  Script: toolcheck.sh
-# Purpose: Check if the required tool is installed on the system.
+# Purpose: Check if the a tool is installed on the system.
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@gmail.com

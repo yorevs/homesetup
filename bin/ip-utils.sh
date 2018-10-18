@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  Script: checkip.sh
-# Purpose: Validate an IP and possibly check details about it.
+# Purpose: Validate an IP and check details about it.
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@gmail.com
