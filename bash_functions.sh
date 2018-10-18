@@ -293,7 +293,7 @@ function tc() {
 function tools() {
 
     DEFAULT_TOOLS=(
-        "brew" "tree" "vim" "pcregrep" "shfmt" "jenv"
+        "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "jenv"
         "node" "java" "python" "ruby" "gcc" "make" "qmake"
         "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
         "nvm" "npm"
@@ -340,6 +340,7 @@ function save() {
         echo "${YELLOW}All saved directories removed!${NC}"
         return 0
     elif test -n "$1"; then
+        test -n "$1" -a ! -d "$1" && echo "${RED}Directory \"$1\" is not a valid!${NC}" && return 1
         test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
         test -n "$1" -a "$1" = ".." && dir=${1//../`pwd`}
         test -n "$1" -a "$1" = "-" && dir=${1//-/$OLDPWD}
