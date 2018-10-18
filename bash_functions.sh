@@ -310,6 +310,63 @@ function tools() {
     return 0
 }
 
+# Manipulate all custom aliases.
+# @param $1 [Req] : The alias name.
+# @param $2 [Opt] : The alias expression.
+function aa() {
+
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: aa [alias] [alias_expr]"
+        echo "Options: "
+        echo "    - List all aliases  : When both <alias> and <alias_expr> are NOT provided."
+        echo "    - Add/Set an alias  : When both <alias> and <alias_expr> are provided."
+        echo "    - Remove the alias  : When <alias> is provided but <alias_expr> is not provided."
+        return 1
+    else
+        local aliasFile="$HOME/.aliases"
+        touch "$aliasFile"
+        local aliasName="$1"
+        shift
+        local aliasExpr="$*"
+        
+        if test -z "$aliasName" -a -z "$aliasExpr"; then
+            # List all aliases
+            local allAliases=$(cat "$aliasFile")
+            if test -n "$allAliases"; then
+                local pad=$(printf '%0.1s' "."{1..60})
+                local pad_len=30
+                (
+                    IFS=$'\n'
+                    echo ' '
+                    for next in $allAliases; do
+                        aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                        aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                        printf "${GREEN}${aliasName//alias /} :"
+                        printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
+                        echo "${WHITE} is ${aliasExpr}"
+                    done
+                    echo "${NC}"
+                )
+            else
+                echo "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
+            fi
+        elif test -n "$aliasName" -a -n "$aliasExpr"; then
+            # Add/Set one alias
+            sed -i '' -E -e "s#(alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
+            echo "alias $aliasName='$aliasExpr'" >> "$aliasFile"
+            echo "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
+            source "$aliasFile"
+        elif test -n "$aliasName" -a -z "$aliasExpr"; then
+            # Remove one alias
+            sed -i '' -E -e "s#(alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
+            echo "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
+            unalias "$aliasName"
+        fi
+    fi
+
+    return 0
+}
+
 # Purpose: Save the current directory to be loaded by `load`.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
@@ -331,14 +388,11 @@ function save() {
         return 1
     elif test "$1" = "-e"; then
         vi "$savedDirs"
-        return 0
     elif test "$1" = "-r"; then
         sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
-        return 0
     elif test "$1" = "-c"; then
         echo '' > "$savedDirs"
         echo "${YELLOW}All saved directories removed!${NC}"
-        return 0
     elif test -n "$1"; then
         test -n "$1" -a ! -d "$1" && echo "${RED}Directory \"$1\" is not a valid!${NC}" && return 1
         test -z "$1" -o "$1" = "." && dir=${1//./`pwd`}
@@ -383,6 +437,8 @@ function load() {
                 done
                 echo "${NC}"
             )
+        else
+            echo "${YELLOW}No directories were saved yet \"$savedDirs\" !${NC}"
         fi
         return 0
     else
@@ -404,7 +460,7 @@ function punch() {
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: punch [-l,-e,-r]"
         echo "Options: "
-        echo "       : !!Do the punch!! (When no option s provided)."
+        echo "       : !!PUNCH THE CLOCK!! (When no option s provided)."
         echo "    -l : List all registered punches."
         echo "    -e : Edit current punch file."
         echo "    -r : Reset punches for the next week."
@@ -486,20 +542,6 @@ function dv() {
     else
         echo "${RED}DOTFILES_VERSION is not defined${NC}"
         return 1
-    fi
-
-    return 0
-}
-
-#TODO Change to set-alias and improve with -e, -l, etc
-function add-alias() {
-
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2"; then
-        echo "Usage: add-alias <name> <alias_expr>"
-        return 1
-    else
-        test -f "$HOME/.aliases" || touch "$HOME/.aliases"
-        echo "alias $1='$2'" >>"$HOME/.aliases"
     fi
 
     return 0

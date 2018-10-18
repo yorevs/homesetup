@@ -119,8 +119,9 @@ paths      | Print each PATH entry on a separate line
 ver        | Check the version of the app using common ways
 tc         | Check whether the tool is installed
 tools      | Check whether some dev. tools are installed
-save       | Save the current directory to be loaded by `load`
-load       | cd into the saved directory issued by `save`
+aa         | Manipulate all custom aliases (add/remove/set)
+save       | Save the one directory to be loaded by `load`
+load       | cd into a saved directory issued by `save`
 punch      | Punch the clock. Add, edit and list punches
 plist      | Display (kill?) a process list, given process name
 dv         | Check the latest dotfiles version
