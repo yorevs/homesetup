@@ -28,5 +28,5 @@ export TRASH="$HOME/.Trash/"
 export DOTFILES_VERSION=$(cat "$HOME_SETUP/VERSION")
 
 # Setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-export HISTSIZE=1000
-export HISTFILESIZE=2000
+export HISTSIZE=500
+export HISTFILESIZE=500

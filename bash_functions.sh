@@ -338,10 +338,12 @@ function aa() {
                 (
                     IFS=$'\n'
                     echo ' '
+                    echo 'Available custom aliases:'
+                    echo ' '
                     for next in $allAliases; do
                         aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
                         aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                        printf "${GREEN}${aliasName//alias /} :"
+                        printf "${BLUE}${aliasName//alias /}"
                         printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
                         echo "${WHITE} is ${aliasExpr}"
                     done
@@ -428,10 +430,12 @@ function load() {
             (
                 IFS=$'\n'
                 echo ' '
+                echo 'Available saved directories:'
+                echo ' '
                 for next in $allDirs; do
                     dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
                     dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                    printf "${BLUE}${dirAlias}:"
+                    printf "${BLUE}${dirAlias}"
                     printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
                     echo "${WHITE}${dir}"
                 done

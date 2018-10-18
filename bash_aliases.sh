@@ -146,17 +146,7 @@ alias gww='gradle wrapper --gradle-version'
 # Docker
 alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 
-# Vue
-alias vue-run='npm run dev'
-alias vue-serv='npm run serve'
-alias vue-init='vue init webpack'
-
 # Directory Shortcuts
-alias work='cd $WORKSPACE'
-alias repos='cd $GIT_REPOS'
 alias desk='cd $DESKTOP'
-alias home='cd $HOME'
-alias db='cd $DROPBOX'
 alias dl='cd $DOWNLOADS'
-alias dev='cd $DEV_FILES'
 alias hhs='cd $HOME_SETUP'

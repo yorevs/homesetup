@@ -16,8 +16,4 @@
     
 * [ ] Create the command 'go' to find the first firectory with the matching name and cd into it.
 
-* [ ] Change add-alias to set-alias and improve it with -e, -l, etc.
-
-* [ ] Change save to accept a new param -a to add an alias as shortcut to load the dir.
-
-
+* [ ] Create the command cmd to execute/list/add/remove commands.
