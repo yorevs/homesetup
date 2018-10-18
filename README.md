@@ -1,4 +1,4 @@
-# ![](logo.png) HomeSetup
+# HomeSetup
 ## Terminal .dotfiles and bash improvements for MacOs
 
 ### 1. Installation
