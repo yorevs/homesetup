@@ -343,13 +343,19 @@ function aa() {
     else
         local aliasFile="$HOME/.aliases"
         touch "$aliasFile"
+
+        if test -n "$1" -a "$1" = "-e"; then
+            vi "$aliasFile"
+            return 0
+        fi
+
         local aliasName="$1"
         shift
         local aliasExpr="$*"
 
         if test -z "$aliasName" -a -z "$aliasExpr"; then
             # List all aliases
-            local allAliases=$(cat "$aliasFile" | sort)
+            local allAliases=$(grep . "$aliasFile")
             if test -n "$allAliases"; then
                 local pad=$(printf '%0.1s' "."{1..60})
                 local pad_len=30
@@ -366,6 +372,8 @@ function aa() {
                             printf "${BLUE}${aliasName//alias /}"
                             printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
                             echo "${WHITE} is ${aliasExpr}"
+                        else
+                            echo "${YELLOW}$next${NC}"
                         fi
                     done
                     echo "${NC}"
@@ -388,7 +396,7 @@ function aa() {
     fi
 
     # Remove all duplicates
-    local contents=$(cat "$aliasFile" | awk '!arr[$0]++')
+    local contents=$(grep . "$aliasFile" | awk '!arr[$0]++')
     echo "$contents" >"$aliasFile"
 
     return 0
@@ -433,7 +441,7 @@ function save() {
     fi
 
     # Remove all duplicates
-    local contents=$(cat "$savedDirs" | awk '!arr[$0]++')
+    local contents=$(grep . "$savedDirs" | awk '!arr[$0]++')
     echo "$contents" >"$savedDirs"
 
     return 0
@@ -452,7 +460,7 @@ function load() {
         echo "    -l : List all saved dirs."
         return 1
     elif test "$1" = "-l"; then
-        local allDirs=$(cat "$savedDirs" | sort)
+        local allDirs=$(grep . "$savedDirs" | sort)
         if test -n "$allDirs"; then
             local pad=$(printf '%0.1s' "."{1..60})
             local pad_len=20
@@ -510,14 +518,14 @@ function punch() {
             # Create the punch file if it does not exist
             test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
             # List punchs
-            test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
+            test "-l" = "$OPT" && grep . "$PUNCH_FILE" && return 0
             # Edit punchs
             test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
             # Reset punchs (backup as week-N.punch)
             test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch" && return 0
             # Do the punch
             if test -z "$OPT"; then
-                lines=$(grep . "$PUNCH_FILE")
+                lines=$(cat "$PUNCH_FILE")
                 success=0
                 for line in $lines; do
                     if [[ "$line" =~ $re ]]; then
@@ -581,6 +589,10 @@ function cmd() {
         touch "$cmdFile"
         
         case "$1" in
+            -e | --edit)
+                vi "$cmdFile"
+                return 0
+            ;;
             -a | --add)
                 shift
                 local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
@@ -603,7 +615,7 @@ function cmd() {
                 fi
             ;;
             -l | --list)
-                local allCmds=$(cat "$cmdFile")
+                local allCmds=$(grep . "$cmdFile")
                 if test -n "$allCmds"; then
                     local pad=$(printf '%0.1s' "."{1..60})
                     local pad_len=20
