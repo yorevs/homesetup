@@ -27,7 +27,7 @@ alias ?="pwd"
 alias q="exit"
 alias reload='cls; exec bash'
 
-# Kills all process specified by $1
+# Kills all processes specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
 
 # Enable aliases to be sudo’ed
@@ -49,7 +49,7 @@ alias lll="ls -lhd .?* ${colorflag}"
 alias lld="ls -lhd .?*/ ${colorflag}"
 
 # List all directories recursively (Nth level depth) as a tree
-alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2; test -z "$1" && tree $1; };_'
+alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
@@ -121,34 +121,40 @@ command -v md5sum >/dev/null || alias md5sum="md5"
 # macOS has no `sha1sum`, so use `shasum` as a fallback
 command -v sha1sum >/dev/null || alias sha1sum="sha1"
 
+# -----------------------------------------------------------------------------------
 # Git Stuff
-alias gs='git s'
-alias gf='git f'
-alias gco='git co'
-alias gta='git a'
-alias gb='git b'
-alias gd='git d'
-alias gp='git p'
-alias gprb='git prb'
-alias gpr='git pull --rebase'
-alias gl='git l'
-alias gcm='git cm'
-alias gca='git ca'
-alias gtps='git ps origin HEAD'
+
+alias gs='git status'
+alias gf='git fetch'
+alias gco='git checkout'
+alias gta='git add'
+alias gb='git branch'
+alias gd='git diff'
+alias gp='git pull'
+alias gprb='git pull --rebase'
+alias gl='git log --oneline --graph --decorate'
+alias gcm='git commit -m'
+alias gca='git commit --amend --no-edit'
+alias gtps='git push origin HEAD'
 alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
 alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
 alias git-show='git diff-tree --no-commit-id --name-status -r'
 alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
 
-# Gradle
+# -----------------------------------------------------------------------------------
+# Gradle Stuff
 alias gwb='gradle clean build -x test'
 alias gwr='gradle bootRun'
 alias gwi='gradle init'
 alias gww='gradle wrapper --gradle-version'
 
-# Docker
+# -----------------------------------------------------------------------------------
+# Docker stuff
+
 alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 
+# -----------------------------------------------------------------------------------
 # Directory Shortcuts
+
 alias desk='cd $DESKTOP'
 alias hhs='cd $HOME_SETUP'

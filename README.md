@@ -65,21 +65,34 @@ ALIAS   | Equivalent
 
 #### General
 
-ALIAS   | Equivalent
-------- | -------
-q       | exit
-reload  | 'Reload all dotfiles and check for updates'
-sudo    | 'Enable aliases to be sudo’ed'
-cls     | clear
-vi      | vim
-tl      | tail -F
-week    | 'Current week of the month' 
-now     | 'Current date'
-now-ms  | 'Current timestamp in milliseconds'
-wget    | 'MacOS has no wget, so use curl instead'
-calc    | 'Evaluate mathematical expression'
-urle    | 'URL-encode string'
-urld    | 'URL-decode string'
+ALIAS    | Equivalent
+-------- | --------
+q        | exit
+reload   | 'Reload all dotfiles and check for updates'
+pk       | Kills all processes specified
+sudo     | 'Enable aliases to be sudo’ed'
+ls       | Always use color output for `ls`
+l        | List all files colorized in long format
+ll       | List all files colorized in long format, including dot files
+lll      | List all dotfiles and dotfolders
+lld      | List all dotfolders
+lt       | List all directories recursively (Nth level depth) as a tree
+grep     | Always enable colored `grep` output
+egrep    | Always enable colored `egrep` output
+fgrep    | Always enable colored `fgrep` output
+rm       | (rm -i) For safety, by default this command will input for confirmation
+cp       | (cp -i) For safety, by default this command will input for confirmation
+mv       | (mv -i) For safety, by default this command will input for confirmation
+cls      | clear
+vi       | vim
+tl       | tail -F
+week     | 'Current week of the month' 
+now      | 'Current date'
+now-ms   | 'Current timestamp in milliseconds'
+wget     | 'MacOS has no wget, so use curl instead'
+calc     | 'Evaluate mathematical expression'
+urle     | 'URL-encode string'
+urld     | 'URL-decode string'
 
 #### IP related
 
