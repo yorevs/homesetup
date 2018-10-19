@@ -135,10 +135,11 @@ else
     done
 fi
 
-echo "${GREEN}Done installing files.${NC}"
+echo "${GREEN}Done installing files. Reloading bash ...${NC}"
 
-sleep 2
-clear
+# Reload the shell to apply changes
+sleep 1
+reset
 
 echo "${CYAN}"
 echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
@@ -154,8 +155,5 @@ echo '? To reload settings type: #> reload'
 echo '? To check for updates type: #> dv'
 echo '? Read README.md for more details about HomeSetup'
 echo -n "${NC}"
-
-# Reload the shell to apply changes
-bash
 
 quit 0

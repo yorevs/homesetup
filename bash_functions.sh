@@ -336,15 +336,15 @@ function tc() {
 function tools() {
 
     DEFAULT_TOOLS=(
-        "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "jenv"
+        "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"
         "node" "java" "python" "ruby" "gcc" "make" "qmake"
         "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
-        "nvm" "npm"
+        "nvm" "npm" "jenv"
     )
     DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
 
     echo ''
-    for app in "${DEV_APPS[@]}"; do
+    for app in ${DEV_APPS[*]}; do
         tc "$app"
     done
     echo ''
