@@ -392,22 +392,26 @@ function aa() {
             if test -n "$allAliases"; then
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=30
-                IFS=$'\n'
                 echo ' '
                 echo 'Available custom aliases:'
                 echo ' '
-                for next in $allAliases; do
-                    local re='^alias.+'
-                    if [[ $next =~ $re ]]; then
-                        aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                        aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                        printf "${BLUE}${aliasName//alias /}"
-                        printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
-                        echo "${WHITE} is ${aliasExpr}"
-                    else
-                        echo "${YELLOW}$next${NC}"
-                    fi
-                done
+                (
+                    local name
+                    local expr
+                    IFS=$'\n'
+                    for next in $allAliases; do
+                        local re='^alias.+'
+                        if [[ $next =~ $re ]]; then
+                            name=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                            expr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                            printf "${BLUE}${name//alias /}"
+                            printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+                            echo "${WHITE} is ${expr}"
+                        else
+                            echo "${YELLOW}$next${NC}"
+                        fi
+                    done
+                )
                 echo "${NC}"
             else
                 echo "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
@@ -516,17 +520,19 @@ function load() {
         if test -n "$allDirs"; then
             pad=$(printf '%0.1s' "."{1..60})
             pad_len=20
-            IFS=$'\n'
             echo ' '
             echo 'Available saved directories:'
             echo ' '
-            for next in $allDirs; do
-                dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                printf "${BLUE}${dirAlias}"
-                printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                echo "${WHITE}${dir}"
-            done
+            (
+                IFS=$'\n'
+                for next in $allDirs; do
+                    dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                    dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                    printf "${BLUE}${dirAlias}"
+                    printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+                    echo "${WHITE}${dir}"
+                done
+            )
             echo "${NC}"
         else
             echo "${YELLOW}No directories were saved yet \"$savedDirs\" !${NC}"
@@ -561,34 +567,36 @@ function punch() {
         echo "    -r : Reset punches for the next week."
         return 1
     else
-        IFS=$'\n'
-        OPT="$1"
-        PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
-        dateStamp="$(date +'%a %d-%m-%Y')"
-        timeStamp="$(date +'%H:%M')"
-        weekStamp="$(date +%V)"
-        local re="($dateStamp).*"
-        # Create the punch file if it does not exist
-        test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
-        # List punchs
-        test "-l" = "$OPT" && echo ''; cat "$PUNCH_FILE"; echo '' && return 0
-        # Edit punchs
-        test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
-        # Reset punchs (backup as week-N.punch)
-        test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
-        # Do the punch
-        if test -z "$OPT"; then
-            lines=$(grep . "$PUNCH_FILE")
-            success=0
-            for line in $lines; do
-                if [[ "$line" =~ $re ]]; then
-                    sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-                    success=1
-                fi
-            done
-            test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
-            grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
-        fi
+        (
+            IFS=$'\n'
+            OPT="$1"
+            PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+            dateStamp="$(date +'%a %d-%m-%Y')"
+            timeStamp="$(date +'%H:%M')"
+            weekStamp="$(date +%V)"
+            local re="($dateStamp).*"
+            # Create the punch file if it does not exist
+            test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
+            # List punchs
+            test "-l" = "$OPT" && echo ''; cat "$PUNCH_FILE"; echo '' && return 0
+            # Edit punchs
+            test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
+            # Reset punchs (backup as week-N.punch)
+            test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
+            # Do the punch
+            if test -z "$OPT"; then
+                lines=$(grep . "$PUNCH_FILE")
+                success=0
+                for line in $lines; do
+                    if [[ "$line" =~ $re ]]; then
+                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                        success=1
+                    fi
+                done
+                test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+                grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+            fi
+        )
     fi
 
     return 0
@@ -611,12 +619,14 @@ function plist() {
         if test -n "$allPids"; then
             test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCOMMAND\n---------------------------------------------------------------------------------"
             test "$2" = "kill" && echo ''
-            IFS=$'\n'
-            for next in $allPids; do
-                pid=$(echo "$next" | awk '{ print $2 }')
-                test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
-                test -n "$pid" -a "$2" = "kill" && kill -9 "$pid" && echo "${RED}Killed process with PID = $pid ${NC}"
-            done
+            (
+                IFS=$'\n'
+                for next in $allPids; do
+                    pid=$(echo "$next" | awk '{ print $2 }')
+                    test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
+                    test -n "$pid" -a "$2" = "kill" && kill -9 "$pid" && echo "${RED}Killed process with PID = $pid ${NC}"
+                done
+            )
             echo ''
         else
             echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
@@ -680,19 +690,21 @@ function cmd() {
             if test -n "$allCmds"; then
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=20
-                IFS=$'\n'
                 echo ' '
                 echo 'Available saved commands:'
                 echo ' '
-                local index=1
-                for next in $allCmds; do
-                    cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
-                    cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
-                    printf "${BLUE}${cmdName}"
-                    printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                    echo "${WHITE}'${cmdExpr}'"
-                    index=$((index + 1))
-                done
+                (
+                    IFS=$'\n'
+                    local index=1
+                    for next in $allCmds; do
+                        cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
+                        cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
+                        printf "${BLUE}${cmdName}"
+                        printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
+                        echo "${WHITE}'${cmdExpr}'"
+                        index=$((index + 1))
+                    done
+                )
                 echo "${NC}"
             fi
             ;;
