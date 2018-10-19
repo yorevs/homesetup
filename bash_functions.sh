@@ -578,7 +578,7 @@ function punch() {
             # Create the punch file if it does not exist
             test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
             # List punchs
-            test "-l" = "$OPT" && echo ''; cat "$PUNCH_FILE"; echo '' && return 0
+            test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
             # Edit punchs
             test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
             # Reset punchs (backup as week-N.punch)
