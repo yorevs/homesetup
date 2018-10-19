@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117
 
 #  Script: install.sh
 # Purpose: Install and configure all dofiles
@@ -8,7 +9,7 @@
 #    Site: https://github.com/yorevs/homesetup
 
 # This script name.
-PROC_NAME="$(basename $0)"
+PROC_NAME=$(basename "$0")
 
 # Help message to be displayed by the script.
 USAGE="
@@ -24,7 +25,7 @@ quit() {
     
     test -n "$2" -o "$2" != "" && echo -e "$2"
     echo ''
-    exit $1
+    exit "$1"
 }
 
 # Usage message.
@@ -48,7 +49,6 @@ do
             shift
             DIR="$1"
         ;;
-        
         *)
             quit 1 "Invalid option: \"$1\""
         ;;
@@ -56,12 +56,13 @@ do
     shift
 done
 
-test -z "$DIR" && DIR=`pwd`
+test -z "$DIR" && DIR=$(pwd)
 
 # HomeSetup folder
 HOME_SETUP=${HOME_SETUP:-$DIR}
 test -d "$HOME_SETUP" || mkdir -p "$DIR"
 
+# shellcheck disable=SC1091
 source bash_colors.sh
 
 ALL_DOTFILES=( 
@@ -79,11 +80,11 @@ echo '#'
 echo '# Install settings:'
 echo "# - HOME_SETUP: $HOME_SETUP"
 echo "# - OPTTIONS: $OPT"
-echo "# - FILES: ${ALL_DOTFILES[@]}"
+echo "# - FILES: ${ALL_DOTFILES[*]}"
 echo '#'
 echo "${RED}"
 
-read -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
 test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && echo "${NC}" && quit 0
 echo ''
 echo "${NC}"
@@ -94,45 +95,50 @@ then
     if ! test -d ~/bin
     then
         # Bin directory
-        echo -n "Linking: " && ln -sfv $HOME_SETUP/bin ~/
+        echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
         test -d ~/bin && echo -e '[   OK   ]\n'
     else
-        cp $HOME_SETUP/bin/* ~/bin
+        cp -n "$HOME_SETUP"/bin/* ~/bin &> /dev/null
     fi
 
     # Bash dotfiles
-    for next in ${ALL_DOTFILES[@]}
+    for next in ${ALL_DOTFILES[*]}
     do
         dotfile=~/.${next}
-        if test -f $dotfile; then test -h $dotfile || mv $dotfile ${dotfile}.bak; fi
-        echo -n "Linking: " && ln -sfv $HOME_SETUP/${next}.sh $dotfile
-        test -f $dotfile && echo -e "${GREEN}[   OK   ]${NC}\n"
-        test -f $dotfile || echo -e "${RED}[ FAILED ]${NC}\n"
+        if test -f "$dotfile"; then test -h "$dotfile" || mv "$dotfile" "${dotfile}.bak"; fi
+        echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+        test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}\n"
+        test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}\n"
     done
 else
-    if ! test -d $HOME_SETUP/bin
+    if ! test -d "$HOME_SETUP/bin"
     then
         # Bin directory
         echo ''
-        read -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
-        test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv $HOME_SETUP/bin ~/ && test -d ~/bin && echo '[ OK ]'
+        read -r -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
+        test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv "$HOME_SETUP/bin" ~/ && test -d ~/bin && echo '[ OK ]'
     else
-        cp $HOME_SETUP/bin/* ~/bin
+        cp -n "$HOME_SETUP"/bin/* ~/bin &> /dev/null
     fi
 
     # Bash dotfiles
-    for next in ${ALL_DOTFILES[@]}
+    for next in ${ALL_DOTFILES[*]}
     do
         dotfile=~/.${next}
         echo ''
-        read -n 1 -sp "Link $dotfile (y/[n])? " ANS
+        read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
         test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
         echo ''
-        echo -n "Linking: " && ln -sfv $HOME_SETUP/${next}.sh $dotfile
-        test -f $dotfile && echo -e "${GREEN}[   OK   ]${NC}\n"
-        test -f $dotfile || echo -e "${RED}[ FAILED ]${NC}\n"
+        echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+        test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}\n"
+        test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}\n"
     done
 fi
+
+echo "${GREEN}Done installing files.${NC}"
+
+sleep 2
+clear
 
 echo "${CYAN}"
 echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
@@ -141,13 +147,15 @@ echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM 
 echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
 echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
 echo ''
-echo "${YELLOW}Dotfiles v$(cat $HOME_SETUP/version) installed!"
+echo "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/version") installed!"
 echo -n "${NC}"
-
 echo "${WHITE}"
-echo '? To reload settings and check for updates type: #> reload'
+echo '? To reload settings type: #> reload'
+echo '? To check for updates type: #> dv'
+echo '? Read README.md for more details about HomeSetup'
 echo -n "${NC}"
 
-source ~/.bashrc
+# Reload the shell to apply changes
+bash
 
 quit 0

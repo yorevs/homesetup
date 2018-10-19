@@ -7,10 +7,10 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 #
-# Original project: https://github.com/mathiasbynens/dotfiles
+# inspiRED by: https://github.com/mathiasbynens/dotfiles
 
 export HOME=${HOME:-~/}
-export USER=${USER:-`whoami`}
+export USER=${USER:-$(whoami)}
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob;
@@ -31,6 +31,7 @@ shopt -s cdspell;
 # * ~/.env can be used to extend/override .bash_env
 # * ~/.colors can be used to extend/override .bash_colors
 # * ~/.functions can be used to extend/override .bash_functions
+# shellcheck disable=SC1090
 for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,aliases,profile,env,colors,functions}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
@@ -53,4 +54,5 @@ fi;
 export PATH="$PATH:$HOME/bin";
 
 # Remove all PATH duplicates
-export PATH=$(echo -n $PATH | awk -v RS=: -v ORS=: '!arr[$0]++')
+# shellcheck disable=SC2155
+export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')

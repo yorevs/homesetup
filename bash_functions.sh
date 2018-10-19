@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117
+# shellcheck disable=SC2059
+# shellcheck disable=SC2183
 
 #  Script: bash_functions.sh
 # Purpose: Configure some shell tools
@@ -47,13 +50,16 @@ function sd() {
 # @param $5 [Con] : Required if $4 is provided. This is the replacement string.
 function ss() {
 
+    local gflags
+    local extra_str
+
     if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2" -o -z "$3"; then
         echo "Usage: ss <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
         return 1
     else
-        local gflags="-HEn"
+        gflags="-HEn"
         test "$4" = "--replace" -a -n "$5" && local replace=1
-        local extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
+        extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
         echo "${YELLOW}Searching for string matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
         test -n "$replace" && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
         test -n "$replace" || result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
@@ -82,23 +88,26 @@ function hist() {
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function del-tree() {
 
+    local all
+    local dst
+
     if test -z "$1" -o "$1" = "/" -o ! -d "$1"; then
         echo "Usage: del-tree <search_path> <glob_exp>"
         return 1
     else
         # Find all files and folders matching the <glob_exp>
-        local all=$(find "$1" -name "*$2")
+        all=$(find "$1" -name "*$2")
         # Move all to trash
         if test -n "$all"; then
-            read -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
+            read -r -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
             if test "$ANS" = 'y' -o "$ANS" = 'Y'; then
                 echo "${RED}"
                 for next in $all; do
-                    local dst=${next##*/}
+                    dst=${next##*/}
                     while [ -e "${TRASH}/$dst" ]; do
                         dst="${next##*/}-$(now-ms)"
                     done
-                    mv -v "$next" ${TRASH}/"$dst"
+                    mv -v "$next" "${TRASH}/$dst"
                 done
                 echo -n "${NC}"
             else
@@ -118,7 +127,7 @@ function jp() {
         echo "Usage: jp <json_string>"
         return 1
     else
-        echo $1 | json_pp -f json -t json -json_opt pretty indent escape_slash
+        echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
     fi
 
     return 0
@@ -128,12 +137,14 @@ function jp() {
 # @param $1 [Req] : The IP to get information about.
 function ip-info() {
 
+    local ipinfo
+
     if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
         echo "Usage: ip-info <IPv4_address>"
         return 1
     else
-        local ipinfo=$(curl --basic ip-api.com/json/$1 2>/dev/null | tr ' ' '_')
-        test -n "$ipinfo" && jp $ipinfo
+        ipinfo=$(curl --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
+        test -n "$ipinfo" && jp "$ipinfo"
     fi
 
     return 0
@@ -193,13 +204,19 @@ function port-check() {
 # @param $1 [Opt] : Filter environments.
 function envs() {
 
+    local pad
+    local pad_len
+    local filter
+    local name
+    local value
+
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: envs [regex_filter]"
         return 1
     else
-        local pad=$(printf '%0.1s' "."{1..60})
-        local pad_len=35
-        local filter="$*"
+        pad=$(printf '%0.1s' "."{1..60})
+        pad_len=35
+        filter="$*"
         test -z "$filter" && filter="^[a-zA-Z0-9_]*.*"
         echo ' '
         echo "Listing all exported environment variables matching [ $filter ]:"
@@ -207,8 +224,8 @@ function envs() {
         (
             IFS=$'\n'
             for v in $(env | sort); do
-                local name=$(echo $v | cut -d '=' -f1)
-                local value=$(echo $v | cut -d '=' -f2-)
+                name=$(echo "$v" | cut -d '=' -f1)
+                value=$(echo "$v" | cut -d '=' -f2-)
                 if [[ $name =~ $filter ]]; then
                     printf "${BLUE}${name}${NC} "
                     printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
@@ -225,18 +242,21 @@ function envs() {
 # Purpose: Print each PATH entry on a separate line.
 function paths() {
 
+    local pad
+    local pad_len
+
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: paths"
         return 1
     elif test -z "$1"; then
-        local pad=$(printf '%0.1s' "."{1..60})
-        local pad_len=60
+        pad=$(printf '%0.1s' "."{1..60})
+        pad_len=60
         echo ' '
         echo 'Listing all PATH entries:'
         echo ' '
         (
             IFS=$'\n'
-            for path in $(echo -e ${PATH//:/\\n}); do
+            for path in $(echo -e "${PATH//:/\\n}"); do
                 printf "$path "
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                 test -d "$path" && printf "${BLUE}OK${NC}\n"
@@ -259,7 +279,7 @@ function ver() {
     else
         # First attempt: app --version
         APP=$1
-        tc ${APP}
+        tc "${APP}"
         test $? -ne 0 && return 2
         VER=$(${APP} --version 2>&1)
         if test $? -ne 0; then
@@ -286,14 +306,19 @@ function ver() {
 # @param $1 [Req] : The tool to check.
 function tc() {
 
+    local pad
+    local pad_len
+    local tool_name
+    local check
+
     if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
         echo "Usage: tc <app>"
         return 1
     else
-        local pad=$(printf '%0.1s' "."{1..60})
-        local pad_len=20
-        local tool_name="$1"
-        local check=$(command -v ${tool_name})
+        pad=$(printf '%0.1s' "."{1..60})
+        pad_len=20
+        tool_name="$1"
+        check=$(command -v "${tool_name}")
         printf "${ORANGE}($(uname -s))${NC} "
         printf "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
@@ -319,8 +344,8 @@ function tools() {
     DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
 
     echo ''
-    for app in ${DEV_APPS[@]}; do
-        tc $app
+    for app in "${DEV_APPS[@]}"; do
+        tc "$app"
     done
     echo ''
     echo "${CYAN}To check the current installed version type: ver <tool_name>${NC}"
@@ -333,6 +358,14 @@ function tools() {
 # @param $2 [Opt] : The alias expression.
 function aa() {
 
+    local aliasFile
+    local aliasName
+    local aliasExpr
+    local pad
+    local pad_len
+    local allAliases
+    local contents
+
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: aa [alias] [alias_expr]"
         echo "Options: "
@@ -341,7 +374,7 @@ function aa() {
         echo "    - Remove the alias  : When <alias> is provided but <alias_expr> is not provided."
         return 1
     else
-        local aliasFile="$HOME/.aliases"
+        aliasFile="$HOME/.aliases"
         touch "$aliasFile"
 
         if test -n "$1" -a "$1" = "-e"; then
@@ -349,35 +382,33 @@ function aa() {
             return 0
         fi
 
-        local aliasName="$1"
+        aliasName="$1"
         shift
-        local aliasExpr="$*"
+        aliasExpr="$*"
 
         if test -z "$aliasName" -a -z "$aliasExpr"; then
             # List all aliases
-            local allAliases=$(grep . "$aliasFile")
+            allAliases=$(grep . "$aliasFile")
             if test -n "$allAliases"; then
-                local pad=$(printf '%0.1s' "."{1..60})
-                local pad_len=30
-                (
-                    IFS=$'\n'
-                    echo ' '
-                    echo 'Available custom aliases:'
-                    echo ' '
-                    for next in $allAliases; do
-                        local re='^alias.+'
-                        if [[ $next =~ $re ]]; then
-                            aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                            aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                            printf "${BLUE}${aliasName//alias /}"
-                            printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
-                            echo "${WHITE} is ${aliasExpr}"
-                        else
-                            echo "${YELLOW}$next${NC}"
-                        fi
-                    done
-                    echo "${NC}"
-                )
+                pad=$(printf '%0.1s' "."{1..60})
+                pad_len=30
+                IFS=$'\n'
+                echo ' '
+                echo 'Available custom aliases:'
+                echo ' '
+                for next in $allAliases; do
+                    local re='^alias.+'
+                    if [[ $next =~ $re ]]; then
+                        aliasName=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                        aliasExpr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                        printf "${BLUE}${aliasName//alias /}"
+                        printf '%*.*s' 0 $((pad_len - ${#aliasName})) "$pad"
+                        echo "${WHITE} is ${aliasExpr}"
+                    else
+                        echo "${YELLOW}$next${NC}"
+                    fi
+                done
+                echo "${NC}"
             else
                 echo "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
             fi
@@ -386,6 +417,7 @@ function aa() {
             sed -i '' -E -e "s#(alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
             echo "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
+            # shellcheck disable=SC1090
             source "$aliasFile"
         elif test -n "$aliasName" -a -z "$aliasExpr"; then
             # Remove one alias
@@ -396,7 +428,7 @@ function aa() {
     fi
 
     # Remove all duplicates
-    local contents=$(grep . "$aliasFile" | awk '!arr[$0]++')
+    contents=$(grep . "$aliasFile" | awk '!arr[$0]++')
     echo "$contents" >"$aliasFile"
 
     return 0
@@ -407,11 +439,12 @@ function aa() {
 # @param $2 [Opt] : The alias to access the directory saved.
 function save() {
 
-    local dir=$(pwd)
+    local dir
+    local contents
     local dirAlias="SAVED_DIR"
     local savedDirs="$HOME/.saved_dir"
 
-    test -n "$2" && dirAlias=$(echo -n "$2" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+    test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
     test -z "$dirAlias" && dirAlias="SAVED_DIR"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
@@ -441,7 +474,7 @@ function save() {
     fi
 
     # Remove all duplicates
-    local contents=$(grep . "$savedDirs" | awk '!arr[$0]++')
+    contents=$(grep . "$savedDirs" | awk '!arr[$0]++')
     echo "$contents" >"$savedDirs"
 
     return 0
@@ -449,10 +482,13 @@ function save() {
 
 # Purpose: Highlight words matching pattern.
 function hl() {
-    HIGHLIGHT_COLOR='\\e[4;37;104m'
-    NORMAL='\\e[0m'
-    local word="${HIGHLIGHT_COLOR}${1}${NORMAL}"
-    while read data; do
+    #local word
+
+    #HIGHLIGHT_COLOR='\\e[4;37;104m'
+    #NORMAL='\\e[0m'
+    #word="${HIGHLIGHT_COLOR}${1}${NORMAL}"
+
+    while read -r data; do
         #local hlWord=$(echo "$data" | sed "s#$1#$word#g")
         #printf "$hlWord"
         printf "$data"
@@ -463,7 +499,11 @@ function hl() {
 # @param $1 [Opt] : The alias to access the directory saved.
 function load() {
 
-    local dirAlias="SAVED_DIR"
+    local dirAlias
+    local allDirs
+    local dir
+    local pad
+    local pad_len
     local savedDirs="$HOME/.saved_dir"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
@@ -472,33 +512,31 @@ function load() {
         echo "    -l : List all saved dirs."
         return 1
     elif test "$1" = "-l"; then
-        local allDirs=$(grep . "$savedDirs" | sort)
+        allDirs=$(grep . "$savedDirs" | sort)
         if test -n "$allDirs"; then
-            local pad=$(printf '%0.1s' "."{1..60})
-            local pad_len=20
-            (
-                IFS=$'\n'
-                echo ' '
-                echo 'Available saved directories:'
-                echo ' '
-                for next in $allDirs; do
-                    dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                    dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                    printf "${BLUE}${dirAlias}"
-                    printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                    echo "${WHITE}${dir}"
-                done
-                echo "${NC}"
-            )
+            pad=$(printf '%0.1s' "."{1..60})
+            pad_len=20
+            IFS=$'\n'
+            echo ' '
+            echo 'Available saved directories:'
+            echo ' '
+            for next in $allDirs; do
+                dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                printf "${BLUE}${dirAlias}"
+                printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+                echo "${WHITE}${dir}"
+            done
+            echo "${NC}"
         else
             echo "${YELLOW}No directories were saved yet \"$savedDirs\" !${NC}"
         fi
         return 0
     else
-        test -n "$1" && dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+        test -n "$1" && dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         test -z "$dirAlias" && dirAlias="SAVED_DIR"
-        local dir=$(grep "$dirAlias" $savedDirs | awk -F '=' '{ print $2 }')
-        test -n "$dir" -a -d "$dir" && cd "$dir"
+        dir=$(grep "$dirAlias" "$savedDirs" | awk -F '=' '{ print $2 }')
+        test -n "$dir" -a -d "$dir" && cd "$dir" || return 1
         test -z "$dir" -o ! -d "$dir" && echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}" && return 1
     fi
 
@@ -510,6 +548,10 @@ function load() {
 # Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 function punch() {
 
+    local dateStamp
+    local timeStamp
+    local weekStamp
+
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: punch [-l,-e,-r]"
         echo "Options: "
@@ -519,36 +561,34 @@ function punch() {
         echo "    -r : Reset punches for the next week."
         return 1
     else
-        (
-            IFS=$'\n'
-            OPT="$1"
-            PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
-            local dateStamp="$(date +'%a %d-%m-%Y')"
-            local timeStamp="$(date +'%H:%M')"
-            local weekStamp="$(date +%V)"
-            local re="($dateStamp).*"
-            # Create the punch file if it does not exist
-            test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
-            # List punchs
-            test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
-            # Edit punchs
-            test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
-            # Reset punchs (backup as week-N.punch)
-            test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname $PUNCH_FILE)/week-$weekStamp.punch" && return 0
-            # Do the punch
-            if test -z "$OPT"; then
-                lines=$(grep . "$PUNCH_FILE")
-                success=0
-                for line in $lines; do
-                    if [[ "$line" =~ $re ]]; then
-                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-                        success=1
-                    fi
-                done
-                test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
-                grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
-            fi
-        )
+        IFS=$'\n'
+        OPT="$1"
+        PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+        dateStamp="$(date +'%a %d-%m-%Y')"
+        timeStamp="$(date +'%H:%M')"
+        weekStamp="$(date +%V)"
+        local re="($dateStamp).*"
+        # Create the punch file if it does not exist
+        test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
+        # List punchs
+        test "-l" = "$OPT" && echo ''; cat "$PUNCH_FILE"; echo '' && return 0
+        # Edit punchs
+        test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
+        # Reset punchs (backup as week-N.punch)
+        test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
+        # Do the punch
+        if test -z "$OPT"; then
+            lines=$(grep . "$PUNCH_FILE")
+            success=0
+            for line in $lines; do
+                if [[ "$line" =~ $re ]]; then
+                    sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                    success=1
+                fi
+            done
+            test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+            grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+        fi
     fi
 
     return 0
@@ -559,22 +599,24 @@ function punch() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function plist() {
 
+    local allPids
+    local pid
+
     if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
         echo "Usage: plist <process_name> [kill]"
         return 1
     else
-        local pids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
-        if test -n "$pids"; then
+        # shellcheck disable=SC2009
+        allPids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
+        if test -n "$allPids"; then
             test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCOMMAND\n---------------------------------------------------------------------------------"
             test "$2" = "kill" && echo ''
-            (
-                IFS=$'\n'
-                for next in $pids; do
-                    local p=$(echo $next | awk '{ print $2 }')
-                    test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
-                    test -n "$p" -a "$2" = "kill" && kill -9 "$p" && echo "${RED}Killed process with PID = $p ${NC}"
-                done
-            )
+            IFS=$'\n'
+            for next in $allPids; do
+                pid=$(echo "$next" | awk '{ print $2 }')
+                test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
+                test -n "$pid" -a "$2" = "kill" && kill -9 "$pid" && echo "${RED}Killed process with PID = $pid ${NC}"
+            done
             echo ''
         else
             echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
@@ -588,6 +630,16 @@ function plist() {
 # @param $1 [Opt] : The command options
 function cmd() {
 
+    local cmdName
+    local cmdId
+    local cmdExpr
+    local allCmds
+    local pad
+    local pad_len
+    local cmdFile="$HOME/.myCommands"
+
+    touch "$cmdFile"
+
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: cmd [options <args>] | [cmd_index]"
         echo "Options: "
@@ -597,9 +649,6 @@ function cmd() {
         echo "    -l : List all stored commands."
         return 1
     else
-        local cmdFile="$HOME/.myCommands"
-        touch "$cmdFile"
-
         case "$1" in
         -e | --edit)
             vi "$cmdFile"
@@ -607,46 +656,44 @@ function cmd() {
             ;;
         -a | --add)
             shift
-            local cmdName=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+            cmdName=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
             shift
-            local cmdExpr="$*"
-            test -z "cmdName" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
+            cmdExpr="$*"
+            test -z "cmdName" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
             sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
             echo "Command $cmdName: $cmdExpr" >>"$cmdFile"
             ;;
         -r | --remove)
             shift
-            local cmdId=$(echo -n "$1" | tr -s [:space:] '_' | tr [:lower:] [:upper:])
+            cmdId=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
             local re='^[1-9]+$'
             if [[ $cmdId =~ $re ]]; then
                 cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $0 }')
                 sed -i '' -E -e "s#($cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
             else
-                test -z "cmdId" -o -z "cmdExpr" && echo "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
+                test -z "cmdId" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
                 sed -i '' -E -e "s#(Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
             fi
             ;;
         -l | --list)
-            local allCmds=$(grep . "$cmdFile")
+            allCmds=$(grep . "$cmdFile")
             if test -n "$allCmds"; then
-                local pad=$(printf '%0.1s' "."{1..60})
-                local pad_len=20
-                (
-                    IFS=$'\n'
-                    echo ' '
-                    echo 'Available saved commands:'
-                    echo ' '
-                    local index=1
-                    for next in $allCmds; do
-                        local cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
-                        local cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
-                        printf "${BLUE}${cmdName}"
-                        printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                        echo "${WHITE}'${cmdExpr}'"
-                        index=$((index + 1))
-                    done
-                    echo "${NC}"
-                )
+                pad=$(printf '%0.1s' "."{1..60})
+                pad_len=20
+                IFS=$'\n'
+                echo ' '
+                echo 'Available saved commands:'
+                echo ' '
+                local index=1
+                for next in $allCmds; do
+                    cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
+                    cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
+                    printf "${BLUE}${cmdName}"
+                    printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
+                    echo "${WHITE}'${cmdExpr}'"
+                    index=$((index + 1))
+                done
+                echo "${NC}"
             fi
             ;;
         [1-9]*)
@@ -667,11 +714,14 @@ function cmd() {
 # Check the latest dotfiles version
 function dv() {
 
+    local repoVer
+    local isDifferent
+
     if test -n "$DOTFILES_VERSION"; then
-        local v=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
-        local newer=$(test -n "$v" -a "$DOTFILES_VERSION" != "$v" && echo 1)
-        test -n "$newer" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${v} , Yours: ${DOTFILES_VERSION}.${NC}"
-        test -n "$newer" || echo -e "${GREEN}You version is up to date: ${v} !${NC}"
+        repoVer=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
+        isDifferent=$(test -n "$repoVer" -a "$DOTFILES_VERSION" != "$repoVer" && echo 1)
+        test -n "$isDifferent" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}.${NC}"
+        test -n "$isDifferent" || echo -e "${GREEN}You version is up to date: ${repoVer} !${NC}"
     else
         echo "${RED}DOTFILES_VERSION is not defined${NC}"
         return 1

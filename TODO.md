@@ -15,3 +15,4 @@
 * [ ] Improve the command cmd to accept auto-complete.
 
 * [ ] Improvement: Use Firebase (https://firebase.google.com/) to store the custom files of the user
+  * https://firebase.google.com

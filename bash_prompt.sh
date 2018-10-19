@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117
 
 #  Script: bash_prompt.sh
 # Purpose: Shell prompt configuration file
@@ -7,11 +8,10 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 #
-# Original project: https://github.com/mathiasbynens/dotfiles
+# inspiRED by: https://github.com/mathiasbynens/dotfiles
 
 # Shell prompt based.
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
-# iTerm → Profiles → Text → use 13pt Monaco with 1.1 vertical spacing.
 
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
     export TERM='gnome-256color';
@@ -25,7 +25,7 @@ prompt_git() {
     local branchName='';
 
     # Check if the current directory is in a Git repository.
-    if test -n $(command -v git) -a $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0'
+    if [ -n "$(command -v git)" ] && [ "$(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}")" == '0' ]
     then
 
         # check if the current directory is in .git before running git checks
@@ -35,12 +35,12 @@ prompt_git() {
             git update-index --really-refresh -q &>/dev/null;
 
             # Check for uncommitted changes in the index.
-            if ! $(git diff --quiet --ignore-submodules --cached); then
+            if ! git diff --quiet --ignore-submodules --cached; then
                 s+='+';
             fi;
 
             # Check for unstaged changes.
-            if ! $(git diff-files --quiet --ignore-submodules --); then
+            if ! git diff-files --quiet --ignore-submodules --; then
                 s+='!';
             fi;
 
@@ -50,7 +50,7 @@ prompt_git() {
             fi;
 
             # Check for stashed files.
-            if $(git rev-parse --verify refs/stash &>/dev/null); then
+            if git rev-parse --verify refs/stash &>/dev/null; then
                 s+='$';
             fi;
 

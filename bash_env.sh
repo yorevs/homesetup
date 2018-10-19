@@ -26,6 +26,7 @@ export DESKTOP="$HOME/Desktop"
 export DOWNLOADS="$HOME/Downloads"
 export TEMP="$TMPDIR"
 export TRASH="$HOME/.Trash/"
+# shellcheck disable=SC2155
 export DOTFILES_VERSION=$(cat "$HOME_SETUP/VERSION")
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash

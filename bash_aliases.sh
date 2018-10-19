@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117
+# shellcheck disable=SC2142
 
 #  Script: bash_aliases.sh
 # Purpose: Configure some useful shell aliases
@@ -7,20 +9,21 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 #
-# Original project: https://github.com/mathiasbynens/dotfiles
+# inspiRED by: https://github.com/mathiasbynens/dotfiles
 
 # Removes all aliases before setting them
 unalias -a
 
 # -----------------------------------------------------------------------------------
 # Navigational
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ~="cd ~"
-alias -- -="cd -"
-alias ?="pwd"
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+# shellcheck disable=SC2035,SC2139
+alias ?='pwd'
 
 # -----------------------------------------------------------------------------------
 # General
@@ -34,19 +37,19 @@ alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
 alias sudo='sudo '
 
 # Always use color output for `ls`
-alias ls="command ls ${colorflag}"
+alias ls='command ls ${COLOR_FLAG}'
 
 # List all files colorized in long format
-alias l="ls -lhF ${colorflag}"
+alias l='ls -lhF ${COLOR_FLAG}'
 
 # List all files colorized in long format, including dot files
-alias ll="ls -lahF ${colorflag}"
+alias ll='ls -lahF ${COLOR_FLAG}'
 
 # List all dotfiles
-alias lll="ls -lhd .?* ${colorflag}"
+alias lll='ls -lhd .?* ${COLOR_FLAG}'
 
 # List all dotdirs
-alias lld="ls -lhd .?*/ ${colorflag}"
+alias lld='ls -lhd .?*/ ${COLOR_FLAG}'
 
 # List all directories recursively (Nth level depth) as a tree
 alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'

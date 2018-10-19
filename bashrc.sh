@@ -1,6 +1,6 @@
-# .bashrc
+#!/usr/bin/env bash
 
-#  Script: bash_prompt.sh
+#  Script: bashrc.sh
 # Purpose: Shell configuration main entry point file
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -8,13 +8,15 @@
 #    Site: https://github.com/yorevs/homesetup
 
 # Source global definitions
-
 if [ -f /etc/bashrc ]
 then
+    # shellcheck disable=SC1091
     source /etc/bashrc
 fi
 
-if [ -n "$PS1" -a -f ~/.bash_profile ]
+# Source the main profile
+if [ -n "$PS1" ] && [ -f ~/.bash_profile ]
 then
-    source ~/.bash_profile;
+    # shellcheck disable=SC1090
+    source ~/.bash_profile
 fi
