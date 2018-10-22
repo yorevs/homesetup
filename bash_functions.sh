@@ -467,12 +467,13 @@ function save() {
         echo '' >"$savedDirs"
         echo "${YELLOW}All saved directories have been removed!${NC}"
     else
-        test -n "$1" -a ! -d "$1" && echo "${RED}Directory \"$1\" is not a valid!${NC}" && return 1
-        test -z "$1" -o "$1" = "." && dir=${1//./$(pwd)}
-        test -n "$1" -a "$1" = ".." && dir=${1//../$(pwd)}
-        test -n "$1" -a "$1" = "-" && dir=${1//-/$OLDPWD}
+        dir="$1"
+        test -z "$dir" -o "$dir" = "." && dir=${dir//./$(pwd)}
+        test -n "$dir" -a "$dir" = ".." && dir=${dir//../$(pwd)}
+        test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
+        test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
         touch "$savedDirs"
-        sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
+        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
         echo "$dirAlias=$dir" >>"$savedDirs"
         echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
@@ -537,21 +538,20 @@ function load() {
         else
             echo "${YELLOW}No directories were saved yet \"$savedDirs\" !${NC}"
         fi
-        return 0
     else
         test -n "$1" && dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         test -z "$dirAlias" && dirAlias="SAVED_DIR"
-        dir=$(grep "$dirAlias" "$savedDirs" | awk -F '=' '{ print $2 }')
-        test -n "$dir" -a -d "$dir" && cd "$dir" || return 1
+        dir=$(grep -m 1 "^${dirAlias}=" "$savedDirs" | awk -F '=' '{ print $2 }')
         test -z "$dir" -o ! -d "$dir" && echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}" && return 1
+        test -n "$dir" -a -d "$dir" && cd "$dir" || return 1
+        echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
     fi
-
-    echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
 
     return 0
 }
 
 # Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
+# @param $1 [Opt] : Punch options
 function punch() {
 
     local dateStamp
