@@ -364,7 +364,6 @@ function aa() {
     local pad
     local pad_len
     local allAliases
-    local contents
 
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: aa [alias] [alias_expr]"
@@ -418,22 +417,18 @@ function aa() {
             fi
         elif test -n "$aliasName" -a -n "$aliasExpr"; then
             # Add/Set one alias
-            sed -i '' -E -e "s#(alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
+            sed -i '' -E -e "s#(^alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
             echo "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
             # shellcheck disable=SC1090
             source "$aliasFile"
         elif test -n "$aliasName" -a -z "$aliasExpr"; then
             # Remove one alias
-            sed -i '' -E -e "s#(alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
+            sed -i '' -E -e "s#(^alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
             echo "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
             unalias "$aliasName"
         fi
     fi
-
-    # Remove all duplicates
-    contents=$(grep . "$aliasFile" | awk '!arr[$0]++')
-    echo "$contents" >"$aliasFile"
 
     return 0
 }
@@ -444,7 +439,6 @@ function aa() {
 function save() {
 
     local dir
-    local contents
     local dirAlias="SAVED_DIR"
     local savedDirs="$HOME/.saved_dir"
 
@@ -461,7 +455,7 @@ function save() {
     elif test "$1" = "-e"; then
         vi "$savedDirs"
     elif test "$1" = "-r"; then
-        sed -i '' -E -e "s#($dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
+        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     elif test "$1" = "-c"; then
         echo '' >"$savedDirs"
@@ -478,14 +472,11 @@ function save() {
         echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
 
-    # Remove all duplicates
-    contents=$(grep . "$savedDirs" | awk '!arr[$0]++')
-    echo "$contents" >"$savedDirs"
-
     return 0
 }
 
 # Purpose: Highlight words matching pattern.
+# TODO
 function hl() {
     #local word
 
@@ -670,7 +661,7 @@ function cmd() {
             shift
             cmdExpr="$*"
             test -z "cmdName" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
-            sed -i '' -E -e "s#(Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
+            sed -i '' -E -e "s#(^Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
             echo "Command $cmdName: $cmdExpr" >>"$cmdFile"
             ;;
         -r | --remove)
@@ -679,10 +670,10 @@ function cmd() {
             local re='^[1-9]+$'
             if [[ $cmdId =~ $re ]]; then
                 cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $0 }')
-                sed -i '' -E -e "s#($cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
+                sed -i '' -E -e "s#(^$cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
             else
                 test -z "cmdId" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
-                sed -i '' -E -e "s#(Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
+                sed -i '' -E -e "s#(^Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
             fi
             ;;
         -l | --list)
