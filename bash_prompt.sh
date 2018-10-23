@@ -20,7 +20,7 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi;
 
 # Configure git stuff
-prompt_git() {
+function prompt_git() {
     local s='';
     local branchName='';
 
