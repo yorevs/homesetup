@@ -120,11 +120,6 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         echo '#'
         echo "${YELLOW}"
         
-        read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
-        test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && echo "${NC}" && quit 0
-        echo ''
-        echo "${NC}"
-        
         if [ "${METHOD}" = 'repair' ]; then
             copy_files
         elif [ "${METHOD}" = 'local' ] ; then
@@ -137,10 +132,19 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # Copy the dotfiles.
     copy_files() {
         
+        if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
+            read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+            test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && echo "${NC}" && quit 0
+            echo ''
+            echo "${NC}"
+        else
+            OPT='all'
+        fi
+        
         echo "Copying dotfiles into place ..."
         
         # If all option is used, do it at once
-        if test "$OPT" = "all" -o "$OPT" = "ALL"; then
+        if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
             if ! test -d ~/bin; then
                 # Bin directory
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
