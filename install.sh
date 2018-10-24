@@ -206,6 +206,9 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # Clone the repository and install dotfiles.
     clone_repository() {
         
+        echo ''
+        echo "${NC}Cloning HomeSetup from repository ..."
+        sleep 1
         command git clone "$REPO_URL" "$HOME_SETUP"
     }
 
