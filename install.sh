@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
 
 { # this ensures the entire script is downloaded #
 
