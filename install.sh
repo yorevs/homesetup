@@ -128,6 +128,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         echo "# - METHOD: $METHOD"
         echo "# - FILES: ${ALL_DOTFILES[*]}"
         printf "%s\n" "#${NC}"
+        echo ''
 
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
             printf "%s\n" "${RED}"
@@ -193,6 +194,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # Clone the repository and install dotfiles.
     clone_repository() {
         
+        test -z "$(command -v git)" && quit 1 "${RED}You need git installed in order to install HomeSetup remotely!"
         test -d "$HOME_SETUP" && quit 1 "${RED}Installation directory already exists and can't be overriden: ${HOME_SETUP}${NC}!"
 
         echo ''

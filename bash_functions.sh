@@ -642,7 +642,7 @@ function cmd() {
     touch "$cmdFile"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: cmd [options <args>] | [cmd_index]"
+        echo "Usage: cmd [options [alias]] | [cmd_index]"
         echo "Options: "
         echo "       : Execute the command specified by <cmd_index> (When no option s provided)."
         echo "    -a : Store a command."
@@ -719,9 +719,10 @@ function dv() {
 
     local repoVer
     local isDifferent
+    local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION'
 
     if test -n "$DOTFILES_VERSION"; then
-        repoVer=$(curl -s -m 3 https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION)
+        repoVer=$(curl -s -m 3 "$VERSION_URL")
         isDifferent=$(test -n "$repoVer" -a "$DOTFILES_VERSION" != "$repoVer" && echo 1)
         test -n "$isDifferent" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}.${NC}"
         test -n "$isDifferent" || echo -e "${GREEN}You version is up to date: ${repoVer} !${NC}"
