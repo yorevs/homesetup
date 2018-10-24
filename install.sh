@@ -219,4 +219,5 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     }
 
     check_inst_method "$@"
-}
+    
+} # this ensures the entire script is downloaded #
