@@ -52,13 +52,6 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         if [ -f bash_colors.sh ]; 
         then 
             source bash_colors.sh
-        else
-            export NC="\e[0m";
-            export RED="\e[1;31m";
-            export GREEN="\e[1;32m";
-            export YELLOW="\e[1;33m";
-            export CYAN="\e[1;36m";
-            export WHITE="\e[1;37m";
         fi
 
         # Check if the user passed the help parameters.
@@ -210,6 +203,11 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         printf "%s\n" "${NC}Cloning HomeSetup from repository ..."
         sleep 1
         command git clone "$REPO_URL" "$HOME_SETUP"
+        # shellcheck disable=SC1091
+        if [ -f "$HOME_SETUP/bash_colors.sh" ]; 
+        then 
+            source "$HOME_SETUP/bash_colors.sh"
+        fi
     }
 
     # Reload the bash and apply the dotfiles.
