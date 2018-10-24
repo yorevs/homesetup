@@ -72,14 +72,16 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
             read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
-            test -z "$ANS" -o "$ANS" = "n" -o "$ANS" = "N" && echo "${NC}" && quit 0
-            echo ''
-            echo "${NC}"
+            if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
+                echo "${NC}" && quit 0
+            else
+                echo ''
+                echo "${NC}"
+                echo "Copying dotfiles into place ..."
+            fi
         else
             OPT='all'
         fi
-        
-        echo "Copying dotfiles into place ..."
         
         # If all option is used, do it at once
         if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
