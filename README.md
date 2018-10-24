@@ -3,11 +3,13 @@
 
 ### 1. Installation
 
-#### 1.1 Clone the repository using the following command:
+#### 1.1 Local installation
+
+Clone the repository using the following command:
 
 `#> git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
 
-#### 1.2 Install dotfiles:
+And then install dotfiles using the following command:
 
 `#> cd ~/HomeSetup && ./install.sh` => **To install one by one**
 
@@ -15,7 +17,17 @@ or
 
 `#> cd ~/HomeSetup && ./install.sh -a` => **To install all files**
 
-Your old dotfiles will be backed up using .bak suffix.
+Your old dotfiles (.bash*) will be backed up using '.bak' suffix.
+
+#### 1.2 Remote installation ( Directly from GitHub )
+
+Use the following command to clone and install the HomeSetup.
+
+`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash`
+
+or
+
+`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash`
 
 ### 2. Dotfiles in this project
 

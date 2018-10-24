@@ -23,9 +23,6 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # GitHub repository URL.
     REPO_URL='https://github.com/yorevs/homesetup.git'
 
-    # GitHub online install command.
-    export INSTALL_CMD='curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash'
-
     # Purpose: Quit the program and exhibits an exit message if specified.
     # @param $1 [Req] : The exit return code.
     # @param $2 [Opt] : The exit message to be displayed.
@@ -49,10 +46,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         clear
 
         # shellcheck disable=SC1091
-        if [ -f bash_colors.sh ]; 
-        then 
-            source bash_colors.sh
-        fi
+        [ -f bash_colors.sh ] && source bash_colors.sh
 
         # Check if the user passed the help parameters.
         test "$1" = '-h' -o "$1" = '--help' && usage
@@ -109,15 +103,6 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             quit 1 "${RED}Unable to find an installation method!${NC}"
         fi
         
-        printf "%s\n" "${BLUE}"
-        echo '#'
-        echo '# Install settings:'
-        echo "# - HOME_SETUP: $HOME_SETUP"
-        echo "# - OPTTIONS: $OPT"
-        echo "# - METHOD: $METHOD"
-        echo "# - FILES: ${ALL_DOTFILES[*]}"
-        printf "%s\n" "#${NC}"
-        
         if [ "${METHOD}" = 'repair' ]; then
             install_dotfiles
         elif [ "${METHOD}" = 'local' ] ; then
@@ -135,6 +120,15 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # Install all dotfiles.
     install_dotfiles() {
         
+        printf "%s\n" "${BLUE}"
+        echo '#'
+        echo '# Install settings:'
+        echo "# - HOME_SETUP: $HOME_SETUP"
+        echo "# - OPTTIONS: $OPT"
+        echo "# - METHOD: $METHOD"
+        echo "# - FILES: ${ALL_DOTFILES[*]}"
+        printf "%s\n" "#${NC}"
+
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
             printf "%s\n" "${RED}"
             read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
@@ -199,14 +193,19 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # Clone the repository and install dotfiles.
     clone_repository() {
         
+        test -d "$HOME_SETUP" && quit 1 "${RED}Installation directory already exists and can't be overriden: ${HOME_SETUP}${NC}!"
+
         echo ''
         printf "%s\n" "${NC}Cloning HomeSetup from repository ..."
         sleep 1
         command git clone "$REPO_URL" "$HOME_SETUP"
-        # shellcheck disable=SC1091
+
         if [ -f "$HOME_SETUP/bash_colors.sh" ]; 
-        then 
+        then
+            # shellcheck disable=SC1090
             source "$HOME_SETUP/bash_colors.sh"
+        else
+            quit 1 "Unable to properly clone the repository!"
         fi
     }
 
