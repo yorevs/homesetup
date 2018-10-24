@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "8e24e3a8-f37c-4050-ac55-0deca138fea8",
+		"name": "Dotfiles",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Hugo Dotfiles",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://homesetup-84064.firebaseio.com/UserCustomData/Dotfiles/Users/Hugo.json",
+					"protocol": "https",
+					"host": [
+						"homesetup-84064",
+						"firebaseio",
+						"com"
+					],
+					"path": [
+						"UserCustomData",
+						"Dotfiles",
+						"Users",
+						"Hugo.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE Hugo Dotfiles",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"aliases\": \"lannas aliases\",\n    \"colors\": \"lannas colors\",\n    \"env\": \"lannas envs\",\n    \"functions\": \"lannas functs\",\n    \"profile\": \"lannas profile\"\n}"
+				},
+				"url": {
+					"raw": "https://homesetup-84064.firebaseio.com/UserCustomData/Dotfiles/Users/Lanna.json",
+					"protocol": "https",
+					"host": [
+						"homesetup-84064",
+						"firebaseio",
+						"com"
+					],
+					"path": [
+						"UserCustomData",
+						"Dotfiles",
+						"Users",
+						"Lanna.json"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

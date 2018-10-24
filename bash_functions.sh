@@ -339,7 +339,7 @@ function tools() {
         "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"
         "node" "java" "python" "ruby" "gcc" "make" "qmake"
         "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
-        "nvm" "npm" "jenv"
+        "nvm" "npm" "jenv" "eslint"
     )
     DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
 
