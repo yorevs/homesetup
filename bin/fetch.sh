@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: ${app.sh}
-# Purpose: ${purpose}
-# Created: Mon DD, YYYY
+#  Script: fetch.sh
+# Purpose: Fetch data using the REST API
+# Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
+#  Mailto: yorevs@gmail.com
+#    Site: https://github.com/yorevs/homesetup
 
 # Current script version.
 VERSION=0.9.0
@@ -19,7 +20,6 @@ Usage: $PROC_NAME [optionals] <mandatories>
 "
 
 # Import pre-defined .bash_colors
-# shellcheck disable=SC1090
 test -f ~/.bash_colors && source ~/.bash_colors
 
 # Purpose: Quit the program and exhibits an exit message if specified.
@@ -49,22 +49,5 @@ version() {
 # Check if the user passed the help or version parameters.
 test "$1" = '-h' -o "$1" = '--help' && usage
 test "$1" = '-v' -o "$1" = '--version' && version
-
-# Loop through the command line options.
-# Short opts: -<C>, Long opts: --<Word>
-while test -n "$1"
-do
-    case "$1" in
-        -s | --stuff)
-            shift
-            # Do stuff
-        ;;
-        
-        *)
-            quit 1 "Invalid option: \"$1\""
-        ;;
-    esac
-    shift
-done
 
 usage

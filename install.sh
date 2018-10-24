@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-{ # this ensures the entire script is downloaded #
+#  Script: install.sh
+# Purpose: Install and configure all dofiles
+# Created: Aug 26, 2008
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@gmail.com
+#    Site: https://github.com/yorevs/homesetup
 
-    #  Script: install.sh
-    # Purpose: Install and configure all dofiles
-    # Created: Aug 26, 2008
-    #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-    #  Mailto: yorevs@gmail.com
-    #    Site: https://github.com/yorevs/homesetup
+{ # this ensures the entire script is downloaded #
 
     # This script name.
     PROC_NAME=$(basename "$0")
@@ -27,17 +27,24 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # @param $1 [Req] : The exit return code.
     # @param $2 [Opt] : The exit message to be displayed.
     quit() {
+        
+        # Unset all declared functions
+        unset -f quit usage version check_inst_method install_dotfiles clone_repository activate_dotfiles
 
-        unset -f quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles
-
-        test -n "$2" -o "$2" != "" && printf "%s\n" "${2}"
-        echo ''
+        test "$1" != '0' -a "$1" != '1' && echo "${RED}"
+        test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
+        test "$1" != '0' -a "$1" != '1' && echo "${NC}"
         exit "$1"
     }
 
     # Usage message.
     usage() {
         quit 1 "$USAGE"
+    }
+
+    # Version message.
+    version() {
+        quit 1 "$VERSION"
     }
 
     # Check which installation method should be used.
@@ -48,8 +55,9 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         # shellcheck disable=SC1091
         [ -f bash_colors.sh ] && source bash_colors.sh
 
-        # Check if the user passed the help parameters.
+        # Check if the user passed the help or version parameters.
         test "$1" = '-h' -o "$1" = '--help' && usage
+        test "$1" = '-v' -o "$1" = '--version' && version
 
         # Loop through the command line options.
         # Short opts: -w, Long opts: --Word
