@@ -23,12 +23,15 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # GitHub repository URL.
     REPO_URL='https://github.com/yorevs/homesetup.git'
 
+    # GitHub online install command.
+    export INSTALL_CMD='curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash'
+
     # Purpose: Quit the program and exhibits an exit message if specified.
     # @param $1 [Req] : The exit return code.
     # @param $2 [Opt] : The exit message to be displayed.
     quit() {
 
-        unset -f quit usage check_inst_method install_dotfiles clone_and_install activate_dotfiles
+        unset -f quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles
 
         test -n "$2" -o "$2" != "" && echo -e "$2"
         echo ''
@@ -39,100 +42,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     usage() {
         quit 1 "$USAGE"
     }
-    
-    # Reload the bash and apply the dotfiles.
-    activate_dotfiles() {
-        
-        echo "${GREEN}Done installing files. Reloading bash ...${NC}"
 
-        # Reload the shell to apply changes
-        sleep 1
-        reset
-
-        echo "${CYAN}"
-        echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
-        echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
-        echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
-        echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
-        echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
-        echo ''
-        echo "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/version") installed!"
-        echo -n "${NC}"
-        echo "${WHITE}"
-        echo '? To reload settings type: #> reload'
-        echo '? To check for updates type: #> dv'
-        echo '? Read README.md for more details about HomeSetup'
-        echo -n "${NC}"
-
-        quit 0
-    }
-    
-    # Install all dotfiles.
-    install_dotfiles() {
-        
-        if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
-            read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
-            if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
-                echo "${NC}" && quit 0
-            else
-                echo ''
-                echo "${NC}"
-                echo "Copying dotfiles into place ..."
-            fi
-        else
-            OPT='all'
-        fi
-        
-        # If all option is used, do it at once
-        if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
-            if ! test -d ~/bin; then
-                # Bin directory
-                echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
-                test -d ~/bin && echo -e '[   OK   ]'
-            else
-                cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
-            fi
-
-            # Bash dotfiles
-            for next in ${ALL_DOTFILES[*]}; do
-                dotfile=~/.${next}
-                if test -f "$dotfile"; then test -h "$dotfile" || mv "$dotfile" "${dotfile}.bak"; fi
-                echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}"
-                test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}"
-            done
-        else
-            if ! test -d "$HOME_SETUP/bin"; then
-                # Bin directory
-                echo ''
-                read -r -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
-                test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv "$HOME_SETUP/bin" ~/ && test -d ~/bin && echo '[ OK ]'
-            else
-                cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
-            fi
-
-            # Bash dotfiles
-            for next in ${ALL_DOTFILES[*]}; do
-                dotfile=~/.${next}
-                echo ''
-                read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
-                test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
-                echo ''
-                echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}"
-                test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}"
-            done
-        fi
-        
-        activate_dotfiles
-    }
-    
-    # Clone the repository and install dotfiles.
-    clone_and_install() {
-        
-        command git clone "$REPO_URL" "$HOME_SETUP"
-    }
-    
     # Check which installation method should be used.
     check_inst_method() {
         
@@ -172,6 +82,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             shift
         done
 
+        # Dotfiles used by HomeSetup
         ALL_DOTFILES=(
             "bashrc"
             "bash_profile"
@@ -185,7 +96,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         test -z "$INSTALL_DIR" && INSTALL_DIR=$(pwd)
 
         # Define the HomeSetup folder.
-        HOME_SETUP=${HOME_SETUP:-$INSTALL_DIR/HomeSetup}
+        HOME_SETUP=${HOME_SETUP:-${INSTALL_DIR/HomeSetup/}/HomeSetup}
         if [ -d "$INSTALL_DIR" ]; then
             touch tmpfile
             test "$?" -eq 0 || quit 1 "${RED}Unable to access the installation directory: ${INSTALL_DIR}${NC}"
@@ -197,10 +108,12 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         # Check the installation method.
         if [ -n "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/VERSION" ]; then
             METHOD='repair'
-        elif [ -z "$DOTFILES_VERSION" ] && [ ! -f "$HOME_SETUP/VERSION" ]; then
+        elif [ -z "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/VERSION" ]; then
             METHOD='local'
-        else
+        elif [ -z "$DOTFILES_VERSION" ] && [ ! -f "$HOME_SETUP/VERSION" ]; then
             METHOD='remote'
+        else
+            quit 1 "${RED}Unable to find an installation method!${NC}"
         fi
         
         echo "${BLUE}"
@@ -211,17 +124,116 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         echo "# - METHOD: $METHOD"
         echo "# - FILES: ${ALL_DOTFILES[*]}"
         echo '#'
-        echo "${YELLOW}"
         
         if [ "${METHOD}" = 'repair' ]; then
             install_dotfiles
         elif [ "${METHOD}" = 'local' ] ; then
             install_dotfiles
+            activate_dotfiles
+        elif [ "${METHOD}" = 'remote' ] ; then
+            clone_repository
+            install_dotfiles
+            activate_dotfiles
         else
-            clone_and_install
+            quit 1 "${RED}Installation method is not valid: ${METHOD}${NC}"
         fi
     }
-
-    check_inst_method "$@"
     
+    # Install all dotfiles.
+    install_dotfiles() {
+        
+        if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
+            echo "${RED}"
+            read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+            if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
+                echo ''
+                test -n "$ANS" && echo ''
+                quit 0 "${NC}Installation cancelled!"
+            else
+                echo ''
+                echo ''
+                echo "${NC}Copying dotfiles into place ..."
+            fi
+            echo "${NC}"
+        else
+            OPT='all'
+        fi
+        
+        # If all option is used, copy all files
+        if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
+            # Bin folder
+            if ! test -d ~/bin; then
+                echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
+                test -d ~/bin && echo -e '[   OK   ]'
+            else
+                cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
+            fi
+
+            # Copy all dotfiles
+            for next in ${ALL_DOTFILES[*]}; do
+                dotfile=~/.${next}
+                if test -f "$dotfile"; then test -h "$dotfile" || mv "$dotfile" "${dotfile}.bak"; fi
+                echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}"
+                test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}"
+            done
+        else
+            # Bin folder
+            if ! test -d ~/bin; then
+                echo ''
+                read -r -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
+                test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv "$HOME_SETUP/bin" ~/ && test -d ~/bin && echo '[ OK ]'
+            else
+                cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
+            fi
+
+            # Copy all dotfiles
+            for next in ${ALL_DOTFILES[*]}; do
+                dotfile=~/.${next}
+                echo ''
+                read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
+                test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
+                echo ''
+                echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}"
+                test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}"
+            done
+        fi
+
+        echo ''
+    }
+    
+    # Clone the repository and install dotfiles.
+    clone_repository() {
+        
+        command git clone "$REPO_URL" "$HOME_SETUP"
+    }
+
+    # Reload the bash and apply the dotfiles.
+    activate_dotfiles() {
+        
+        sleep 1
+        echo ''
+        echo "${GREEN}Done installing files. Reloading bash ...${NC}"
+
+        echo "${CYAN}"
+        echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
+        echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
+        echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
+        echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
+        echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
+        echo ''
+        echo "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/version") installed!"
+        echo "${WHITE}"
+        echo "? To activate dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+        echo "? To reload settings type: #> ${GREEN}reload${NC}"
+        echo "? To check for updates type: #> ${GREEN}dv${NC}"
+        echo '? Check README.md for full details about your new HomeSetup'
+        echo -n "${NC}"
+
+        quit 0
+    }
+    
+    check_inst_method "$@"
+
 } # this ensures the entire script is downloaded #
