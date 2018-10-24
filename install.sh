@@ -33,7 +33,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
 
         unset -f quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles
 
-        test -n "$2" -o "$2" != "" && echo -e "$2"
+        test -n "$2" -o "$2" != "" && printf "%s\n" "${2}"
         echo ''
         exit "$1"
     }
@@ -116,14 +116,14 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             quit 1 "${RED}Unable to find an installation method!${NC}"
         fi
         
-        echo "${BLUE}"
+        printf "%s\n" "${BLUE}"
         echo '#'
         echo '# Install settings:'
         echo "# - HOME_SETUP: $HOME_SETUP"
         echo "# - OPTTIONS: $OPT"
         echo "# - METHOD: $METHOD"
         echo "# - FILES: ${ALL_DOTFILES[*]}"
-        echo '#'
+        printf "%s\n" "#${NC}"
         
         if [ "${METHOD}" = 'repair' ]; then
             install_dotfiles
@@ -143,7 +143,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     install_dotfiles() {
         
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
-            echo "${RED}"
+            printf "%s\n" "${RED}"
             read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
             if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
                 echo ''
@@ -152,9 +152,9 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             else
                 echo ''
                 echo ''
-                echo "${NC}Copying dotfiles into place ..."
+                printf "%s\n" "${NC}Copying dotfiles into place ..."
             fi
-            echo "${NC}"
+            printf "%s\n" "${NC}"
         else
             OPT='all'
         fi
@@ -164,7 +164,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             # Bin folder
             if ! test -d ~/bin; then
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
-                test -d ~/bin && echo -e '[   OK   ]'
+                test -d ~/bin && printf "%s\n" '[   OK   ]'
             else
                 cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
             fi
@@ -174,8 +174,8 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 dotfile=~/.${next}
                 if test -f "$dotfile"; then test -h "$dotfile" || mv "$dotfile" "${dotfile}.bak"; fi
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}"
-                test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}"
+                test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
+                test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
             done
         else
             # Bin folder
@@ -195,8 +195,8 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
                 echo ''
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                test -f "$dotfile" && echo -e "${GREEN}[   OK   ]${NC}"
-                test -f "$dotfile" || echo -e "${RED}[ FAILED ]${NC}"
+                test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
+                test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
             done
         fi
 
@@ -207,7 +207,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     clone_repository() {
         
         echo ''
-        echo "${NC}Cloning HomeSetup from repository ..."
+        printf "%s\n" "${NC}Cloning HomeSetup from repository ..."
         sleep 1
         command git clone "$REPO_URL" "$HOME_SETUP"
     }
@@ -217,22 +217,22 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         
         sleep 1
         echo ''
-        echo "${GREEN}Done installing files. Reloading bash ...${NC}"
+        printf "%s\n" "${GREEN}Done installing files. Reloading bash ...${NC}"
 
-        echo "${CYAN}"
+        printf "%s\n" "${CYAN}"
         echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
         echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
         echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
         echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
         echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
         echo ''
-        echo "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/version") installed!"
-        echo "${WHITE}"
-        echo "? To activate dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
-        echo "? To reload settings type: #> ${GREEN}reload${NC}"
-        echo "? To check for updates type: #> ${GREEN}dv${NC}"
+        printf "%s\n" "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/version") installed!"
+        printf "%s\n" "${WHITE}"
+        printf "%s\n" "? To activate dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+        printf "%s\n" "? To reload settings type: #> ${GREEN}reload${NC}"
+        printf "%s\n" "? To check for updates type: #> ${GREEN}dv${NC}"
         echo '? Check README.md for full details about your new HomeSetup'
-        echo -n "${NC}"
+        printf "%s\n" "${NC}"
 
         quit 0
     }
