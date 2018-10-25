@@ -7,11 +7,11 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-#
-# inspiRED by: https://github.com/mathiasbynens/dotfiles
+# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.prompt
 
-# Shell prompt based.
+# inspiRED by: https://github.com/mathiasbynens/dotfiles
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
+# Improved with: http://ezprompt.net
 
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
     export TERM='gnome-256color';

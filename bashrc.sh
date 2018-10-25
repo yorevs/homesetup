@@ -6,6 +6,13 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
+# !NOTICE: Do not change this file. To customize your shell create the custom files: 
+#   .aliases    : To customize your aliases
+#   .colors     : To customize your colors
+#   .env        : To customize your environment variables
+#   .functions  : To customize your functions
+#   .profile    : To customize your profile
+#   .prompt     : To customize your prompt
 
 # If not running interactively, don't do anything.
 [ -z "$PS1" ] && return

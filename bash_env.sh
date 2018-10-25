@@ -6,6 +6,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
+# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.env
 
 # Home Sweet Homes
 command -v java >/dev/null && export JAVA_HOME="/Library/Java/JavaVirtualMachines/Current/Contents/Home"

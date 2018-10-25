@@ -8,7 +8,8 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-#
+# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.aliases
+
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 
 # Removes all aliases before setting them
