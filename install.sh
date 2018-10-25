@@ -8,7 +8,7 @@
 #  Mailto: yorevs@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 
-{ # this ensures the entire script is downloaded #
+{
 
     # This script name.
     PROC_NAME=$(basename "$0")
@@ -246,4 +246,4 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     
     check_inst_method "$@"
 
-} # this ensures the entire script is downloaded #
+}
