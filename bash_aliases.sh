@@ -116,13 +116,17 @@ alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false 
 alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Canonical hex dump; some systems have this symlinked
-command -v hd >/dev/null || alias hd="hexdump -C"
+command -v hd >/dev/null || alias hd='hexdump -C'
 
 # macOS has no `md5sum`, so use `md5` as a fallback
-command -v md5sum >/dev/null || alias md5sum="md5"
+command -v md5sum >/dev/null || alias md5sum='md5'
 
 # macOS has no `sha1sum`, so use `shasum` as a fallback
-command -v sha1sum >/dev/null || alias sha1sum="sha1"
+command -v sha1sum >/dev/null || alias sha1sum='sha1'
+
+# GPG encryption/decryption shortcut
+command -v gpg >/dev/null && alias encrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: encrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 -c $2 &> /dev/null; };_'
+command -v gpg >/dev/null && alias decrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: decrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 $2 &> /dev/null; };_'
 
 # -----------------------------------------------------------------------------------
 # Git Stuff

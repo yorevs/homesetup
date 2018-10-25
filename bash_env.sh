@@ -37,3 +37,11 @@ export HISTFILESIZE=500
 export LANG=en_US.UTF-8
 export LC_CTYPE=UTF-8
 export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+
+# Development tools. To override it please export the same variable at ~/.env
+export DEFAULT_DEV_TOOLS=(
+    "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"
+    "node" "java" "python" "ruby" "gcc" "make" "qmake"
+    "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
+    "nvm" "npm" "jenv" "eslint" "gpg" "base64"
+)

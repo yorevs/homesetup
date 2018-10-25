@@ -335,13 +335,7 @@ function tc() {
 # Purpose: Check if the development tools are installed on the system.
 function tools() {
 
-    DEFAULT_TOOLS=(
-        "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"
-        "node" "java" "python" "ruby" "gcc" "make" "qmake"
-        "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
-        "nvm" "npm" "jenv" "eslint"
-    )
-    DEV_APPS=${DEV_APPS:-${DEFAULT_TOOLS[@]}}
+    DEV_APPS=${DEV_APPS:-${DEFAULT_DEV_TOOLS[*]}}
 
     echo ''
     for app in ${DEV_APPS[*]}; do
