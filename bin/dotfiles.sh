@@ -110,15 +110,29 @@ cmd_firebase() {
     shift
     args=( "$@" )
 
-    echo "T: $task"
-    echo "A: ${args[*]}"
-
     test -z "${args[*]}" -a "$task" != 'setup' && quit 2 "Invalid number of arguments for task: \"$task\" !"
 
     shopt -s nocasematch
     case "$task" in
         setup)
-            echo "TODO Setup"
+            test -f "$FIREBASE_FILE" && rm -f "$FIREBASE_FILE"
+            while [ ! -f "$FIREBASE_FILE" ];
+            do
+                clear
+                local setupContent=""
+                echo "### Firebase setup"
+                echo "-------------------------------"
+                read -r -p 'Please type you Project ID: ' ANS
+                [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID${NC}" && sleep 1 && continue
+                setupContent="${setupContent}PROJECT_ID=${ANS}\n"
+                read -r -p 'Please type a password to encrypt you data: ' ANS
+                [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password${NC}" && sleep 1 && continue
+                setupContent="${setupContent}PROJECT_ID=${ANS}\n"
+                echo -e '# Your Firebase credentials:\n' > "$FIREBASE_FILE"
+                echo -e "$setupContent" >> "$FIREBASE_FILE"
+            done
+            printf '%s\n' "${GREEN}Configuration successfull!${NC}"
+            echo ''
         ;;
         upload)
             test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
