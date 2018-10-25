@@ -27,12 +27,13 @@ test -f ~/.bash_colors && source ~/.bash_colors
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
     
+    test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
+    test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
+    test "$1" != '0' -a "$1" != '1' && printf "%s" "${NC}"
+
     # Unset all declared functions
     unset -f quit usage version 
-
-    test "$1" != '0' -a "$1" != '1' && echo "${RED}"
-    test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    test "$1" != '0' -a "$1" != '1' && echo "${NC}"
+    
     exit "$1"
 }
 
