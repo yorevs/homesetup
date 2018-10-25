@@ -361,13 +361,16 @@ function aa() {
     local pad
     local pad_len
     local allAliases
+    local isSorted=0
 
     if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: aa [alias] [alias_expr]"
-        echo "Options: "
-        echo "    - List all aliases  : When both <alias> and <alias_expr> are NOT provided."
-        echo "    - Add/Set an alias  : When both <alias> and <alias_expr> are provided."
-        echo "    - Remove the alias  : When <alias> is provided but <alias_expr> is not provided."
+        echo 'Usage: aa [-s|--sort] [alias] [alias_expr]'
+        echo ''
+        echo 'Options: '
+        echo '           -s | --sort    : Sort results ASC.'
+        echo '      List all aliases    : When both [alias] and [alias_expr] are NOT provided.'
+        echo '      Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
+        echo '      Remove the alias    : When [alias] is provided but [alias_expr] is not provided.'
         return 1
     else
         aliasFile="$HOME/.aliases"
@@ -378,13 +381,14 @@ function aa() {
             return 0
         fi
 
+        test "$1" = '-s' -o "$1" = "--sort" && isSorted=1 && shift
         aliasName="$1"
         shift
         aliasExpr="$*"
 
         if test -z "$aliasName" -a -z "$aliasExpr"; then
             # List all aliases
-            allAliases=$(grep . "$aliasFile")
+            test "$isSorted" = "0" && allAliases=$(grep . "$aliasFile") || allAliases=$(grep . "$aliasFile" | sort)
             if test -n "$allAliases"; then
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=30
