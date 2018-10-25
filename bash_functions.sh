@@ -133,6 +133,9 @@ function jp() {
     return 0
 }
 
+# Remove the function is json_pp is not installed.
+command -v json_pp >/dev/null || unset jp
+
 # Purpose: Check information about the IP.
 # @param $1 [Req] : The IP to get information about.
 function ip-info() {
@@ -469,22 +472,6 @@ function save() {
     return 0
 }
 
-# Purpose: Highlight words matching pattern.
-# TODO
-function hl() {
-    #local word
-
-    #HIGHLIGHT_COLOR='\\e[4;37;104m'
-    #NORMAL='\\e[0m'
-    #word="${HIGHLIGHT_COLOR}${1}${NORMAL}"
-
-    while read -r data; do
-        #local hlWord=$(echo "$data" | sed "s#$1#$word#g")
-        #printf "$hlWord"
-        printf "$data"
-    done
-}
-
 # Purpose: cd into the saved directory issued by `save`.
 # @param $1 [Opt] : The alias to access the directory saved.
 function load() {
@@ -707,6 +694,23 @@ function cmd() {
 
     return 0
 }
+
+
+# Purpose: Highlight words matching pattern.
+# TODO Experimental
+#function hl() {
+    #local word
+
+    #HIGHLIGHT_COLOR='\\e[4;37;104m'
+    #NORMAL='\\e[0m'
+    #word="${HIGHLIGHT_COLOR}${1}${NORMAL}"
+
+    #while read -r data; do
+        #local hlWord=$(echo "$data" | sed "s#$1#$word#g")
+        #printf "$hlWord"
+        #printf "$data"
+    #done
+#}
 
 # Check the latest dotfiles version
 function dv() {

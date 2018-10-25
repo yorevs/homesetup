@@ -22,6 +22,7 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ~='cd ~'
 alias -- -='cd -'
+
 # shellcheck disable=SC2035,SC2139
 alias ?='pwd'
 
@@ -74,14 +75,16 @@ alias now='date +"%d-%m-%Y %T"'
 alias now-ms='date "+%s%S"'
 
 # macOS has no `wget, so using curl instead`
-alias wget='curl -O'
+command -v wget >/dev/null || alias wget='curl -O'
 
-# Evaluate mathematical expression
-alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'
+if [ "$(command -v python)" ]; then
+    # Evaluate mathematical expression
+    alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'
 
-# URL-encode strings
-alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+    # URL-encode strings
+    alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+    alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+fi
 
 # -----------------------------------------------------------------------------------
 # IP related
@@ -103,17 +106,21 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
 # Flush Directory Service cache
-alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+command -v dscacheutil >/dev/null && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
 # Clean up LaunchServices to remove duplicates in the “Open With” menu
-alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+command -v lsregister >/dev/null && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
 # Show/hide hidden files in Finder
-alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+command -v defaults >/dev/null && alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+command -v defaults >/dev/null && alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
-# set JAVA_HOME using jenv
-alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
+# Set JAVA_HOME using jenv
+command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
+
+# GPG encryption/decryption shortcut
+command -v gpg >/dev/null && alias encrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: encrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 -c $2 &> /dev/null; };_'
+command -v gpg >/dev/null && alias decrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: decrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 $2 &> /dev/null; };_'
 
 # Canonical hex dump; some systems have this symlinked
 command -v hd >/dev/null || alias hd='hexdump -C'
@@ -122,43 +129,44 @@ command -v hd >/dev/null || alias hd='hexdump -C'
 command -v md5sum >/dev/null || alias md5sum='md5'
 
 # macOS has no `sha1sum`, so use `shasum` as a fallback
+command -v sha1 >/dev/null || alias sha1='shasum'
 command -v sha1sum >/dev/null || alias sha1sum='sha1'
-
-# GPG encryption/decryption shortcut
-command -v gpg >/dev/null && alias encrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: encrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 -c $2 &> /dev/null; };_'
-command -v gpg >/dev/null && alias decrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: decrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 $2 &> /dev/null; };_'
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
-
-alias gs='git status'
-alias gf='git fetch'
-alias gco='git checkout'
-alias gta='git add'
-alias gb='git branch'
-alias gd='git diff'
-alias gp='git pull'
-alias gprb='git pull --rebase'
-alias gl='git log --oneline --graph --decorate'
-alias gcm='git commit -m'
-alias gca='git commit --amend --no-edit'
-alias gtps='git push origin HEAD'
-alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
-alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
-alias git-show='git diff-tree --no-commit-id --name-status -r'
-alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
+if [ "$(command -v git)" ]; then
+    alias gs='git status'
+    alias gf='git fetch'
+    alias gco='git checkout'
+    alias gta='git add'
+    alias gb='git branch'
+    alias gd='git diff'
+    alias gp='git pull'
+    alias gprb='git pull --rebase'
+    alias gl='git log --oneline --graph --decorate'
+    alias gcm='git commit -m'
+    alias gca='git commit --amend --no-edit'
+    alias gtps='git push origin HEAD'
+    alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
+    alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
+    alias git-show='git diff-tree --no-commit-id --name-status -r'
+    alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
+fi
 
 # -----------------------------------------------------------------------------------
 # Gradle Stuff
-alias gwb='gradle clean build -x test'
-alias gwr='gradle bootRun'
-alias gwi='gradle init'
-alias gww='gradle wrapper --gradle-version'
+if [ "$(command -v gradle)" ]; then
+    alias gwb='gradle clean build -x test'
+    alias gwr='gradle bootRun'
+    alias gwi='gradle init'
+    alias gww='gradle wrapper --gradle-version'
+fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
-
-alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+if [ "$(command -v docker)" ]; then
+    alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+fi
 
 # -----------------------------------------------------------------------------------
 # Directory Shortcuts
