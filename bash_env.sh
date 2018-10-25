@@ -28,11 +28,14 @@ export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-$HOME/.Trash}"
 
 # shellcheck disable=SC2155
-export DOTFILES_VERSION=$(grep . "$HOME_SETUP/VERSION")
+export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
-export HISTSIZE=${HISTSIZE:-500}
-export HISTFILESIZE=${HISTFILESIZE:-500}
+export HISTSIZE=${HISTSIZE:-1000}
+export HISTFILESIZE=${HISTFILESIZE:-2000}
+
+# Don't put duplicate lines in the history.
+export HISTCONTROL=ignoredups:ignorespace
 
 # Languages and encodings
 export LANG=${LANG:-en_US.UTF-8}

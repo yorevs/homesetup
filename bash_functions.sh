@@ -437,7 +437,7 @@ function save() {
 
     local dir
     local dirAlias="SAVED_DIR"
-    local savedDirs="$HOME/.saved_dir"
+    SAVED_DIRS=${SAVED_DIRS:-$HOME/.saved_dir}
 
     test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
     test -z "$dirAlias" && dirAlias="SAVED_DIR"
@@ -450,12 +450,12 @@ function save() {
         echo "    -c : Clear all saved dirs."
         return 1
     elif test "$1" = "-e"; then
-        vi "$savedDirs"
+        vi "$SAVED_DIRS"
     elif test "$1" = "-r"; then
-        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
+        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$SAVED_DIRS"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     elif test "$1" = "-c"; then
-        echo '' >"$savedDirs"
+        echo '' >"$SAVED_DIRS"
         echo "${YELLOW}All saved directories have been removed!${NC}"
     else
         dir="$1"
@@ -463,9 +463,9 @@ function save() {
         test -n "$dir" -a "$dir" = ".." && dir=${dir//../$(pwd)}
         test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
         test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
-        touch "$savedDirs"
-        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$savedDirs"
-        echo "$dirAlias=$dir" >>"$savedDirs"
+        touch "$SAVED_DIRS"
+        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$SAVED_DIRS"
+        echo "$dirAlias=$dir" >>"$SAVED_DIRS"
         echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
 
@@ -481,7 +481,7 @@ function load() {
     local dir
     local pad
     local pad_len
-    local savedDirs="$HOME/.saved_dir"
+    SAVED_DIRS=${SAVED_DIRS:-$HOME/.saved_dir}
 
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: load [-l] | [dir_alias]"
@@ -489,7 +489,7 @@ function load() {
         echo "    -l : List all saved dirs."
         return 1
     elif test "$1" = "-l"; then
-        allDirs=$(grep . "$savedDirs" | sort)
+        allDirs=$(grep . "$SAVED_DIRS" | sort)
         if test -n "$allDirs"; then
             pad=$(printf '%0.1s' "."{1..60})
             pad_len=20
@@ -508,12 +508,12 @@ function load() {
             )
             echo "${NC}"
         else
-            echo "${YELLOW}No directories were saved yet \"$savedDirs\" !${NC}"
+            echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
         fi
     else
         test -n "$1" && dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         test -z "$dirAlias" && dirAlias="SAVED_DIR"
-        dir=$(grep -m 1 "^${dirAlias}=" "$savedDirs" | awk -F '=' '{ print $2 }')
+        dir=$(grep -m 1 "^${dirAlias}=" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
         test -z "$dir" -o ! -d "$dir" && echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}" && return 1
         test -n "$dir" -a -d "$dir" && cd "$dir" || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
@@ -609,7 +609,7 @@ function plist() {
 }
 
 # Purpose: Add/Remove/List/Execute saved bash commands.
-# @param $1 [Opt] : The command options
+# @param $1 [Opt] : The command options.
 function cmd() {
 
     local cmdName
@@ -618,9 +618,9 @@ function cmd() {
     local allCmds
     local pad
     local pad_len
-    local cmdFile="$HOME/.myCommands"
+    CMD_FILE=${CMD_FILE:-$HOME/.cmd_file}
 
-    touch "$cmdFile"
+    touch "$CMD_FILE"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: cmd [options [alias]] | [cmd_index]"
@@ -633,7 +633,7 @@ function cmd() {
     else
         case "$1" in
         -e | --edit)
-            vi "$cmdFile"
+            vi "$CMD_FILE"
             return 0
             ;;
         -a | --add)
@@ -642,23 +642,23 @@ function cmd() {
             shift
             cmdExpr="$*"
             test -z "cmdName" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
-            sed -i '' -E -e "s#(^Command $cmdName: .*)?##" -e '/^\s*$/d' "$cmdFile"
-            echo "Command $cmdName: $cmdExpr" >>"$cmdFile"
+            sed -i '' -E -e "s#(^Command $cmdName: .*)?##" -e '/^\s*$/d' "$CMD_FILE"
+            echo "Command $cmdName: $cmdExpr" >>"$CMD_FILE"
             ;;
         -r | --remove)
             shift
             cmdId=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
             local re='^[1-9]+$'
             if [[ $cmdId =~ $re ]]; then
-                cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $0 }')
-                sed -i '' -E -e "s#(^$cmdExpr)?##" -e '/^\s*$/d' "$cmdFile"
+                cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $0 }')
+                sed -i '' -E -e "s#(^$cmdExpr)?##" -e '/^\s*$/d' "$CMD_FILE"
             else
                 test -z "cmdId" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
-                sed -i '' -E -e "s#(^Command $cmdId: .*)?##" -e '/^\s*$/d' "$cmdFile"
+                sed -i '' -E -e "s#(^Command $cmdId: .*)?##" -e '/^\s*$/d' "$CMD_FILE"
             fi
             ;;
         -l | --list)
-            allCmds=$(grep . "$cmdFile")
+            allCmds=$(grep . "$CMD_FILE")
             if test -n "$allCmds"; then
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=20
@@ -681,7 +681,7 @@ function cmd() {
             fi
             ;;
         [1-9]*)
-            cmdExpr=$(awk "NR==$1" "$cmdFile" | awk -F ': ' '{ print $2 }')
+            cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
             echo "#> $cmdExpr"
             eval "$cmdExpr"
             ;;

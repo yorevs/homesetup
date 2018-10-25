@@ -7,6 +7,9 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 
+# If not running interactively, don't do anything.
+[ -z "$PS1" ] && return
+
 # Source global definitions
 if [ -f /etc/bashrc ]
 then
