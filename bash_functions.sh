@@ -721,7 +721,7 @@ function dv() {
 
     local repoVer
     local isDifferent
-    local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/VERSION'
+    local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
 
     if test -n "$DOTFILES_VERSION"; then
         repoVer=$(curl -s -m 3 "$VERSION_URL")
