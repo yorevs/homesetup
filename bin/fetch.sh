@@ -25,6 +25,7 @@ Usage: $PROC_NAME <method> [options] <url>
         --headers <json_headers>    : The http request headers.
         --body    <json_body>       : The http request body (payload).
         --format                    : Format the json response.
+        --silent                    : Omits all informational messages.
 "
 
 # Import pre-defined .bash_colors
@@ -76,25 +77,28 @@ shopt -u nocasematch
 # Loop through the command line options.
 while test -n "$1"; do
     case "$1" in
-    --headers)
-        shift
-        IFS=','
-        arr=("$1")
-        for h in ${arr[*]}; do
-            HEADERS="$HEADERS -H $h"
-        done
-        IFS=' '
+        --headers)
+            shift
+            IFS=','
+            arr=("$1")
+            for h in ${arr[*]}; do
+                HEADERS="$HEADERS -H $h"
+            done
+            IFS=' '
         ;;
-    --body)
-        shift
-        BODY="$1"
+        --body)
+            shift
+            BODY="$1"
         ;;
-    --format)
-        FORMAT=1
+        --format)
+            FORMAT=1
         ;;
-    *)
-        URL="$*"
-        break
+        --silent)
+            SILENT=1
+        ;;
+        *)
+            URL="$*"
+            break
         ;;
     esac
     shift
@@ -126,7 +130,7 @@ do_fetch() {
     if test -n "$HEADERS" -a -z "${BODY}"; then curl -X "${METHOD}" "${URL}" 2>/dev/null; return $?; fi
 }
 
-echo "Fetching (${METHOD}) $URL ..."
+test -z "${SILENT}" && echo "Fetching (${METHOD}) $URL ..."
 
 do_fetch
 ret=$?

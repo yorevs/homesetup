@@ -37,7 +37,7 @@ quit() {
     test "$1" != '0' -a "$1" != '1' && printf "%s" "${NC}"
 
     # Unset all declared functions
-    unset -f quit usage version exec_command cmd_help cmd_firebase
+    unset -f quit usage version exec_command cmd_help cmd_firebase load_fb_settings
 
     exit "$1"
 }
@@ -55,6 +55,32 @@ version() {
 # Check if the user passed the help or version parameters.
 test "$1" = '-h' -o "$1" = '--help' && usage
 test "$1" = '-v' -o "$1" = '--version' && version
+
+# TODO
+FIREBASE_FILE=${FIREBASE_FILE:-$HOME/.firebase}
+
+# TODO
+DOTFILES_FILE=${DOTFILES_FILE:-$HOME_SETUP/dotfiles.json}
+
+# Loads Firebase settings from file.
+load_fb_settings() {
+
+    test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
+    # shellcheck disable=SC1090
+    test -f "$FIREBASE_FILE" && source "$FIREBASE_FILE"
+    [ -z "$PROJECT_ID" ] || [ -z "$FIREBASE_URL" ] || [ -z "$PASSPHRASE" ] && quit 2 "Invalid settings file!"
+    return 0
+}
+
+# Download the User dotfiles from Firebase.
+download_dotfiles() {
+
+    fetch.sh GET --silent "$FIREBASE_URL" &> "$DOTFILES_FILE"
+    ret=$?
+    test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully loaded from ${args[0]}${NC}"
+    test $ret -eq 0 || quit 2 "${RED}Failed to load Dotfiles from ${args[0]}${NC}"
+    return $ret
+}
 
 # Execute a dotfiles command.
 exec_command() {
@@ -113,7 +139,6 @@ cmd_firebase() {
     local f_env
     local f_functions
     local f_profile
-    FIREBASE_FILE=${FIREBASE_FILE:-$HOME/.firebase}
     task="$1"
     shift
     args=( "$@" )
@@ -145,9 +170,7 @@ cmd_firebase() {
             return 0
         ;;
         upload)
-            test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
-            # shellcheck disable=SC1090
-            test -f "$FIREBASE_FILE" && source "$FIREBASE_FILE"
+            load_fb_settings
             test -f "$HOME"/.aliases && f_aliases=$(grep . "$HOME"/.aliases | base64)
             test -f "$HOME"/.colors && f_colors=$(grep . "$HOME"/.colors | base64)
             test -f "$HOME"/.env && f_env=$(grep . "$HOME"/.env | base64)
@@ -163,17 +186,32 @@ cmd_firebase() {
             match=', } }'
             repl=' } }'
             body="${body//$match/$repl}"
-            fetch.sh PATCH --body "$body" "$FIREBASE_URL" &> /dev/null
+            fetch.sh PATCH --silent --body "$body" "$FIREBASE_URL" &> /dev/null
             ret=$?
             test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully saved as ${args[0]}${NC}"
-            test $ret -eq 0 || echo "${RED}Failed to save Dotfiles as ${args[0]}${NC}"
-            return $ret
+            test $ret -eq 0 || quit 2 "${RED}Failed to save Dotfiles as ${args[0]}${NC}"
+            return 0
         ;;
         download)
-            echo "TODO Download"
+            load_fb_settings
+            download_dotfiles
+            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"aliases\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
+            f_colors=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"colors\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
+            f_env=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"env\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
+            f_functions=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"functions\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
+            f_profile=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"profile\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
+            echo "$f_aliases" > aliases
+            echo "$f_colors" > colors
+            echo "$f_env" > env
+            echo "$f_functions" > functions
+            echo "$f_profile" > profile
+            return 0
         ;;
         merge)
-            echo "TODO Merge"
+            load_fb_settings
+            download_dotfiles
+            # TODO Parse the json response
+            return 0
         ;;
         *)
             quit 2 "Invalid firebase task: \"$task\" !"
