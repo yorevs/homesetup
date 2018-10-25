@@ -120,13 +120,14 @@ format_json() {
 # Do the request
 do_fetch() {
 
-    test -z "$HEADERS" -a -z "${BODY}" && curl -X "${METHOD}" "${URL}" 2>/dev/null | format_json
-    test -z "$HEADERS" -a -n "${BODY}" && curl -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null | format_json
-    test -n "$HEADERS" -a -n "${BODY}" && curl -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null | format_json
-    test -n "$HEADERS" -a -z "${BODY}" && curl -X "${METHOD}" "${URL}" 2>/dev/null | format_json
+    if test -z "$HEADERS" -a -z "${BODY}"; then curl -X "${METHOD}" "${URL}" 2>/dev/null; return $?; fi
+    if test -z "$HEADERS" -a -n "${BODY}"; then curl -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null; return $?; fi
+    if test -n "$HEADERS" -a -n "${BODY}"; then curl -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null; return $?; fi
+    if test -n "$HEADERS" -a -z "${BODY}"; then curl -X "${METHOD}" "${URL}" 2>/dev/null; return $?; fi
 }
 
 echo "Fetching (${METHOD}) $URL ..."
-do_fetch
 
-quit 0
+do_fetch
+ret=$?
+quit $ret

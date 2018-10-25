@@ -105,7 +105,14 @@ cmd_help() {
 # Execute a Firebase command
 cmd_firebase() {
 
+    local body
+    local f_aliases
+    local f_colors
+    local f_env
+    local f_functions
+    local f_profile
     FIREBASE_FILE=${FIREBASE_FILE:-$HOME/.firebase}
+    FIREBASE_URL="https://homesetup-84064.firebaseio.com/Dotfiles.json"
     task="$1"
     shift
     args=( "$@" )
@@ -127,7 +134,7 @@ cmd_firebase() {
                 setupContent="${setupContent}PROJECT_ID=${ANS}\n"
                 read -r -p 'Please type a password to encrypt you data: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password${NC}" && sleep 1 && continue
-                setupContent="${setupContent}PROJECT_ID=${ANS}\n"
+                setupContent="${setupContent}PASSPHRASE=${ANS}\n"
                 echo -e '# Your Firebase credentials:\n' > "$FIREBASE_FILE"
                 echo -e "$setupContent" >> "$FIREBASE_FILE"
             done
@@ -138,6 +145,25 @@ cmd_firebase() {
             test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
             # shellcheck disable=SC1090
             test -f "$FIREBASE_FILE" && source "$FIREBASE_FILE"
+            test -f "$HOME"/.aliases && f_aliases=$(grep . "$HOME"/.aliases | base64)
+            test -f "$HOME"/.colors && f_colors=$(grep . "$HOME"/.colors | base64)
+            test -f "$HOME"/.env && f_env=$(grep . "$HOME"/.env | base64)
+            test -f "$HOME"/.functions && f_functions=$(grep . "$HOME"/.functions | base64)
+            test -f "$HOME"/.profile && f_profile=$(grep . "$HOME"/.profile | base64)
+            body="{ \"${args[0]}\" : { "
+            test -f "$HOME"/.aliases && body="${body}\"aliases\" : \"$f_aliases\","
+            test -f "$HOME"/.colors && body="${body}\"colors\" : \"$f_colors\","
+            test -f "$HOME"/.env && body="${body}\"env\" : \"$f_env\","
+            test -f "$HOME"/.functions && body="${body}\"functions\" : \"$f_functions\","
+            test -f "$HOME"/.profile && body="${body}\"profile\" : \"$f_profile\""
+            body="${body}, } }"
+            match=', } }'
+            repl=' } }'
+            body="${body//$match/$repl}"
+            fetch.sh PATCH --body "$body" "$FIREBASE_URL" &> /dev/null
+            ret=$?
+            test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully saved as ${args[0]}${NC}"
+            test $ret -eq 0 || echo "${RED}Failed to save Dotfiles as ${args[0]}${NC}"
         ;;
         download)
             echo "TODO Download"
