@@ -64,16 +64,18 @@ exec_command() {
         # Do stuff related to firebase
         cmd_firebase)
             cmd_firebase "$@"
+            ret=$?
         ;;
         cmd_help)
             cmd_help "$@"
+            ret=$?
         ;;
         *)
             quit 1 "Invalid command \"${COMMAND}\" !"
         ;;
     esac
     shopt -u nocasematch
-    quit 0
+    quit $ret
 }
 
 # Provides a help about the command.
@@ -112,7 +114,6 @@ cmd_firebase() {
     local f_functions
     local f_profile
     FIREBASE_FILE=${FIREBASE_FILE:-$HOME/.firebase}
-    FIREBASE_URL="https://homesetup-84064.firebaseio.com/Dotfiles.json"
     task="$1"
     shift
     args=( "$@" )
@@ -130,16 +131,18 @@ cmd_firebase() {
                 echo "### Firebase setup"
                 echo "-------------------------------"
                 read -r -p 'Please type you Project ID: ' ANS
-                [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID${NC}" && sleep 1 && continue
+                [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PROJECT_ID=${ANS}\n"
+                setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/Dotfiles.json\n"
                 read -r -p 'Please type a password to encrypt you data: ' ANS
-                [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password${NC}" && sleep 1 && continue
+                [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PASSPHRASE=${ANS}\n"
                 echo -e '# Your Firebase credentials:\n' > "$FIREBASE_FILE"
                 echo -e "$setupContent" >> "$FIREBASE_FILE"
             done
             printf '%s\n' "${GREEN}Configuration successfull!${NC}"
             echo ''
+            return 0
         ;;
         upload)
             test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
@@ -164,6 +167,7 @@ cmd_firebase() {
             ret=$?
             test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully saved as ${args[0]}${NC}"
             test $ret -eq 0 || echo "${RED}Failed to save Dotfiles as ${args[0]}${NC}"
+            return $ret
         ;;
         download)
             echo "TODO Download"
