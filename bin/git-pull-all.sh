@@ -4,7 +4,7 @@
 # Purpose: Pull all projects within the specified path to the given repository/branch
 # Created: Mar 21, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@gmail.com
+#  Mailto: yorevs@hotmail.com
 
 # Current script version.
 VERSION=0.9.0

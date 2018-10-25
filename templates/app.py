@@ -3,7 +3,7 @@
   @purpose: ${purpose}
   @created: Mon DD, YYYY
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-   @mailto: yorevs@gmail.com
+   @mailto: yorevs@hotmail.com
 """
 
 import sys, os, getopt

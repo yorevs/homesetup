@@ -4,7 +4,7 @@
 # Purpose: Change the hostname permanently
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@gmail.com
+#  Mailto: yorevs@hotmail.com
 
 # Current script version.
 VERSION=1.0.0

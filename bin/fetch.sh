@@ -5,7 +5,7 @@
 # Purpose: Fetch data using the REST API
 # Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@gmail.com
+#  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 
 # Current script version.
