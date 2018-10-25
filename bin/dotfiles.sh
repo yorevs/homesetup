@@ -105,6 +105,7 @@ cmd_help() {
 # Execute a Firebase command
 cmd_firebase() {
 
+    FIREBASE_FILE=${FIREBASE_FILE:-$HOME/.firebase}
     task="$1"
     shift
     args=( "$@" )
@@ -120,7 +121,9 @@ cmd_firebase() {
             echo "TODO Setup"
         ;;
         upload)
-            echo "TODO Upload"
+            test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
+            # shellcheck disable=SC1090
+            test -f "$FIREBASE_FILE" && source "$FIREBASE_FILE"
         ;;
         download)
             echo "TODO Download"
