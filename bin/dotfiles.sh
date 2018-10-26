@@ -198,7 +198,7 @@ cmd_firebase() {
             test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
             load_fb_settings
             download_dotfiles
-            fb_re_resp='.*\"aliases\"\:\"\(.*\)\"\,?\"colors\"\:\"\(.*\)\"\,?\"env\"\:\"\(.*\)\"\,?\"functions\"\:\"\(.*\)\"\,?\"profile\"\:\"\(.*\)\".*'
+            fb_re_resp='.*"aliases":"(.*)",*"colors":"(.*)",*"env":"(.*)",*"functions":"(.*)",*"profile":"(.*)".*'
             f_aliases=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\1#g" | base64 -D 2>/dev/null)
             f_colors=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\2#g" | base64 -D 2>/dev/null)
             f_env=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\3#g" | base64 -D 2>/dev/null)
@@ -209,7 +209,7 @@ cmd_firebase() {
             test -n "$f_env" && echo "$f_env" > "$HOME/.env"
             test -n "$f_functions" && echo "$f_functions" > "$HOME/.functions"
             test -n "$f_profile" && echo "$f_profile" > "$HOME/.profile"
-            #rm -f "$DOTFILES_FILE"
+            rm -f "$DOTFILES_FILE"
             printf "%s\n" "? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
             echo ''
             return 0
