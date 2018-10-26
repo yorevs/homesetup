@@ -88,10 +88,10 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             "bash_functions"
         )
 
-        test -z "$INSTALL_DIR" && INSTALL_DIR=$(pwd)
+        test -z "$INSTALL_DIR" && INSTALL_DIR=$HOME
 
         # Define the HomeSetup folder.
-        HOME_SETUP=${HOME_SETUP:-${INSTALL_DIR/HomeSetup/}/HomeSetup}
+        HOME_SETUP=${HOME_SETUP:-${INSTALL_DIR}/HomeSetup/}
         if [ -d "$INSTALL_DIR" ]; then
             touch tmpfile
             test "$?" -eq 0 || quit 1 "${RED}Unable to access the installation directory: ${INSTALL_DIR}${NC}"
