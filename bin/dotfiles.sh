@@ -198,12 +198,12 @@ cmd_firebase() {
             test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
             load_fb_settings
             download_dotfiles
-            fb_re_resp='s#.*\[{]\"aliases\"\:\"(.*)\",?\"colors\"\:\"(.*)\",?\"env\"\:\"(.*)\",?\"functions\"\:\"(.*)\",?\"profile\"\:\"(.*)\"[}][}].*'
-            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\1#" | base64 -D 2>/dev/null)
-            f_colors=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\2#" | base64 -D 2>/dev/null)
-            f_env=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\3#" | base64 -D 2>/dev/null)
-            f_functions=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\4#" | base64 -D 2>/dev/null)
-            f_profile=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\5#" | base64 -D 2>/dev/null)
+            fb_re_resp='s#.*[{]"aliases\"\:\"(.*)\",?\"colors\"\:\"(.*)\",?\"env\"\:\"(.*)\",?\"functions\"\:\"(.*)\",?\"profile\"\:\"(.*)\"[}][}].*'
+            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E -e "$fb_re_resp#\1#" | base64 -D 2>/dev/null)
+            f_colors=$(grep . "$DOTFILES_FILE" | sed -E -e "$fb_re_resp#\2#" | base64 -D 2>/dev/null)
+            f_env=$(grep . "$DOTFILES_FILE" | sed -E -e "$fb_re_resp#\3#" | base64 -D 2>/dev/null)
+            f_functions=$(grep . "$DOTFILES_FILE" | sed -E -e "$fb_re_resp#\4#" | base64 -D 2>/dev/null)
+            f_profile=$(grep . "$DOTFILES_FILE" | sed -E -e "$fb_re_resp#\5#" | base64 -D 2>/dev/null)
             test -n "$f_aliases" && echo "$f_aliases" > "$HOME/.aliases"
             test -n "$f_colors" && echo "$f_colors" > "$HOME/.colors"
             test -n "$f_env" && echo "$f_env" > "$HOME/.env"
