@@ -198,7 +198,7 @@ cmd_firebase() {
             test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
             load_fb_settings
             download_dotfiles
-            fb_re_resp='s#.*\{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"\}\}.*'
+            fb_re_resp='s#.*\[{]\"aliases\"\:\"(.*)\",?\"colors\"\:\"(.*)\",?\"env\"\:\"(.*)\",?\"functions\"\:\"(.*)\",?\"profile\"\:\"(.*)\"[}][}].*'
             f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\1#" | base64 -D 2>/dev/null)
             f_colors=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\2#" | base64 -D 2>/dev/null)
             f_env=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\3#" | base64 -D 2>/dev/null)

@@ -53,15 +53,21 @@ function ss() {
 
     local gflags
     local extra_str
+    local type='string'
+    local gflags="-Hn" # Extended regex as default
 
     if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2" -o -z "$3"; then
-        echo "Usage: ss <search_path> <string> <glob_exp_files> [--replace <replacement_text>]"
+        echo "Usage: ss [-i,-w] <search_path> <regex/string> <glob_exp_files> [--replace <replacement_text>]"
+        echo ''
+        echo 'Options: '
+        echo '           -i | --ignore-case : Makes the search case INSENSITIVE.'
+        echo '           -w | --words       : Makes the search treat the search string as a word (not a regex).'
         return 1
     else
-        gflags="-HEn"
+        test "$1" = "-w" -o "$1" gflags="-Hn" 
         test "$4" = "--replace" -a -n "$5" && local replace=1
         extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
-        echo "${YELLOW}Searching for string matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+        echo "${YELLOW}Searching for ${type} matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
         test -n "$replace" && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
         test -n "$replace" || result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
         test -n "$replace" && echo "${result//$2/$5}" | grep $gflags "$5"
