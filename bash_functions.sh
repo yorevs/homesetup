@@ -445,20 +445,16 @@ function save() {
     test -z "$dirAlias" && dirAlias="SAVED_DIR"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: save [-e,-r,-c] | [dir_to_save] [dir_alias]"
+        echo "Usage: save [options] | [dir_to_save] [dir_alias]"
         echo "Options: "
         echo "    -e : Edit the saved dirs file."
         echo "    -r : Remove saved dir."
-        echo "    -c : Clear all saved dirs."
         return 1
     elif test "$1" = "-e"; then
         vi "$SAVED_DIRS"
     elif test "$1" = "-r"; then
         sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$SAVED_DIRS"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
-    elif test "$1" = "-c"; then
-        echo '' >"$SAVED_DIRS"
-        echo "${YELLOW}All saved directories have been removed!${NC}"
     else
         dir="$1"
         test -z "$dir" -o "$dir" = "." && dir=${dir//./$(pwd)}
@@ -539,9 +535,9 @@ function cmd() {
     touch "$CMD_FILE"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: cmd [options [alias]] | [cmd_index]"
+        echo "Usage: cmd [options [alias] <expression>] | [cmd_index]"
         echo "Options: "
-        echo "       : Execute the command specified by <cmd_index> (When no option s provided)."
+        echo "       : Execute the command specified by <cmd_index> (When no option is provided)."
         echo "    -e : Edit the commands file."
         echo "    -a : Store a command."
         echo "    -r : Remove a command."
