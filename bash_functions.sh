@@ -44,34 +44,58 @@ function sd() {
 }
 
 # Purpose: Search for strings in files recursively.
-# @param $1 [Req] : The base search path.
-# @param $2 [Req] : The searching string.
-# @param $3 [Req] : The GLOB expression of the file search.
-# @param $4 [Opt] : Whether to replace the findings.
-# @param $5 [Con] : Required if $4 is provided. This is the replacement string.
+# @param $1 [Req] : Search options.
+# @param $2 [Req] : The base search path.
+# @param $3 [Req] : The searching string.
+# @param $4 [Req] : The GLOB expression of the file search.
+# @param $5 [Opt] : Whether to replace the findings.
+# @param $6 [Con] : Required if $4 is provided. This is the replacement string.
 function ss() {
 
     local gflags
     local extra_str
-    local type='string'
-    local gflags="-Hn" # Extended regex as default
+    local replace
+    local strType='regex'
+    local gflags="-HnE"
 
     if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2" -o -z "$3"; then
-        echo "Usage: ss [-i,-w] <search_path> <regex/string> <glob_exp_files> [--replace <replacement_text>]"
+        echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
         echo ''
         echo 'Options: '
-        echo '           -i | --ignore-case : Makes the search case INSENSITIVE.'
-        echo '           -w | --words       : Makes the search treat the search string as a word (not a regex).'
+        echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
+        echo '    -w | --words                    : Makes the search treat the search as a STRING not a regex.'
+        echo '    -r | --replace <replacement>    : Makes the search to REPLACE all findings by the replacement string.'
         return 1
     else
-        test "$1" = "-w" -o "$1" gflags="-Hn" 
-        test "$4" = "--replace" -a -n "$5" && local replace=1
-        extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
-        echo "${YELLOW}Searching for ${type} matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
-        test -n "$replace" && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
-        test -n "$replace" || result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
-        test -n "$replace" && echo "${result//$2/$5}" | grep $gflags "$5"
-        test -n "$replace" || echo "${result}" | grep $gflags "$2"
+        while test -n "$1"
+        do
+            case "$1" in
+                -w | --words)
+                    gflags="${gflags//E/Fw}"
+                    strType='string'
+                ;;
+                -i | --ignore-case)
+                    gflags="${gflags}i"
+                    strType="${strType}-ignore-case"
+                ;;
+                -r | --replace)
+                    replace=1
+                    extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
+                ;;
+                *)
+                    [[ ! "$1" =~ ^-[wir] ]] && break
+                ;;
+            esac
+            shift
+        done
+        echo "${YELLOW}Searching for ${strType} matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+        if [ -n "$replace" ]; then
+            result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
+            echo "${result//$2/$5}" | grep $gflags "$5"
+        else
+            result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
+            echo "${result}" | grep $gflags "$2"
+        fi
     fi
 
     return 0
