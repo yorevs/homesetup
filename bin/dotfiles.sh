@@ -199,11 +199,11 @@ cmd_firebase() {
             load_fb_settings
             download_dotfiles
             fb_re_resp='.*"aliases":"(.*)",*"colors":"(.*)",*"env":"(.*)",*"functions":"(.*)",*"profile":"(.*)".*'
-            f_aliases=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\1#g" | base64 -D 2>/dev/null)
-            f_colors=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\2#g" | base64 -D 2>/dev/null)
-            f_env=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\3#g" | base64 -D 2>/dev/null)
-            f_functions=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\4#g" | base64 -D 2>/dev/null)
-            f_profile=$(grep . "$DOTFILES_FILE" | sed "s#$fb_re_resp#\5#g" | base64 -D 2>/dev/null)
+            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\1#g" | base64 -D 2>/dev/null)
+            f_colors=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\2#g" | base64 -D 2>/dev/null)
+            f_env=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\3#g" | base64 -D 2>/dev/null)
+            f_functions=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\4#g" | base64 -D 2>/dev/null)
+            f_profile=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\5#g" | base64 -D 2>/dev/null)
             test -n "$f_aliases" && echo "$f_aliases" > "$HOME/.aliases"
             test -n "$f_colors" && echo "$f_colors" > "$HOME/.colors"
             test -n "$f_env" && echo "$f_env" > "$HOME/.env"
