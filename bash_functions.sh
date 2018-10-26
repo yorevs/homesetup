@@ -88,7 +88,7 @@ function ss() {
             esac
             shift
         done
-        echo "${YELLOW}Searching for ${strType} matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+        echo "${YELLOW}Searching for \"${strType}\" matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
         if [ -n "$replace" ]; then
             result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$5/g" {} \;)
             echo "${result//$2/$5}" | grep $gflags "$5"
