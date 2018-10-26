@@ -6,7 +6,7 @@
 # Created: Oct 25, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
-#    Site: https://github.com/yorevs/homesetup
+#    Site: https://github.com/yorevs#homesetup
 
 # Current script version.
 VERSION=0.9.0
@@ -75,7 +75,7 @@ load_fb_settings() {
 # Download the User dotfiles from Firebase.
 download_dotfiles() {
 
-    fetch.sh GET --silent "$FIREBASE_URL" &> "$DOTFILES_FILE"
+    fetch.sh GET --silent "$FIREBASE_URL" > "$DOTFILES_FILE"
     ret=$?
     test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully loaded from ${args[0]}${NC}"
     test $ret -eq 0 || quit 2 "${RED}Failed to load Dotfiles from ${args[0]}${NC}"
@@ -195,11 +195,11 @@ cmd_firebase() {
         download)
             load_fb_settings
             download_dotfiles
-            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"aliases\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
-            f_colors=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"colors\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
-            f_env=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"env\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
-            f_functions=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"functions\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
-            f_profile=$(grep . "$DOTFILES_FILE" | sed -E 's/.*(,?\".*\")?\"profile\":\"(.*)\"(,?\".*\")?.*/\2/' | base64 -D 2>/dev/null)
+            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\1#' | base64 -D 2>/dev/null)
+            f_colors=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\2#' | base64 -D 2>/dev/null)
+            f_env=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\3#' | base64 -D 2>/dev/null)
+            f_functions=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\4#' | base64 -D 2>/dev/null)
+            f_profile=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\5#' | base64 -D 2>/dev/null)
             echo "$f_aliases" > aliases
             echo "$f_colors" > colors
             echo "$f_env" > env
