@@ -36,7 +36,7 @@ export HISTSIZE=${HISTSIZE:-1000}
 export HISTFILESIZE=${HISTFILESIZE:-2000}
 
 # Don't put duplicate lines in the history.
-export HISTCONTROL=ignoredups:ignorespace
+export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups
 
 # Languages and encodings
 export LANG=${LANG:-en_US.UTF-8}
