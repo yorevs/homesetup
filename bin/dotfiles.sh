@@ -206,6 +206,7 @@ cmd_firebase() {
             test -n "$f_functions" && echo "$f_functions" > "$HOME/.functions"
             test -n "$f_profile" && echo "$f_profile" > "$HOME/.profile"
             rm -f "$DOTFILES_FILE"
+            printf "%s\n" "? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
             return 0
         ;;
         merge)
@@ -216,12 +217,13 @@ cmd_firebase() {
             f_env=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\3#' | base64 -D 2>/dev/null)
             f_functions=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\4#' | base64 -D 2>/dev/null)
             f_profile=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\5#' | base64 -D 2>/dev/null)
-            echo "$f_aliases" >> "$HOME/.aliases"
-            echo "$f_colors" >> "$HOME/.colors"
-            echo "$f_env" >> "$HOME/.env"
-            echo "$f_functions" >> "$HOME/.functions"
-            echo "$f_profile" >> "$HOME/.profile"
+            test -n "$f_aliases" && echo "$f_aliases" >> "$HOME/.aliases"
+            test -n "$f_colors" && echo "$f_colors" >> "$HOME/.colors"
+            test -n "$f_env" && echo "$f_env" >> "$HOME/.env"
+            test -n "$f_functions" && echo "$f_functions" >> "$HOME/.functions"
+            test -n "$f_profile" && echo "$f_profile" >> "$HOME/.profile"
             rm -f "$DOTFILES_FILE"
+            printf "%s\n" "? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
             return 0
         ;;
         *)
