@@ -407,27 +407,27 @@ function aa() {
                             expr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
                             printf "${BLUE}${name//alias /}"
                             printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                            echo "${WHITE} is ${expr}"
+                            printf '%s\n' "${WHITE} is aliased to ${expr}"
                         else
-                            echo "${YELLOW}$next${NC}"
+                            printf '%s\n' "${YELLOW}$next${NC}"
                         fi
                     done
                 )
-                echo "${NC}"
+                printf '%s\n' "${NC}"
             else
-                echo "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
+                printf '%s\n' "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
             fi
         elif test -n "$aliasName" -a -n "$aliasExpr"; then
             # Add/Set one alias
             sed -i '' -E -e "s#(^alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
-            echo "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
+            printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
             # shellcheck disable=SC1090
             source "$aliasFile"
         elif test -n "$aliasName" -a -z "$aliasExpr"; then
             # Remove one alias
             sed -i '' -E -e "s#(^alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
-            echo "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
+            printf '%s\n' "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
             unalias "$aliasName"
         fi
     fi
@@ -497,7 +497,7 @@ function load() {
         allDirs=$(grep . "$SAVED_DIRS" | sort)
         if test -n "$allDirs"; then
             pad=$(printf '%0.1s' "."{1..60})
-            pad_len=20
+            pad_len=30
             echo ' '
             echo 'Available saved directories:'
             echo ' '
@@ -508,7 +508,7 @@ function load() {
                     dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
                     printf "${BLUE}${dirAlias}"
                     printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                    echo "${WHITE}${dir}"
+                    printf '%s\n' "${WHITE} is saved as '${dir}'"
                 done
             )
             echo "${NC}"
@@ -522,92 +522,6 @@ function load() {
         test -z "$dir" -o ! -d "$dir" && echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}" && return 1
         test -n "$dir" -a -d "$dir" && cd "$dir" || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
-    fi
-
-    return 0
-}
-
-# Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
-# @param $1 [Opt] : Punch options
-function punch() {
-
-    local dateStamp
-    local timeStamp
-    local weekStamp
-
-    if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: punch [-l,-e,-r]"
-        echo "Options: "
-        echo "       : !!PUNCH THE CLOCK!! (When no option s provided)."
-        echo "    -l : List all registered punches."
-        echo "    -e : Edit current punch file."
-        echo "    -r : Reset punches for the next week."
-        return 1
-    else
-        (
-            IFS=$'\n'
-            OPT="$1"
-            PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
-            dateStamp="$(date +'%a %d-%m-%Y')"
-            timeStamp="$(date +'%H:%M')"
-            weekStamp="$(date +%V)"
-            local re="($dateStamp).*"
-            # Create the punch file if it does not exist
-            test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
-            # List punchs
-            test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
-            # Edit punchs
-            test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
-            # Reset punchs (backup as week-N.punch)
-            test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
-            # Do the punch
-            if test -z "$OPT"; then
-                lines=$(grep . "$PUNCH_FILE")
-                success=0
-                for line in $lines; do
-                    if [[ "$line" =~ $re ]]; then
-                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-                        success=1
-                    fi
-                done
-                test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
-                grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
-            fi
-        )
-    fi
-
-    return 0
-}
-
-# Purpose: Display a process list of the given process name, killing them if specified.
-# @param $1 [Req] : The process name to check.
-# @param $2 [Opt] : Whether to kill all found processes.
-function plist() {
-
-    local allPids
-    local pid
-
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
-        echo "Usage: plist <process_name> [kill]"
-        return 1
-    else
-        # shellcheck disable=SC2009
-        allPids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
-        if test -n "$allPids"; then
-            test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCOMMAND\n---------------------------------------------------------------------------------"
-            test "$2" = "kill" && echo ''
-            (
-                IFS=$'\n'
-                for next in $allPids; do
-                    pid=$(echo "$next" | awk '{ print $2 }')
-                    test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
-                    test -n "$pid" -a "$2" = "kill" && kill -9 "$pid" && echo "${RED}Killed process with PID = $pid ${NC}"
-                done
-            )
-            echo ''
-        else
-            echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
-        fi
     fi
 
     return 0
@@ -666,7 +580,7 @@ function cmd() {
             allCmds=$(grep . "$CMD_FILE")
             if test -n "$allCmds"; then
                 pad=$(printf '%0.1s' "."{1..60})
-                pad_len=20
+                pad_len=30
                 echo ' '
                 echo 'Available saved commands:'
                 echo ' '
@@ -678,11 +592,11 @@ function cmd() {
                         cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
                         printf "${BLUE}${cmdName}"
                         printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                        echo "${WHITE}'${cmdExpr}'"
+                        echo "${WHITE} is stored as '${cmdExpr}'"
                         index=$((index + 1))
                     done
                 )
-                echo "${NC}"
+                printf '%s\n' "${NC}"
             fi
             ;;
         [1-9]*)
@@ -691,7 +605,7 @@ function cmd() {
             eval "$cmdExpr"
             ;;
         *)
-            echo "${RED}Invalid arguments: \"$1\"${NC}"
+            printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
             return 1
             ;;
         esac
@@ -700,6 +614,91 @@ function cmd() {
     return 0
 }
 
+# Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
+# @param $1 [Opt] : Punch options
+function punch() {
+
+    local dateStamp
+    local timeStamp
+    local weekStamp
+
+    if test "$1" = "-h" -o "$1" = "--help"; then
+        echo "Usage: punch [-l,-e,-r]"
+        echo "Options: "
+        echo "       : !!PUNCH THE CLOCK!! (When no option s provided)."
+        echo "    -l : List all registered punches."
+        echo "    -e : Edit current punch file."
+        echo "    -r : Reset punches for the next week."
+        return 1
+    else
+        OPT="$1"
+        PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+        dateStamp="$(date +'%a %d-%m-%Y')"
+        timeStamp="$(date +'%H:%M')"
+        weekStamp="$(date +%V)"
+        local re="($dateStamp).*"
+        # Create the punch file if it does not exist
+        test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
+        # List punchs
+        test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
+        # Edit punchs
+        test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
+        # Reset punchs (backup as week-N.punch)
+        test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
+        # Do the punch
+        if test -z "$OPT"; then
+            lines=$(grep . "$PUNCH_FILE")
+            (
+                success=0
+                IFS=$'\n'
+                for line in $lines; do
+                    if [[ "$line" =~ $re ]]; then
+                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                        success=1
+                    fi
+                done
+                test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+            )
+            grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+        fi
+    fi
+
+    return 0
+}
+
+# Purpose: Display a process list of the given process name, killing them if specified.
+# @param $1 [Req] : The process name to check.
+# @param $2 [Opt] : Whether to kill all found processes.
+function plist() {
+
+    local allPids
+    local pid
+
+    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+        echo "Usage: plist <process_name> [kill]"
+        return 1
+    else
+        # shellcheck disable=SC2009
+        allPids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
+        if test -n "$allPids"; then
+            test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCOMMAND\n---------------------------------------------------------------------------------"
+            test "$2" = "kill" && echo ''
+            (
+                IFS=$'\n'
+                for next in $allPids; do
+                    pid=$(echo "$next" | awk '{ print $2 }')
+                    test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
+                    test -n "$pid" -a "$2" = "kill" && kill -9 "$pid" && echo "${RED}Killed process with PID = $pid ${NC}"
+                done
+            )
+            echo ''
+        else
+            echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
+        fi
+    fi
+
+    return 0
+}
 
 # Purpose: Highlight words matching pattern.
 # TODO Experimental
