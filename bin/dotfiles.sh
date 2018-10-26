@@ -77,8 +77,8 @@ download_dotfiles() {
 
     fetch.sh GET --silent "$FIREBASE_URL" > "$DOTFILES_FILE"
     ret=$?
-    test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully loaded from ${args[0]}${NC}"
-    test $ret -eq 0 || quit 2 "${RED}Failed to load Dotfiles from ${args[0]}${NC}"
+    test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully downloaded from ${args[0]}${NC}"
+    test $ret -eq 0 || quit 2 "${RED}Failed to download Dotfiles from ${args[0]}${NC}"
     return $ret
 }
 
@@ -138,10 +138,10 @@ cmd_firebase() {
     local f_env
     local f_functions
     local f_profile
+    local fb_re_resp
     task="$1"
     shift
     args=( "$@" )
-
     test -z "${args[*]}" -a "$task" != 'setup' && quit 2 "Invalid number of arguments for task: \"$task\" !"
 
     shopt -s nocasematch
@@ -164,7 +164,7 @@ cmd_firebase() {
                 echo -e '# Your Firebase credentials:\n' > "$FIREBASE_FILE"
                 echo -e "$setupContent" >> "$FIREBASE_FILE"
             done
-            printf '%s\n' "${GREEN}Configuration successfull!${NC}"
+            printf '%s\n' "${GREEN}Configuration successfully saved!${NC}"
             echo ''
             return 0
         ;;
@@ -192,13 +192,18 @@ cmd_firebase() {
             return 0
         ;;
         download)
+            printf "%s\n" "${RED}"
+            read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
+            printf "%s\n" "${NC}"
+            test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
             load_fb_settings
             download_dotfiles
-            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\1#' | base64 -D 2>/dev/null)
-            f_colors=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\2#' | base64 -D 2>/dev/null)
-            f_env=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\3#' | base64 -D 2>/dev/null)
-            f_functions=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\4#' | base64 -D 2>/dev/null)
-            f_profile=$(grep . "$DOTFILES_FILE" | sed -E 's#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*#\5#' | base64 -D 2>/dev/null)
+            fb_re_resp='s#.*{"aliases":"(.*)",?"colors":"(.*)",?"env":"(.*)",?"functions":"(.*)",?"profile":"(.*)"}}.*'
+            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\1#" | base64 -D 2>/dev/null)
+            f_colors=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\2#" | base64 -D 2>/dev/null)
+            f_env=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\3#" | base64 -D 2>/dev/null)
+            f_functions=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\4#" | base64 -D 2>/dev/null)
+            f_profile=$(grep . "$DOTFILES_FILE" | sed -E "$fb_re_resp#\5#" | base64 -D 2>/dev/null)
             test -n "$f_aliases" && echo "$f_aliases" > "$HOME/.aliases"
             test -n "$f_colors" && echo "$f_colors" > "$HOME/.colors"
             test -n "$f_env" && echo "$f_env" > "$HOME/.env"
@@ -206,6 +211,7 @@ cmd_firebase() {
             test -n "$f_profile" && echo "$f_profile" > "$HOME/.profile"
             rm -f "$DOTFILES_FILE"
             printf "%s\n" "? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+            echo ''
             return 0
         ;;
         *)
