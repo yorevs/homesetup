@@ -446,14 +446,14 @@ function aa() {
             fi
         elif test -n "$aliasName" -a -n "$aliasExpr"; then
             # Add/Set one alias
-            sed -i '' -E -e "s#(^alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
+            sed -i '' -E -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
             printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
             # shellcheck disable=SC1090
             source "$aliasFile"
         elif test -n "$aliasName" -a -z "$aliasExpr"; then
             # Remove one alias
-            sed -i '' -E -e "s#(^alias $aliasName=.*)?##g" -e '/^\s*$/d' "$aliasFile"
+            sed -i '' -E -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
             printf '%s\n' "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
             unalias "$aliasName"
         fi
@@ -483,7 +483,7 @@ function save() {
     elif test "$1" = "-e"; then
         vi "$SAVED_DIRS"
     elif test "$1" = "-r"; then
-        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$SAVED_DIRS"
+        sed -i '' -E -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     else
         dir="$1"
@@ -492,7 +492,7 @@ function save() {
         test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
         test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
         touch "$SAVED_DIRS"
-        sed -i '' -E -e "s#(^$dirAlias=.*)?##" -e '/^\s*$/d' "$SAVED_DIRS"
+        sed -i '' -E -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
         echo "$dirAlias=$dir" >>"$SAVED_DIRS"
         echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
     fi
@@ -585,7 +585,7 @@ function cmd() {
                 shift
                 cmdExpr="$*"
                 test -z "cmdName" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
-                sed -i '' -E -e "s#(^Command $cmdName: .*)?##" -e '/^\s*$/d' "$CMD_FILE"
+                sed -i '' -E -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
                 echo "Command $cmdName: $cmdExpr" >>"$CMD_FILE"
                 ;;
             -r | --remove)
@@ -594,10 +594,10 @@ function cmd() {
                 local re='^[1-9]+$'
                 if [[ $cmdId =~ $re ]]; then
                     cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $0 }')
-                    sed -i '' -E -e "s#(^$cmdExpr)?##" -e '/^\s*$/d' "$CMD_FILE"
+                    sed -i '' -E -e "s#(^$cmdExpr)*##" -e '/^\s*$/d' "$CMD_FILE"
                 else
                     test -z "cmdId" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
-                    sed -i '' -E -e "s#(^Command $cmdId: .*)?##" -e '/^\s*$/d' "$CMD_FILE"
+                    sed -i '' -E -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
                 fi
             ;;
             -l | --list)
