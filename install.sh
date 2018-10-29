@@ -179,16 +179,14 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 test -d ~/bin && printf "%s\n" '[   OK   ]'
             else
                 cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
-                test -f ~/bin/dotfiles.sh ||quit 2 "Unable to copy scripts into ~/bin directory!"
+                test -f ~/bin/dotfiles.sh || quit 2 "Unable to copy scripts into ~/bin directory!"
             fi
 
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=~/.${next}
-                # Backup existing dofiles into ~/.hhs
-                if [ -f "$dotfile" ]; then 
-                    test -h "$dotfile" || mv "$dotfile" "$HHS_DIR/${dotfile}.orig"; 
-                fi
+                # Backup existing dofile into ~/.hhs
+                [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
 
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
@@ -203,7 +201,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 test $? -ne 0 && quit 2 "Unable to link bin folder into ~ !"
             else
                 cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
-                test -f ~/bin/dotfiles.sh ||quit 2 "Unable to copy scripts into ~/bin directory!"
+                test -f ~/bin/dotfiles.sh || quit 2 "Unable to copy scripts into ~/bin directory!"
             fi
 
             # Copy all dotfiles
@@ -214,10 +212,10 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
                 test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
                 echo ''
+                
+                # Backup existing dofile into ~/.hhs
+                [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
 
-                if [ -f "$dotfile" ]; then 
-                    test -h "$dotfile" || mv "$dotfile" "$HHS_DIR/${dotfile}.orig"; 
-                fi
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
                 test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
