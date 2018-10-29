@@ -13,7 +13,7 @@
 
 # Detect which `ls` flavor is in use
 # LS_Colors builder: https://geoff.greer.fm/lscolors/
-if ls --color > /dev/null 2>&1; then # GNU `ls`
+if ls --color &> /dev/null; then # GNU `ls`
     export COLOR_FLAG="--color"
     export LS_COLORS='no=00:fi=00:do=01;35:or=40;31;01:di=01;34:ln=36;40:so=35;40:pi=33;40:ex=01;32:bd=40;33;01:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43:'
 else # macOS `ls`
@@ -23,8 +23,6 @@ else # macOS `ls`
 fi
 
 export GREP_COLOR='1;31'
-
-# TODO Add grep colors
 
 if tput setaf 1 &> /dev/null; then
     # Solarized colors, taken from http://git.io/solarized-colors.

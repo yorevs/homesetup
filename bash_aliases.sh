@@ -71,12 +71,15 @@ alias cls='clear'
 alias vi='vim'
 alias tl='tail -F'
 
-# Linux boxes have a different syntax for sed inplace, so we create a new ised to match the correct syntax for each OS.
-if [ "Linux" = "$(uname -s)" ]
-then 
+alias encode="base64"
+
+# Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
+if [ "Linux" = "$(uname -s)" ]; then 
     alias ised="sed -i'' -r"
-else 
+    alias decode='base64 -d'
+elif [ "Darwin" = "$(uname -s)" ]; then
     alias ised="sed -i '' -E"
+    alias decode='base64 -D'
 fi
 
 alias week='date +%V'

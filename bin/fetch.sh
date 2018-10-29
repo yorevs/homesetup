@@ -28,10 +28,6 @@ Usage: $PROC_NAME <method> [options] <url>
         --silent                    : Omits all informational messages.
 "
 
-# Import pre-defined .bash_colors
-# shellcheck disable=SC1090
-test -f ~/.bash_colors && source ~/.bash_colors
-
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
@@ -64,12 +60,12 @@ test -z "$1" && usage
 
 shopt -s nocasematch
 case "$1" in
-'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
-    METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
-    shift
+    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
+        METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+        shift
     ;;
-*)
-    quit 2 "Method $1 is not not valid!"
+    *)
+        quit 2 "Method $1 is not not valid!"
     ;;
 esac
 shopt -u nocasematch
@@ -124,10 +120,17 @@ format_json() {
 # Do the request
 do_fetch() {
 
-    if test -z "$HEADERS" -a -z "${BODY}"; then curl -X "${METHOD}" "${URL}" 2>/dev/null; return $?; fi
-    if test -z "$HEADERS" -a -n "${BODY}"; then curl -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null; return $?; fi
-    if test -n "$HEADERS" -a -n "${BODY}"; then curl -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null; return $?; fi
-    if test -n "$HEADERS" -a -z "${BODY}"; then curl -X "${METHOD}" "${URL}" 2>/dev/null; return $?; fi
+    if [ -z "$HEADERS" ] && [ -z "${BODY}" ]; then
+        curl -X "${METHOD}" "${URL}" 2> /dev/null | format_json
+    elif [ -z "$HEADERS" ] && [ -n "${BODY}" ]; then
+        curl -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
+    elif [ -n "$HEADERS" ] && [ -n "${BODY}" ]; then
+        curl -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
+    elif [ -n "$HEADERS" ] && [ -z "${BODY}" ]; then
+        curl -X "${METHOD}" "${URL}" 2> /dev/null | format_json
+    fi
+
+    return $?
 }
 
 test -z "${SILENT}" && echo "Fetching (${METHOD}) $URL ..."

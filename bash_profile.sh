@@ -33,6 +33,7 @@ shopt -s cdspell;
 # * ~/.colors can be used to extend/override .bash_colors
 # * ~/.functions can be used to extend/override .bash_functions
 # shellcheck disable=SC1090
+
 for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,env,aliases,profile,colors,functions}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
