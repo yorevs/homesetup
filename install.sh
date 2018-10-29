@@ -39,12 +39,12 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
 
     # Usage message.
     usage() {
-        quit 1 "$USAGE"
+        quit 2 "$USAGE"
     }
 
     # Version message.
     version() {
-        quit 1 "$VERSION"
+        quit 2 "$VERSION"
     }
 
     # Check which installation method should be used.
@@ -71,7 +71,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 INSTALL_DIR="$1"
                 ;;
             *)
-                quit 1 "Invalid option: \"$1\""
+                quit 2 "Invalid option: \"$1\""
                 ;;
             esac
             shift
@@ -91,24 +91,35 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         test -z "$INSTALL_DIR" && INSTALL_DIR=$HOME
 
         # Define the HomeSetup folder.
-        HOME_SETUP=${HOME_SETUP:-${INSTALL_DIR}/HomeSetup/}
+        HOME_SETUP=${HOME_SETUP:-$INSTALL_DIR/HomeSetup/}
         if [ -d "$INSTALL_DIR" ]; then
-            touch tmpfile
-            test "$?" -eq 0 || quit 1 "${RED}Unable to access the installation directory: ${INSTALL_DIR}${NC}"
-            rm -f tmpfile
+            touch "$INSTALL_DIR/tmpfile"
+            test "$?" -eq 0 || quit 2 "Unable to access the installation directory: ${INSTALL_DIR}"
+            rm -f "$INSTALL_DIR/tmpfile"
         else
-            quit 1 "${RED}Installation directory is not valid: ${INSTALL_DIR}${NC}"
+            quit 2 "Installation directory is not valid: ${INSTALL_DIR}"
+        fi
+
+        # Create the ~/.hhs folder
+        HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
+        if [ ! -d "$HHS_DIR" ]; then
+            mkdir -p "$HHS_DIR"
+            test -d "$HHS_DIR" || quit 2 "Unable to create directory ~/.hhs"
+        else
+            touch "$HHS_DIR/tmpfile"
+            test "$?" -eq 0 || quit 2 "Unable to access the ~/.hhs directory: ${HHS_DIR}"
+            rm -f "$HHS_DIR/tmpfile"
         fi
         
         # Check the installation method.
-        if [ -n "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/VERSION" ]; then
+        if [ -n "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/.VERSION" ]; then
             METHOD='repair'
-        elif [ -z "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/VERSION" ]; then
+        elif [ -z "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/.VERSION" ]; then
             METHOD='local'
-        elif [ -z "$DOTFILES_VERSION" ] && [ ! -f "$HOME_SETUP/VERSION" ]; then
+        elif [ -z "$DOTFILES_VERSION" ] && [ ! -f "$HOME_SETUP/.VERSION" ]; then
             METHOD='remote'
         else
-            quit 1 "${RED}Unable to find an installation method!${NC}"
+            quit 2 "Unable to find an installation method!"
         fi
         
         if [ "${METHOD}" = 'repair' ]; then
@@ -121,7 +132,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             install_dotfiles
             activate_dotfiles
         else
-            quit 1 "${RED}Installation method is not valid: ${METHOD}${NC}"
+            quit 2 "Installation method is not valid: ${METHOD}"
         fi
     }
     
@@ -144,31 +155,41 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
                 echo ''
                 test -n "$ANS" && echo ''
-                quit 0 "${NC}Installation cancelled!"
+                quit 0 "Installation cancelled!"
             else
                 echo ''
-                echo ''
+                test -n "$ANS" && echo ''
                 printf "%s\n" "${NC}Copying dotfiles into place ..."
+                # Moving old hhs files into the proper folder
+                test -f ~/.cmd_file && mv -f ~/.cmd_file "$HHS_DIR/.cmd_file"
+                test -f ~/.saved_dir && mv -f ~/.saved_dir "$HHS_DIR/.saved_dirs"
+                test -f ~/.punchs && mv -f ~/.punchs "$HHS_DIR/.punchs"
             fi
             printf "%s\n" "${NC}"
         else
             OPT='all'
         fi
-        
+
         # If all option is used, copy all files
         if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
             # Bin folder
             if ! test -d ~/bin; then
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
+                test $? -ne 0 && quit 2 "Unable to link bin folder into ~ !"
                 test -d ~/bin && printf "%s\n" '[   OK   ]'
             else
-                cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
+                cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
+                test -f ~/bin/dotfiles.sh ||quit 2 "Unable to copy scripts into ~/bin directory!"
             fi
 
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=~/.${next}
-                if test -f "$dotfile"; then test -h "$dotfile" || mv "$dotfile" "${dotfile}.bak"; fi
+                # Backup existing dofiles into ~/.hhs
+                if [ -f "$dotfile" ]; then 
+                    test -h "$dotfile" || mv "$dotfile" "$HHS_DIR/${dotfile}.orig"; 
+                fi
+
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
                 test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
@@ -179,17 +200,24 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 echo ''
                 read -r -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
                 test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv "$HOME_SETUP/bin" ~/ && test -d ~/bin && echo '[ OK ]'
+                test $? -ne 0 && quit 2 "Unable to link bin folder into ~ !"
             else
-                cp -n "$HOME_SETUP"/bin/* ~/bin &>/dev/null
+                cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
+                test -f ~/bin/dotfiles.sh ||quit 2 "Unable to copy scripts into ~/bin directory!"
             fi
 
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=~/.${next}
+
                 echo ''
                 read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
                 test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
                 echo ''
+
+                if [ -f "$dotfile" ]; then 
+                    test -h "$dotfile" || mv "$dotfile" "$HHS_DIR/${dotfile}.orig"; 
+                fi
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
                 test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
@@ -202,8 +230,8 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     # Clone the repository and install dotfiles.
     clone_repository() {
         
-        test -z "$(command -v git)" && quit 1 "${RED}You need git installed in order to install HomeSetup remotely!"
-        test -d "$HOME_SETUP" && quit 1 "${RED}Installation directory already exists and can't be overriden: ${HOME_SETUP}${NC}!"
+        test -z "$(command -v git)" && quit 2 "You need git installed in order to install HomeSetup remotely!"
+        test -d "$HOME_SETUP" && quit 2 "Installation directory already exists and can't be overriden: ${HOME_SETUP}!"
 
         echo ''
         printf "%s\n" "${NC}Cloning HomeSetup from repository ..."
@@ -215,7 +243,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             # shellcheck disable=SC1090
             source "$HOME_SETUP/bash_colors.sh"
         else
-            quit 1 "Unable to properly clone the repository!"
+            quit 2 "Unable to properly clone the repository!"
         fi
     }
 

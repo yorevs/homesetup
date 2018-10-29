@@ -20,6 +20,7 @@ export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sd
 # Other environment variables
 test -d "$HOME/Dropbox" && export DROPBOX="$HOME/Dropbox"
 export HOME_SETUP="$HOME/HomeSetup"
+export HHS_DIR="$HOME/.hhs"
 command -v git >/dev/null && export GIT_REPOS="$HOME/GIT-Repository"
 command -v svn >/dev/null && export SVN_REPOS="$HOME/SVN-Repository"
 export WORKSPACE="$HOME/Workspace"

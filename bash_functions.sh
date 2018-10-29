@@ -468,7 +468,7 @@ function save() {
 
     local dir
     local dirAlias="SAVED_DIR"
-    SAVED_DIRS=${SAVED_DIRS:-$HOME/.saved_dir}
+    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
     test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
     test -z "$dirAlias" && dirAlias="SAVED_DIR"
@@ -509,7 +509,7 @@ function load() {
     local dir
     local pad
     local pad_len
-    SAVED_DIRS=${SAVED_DIRS:-$HOME/.saved_dir}
+    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
     touch "$SAVED_DIRS"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
@@ -561,7 +561,7 @@ function cmd() {
     local allCmds
     local pad
     local pad_len
-    CMD_FILE=${CMD_FILE:-$HOME/.cmd_file}
+    CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
     touch "$CMD_FILE"
 
@@ -657,7 +657,7 @@ function punch() {
         return 1
     else
         OPT="$1"
-        PUNCH_FILE=${PUNCH_FILE:-$HOME/.punchs}
+        PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punchs}
         dateStamp="$(date +'%a %d-%m-%Y')"
         timeStamp="$(date +'%H:%M')"
         weekStamp="$(date +%V)"
