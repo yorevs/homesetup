@@ -4,7 +4,5 @@
 
 * [ ] Improve the command cmd to accept auto-complete.
 
-* [ ] Improvement: Use Firebase to store the custom files of the user
+* [ ] Improvement: Use Firebase to store the custom files of the user:
   * [ ] Add authentication to the requests
-
-* [ ] Group all HomeSetup files into a ~.hsdf folder

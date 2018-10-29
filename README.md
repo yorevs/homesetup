@@ -17,7 +17,7 @@ or
 
 `#> cd ~/HomeSetup && ./install.sh -a` => **To install all files**
 
-Your old dotfiles (.bash*) will be backed up using '.bak' suffix.
+Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 
 #### 1.2 Remote installation ( Directly from GitHub )
 
@@ -172,6 +172,7 @@ ip-utils.sh             | Validate an IP and check details about it
 send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads
 tcalc.py                | Simple app to do mathematical calculations with time 
 toolcheck.sh            | Check if the a tool is installed on the system
+dotfiles.sh             | Manage your HomeSetup dotfiles and more
 
 **Please check: [bin](./bin) for all scripts**
 

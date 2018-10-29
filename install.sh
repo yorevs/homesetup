@@ -155,7 +155,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
                 echo ''
                 test -n "$ANS" && echo ''
-                quit 0 "Installation cancelled!"
+                quit 1 "Installation cancelled!"
             else
                 echo ''
                 test -n "$ANS" && echo ''
