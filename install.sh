@@ -164,6 +164,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 test -f ~/.cmd_file && mv -f ~/.cmd_file "$HHS_DIR/.cmd_file"
                 test -f ~/.saved_dir && mv -f ~/.saved_dir "$HHS_DIR/.saved_dirs"
                 test -f ~/.punchs && mv -f ~/.punchs "$HHS_DIR/.punchs"
+                test -f ~/.firebase && mv -f ~/.firebase "$HHS_DIR/.firebase"
             fi
             printf "%s\n" "${NC}"
         else

@@ -57,10 +57,10 @@ test "$1" = '-h' -o "$1" = '--help' && usage
 test "$1" = '-v' -o "$1" = '--version' && version
 
 # TODO
-FIREBASE_FILE=${FIREBASE_FILE:-$HOME/.firebase}
+FIREBASE_FILE=${FIREBASE_FILE:-$HHS_DIR/.firebase}
 
 # TODO
-DOTFILES_FILE=${DOTFILES_FILE:-$HOME_SETUP/dotfiles.json}
+DOTFILES_FILE=${DOTFILES_FILE:-$HHS_DIR/dotfiles.json}
 
 # Loads Firebase settings from file.
 load_fb_settings() {
@@ -192,7 +192,7 @@ cmd_firebase() {
             ret=$?
             test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully saved as ${args[0]}${NC}"
             test $ret -eq 0 || quit 2 "${RED}Failed to save Dotfiles as ${args[0]}${NC}"
-            return 0
+            return $ret
         ;;
         download)
             printf "%s\n" "${RED}"
@@ -201,6 +201,7 @@ cmd_firebase() {
             test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
             load_fb_settings
             download_dotfiles
+            ret=$?
             fb_re_resp='.*"aliases":"(.*)",*"colors":"(.*)",*"env":"(.*)",*"functions":"(.*)",*"profile":"(.*)".*'
             f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\1#g" | base64 "${b64flag}" 2>/dev/null)
             f_colors=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\2#g" | base64 "${b64flag}" 2>/dev/null)
@@ -212,10 +213,10 @@ cmd_firebase() {
             test -n "$f_env" && echo "$f_env" > "$HOME/.env"
             test -n "$f_functions" && echo "$f_functions" > "$HOME/.functions"
             test -n "$f_profile" && echo "$f_profile" > "$HOME/.profile"
-            rm -f "$DOTFILES_FILE"
+            test $ret -e 0 && rm -f "$DOTFILES_FILE"
             printf "%s\n" "? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
             echo ''
-            return 0
+            return $ret
         ;;
         *)
             quit 2 "Invalid firebase task: \"$task\" !"
