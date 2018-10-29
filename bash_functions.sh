@@ -453,9 +453,9 @@ function aa() {
             source "$aliasFile"
         elif test -n "$aliasName" -a -z "$aliasExpr"; then
             # Remove one alias
+            unalias "$aliasName"
             sed -i '' -E -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
             printf '%s\n' "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
-            unalias "$aliasName"
         fi
     fi
 
@@ -473,6 +473,7 @@ function save() {
 
     test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
     test -z "$dirAlias" && dirAlias="SAVED_DIR"
+    touch "$SAVED_DIRS"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: save [options] | [dir_to_save] [dir_alias]"
@@ -510,6 +511,7 @@ function load() {
     local pad
     local pad_len
     SAVED_DIRS=${SAVED_DIRS:-$HOME/.saved_dir}
+    touch "$SAVED_DIRS"
 
     if test "$1" = "-h" -o "$1" = "--help"; then
         echo "Usage: load [-l] | [dir_alias]"
