@@ -85,8 +85,6 @@ Thumbs.db
 Desktop.ini
 
 ### Project specific ###
-gitconfig
-gitignore
-viminfo
-OLD-Stuff
-add-vpn-routes.sh
+.gitconfig
+.gitignore
+.viminfo
