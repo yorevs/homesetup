@@ -71,6 +71,14 @@ alias cls='clear'
 alias vi='vim'
 alias tl='tail -F'
 
+# Linux boxes have a different syntax for sed inplace, so we create a new ised to match the correct syntax for each OS.
+if [ "Linux" = "$(uname -s)" ]
+then 
+    alias ised="sed -i'' -r"
+else 
+    alias ised="sed -i '' -E"
+fi
+
 alias week='date +%V'
 alias now='date +"%d-%m-%Y %T"'
 alias now-ms='date "+%s%S"'
