@@ -37,7 +37,8 @@ quit() {
     test "$1" != '0' -a "$1" != '1' && printf "%s" "${NC}"
 
     # Unset all declared functions
-    unset -f quit usage version exec_command cmd_help cmd_firebase load_fb_settings
+    unset -f quit usage version exec_command cmd_help cmd_firebase load_fb_settings download_dotfiles \
+    parse_and_save_dotfiles build_dotfiles_payload
 
     exit "$1"
 }
@@ -75,11 +76,59 @@ load_fb_settings() {
 # Download the User dotfiles from Firebase.
 download_dotfiles() {
 
+    local fb_alias="$1"
     fetch.sh GET --silent "$FIREBASE_URL" > "$DOTFILES_FILE"
     ret=$?
-    test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully downloaded from ${args[0]}${NC}"
-    test $ret -eq 0 || quit 2 "${RED}Failed to download Dotfiles from ${args[0]}${NC}"
+    test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully downloaded from ${fb_alias}${NC}"
+    test $ret -eq 0 || quit 2 "${RED}Failed to download Dotfiles from ${fb_alias}${NC}"
     return $ret
+}
+
+# Parse the dotfiles response payload and save the files.
+parse_and_save_dotfiles() {
+
+    local f_aliases
+    local f_colors
+    local f_env
+    local f_functions
+    local f_profile
+    local fb_re_resp
+    local b64flag
+
+    fb_re_resp='.*"aliases":"(.*)",*"colors":"(.*)",*"env":"(.*)",*"functions":"(.*)",*"profile":"(.*)".*'
+    f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\1#g" | base64 "${b64flag}" 2>/dev/null)
+    f_colors=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\2#g" | base64 "${b64flag}" 2>/dev/null)
+    f_env=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\3#g" | base64 "${b64flag}" 2>/dev/null)
+    f_functions=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\4#g" | base64 "${b64flag}" 2>/dev/null)
+    f_profile=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\5#g" | base64 "${b64flag}" 2>/dev/null)
+    test -n "$f_aliases" && echo "$f_aliases" > "$HOME/.aliases"
+    test -n "$f_colors" && echo "$f_colors" > "$HOME/.colors"
+    test -n "$f_env" && echo "$f_env" > "$HOME/.env"
+    test -n "$f_functions" && echo "$f_functions" > "$HOME/.functions"
+    test -n "$f_profile" && echo "$f_profile" > "$HOME/.profile"
+}
+
+# Build the dotfiles jso payload.
+build_dotfiles_payload() {
+
+    local payload=''
+    
+    test -f "$HOME"/.aliases && f_aliases=$(grep . "$HOME"/.aliases | base64)
+    test -f "$HOME"/.colors && f_colors=$(grep . "$HOME"/.colors | base64)
+    test -f "$HOME"/.env && f_env=$(grep . "$HOME"/.env | base64)
+    test -f "$HOME"/.functions && f_functions=$(grep . "$HOME"/.functions | base64)
+    test -f "$HOME"/.profile && f_profile=$(grep . "$HOME"/.profile | base64)
+    payload="{ \"$fb_alias\" : { "
+    test -f "$HOME"/.aliases && payload="${payload}\"aliases\" : \"$f_aliases\","
+    test -f "$HOME"/.colors && payload="${payload}\"colors\" : \"$f_colors\","
+    test -f "$HOME"/.env && payload="${payload}\"env\" : \"$f_env\","
+    test -f "$HOME"/.functions && payload="${payload}\"functions\" : \"$f_functions\","
+    test -f "$HOME"/.profile && payload="${payload}\"profile\" : \"$f_profile\""
+    payload="${payload}, } }"
+    local match=', } }'
+    local repl=' } }'
+    payload="${payload//$match/$repl}"
+    echo "$payload"
 }
 
 # Execute a dotfiles command.
@@ -114,9 +163,9 @@ cmd_help() {
             echo "Usage: $PROC_NAME firebase <task> [args]"
             echo ""
             echo "  Tasks:"
-            echo "        setup               : Setup your Firebase account to use with your HomeSetup installation."
-            echo "       upload <db_alias>    : Upload your custom .dotfiles to your Firebase 'Realtime Database'."
-            echo "     download <db_alias>    : Download your custom .dotfiles from your Firebase 'Realtime Database'."
+            echo "      s |    setup               : Setup your Firebase account to use with your HomeSetup installation."
+            echo "     ul |   upload <db_alias>    : Upload your custom .dotfiles to your Firebase 'Realtime Database'."
+            echo "     dl | download <db_alias>    : Download your custom .dotfiles from your Firebase 'Realtime Database'."
         ;;
         H | help)
             echo "Provides a help to the given command."
@@ -133,34 +182,29 @@ cmd_help() {
 cmd_firebase() {
 
     local body
-    local f_aliases
-    local f_colors
-    local f_env
-    local f_functions
-    local f_profile
-    local fb_re_resp
-    local b64flag
+    local fb_alias
+    local setupContent=""
 
     test "$(uname -s)" = "Linux" && b64flag='-d' || b64flag='-D'
     task="$1"
     shift
     args=( "$@" )
     test -z "${args[*]}" -a "$task" != 'setup' && quit 2 "Invalid number of arguments for task: \"$task\" !"
+    fb_alias=$(echo "${args[0]}" | tr '[:lower:]' '[:upper:]' )
 
     shopt -s nocasematch
     case "$task" in
-        setup)
+        s | setup)
             test -f "$FIREBASE_FILE" && rm -f "$FIREBASE_FILE"
             while [ ! -f "$FIREBASE_FILE" ];
             do
                 clear
-                local setupContent=""
                 echo "### Firebase setup"
                 echo "-------------------------------"
                 read -r -p 'Please type you Project ID: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PROJECT_ID=${ANS}\n"
-                setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/Dotfiles.json\n"
+                setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/HomeSetup/Dotfiles.json\n"
                 read -r -p 'Please type a password to encrypt you data: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PASSPHRASE=${ANS}\n"
@@ -168,61 +212,33 @@ cmd_firebase() {
                 echo -e "$setupContent" >> "$FIREBASE_FILE"
             done
             printf '%s\n' "${GREEN}Configuration successfully saved!${NC}"
-            echo ''
-            return 0
         ;;
-        upload)
+        ul | upload)
             load_fb_settings
-            test -f "$HOME"/.aliases && f_aliases=$(grep . "$HOME"/.aliases | base64)
-            test -f "$HOME"/.colors && f_colors=$(grep . "$HOME"/.colors | base64)
-            test -f "$HOME"/.env && f_env=$(grep . "$HOME"/.env | base64)
-            test -f "$HOME"/.functions && f_functions=$(grep . "$HOME"/.functions | base64)
-            test -f "$HOME"/.profile && f_profile=$(grep . "$HOME"/.profile | base64)
-            body="{ \"${args[0]}\" : { "
-            test -f "$HOME"/.aliases && body="${body}\"aliases\" : \"$f_aliases\","
-            test -f "$HOME"/.colors && body="${body}\"colors\" : \"$f_colors\","
-            test -f "$HOME"/.env && body="${body}\"env\" : \"$f_env\","
-            test -f "$HOME"/.functions && body="${body}\"functions\" : \"$f_functions\","
-            test -f "$HOME"/.profile && body="${body}\"profile\" : \"$f_profile\""
-            body="${body}, } }"
-            match=', } }'
-            repl=' } }'
-            body="${body//$match/$repl}"
+            body=$(build_dotfiles_payload)
             fetch.sh PATCH --silent --body "$body" "$FIREBASE_URL" &> /dev/null
             ret=$?
-            test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully saved as ${args[0]}${NC}"
-            test $ret -eq 0 || quit 2 "${RED}Failed to save Dotfiles as ${args[0]}${NC}"
-            return $ret
+            test $ret -eq 0 && echo "${GREEN}Dotfiles sucessfully uploaded as ${fb_alias}${NC}"
+            test $ret -eq 0 || quit 2 "${RED}Failed to upload Dotfiles as ${fb_alias}${NC}"
         ;;
-        download)
+        dl | download)
             printf "%s\n" "${RED}"
             read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
             printf "%s\n" "${NC}"
             test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
             load_fb_settings
-            download_dotfiles
-            ret=$?
-            fb_re_resp='.*"aliases":"(.*)",*"colors":"(.*)",*"env":"(.*)",*"functions":"(.*)",*"profile":"(.*)".*'
-            f_aliases=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\1#g" | base64 "${b64flag}" 2>/dev/null)
-            f_colors=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\2#g" | base64 "${b64flag}" 2>/dev/null)
-            f_env=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\3#g" | base64 "${b64flag}" 2>/dev/null)
-            f_functions=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\4#g" | base64 "${b64flag}" 2>/dev/null)
-            f_profile=$(grep . "$DOTFILES_FILE" | sed -E "s#$fb_re_resp#\5#g" | base64 "${b64flag}" 2>/dev/null)
-            test -n "$f_aliases" && echo "$f_aliases" > "$HOME/.aliases"
-            test -n "$f_colors" && echo "$f_colors" > "$HOME/.colors"
-            test -n "$f_env" && echo "$f_env" > "$HOME/.env"
-            test -n "$f_functions" && echo "$f_functions" > "$HOME/.functions"
-            test -n "$f_profile" && echo "$f_profile" > "$HOME/.profile"
-            test $ret -e 0 && rm -f "$DOTFILES_FILE"
+            download_dotfiles "$fb_alias"
+            parse_and_save_dotfiles
             printf "%s\n" "? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
-            echo ''
-            return $ret
         ;;
         *)
             quit 2 "Invalid firebase task: \"$task\" !"
         ;;
     esac
     shopt -u nocasematch
+    echo ''
+
+    return 0
 }
 
 test -z "$1" && usage
