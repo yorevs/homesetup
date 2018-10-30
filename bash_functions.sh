@@ -642,7 +642,7 @@ function cmd() {
             [A-Z0-9_]*)
                 cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                 test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                test -n "$cmdExpr" && eval "$cmdExpr"
+                test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
             ;;
             *)
                 printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
@@ -762,15 +762,18 @@ function plist() {
     #done
 #}
 
-# Purpose: Checkout the last different previous git branch
+# Purpose: Checkout the last different previous git branch.
 function git-() {
 
-    local currBranch="$(git rev-parse --abbrev-ref HEAD)"
-    local prevBranch=$(git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6}')
-    git checkout $prevBranch
+    local currBranch
+    local prevBranch
+
+    currBranch="$(git rev-parse --abbrev-ref HEAD)"
+    prevBranch=$(git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6}')
+    command git checkout "$prevBranch"
 }
 
-# Check the latest dotfiles version
+# Check the latest dotfiles version.
 function dv() {
 
     local repoVer
