@@ -58,19 +58,19 @@ version() {
 test "$1" = '-h' -o "$1" = '--help' && usage
 test "$1" = '-v' -o "$1" = '--version' && version
 
-# TODO
+# Firebase configuration file.
 FIREBASE_FILE="$HHS_DIR/.firebase"
 
-# TODO
+# Firebase json response file.
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
-# TODO
+# Firebase response regex.
 FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+\}$'
 
-# TODO
+# File to store the saved commands.
 CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
-# TODO
+# File to store the saved directories.
 SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
 # Loads Firebase settings from file.

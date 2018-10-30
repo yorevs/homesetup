@@ -47,19 +47,24 @@ function decrypt() {
         echo "Usage: decrypt <file_name> <passphrase> [keep]"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
-        local filename
-        filename=${1%.*}
-        gpg --yes --batch --passphrase="$2" "$filename.gpg" &> /dev/null;
+        local filename="$1"
+        local fileext
+        fileext=${1##*.}
+        if [ "gpg" != "$fileext" ]; then
+            filename=${1}.gpg
+            cp -f "$1" "$filename"
+        fi
+        gpg --yes --batch --passphrase="$2" "$filename" &> /dev/null;
         if test $? -eq 0; then
             echo -e "${GREEN}File \"$1\" has been decrypted!${NC}"
-            test "$3" = "keep" || rm -f "$1"
+            test "$3" = "keep" || rm -f "$filename"
             return 0
         fi
     else
         echo -e "${RED}gpg is required to execute this command!${NC}"
     fi
 
-    echo -e "${RED}Unable to decrypt file: \"$1\" ${NC}"
+    echo -e "${RED}Unable to decrypt file: \"$filename\" ${NC}"
 
     return 1
 }
