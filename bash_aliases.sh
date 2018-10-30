@@ -54,7 +54,7 @@ alias lll='ls -lhd .?* ${COLOR_FLAG}'
 alias lld='ls -lhd .?*/ ${COLOR_FLAG}'
 
 # List all directories recursively (Nth level depth) as a tree
-alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
+command -v tree >/dev/null && alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
