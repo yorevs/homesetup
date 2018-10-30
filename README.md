@@ -41,12 +41,12 @@ Access: https://console.firebase.google.com/
 
 1. Create a *new Project* (HomeSetup).
 2. Create Database (as **testing mode**).
-    2.1. Click on Develop -> Database -> Create Database
-    2.2. Click on **Realtime Database**
-    2.2. Click on the **Rules** tab.
-        2.2.1 Change the line from: `".read": false,` to `".read": true,`.
-        2.2.2 Change the line from: `".write": false,` to `".write": true,`.
-        2.2.3 Click on the *Publish* button and accept changes.
+    * Click on Develop -> Database -> Create Database
+    * Click on **Realtime Database**
+    * Click on the **Rules** tab.
+        - Change the line from: `".read": false,` to `".read": true,`.
+        - Change the line from: `".write": false,` to `".write": true,`.
+        - Click on the *Publish* button and accept changes.
 3. Grab you *Project ID* from the settings Settings menu.
 
 Type in a shell: `#> dotfiles.sh fb setup`
