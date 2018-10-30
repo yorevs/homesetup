@@ -79,7 +79,9 @@ function ss() {
                 ;;
                 -r | --replace)
                     replace=1
-                    extra_str=$(test -n "$replace" && echo ", replacement: \"$5\"")
+                    shift
+                    repl_str="$1"
+                    extra_str=", replacement: \"$repl_str\""
                 ;;
                 *)
                     [[ ! "$1" =~ ^-[wir] ]] && break
@@ -89,11 +91,16 @@ function ss() {
         done
         echo "${YELLOW}Searching for \"${strType}\" matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
         if [ -n "$replace" ]; then
-            result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec ised -e "s/$2/$5/g" {} \;)
-            echo "${result//$2/$5}" | grep $gflags "$5"
+            if [ "$strType" = 'string' ]; then
+                echo "${RED}Can't replace non-Regex expressions in search!${NC}"
+                return 1
+            fi
+            [ "Linux" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i'' -e "s/$2/$repl_str/g" {} \;)
+            [ "Darwin" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$repl_str/g" {} \;)
+            test -n "$result" && echo "${result//$2/$repl_str}" | grep $gflags "$repl_str"
         else
             result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
-            echo "${result}" | grep $gflags "$2"
+            test -n "$result" && echo "${result}" | grep $gflags "$2"
         fi
     fi
 
