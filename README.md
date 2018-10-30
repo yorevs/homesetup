@@ -157,6 +157,8 @@ This project adds many script functions the shell. All functions provide a help 
 
 Function   | Purpose
 ---------- | ----------
+encrypt    | Encrypt file using GPG encryption.
+decrypt    | Decrypt file using GPG encryption.
 sf         | Search for files recursively
 sd         | Search for directories recursively
 ss         | Search for strings in files recursively

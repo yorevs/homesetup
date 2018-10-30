@@ -12,7 +12,7 @@
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.functions
 
 
-# Purpose: GPG encryption.
+# Purpose: Encrypt file using GPG encryption.
 # @param $1 [Req] : The file to encrypt.
 # @param $2 [Req] : The passphrase to encrypt the file.
 # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
@@ -38,7 +38,7 @@ function encrypt() {
     return 1
 }
 
-# Purpose: GPG decryption.
+# Purpose: Decrypt file using GPG encryption..
 # @param $1 [Req] : The file to decrypt.
 # @param $2 [Req] : The passphrase to decrypt the file.
 # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
