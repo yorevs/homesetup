@@ -130,7 +130,7 @@ function del-tree() {
         # Move all to trash
         if test -n "$all"; then
             read -r -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
-            if test "$ANS" = 'y' -o "$ANS" = 'Y'; then
+            if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
                 echo "${RED}"
                 for next in $all; do
                     dst=${next##*/}
@@ -762,14 +762,25 @@ function dv() {
         isDifferent=$(test -n "$repoVer" -a "$DOTFILES_VERSION" != "$repoVer" && echo 1)
         if [ -n "$isDifferent" ];then
             echo -e "${YELLOW}You have a different version of HomeSetup:"
-            echo -e "  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}.${NC}"
+            echo -e "  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}."
+            read -r -n 1 -sp "Update it now (y/[n]) ?" ANS
+            test -n "$ANS" && echo "${ANS}${NC}"
+            if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
+                cd "$HOME_SETUP" || return 1
+                git pull || return 1
+                sleep 1
+                cd - || return 1
+                echo -e "${GREEN}Successfully updated HomeSetup!"
+                reload
+            fi
         else
-            echo -e "${GREEN}You version is up to date with the repository: ${repoVer} !${NC}"
+            echo -e "${GREEN}You version is up to date with the repository: ${repoVer} !"
         fi
     else
         echo "${RED}DOTFILES_VERSION was not defined!${NC}"
         return 1
     fi
+    echo "${NC}"
 
     return 0
 }
