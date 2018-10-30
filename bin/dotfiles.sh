@@ -65,7 +65,7 @@ FIREBASE_FILE="$HHS_DIR/.firebase"
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
 # TODO
-FB_RE_RESP='{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"profile":".*")*(,*"SAVED_DIRS":".*")*)+}'
+FB_RE_RESP='{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+}'
 
 # TODO
 CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
@@ -128,7 +128,7 @@ build_dotfiles_payload() {
     test -n "$f_functions" && payload="${payload}\"functions\" : \"$f_functions\","
     test -n "$f_profile" && payload="${payload}\"profile\" : \"$f_profile\","
     test -n "$f_cmdFile" && payload="${payload}\"commands\" : \"$f_cmdFile\","
-    test -n "$f_savedDirs" && payload="${payload}\"SAVED_DIRS\" : \"$f_savedDirs\""
+    test -n "$f_savedDirs" && payload="${payload}\"savedDirs\" : \"$f_savedDirs\""
     payload="${payload} } }"
     local match=', } }'
     local repl=' } }'

@@ -483,7 +483,7 @@ function save() {
     elif test "$1" = "-e"; then
         vi "$SAVED_DIRS"
     elif test "$1" = "-r"; then
-        ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
+        ised -e "s#(^$dirAlias=.*)*##g" -e '/^\s*$/d' "$SAVED_DIRS"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     else
         dir="$1"

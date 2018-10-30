@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091
 
 #  Script: bashrc.sh
 # Purpose: Shell configuration main entry point file
@@ -20,13 +21,11 @@
 # Source global definitions
 if [ -f /etc/bashrc ]
 then
-    # shellcheck disable=SC1091
     source /etc/bashrc
 fi
 
 # Source the main profile
 if [ -n "$PS1" ] && [ -f ~/.bash_profile ]
 then
-    # shellcheck disable=SC1090
     source ~/.bash_profile
 fi

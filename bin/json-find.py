@@ -18,6 +18,7 @@ json_obj = None
 alias = None
 
 try:
+    
     index=1
     jutils = JsonUtils()
     opts, args = getopt.getopt(sys.argv[1:], 'f:a:', ['file','alias'])
@@ -34,7 +35,9 @@ try:
     if f_json is None:
         json_str = ', '.join(str(x) for x in sys.argv[index:])
         json_obj = json.loads(json_str)
+        
     content = jutils.jsonSelect(json_obj, alias)
-    print content
+    print '%s' % '' if content is None else content
+    
 except:
     pass
