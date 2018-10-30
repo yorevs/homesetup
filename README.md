@@ -29,6 +29,32 @@ or
 
 `#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash`
 
+#### 1.3 Setup a Firebase account for custom files synchronization
+
+HomeSetup allows you to use your Firebase account to upload and download your custom files
+to your *Realtime Database*. To be able to use this feature, you need first to configure
+your Firebase account with HomeSetup.
+
+##### 1.3.1 Create a Firebase accout using your Google credentials (If you do not have one)
+
+Access: https://console.firebase.google.com/
+
+1. Create a *new Project* (HomeSetup).
+2. Create Database (as **testing mode**).
+    2.1. Click on Develop -> Database -> Create Database
+    2.2. Click on **Realtime Database**
+    2.2. Click on the **Rules** tab.
+        2.2.1 Change the line from: `".read": false,` to `".read": true,`.
+        2.2.2 Change the line from: `".write": false,` to `".write": true,`.
+        2.2.3 Click on the *Publish* button and accept changes.
+3. Grab you *Project ID* from the settings Settings menu.
+
+Type in a shell: `#> dotfiles.sh fb setup`
+
+Fill in the information required.
+You are now ready to use the Firebase features of HomeSetup.
+Type: `#> dotfiles.sh help fb` for further information about using it.
+
 ### 2. Dotfiles in this project
 
 The following files will be added when installing this project:
