@@ -57,7 +57,7 @@ function ss() {
     local strType='regex'
     local gflags="-HnE"
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 3 ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
         echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
         echo ''
         echo 'Options: '
@@ -707,7 +707,7 @@ function plist() {
     local allPids
     local pid
 
-    if [ "$1" = "-h" ] [ "$1" = "--help" ] [ -z "$1" ]; then
+    if [ "$1" = "-h" ] [ "$1" = "--help" ] [ -lt 1 ]; then
         echo "Usage: plist <process_name> [kill]"
         return 1
     else
