@@ -121,13 +121,13 @@ format_json() {
 do_fetch() {
 
     if [ -z "$HEADERS" ] && [ -z "${BODY}" ]; then
-        curl -X "${METHOD}" "${URL}" 2> /dev/null | format_json
+        curl -m 3 -X "${METHOD}" "${URL}" 2> /dev/null | format_json
     elif [ -z "$HEADERS" ] && [ -n "${BODY}" ]; then
-        curl -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
+        curl -m 3 -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
     elif [ -n "$HEADERS" ] && [ -n "${BODY}" ]; then
-        curl -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
+        curl -m 3 -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
     elif [ -n "$HEADERS" ] && [ -z "${BODY}" ]; then
-        curl -X "${METHOD}" "${URL}" 2> /dev/null | format_json
+        curl -m 3 -X "${METHOD}" "${URL}" 2> /dev/null | format_json
     fi
 
     return $?

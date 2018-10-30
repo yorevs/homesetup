@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
+#  Script: json-find.py
+# Purpose: Find a object from the json string or file.
+# Created: Jan 20, 2017
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+#    Site: https://github.com/yorevs/homesetup
+
 import sys
 import json
 import getopt
 
 from jsonutils.JsonUtils import JsonUtils
-
-STDERR = sys.stderr
-def excepthook(*args):
-    print >> STDERR, 'caught'
-    print >> STDERR, args
-
-sys.excepthook = excepthook
 
 f_json = None
 json_obj = None

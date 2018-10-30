@@ -16,7 +16,7 @@
 # @param $2 [Req] : The GLOB expression of the file search.
 function sf() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo "Usage: sf <search_path> <glob_exp_files>"
         return 1
     else
@@ -31,7 +31,7 @@ function sf() {
 # @param $2 [Req] : The GLOB expression of the directory search.
 function sd() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo "Usage: sd <search_path> <glob_exp_folders>"
         return 1
     else
@@ -57,7 +57,7 @@ function ss() {
     local strType='regex'
     local gflags="-HnE"
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -o -z "$2" -o -z "$3"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 3 ]; then
         echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
         echo ''
         echo 'Options: '
@@ -104,7 +104,7 @@ function ss() {
 # @param $1 [Req] : The searching command.
 function hist() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: hist <command>"
         return 1
     else
@@ -121,14 +121,14 @@ function del-tree() {
     local all
     local dst
 
-    if test -z "$1" -o "$1" = "/" -o ! -d "$1"; then
+    if [ -z "$1" ] || [ "$1" = "/" ] || [ ! -d "$1" ]; then
         echo "Usage: del-tree <search_path> <glob_exp>"
         return 1
     else
         # Find all files and folders matching the <glob_exp>
         all=$(find "$1" -name "*$2")
         # Move all to trash
-        if test -n "$all"; then
+        if [ -n "$all" ]; then
             read -r -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
             if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
                 echo "${RED}"
@@ -153,7 +153,7 @@ function del-tree() {
 # @param $1 [Req] : The unformatted JSON string.
 function jp() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: jp <json_string>"
         return 1
     else
@@ -172,11 +172,11 @@ function ip-info() {
 
     local ipinfo
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ip-info <IPv4_address>"
         return 1
     else
-        ipinfo=$(curl --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
+        ipinfo=$(curl -m 3 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
         test -n "$ipinfo" && jp "$ipinfo"
     fi
 
@@ -187,7 +187,7 @@ function ip-info() {
 # @param $1 [Req] : The IP address to resolve.
 function ip-resolve() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ip-resolve <IPv4_address>"
         return 1
     else
@@ -201,7 +201,7 @@ function ip-resolve() {
 # @param $1 [Req] : The domain name to lookup.
 function ip-lookup() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ip-lookup <domain_name>"
         return 1
     else
@@ -305,7 +305,7 @@ function paths() {
 # @param $1 [Req] : The app to check.
 function ver() {
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ver <appName>"
         return 1
     else
@@ -345,7 +345,7 @@ function tc() {
     local tool_name
     local check
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: tc <appName>"
     else
         pad=$(printf '%0.1s' "."{1..60})
@@ -355,7 +355,7 @@ function tc() {
         printf "${ORANGE}($(uname -s))${NC} "
         printf "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
-        if test -n "${check}"; then
+        if [ -n "${check}" ]; then
             printf '%s\n' "${GREEN}INSTALLED${NC} at ${check}"
             return 0
         else
@@ -524,7 +524,7 @@ function load() {
         return 1
     elif [ "$1" = "-l" ] || [ -z "$1" ]; then
         allDirs=$(grep . "$SAVED_DIRS" | sort)
-        if test -n "$allDirs"; then
+        if [ -n "$allDirs" ]; then
             pad=$(printf '%0.1s' "."{1..60})
             pad_len=40
             echo ' '
@@ -611,7 +611,7 @@ function cmd() {
             ;;
             "" | -l | --list)
                 allCmds=$(grep . "$CMD_FILE")
-                if test -n "$allCmds"; then
+                if [ -n "$allCmds" ]; then
                     pad=$(printf '%0.1s' "."{1..60})
                     pad_len=40
                     echo ' '
@@ -679,7 +679,7 @@ function punch() {
         # Reset punchs (backup as week-N.punch)
         test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
         # Do the punch
-        if test -z "$OPT"; then
+        if [ -z "$OPT" ]; then
             lines=$(grep . "$PUNCH_FILE")
             (
                 success=0
