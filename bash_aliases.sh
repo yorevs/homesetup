@@ -68,7 +68,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 alias cls='clear'
-command -v vim >/dev/null || alias vi='vim'
+command -v vim >/dev/null && alias vi='vim'
 alias tl='tail -F'
 
 alias encode="base64"
