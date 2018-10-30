@@ -13,9 +13,10 @@ command -v java >/dev/null && export JAVA_HOME="/Library/Java/JavaVirtualMachine
 command -v java >/dev/null && export JDK_HOME="$JAVA_HOME"
 command -v python >/dev/null && export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
 command -v qmake >/dev/null && export QT_HOME="$HOME/Applications/QT/Current/clang_64"
-command -v xcode-select >/dev/null && export XCODE_HOME="xcode-select -p"
-export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
+# shellcheck disable=SC2155
+command -v xcode-select >/dev/null && export XCODE_HOME="$(xcode-select -p)"
+command -v xcode-select >/dev/null && export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 # Other environment variables
 test -d "$HOME/Dropbox" && export DROPBOX="$HOME/Dropbox"
