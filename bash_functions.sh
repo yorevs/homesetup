@@ -427,7 +427,7 @@ function aa() {
                     local expr
                     IFS=$'\n'
                     for next in $allAliases; do
-                        local re='^alias.+'
+                        local re='^alias .+=.+'
                         if [[ $next =~ $re ]]; then
                             name=$(echo -n "$next" | awk -F '=' '{ print $1 }')
                             expr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
