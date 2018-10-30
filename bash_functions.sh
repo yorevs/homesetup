@@ -11,6 +11,59 @@
 #    Site: https://github.com/yorevs/homesetup
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.functions
 
+
+# Purpose: GPG encryption.
+# @param $1 [Req] : The file to encrypt.
+# @param $2 [Req] : The passphrase to encrypt the file.
+# @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
+function encrypt() {
+
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
+        echo "Usage: encrypt <file_name> <passphrase> [keep]"
+        return 1
+    elif [ -n "$(command -v gpg)" ]; then
+        gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null;
+        if test $? -eq 0; then
+            echo -e "${GREEN}File \"$1\" has been encrypted!${NC}"
+            test "$3" = "keep" || mv -f "$1.gpg" "$1"
+            return 0
+        fi
+    else
+        echo -e "${RED}gpg is required to execute this command!${NC}"
+    fi
+
+    echo -e "${RED}Unable to encrypt file: \"$1\" ${NC}"
+
+    return 1
+}
+
+# Purpose: GPG decryption.
+# @param $1 [Req] : The file to decrypt.
+# @param $2 [Req] : The passphrase to decrypt the file.
+# @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
+function decrypt() {
+
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
+        echo "Usage: decrypt <file_name> <passphrase> [keep]"
+        return 1
+    elif [ -n "$(command -v gpg)" ]; then
+        local filename
+        filename=${1%.*}
+        gpg --yes --batch --passphrase="$2" "$filename.gpg" &> /dev/null;
+        if test $? -eq 0; then
+            echo -e "${GREEN}File \"$1\" has been decrypted!${NC}"
+            test "$3" = "keep" || rm -f "$1"
+            return 0
+        fi
+    else
+        echo -e "${RED}gpg is required to execute this command!${NC}"
+    fi
+
+    echo -e "${RED}Unable to decrypt file: \"$1\" ${NC}"
+
+    return 1
+}
+
 # Purpose: Search for files recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the file search.
@@ -714,7 +767,7 @@ function plist() {
     local allPids
     local pid
 
-    if [ "$1" = "-h" ] [ "$1" = "--help" ] [ -lt 1 ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
         echo "Usage: plist <process_name> [kill]"
         return 1
     else

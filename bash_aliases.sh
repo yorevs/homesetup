@@ -130,10 +130,6 @@ command -v defaults >/dev/null && alias hide-files="defaults write com.apple.fin
 # Set JAVA_HOME using jenv
 command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
-# GPG encryption/decryption shortcut
-command -v gpg >/dev/null && alias encrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: encrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 -c $2 &> /dev/null; };_'
-command -v gpg >/dev/null && alias decrypt='function _() { test -z "$1" -o -z "$2" && echo "Usage: decrypt <password> <filename>" || gpg --yes --batch --passphrase=$1 $2 &> /dev/null; };_'
-
 # Canonical hex dump; some systems have this symlinked
 command -v hd >/dev/null || alias hd='hexdump -C'
 
