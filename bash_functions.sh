@@ -762,6 +762,14 @@ function plist() {
     #done
 #}
 
+# Purpose: Checkout the last different previous git branch
+function git-() {
+
+    local currBranch="$(git rev-parse --abbrev-ref HEAD)"
+    local prevBranch=$(git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6}')
+    git checkout $prevBranch
+}
+
 # Check the latest dotfiles version
 function dv() {
 
