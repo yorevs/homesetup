@@ -290,13 +290,12 @@ function paths() {
         (
             IFS=$'\n'
             for path in $(echo -e "${PATH//:/\\n}"); do
-                printf "$path "
+                printf '%s' "${BLUE}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-                test -d "$path" && printf "${BLUE}OK${NC}\n"
-                test -d "$path" || printf "${RED}DOES NOT EXIST${NC}\n"
+                test -d "$path" && printf '%s\n' "${GREEN} Path exists" || printf '%s\n'  "${RED} Path does not exist"
             done
         )
-        echo ''
+        echo -e "${NC}"
     fi
 
     return 0
@@ -333,6 +332,8 @@ function ver() {
         fi
         printf "${VER}\n"
     fi
+
+    return 0
 }
 
 # Purpose: Check if the required tool is installed on the system.
@@ -377,6 +378,7 @@ function tools() {
     echo "${CYAN}"
     echo 'To check the current installed version type: #> ver <tool_name>'
     echo "${NC}"
+    
     return 0
 }
 
