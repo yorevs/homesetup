@@ -216,18 +216,18 @@ function ip-lookup() {
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
 function port-check() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1" -a -z "$2"; then
-        echo "Usage: port-check <portnum_regex> [state]"
-        echo "States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
-        return 1
-    elif test -n "$1" -a -z "$2"; then
+    if [ -n "$1" ] && [ -n "$2" ]; then
+        echo "Checking port \"$1\" state: \"$2\""
+        echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
+        netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$2"
+    elif [ -n "$1" ] && [ -z "$2" ]; then
         echo "Checking port \"$1\" state: \"ALL\""
         echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
         netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$1"
     else
-        echo "Checking port \"$1\" state: \"$2\""
-        echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
-        netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$2"
+        echo "Usage: port-check <portnum_regex> [state]"
+        echo "States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
+        return 1
     fi
 
     return 0
@@ -243,7 +243,7 @@ function envs() {
     local name
     local value
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: envs [regex_filter]"
         return 1
     else
@@ -278,10 +278,10 @@ function paths() {
     local pad
     local pad_len
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: paths"
         return 1
-    elif test -z "$1"; then
+    elif [ -z "$1" ]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=60
         echo ' '
@@ -306,8 +306,8 @@ function paths() {
 # @param $1 [Req] : The app to check.
 function ver() {
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
-        echo "Usage: ver <app>"
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
+        echo "Usage: ver <appName>"
         return 1
     else
         # First attempt: app --version
@@ -325,7 +325,7 @@ function ver() {
                     # Last attempt: app -v
                     VER=$(${APP} -v 2>&1)
                     if test $? -ne 0; then
-                        printf "${RED}Unable to find $APP version using common methods (--version, -version, -V and -v) ${NC}\n"
+                        printf '%s\n' "${RED}Unable to find $APP version using common methods (--version, -version, -V and -v) ${NC}"
                         return 1
                     fi
                 fi
@@ -336,7 +336,7 @@ function ver() {
 }
 
 # Purpose: Check if the required tool is installed on the system.
-# @param $1 [Req] : The tool to check.
+# @param $1 [Req] : The app to check.
 function tc() {
 
     local pad
@@ -344,9 +344,8 @@ function tc() {
     local tool_name
     local check
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
-        echo "Usage: tc <app>"
-        return 1
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
+        echo "Usage: tc <appName>"
     else
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
@@ -356,13 +355,14 @@ function tc() {
         printf "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
         if test -n "${check}"; then
-            printf "${GREEN}INSTALLED${NC} at ${check}\n"
+            printf '%s\n' "${GREEN}INSTALLED${NC} at ${check}"
             return 0
         else
-            printf "${RED}NOT INSTALLED${NC}\n"
-            return 2
+            printf '%s\n' "${RED}NOT INSTALLED${NC}"
         fi
     fi
+
+    return 1
 }
 
 # Purpose: Check if the development tools are installed on the system.
@@ -374,9 +374,9 @@ function tools() {
     for app in ${DEV_APPS[*]}; do
         tc "$app"
     done
-    echo ''
-    echo "${CYAN}To check the current installed version type: ver <tool_name>${NC}"
-    echo ''
+    echo "${CYAN}"
+    echo 'To check the current installed version type: #> ver <tool_name>'
+    echo "${NC}"
     return 0
 }
 
@@ -393,7 +393,7 @@ function aa() {
     local allAliases
     local isSorted=0
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo 'Usage: aa [-s|--sort] [alias] [alias_expr]'
         echo ''
         echo 'Options: '
@@ -413,10 +413,10 @@ function aa() {
         shift
         aliasExpr="$*"
 
-        if test -z "$aliasName" -a -z "$aliasExpr"; then
+        if [ -z "$aliasName" ] && [ -z "$aliasExpr" ]; then
             # List all aliases
             test "$isSorted" = "0" && allAliases=$(grep . "$aliasFile") || allAliases=$(grep . "$aliasFile" | sort)
-            if test -n "$allAliases"; then
+            if [ -n "$allAliases" ]; then
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=40
                 echo ' '
@@ -443,14 +443,14 @@ function aa() {
             else
                 printf '%s\n' "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
             fi
-        elif test -n "$aliasName" -a -n "$aliasExpr"; then
+        elif [ -n "$aliasName" ] && [ -n "$aliasExpr" ]; then
             # Add/Set one alias
             ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
             printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
             # shellcheck disable=SC1090
             source "$aliasFile"
-        elif test -n "$aliasName" -a -z "$aliasExpr"; then
+        elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then
             # Remove one alias
             unalias "$aliasName" &> /dev/null
             ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
@@ -467,34 +467,34 @@ function aa() {
 function save() {
 
     local dir
-    local dirAlias="SAVED_DIR"
+    local dirAlias
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
-    test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-    test -z "$dirAlias" && dirAlias="SAVED_DIR"
     touch "$SAVED_DIRS"
+    dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$dirAlias" ]; then
         echo "Usage: save [options] | [dir_to_save] [dir_alias]"
         echo "Options: "
         echo "    -e : Edit the saved dirs file."
         echo "    -r : Remove saved dir."
         return 1
-    elif test "$1" = "-e"; then
-        vi "$SAVED_DIRS"
-    elif test "$1" = "-r"; then
-        ised -e "s#(^$dirAlias=.*)*##g" -e '/^\s*$/d' "$SAVED_DIRS"
-        echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
     else
-        dir="$1"
-        test -z "$dir" -o "$dir" = "." && dir=${dir//./$(pwd)}
-        test -n "$dir" -a "$dir" = ".." && dir=${dir//../$(pwd)}
-        test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
-        test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
-        touch "$SAVED_DIRS"
-        ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
-        echo "$dirAlias=$dir" >>"$SAVED_DIRS"
-        echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
+        if [ "$1" = "-e" ]; then
+            vi "$SAVED_DIRS"
+        elif [ "$1" = "-r" ]; then
+            ised -e "s#(^$dirAlias=.*)*##g" -e '/^\s*$/d' "$SAVED_DIRS"
+            echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
+        else
+            dir="$1"
+            test -z "$dir" -o "$dir" = "." && dir=${dir//./$(pwd)}
+            test -n "$dir" -a "$dir" = ".." && dir=${dir//../$(pwd)}
+            test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
+            test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
+            ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
+            echo "$dirAlias=$dir" >>"$SAVED_DIRS"
+            echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
+        fi
     fi
 
     return 0
@@ -512,12 +512,13 @@ function load() {
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
     touch "$SAVED_DIRS"
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: load [-l] | [dir_alias]"
         echo "Options: "
-        echo "    -l : List all saved dirs."
+        echo "    [dir_alias] : Change to the directory saved from the alias provided."
+        echo "             -l : List all saved dirs."
         return 1
-    elif test "$1" = "-l"; then
+    elif [ "$1" = "-l" ] || [ -z "$1" ]; then
         allDirs=$(grep . "$SAVED_DIRS" | sort)
         if test -n "$allDirs"; then
             pad=$(printf '%0.1s' "."{1..60})
@@ -540,12 +541,14 @@ function load() {
             echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
         fi
     else
-        test -n "$1" && dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        test -z "$dirAlias" && dirAlias="SAVED_DIR"
+        dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         dir=$(grep -m 1 "^${dirAlias}=" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
-        test -z "$dir" -o ! -d "$dir" && echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}" && return 1
-        test -n "$dir" -a -d "$dir" && cd "$dir" || return 1
-        echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+        if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+            qiot 2 "Directory ($dirAlias): \"$dir\" was not found"
+        else
+            cd "$dir" || quit 2 "Unable to change to directory: $dir"
+            echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+        fi
     fi
 
     return 0
@@ -565,14 +568,14 @@ function cmd() {
 
     touch "$CMD_FILE"
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
-        echo "Usage: cmd [options [alias] <expression>] | [cmd_index]"
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: cmd [options [cmd_alias] <cmd_expression>] | [cmd_index]"
         echo "Options: "
-        echo "       : Execute the command specified by <cmd_index> (When no option is provided)."
-        echo "    -e : Edit the commands file."
-        echo "    -a : Store a command."
-        echo "    -r : Remove a command."
-        echo "    -l : List all stored commands."
+        echo "    [cmd_index] : Execute the command specified by the command index."
+        echo "             -e : Edit the commands file."
+        echo "             -a : Store a command."
+        echo "             -r : Remove a command."
+        echo "             -l : List all stored commands."
         return 1
     else
         case "$1" in
@@ -601,7 +604,7 @@ function cmd() {
                     ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
                 fi
             ;;
-            -l | --list)
+            "" | -l | --list)
                 allCmds=$(grep . "$CMD_FILE")
                 if test -n "$allCmds"; then
                     pad=$(printf '%0.1s' "."{1..60})
@@ -647,10 +650,10 @@ function punch() {
     local timeStamp
     local weekStamp
 
-    if test "$1" = "-h" -o "$1" = "--help"; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: punch [-l,-e,-r]"
         echo "Options: "
-        echo "       : !!PUNCH THE CLOCK!! (When no option s provided)."
+        echo "       : !!PUNCH THE CLOCK!! (When no option is provided)."
         echo "    -l : List all registered punches."
         echo "    -e : Edit current punch file."
         echo "    -r : Reset punches for the next week."
@@ -699,24 +702,30 @@ function plist() {
     local allPids
     local pid
 
-    if test "$1" = "-h" -o "$1" = "--help" -o -z "$1"; then
+    if [ "$1" = "-h" ] [ "$1" = "--help" ] [ -z "$1" ]; then
         echo "Usage: plist <process_name> [kill]"
         return 1
     else
         # shellcheck disable=SC2009
         allPids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
-        if test -n "$allPids"; then
-            test "$2" = "kill" || echo -e "${GREEN}\nUID\tPID\tPPID\tCOMMAND\n---------------------------------------------------------------------------------"
-            test "$2" = "kill" && echo ''
+        if [ -n "$allPids" ]; then
+            echo -e "${WHITE}\nUID\tPID\tPPID\tCOMMAND"
+            echo '---------------------------------------------------------------------------------'
+            echo -e "${RED}"
             (
                 IFS=$'\n'
                 for next in $allPids; do
                     pid=$(echo "$next" | awk '{ print $2 }')
-                    test "$2" = "kill" || echo -e "${BLUE}$next${NC}" | tr ' ' '\t'
-                    test -n "$pid" -a "$2" = "kill" && kill -9 "$pid" && echo "${RED}Killed process with PID = $pid ${NC}"
+                    echo -en "${BLUE}$next" | tr ' ' '\t'
+                    if [ -n "$pid" ] && [ "$2" = "kill" ]; then 
+                        kill -9 "$pid"
+                        echo -e "${RED}\t\tKilled with signal -9"
+                    else
+                        test -n "$(pgrep "$1")" && echo -e "${GREEN}*"
+                    fi
                 done
             )
-            echo ''
+            echo -e "${NC}"
         else
             echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
         fi
@@ -748,13 +757,17 @@ function dv() {
     local isDifferent
     local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
 
-    if test -n "$DOTFILES_VERSION"; then
+    if [ -n "$DOTFILES_VERSION" ]; then
         repoVer=$(curl -s -m 3 "$VERSION_URL")
         isDifferent=$(test -n "$repoVer" -a "$DOTFILES_VERSION" != "$repoVer" && echo 1)
-        test -n "$isDifferent" && echo -e "${YELLOW}You have a different version of HomeSetup:\n  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}.${NC}"
-        test -n "$isDifferent" || echo -e "${GREEN}You version is up to date: ${repoVer} !${NC}"
+        if [ -n "$isDifferent" ];then
+            echo -e "${YELLOW}You have a different version of HomeSetup:"
+            echo -e "  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}.${NC}"
+        else
+            echo -e "${GREEN}You version is up to date with the repository: ${repoVer} !${NC}"
+        fi
     else
-        echo "${RED}DOTFILES_VERSION is not defined${NC}"
+        echo "${RED}DOTFILES_VERSION was not defined!${NC}"
         return 1
     fi
 
