@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
+# shellcheck disable=SC1117,SC1090
 
 #  Script: dotfiles.sh
 # Purpose: Manage your HomeSetup dotfiles and more
@@ -24,8 +24,8 @@ Usage: $PROC_NAME <command> [<args>]
 "
 
 # Import pre-defined .bash_colors
-# shellcheck disable=SC1090
 test -f ~/.bash_colors && source ~/.bash_colors
+test -f ~/.bash_functions && source ~/.bash_functions
 
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
@@ -77,7 +77,6 @@ SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 load_fb_settings() {
 
     test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
-    # shellcheck disable=SC1090
     test -f "$FIREBASE_FILE" && source "$FIREBASE_FILE"
     [ -z "$PROJECT_ID" ] || [ -z "$FIREBASE_URL" ] || [ -z "$PASSPHRASE" ] && quit 2 "Invalid settings file!"
     return 0
