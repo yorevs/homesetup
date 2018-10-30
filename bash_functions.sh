@@ -632,18 +632,18 @@ function cmd() {
                             cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
                             printf "${BLUE}${cmdName}"
                             printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                            echo "${WHITE} is stored as '${cmdExpr}'"
+                            echo "${WHITE} is stored as: ${cmdExpr}"
                             index=$((index + 1))
                         done
                     )
                     printf '%s\n' "${NC}"
                 fi
             ;;
-            [1-9]*)
+            [A-Z0-9_]*)
                 cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                echo "#> $cmdExpr"
+                test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                 test -n "$cmdExpr" && eval "$cmdExpr"
-                ;;
+            ;;
             *)
                 printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
                 return 1
