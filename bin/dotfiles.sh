@@ -65,7 +65,7 @@ FIREBASE_FILE="$HHS_DIR/.firebase"
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
 # TODO
-FB_RE_RESP='{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+}'
+FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+\}$'
 
 # TODO
 CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
