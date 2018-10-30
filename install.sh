@@ -260,7 +260,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
         echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
         echo ''
-        printf "%s\n" "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/version") installed!"
+        printf "%s\n" "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         printf "%s\n" "${WHITE}"
         printf "%s\n" "? To activate dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
         printf "%s\n" "? To reload settings type: #> ${GREEN}reload${NC}"

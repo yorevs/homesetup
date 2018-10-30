@@ -39,11 +39,6 @@ export HISTFILESIZE=${HISTFILESIZE:-2000}
 # Don't put duplicate lines in the history.
 export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups
 
-# Languages and encodings
-export LANG=${LANG:-en_US.UTF-8}
-export LC_CTYPE=${LC_CTYPE:-UTF-8}
-export NLS_LANG=${NLS_LANG:-AMERICAN_AMERICA.AL32UTF8}
-
 # Development tools. To override it please export the same variable at ~/.env
 export DEFAULT_DEV_TOOLS=(
     "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"

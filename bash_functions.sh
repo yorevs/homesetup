@@ -248,7 +248,7 @@ function envs() {
         return 1
     else
         pad=$(printf '%0.1s' "."{1..60})
-        pad_len=35
+        pad_len=60
         filter="$*"
         test -z "$filter" && filter="^[a-zA-Z0-9_]*.*"
         echo ' '
@@ -349,7 +349,7 @@ function tc() {
         return 1
     else
         pad=$(printf '%0.1s' "."{1..60})
-        pad_len=20
+        pad_len=40
         tool_name="$1"
         check=$(command -v "${tool_name}")
         printf "${ORANGE}($(uname -s))${NC} "
@@ -418,7 +418,7 @@ function aa() {
             test "$isSorted" = "0" && allAliases=$(grep . "$aliasFile") || allAliases=$(grep . "$aliasFile" | sort)
             if test -n "$allAliases"; then
                 pad=$(printf '%0.1s' "."{1..60})
-                pad_len=30
+                pad_len=40
                 echo ' '
                 echo 'Available custom aliases:'
                 echo ' '
@@ -521,7 +521,7 @@ function load() {
         allDirs=$(grep . "$SAVED_DIRS" | sort)
         if test -n "$allDirs"; then
             pad=$(printf '%0.1s' "."{1..60})
-            pad_len=30
+            pad_len=40
             echo ' '
             echo 'Available saved directories:'
             echo ' '
@@ -605,7 +605,7 @@ function cmd() {
                 allCmds=$(grep . "$CMD_FILE")
                 if test -n "$allCmds"; then
                     pad=$(printf '%0.1s' "."{1..60})
-                    pad_len=30
+                    pad_len=40
                     echo ' '
                     echo 'Available stored commands:'
                     echo ' '
