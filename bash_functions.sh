@@ -18,14 +18,15 @@
 # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
 function encrypt() {
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
-        echo "Usage: encrypt <file_name> <passphrase> [keep]"
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+        echo "Usage: encrypt <file_name> <passphrase>"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
         gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null;
         if test $? -eq 0; then
             echo -e "${GREEN}File \"$1\" has been encrypted!${NC}"
-            test "$3" = "keep" || mv -f "$1.gpg" "$1"
+            encode -i "$1.gpg" -o "$1"
+            rm -f "$1.gpg"
             return 0
         fi
     else
@@ -44,20 +45,14 @@ function encrypt() {
 function decrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
-        echo "Usage: decrypt <file_name> <passphrase> [keep]"
+        echo "Usage: decrypt <file_name> <passphrase>"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
-        local filename="$1"
-        local fileext
-        fileext=${1##*.}
-        if [ "gpg" != "$fileext" ]; then
-            filename=${1}.gpg
-            cp -f "$1" "$filename"
-        fi
-        gpg --yes --batch --passphrase="$2" "$filename" &> /dev/null;
+        decode -i "$1" -o "$1.gpg"
+        gpg --yes --batch --passphrase="$2" "$1.gpg" &> /dev/null;
         if test $? -eq 0; then
             echo -e "${GREEN}File \"$1\" has been decrypted!${NC}"
-            test "$3" = "keep" || rm -f "$filename"
+            rm -f "$1.gpg"
             return 0
         fi
     else
