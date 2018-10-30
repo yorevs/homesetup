@@ -473,7 +473,7 @@ function save() {
     touch "$SAVED_DIRS"
     dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$dirAlias" ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$dirAlias" ] && [ "$1" != "-e" ]; then
         echo "Usage: save [options] | [dir_to_save] [dir_alias]"
         echo "Options: "
         echo "    -e : Edit the saved dirs file."
@@ -487,6 +487,8 @@ function save() {
             echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
         else
             dir="$1"
+            # If the path is not absolute, append the current directory to it.
+            [ -d "$dir" ] && [[ ! "$dir" =~ ^/ ]] && dir="$(pwd)/$dir"
             test -z "$dir" -o "$dir" = "." && dir=${dir//./$(pwd)}
             test -n "$dir" -a "$dir" = ".." && dir=${dir//../$(pwd)}
             test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
@@ -544,7 +546,8 @@ function load() {
         dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         dir=$(grep -m 1 "^${dirAlias}=" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
         if [ -z "$dir" ] || [ ! -d "$dir" ]; then
-            qiot 2 "Directory ($dirAlias): \"$dir\" was not found"
+            echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}"
+            return 1
         else
             cd "$dir" || quit 2 "Unable to change to directory: $dir"
             echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
