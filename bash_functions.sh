@@ -782,7 +782,7 @@ function punch() {
                 done
                 if [ "-l" = "$opt" ]; then
                     # shellcheck disable=SC2086
-                    total="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} )"
+                    total="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${BLUE}---------------------------------------------------------------------------"
                     echo -e "Week total = ${total}${NC}"
                 fi
