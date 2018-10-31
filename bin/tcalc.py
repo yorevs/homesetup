@@ -17,7 +17,10 @@ for tm in sys.argv[1:]:
         op = tm
     else:
         parts = [int(s) for s in tm.split(':')]
-        tm_amount = ((parts[0] * 60 + parts[1]) * 60 + parts[2])
+        f_hours = parts[0] if len(parts) > 0 else 0
+        f_mins = parts[1] if len(parts) > 1 else 0
+        f_secs = parts[2] if len(parts) > 2 else 0
+        tm_amount = ((f_hours * 60 + f_mins) * 60 + f_secs )
         if op == '+':
             total_seconds += tm_amount
         else:

@@ -714,6 +714,7 @@ function punch() {
     local dateStamp
     local timeStamp
     local weekStamp
+    local opt
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: punch [-l,-e,-r]"
@@ -724,41 +725,60 @@ function punch() {
         echo "    -r : Reset punches for the next week."
         return 1
     else
-        OPT="$1"
+        opt="$1"
         PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punchs}
         dateStamp="$(date +'%a %d-%m-%Y')"
         timeStamp="$(date +'%H:%M')"
         weekStamp="$(date +%V)"
         local re="($dateStamp).*"
         local lines
-        local totals
         # Create the punch file if it does not exist
-        if [ -f "$PUNCH_FILE" ]; then 
+        if [ ! -f "$PUNCH_FILE" ]; then 
             echo "$dateStamp => " >"$PUNCH_FILE"
-        # List punchs
-        elif [ "-l" = "$OPT" ]; then
-            cat "$PUNCH_FILE"
+        fi
         # Edit punchs
-        elif [ "-e" = "$OPT" ]; then
+        if [ "-e" = "$opt" ]; then
             vi "$PUNCH_FILE"
         # Reset punchs (backup as week-N.punch)
-        elif [ "-r" = "$OPT" ]; then
+        elif [ "-r" = "$opt" ]; then
             mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
-        # Do the punch
-        elif [ -z "$OPT" ]; then
+        else
             lines=$(grep . "$PUNCH_FILE")
             (
-                success=0
+                local totals=()
+                local pad
+                local pad_len
+                local index=0
+                local lineTotal
                 IFS=$'\n'
+                pad=$(printf '%0.1s' "."{1..60})
+                pad_len=36
+                test -z "$lines" &&  echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
                 for line in $lines; do
-                    if [[ "$line" =~ $re ]]; then
+                    # List punchs
+                    if [ "-l" = "$opt" ]; then
+                        echo -n "$line"
+                    # Do the punch
+                    elif [[ "$line" =~ $re ]]; then
                         sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
-                        success=1
                     fi
+                    # Read all timestamps and split them into an array.
+                    IFS=' ' 
+                    read -r -a totals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
+                    # If we have an even number of timestamps, display te subtotals.
+                    if [ "$(echo "${#totals[@]} % 2" | bc)" -eq 0 ]; then
+                        # shellcheck disable=SC2086
+                        lineTotal="$(tcalc.py ${totals[5]} - ${totals[4]} + ${totals[3]} - ${totals[2]} + ${totals[1]} - ${totals[0]})"
+                        printf '%*.*s' 0 $((pad_len - ${#totals[@]} * 6)) "$pad"
+                        [[ "$lineTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Total = ${GREEN}${lineTotal}${NC}" || echo -e " : Total = ${RED}${lineTotal}${NC}"
+                    else
+                        echo ''
+                    fi
+                    index=$((index + 1))
+                    IFS=$'\n'
                 done
-                test "$success" = "1" || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
             )
-            grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
+            test -z "$opt" && grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
         fi
     fi
 
