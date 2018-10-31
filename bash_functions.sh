@@ -537,7 +537,8 @@ function save() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$dirAlias" ] && [ "$1" != "-e" ]; then
         echo "Usage: save [options] | [dir_to_save] [dir_alias]"
-        echo "Options: "
+        echo ''
+        echo 'Options: '
         echo "    -e : Edit the saved dirs file."
         echo "    -r : Remove saved dir."
         return 1
@@ -578,7 +579,8 @@ function load() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: load [-l] | [dir_alias]"
-        echo "Options: "
+        echo ''
+        echo 'Options: '
         echo "    [dir_alias] : Change to the directory saved from the alias provided."
         echo "             -l : List all saved dirs."
         return 1
@@ -635,7 +637,8 @@ function cmd() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: cmd [options [cmd_alias] <cmd_expression>] | [cmd_index]"
-        echo "Options: "
+        echo ''
+        echo 'Options: '
         echo "    [cmd_index] : Execute the command specified by the command index."
         echo "             -e : Edit the commands file."
         echo "             -a : Store a command."
@@ -718,7 +721,7 @@ function punch() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: punch [-l,-e,-r]"
-        echo "Options: "
+        echo 'Options: '
         echo "       : !!PUNCH THE CLOCK!! (When no option is provided)."
         echo "    -l : List all registered punches."
         echo "    -e : Edit current punch file."
@@ -801,13 +804,18 @@ function plist() {
 
     local allPids
     local pid
+    local gflags=''
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-        echo "Usage: plist <process_name> [kill]"
+        echo "Usage: plist [-i] <process_name> [kill]"
+        echo ''
+        echo 'Options: '
+        echo '    -i : Make case insensitive search'
         return 1
     else
+        test "$1" = "-i" && gflags='-i' && shift
         # shellcheck disable=SC2009
-        allPids=$(ps -efc | grep "$1" | awk '{ print $1,$2,$3,$8 }')
+        allPids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
         if [ -n "$allPids" ]; then
             echo -e "${WHITE}\nUID\tPID\tPPID\tCOMMAND"
             echo '---------------------------------------------------------------------------------'
@@ -821,15 +829,16 @@ function plist() {
                         kill -9 "$pid"
                         echo -e "${RED}\t\tKilled with signal -9"
                     else
-                        test -n "$(pgrep "$1")" && echo -e "${GREEN}*"
+                        test -n "$(pgrep ${gflags} "$1")" && echo -e "${GREEN}*" || echo -e "${RED}*"
                     fi
                 done
             )
-            echo -e "${NC}"
         else
-            echo -e "\n${YELLOW}No active PIDs for process named: $1 ${NC}\n"
+            echo -e "\n${YELLOW}No active PIDs for process named: \"$1\" \n"
         fi
     fi
+
+    echo -e "${NC}"
 
     return 0
 }
