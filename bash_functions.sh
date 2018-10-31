@@ -745,26 +745,33 @@ function punch() {
         else
             lines=$(grep . "$PUNCH_FILE")
             (
+                local lineTotals=()
                 local totals=()
                 local pad
                 local pad_len
                 local lineTotal
+                local total
                 IFS=$'\n'
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=36
                 test -z "$lines" &&  echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+                if [ "-l" = "$opt" ]; then
+                    echo -e "${BLUE}Week ($weekStamp) punches: $PUNCH_FILE"
+                    echo "---------------------------------------------------------------------------${NC}"
+                fi
                 for line in $lines; do
                     # List punchs
                     if [ "-l" = "$opt" ]; then
                         echo -n "$line"
                         # Read all timestamps and split them into an array.
-                        IFS=' ' read -r -a totals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')" IFS=$'\n'
+                        IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')" IFS=$'\n'
                         # If we have an even number of timestamps, display te subtotals.
-                        if [ "$(echo "${#totals[@]} % 2" | bc)" -eq 0 ]; then
+                        if [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
                             # shellcheck disable=SC2086
-                            lineTotal="$(tcalc.py ${totals[5]} - ${totals[4]} + ${totals[3]} - ${totals[2]} + ${totals[1]} - ${totals[0]})"
-                            printf '%*.*s' 0 $((pad_len - ${#totals[@]} * 6)) "$pad"
-                            [[ "$lineTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Total = ${GREEN}${lineTotal}${NC}" || echo -e " : Total = ${RED}${lineTotal}${NC}"
+                            lineTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})"
+                            printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
+                            [[ "$lineTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Partial = ${GREEN}${lineTotal}${NC}" || echo -e " : Partial = ${RED}${lineTotal}${NC}"
+                            totals+=("$lineTotal")
                         else
                             echo ''
                         fi
@@ -773,6 +780,12 @@ function punch() {
                         sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
                     fi
                 done
+                if [ "-l" = "$opt" ]; then
+                    # shellcheck disable=SC2086
+                    total="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} )"
+                    echo -e "${BLUE}---------------------------------------------------------------------------"
+                    echo -e "Week total = ${total}${NC}"
+                fi
             )
             test -z "$opt" && grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
         fi
