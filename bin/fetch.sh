@@ -32,14 +32,12 @@ Usage: $PROC_NAME <method> [options] <url>
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-
+    
     test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
     test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    test "$1" != '0' -a "$1" != '1' && printf "%s" "${NC}"
-
     # Unset all declared functions
     unset -f quit usage version format_json do_fetch
-
+    printf "%s\n" "${NC}"
     exit "$1"
 }
 
@@ -54,9 +52,8 @@ version() {
 }
 
 # Check if the user passed the help or version parameters.
-test "$1" = '-h' -o "$1" = '--help' && usage
+test "$1" = '-h' -o "$1" = '--help'-o -z "$1" && usage
 test "$1" = '-v' -o "$1" = '--version' && version
-test -z "$1" && usage
 
 shopt -s nocasematch
 case "$1" in

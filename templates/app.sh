@@ -29,11 +29,9 @@ quit() {
     
     test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
     test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    test "$1" != '0' -a "$1" != '1' && printf "%s" "${NC}"
-
     # Unset all declared functions
     unset -f quit usage version 
-    
+    printf "%s\n" "${NC}"
     exit "$1"
 }
 

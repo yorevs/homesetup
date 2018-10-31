@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117
 
 #  Script: checkip.sh
 # Purpose: Validate an IP and check details about it.
@@ -10,23 +11,28 @@
 VERSION=1.0.0
 
 # This script name.
-PROC_NAME="$(basename $0)"
+PROC_NAME=$(basename "$0")
 
 # Help message to be displayed by the script.
 USAGE="
 Usage: $PROC_NAME <IP>
 "
 
+# Import pre-defined .bash_colors
+# shellcheck disable=SC1090
+test -f ~/.bash_colors && source ~/.bash_colors
+
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-
-    if test -n "$2" -o "$2" != ""; then
-        echo -e "$2"
-    fi
-
-    exit $1
+    
+    test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
+    test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
+    # Unset all declared functions
+    unset -f quit usage version checkIpClass checkIpType checkIpValid
+    printf "%s\n" "${NC}"
+    exit "$1"
 }
 
 # Usage message.
@@ -34,8 +40,14 @@ usage() {
     quit 1 "$USAGE"
 }
 
-# Check if the user passed the help parameters.
-test "$1" = '-h' -o "$1" = '--help' -o -z "$1" -o "$1" = "" && usage
+# Version message.
+version() {
+    quit 1 "$VERSION"
+}
+
+# Check if the user passed the help or version parameters.
+test "$1" = '-h' -o "$1" = '--help' -o -z "$1" && usage
+test "$1" = '-v' -o "$1" = '--version' && version
 
 # The IP to be validated.
 IP="$1"
@@ -52,7 +64,7 @@ fi
 # @param $1 [Req] : The IP to get information about
 checkIpClass() {
 
-    octet_1=$(echo $1 | cut -d '.' -f1)
+    octet_1=$(echo "$1" | cut -d '.' -f1)
 
     if test "$((octet_1))" -le 127; then
         IP_CLASS="A"
@@ -115,8 +127,8 @@ checkIpValid() {
 
     # On Mac option -r does not exist, -E on linux option does not exist
     extRegexFlag='-r'
-    test $(uname -s) = "Darwin" && extRegexFlag='-E'
-    IP_VALID=$(echo $IP | sed $extRegexFlag "s/$ip_regex/VALID/")
+    test "$(uname -s)" = "Darwin" && extRegexFlag='-E'
+    IP_VALID=$(echo "$IP" | sed $extRegexFlag "s/$ip_regex/VALID/")
 
     if test "$IP_VALID" != "VALID"; then
         IP_VALID="## Invalid IP ##"
@@ -128,8 +140,8 @@ checkIpValid() {
 checkIpValid
 
 if test -z "$IP_VALID"; then
-    checkIpClass $IP
-    checkIpType $IP
+    checkIpClass "$IP"
+    checkIpType "$IP"
     echo "Valid IP: $IP, Class: $IP_CLASS, Type: $IP_TYPE"
 else
     echo "$IP_VALID"

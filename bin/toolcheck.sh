@@ -11,7 +11,7 @@
 VERSION=1.0.0
 
 # This script name.
-PROC_NAME="$(basename $0)"
+PROC_NAME=$(basename "$0")
 
 # Help message to be displayed by the script.
 USAGE="
@@ -29,11 +29,9 @@ quit() {
     
     test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
     test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    test "$1" != '0' -a "$1" != '1' && printf "%s" "${NC}"
-
     # Unset all declared functions
     unset -f quit usage version 
-    
+    printf "%s\n" "${NC}"
     exit "$1"
 }
 
@@ -47,8 +45,9 @@ version() {
     quit 1 "$VERSION"
 }
 
-# Check if the user passed the help parameters.
-test "$1" = '-h' -o "$1" = '--help' -o -z "$1" -o "$1" = "" && usage
+# Check if the user passed the help or version parameters.
+test "$1" = '-h' -o "$1" = '--help' -o -z "$1" && usage
+test "$1" = '-v' -o "$1" = '--version' && version
 
 TOOL_NAME="$1"
 
