@@ -25,10 +25,15 @@
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
     https://github.com/creationix/nvm
 
-## 6. WIZLAIR  
-    https://archive.org/details/msdos_shareware_fb_WIZLAIR
-    
-## 7. Terminal Shortcuts
+## 6. Install rvm
+
+    TODO
+
+## 7. Install brew
+
+    TODO
+
+## 8. Terminal Shortcuts
 - Option  + Left or Right: Navigate through words
 - Control + W: Delete word before cursor
 - Escape  + T: Swap words before cursor
@@ -42,7 +47,7 @@
 - Command + K: Clear screen
 - Command + L: Clear line
 
-## 8. Lombok
+## 9. Lombok
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
@@ -52,14 +57,17 @@
 @Data
 @Slf4j
 
-## application-it.properties
+## 10. application-it.properties
 spring.datasource.driver-class-name=org.h2.Driver
 spring.datasource.username=sa
 spring.datasource.password=
 spring.jpa.generate-ddl=false
 spring.jpa.hibernate.ddl-auto=validate
-#spring.h2.console.enabled=true
-#spring.h2.console.path=/h2DB
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2DB
 spring.datasource.platform=h2
 spring.datasource.url=jdbc:h2:mem:SCHEMA;MODE=Postgres;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 spring.jpa.show-sql=true
+
+## WIZLAIR
+    https://archive.org/details/msdos_shareware_fb_WIZLAIR

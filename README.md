@@ -208,11 +208,11 @@ dotfiles.sh             | Manage your HomeSetup dotfiles and more
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
-* [x] Install the terminal font from '$HOME_SETUP/misc/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
+* [x] Install the terminal font from '$HOME_SETUP/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
 * [x] Import the HomeSetup.terminal from "$HOME_SETUP/misc/HomeSetup.terminal" to your Terminal App.
 * [x] Set HomeSetup as the default profile.
 
 Done! Now you have your terminal just like mine.
 
-**To keep your HomeSetup updated, don't forget to run `#> dv` sometimes and update (git pull) the code**
+**To keep your HomeSetup updated, don't forget to run `#> dv` sometimes to update (git pull) to the latest code**
 
