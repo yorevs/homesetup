@@ -40,6 +40,7 @@ if tput setaf 1 &> /dev/null; then
     VIOLET=$(tput setaf 61);
     WHITE=$(tput setaf 15);
     YELLOW=$(tput setaf 136);
+    HIGHLIGHT_COLOR=${RED};
 else
     export BOLD='';
     export NC="\e[0m";
@@ -53,6 +54,5 @@ else
     export VIOLET="\e[1;35m";
     export WHITE="\e[1;37m";
     export YELLOW="\e[1;33m";
+    export HIGHLIGHT_COLOR="${RED}";
 fi;
-
-export HIGHLIGHT_COLOR="${RED}"
