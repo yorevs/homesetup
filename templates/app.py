@@ -1,4 +1,5 @@
-"""@package This is a template python application
+"""
+  @package: This is a template python application
    @script: ${app.py}
   @purpose: ${purpose}
   @created: Mon DD, YYYY

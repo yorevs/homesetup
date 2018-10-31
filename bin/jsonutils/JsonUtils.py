@@ -1,11 +1,14 @@
 import re
 
-#  Script: tcalc.py
-# Purpose: Provides an engine to navigate through a json object.
-# Created: Aug 26, 2017
-#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
-#    Site: https://github.com/yorevs/homesetup
+"""
+  @package: jsonutils
+   @script: JsonUtils.py
+  @purpose: Provides an engine to navigate through a json object.
+  @created: Aug 26, 2017
+   @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+   @mailto: yorevs@hotmail.com
+      Site: https://github.com/yorevs/homesetup
+"""
 
 class JsonUtils:
 

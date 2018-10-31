@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-#  Script: send-msg.py
-# Purpose: IP Message Sender. Sends TCP/UDP messages (multi-threaded).
-# Created: Aug 26, 2017
-#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
-#    Site: https://github.com/yorevs/homesetup
+"""
+  @package: -
+   @script: send-msg.py
+  @purpose: IP Message Sender. Sends TCP/UDP messages (multi-threaded).
+  @created: Aug 26, 2017
+   @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+   @mailto: yorevs@hotmail.com
+      Site: https://github.com/yorevs/homesetup
+"""
 
 from time import sleep, time as time
 from datetime import timedelta

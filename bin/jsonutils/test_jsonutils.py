@@ -3,6 +3,15 @@ import json
 
 from JsonUtils import JsonUtils
 
+"""
+  @package: jsonutils
+   @script: test_JsonUtils.py
+  @purpose: Test Suite for JsonUtils.
+  @created: Aug 26, 2017
+   @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+   @mailto: yorevs@hotmail.com
+      Site: https://github.com/yorevs/homesetup
+"""
 
 SAMPLE_FILE_NAME = "json_utils_sample.json"
 

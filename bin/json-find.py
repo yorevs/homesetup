@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-#  Script: json-find.py
-# Purpose: Find a object from the json string or file.
-# Created: Jan 20, 2017
-#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
-#    Site: https://github.com/yorevs/homesetup
+"""
+  @package: -
+   @script: json-find.py
+  @purpose: Find a object from the json string or file.
+  @created: Jan 20, 2017
+   @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+   @mailto: yorevs@hotmail.com
+      Site: https://github.com/yorevs/homesetup
+"""
 
 import sys
 import json
