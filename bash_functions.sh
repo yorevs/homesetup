@@ -101,11 +101,13 @@ function sd() {
 function hl() {
 
     local word
+    local search
 
+    search="$1"
     word="${HIGHLIGHT_COLOR}${1}${NC}"
 
     while read -r stream; do
-        printf '%s\n' "${stream//$1/$word}"
+        printf '%s\n' "${stream//$search/$word}"
     done
 
     return 0
