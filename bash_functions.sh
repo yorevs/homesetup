@@ -749,8 +749,8 @@ function punch() {
                 local totals=()
                 local pad
                 local pad_len
-                local lineTotal
-                local total
+                local subTotal
+                local weekTotal
                 IFS=$'\n'
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=36
@@ -768,10 +768,10 @@ function punch() {
                         # If we have an even number of timestamps, display te subtotals.
                         if [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
                             # shellcheck disable=SC2086
-                            lineTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})"
+                            subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})"
                             printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
-                            [[ "$lineTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Partial = ${GREEN}${lineTotal}${NC}" || echo -e " : Partial = ${RED}${lineTotal}${NC}"
-                            totals+=("$lineTotal")
+                            [[ "$subTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Partial = ${GREEN}${subTotal}${NC}" || echo -e " : Partial = ${RED}${subTotal}${NC}"
+                            totals+=("$subTotal")
                         else
                             echo ''
                         fi
@@ -782,9 +782,9 @@ function punch() {
                 done
                 if [ "-l" = "$opt" ]; then
                     # shellcheck disable=SC2086
-                    total="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
+                    weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${BLUE}---------------------------------------------------------------------------"
-                    echo -e "Week total = ${total}${NC}"
+                    echo -e "Week weekTotal = ${weekTotal}${NC}"
                 fi
             )
             test -z "$opt" && grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"

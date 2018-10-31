@@ -13,7 +13,7 @@ total_seconds = 0
 op = '+'
 
 for tm in sys.argv[1:]:
-    if tm in [ '+', '-']:
+    if tm in [ '+', '-' ]:
         op = tm
     else:
         parts = [int(s) for s in tm.split(':')]
