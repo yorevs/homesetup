@@ -95,6 +95,22 @@ function sd() {
     return 0
 }
 
+# Purpose: Highlight words matching pattern.
+# @param $1 [Req] : The word to highlight.
+# @param $1 [Pip] : The piped input stream.
+function hl() {
+
+    local word
+
+    word="${HIGHLIGHT_COLOR}${1}${NC}"
+
+    while read -r stream; do
+        printf '%s\n' "${stream//$1/$word}"
+    done
+
+    return 0
+}
+
 # Purpose: Search for strings in files recursively.
 # @param $1 [Req] : Search options.
 # @param $2 [Req] : The base search path.
@@ -108,7 +124,7 @@ function ss() {
     local extra_str
     local replace
     local strType='regex'
-    local gflags="-HnE"
+    local gflags="-HnEI"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
         echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
@@ -117,6 +133,7 @@ function ss() {
         echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
         echo '    -w | --words                    : Makes the search treat the search as a STRING not a regex.'
         echo '    -r | --replace <replacement>    : Makes the search to REPLACE all findings by the replacement string.'
+        echo '    -b | --binary                   : Includes binary files in the search.'
         return 1
     else
         while test -n "$1"
@@ -129,6 +146,10 @@ function ss() {
                 -i | --ignore-case)
                     gflags="${gflags}i"
                     strType="${strType}-ignore-case"
+                ;;
+                -b | --binary)
+                    gflags="${gflags//I/}"
+                    strType="${strType}+binary"
                 ;;
                 -r | --replace)
                     replace=1
@@ -150,10 +171,10 @@ function ss() {
             fi
             [ "Linux" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i'' -e "s/$2/$repl_str/g" {} \;)
             [ "Darwin" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$repl_str/g" {} \;)
-            test -n "$result" && echo "${result//$2/$repl_str}" | grep $gflags "$repl_str"
+            test -n "$result" && echo "${result//$2/$repl_str}" | hl "$repl_str"
         else
             result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
-            test -n "$result" && echo "${result}" | grep $gflags "$2"
+            test -n "$result" && echo "${result}" | hl "$2"
         fi
     fi
 
@@ -834,7 +855,7 @@ function plist() {
                 done
             )
         else
-            echo -e "\n${YELLOW}No active PIDs for process named: \"$1\" \n"
+            echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
         fi
     fi
 
@@ -842,22 +863,6 @@ function plist() {
 
     return 0
 }
-
-# Purpose: Highlight words matching pattern.
-# TODO Experimental
-#function hl() {
-    #local word
-
-    #HIGHLIGHT_COLOR='\\e[4;37;104m'
-    #NORMAL='\\e[0m'
-    #word="${HIGHLIGHT_COLOR}${1}${NORMAL}"
-
-    #while read -r data; do
-        #local hlWord=$(echo "$data" | sed "s#$1#$word#g")
-        #printf "$hlWord"
-        #printf "$data"
-    #done
-#}
 
 # Purpose: CD into the first match of the specified directory name.
 # @param $1 [Req] : The base search path.

@@ -30,10 +30,10 @@ alias ?='pwd'
 # -----------------------------------------------------------------------------------
 # General
 alias q="exit"
-alias reload='cls; exec bash'
+alias reload='cls; source ~/.bashrc && echo "${GREEN}HomeSetup bash v$DOTFILES_VERSION reloaded!${NC}"'
 
 # Kills all processes specified by $1
-alias pk='function _() { test -n "$1" && plist $1 kill }; };_'
+alias pk='function _() { test -n "$1" && plist $1 kill; };_'
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -63,14 +63,31 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # For safety, by default those commands will input for confirmation
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+alias rm='rm -iv'
+alias cp='cp -iv'
+alias mv='mv -iv'
 
+# Setting some defaults
 alias cls='clear'
 command -v vim >/dev/null && alias vi='vim'
 alias tl='tail -F'
+alias df='df -H'
+alias du='du -ch'
 
+# Make mount command output pretty and human readable format
+alias mount='mount | column -t'
+
+# Make a folder and go into it
+alias mkcd='function _() { mkdir -p $1; cd $1; };_'
+
+# Top shortcuts
+alias cpu='top -o cpu' # Cpu
+alias mem='top -o rsize' # Memory
+
+# Recursively delete Dropbox conflicted files
+test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
+
+# Base64 encode shortcuts
 alias encode="base64"
 
 # Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.

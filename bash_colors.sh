@@ -54,3 +54,4 @@ else
     export YELLOW="\e[1;33m";
 fi;
 
+export HIGHLIGHT_COLOR="${RED}"
