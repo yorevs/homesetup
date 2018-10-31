@@ -748,7 +748,6 @@ function punch() {
                 local totals=()
                 local pad
                 local pad_len
-                local index=0
                 local lineTotal
                 IFS=$'\n'
                 pad=$(printf '%0.1s' "."{1..60})
@@ -758,24 +757,21 @@ function punch() {
                     # List punchs
                     if [ "-l" = "$opt" ]; then
                         echo -n "$line"
+                        # Read all timestamps and split them into an array.
+                        IFS=' ' read -r -a totals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')" IFS=$'\n'
+                        # If we have an even number of timestamps, display te subtotals.
+                        if [ "$(echo "${#totals[@]} % 2" | bc)" -eq 0 ]; then
+                            # shellcheck disable=SC2086
+                            lineTotal="$(tcalc.py ${totals[5]} - ${totals[4]} + ${totals[3]} - ${totals[2]} + ${totals[1]} - ${totals[0]})"
+                            printf '%*.*s' 0 $((pad_len - ${#totals[@]} * 6)) "$pad"
+                            [[ "$lineTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Total = ${GREEN}${lineTotal}${NC}" || echo -e " : Total = ${RED}${lineTotal}${NC}"
+                        else
+                            echo ''
+                        fi
                     # Do the punch
                     elif [[ "$line" =~ $re ]]; then
                         sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
                     fi
-                    # Read all timestamps and split them into an array.
-                    IFS=' ' 
-                    read -r -a totals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
-                    # If we have an even number of timestamps, display te subtotals.
-                    if [ "$(echo "${#totals[@]} % 2" | bc)" -eq 0 ]; then
-                        # shellcheck disable=SC2086
-                        lineTotal="$(tcalc.py ${totals[5]} - ${totals[4]} + ${totals[3]} - ${totals[2]} + ${totals[1]} - ${totals[0]})"
-                        printf '%*.*s' 0 $((pad_len - ${#totals[@]} * 6)) "$pad"
-                        [[ "$lineTotal" =~ ^(1[0-9]|0[8-9]):..:.. ]] && echo -e " : Total = ${GREEN}${lineTotal}${NC}" || echo -e " : Total = ${RED}${lineTotal}${NC}"
-                    else
-                        echo ''
-                    fi
-                    index=$((index + 1))
-                    IFS=$'\n'
                 done
             )
             test -z "$opt" && grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
