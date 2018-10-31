@@ -180,6 +180,8 @@ load       | cd into a saved directory issued by `save`
 punch      | Punch the clock. Add, edit and list punches
 plist      | Display (kill?) a process list, given process name
 cmd        | Add/Remove/List/Execute saved bash commands
+go         | CD into the first match of the specified directory name
+git-       | GTI Checkout the last different previous branch ni history
 dv         | Check the latest HomeSetup version
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**

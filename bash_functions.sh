@@ -59,7 +59,7 @@ function decrypt() {
         echo -e "${RED}gpg is required to execute this command!${NC}"
     fi
 
-    echo -e "${RED}Unable to decrypt file: \"$filename\" ${NC}"
+    echo -e "${RED}Unable to decrypt file: \"$1\" ${NC}"
 
     return 1
 }
@@ -864,7 +864,7 @@ function go() {
     return 0
 }
 
-# Purpose: Checkout the last different previous git branch.
+# Purpose: GTI Checkout the last different previous branch in history.
 function git-() {
 
     local currBranch
