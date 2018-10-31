@@ -1994,7 +1994,7 @@ _git_rebase ()
 {
 	__git_find_repo_path
 	if [ -f "$__git_repo_path"/rebase-merge/interactive ]; then
-		__gitcomp "--continue --skip --abort --quit --edit-todo --show-current-patch"
+		__gitcomp "--continue --skip --abort --quit --edit-TODO --show-current-patch"
 		return
 	elif [ -d "$__git_repo_path"/rebase-apply ] || \
 	     [ -d "$__git_repo_path"/rebase-merge ]; then

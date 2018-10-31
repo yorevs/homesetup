@@ -10,6 +10,7 @@
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.colors
 
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
+# improved with: https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
 # Detect which `ls` flavor is in use
 # LS_Colors builder: https://geoff.greer.fm/lscolors/
