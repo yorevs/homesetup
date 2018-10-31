@@ -850,6 +850,20 @@ function plist() {
     #done
 #}
 
+# Purpose: CD into the first match of the specified directory name.
+# @param $1 [Req] : The base search path.
+# @param $1 [Req] : The directory name to go.
+function go() {
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+        echo "Usage: go <search_path> <dir_name>"
+        return 1
+    else
+        pushd "$(find "$1" -type d -name "$2" | head -n 1)" || echo -e "${RED}Directory not found!${NC}"
+    fi
+
+    return 0
+}
+
 # Purpose: Checkout the last different previous git branch.
 function git-() {
 
