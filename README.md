@@ -172,16 +172,16 @@ port-check | Check the state of a local port
 envs       | Prints all environment variables
 paths      | Print each PATH entry on a separate line
 ver        | Check the version of the app using common ways
-tc         | Check whether the tool is installed
-tools      | Check whether some dev. tools are installed
-aa         | Manipulate all custom aliases (add/remove/set)
+tc         | Check whether the `tool` is installed
+tools      | Check whether some `dev. tools` are installed
+aa         | Manipulate all custom aliases `(add/remove/set)`
 save       | Save the one directory to be loaded by `load`
 load       | cd into a saved directory issued by `save`
 punch      | Punch the clock. Add, edit and list punches
-plist      | Display (kill?) a process list, given process name
-cmd        | Add/Remove/List/Execute saved bash commands
+plist      | Display (maybe kill?) a process list, given process name
+cmd        | Add/Remove/List/Execute `saved bash commands`
 go         | CD into the first match of the specified directory name
-git-       | GTI Checkout the last different previous branch ni history
+git-       | GIT Checkout the last different previous branch in history
 dv         | Check the latest HomeSetup version
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**

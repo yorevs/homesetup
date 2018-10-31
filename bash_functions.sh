@@ -864,7 +864,7 @@ function go() {
     return 0
 }
 
-# Purpose: GTI Checkout the last different previous branch in history.
+# Purpose: GIT Checkout the last different previous branch in history.
 function git-() {
 
     local currBranch
