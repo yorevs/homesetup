@@ -730,16 +730,22 @@ function punch() {
         timeStamp="$(date +'%H:%M')"
         weekStamp="$(date +%V)"
         local re="($dateStamp).*"
+        local lines
+        local totals
         # Create the punch file if it does not exist
-        test -f "$PUNCH_FILE" || echo "$dateStamp => " >"$PUNCH_FILE"
+        if [ -f "$PUNCH_FILE" ]; then 
+            echo "$dateStamp => " >"$PUNCH_FILE"
         # List punchs
-        test "-l" = "$OPT" && cat "$PUNCH_FILE" && return 0
+        elif [ "-l" = "$OPT" ]; then
+            cat "$PUNCH_FILE"
         # Edit punchs
-        test "-e" = "$OPT" && vi "$PUNCH_FILE" && return 0
+        elif [ "-e" = "$OPT" ]; then
+            vi "$PUNCH_FILE"
         # Reset punchs (backup as week-N.punch)
-        test "-r" = "$OPT" && mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch" && return 0
+        elif [ "-r" = "$OPT" ]; then
+            mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
         # Do the punch
-        if [ -z "$OPT" ]; then
+        elif [ -z "$OPT" ]; then
             lines=$(grep . "$PUNCH_FILE")
             (
                 success=0
@@ -821,8 +827,10 @@ function git-() {
     local currBranch
     local prevBranch
 
-    currBranch="$(git rev-parse --abbrev-ref HEAD)"
-    prevBranch=$(git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6}')
+    # Get the current branch.
+    currBranch="$(command git rev-parse --abbrev-ref HEAD)"
+    # Get the previous branch. Skip the same branch change (that is what is different from git checkout -).
+    prevBranch=$(command git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6 }')
     command git checkout "$prevBranch"
 }
 
