@@ -891,12 +891,12 @@ function go() {
         echo "Usage: go [search_path] <dir_name>"
         return 1
     else
-        local search
+        local searchPath
         local name
-        test -n "$2" && search="$1" || search="."
+        test -n "$2" && searchPath="$1" || searchPath="."
         test -n "$2" && name="$2" || name="$1"
         # shellcheck disable=SC2207
-        results=( $(find -H "$search" -name "$name" | sort) )
+        results=( $(find -H "$searchPath" -name "$name" | sort) )
         len=${#results[@]}
         # If there was only one directory found, CD into it
         if [ "$len" -eq 0 ]; then
@@ -910,51 +910,82 @@ function go() {
             local selIndex=0
             local showFrom=0
             local showTo=4
+            local diffIndex
+            local index
+            
+            diffIndex=$((showTo-showFrom))
+            echo "@@ Multiple directories found. Please choose one to go into:"
+            echo "Base dir: $searchPath"
+            echo "-------------------------------------------------------------"
+            echo ''
 
             while [ -z "$dir" ]; do
-                
-                echo "@@ Multiple directories found ($len). Choose one:"
-                echo "-------------------------------------------------"
 
-                echo ''
                 for i in $(seq $showFrom $showTo); do
                     test "$i" -ge "$len" && break
-                    printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '->' || echo '  ')" "${results[i]}"
+                    printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '->' || echo '  ')" "${results[i]//$searchPath\/}"
                 done
-                echo ''
                 
-                read -r -n 1 -p "[Enter] Select [>] Next [<] Previous [q] Quit: " ANS
+                echo ''
+                echo -n "[$((showFrom+1)) - $((showTo+1))] / ($len) : "
+                read -rsn1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
 
                 case "$ANS" in
-                    'q') # Quit
+                    'q')
                         echo ''
                         return 1
                     ;;
                     [1-9]*)
-                        # TODO jump to
-                    ;;
-                    '>' | '.') # Next
-                        if [ "$selIndex" -eq "$showTo" ] && [ "$((showTo+1))" -lt "$len" ]; then
-                            showFrom=$((showFrom+1))
-                            showTo=$((showTo+1))
+                        index="$ANS"
+                        echo -n "$ANS"
+                        while :
+                        do
+                            read -rsn1 ANS2
+                            echo -n "$ANS2"
+                            test -z "$ANS2" && break
+                            index="${index}${ANS2}"
+                        done
+                        if [ "$index" -ge 0 ] && [ "$index" -le "$len" ]; then
+                            showTo=$((index-1))
+                            test "$showTo" -le "$diffIndex" && showTo=$diffIndex
+                            showFrom=$((showTo-diffIndex))
+                            selIndex=$((index-1))
                         fi
-                        test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
                     ;;
-                    '<' | ',') # Previous
-                        if [ "$selIndex" -eq "$showFrom" ] && [ "$showFrom" -gt 0 ]; then
-                            showFrom=$((showFrom-1))
-                            showTo=$((showTo-1))
-                        fi
-                        test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
+                    $'\033')
+                        read -rsn2 ANS
+                        case "$ANS" in
+                        [A)
+                            # Previous
+                            if [ "$selIndex" -eq "$showFrom" ] && [ "$showFrom" -gt 0 ]; then
+                                showFrom=$((showFrom-1))
+                                showTo=$((showTo-1))
+                            fi
+                            test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
+                        ;;
+                        [B)
+                            # Next
+                            if [ "$selIndex" -eq "$showTo" ] && [ "$((showTo+1))" -lt "$len" ]; then
+                                showFrom=$((showFrom+1))
+                                showTo=$((showTo+1))
+                            fi
+                            test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
+                        ;;
+                        *) # Quit
+                            echo ''
+                            return 1
+                        ;;
+                        esac
                     ;;
                     '') # Select
+                        echo ''
                         dir=${results[selIndex]}
                         break
                     ;;
                 esac
 
                 # Delete the current line, move up, delete line, move up, delete line
-                echo -ne "\033[$((showTo-showFrom+6))A\r\033[J";
+                echo -ne "\033[$((showTo-showFrom+2))A\r\033[J";
 
             done
         fi
