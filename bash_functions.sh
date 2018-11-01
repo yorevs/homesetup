@@ -636,7 +636,7 @@ function load() {
             echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}"
             return 1
         else
-            cd "$dir" || quit 2 "Unable to change to directory: $dir"
+            cd "$dir" || return 1
             echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
         fi
     fi
@@ -882,11 +882,70 @@ function plist() {
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
 function go() {
+    
+    local dir
+    local p
+    local n
+    local i=1
+    local results=()
+    local selIndex=0
+    local len
+    
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo "Usage: go <search_path> <dir_name>"
         return 1
     else
-        pushd "$(find "$1" -type d -name "$2" | head -n 1)" || echo -e "${RED}Directory not found!${NC}"
+        # shellcheck disable=SC2207
+        results=( $(find "$1" -type d -name "$2") )
+        len=${#results[@]}
+        # If there was only one directory found, CD into it
+        if [ "$len" -eq 0 ]; then
+            echo "${YELLOW}No matches for directory with name \"$2\" was found !${NC}"
+        elif [ "$len" -eq 1 ]; then
+            dir=${results[0]}
+        # If multiple directories were found with the same name, query the user
+        else
+
+            clear
+
+            while [ -z "$dir" ]; do
+                
+                echo -ne "\033[1J\033[1A\r";
+                echo "@@ Multiple directories found ($len). Choose one:"
+                echo "-------------------------------------------------"
+
+                p=$((i-1))
+                n=$((i+1))
+                
+                printf '(%.2d) %s%s\n' "$((p+1))" "$(test $p -eq $selIndex && echo '-> ' || echo '   ')" "${results[p]}"
+                printf '(%.2d) %s%s\n' "$((i+1))" "$(test $i -eq $selIndex && echo '-> ' || echo '   ')" "${results[i]}"
+                printf '(%.2d) %s%s\n' "$((n+1))" "$(test $n -eq $selIndex && echo '-> ' || echo '   ')" "${results[n]}"
+                
+                read -r -n 1 -p "[Enter] Select [>] Next [<] Previous [q] Quit: " ANS
+
+                case "$ANS" in
+                    'q')
+                        return 1
+                    ;;
+                    '>' | '.')
+                        [ $((i+2)) -lt "$len" ] && i=$((i+1))
+                        test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
+                    ;;
+                    '<' | ',')
+                        [ $i -gt 1 ] && i=$((i-1))
+                        test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
+                    ;;
+                    '')
+                        dir=${results[selIndex]}
+                        break
+                    ;;
+                esac
+                # Delete the current line, move up, delete line, move up, delete line
+                echo -ne "\033[7A\r\033[J";
+            done
+        fi
+        pushd "$dir" &> /dev/null || return 1
+        echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
     fi
 
     return 0
