@@ -893,7 +893,7 @@ function go() {
     else
         local searchPath
         local name
-        test -n "$2" && searchPath="$1" || searchPath="."
+        test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         # shellcheck disable=SC2207
         results=( $(find -H "$searchPath" -iname "$name" | sort) )
@@ -911,11 +911,12 @@ function go() {
             clear
             local selIndex=0
             local showFrom=0
-            local showTo=4
+            local showTo=$GO_MAX_ROWS
             local offset
             local diffIndex
             local index
             
+            tput civis
             diffIndex=$((showTo-showFrom))
             echo "@@ Multiple directories found ($len). Please choose one to go into:"
             echo "Base dir: $searchPath"
@@ -925,9 +926,10 @@ function go() {
             while [ -z "$dir" ]; do
 
                 offset=1
-                for i in $(seq $showFrom $showTo); do
+                for i in $(seq "$showFrom" "$showTo"); do
+                    echo -ne "\033[2K\r"
                     test "$i" -ge "$len" && break
-                    printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '->' || echo '  ')" "${results[i]//$searchPath\/}"
+                    printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '=>' || echo '  ')" "${results[i]//$searchPath\/}"
                     offset=$((offset+1))
                 done
                 
@@ -937,6 +939,7 @@ function go() {
                 case "$ANS" in
                     'q')
                         echo ''
+                        tput cnorm
                         return 1
                     ;;
                     [1-9]*)
@@ -977,6 +980,7 @@ function go() {
                         ;;
                         *) # Quit
                             echo ''
+                            tput cnorm
                             return 1
                         ;;
                         esac
@@ -989,10 +993,11 @@ function go() {
                 esac
 
                 # Move up offset lines and delete from cursor down
-                echo -ne "\033[${offset}A\r\033[J";
+                echo -ne "\033[${offset}A\r"
 
             done
         fi
+        tput cnorm
         pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
 
