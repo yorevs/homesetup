@@ -796,7 +796,7 @@ function punch() {
                         # Read all timestamps and append them into an array.
                         IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')" IFS=$'\n'
                         # If we have an even number of timestamps, display te subtotals.
-                        if [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
+                        if [ ${#lineTotals[@]} -gt 0 ] && [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
                             # shellcheck disable=SC2086
                             subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})"
                             printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
