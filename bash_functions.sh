@@ -896,7 +896,7 @@ function go() {
         return 1
     else
         # shellcheck disable=SC2207
-        results=( $(find "$1" -type d -name "$2") )
+        results=( $(find -H "$1" -name "$2" | sort) )
         len=${#results[@]}
         # If there was only one directory found, CD into it
         if [ "$len" -eq 0 ]; then
@@ -946,8 +946,7 @@ function go() {
 
             done
         fi
-        pushd "$dir" &> /dev/null || return 1
-        echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+        pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
 
     return 0
