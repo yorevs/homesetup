@@ -901,6 +901,7 @@ function go() {
         # If no directory is found under the specified name
         if [ "$len" -eq 0 ]; then
             echo "${YELLOW}No matches for directory with name \"$name\" was found !${NC}"
+            return 1
         # If there was only one directory found, CD into it
         elif [ "$len" -eq 1 ]; then
             dir=${results[0]}
@@ -987,7 +988,7 @@ function go() {
                     ;;
                 esac
 
-                # Delete the current line, move up, delete line, move up, delete line
+                # Move up offset lines and delete from cursor down
                 echo -ne "\033[${offset}A\r\033[J";
 
             done
