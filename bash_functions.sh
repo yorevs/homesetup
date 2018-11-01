@@ -894,40 +894,43 @@ function go() {
         local searchPath
         local name
         test -n "$2" && searchPath="$1" || searchPath="."
-        test -n "$2" && name="$2" || name="$1"
+        test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         # shellcheck disable=SC2207
         results=( $(find -H "$searchPath" -name "$name" | sort) )
         len=${#results[@]}
-        # If there was only one directory found, CD into it
+        # If no directory is found under the specified name
         if [ "$len" -eq 0 ]; then
             echo "${YELLOW}No matches for directory with name \"$name\" was found !${NC}"
+        # If there was only one directory found, CD into it
         elif [ "$len" -eq 1 ]; then
             dir=${results[0]}
         # If multiple directories were found with the same name, query the user
         else
-
+            
             clear
             local selIndex=0
             local showFrom=0
             local showTo=4
+            local offset
             local diffIndex
             local index
             
             diffIndex=$((showTo-showFrom))
-            echo "@@ Multiple directories found. Please choose one to go into:"
+            echo "@@ Multiple directories found ($len). Please choose one to go into:"
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
             echo ''
 
             while [ -z "$dir" ]; do
 
+                offset=1
                 for i in $(seq $showFrom $showTo); do
                     test "$i" -ge "$len" && break
                     printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '->' || echo '  ')" "${results[i]//$searchPath\/}"
+                    offset=$((offset+1))
                 done
                 
                 echo ''
-                echo -n "[$((showFrom+1)) - $((showTo+1))] / ($len) : "
                 read -rsn1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
 
                 case "$ANS" in
@@ -985,7 +988,7 @@ function go() {
                 esac
 
                 # Delete the current line, move up, delete line, move up, delete line
-                echo -ne "\033[$((showTo-showFrom+2))A\r\033[J";
+                echo -ne "\033[${offset}A\r\033[J";
 
             done
         fi
