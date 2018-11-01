@@ -777,20 +777,23 @@ function punch() {
                 local pad_len
                 local subTotal
                 local weekTotal
+                local success
                 IFS=$'\n'
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=36
-                test -z "$lines" &&  echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+
+                # Display totals of the week when listing - Header
                 if [ "-l" = "$opt" ]; then
                     echo ''
                     echo -e "${BLUE}Week ($weekStamp) punches: $PUNCH_FILE"
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
+
                 for line in $lines; do
                     # List punchs
                     if [ "-l" = "$opt" ]; then
                         echo -n "$line"
-                        # Read all timestamps and split them into an array.
+                        # Read all timestamps and append them into an array.
                         IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')" IFS=$'\n'
                         # If we have an even number of timestamps, display te subtotals.
                         if [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
@@ -802,20 +805,27 @@ function punch() {
                         else
                             echo ''
                         fi
-                    # Do the punch
+                    # Do the punch to the current day
                     elif [[ "$line" =~ $re ]]; then
-                        sed -E -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" -i .bak "$PUNCH_FILE"
+                        ised -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$PUNCH_FILE"
+                        success='1'
+                        break
                     fi
                 done
+
+                # Display totals of the week when listing - Footer
                 if [ "-l" = "$opt" ]; then
                     # shellcheck disable=SC2086
                     weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${BLUE}---------------------------------------------------------------------------"
                     echo -e "Week weekTotal = ${weekTotal}${NC}"
                     echo ''
+                else
+                    # Create a new timestamp if it's the first punch for the day
+                    test "$success" = '1' || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+                    grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
                 fi
             )
-            test -z "$opt" && grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
         fi
     fi
 
