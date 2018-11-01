@@ -588,7 +588,7 @@ function save() {
     return 0
 }
 
-# Purpose: cd into the saved directory issued by `save`.
+# Purpose: CD into the saved directory issued by `save`.
 # @param $1 [Opt] : The alias to access the directory saved.
 function load() {
 
@@ -636,7 +636,7 @@ function load() {
             echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}"
             return 1
         else
-            cd "$dir" || return 1
+            pushd "$dir" || return 1
             echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
         fi
     fi
@@ -884,11 +884,7 @@ function plist() {
 function go() {
     
     local dir
-    local p
-    local n
-    local i=1
     local results=()
-    local selIndex=0
     local len
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
@@ -907,42 +903,53 @@ function go() {
         else
 
             clear
+            local selIndex=0
+            local showFrom=0
+            local showTo=4
 
             while [ -z "$dir" ]; do
                 
                 echo "@@ Multiple directories found ($len). Choose one:"
                 echo "-------------------------------------------------"
 
-                p=$((i-1))
-                n=$((i+1))
-                
-                printf '(%.2d) %0.4s %s\n' "$((p+1))" "$(test $p -eq $selIndex && echo '->' || echo '  ')" "${results[p]}"
-                printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test $i -eq $selIndex && echo '->' || echo '  ')" "${results[i]}"
-                test "$len" -gt 2 && printf '(%.2d) %0.4s %s\n' "$((n+1))" "$(test $n -eq $selIndex && echo '->' || echo '  ')" "${results[n]}"
+                echo ''
+                for i in $(seq $showFrom $showTo); do
+                    printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '->' || echo '  ')" "${results[i]}"
+                done
+                echo ''
                 
                 read -r -n 1 -p "[Enter] Select [>] Next [<] Previous [q] Quit: " ANS
 
                 case "$ANS" in
-                    'q')
+                    'q') # Quit
                         echo ''
                         return 1
                     ;;
-                    '>' | '.')
-                        [ $((i+2)) -lt "$len" ] && i=$((i+1))
+                    [1-9]*)
+                        # TODO jump to
+                    ;;
+                    '>' | '.') # Next
+                        if [ "$selIndex" -eq "$showTo" ] && [ "$((showTo+1))" -lt "$len" ]; then
+                            showFrom=$((showFrom+1))
+                            showTo=$((showTo+1))
+                        fi
                         test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
                     ;;
-                    '<' | ',')
-                        [ $i -gt 1 ] && i=$((i-1))
+                    '<' | ',') # Previous
+                        if [ "$selIndex" -eq "$showFrom" ] && [ "$showFrom" -gt 0 ]; then
+                            showFrom=$((showFrom-1))
+                            showTo=$((showTo-1))
+                        fi
                         test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
                     ;;
-                    '')
+                    '') # Select
                         dir=${results[selIndex]}
                         break
                     ;;
                 esac
 
                 # Delete the current line, move up, delete line, move up, delete line
-                echo -ne "\033[7A\r\033[J";
+                echo -ne "\033[$((showTo-showFrom+6))A\r\033[J";
 
             done
         fi
@@ -981,10 +988,10 @@ function dv() {
             read -r -n 1 -sp "Update it now (y/[n]) ?" ANS
             test -n "$ANS" && echo "${ANS}${NC}"
             if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-                cd "$HOME_SETUP" || return 1
+                pushd "$HOME_SETUP" || return 1
                 git pull || return 1
                 sleep 1
-                cd - || return 1
+                popd || return 1
                 echo -e "${GREEN}Successfully updated HomeSetup!"
                 reload
             fi
