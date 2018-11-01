@@ -910,21 +910,21 @@ function go() {
 
             while [ -z "$dir" ]; do
                 
-                echo -ne "\033[1J\033[1A\r";
                 echo "@@ Multiple directories found ($len). Choose one:"
                 echo "-------------------------------------------------"
 
                 p=$((i-1))
                 n=$((i+1))
                 
-                printf '(%.2d) %s%s\n' "$((p+1))" "$(test $p -eq $selIndex && echo '-> ' || echo '   ')" "${results[p]}"
-                printf '(%.2d) %s%s\n' "$((i+1))" "$(test $i -eq $selIndex && echo '-> ' || echo '   ')" "${results[i]}"
-                printf '(%.2d) %s%s\n' "$((n+1))" "$(test $n -eq $selIndex && echo '-> ' || echo '   ')" "${results[n]}"
+                printf '(%.2d) %0.4s %s\n' "$((p+1))" "$(test $p -eq $selIndex && echo '->' || echo '  ')" "${results[p]}"
+                printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test $i -eq $selIndex && echo '->' || echo '  ')" "${results[i]}"
+                test "$len" -gt 2 && printf '(%.2d) %0.4s %s\n' "$((n+1))" "$(test $n -eq $selIndex && echo '->' || echo '  ')" "${results[n]}"
                 
                 read -r -n 1 -p "[Enter] Select [>] Next [<] Previous [q] Quit: " ANS
 
                 case "$ANS" in
                     'q')
+                        echo ''
                         return 1
                     ;;
                     '>' | '.')
@@ -940,8 +940,10 @@ function go() {
                         break
                     ;;
                 esac
+
                 # Delete the current line, move up, delete line, move up, delete line
                 echo -ne "\033[7A\r\033[J";
+
             done
         fi
         pushd "$dir" &> /dev/null || return 1
