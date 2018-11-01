@@ -887,16 +887,20 @@ function go() {
     local results=()
     local len
     
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: go <search_path> <dir_name>"
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
+        echo "Usage: go [search_path] <dir_name>"
         return 1
     else
+        local search
+        local name
+        test -n "$2" && search="$1" || search="."
+        test -n "$2" && name="$2" || name="$1"
         # shellcheck disable=SC2207
-        results=( $(find -H "$1" -name "$2" | sort) )
+        results=( $(find -H "$search" -name "$name" | sort) )
         len=${#results[@]}
         # If there was only one directory found, CD into it
         if [ "$len" -eq 0 ]; then
-            echo "${YELLOW}No matches for directory with name \"$2\" was found !${NC}"
+            echo "${YELLOW}No matches for directory with name \"$name\" was found !${NC}"
         elif [ "$len" -eq 1 ]; then
             dir=${results[0]}
         # If multiple directories were found with the same name, query the user
