@@ -52,7 +52,7 @@ version() {
 }
 
 # Check if the user passed the help or version parameters.
-test "$1" = '-h' -o "$1" = '--help'-o -z "$1" && usage
+test "$1" = '-h' -o "$1" = '--help' -o -z "$1" && usage
 test "$1" = '-v' -o "$1" = '--version' && version
 
 shopt -s nocasematch

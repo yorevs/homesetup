@@ -782,6 +782,7 @@ function punch() {
                 pad_len=36
                 test -z "$lines" &&  echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
                 if [ "-l" = "$opt" ]; then
+                    echo ''
                     echo -e "${BLUE}Week ($weekStamp) punches: $PUNCH_FILE"
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
@@ -811,6 +812,7 @@ function punch() {
                     weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${BLUE}---------------------------------------------------------------------------"
                     echo -e "Week weekTotal = ${weekTotal}${NC}"
+                    echo ''
                 fi
             )
             test -z "$opt" && grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/Today/g"
