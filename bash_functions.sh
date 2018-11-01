@@ -636,7 +636,7 @@ function load() {
             echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}"
             return 1
         else
-            pushd "$dir" || return 1
+            pushd "$dir" &> /dev/null || return 1
             echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
         fi
     fi
@@ -988,10 +988,10 @@ function dv() {
             read -r -n 1 -sp "Update it now (y/[n]) ?" ANS
             test -n "$ANS" && echo "${ANS}${NC}"
             if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-                pushd "$HOME_SETUP" || return 1
+                pushd "$HOME_SETUP" &> /dev/null || return 1
                 git pull || return 1
                 sleep 1
-                popd || return 1
+                popd &> /dev/null || return 1
                 echo -e "${GREEN}Successfully updated HomeSetup!"
                 reload
             fi
