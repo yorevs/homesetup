@@ -896,7 +896,7 @@ function go() {
         test -n "$2" && searchPath="$1" || searchPath="."
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         # shellcheck disable=SC2207
-        results=( $(find -H "$searchPath" -name "$name" | sort) )
+        results=( $(find -H "$searchPath" -iname "$name" | sort) )
         len=${#results[@]}
         # If no directory is found under the specified name
         if [ "$len" -eq 0 ]; then
