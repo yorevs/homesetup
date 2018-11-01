@@ -914,6 +914,7 @@ function go() {
 
                 echo ''
                 for i in $(seq $showFrom $showTo); do
+                    test "$i" -ge "$len" && break
                     printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '->' || echo '  ')" "${results[i]}"
                 done
                 echo ''
