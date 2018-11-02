@@ -916,25 +916,25 @@ function go() {
             local diffIndex
             local index
             
-            tput civis
             diffIndex=$((showTo-showFrom))
-            echo "@@ Multiple directories found ($len). Please choose one to go into:"
+            echo "${YELLOW}@@ Multiple directories found ($len). Please choose one to go into:"
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
-            echo ''
+            echo "${NC}"
 
             while [ -z "$dir" ]; do
 
                 offset=1
+                tput civis
                 for i in $(seq "$showFrom" "$showTo"); do
-                    echo -ne "\033[2K\r"
+                    echo -ne "\033[2K\r${WHITE}"
                     test "$i" -ge "$len" && break
                     printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '=>' || echo '  ')" "${results[i]//$searchPath\/}"
                     offset=$((offset+1))
                 done
                 
-                echo ''
-                read -rsn1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
+                echo "${BLUE}"
+                read -rs -n 1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
 
                 case "$ANS" in
                     'q')
@@ -943,16 +943,19 @@ function go() {
                         return 1
                     ;;
                     [1-9]*)
+                        tput cnorm
                         index="$ANS"
                         echo -n "$ANS"
-                        while :
+                        while test "${#index}" -le "${#len}"
                         do
-                            read -rsn1 ANS2
+                            read -rs -n 1 ANS2
                             echo -n "$ANS2"
-                            test -z "$ANS2" && break
                             index="${index}${ANS2}"
+                            break
                         done
-                        if [ "$index" -ge 0 ] && [ "$index" -le "$len" ]; then
+                        tput civis
+                        echo -ne "\033[$((${#index}+1))D\033[K"
+                        if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
                             showTo=$((index-1))
                             test "$showTo" -le "$diffIndex" && showTo=$diffIndex
                             showFrom=$((showTo-diffIndex))
@@ -991,14 +994,14 @@ function go() {
                         break
                     ;;
                 esac
-
+                
                 # Move up offset lines and delete from cursor down
                 echo -ne "\033[${offset}A\r"
 
             done
         fi
         tput cnorm
-        pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
+        test -n "$dir" -a -d "$dir" && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
 
     return 0
