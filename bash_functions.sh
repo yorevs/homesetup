@@ -981,11 +981,6 @@ function go() {
                             fi
                             test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
                         ;;
-                        *) # Quit
-                            echo ''
-                            tput cnorm
-                            return 1
-                        ;;
                         esac
                     ;;
                     '') # Select
