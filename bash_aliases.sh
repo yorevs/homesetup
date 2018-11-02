@@ -106,6 +106,10 @@ alias now-ms='date "+%s%S"'
 # macOS has no `wget, so using curl instead`
 command -v wget >/dev/null || alias wget='curl -O'
 
+alias showCursor='tput cnorm'
+
+alias hideCursor='tput civis'
+
 if [ "$(command -v python)" ]; then
     # Evaluate mathematical expression
     alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'

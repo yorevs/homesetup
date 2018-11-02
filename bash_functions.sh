@@ -895,7 +895,6 @@ function go() {
         local name
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
-        # shellcheck disable=SC2207
         results=( $(find -H "$searchPath" -iname "$name" | sort) )
         len=${#results[@]}
         # If no directory is found under the specified name
@@ -925,7 +924,7 @@ function go() {
             while [ -z "$dir" ]; do
 
                 offset=1
-                tput civis
+                hideCursor
                 for i in $(seq "$showFrom" "$showTo"); do
                     echo -ne "\033[2K\r${WHITE}"
                     test "$i" -ge "$len" && break
@@ -939,11 +938,11 @@ function go() {
                 case "$ANS" in
                     'q')
                         echo ''
-                        tput cnorm
+                        showCursor
                         return 1
                     ;;
-                    [1-9]*)
-                        tput cnorm
+                    [1-9])
+                        showCursor
                         index="$ANS"
                         echo -n "$ANS"
                         while test "${#index}" -le "${#len}"
@@ -953,7 +952,7 @@ function go() {
                             index="${index}${ANS2}"
                             break
                         done
-                        tput civis
+                        hideCursor
                         echo -ne "\033[$((${#index}+1))D\033[K"
                         if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
                             showTo=$((index-1))
@@ -962,10 +961,10 @@ function go() {
                             selIndex=$((index-1))
                         fi
                     ;;
-                    $'\033')
+                    $'\033') # Handle escape '\e[xx' codes
                         read -rsn2 ANS
                         case "$ANS" in
-                        [A)
+                        [A) # Up-arrow
                             # Previous
                             if [ "$selIndex" -eq "$showFrom" ] && [ "$showFrom" -gt 0 ]; then
                                 showFrom=$((showFrom-1))
@@ -973,7 +972,7 @@ function go() {
                             fi
                             test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
                         ;;
-                        [B)
+                        [B) # Down-arrow
                             # Next
                             if [ "$selIndex" -eq "$showTo" ] && [ "$((showTo+1))" -lt "$len" ]; then
                                 showFrom=$((showFrom+1))
@@ -983,7 +982,8 @@ function go() {
                         ;;
                         esac
                     ;;
-                    '') # Select
+                    '') # Enter
+                        # Select
                         echo ''
                         dir=${results[selIndex]}
                         break
@@ -995,7 +995,7 @@ function go() {
 
             done
         fi
-        tput cnorm
+        showCursor
         test -n "$dir" -a -d "$dir" && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
 
