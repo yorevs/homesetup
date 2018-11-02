@@ -126,7 +126,7 @@ fi
 alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
 
 # External
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias ip='echo "Internet IP: $(dig +short myip.opendns.com @resolver1.opendns.com)"'
 # Local
 alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP: $(ipconfig getifaddr $iface)"; done'
 # All IPs
