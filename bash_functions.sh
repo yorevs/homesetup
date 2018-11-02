@@ -4,7 +4,7 @@
 # shellcheck disable=SC2183
 
 #  Script: bash_functions.sh
-# Purpose: Configure some shell tools
+# @function: Configure some shell tools
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -12,7 +12,7 @@
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.functions
 
 
-# Purpose: Encrypt file using GPG encryption.
+# @function: Encrypt file using GPG encryption.
 # @param $1 [Req] : The file to encrypt.
 # @param $2 [Req] : The passphrase to encrypt the file.
 # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
@@ -38,7 +38,7 @@ function encrypt() {
     return 1
 }
 
-# Purpose: Decrypt file using GPG encryption..
+# @function: Decrypt file using GPG encryption..
 # @param $1 [Req] : The file to decrypt.
 # @param $2 [Req] : The passphrase to decrypt the file.
 # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
@@ -64,38 +64,7 @@ function decrypt() {
     return 1
 }
 
-# Purpose: Search for files recursively.
-# @param $1 [Req] : The base search path.
-# @param $2 [Req] : The GLOB expression of the file search.
-function sf() {
-
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: sf <search_path> <glob_exp_files>"
-        return 1
-    else
-        echo "Searching for files matching: \"$2\" in \"$1\""
-        find "$1" -type f -iname "*""$2"
-        return $?
-    fi
-}
-
-# Purpose: Search for directories recursively.
-# @param $1 [Req] : The base search path.
-# @param $2 [Req] : The GLOB expression of the directory search.
-function sd() {
-
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: sd <search_path> <glob_exp_folders>"
-        return 1
-    else
-        echo "Searching for folders matching: \"$2\" in \"$1\""
-        find "$1" -type d -iname "*""$2"
-    fi
-
-    return 0
-}
-
-# Purpose: Highlight words matching pattern.
+# @function: Highlight words matching pattern.
 # @param $1 [Req] : The word to highlight.
 # @param $1 [Pip] : The piped input stream.
 function hl() {
@@ -113,7 +82,41 @@ function hl() {
     return 0
 }
 
-# Purpose: Search for strings in files recursively.
+# @function: Search for files recursively.
+# @param $1 [Req] : The base search path.
+# @param $2 [Req] : The GLOB expression of the file search.
+function sf() {
+
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+        echo "Usage: sf <search_path> <glob_exp_files>"
+        return 1
+    else
+        local ext=".${2##*.}"
+        echo "E: $ext"
+        echo "Searching for files matching: \"$2\" in \"$1\""
+        find "$1" -type f -iname "*""$2" | hl "${ext##*.}"
+        return $?
+    fi
+}
+
+# @function: Search for directories recursively.
+# @param $1 [Req] : The base search path.
+# @param $2 [Req] : The GLOB expression of the directory search.
+function sd() {
+
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+        echo "Usage: sd <search_path> <glob_exp_folders>"
+        return 1
+    else
+        local ext=".${2##*.}"
+        echo "Searching for folders matching: \"$2\" in \"$1\""
+        find "$1" -type d -iname "*""$2" | hl "${ext##*.}"
+    fi
+
+    return 0
+}
+
+# @function: Search for strings in files recursively.
 # @param $1 [Req] : Search options.
 # @param $2 [Req] : The base search path.
 # @param $3 [Req] : The searching string.
@@ -183,13 +186,15 @@ function ss() {
     return 0
 }
 
-# Purpose: Search for a previous issued command from history.
+# @function: Search for a previous issued command from history.
 # @param $1 [Req] : The searching command.
 function hist() {
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: hist <command>"
         return 1
+    elif [ "$#" -eq 0 ]; then
+        history
     else
         history | grep "$*"
     fi
@@ -197,7 +202,7 @@ function hist() {
     return 0
 }
 
-# Purpose: Send files recursively to Trash.
+# @function: Send files recursively to Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function del-tree() {
 
@@ -232,7 +237,7 @@ function del-tree() {
     return 0
 }
 
-# Purpose: Pretty print (format) JSON string.
+# @function: Pretty print (format) JSON string.
 # @param $1 [Req] : The unformatted JSON string.
 function jp() {
 
@@ -240,16 +245,17 @@ function jp() {
         echo "Usage: jp <json_string>"
         return 1
     else
-        echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
+        if [ "$(uname -s)" = 'Darwin' ]; then
+            echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
+        else
+            grep . "$1" | json_pp
+        fi
     fi
 
     return 0
 }
 
-# Remove the function is json_pp is not installed.
-command -v json_pp >/dev/null || unset jp
-
-# Purpose: Check information about the IP.
+# @function: Check information about the IP.
 # @param $1 [Req] : The IP to get information about.
 function ip-info() {
 
@@ -266,7 +272,7 @@ function ip-info() {
     return 0
 }
 
-# Purpose: Resolve domain names associated with the IP.
+# @function: Resolve domain names associated with the IP.
 # @param $1 [Req] : The IP address to resolve.
 function ip-resolve() {
 
@@ -280,7 +286,7 @@ function ip-resolve() {
     return 0
 }
 
-# Purpose: Lookup the DNS to determine the associated IP address.
+# @function: Lookup the DNS to determine the associated IP address.
 # @param $1 [Req] : The domain name to lookup.
 function ip-lookup() {
 
@@ -294,7 +300,7 @@ function ip-lookup() {
     return 0
 }
 
-# Purpose: Check the state of a local port.
+# @function: Check the state of a local port.
 # @param $1 [Req] : The port number regex.
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
 function port-check() {
@@ -316,7 +322,7 @@ function port-check() {
     return 0
 }
 
-# Purpose: Print all environment variables.
+# @function: Print all environment variables.
 # @param $1 [Opt] : Filter environments.
 function envs() {
 
@@ -355,7 +361,7 @@ function envs() {
     return 0
 }
 
-# Purpose: Print each PATH entry on a separate line.
+# @function: Print each PATH entry on a separate line.
 function paths() {
 
     local pad
@@ -384,7 +390,7 @@ function paths() {
     return 0
 }
 
-# Purpose: Check the version of the app using common ways.
+# @function: Check the version of the app using common ways.
 # @param $1 [Req] : The app to check.
 function ver() {
 
@@ -419,7 +425,7 @@ function ver() {
     return 0
 }
 
-# Purpose: Check if the required tool is installed on the system.
+# @function: Check if the required tool is installed on the system.
 # @param $1 [Req] : The app to check.
 function tc() {
 
@@ -449,7 +455,7 @@ function tc() {
     return 1
 }
 
-# Purpose: Check if the development tools are installed on the system.
+# @function: Check if the development tools are installed on the system.
 function tools() {
 
     DEV_APPS=${DEV_APPS:-${DEFAULT_DEV_TOOLS[*]}}
@@ -465,7 +471,7 @@ function tools() {
     return 0
 }
 
-# Manipulate all custom aliases.
+# @function: Manipulate all custom aliases.
 # @param $1 [Req] : The alias name.
 # @param $2 [Opt] : The alias expression.
 function aa() {
@@ -546,7 +552,7 @@ function aa() {
     return 0
 }
 
-# Purpose: Save the current directory to be loaded by `load`.
+# @function: Save the current directory to be loaded by `load`.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
 function save() {
@@ -588,7 +594,7 @@ function save() {
     return 0
 }
 
-# Purpose: CD into the saved directory issued by `save`.
+# @function: CD into the saved directory issued by `save`.
 # @param $1 [Opt] : The alias to access the directory saved.
 function load() {
 
@@ -644,7 +650,7 @@ function load() {
     return 0
 }
 
-# Purpose: Add/Remove/List/Execute saved bash commands.
+# @function: Add/Remove/List/Execute saved bash commands.
 # @param $1 [Opt] : The command options.
 function cmd() {
 
@@ -733,7 +739,7 @@ function cmd() {
     return 0
 }
 
-# Purpose: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
+# @function: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 # @param $1 [Opt] : Punch options
 function punch() {
 
@@ -832,7 +838,7 @@ function punch() {
     return 0
 }
 
-# Purpose: Display a process list of the given process name, killing them if specified.
+# @function: Display a process list of the given process name, killing them if specified.
 # @param $1 [Req] : The process name to check.
 # @param $2 [Opt] : Whether to kill all found processes.
 function plist() {
@@ -878,7 +884,7 @@ function plist() {
     return 0
 }
 
-# Purpose: CD into the first match of the specified directory name.
+# @function: CD into the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
 function go() {
@@ -1003,7 +1009,7 @@ function go() {
     return 0
 }
 
-# Purpose: GIT Checkout the last different previous branch in history.
+# @function: GIT Checkout the branch in history (skips branch-to-same-branch ).
 function git-() {
 
     local currBranch
@@ -1016,7 +1022,7 @@ function git-() {
     command git checkout "$prevBranch"
 }
 
-# Check the latest dotfiles version.
+# @function: Check the latest dotfiles version.
 function dv() {
 
     local repoVer

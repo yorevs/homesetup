@@ -77,14 +77,16 @@ alias du='du -ch'
 # Make mount command output pretty and human readable format
 alias mount='mount | column -t'
 
-# Make a folder and go into it
+# Make a folder and cd into it
 alias mkcd='function _() { mkdir -p $1; cd $1; };_'
 
-# Top shortcuts
-alias cpu='top -o cpu' # Cpu
-alias mem='top -o rsize' # Memory
+# Top shortcut ordered by cpu
+alias cpu='top -o cpu'
 
-# Recursively delete Dropbox conflicted files
+# Top shortcut ordered by Memory
+alias mem='top -o rsize'
+
+# Recursively delete Dropbox conflicted files from the current directory
 test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
 
 # Base64 encode shortcuts
@@ -99,6 +101,7 @@ elif [ "Darwin" = "$(uname -s)" ]; then
     alias decode='base64 -D'
 fi
 
+# Date and time shortcuts
 alias week='date +%V'
 alias now='date +"%d-%m-%Y %T"'
 alias now-ms='date "+%s%S"'
@@ -106,9 +109,17 @@ alias now-ms='date "+%s%S"'
 # macOS has no `wget, so using curl instead`
 command -v wget >/dev/null || alias wget='curl -O'
 
+# linux has no `json_pp`, so using python instead
+command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
+
+# Show the cursor using tput
 alias showCursor='tput cnorm'
 
+# Hide the cursor using tput
 alias hideCursor='tput civis'
+
+# -----------------------------------------------------------------------------------
+# Python aliases
 
 if [ "$(command -v python)" ]; then
     # Evaluate mathematical expression

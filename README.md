@@ -107,30 +107,39 @@ ALIAS    | Equivalent
 -------- | --------
 q        | exit
 reload   | 'Reload all dotfiles and check for updates'
-pk       | Kills all processes specified
+pk       | 'Kills all processes specified by a name'
 sudo     | 'Enable aliases to be sudo’ed'
-ls       | Always use color output for `ls`
-l        | List all files colorized in long format
-ll       | List all files colorized in long format, including dot files
-lll      | List all dotfiles and dotfolders
-lld      | List all dotfolders
-lt       | List all directories recursively (Nth level depth) as a tree
-grep     | Always enable colored `grep` output
-egrep    | Always enable colored `egrep` output
-fgrep    | Always enable colored `fgrep` output
-rm       | (rm -i) For safety, by default this command will input for confirmation
-cp       | (cp -i) For safety, by default this command will input for confirmation
-mv       | (mv -i) For safety, by default this command will input for confirmation
+ls       | 'Always use color output for `ls`'
+l        | 'List all files colorized in long format'
+ll       | 'List all files colorized in long format, including dot files'
+lll      | 'List all dotfiles and dotfolders'
+lld      | 'List all dotfolders'
+lt       | 'List all directories recursively (Nth level depth) as a tree'
+grep     | 'Always enable colored `grep` output'
+egrep    | 'Always enable colored `egrep` output'
+fgrep    | 'Always enable colored `fgrep` output'
+rm       | rm -i 'For safety, by default this command will input for confirmation'
+cp       | cp -i 'For safety, by default this command will input for confirmation'
+mv       | mv -i 'For safety, by default this command will input for confirmation'
 cls      | clear
 vi       | vim
 tl       | tail -F
+mount    | 'Make mount command output pretty and human readable format'
+mkcd     | Make a folder and cd into it
+cpu      | `top` shortcut ordered by cpu
+mem      | `top` shortcut ordered by memory
+rmdbc    | 'Recursively delete Dropbox conflicted files from the current directory'
 week     | 'Current week of the month' 
 now      | 'Current date'
 now-ms   | 'Current timestamp in milliseconds'
 wget     | 'MacOS has no wget, so use curl instead'
-calc     | 'Evaluate mathematical expression'
-urle     | 'URL-encode string'
-urld     | 'URL-decode string'
+
+#### Python aliases
+ALIAS   | Equivalent
+------- | -------
+calc    | 'Evaluate mathematical expression'
+urle    | 'URL-encode string'
+urld    | 'URL-decode string'
 
 #### IP related
 
@@ -155,34 +164,35 @@ hide-files | 'Hiden hidden files in Finder'
 
 This project adds many script functions the shell. All functions provide a help using the options -h or --help.
 
-Function   | Purpose
----------- | ----------
-encrypt    | Encrypt file using GPG encryption.
-decrypt    | Decrypt file using GPG encryption.
-sf         | Search for files recursively
-sd         | Search for directories recursively
-ss         | Search for strings in files recursively
-hist       | Search for a previous issued command from history
-del-tree   | Send files recursively to Trash (del tree)
-jp         | Pretty print (format) JSON string
-ip-info    | Check information about the IP
-ip-resolve | Resolve domain names associated with the IP
-ip-lookup  | Lookup DNS entries to determine the IP address
-port-check | Check the state of a local port
-envs       | Prints all environment variables
-paths      | Print each PATH entry on a separate line
-ver        | Check the version of the app using common ways
-tc         | Check whether the `tool` is installed
-tools      | Check whether some `dev. tools` are installed
-aa         | Manipulate all custom aliases `(add/remove/set)`
-save       | Save the one directory to be loaded by `load`
-load       | cd into a saved directory issued by `save`
-punch      | Punch the clock. Add, edit and list punches
-plist      | Display (maybe kill?) a process list, given process name
-cmd        | Add/Remove/List/Execute `saved bash commands`
-go         | CD into the first match of the specified directory name
-git-       | GIT Checkout the last different previous branch in history
-dv         | Check the latest HomeSetup version
+Function    | Purpose
+----------- | -----------
+encrypt     | Encrypt file using GPG encryption.
+decrypt     | Decrypt file using GPG encryption.
+hl          | Highlight words from the piped stream.
+sf          | Search for files recursively.
+sd          | Search for directories recursively.
+ss          | Search for strings in files recursively.
+hist        | Search for a previous issued command from history.
+del-tree    | Send files recursively to Trash (del tree).
+jp          | Pretty print (format) JSON string.
+ip-info     | Check information about the IP.
+ip-resolve  | Resolve domain names associated with the IP.
+ip-lookup   | Lookup DNS entries to determine the IP address.
+port-check  | Check the state of a local port.
+envs        | Prints all environment variables.
+paths       | Print each PATH entry on a separate line.
+ver         | Check the version of the app using common ways.
+tc          | Check whether the `tool` is installed.
+tools       | Check whether some `dev. tools` are installed.
+aa          | Manipulate all custom aliases `(add/remove/set)`.
+save        | Save the one directory to be loaded by `load`.
+load        | Pushd into a saved directory issued by `save`.
+punch       | Punch the clock. Add, edit and list punches.
+plist       | Display (maybe kill?) a process list, given process name.
+cmd         | Add/Remove/List/Execute `saved bash commands`.
+go          | Pushd into the first match of the specified directory name.
+git-        | GIT Checkout the branch in history (skips branch-to-same-branch ).
+dv          | Check the latest HomeSetup version.
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 

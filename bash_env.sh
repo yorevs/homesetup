@@ -45,6 +45,6 @@ export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups
 export DEFAULT_DEV_TOOLS=(
     "bash" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"
     "node" "java" "python" "ruby" "gcc" "make" "qmake"
-    "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs"
+    "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "htop"
     "nvm" "npm" "jenv" "eslint" "gpg" "base64" "md5" "shasum"
 )
