@@ -36,7 +36,7 @@ export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
 export HISTSIZE=${HISTSIZE:-1000}
 export HISTFILESIZE=${HISTFILESIZE:-2000}
-export GO_MAX_ROWS=10
+export MSELECT_MAX_ROWS=10
 
 # Don't put duplicate lines in the history.
 export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups

@@ -471,6 +471,106 @@ function tools() {
     return 0
 }
 
+# @function: Select an option among an array, using a navigable menu.
+# @param $1 [Req] : The array of options
+function mselect() {
+    
+    local selIndex=0
+    local showFrom=0
+    local showTo=$MSELECT_MAX_ROWS
+    # shellcheck disable=SC2206
+    local allOptions=( $* )
+    local len=${#allOptions[@]}
+    local offset=1
+    local diffIndex=$((showTo-showFrom))
+    local index=''
+    
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+    command rm -f "$MSELECT_FILE"
+    
+    test "$len" -eq 0 && return 1
+    
+    while :
+    do
+
+        offset=1
+        hide-cursor
+        
+        for i in $(seq "$showFrom" "$showTo"); do
+            echo -ne "\033[2K\r${WHITE}"
+            test "$i" -ge "$len" && break
+            printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '=>' || echo '  ')" "${allOptions[i]}"
+            offset=$((offset+1))
+        done
+        
+        echo "${BLUE}"
+        read -rs -n 1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
+
+        case "$ANS" in
+            'q') 
+                # Exit
+                echo ''
+                show-cursor
+                return 1
+            ;;
+            [1-9]) # When a number is typed, try to scroll to index
+                show-cursor
+                index="$ANS"
+                echo -n "$ANS"
+                while test "${#index}" -le "${#len}"
+                do
+                    read -rs -n 1 ANS2
+                    echo -n "$ANS2"
+                    index="${index}${ANS2}"
+                    break
+                done
+                hide-cursor
+                echo -ne "\033[$((${#index}+1))D\033[K"
+                if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
+                    showTo=$((index-1))
+                    test "$showTo" -le "$diffIndex" && showTo=$diffIndex
+                    showFrom=$((showTo-diffIndex))
+                    selIndex=$((index-1))
+                fi
+            ;;
+            $'\033') # Handle escape '\e[xx' codes
+                read -rsn2 ANS
+                case "$ANS" in
+                [A) # Up-arrow
+                    # Previous
+                    if [ "$selIndex" -eq "$showFrom" ] && [ "$showFrom" -gt 0 ]; then
+                        showFrom=$((showFrom-1))
+                        showTo=$((showTo-1))
+                    fi
+                    test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
+                ;;
+                [B) # Down-arrow
+                    # Next
+                    if [ "$selIndex" -eq "$showTo" ] && [ "$((showTo+1))" -lt "$len" ]; then
+                        showFrom=$((showFrom+1))
+                        showTo=$((showTo+1))
+                    fi
+                    test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
+                ;;
+                esac
+            ;;
+            '') # Enter
+                # Select
+                echo ''
+                break
+            ;;
+        esac
+        
+        # Move up offset lines and delete from cursor down
+        echo -ne "\033[${offset}A\r"
+
+    done
+    show-cursor
+    echo "$selIndex" > "$MSELECT_FILE"
+    
+    return 0
+}
+
 # @function: Manipulate all custom aliases.
 # @param $1 [Req] : The alias name.
 # @param $2 [Opt] : The alias expression.
@@ -559,9 +659,11 @@ function save() {
 
     local dir
     local dirAlias
+    local allDirs=()
+    
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
-
     touch "$SAVED_DIRS"
+    
     dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$dirAlias" ] && [ "$1" != "-e" ]; then
@@ -586,8 +688,11 @@ function save() {
             test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
             test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
             ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
-            echo "$dirAlias=$dir" >>"$SAVED_DIRS"
+            IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS"
+            allDirs+=( "$dirAlias=$dir" )
+            printf "%s\n" "${allDirs[@]}" > "$SAVED_DIRS"
             echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
+            sort "$SAVED_DIRS" -o "$SAVED_DIRS"
         fi
     fi
 
@@ -599,7 +704,7 @@ function save() {
 function load() {
 
     local dirAlias
-    local allDirs
+    local allDirs=()
     local dir
     local pad
     local pad_len
@@ -613,38 +718,65 @@ function load() {
         echo "    [dir_alias] : Change to the directory saved from the alias provided."
         echo "             -l : List all saved dirs."
         return 1
-    elif [ "$1" = "-l" ] || [ -z "$1" ]; then
-        allDirs=$(grep . "$SAVED_DIRS" | sort)
-        if [ -n "$allDirs" ]; then
-            pad=$(printf '%0.1s' "."{1..60})
-            pad_len=40
-            echo ' '
-            echo 'Available saved directories:'
-            echo ' '
-            (
-                IFS=$'\n'
-                for next in $allDirs; do
-                    dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                    dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                    printf "${BLUE}${dirAlias}"
-                    printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                    printf '%s\n' "${WHITE} is saved as '${dir}'"
-                done
-            )
-            echo "${NC}"
-        else
-            echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
-        fi
-    else
-        dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        dir=$(grep -m 1 "^${dirAlias}=" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
-        if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+    fi
+    
+    IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS"
+    
+    if [ ${#allDirs[@]} -ne 0 ]; then
+    
+        case "$1" in
+            -l)
+                
+                pad=$(printf '%0.1s' "."{1..60})
+                pad_len=40
+                echo ' '
+                echo 'Available saved directories:'
+                echo ' '
+                (
+                    for next in ${allDirs[*]}; do
+                        dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                        dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                        printf "${BLUE}${dirAlias}"
+                        printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+                        printf '%s\n' "${WHITE} is saved as '${dir}'"
+                    done
+                )
+                echo "${NC}"
+            ;;
+            '')
+                clear
+                IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS"
+                echo 'Available directories saved: '
+                echo -e "${WHITE}"
+                mselect "${allDirs[@]}"
+                # shellcheck disable=SC2181
+                if [ "$?" -eq 0 ]; then
+                    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+                    selIndex=$(grep . "$MSELECT_FILE") # selIndex is zero-based
+                    dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+                    dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
+                fi
+            ;;
+            [a-zA-Z0-9_]*)
+                dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+                dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
+            ;;
+            *)
+                printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
+                return 1
+            ;;
+        esac
+        
+        if [ -n "$dir" ] && [ ! -d "$dir" ]; then
             echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}"
             return 1
-        else
+        elif [ -n "$dir" ] && [ -d "$dir" ]; then
             pushd "$dir" &> /dev/null || return 1
             echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
         fi
+        
+    else
+        echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
     fi
 
     return 0
@@ -657,11 +789,11 @@ function cmd() {
     local cmdName
     local cmdId
     local cmdExpr
-    local allCmds
     local pad
     local pad_len
+    local allCmds=()
+    
     CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
-
     touch "$CMD_FILE"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -701,9 +833,9 @@ function cmd() {
                     ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
                 fi
             ;;
-            "" | -l | --list)
-                allCmds=$(grep . "$CMD_FILE")
-                if [ -n "$allCmds" ]; then
+            -l | --list)
+                IFS=$'\n' read -d '' -r -a allCmds < "$CMD_FILE"
+                if [ ${#allCmds[@]} -ne 0 ]; then
                     pad=$(printf '%0.1s' "."{1..60})
                     pad_len=40
                     echo ' '
@@ -711,8 +843,7 @@ function cmd() {
                     echo ' '
                     (
                         local index=1
-                        IFS=$'\n'
-                        for next in $allCmds; do
+                        for next in ${allCmds[*]}; do
                             cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
                             cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
                             printf "${BLUE}${cmdName}"
@@ -722,6 +853,20 @@ function cmd() {
                         done
                     )
                     printf '%s\n' "${NC}"
+                fi
+            ;;
+            '')
+                IFS=$'\n' read -d '' -r -a allCmds < "$CMD_FILE"
+                echo 'Available commands stored: '
+                echo -e "${WHITE}"
+                mselect "${allCmds[@]}"
+                # shellcheck disable=SC2181
+                if [ "$?" -eq 0 ]; then
+                    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+                    selIndex=$(grep . "$MSELECT_FILE") # selIndex is zero-based
+                    cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                    test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                    test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
                 fi
             ;;
             [A-Z0-9_]*)
@@ -899,6 +1044,7 @@ function go() {
     else
         local searchPath
         local name
+        local selIndex
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         # shellcheck disable=SC2207
@@ -913,96 +1059,19 @@ function go() {
             dir=${results[0]}
         # If multiple directories were found with the same name, query the user
         else
-            
             clear
-            local selIndex=0
-            local showFrom=0
-            local showTo=$GO_MAX_ROWS
-            local offset
-            local diffIndex
-            local index
-            
-            diffIndex=$((showTo-showFrom))
             echo "${YELLOW}@@ Multiple directories found ($len). Please choose one to go into:"
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
             echo "${NC}"
-
-            while [ -z "$dir" ]; do
-
-                offset=1
-                hideCursor
-                for i in $(seq "$showFrom" "$showTo"); do
-                    echo -ne "\033[2K\r${WHITE}"
-                    test "$i" -ge "$len" && break
-                    printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '=>' || echo '  ')" "${results[i]//$searchPath\/}"
-                    offset=$((offset+1))
-                done
-                
-                echo "${BLUE}"
-                read -rs -n 1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
-
-                case "$ANS" in
-                    'q')
-                        echo ''
-                        showCursor
-                        return 1
-                    ;;
-                    [1-9])
-                        showCursor
-                        index="$ANS"
-                        echo -n "$ANS"
-                        while test "${#index}" -le "${#len}"
-                        do
-                            read -rs -n 1 ANS2
-                            echo -n "$ANS2"
-                            index="${index}${ANS2}"
-                            break
-                        done
-                        hideCursor
-                        echo -ne "\033[$((${#index}+1))D\033[K"
-                        if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
-                            showTo=$((index-1))
-                            test "$showTo" -le "$diffIndex" && showTo=$diffIndex
-                            showFrom=$((showTo-diffIndex))
-                            selIndex=$((index-1))
-                        fi
-                    ;;
-                    $'\033') # Handle escape '\e[xx' codes
-                        read -rsn2 ANS
-                        case "$ANS" in
-                        [A) # Up-arrow
-                            # Previous
-                            if [ "$selIndex" -eq "$showFrom" ] && [ "$showFrom" -gt 0 ]; then
-                                showFrom=$((showFrom-1))
-                                showTo=$((showTo-1))
-                            fi
-                            test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
-                        ;;
-                        [B) # Down-arrow
-                            # Next
-                            if [ "$selIndex" -eq "$showTo" ] && [ "$((showTo+1))" -lt "$len" ]; then
-                                showFrom=$((showFrom+1))
-                                showTo=$((showTo+1))
-                            fi
-                            test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
-                        ;;
-                        esac
-                    ;;
-                    '') # Enter
-                        # Select
-                        echo ''
-                        dir=${results[selIndex]}
-                        break
-                    ;;
-                esac
-                
-                # Move up offset lines and delete from cursor down
-                echo -ne "\033[${offset}A\r"
-
-            done
+            mselect "${results[@]}"
+            # shellcheck disable=SC2181
+            if [ "$?" -eq 0 ]; then
+                MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+                selIndex=$(grep . "$MSELECT_FILE")
+                dir=${results[$selIndex]}
+            fi
         fi
-        showCursor
         test -n "$dir" -a -d "$dir" && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
 

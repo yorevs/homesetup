@@ -113,10 +113,10 @@ command -v wget >/dev/null || alias wget='curl -O'
 command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
 
 # Show the cursor using tput
-alias showCursor='tput cnorm'
+alias show-cursor='tput cnorm'
 
 # Hide the cursor using tput
-alias hideCursor='tput civis'
+alias hide-cursor='tput civis'
 
 # -----------------------------------------------------------------------------------
 # Python aliases
