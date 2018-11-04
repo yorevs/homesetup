@@ -833,21 +833,30 @@ function cmd() {
                 cmdName=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
                 shift
                 cmdExpr="$*"
-                test -z "cmdName" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}" && return 1
+                if [ -z "$cmdName" ] || [ -z "$cmdExpr" ]; then
+                    printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}"
+                    return 1
+                fi
                 ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
                 echo "Command $cmdName: $cmdExpr" >>"$CMD_FILE"
-                ;;
+                sort "$CMD_FILE" -o "$CMD_FILE"
+                echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${BLUE}$cmdExpr ${NC}"
+            ;;
             -r | --remove)
                 shift
+                # Command ID can be the index or the alias
                 cmdId=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
                 local re='^[1-9]+$'
                 if [[ $cmdId =~ $re ]]; then
                     cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $0 }')
                     ised -e "s#(^$cmdExpr)*##" -e '/^\s*$/d' "$CMD_FILE"
-                else
-                    test -z "cmdId" -o -z "cmdExpr" && printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}" && return 1
+                elif [ -n "$cmdId" ]; then
                     ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
+                else
+                    printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}"
+                    return 1
                 fi
+                echo "${YELLOW}Command removed: ${WHITE}\"$cmdId\" ${NC}"
             ;;
             -l | --list)
                 if [ ${#allCmds[@]} -ne 0 ]; then
