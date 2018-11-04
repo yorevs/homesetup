@@ -688,9 +688,9 @@ function save() {
             test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
             test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
             ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
+            echo "$dirAlias=$dir" >> "$SAVED_DIRS"
             # shellcheck disable=SC2046
             read -d $'\n' -r -a allDirs <<< $(sort "$SAVED_DIRS")
-            allDirs+=( "$dirAlias=$dir" )
             printf "%s\n" "${allDirs[@]}" > "$SAVED_DIRS"
             echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
         fi
