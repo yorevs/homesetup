@@ -688,11 +688,11 @@ function save() {
             test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
             test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
             ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
-            IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS"
+            # shellcheck disable=SC2046
+            read -d $'\n' -r -a allDirs <<< $(sort "$SAVED_DIRS")
             allDirs+=( "$dirAlias=$dir" )
             printf "%s\n" "${allDirs[@]}" > "$SAVED_DIRS"
             echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
-            sort "$SAVED_DIRS" -o "$SAVED_DIRS"
         fi
     fi
 
@@ -726,7 +726,6 @@ function load() {
     
         case "$1" in
             -l)
-                
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=40
                 echo ' '
@@ -745,7 +744,6 @@ function load() {
             ;;
             '')
                 clear
-                IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS"
                 echo 'Available directories saved: '
                 echo -e "${WHITE}"
                 mselect "${allDirs[@]}"
