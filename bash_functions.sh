@@ -672,9 +672,7 @@ function save() {
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
     touch "$SAVED_DIRS"
     
-    dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$dirAlias" ] && [ "$1" != "-e" ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
         echo "Usage: save [options] | [dir_to_save] [dir_alias]"
         echo ''
         echo 'Options: '
@@ -682,9 +680,13 @@ function save() {
         echo "    -r : Remove saved dir."
         return 1
     else
+        
+        test -n "$2" || dirAlias=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        
         if [ "$1" = "-e" ]; then
             vi "$SAVED_DIRS"
-        elif [ "$1" = "-r" ]; then
+        elif [ -z "$2" ] || [ "$1" = "-r" ]; then
             ised -e "s#(^$dirAlias=.*)*##g" -e '/^\s*$/d' "$SAVED_DIRS"
             echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
         else
