@@ -354,6 +354,7 @@ function envs() {
                     printf " => ${value} \n"
                 fi
             done
+            IFS="$RESET_IFS"
         )
         echo ' '
     fi
@@ -377,7 +378,6 @@ function paths() {
         echo 'Listing all PATH entries:'
         echo ' '
         (
-            IFS=$'\n'
             for path in $(echo -e "${PATH//:/\\n}"); do
                 printf '%s' "${BLUE}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
@@ -471,16 +471,16 @@ function tools() {
     return 0
 }
 
+
 # @function: Select an option among an array, using a navigable menu.
 # @param $1 [Req] : The array of options
 function mselect() {
     
+    local len
+    local allOptions=()
     local selIndex=0
     local showFrom=0
     local showTo=$MSELECT_MAX_ROWS
-    # shellcheck disable=SC2206
-    local allOptions=( $* )
-    local len=${#allOptions[@]}
     local offset=1
     local diffIndex=$((showTo-showFrom))
     local index=''
@@ -488,17 +488,21 @@ function mselect() {
     MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     command rm -f "$MSELECT_FILE"
     
-    test "$len" -eq 0 && return 1
-    
+    IFS=$'\n'
+    # shellcheck disable=SC2206
+    allOptions=( $* )
+    len=${#allOptions[*]}
     while :
     do
-
+        
+        test "$len" -eq 0 && return 1
+        
         offset=1
         hide-cursor
         
         for i in $(seq "$showFrom" "$showTo"); do
             echo -ne "\033[2K\r${WHITE}"
-            test "$i" -ge "$len" && break
+            [ "$i" -ge "$len" ] && break
             printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '=>' || echo '  ')" "${allOptions[i]}"
             offset=$((offset+1))
         done
@@ -509,7 +513,7 @@ function mselect() {
         case "$ANS" in
             'q') 
                 # Exit
-                echo ''
+                echo "${NC}"
                 show-cursor
                 return 1
             ;;
@@ -565,8 +569,11 @@ function mselect() {
         echo -ne "\033[${offset}A\r"
 
     done
+    IFS="$RESET_IFS"
+    
     show-cursor
     echo "$selIndex" > "$MSELECT_FILE"
+    echo -ne "${NC}"
     
     return 0
 }
@@ -629,6 +636,7 @@ function aa() {
                             printf '%s\n' "${YELLOW}$next${NC}"
                         fi
                     done
+                    IFS="$RESET_IFS"
                 )
                 printf '%s\n' "${NC}"
             else
@@ -690,8 +698,9 @@ function save() {
             ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$SAVED_DIRS"
             echo "$dirAlias=$dir" >> "$SAVED_DIRS"
             # shellcheck disable=SC2046
-            read -d $'\n' -r -a allDirs <<< $(sort "$SAVED_DIRS")
+            IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS" IFS="$RESET_IFS"
             printf "%s\n" "${allDirs[@]}" > "$SAVED_DIRS"
+            sort "$SAVED_DIRS" -o "$SAVED_DIRS"
             echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
         fi
     fi
@@ -708,7 +717,9 @@ function load() {
     local dir
     local pad
     local pad_len
+    
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     touch "$SAVED_DIRS"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -720,7 +731,8 @@ function load() {
         return 1
     fi
     
-    IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS"
+    # shellcheck disable=SC2046
+    IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS" IFS="$RESET_IFS"
     
     if [ ${#allDirs[@]} -ne 0 ]; then
     
@@ -731,25 +743,23 @@ function load() {
                 echo ' '
                 echo 'Available saved directories:'
                 echo ' '
-                (
-                    for next in ${allDirs[*]}; do
-                        dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                        dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                        printf "${BLUE}${dirAlias}"
-                        printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                        printf '%s\n' "${WHITE} is saved as '${dir}'"
-                    done
-                )
+                for next in ${allDirs[*]}; do
+                    dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                    dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                    printf "${BLUE}${dirAlias}"
+                    printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+                    printf '%s\n' "${WHITE} is saved as '${dir}'"
+                done
                 echo "${NC}"
+                return 0
             ;;
             '')
                 clear
                 echo 'Available directories saved: '
                 echo -e "${WHITE}"
-                mselect "${allDirs[@]}"
+                mselect "${allDirs[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
-                    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
                     selIndex=$(grep . "$MSELECT_FILE") # selIndex is zero-based
                     dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
                     dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
@@ -757,7 +767,7 @@ function load() {
             ;;
             [a-zA-Z0-9_]*)
                 dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-                dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
+                dir=$(grep "$dirAlias" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
             ;;
             *)
                 printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
@@ -790,10 +800,12 @@ function cmd() {
     local pad
     local pad_len
     local allCmds=()
+    local index=1
     
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
     touch "$CMD_FILE"
-
+    
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: cmd [options [cmd_alias] <cmd_expression>] | [cmd_index]"
         echo ''
@@ -805,6 +817,10 @@ function cmd() {
         echo "             -l : List all stored commands."
         return 1
     else
+    
+        # shellcheck disable=SC2046
+        IFS=$'\n' read -d '' -r -a allCmds < "$CMD_FILE" IFS="$RESET_IFS"
+        
         case "$1" in
             -e | --edit)
                 vi "$CMD_FILE"
@@ -832,7 +848,6 @@ function cmd() {
                 fi
             ;;
             -l | --list)
-                IFS=$'\n' read -d '' -r -a allCmds < "$CMD_FILE"
                 if [ ${#allCmds[@]} -ne 0 ]; then
                     pad=$(printf '%0.1s' "."{1..60})
                     pad_len=40
@@ -840,27 +855,27 @@ function cmd() {
                     echo 'Available stored commands:'
                     echo ' '
                     (
-                        local index=1
+                        IFS=$'\n'
                         for next in ${allCmds[*]}; do
                             cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
                             cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
                             printf "${BLUE}${cmdName}"
                             printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                            echo "${WHITE} is stored as: ${cmdExpr}"
+                            echo "is stored as: ${cmdExpr}"
                             index=$((index + 1))
                         done
+                        IFS="$RESET_IFS"
                     )
                     printf '%s\n' "${NC}"
                 fi
             ;;
             '')
-                IFS=$'\n' read -d '' -r -a allCmds < "$CMD_FILE"
+                clear
                 echo 'Available commands stored: '
                 echo -e "${WHITE}"
-                mselect "${allCmds[@]}"
+                mselect "${allCmds[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
-                    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
                     selIndex=$(grep . "$MSELECT_FILE") # selIndex is zero-based
                     cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                     test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
@@ -870,7 +885,7 @@ function cmd() {
             [A-Z0-9_]*)
                 cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                 test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
+                test -n "$cmdExpr" && echo -e "#> $cmdExpr" && eval "$cmdExpr"
             ;;
             *)
                 printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
@@ -927,7 +942,6 @@ function punch() {
                 local subTotal
                 local weekTotal
                 local success
-                IFS=$'\n'
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=36
 
@@ -937,13 +951,14 @@ function punch() {
                     echo -e "${YELLOW}Week ($weekStamp) punches: $PUNCH_FILE"
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
-
+                
+                IFS=$'\n'
                 for line in $lines; do
                     # List punchs
                     if [ "-l" = "$opt" ]; then
                         echo -n "${line//${dateStamp}/${BLUE}${dateStamp}}"
                         # Read all timestamps and append them into an array.
-                        IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')" IFS=$'\n'
+                        read -r -d ' ' -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
                         # If we have an even number of timestamps, display te subtotals.
                         if [ ${#lineTotals[@]} -gt 0 ] && [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
                             # shellcheck disable=SC2086
@@ -961,6 +976,7 @@ function punch() {
                         break
                     fi
                 done
+                IFS="$RESET_IFS"
 
                 # Display totals of the week when listing - Footer
                 if [ "-l" = "$opt" ]; then
@@ -1016,6 +1032,7 @@ function plist() {
                         test -n "$(pgrep ${gflags} "$1")" && echo -e "${GREEN}*" || echo -e "${RED}*"
                     fi
                 done
+                IFS="$RESET_IFS"
             )
         else
             echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
@@ -1062,7 +1079,7 @@ function go() {
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
             echo "${NC}"
-            mselect "${results[@]}"
+            mselect "${results[*]}"
             # shellcheck disable=SC2181
             if [ "$?" -eq 0 ]; then
                 MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}

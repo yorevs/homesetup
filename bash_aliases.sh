@@ -86,9 +86,6 @@ alias cpu='top -o cpu'
 # Top shortcut ordered by Memory
 alias mem='top -o rsize'
 
-# Recursively delete Dropbox conflicted files from the current directory
-test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
-
 # Base64 encode shortcuts
 alias encode="base64"
 
@@ -117,6 +114,12 @@ alias show-cursor='tput cnorm'
 
 # Hide the cursor using tput
 alias hide-cursor='tput civis'
+
+# Recursively delete Dropbox conflicted files from the current directory
+test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
+
+# Set JAVA_HOME using jenv
+command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # -----------------------------------------------------------------------------------
 # Python aliases
@@ -158,9 +161,6 @@ command -v lsregister >/dev/null && alias ls-cleanup="/System/Library/Frameworks
 # Show/hide hidden files in Finder
 command -v defaults >/dev/null && alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
 command -v defaults >/dev/null && alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-
-# Set JAVA_HOME using jenv
-command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Canonical hex dump; some systems have this symlinked
 command -v hd >/dev/null || alias hd='hexdump -C'

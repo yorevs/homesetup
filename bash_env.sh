@@ -37,6 +37,7 @@ export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export HISTSIZE=${HISTSIZE:-1000}
 export HISTFILESIZE=${HISTFILESIZE:-2000}
 export MSELECT_MAX_ROWS=10
+export RESET_IFS="$IFS"
 
 # Don't put duplicate lines in the history.
 export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups
