@@ -176,10 +176,10 @@ function ss() {
             fi
             [ "Linux" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i'' -e "s/$2/$repl_str/g" {} \;)
             [ "Darwin" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$repl_str/g" {} \;)
-            test -n "$result" && echo "${result//$2/$repl_str}" | hl "$repl_str"
+            test -n "$result" && echo "${result//$2/$repl_str}" | grep "$repl_str"
         else
             result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
-            test -n "$result" && echo "${result}" | hl "$2"
+            test -n "$result" && echo "${result}" | grep "$2"
         fi
     fi
 
