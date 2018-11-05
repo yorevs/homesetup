@@ -476,17 +476,20 @@ function tools() {
 # @param $1 [Req] : The array of options
 function mselect() {
     
+    MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:=10}
+
     local len
     local allOptions=()
     local selIndex=0
     local showFrom=0
-    local showTo=$MSELECT_MAX_ROWS
+    local showTo=$((MSELECT_MAX_ROWS-1))
     local offset=1
     local diffIndex=$((showTo-showFrom))
     local index=''
     
     MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     command rm -f "$MSELECT_FILE"
+    clear
     
     IFS=$'\n'
     # shellcheck disable=SC2206
@@ -497,21 +500,26 @@ function mselect() {
         
         test "$len" -eq 0 && return 1
         
-        offset=1
+        offset=2
         hide-cursor
-        
+
+        echo "${WHITE}"
         for i in $(seq "$showFrom" "$showTo"); do
-            echo -ne "\033[2K\r${WHITE}"
+            echo -ne "\033[2K\r"
             [ "$i" -ge "$len" ] && break
-            printf '(%.2d) %0.4s %s\n' "$((i+1))" "$(test "$i" -eq $selIndex && echo '=>' || echo '  ')" "${allOptions[i]}"
+            if [ "$i" -ne $selIndex ]; then 
+                printf "(%.${#len}d) %0.4s %s\n" "$((i+1))" '  ' "${allOptions[i]}"
+            else
+                printf "${HIGHLIGHT_COLOR}(%.${#len}d) %0.4s %s${NC}\n" "$((i+1))" '=>' "${allOptions[i]}"
+            fi
             offset=$((offset+1))
         done
-        
         echo "${BLUE}"
-        read -rs -n 1 -p "[Enter] to select, [up-down] to move cursor, [q] to quit: " ANS
+
+        read -rs -n 1 -p "[Enter] to Select, [Up-Down] to Navigate, [Q] to Quit: " ANS
 
         case "$ANS" in
-            'q') 
+            'q' | 'Q') 
                 # Exit
                 echo "${NC}"
                 show-cursor
@@ -521,14 +529,15 @@ function mselect() {
                 show-cursor
                 index="$ANS"
                 echo -n "$ANS"
-                while test "${#index}" -le "${#len}"
+                while [ "${#index}" -lt "${#len}" ]
                 do
                     read -rs -n 1 ANS2
+                    [ -z "$ANS2" ] && break
                     echo -n "$ANS2"
                     index="${index}${ANS2}"
-                    break
                 done
                 hide-cursor
+                # Erase the index typed
                 echo -ne "\033[$((${#index}+1))D\033[K"
                 if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
                     showTo=$((index-1))
@@ -537,7 +546,7 @@ function mselect() {
                     selIndex=$((index-1))
                 fi
             ;;
-            $'\033') # Handle escape '\e[xx' codes
+            $'\033') # Handle escape '\e[nX' codes
                 read -rsn2 ANS
                 case "$ANS" in
                 [A) # Up-arrow
@@ -756,9 +765,8 @@ function load() {
                 return 0
             ;;
             '')
-                clear
                 echo 'Available directories saved: '
-                echo -e "${WHITE}"
+                echo -en "${WHITE}"
                 mselect "${allDirs[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
@@ -881,9 +889,8 @@ function cmd() {
                 fi
             ;;
             '')
-                clear
                 echo 'Available commands stored: '
-                echo -e "${WHITE}"
+                echo -en "${WHITE}"
                 mselect "${allCmds[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
@@ -1084,11 +1091,10 @@ function go() {
             dir=${results[0]}
         # If multiple directories were found with the same name, query the user
         else
-            clear
             echo "${YELLOW}@@ Multiple directories found ($len). Please choose one to go into:"
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
-            echo "${NC}"
+            echo -en "${NC}"
             mselect "${results[*]}"
             # shellcheck disable=SC2181
             if [ "$?" -eq 0 ]; then
