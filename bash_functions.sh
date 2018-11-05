@@ -513,7 +513,7 @@ function mselect() {
             fi
             offset=$((offset+1))
         done
-        echo "${HIGHLIGHT_COLOR}"
+        echo "${YELLOW}"
 
         read -rs -n 1 -p "[Enter] to Select, [Up-Down] to Navigate, [Q] to Quit: " ANS
 
