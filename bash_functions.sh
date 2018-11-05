@@ -1069,6 +1069,8 @@ function plist() {
 # @param $1 [Req] : The directory name to go.
 function go() {
     
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+
     local dir
     local results=()
     local len
@@ -1082,7 +1084,9 @@ function go() {
         local selIndex
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
-        IFS=$'\n' read -d '' -r -a results <<< "$(find -H "$searchPath" -iname "$name")" IFS="$RESET_IFS"
+        pushd "$searchPath" &> /dev/null || return 1
+        IFS=$'\n' read -d '' -r -a results <<< "$(find -H . -iname "$name")" IFS="$RESET_IFS"
+        popd &> /dev/null || return 1
         len=${#results[@]}
         # If no directory is found under the specified name
         if [ "$len" -eq 0 ]; then
@@ -1098,13 +1102,14 @@ function go() {
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
             echo -en "${NC}"
+            IFS=$'\n'
             mselect "${results[*]}"
             # shellcheck disable=SC2181
             if [ "$?" -eq 0 ]; then
-                MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
                 selIndex=$(grep . "$MSELECT_FILE")
                 dir=${results[$selIndex]}
             fi
+            IFS="$RESET_IFS"
         fi
         test -n "$dir" -a -d "$dir" && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
