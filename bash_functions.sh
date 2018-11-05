@@ -93,7 +93,7 @@ function sf() {
     else
         local ext=".${2##*.}"
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        find -L "$1" -iname "*""$2" | grep "${ext##*.}"
+        find -L "$1" -iname "*""$2"  | grep "${ext##*.}"
         return $?
     fi
 }
@@ -211,7 +211,7 @@ function del-tree() {
         return 1
     else
         # Find all files and folders matching the <glob_exp>
-        all=$(find "$1" -name "*$2")
+        all=$(find "$1" -name "*$2" 2> /dev/null)
         # Move all to trash
         if [ -n "$all" ]; then
             read -r -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
@@ -1085,7 +1085,7 @@ function go() {
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         pushd "$searchPath" &> /dev/null || return 1
-        IFS=$'\n' read -d '' -r -a results <<< "$(find -H . -iname "$name")" IFS="$RESET_IFS"
+        IFS=$'\n' read -d '' -r -a results <<< "$(find -H . -iname "$name" 2> /dev/null)" IFS="$RESET_IFS"
         popd &> /dev/null || return 1
         len=${#results[@]}
         # If no directory is found under the specified name
