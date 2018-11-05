@@ -1073,8 +1073,7 @@ function go() {
         local selIndex
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
-        # shellcheck disable=SC2207
-        IFS=$'\n' results=( $(find -H "$searchPath" -iname "$name") ) IFS="$RESET_IFS"
+        IFS=$'\n' read -d '' -r -a results <<< "$(find -H "$searchPath" -iname "$name")" IFS="$RESET_IFS"
         len=${#results[@]}
         # If no directory is found under the specified name
         if [ "$len" -eq 0 ]; then
