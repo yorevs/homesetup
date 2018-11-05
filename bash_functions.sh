@@ -486,7 +486,6 @@ function mselect() {
     local index=''
 
     command rm -f "$MSELECT_FILE"
-    IFS=$'\n '
     # shellcheck disable=SC2206
     allOptions=( $* )
     len=${#allOptions[*]}
@@ -891,6 +890,7 @@ function cmd() {
                 clear
                 echo 'Available commands stored: '
                 echo -en "${WHITE}"
+                IFS=$'\n' 
                 mselect "${allCmds[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
@@ -899,6 +899,7 @@ function cmd() {
                     test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                     test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
                 fi
+                IFS="$RESET_IFS"
             ;;
             [A-Z0-9_]*)
                 cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
