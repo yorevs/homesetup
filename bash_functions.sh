@@ -92,9 +92,8 @@ function sf() {
         return 1
     else
         local ext=".${2##*.}"
-        echo "E: $ext"
-        echo "Searching for files matching: \"$2\" in \"$1\""
-        find "$1" -type f -iname "*""$2" | grep "${ext##*.}"
+        echo "Searching for files or linked files matching: \"$2\" in \"$1\""
+        find -L "$1" -iname "*""$2" | grep "${ext##*.}"
         return $?
     fi
 }
@@ -109,8 +108,8 @@ function sd() {
         return 1
     else
         local ext=".${2##*.}"
-        echo "Searching for folders matching: \"$2\" in \"$1\""
-        find "$1" -type d -iname "*""$2" | grep "${ext##*.}"
+        echo "Searching for folders or linked folders matching: \"$2\" in \"$1\""
+        find -H "$1" -iname "*""$2" | grep "${ext##*.}"
     fi
 
     return 0
@@ -174,12 +173,10 @@ function ss() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i'' -e "s/$2/$repl_str/g" {} \;)
-            [ "Darwin" = "$(uname -s)" ] && result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \; -exec sed -i '' -e "s/$2/$repl_str/g" {} \;)
-            test -n "$result" && echo "${result//$2/$repl_str}" | grep "$repl_str"
+            [ "Linux" = "$(uname -s)" ] && find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i'' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
+            [ "Darwin" = "$(uname -s)" ] && find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i '' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
         else
-            result=$(find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} \;)
-            test -n "$result" && echo "${result}" | grep "$2"
+            find -L "$1" -iname "*""$3" -exec grep $gflags "$2" {} + | grep $gflags "$2"
         fi
     fi
 
