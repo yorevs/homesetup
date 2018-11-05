@@ -349,7 +349,7 @@ function envs() {
                 name=$(echo "$v" | cut -d '=' -f1)
                 value=$(echo "$v" | cut -d '=' -f2-)
                 if [[ $name =~ $filter ]]; then
-                    printf "${BLUE}${name}${NC} "
+                    printf "${HIGHLIGHT_COLOR}${name}${NC} "
                     printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
                     printf " => ${value} \n"
                 fi
@@ -379,7 +379,7 @@ function paths() {
         echo ' '
         (
             for path in $(echo -e "${PATH//:/\\n}"); do
-                printf '%s' "${BLUE}$path ${WHITE}"
+                printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                 test -d "$path" && printf '%s\n' "${GREEN} Path exists" || printf '%s\n'  "${RED} Path does not exist"
             done
@@ -489,7 +489,6 @@ function mselect() {
     
     MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     command rm -f "$MSELECT_FILE"
-    clear
     
     IFS=$'\n'
     # shellcheck disable=SC2206
@@ -508,13 +507,13 @@ function mselect() {
             echo -ne "\033[2K\r"
             [ "$i" -ge "$len" ] && break
             if [ "$i" -ne $selIndex ]; then 
-                printf "(%.${#len}d) %0.4s %s\n" "$((i+1))" '  ' "${allOptions[i]}"
+                printf " %.${#len}d  %0.4s %s\n" "$((i+1))" ' ' "${allOptions[i]}"
             else
-                printf "${HIGHLIGHT_COLOR}(%.${#len}d) %0.4s %s${NC}\n" "$((i+1))" '=>' "${allOptions[i]}"
+                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s${NC}\n" "$((i+1))" '>' "${allOptions[i]}"
             fi
             offset=$((offset+1))
         done
-        echo "${BLUE}"
+        echo "${HIGHLIGHT_COLOR}"
 
         read -rs -n 1 -p "[Enter] to Select, [Up-Down] to Navigate, [Q] to Quit: " ANS
 
@@ -638,7 +637,7 @@ function aa() {
                         if [[ $next =~ $re ]]; then
                             name=$(echo -n "$next" | awk -F '=' '{ print $1 }')
                             expr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                            printf "${BLUE}${name//alias /}"
+                            printf "${HIGHLIGHT_COLOR}${name//alias /}"
                             printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
                             printf '%s\n' "${WHITE} is aliased to ${expr}"
                         else
@@ -655,7 +654,7 @@ function aa() {
             # Add/Set one alias
             ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
-            printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${BLUE}'$aliasExpr' ${NC}"
+            printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
             # shellcheck disable=SC1090
             source "$aliasFile"
         elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then
@@ -712,7 +711,7 @@ function save() {
             IFS=$'\n' read -d '' -r -a allDirs < "$SAVED_DIRS" IFS="$RESET_IFS"
             printf "%s\n" "${allDirs[@]}" > "$SAVED_DIRS"
             sort "$SAVED_DIRS" -o "$SAVED_DIRS"
-            echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${BLUE}$dirAlias ${NC}"
+            echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HIGHLIGHT_COLOR}$dirAlias ${NC}"
         fi
     fi
 
@@ -757,7 +756,7 @@ function load() {
                 for next in ${allDirs[*]}; do
                     dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
                     dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                    printf "${BLUE}${dirAlias}"
+                    printf "${HIGHLIGHT_COLOR}${dirAlias}"
                     printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
                     printf '%s\n' "${WHITE} is saved as '${dir}'"
                 done
@@ -765,6 +764,7 @@ function load() {
                 return 0
             ;;
             '')
+                clear
                 echo 'Available directories saved: '
                 echo -en "${WHITE}"
                 mselect "${allDirs[*]}"
@@ -848,7 +848,7 @@ function cmd() {
                 ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
                 echo "Command $cmdName: $cmdExpr" >>"$CMD_FILE"
                 sort "$CMD_FILE" -o "$CMD_FILE"
-                echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${BLUE}$cmdExpr ${NC}"
+                echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${HIGHLIGHT_COLOR}$cmdExpr ${NC}"
             ;;
             -r | --remove)
                 shift
@@ -878,7 +878,7 @@ function cmd() {
                         for next in ${allCmds[*]}; do
                             cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
                             cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
-                            printf "${BLUE}${cmdName}"
+                            printf "${HIGHLIGHT_COLOR}${cmdName}"
                             printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
                             echo "is stored as: ${cmdExpr}"
                             index=$((index + 1))
@@ -889,6 +889,7 @@ function cmd() {
                 fi
             ;;
             '')
+                clear
                 echo 'Available commands stored: '
                 echo -en "${WHITE}"
                 mselect "${allCmds[*]}"
@@ -974,7 +975,7 @@ function punch() {
                 for line in $lines; do
                     # List punchs
                     if [ "-l" = "$opt" ]; then
-                        echo -n "${line//${dateStamp}/${BLUE}${dateStamp}}"
+                        echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
                         # Read all timestamps and append them into an array.
                         IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
                         # If we have an even number of timestamps, display te subtotals.
@@ -1042,7 +1043,7 @@ function plist() {
                 IFS=$'\n'
                 for next in $allPids; do
                     pid=$(echo "$next" | awk '{ print $2 }')
-                    echo -en "${BLUE}$next" | tr ' ' '\t'
+                    echo -en "${HIGHLIGHT_COLOR}$next" | tr ' ' '\t'
                     if [ -n "$pid" ] && [ "$2" = "kill" ]; then 
                         kill -9 "$pid"
                         echo -e "${RED}\t\tKilled with signal -9"
@@ -1091,6 +1092,7 @@ function go() {
             dir=${results[0]}
         # If multiple directories were found with the same name, query the user
         else
+            clear
             echo "${YELLOW}@@ Multiple directories found ($len). Please choose one to go into:"
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
