@@ -94,7 +94,7 @@ function sf() {
         local ext=".${2##*.}"
         echo "E: $ext"
         echo "Searching for files matching: \"$2\" in \"$1\""
-        find "$1" -type f -iname "*""$2" | hl "${ext##*.}"
+        find "$1" -type f -iname "*""$2" | grep "${ext##*.}"
         return $?
     fi
 }
@@ -110,7 +110,7 @@ function sd() {
     else
         local ext=".${2##*.}"
         echo "Searching for folders matching: \"$2\" in \"$1\""
-        find "$1" -type d -iname "*""$2" | hl "${ext##*.}"
+        find "$1" -type d -iname "*""$2" | grep "${ext##*.}"
     fi
 
     return 0
