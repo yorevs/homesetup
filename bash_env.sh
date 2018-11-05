@@ -30,14 +30,19 @@ export DOWNLOADS="$HOME/Downloads"
 export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-$HOME/.Trash}"
 
-# shellcheck disable=SC2155
-export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
-
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
 export HISTSIZE=${HISTSIZE:-1000}
 export HISTFILESIZE=${HISTFILESIZE:-2000}
-export MSELECT_MAX_ROWS=10
+
+# HomeSetup variables
+# shellcheck disable=SC2155
+export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export RESET_IFS="$IFS"
+export MSELECT_MAX_ROWS=10
+export MSELECT_FILE="$HHS_DIR/.mselect"
+export SAVED_DIRS="$HHS_DIR/.saved_dirs"
+export CMD_FILE="$HHS_DIR/.cmd_file"
+export PUNCH_FILE="$HHS_DIR/.punchs"
 
 # Don't put duplicate lines in the history.
 export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups

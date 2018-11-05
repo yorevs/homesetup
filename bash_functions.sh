@@ -474,6 +474,7 @@ function tools() {
 function mselect() {
     
     MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:=10}
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
 
     local len
     local allOptions=()
@@ -483,14 +484,13 @@ function mselect() {
     local offset=1
     local diffIndex=$((showTo-showFrom))
     local index=''
-    
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+
     command rm -f "$MSELECT_FILE"
-    
-    IFS=$'\n'
+    IFS=$'\n '
     # shellcheck disable=SC2206
     allOptions=( $* )
     len=${#allOptions[*]}
+    
     while :
     do
         
@@ -670,11 +670,12 @@ function aa() {
 # @param $2 [Opt] : The alias to access the directory saved.
 function save() {
 
+    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
+
     local dir
     local dirAlias
     local allDirs=()
     
-    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
     touch "$SAVED_DIRS"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
@@ -719,14 +720,15 @@ function save() {
 # @param $1 [Opt] : The alias to access the directory saved.
 function load() {
 
+    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+
     local dirAlias
     local allDirs=()
     local dir
     local pad
     local pad_len
     
-    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     touch "$SAVED_DIRS"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -800,6 +802,9 @@ function load() {
 # @function: Add/Remove/List/Execute saved bash commands.
 # @param $1 [Opt] : The command options.
 function cmd() {
+    
+    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
+    CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
     local cmdName
     local cmdId
@@ -808,9 +813,6 @@ function cmd() {
     local pad_len
     local allCmds=()
     local index=1
-    
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
-    CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
     touch "$CMD_FILE"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -917,6 +919,8 @@ function cmd() {
 # @param $1 [Opt] : Punch options
 function punch() {
 
+    PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punchs}
+
     local dateStamp
     local timeStamp
     local weekStamp
@@ -932,7 +936,6 @@ function punch() {
         return 1
     else
         opt="$1"
-        PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punchs}
         dateStamp="$(date +'%a %d-%m-%Y')"
         timeStamp="$(date +'%H:%M')"
         weekStamp="$(date +%V)"
