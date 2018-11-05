@@ -969,7 +969,7 @@ function punch() {
                     if [ "-l" = "$opt" ]; then
                         echo -n "${line//${dateStamp}/${BLUE}${dateStamp}}"
                         # Read all timestamps and append them into an array.
-                        read -r -d ' ' -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
+                        IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
                         # If we have an even number of timestamps, display te subtotals.
                         if [ ${#lineTotals[@]} -gt 0 ] && [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
                             # shellcheck disable=SC2086
