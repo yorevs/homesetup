@@ -126,7 +126,7 @@ command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/
 
 if [ "$(command -v python)" ]; then
     # Evaluate mathematical expression
-    alias calc='python -c "import sys,math;print(eval(sys.argv[1]));"'
+    alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
 
     # URL-encode strings
     alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
