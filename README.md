@@ -184,6 +184,7 @@ paths       | Print each PATH entry on a separate line.
 ver         | Check the version of the app using common ways.
 tc          | Check whether the `tool` is installed.
 tools       | Check whether some `dev. tools` are installed.
+mselect     | Select an option from a list, using a navigable menu.
 aa          | Manipulate all custom aliases `(add/remove/set)`.
 save        | Save the one directory to be loaded by `load`.
 load        | Pushd into a saved directory issued by `save`.

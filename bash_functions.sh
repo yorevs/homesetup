@@ -455,10 +455,10 @@ function tc() {
 # @function: Check if the development tools are installed on the system.
 function tools() {
 
-    DEV_APPS=${DEV_APPS:-${DEFAULT_DEV_TOOLS[*]}}
+    DEFAULT_DEV_TOOLS=${DEFAULT_DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
 
     echo ''
-    for app in ${DEV_APPS[*]}; do
+    for app in ${DEFAULT_DEV_TOOLS[*]}; do
         tc "$app"
     done
     echo "${CYAN}"
@@ -469,9 +469,9 @@ function tools() {
 }
 
 
-# @function: Select an option among an array, using a navigable menu.
-# @param $1 [Req] : The response file
-# @param $2 [Req] : The array of options
+# @function: Select an option from a list, using a navigable menu.
+# @param $1 [Req] : The response file.
+# @param $2 [Req] : The array of options.
 function mselect() {
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
