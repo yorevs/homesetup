@@ -979,15 +979,16 @@ function punch() {
                         echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
                         # Read all timestamps and append them into an array.
                         IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
-                        # If we have an even number of timestamps, display te subtotals.
+                        # If we have an even number of timestamps, display the subtotals.
                         if [ ${#lineTotals[@]} -gt 0 ] && [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
                             # shellcheck disable=SC2086
-                            subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})"
+                            subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})" # Up to 3 pairs of timestamps.
                             printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
+                            # If the sub total is gerater or equal to 8 hours, color it green, red otherwise.
                             [[ "$subTotal" =~ ^([12][0-9]|0[89]):..:.. ]] && echo -e " : Partial = ${GREEN}${subTotal}${NC}" || echo -e " : Partial = ${RED}${subTotal}${NC}"
                             totals+=("$subTotal")
                         else
-                            echo "${RED}**${NC}"
+                            echo "${RED}**:**${NC}"
                         fi
                     # Do the punch to the current day
                     elif [[ "$line" =~ $re ]]; then
@@ -1003,7 +1004,7 @@ function punch() {
                     # shellcheck disable=SC2086
                     weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${YELLOW}---------------------------------------------------------------------------"
-                    echo -e "Week weekTotal = ${weekTotal}${NC}"
+                    echo -e "Week total: ${weekTotal}${NC}"
                     echo ''
                 else
                     # Create a new timestamp if it's the first punch for the day
