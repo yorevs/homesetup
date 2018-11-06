@@ -188,12 +188,12 @@ function ss() {
 function hist() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: hist <command>"
+        echo "Usage: hist [command]"
         return 1
     elif [ "$#" -eq 0 ]; then
-        history | cut -d ' ' -f4- | sort | uniq
+        history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "^ *[0-9]*  "
     else
-        history | grep "$*"
+        history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "$*"
     fi
 
     return 0
