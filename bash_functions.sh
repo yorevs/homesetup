@@ -191,7 +191,7 @@ function hist() {
         echo "Usage: hist <command>"
         return 1
     elif [ "$#" -eq 0 ]; then
-        history
+        history | cut -d ' ' -f4- | sort | uniq
     else
         history | grep "$*"
     fi
