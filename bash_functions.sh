@@ -109,7 +109,7 @@ function sd() {
     else
         local ext=".${2##*.}"
         echo "Searching for folders or linked folders matching: \"$2\" in \"$1\""
-        find -H "$1" -type d -iname "*""$2" | grep "${ext##*.}"
+        find -L "$1" -type d -iname "*""$2""*" | grep "${ext##*.}"
     fi
 
     return 0
@@ -1105,7 +1105,7 @@ function go() {
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         pushd "$searchPath" &> /dev/null || return 1
-        IFS=$'\n' read -d '' -r -a results <<< "$(find -H . -type d -iname "$name" 2> /dev/null)" IFS="$RESET_IFS"
+        IFS=$'\n' read -d '' -r -a results <<< "$(find -L . -type d -iname "*""$name""*" 2> /dev/null)" IFS="$RESET_IFS"
         popd &> /dev/null || return 1
         len=${#results[@]}
         # If no directory is found under the specified name
