@@ -1105,9 +1105,7 @@ function go() {
         local selIndex
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
-        pushd "$searchPath" &> /dev/null || return 1
-        IFS=$'\n' read -d '' -r -a results <<< "$(find -L . -type d -iname "*""$name" 2> /dev/null)" IFS="$RESET_IFS"
-        popd &> /dev/null || return 1
+        IFS=$'\n' read -d '' -r -a results <<< "$(find -L "$searchPath" -type d -iname "*""$name" 2> /dev/null)" IFS="$RESET_IFS"
         len=${#results[@]}
         # If no directory is found under the specified name
         if [ "$len" -eq 0 ]; then
@@ -1125,7 +1123,7 @@ function go() {
             echo -en "${NC}"
             IFS=$'\n'
             mselectFile=$(mktemp)
-            mselect "$mselectFile" "${results[*]}"
+            mselect "$mselectFile" "${results[*]//$searchPath\/}"
             # shellcheck disable=SC2181
             if [ "$?" -eq 0 ]; then
                 selIndex=$(grep . "$mselectFile")
