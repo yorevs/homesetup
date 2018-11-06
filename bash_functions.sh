@@ -461,7 +461,7 @@ function tools() {
     for app in ${DEFAULT_DEV_TOOLS[*]}; do
         tc "$app"
     done
-    echo "${CYAN}"
+    echo "${HIGHLIGHT_COLOR}"
     echo 'To check the current installed version type: #> ver <tool_name>'
     echo "${NC}"
     
@@ -478,7 +478,7 @@ function mselect() {
         echo 'Usage: mselect <output_file> <option1 option2 ...>'
         echo ''
         echo 'Notes: '
-        echo '  - Two or more options are required to run mselect.'
+        echo '  - If only one option is available, mselect will select it and return.'
         echo '  - A temporary file is suggested to used with this function (mktemp).'
 
         return 1
@@ -502,7 +502,8 @@ function mselect() {
     allOptions=( $* )
     len=${#allOptions[*]}
 
-    test "$len" -lt 2 && return 1
+    # When only one option is provided, select the index 0
+    test "$len" -eq 1 && echo "0" > "$outfile" && return 0
 
     while :
     do
@@ -761,7 +762,7 @@ function load() {
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=40
                 echo ' '
-                echo 'Available saved directories:'
+                echo "Available directories (${#allDirs[@]}) saved:"
                 echo ' '
                 for next in ${allDirs[*]}; do
                     dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
@@ -775,7 +776,7 @@ function load() {
             ;;
             '')
                 clear
-                echo 'Available directories saved: '
+                echo "Available directories (${#allDirs[@]}) saved:"
                 echo -en "${WHITE}"
                 mselectFile=$(mktemp)
                 mselect "$mselectFile" "${allDirs[*]}"
@@ -886,7 +887,7 @@ function cmd() {
                     pad=$(printf '%0.1s' "."{1..60})
                     pad_len=40
                     echo ' '
-                    echo 'Available stored commands:'
+                    echo "Available commands (${#allCmds[@]}) stored:"
                     echo ' '
                     (
                         IFS=$'\n'
@@ -905,7 +906,7 @@ function cmd() {
             ;;
             '')
                 clear
-                echo 'Available commands stored: '
+                echo "Available commands (${#allCmds[@]}) stored:"
                 echo -en "${WHITE}"
                 IFS=$'\n' 
                 mselectFile=$(mktemp)
@@ -1118,7 +1119,7 @@ function go() {
         # If multiple directories were found with the same name, query the user
         else
             clear
-            echo "${YELLOW}@@ Multiple directories found ($len). Please choose one to go into:"
+            echo "${YELLOW}@@ Multiple directories ($len) found. Please choose one to go into:"
             echo "Base dir: $searchPath"
             echo "-------------------------------------------------------------"
             echo -en "${NC}"
