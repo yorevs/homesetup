@@ -495,6 +495,7 @@ function mselect() {
     local diffIndex=$((showTo-showFrom))
     local index=''
     local outfile=$1
+    local columns
 
     test -f "$outfile" && command rm -f "$outfile"
     shift
@@ -505,9 +506,11 @@ function mselect() {
     # When only one option is provided, select the index 0
     test "$len" -eq 1 && echo "0" > "$outfile" && return 0
 
+    tput sc
+
     while :
     do
-        
+        columns="$(tput cols)"
         offset=2
         hide-cursor
 
@@ -516,9 +519,9 @@ function mselect() {
             echo -ne "\033[2K\r"
             [ "$i" -ge "$len" ] && break
             if [ "$i" -ne $selIndex ]; then 
-                printf " %.${#len}d  %0.4s %s\n" "$((i+1))" ' ' "${allOptions[i]}"
+                printf " %.${#len}d  %0.4s %s\n" "$((i+1))" ' ' "${allOptions[i]:0:${columns}}"
             else
-                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s${NC}\n" "$((i+1))" '>' "${allOptions[i]}"
+                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s${NC}\n" "$((i+1))" '>' "${allOptions[i]:0:${columns}}"
             fi
             offset=$((offset+1))
         done
@@ -583,7 +586,7 @@ function mselect() {
         esac
         
         # Move up offset lines and delete from cursor down
-        echo -ne "\033[${offset}A\r"
+        tput rc
 
     done
     IFS="$RESET_IFS"
