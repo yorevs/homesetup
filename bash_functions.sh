@@ -470,11 +470,21 @@ function tools() {
 
 
 # @function: Select an option among an array, using a navigable menu.
-# @param $1 [Req] : The array of options
+# @param $1 [Req] : The response file
+# @param $2 [Req] : The array of options
 function mselect() {
     
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo 'Usage: mselect <output_file> <option1 option2 ...>'
+        echo ''
+        echo 'Notes: '
+        echo '  - Two or more options are required to run mselect.'
+        echo '  - A temporary file is suggested to used with this function (mktemp).'
+
+        return 1
+    fi
+
     MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:=10}
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
 
     local len
     local allOptions=()
@@ -484,16 +494,18 @@ function mselect() {
     local offset=1
     local diffIndex=$((showTo-showFrom))
     local index=''
+    local outfile=$1
 
-    command rm -f "$MSELECT_FILE"
+    test -f "$outfile" && command rm -f "$outfile"
+    shift
     # shellcheck disable=SC2206
     allOptions=( $* )
     len=${#allOptions[*]}
-    
+
+    test "$len" -lt 2 && return 1
+
     while :
     do
-        
-        test "$len" -eq 0 && return 1
         
         offset=2
         hide-cursor
@@ -576,7 +588,7 @@ function mselect() {
     IFS="$RESET_IFS"
     
     show-cursor
-    echo "$selIndex" > "$MSELECT_FILE"
+    echo "$selIndex" > "$outfile"
     echo -ne "${NC}"
     
     return 0
@@ -720,13 +732,13 @@ function save() {
 function load() {
 
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
 
     local dirAlias
     local allDirs=()
     local dir
     local pad
     local pad_len
+    local mselectFile
     
     touch "$SAVED_DIRS"
 
@@ -765,11 +777,13 @@ function load() {
                 clear
                 echo 'Available directories saved: '
                 echo -en "${WHITE}"
-                mselect "${allDirs[*]}"
+                mselectFile=$(mktemp)
+                mselect "$mselectFile" "${allDirs[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
-                    selIndex=$(grep . "$MSELECT_FILE") # selIndex is zero-based
+                    selIndex=$(grep . "$mselectFile")
                     dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+                    # selIndex is zero-based
                     dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
                 fi
             ;;
@@ -795,6 +809,8 @@ function load() {
         echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
     fi
 
+    test -f "$mselectFile" && command rm -f "$mselectFile"
+
     return 0
 }
 
@@ -802,7 +818,6 @@ function load() {
 # @param $1 [Opt] : The command options.
 function cmd() {
     
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
     CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
     local cmdName
@@ -810,8 +825,10 @@ function cmd() {
     local cmdExpr
     local pad
     local pad_len
+    local mselectFile
     local allCmds=()
     local index=1
+
     touch "$CMD_FILE"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -891,10 +908,11 @@ function cmd() {
                 echo 'Available commands stored: '
                 echo -en "${WHITE}"
                 IFS=$'\n' 
-                mselect "${allCmds[*]}"
+                mselectFile=$(mktemp)
+                mselect "$mselectFile" "${allCmds[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
-                    selIndex=$(grep . "$MSELECT_FILE") # selIndex is zero-based
+                    selIndex=$(grep . "$mselectFile") # selIndex is zero-based
                     cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                     test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
                     test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
@@ -912,6 +930,8 @@ function cmd() {
             ;;
         esac
     fi
+
+    test -f "$mselectFile" && command rm -f "$mselectFile"
 
     return 0
 }
@@ -1070,11 +1090,10 @@ function plist() {
 # @param $1 [Req] : The directory name to go.
 function go() {
     
-    MSELECT_FILE=${MSELECT_FILE:-$HHS_DIR/.mselect}
-
     local dir
-    local results=()
     local len
+    local mselectFile
+    local results=()
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
         echo "Usage: go [search_path] <dir_name>"
@@ -1104,16 +1123,19 @@ function go() {
             echo "-------------------------------------------------------------"
             echo -en "${NC}"
             IFS=$'\n'
-            mselect "${results[*]}"
+            mselectFile=$(mktemp)
+            mselect "$mselectFile" "${results[*]}"
             # shellcheck disable=SC2181
             if [ "$?" -eq 0 ]; then
-                selIndex=$(grep . "$MSELECT_FILE")
+                selIndex=$(grep . "$mselectFile")
                 dir=${results[$selIndex]}
             fi
             IFS="$RESET_IFS"
         fi
         test -n "$dir" -a -d "$dir" && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
+
+    test -f "$mselectFile" && command rm -f "$mselectFile"
 
     return 0
 }

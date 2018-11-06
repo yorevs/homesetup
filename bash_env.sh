@@ -39,7 +39,6 @@ export HISTFILESIZE=${HISTFILESIZE:-2000}
 export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export RESET_IFS="$IFS"
 export MSELECT_MAX_ROWS=10
-export MSELECT_FILE="$HHS_DIR/.mselect"
 export SAVED_DIRS="$HHS_DIR/.saved_dirs"
 export CMD_FILE="$HHS_DIR/.cmd_file"
 export PUNCH_FILE="$HHS_DIR/.punchs"
