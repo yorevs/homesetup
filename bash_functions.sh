@@ -93,7 +93,7 @@ function sf() {
     else
         local ext=".${2##*.}"
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        find -L "$1" -iname "*""$2"  | grep "${ext##*.}"
+        find -L "$1" -type f -iname "*""$2"  | grep "${ext##*.}"
         return $?
     fi
 }
@@ -109,7 +109,7 @@ function sd() {
     else
         local ext=".${2##*.}"
         echo "Searching for folders or linked folders matching: \"$2\" in \"$1\""
-        find -H "$1" -iname "*""$2" | grep "${ext##*.}"
+        find -H "$1" -type d -iname "*""$2" | grep "${ext##*.}"
     fi
 
     return 0
@@ -173,10 +173,10 @@ function ss() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "$(uname -s)" ] && find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i'' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
-            [ "Darwin" = "$(uname -s)" ] && find "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i '' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
+            [ "Linux" = "$(uname -s)" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i'' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
+            [ "Darwin" = "$(uname -s)" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i '' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
         else
-            find -L "$1" -iname "*""$3" -exec grep $gflags "$2" {} + | grep $gflags "$2"
+            find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + | grep $gflags "$2"
         fi
     fi
 
@@ -1105,7 +1105,7 @@ function go() {
         test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
         test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
         pushd "$searchPath" &> /dev/null || return 1
-        IFS=$'\n' read -d '' -r -a results <<< "$(find -H . -iname "$name" 2> /dev/null)" IFS="$RESET_IFS"
+        IFS=$'\n' read -d '' -r -a results <<< "$(find -H . -type d -iname "$name" 2> /dev/null)" IFS="$RESET_IFS"
         popd &> /dev/null || return 1
         len=${#results[@]}
         # If no directory is found under the specified name
