@@ -482,9 +482,12 @@ function mselect() {
         echo 'Notes: '
         echo '  - If only one option is available, mselect will select it and return.'
         echo '  - A temporary file is suggested to used with this function (mktemp).'
+        echo '  - The outfile must not exist or be empty.'
 
         return 1
     fi
+
+    test -d "$1" -o -s "$1" && echo -e "${RED}\"$1\" is a directory or an existing non-empty file!${NC}" && return 1
 
     MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:=10}
 
@@ -499,7 +502,6 @@ function mselect() {
     local columns
     local optStr
 
-    test -f "$outfile" && command rm -f "$outfile"
     shift
     # shellcheck disable=SC2206
     allOptions=( $* )
