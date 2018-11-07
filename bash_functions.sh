@@ -522,12 +522,12 @@ function mselect() {
             if [ "$i" -ne $selIndex ]; then 
                 printf " %.${#len}d  %0.4s %s" "$((i+1))" ' ' "$optStr"
             else
-                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s${NC}" "$((i+1))" '>' "$optStr"
+                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s" "$((i+1))" '>' "$optStr"
             fi
-            test "${#optStr}" -ge "$columns" && echo -e '\033[4D\033[K...' || echo ''
+            [ "${#optStr}" -ge "$columns" ] && echo -e "\033[4D\033[K...${NC}" || echo -e "${NC}"
         done
+        
         echo "${YELLOW}"
-
         read -rs -n 1 -p "[Enter] to Select, [Up-Down] to Navigate, [Q] to Quit: " ANS
 
         case "$ANS" in
