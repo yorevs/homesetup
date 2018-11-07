@@ -391,6 +391,8 @@ function paths() {
 # @param $1 [Req] : The app to check.
 function ver() {
 
+    local version
+
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ver <appName>"
         return 1
@@ -398,17 +400,17 @@ function ver() {
         # First attempt: app --version
         APP=$1
         tc "${APP}"
-        test $? -ne 0 && return 2
-        VER=$(${APP} --version 2>&1)
+        test $? -ne 0 && printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system!" && return 2
+        version=$(${APP} --version 2>&1)
         if test $? -ne 0; then
             # Second attempt: app -version
-            VER=$(${APP} -version 2>&1)
+            version=$(${APP} -version 2>&1)
             if test $? -ne 0; then
                 # Third attempt: app -V
-                VER=$(${APP} -V 2>&1)
+                version=$(${APP} -V 2>&1)
                 if test $? -ne 0; then
                     # Last attempt: app -v
-                    VER=$(${APP} -v 2>&1)
+                    version=$(${APP} -v 2>&1)
                     if test $? -ne 0; then
                         printf '%s\n' "${RED}Unable to find $APP version using common methods (--version, -version, -V and -v) ${NC}"
                         return 1
@@ -416,7 +418,7 @@ function ver() {
                 fi
             fi
         fi
-        printf "${VER}\n"
+        printf '%s\n' "${version}"
     fi
 
     return 0
