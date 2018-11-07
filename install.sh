@@ -175,9 +175,13 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
             # Bin folder
             if ! test -d ~/bin; then
-                echo -n "Linking: " && ln -sfv "$HOME_SETUP/bin" ~/
-                test $? -ne 0 && quit 2 "Unable to link bin folder into ~ !"
-                test -d ~/bin && printf "%s\n" '[   OK   ]'
+                echo -n "Linking: "
+                ln -sfv "$HOME_SETUP/bin" ~ 
+                if [ -d ~/bin ]; then
+                    echo '[  OK  ]'
+                else
+                    quit 2 "Unable to link bin folder into ~ !"
+                fi
             else
                 cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
                 test -f ~/bin/dotfiles.sh || quit 2 "Unable to copy scripts into ~/bin directory!"
@@ -188,7 +192,6 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 dotfile=~/.${next}
                 # Backup existing dofile into ~/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
                 test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
@@ -198,8 +201,15 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             if ! test -d ~/bin; then
                 echo ''
                 read -r -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
-                test "$ANS" = 'y' -o "$ANS" = 'Y' && echo -en "$ANS \nLinking: " && ln -sfv "$HOME_SETUP/bin" ~/ && test -d ~/bin && echo '[ OK ]'
-                test $? -ne 0 && quit 2 "Unable to link bin folder into ~ !"
+                if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
+                    echo -en "$ANS \nLinking: "
+                    ln -sfv "$HOME_SETUP/bin" ~ 
+                    if [ -d ~/bin ]; then
+                        echo '[  OK  ]'
+                    else
+                        quit 2 "Unable to link bin folder into ~ !"
+                    fi
+                fi
             else
                 cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
                 test -f ~/bin/dotfiles.sh || quit 2 "Unable to copy scripts into ~/bin directory!"
@@ -208,15 +218,12 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=~/.${next}
-
                 echo ''
                 read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
                 test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
                 echo ''
-                
                 # Backup existing dofile into ~/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
                 test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
