@@ -491,11 +491,11 @@ function mselect() {
     local selIndex=0
     local showFrom=0
     local showTo=$((MSELECT_MAX_ROWS-1))
-    local offset=1
     local diffIndex=$((showTo-showFrom))
     local index=''
     local outfile=$1
     local columns
+    local optStr
 
     test -f "$outfile" && command rm -f "$outfile"
     shift
@@ -505,25 +505,26 @@ function mselect() {
 
     # When only one option is provided, select the index 0
     test "$len" -eq 1 && echo "0" > "$outfile" && return 0
-
     tput sc
+    echo -ne "\033[?7l"
 
     while :
     do
-        columns="$(tput cols)"
-        offset=2
+        columns="$(($(tput cols)-7))"
         hide-cursor
 
         echo "${WHITE}"
         for i in $(seq "$showFrom" "$showTo"); do
+            optStr="${allOptions[i]:0:$columns}"
+            # Erase current line before repaint
             echo -ne "\033[2K\r"
             [ "$i" -ge "$len" ] && break
             if [ "$i" -ne $selIndex ]; then 
-                printf " %.${#len}d  %0.4s %s\n" "$((i+1))" ' ' "${allOptions[i]:0:${columns}}"
+                printf " %.${#len}d  %0.4s %s" "$((i+1))" ' ' "$optStr"
             else
-                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s${NC}\n" "$((i+1))" '>' "${allOptions[i]:0:${columns}}"
+                printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s${NC}" "$((i+1))" '>' "$optStr"
             fi
-            offset=$((offset+1))
+            test "${#optStr}" -ge "$columns" && echo -e '\033[4D\033[K...' || echo ''
         done
         echo "${YELLOW}"
 
@@ -585,7 +586,7 @@ function mselect() {
             ;;
         esac
         
-        # Move up offset lines and delete from cursor down
+        # Erase current line and restore the cursor to the home position
         tput rc
 
     done
