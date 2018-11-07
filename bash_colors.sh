@@ -14,13 +14,21 @@
 
 # Detect which `ls` flavor is in use
 # LS_Colors builder: https://geoff.greer.fm/lscolors/
+# Items:
+#   di: Directory      bd: Block special
+#   ln: Link           cd: Char special
+#   so: Socket         su: Exe setuid
+#   pi: Pipe           sg: Exe setgid
+#   ex: Executable     tw: Dir. write others(sticky)
+#                      ow: Dir. write others(no-sticky)
+#
 if ls --color &> /dev/null; then # GNU `ls`
     export COLOR_FLAG="--color"
-    export LS_COLORS='no=00:fi=00:do=01;35:or=40;31;01:di=01;34:ln=36;40:so=35;40:pi=33;40:ex=01;32:bd=40;33;01:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43:'
+    export LS_COLORS='di=1;34:ln=1;36:so=35:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 else # macOS `ls`
     export COLOR_FLAG="-G"
     export CLICOLOR=1
-    export LSCOLORS='ExgxfxdxCxegedabagacad'
+    export LSCOLORS='ExGxfxdxCxegedabagacad'
 fi
 
 export GREP_COLOR='1;31'
@@ -28,8 +36,8 @@ export GREP_COLOR='1;31'
 if tput setaf 1 &> /dev/null; then
     # Solarized colors, taken from http://git.io/solarized-colors.
     tput sgr0; # NC colors
-    BOLD=$(tput bold);
     NC=$(tput sgr0);
+    BOLD=$(tput bold);
     BLACK=$(tput setaf 0);
     BLUE=$(tput setaf 33);
     CYAN=$(tput setaf 37);
@@ -42,8 +50,8 @@ if tput setaf 1 &> /dev/null; then
     YELLOW=$(tput setaf 136);
     HIGHLIGHT_COLOR=$(tput setaf 33); # Blue
 else
-    export BOLD='';
     export NC="\e[0m";
+    export BOLD='';
     export BLACK="\e[1;30m";
     export BLUE="\e[1;34m";
     export CYAN="\e[1;36m";
