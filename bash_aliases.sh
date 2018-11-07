@@ -109,12 +109,6 @@ command -v wget >/dev/null || alias wget='curl -O'
 # linux has no `json_pp`, so using python instead
 command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
 
-# Show the cursor using tput
-alias show-cursor='tput cnorm'
-
-# Hide the cursor using tput
-alias hide-cursor='tput civis'
-
 # Recursively delete Dropbox conflicted files from the current directory
 test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
 
@@ -213,3 +207,24 @@ fi
 
 alias desk='cd $DESKTOP'
 alias hhs='cd $HOME_SETUP'
+
+# -----------------------------------------------------------------------------------
+# Handy Terminal Shortcuts
+
+# Show the cursor using tput
+alias show-cursor='tput cnorm'
+
+# Hide the cursor using tput
+alias hide-cursor='tput civis'
+
+# Save current cursor position
+alias save-cursor-pos='tput sc'
+
+# Restore saved cursor position
+alias restore-cursor-pos='tput rc'
+
+# Enable line wrapping
+alias enable-line-wrap='echo -ne "\033[?7h"'
+
+# Disable line wrapping
+alias disable-line-wrap='echo -ne "\033[?7l"'

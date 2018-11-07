@@ -509,8 +509,8 @@ function mselect() {
 
     # When only one option is provided, select the index 0
     test "$len" -eq 1 && echo "0" > "$outfile" && return 0
-    tput sc
-    echo -ne "\033[?7l"
+    save-cursor-pos
+    disable-line-wrap
 
     while :
     do
@@ -539,6 +539,7 @@ function mselect() {
                 # Exit
                 echo "${NC}"
                 show-cursor
+                enable-line-wrap
                 return 1
             ;;
             [1-9]) # When a number is typed, try to scroll to index
@@ -591,12 +592,13 @@ function mselect() {
         esac
         
         # Erase current line and restore the cursor to the home position
-        tput rc
+        restore-cursor-pos
 
     done
     IFS="$RESET_IFS"
     
     show-cursor
+    enable-line-wrap
     echo "$selIndex" > "$outfile"
     echo -ne "${NC}"
     
