@@ -1,4 +1,4 @@
-# HomeSetup [![Build Status][travis-badge]] [![Coverage Status][coveralls-badge]]
+# HomeSetup
 ## Terminal .dotfiles and bash improvements for MacOS or Linux
 
 ### 1. Installation
