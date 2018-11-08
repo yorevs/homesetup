@@ -249,13 +249,20 @@ cmd_firebase() {
                 read -r -p 'Please type you Project ID: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PROJECT_ID=${ANS}\n"
-                setupContent="${setupContent}UUID=$u_uuid\n"
                 setupContent="${setupContent}USERNAME=$u_name\n"
                 setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/homesetup\n"
                 read -r -p 'Please type a password to encrypt you data: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PASSPHRASE=${ANS}\n"
-                echo "Your User ID (UUID) is: $u_uuid"
+                read -r -p "Please type a UUID to use or press enter to generate a new one: " ANS
+                if [ -n "$ANS" ] && [[ "$ANS" =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]]; then
+                    u_uuid="$ANS"
+                elif [ -n "$ANS" ]; then
+                    printf "%s\n" "${RED}Invalid UUID: ${ANS}${NC}" && sleep 1 && continue
+                else
+                    echo "=> UUID automatically generated: $u_uuid"
+                fi
+                setupContent="${setupContent}UUID=$u_uuid\n"
                 # Write user's Firebase data
                 echo '# Your Firebase credentials:' > "$FIREBASE_FILE"
                 echo "-------------------------------"
