@@ -51,6 +51,18 @@ version() {
     quit 1 "$VERSION"
 }
 
+# Trim whitespaces
+trim() {
+
+    local var="$*"
+    # remove leading whitespace characters
+    var="${var#"${var%%[![:space:]]*}"}"
+
+    # remove trailing whitespace characters
+    var="${var%"${var##*[![:space:]]}"}"
+    echo -n "$var"
+}
+
 # Check if the user passed the help or version parameters.
 test "$1" = '-h' -o "$1" = '--help' && usage
 test "$1" = '-v' -o "$1" = '--version' && version
@@ -75,7 +87,7 @@ load_fb_settings() {
 
     test -f "$FIREBASE_FILE" || quit 2 "Your need to setup your Firebase credentials first."
     test -f "$FIREBASE_FILE" && source "$FIREBASE_FILE"
-    [ -z "$PROJECT_ID" ] || [ -z "$FIREBASE_URL" ] || [ -z "$PASSPHRASE" ] && quit 2 "Invalid settings file!"
+    [ -z "$PROJECT_ID" ] || [ -z "$FIREBASE_URL" ] || [ -z "$PASSPHRASE" ] || [ -z "$UUID" ] && quit 2 "Invalid settings file!"
     return 0
 }
 
@@ -85,7 +97,7 @@ download_dotfiles() {
     local fb_alias="$1"
 
     rm -f "$DOTFILES_FILE"
-    fetch.sh GET --silent "$FIREBASE_URL/Dotfiles/${fb_alias}.json" > "$DOTFILES_FILE" 
+    fetch.sh GET --silent "$FIREBASE_URL/dotfiles/$UUID/${fb_alias}.json" > "$DOTFILES_FILE" 
     ret=$?
 
     if [ $ret -eq 0 ] && [ -f "$DOTFILES_FILE" ] && [[ "$(grep . "$DOTFILES_FILE")" =~ $FB_RE_RESP ]];then 
@@ -124,7 +136,9 @@ build_dotfiles_payload() {
     test -n "$f_functions" && payload="${payload}\"functions\" : \"$f_functions\","
     test -n "$f_profile" && payload="${payload}\"profile\" : \"$f_profile\","
     test -n "$f_cmdFile" && payload="${payload}\"commands\" : \"$f_cmdFile\","
-    test -n "$f_savedDirs" && payload="${payload}\"savedDirs\" : \"$f_savedDirs\""
+    test -n "$f_savedDirs" && payload="${payload}\"savedDirs\" : \"$f_savedDirs\","
+    payload="${payload}\"lastUpdate\" : \"$(date +'%d-%m-%Y %T')\","
+    payload="${payload}\"lastUser\" : \"$(whoami)\""
     payload="${payload} } }"
     local match=', } }'
     local repl=' } }'
@@ -140,7 +154,7 @@ upload_dotfiles() {
     local fb_alias="$1"
 
     body=$(build_dotfiles_payload)
-    fetch.sh PATCH --silent --body "$body" "$FIREBASE_URL/Dotfiles.json" &> /dev/null
+    fetch.sh PATCH --silent --body "$body" "$FIREBASE_URL/dotfiles/$UUID.json" &> /dev/null
     ret=$?
     test $ret -eq 0 && echo "${GREEN}Dotfiles \"${fb_alias}\" sucessfully uploaded!${NC}"
     test $ret -eq 0 || quit 2 "Failed to upload Dotfiles as ${fb_alias}"
@@ -177,28 +191,6 @@ parse_and_save_dotfiles() {
     test -n "$f_savedDirs" && echo "$f_savedDirs" > "$SAVED_DIRS"
 }
 
-# Execute a dotfiles command.
-exec_command() {
-
-    shopt -s nocasematch
-    case "${COMMAND}" in
-        # Do stuff related to firebase
-        cmd_firebase)
-            cmd_firebase "$@"
-            ret=$?
-        ;;
-        cmd_help)
-            cmd_help "$@"
-            ret=$?
-        ;;
-        *)
-            quit 1 "Invalid command \"${COMMAND}\" !"
-        ;;
-    esac
-    shopt -u nocasematch
-    quit $ret
-}
-
 # Provides a help about the command.
 cmd_help() {
     shopt -s nocasematch
@@ -231,6 +223,8 @@ cmd_firebase() {
 
     local body
     local fb_alias
+    local u_uuid
+    local u_name
     local setupContent=""
 
     test -z "$1" && cmd_help 'FB'
@@ -238,7 +232,10 @@ cmd_firebase() {
     shift
     args=( "$@" )
     test -z "${args[*]}" -a "$task" != 'setup' && quit 2 "Invalid firebase task or invalid number of arguments: \"$task\" !"
-    fb_alias=$(echo "${args[0]}" | tr '[:lower:]' '[:upper:]' )
+    fb_alias="$(trim "${args[0]}" | tr '[:upper:]' '[:lower:]')"
+    fb_alias="${fb_alias//[[:space:]]/_}"
+    u_name=$(whoami)
+    u_uuid=$(python -c "import uuid as ul; print(str(ul.uuid4()));")
 
     shopt -s nocasematch
     case "$task" in
@@ -252,14 +249,19 @@ cmd_firebase() {
                 read -r -p 'Please type you Project ID: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PROJECT_ID=${ANS}\n"
-                setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/HomeSetup\n"
+                setupContent="${setupContent}UUID=$u_uuid\n"
+                setupContent="${setupContent}USERNAME=$u_name\n"
+                setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/homesetup\n"
                 read -r -p 'Please type a password to encrypt you data: ' ANS
                 [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password: ${ANS}${NC}" && sleep 1 && continue
                 setupContent="${setupContent}PASSPHRASE=${ANS}\n"
-                echo -e '# Your Firebase credentials:\n' > "$FIREBASE_FILE"
+                echo "Your User ID (UUID) is: $u_uuid"
+                # Write user's Firebase data
+                echo '# Your Firebase credentials:' > "$FIREBASE_FILE"
+                echo "-------------------------------"
                 echo -e "$setupContent" >> "$FIREBASE_FILE"
             done
-            printf '%s\n' "${GREEN}Configuration successfully saved!${NC}"
+            printf "%s\n" "${GREEN}Configuration successfully saved!${NC}"
         ;;
         ul | upload)
             load_fb_settings
@@ -282,6 +284,28 @@ cmd_firebase() {
     shopt -u nocasematch
 
     return 0
+}
+
+# Execute a dotfiles command.
+exec_command() {
+
+    shopt -s nocasematch
+    case "${COMMAND}" in
+        # Do stuff related to firebase
+        cmd_firebase)
+            cmd_firebase "$@"
+            ret=$?
+        ;;
+        cmd_help)
+            cmd_help "$@"
+            ret=$?
+        ;;
+        *)
+            quit 1 "Invalid command \"${COMMAND}\" !"
+        ;;
+    esac
+    shopt -u nocasematch
+    quit $ret
 }
 
 test -z "$1" && usage
