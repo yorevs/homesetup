@@ -125,6 +125,9 @@ if [ "$(command -v python)" ]; then
     # URL-encode strings
     alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
     alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+
+    # Generate a UUID
+    alias uuid='python -c "import uuid as ul; print(str(ul.uuid4()));"'
 fi
 
 # -----------------------------------------------------------------------------------
