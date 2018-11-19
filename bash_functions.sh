@@ -1056,21 +1056,36 @@ function plist() {
 
     local allPids
     local pid
-    local gflags=''
+    local gflags='-E'
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-        echo "Usage: plist [-i] <process_name> [kill]"
+        echo "Usage: plist [-i,-w] <process_name> [kill]"
         echo ''
         echo 'Options: '
         echo '    -i : Make case insensitive search'
+        echo '    -w : Match full words only'
         return 1
     else
-        test "$1" = "-i" && gflags='-i' && shift
-        # shellcheck disable=SC2009
+        while test -n "$1"
+        do
+            case "$1" in
+                -w | --words)
+                    gflags="${gflags//E/Fw}"
+                ;;
+                -i | --ignore-case)
+                    gflags="${gflags}i"
+                ;;
+                *)
+                    [[ ! "$1" =~ ^-[wi] ]] && break
+                ;;
+            esac
+            shift
+        done
+        # shellcheck disable=SC2009,SC2086
         allPids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
         if [ -n "$allPids" ]; then
             echo -e "${WHITE}\nUID\tPID\tPPID\tCOMMAND"
-            echo '---------------------------------------------------------------------------------'
+            echo '--------------------------------------------------------------------------------'
             echo -e "${RED}"
             (
                 IFS=$'\n'
@@ -1079,9 +1094,9 @@ function plist() {
                     echo -en "${HIGHLIGHT_COLOR}$next" | tr ' ' '\t'
                     if [ -n "$pid" ] && [ "$2" = "kill" ]; then 
                         kill -9 "$pid"
-                        echo -e "${RED}\t\tKilled with signal -9"
+                        echo -e "${RED}\t\t\t\t=> Killed with signal -9"
                     else
-                        test -n "$(pgrep ${gflags} "$1")" && echo -e "${GREEN}*" || echo -e "${RED}*"
+                        ps -p "$pid" &>/dev/null && echo -e "${GREEN}**" || echo -e "${RED}**"
                     fi
                 done
                 IFS="$RESET_IFS"
