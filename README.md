@@ -1,5 +1,5 @@
 # HomeSetup
-## Terminal .dotfiles and bash improvements for MacOS or Linux
+## Terminal .dotfiles and bash improvements for MacOS
 
 ### 1. Installation
 
