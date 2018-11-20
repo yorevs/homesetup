@@ -2,7 +2,7 @@
 
 """@package -
    @script: free.py
-  @purpose: Report system memory usage
+  @purpose: Report system memory usage.
   @created: Nov 20, 2008
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@gmail.com

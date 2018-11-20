@@ -203,23 +203,34 @@ dv          | Check the latest HomeSetup version.
 
 The project contains some useful scripts that can be used directly from shell. It is also added to your path variable.
 
+#### 5.1 Python scripts
+
 Function                | Purpose
 ----------------------- | -----------------------
-build-java-hierarchy.py | This is a python application to help understanding a Java project and it's class hierarchies
+build-java-hierarchy.py | Build a hierarchy spread sheet from a Java project
 calc.py                 | Simple app to do mathematical calculations
+tcalc.py                | Simple app to do mathematical calculations with time
+free.py                 | Report system memory usage
+send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads
+
+#### 5.2 Shell scripts
+
+Function                | Purpose
+----------------------- | -----------------------
+dotfiles.sh             | Manage your HomeSetup dotfiles and more
+fetch.sh                | Script to fetch REST APIs data
 git-completion.sh       | bash/zsh completion support for core Git
-git-diff-cmd            | Enable opendiff to be used with git instead of normal diff
-git-pull-all            | Pull all projects within the specified path to the given repository/branch
+git-diff-cmd.sh         | Enable opendiff to be used with git instead of normal diff
+git-pull-all.sh         | Pull all projects within the specified path to the given repository/branch
 hostname-change.sh      | Change the hostname permanently
 ip-utils.sh             | Validate an IP and check details about it
-send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads
-tcalc.py                | Simple app to do mathematical calculations with time 
+json-find               | Find a object from the json string or file
+pprint-xml              | Pretty print a xml file
 toolcheck.sh            | Check if the a tool is installed on the system
-dotfiles.sh             | Manage your HomeSetup dotfiles and more
 
 **Please check: [bin](./bin) for all scripts**
 
-### 5. HomeSetup Terminal
+### 6. HomeSetup Terminal
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 

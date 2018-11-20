@@ -2,7 +2,7 @@
 # shellcheck disable=SC1117
 
 #  Script: fetch.sh
-# Purpose: Fetch data using the REST API
+# Purpose: Script to fetch REST APIs data.
 # Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
