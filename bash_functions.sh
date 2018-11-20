@@ -1218,6 +1218,11 @@ function parts() {
     local pad_len
     local allParts
     local strText
+    local mounted
+    local size
+    local used
+    local avail
+    local cap
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
@@ -1230,11 +1235,16 @@ function parts() {
         for next in $allParts
         do
             strText=$(echo "$next" | cut -c 17-)
-            printf '%-25s\t' "$(echo "$strText" | awk '{ print $8 }')"
-            printf '%-4s\t'  "$(echo "$strText" | awk '{ print $1 }')"
-            printf '%-4s\t'  "$(echo "$strText" | awk '{ print $2 }')"
-            printf '%-4s\t'  "$(echo "$strText" | awk '{ print $3 }')"
-            printf '%-4s\n'  "$(echo "$strText" | awk '{ print $4 }')"
+            mounted="$(echo "$strText" | awk '{ print $8 }')"
+            size="$(echo "$strText" | awk '{ print $1 }')"
+            used="$(echo "$strText" | awk '{ print $2 }')"
+            avail="$(echo "$strText" | awk '{ print $3 }')"
+            cap="$(echo "$strText" | awk '{ print $4 }')"
+            printf '%-25s\t' "${mounted:0:25}"
+            printf '%4s\t'  "${size:0:4}"
+            printf '%4s\t'  "${used:0:4}"
+            printf '%4s\t'  "${avail:0:4}"
+            printf '%4s\n'  "${cap:0:4}"
         done
         echo "${NC}"
     )
