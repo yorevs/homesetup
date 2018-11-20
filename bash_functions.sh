@@ -442,7 +442,7 @@ function tc() {
         check=$(command -v "${tool_name}")
         printf "${ORANGE}($(uname -s))${NC} "
         printf "Checking: ${YELLOW}${tool_name}${NC} "
-        printf '%*.*s' 0 $((pad_len - ${#1})) "$pad"
+        printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
         if [ -n "${check}" ]; then
             printf '%s\n' "${GREEN}INSTALLED${NC} at ${check}"
             return 0
@@ -645,7 +645,7 @@ function aa() {
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=40
                 echo ' '
-                echo 'Available custom aliases:'
+                echo "${YELLOW}Available custom aliases:"
                 echo ' '
                 (
                     local name
@@ -660,7 +660,7 @@ function aa() {
                             printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
                             printf '%s\n' "${WHITE} is aliased to ${expr}"
                         else
-                            printf '%s\n' "${YELLOW}$next${NC}"
+                            printf '%s\n' "${GREEN}$next${NC}"
                         fi
                     done
                     IFS="$RESET_IFS"
@@ -772,7 +772,7 @@ function load() {
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=40
                 echo ' '
-                echo "Available directories (${#allDirs[@]}) saved:"
+                echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
                 echo ' '
                 for next in ${allDirs[*]}; do
                     dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
@@ -786,7 +786,7 @@ function load() {
             ;;
             '')
                 clear
-                echo "Available directories (${#allDirs[@]}) saved:"
+                echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
                 echo -en "${WHITE}"
                 mselectFile=$(mktemp)
                 mselect "$mselectFile" "${allDirs[*]}"
@@ -897,7 +897,7 @@ function cmd() {
                     pad=$(printf '%0.1s' "."{1..60})
                     pad_len=40
                     echo ' '
-                    echo "Available commands (${#allCmds[@]}) stored:"
+                    echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
                     echo ' '
                     (
                         IFS=$'\n'
@@ -916,7 +916,7 @@ function cmd() {
             ;;
             '')
                 clear
-                echo "Available commands (${#allCmds[@]}) stored:"
+                echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
                 echo -en "${WHITE}"
                 IFS=$'\n' 
                 mselectFile=$(mktemp)
@@ -1175,6 +1175,71 @@ function git-() {
     # Get the previous branch. Skip the same branch change (that is what is different from git checkout -).
     prevBranch=$(command git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6 }')
     command git checkout "$prevBranch"
+}
+
+# @function: Retrieve some important system information.
+function sysinfo() {
+    
+    local username
+    username="$(whoami)"
+
+    echo -e "\n${YELLOW}System information ------------------------------------------------"
+    echo -e "\n${WHITE}User:${HIGHLIGHT_COLOR}"
+    echo -e "  Name......... : $username"
+    echo -e "  UID.......... : $(id -u "$username")"
+    echo -e "  GID.......... : $(id -g "$username")"
+    echo -e "\n${WHITE}System:${HIGHLIGHT_COLOR}"
+    echo -e "  Name......... : $(uname -sm) Kernel v$(uname -r)"
+    echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
+    echo -e "  Free Memory.. : $(free.py | awk 'NR==5' | cut -c 20-)"
+    echo -e "  CPU Usage.... : $(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
+    echo -e "\n${WHITE}Network:${HIGHLIGHT_COLOR}"
+    echo -e "  Hostname..... : $(hostname)"
+    echo -e "  Local-IP..... : $(ipl | grep 'en0' | awk -F ': ' '{ print $2 }')"
+    echo -e "  Real-IP...... : $(ip)"
+    echo -e "\n${WHITE}Logged Users:${HIGHLIGHT_COLOR}"
+    ( 
+        IFS=$'\n'
+        for next in $(who)
+        do 
+            echo -e "  $next"
+        done 
+        IFS=$RESET_IFS
+    )
+    echo "${NC}"
+
+    return 0
+}
+
+# @function: Exhibit a summary about all partitions.
+function parts() {
+
+    local pad
+    local pad_len
+    local allParts
+    local strText
+
+    pad=$(printf '%0.1s' "."{1..60})
+    pad_len=40
+    allParts="$(df -Ha | tail -n +2)"
+    (
+        IFS=$'\n'
+        echo "${YELLOW}"
+        printf '%-25s\t%-4s\t%-4s\t%-4s\t%-4s\t\n' 'Mounted-ON' 'Size' 'Used' 'Avail' 'Capacity'
+        echo -e "----------------------------------------------------------------${HIGHLIGHT_COLOR}"
+        for next in $allParts
+        do
+            strText=$(echo "$next" | cut -c 17-)
+            printf '%-25s\t' "$(echo "$strText" | awk '{ print $8 }')"
+            printf '%-4s\t'  "$(echo "$strText" | awk '{ print $1 }')"
+            printf '%-4s\t'  "$(echo "$strText" | awk '{ print $2 }')"
+            printf '%-4s\t'  "$(echo "$strText" | awk '{ print $3 }')"
+            printf '%-4s\n'  "$(echo "$strText" | awk '{ print $4 }')"
+        done
+        echo "${NC}"
+    )
+
+    return 0
 }
 
 # @function: Check the latest dotfiles version.

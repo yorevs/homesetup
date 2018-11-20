@@ -193,6 +193,8 @@ plist       | Display (maybe kill?) a process list, given process name.
 cmd         | Add/Remove/List/Execute `saved bash commands`.
 go          | Pushd into the first match of the specified directory name.
 git-        | GIT Checkout the branch in history (skips branch-to-same-branch ).
+sysinfo     | Retrieve some important system information.
+parts       | Exhibit a summary about all partitions.
 dv          | Check the latest HomeSetup version.
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
