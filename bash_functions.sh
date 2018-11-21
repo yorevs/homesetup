@@ -1234,7 +1234,7 @@ function parts() {
         echo -e "----------------------------------------------------------------${HIGHLIGHT_COLOR}"
         for next in $allParts
         do
-            strText=$(echo "$next" | cut -c 17-)
+            strText=${next:16}
             mounted="$(echo "$strText" | awk '{ print $8 }')"
             size="$(echo "$strText" | awk '{ print $1 }')"
             used="$(echo "$strText" | awk '{ print $2 }')"
