@@ -105,11 +105,15 @@ uninstall_dotfiles() {
     unset HHS_DIR
     unset DOTFILES_VERSION
     export PS1='\[\h:\W \u \$ '
+    export PS2="$PS1"
+
+    # shellcheck disable=SC2164
+    cd ~
 
     echo "HomeSetup successfully removed."
     printf "%s\n" "? To reload your old dotfiles type: #> source ~/.bashrc"
     printf "%s\n" "? Your PS1 (prompt) will be restored next time you open the terminal."
-    echo "Finished"
+    printf "%s\n" "? Your temporary PS1 => $PS1"
     echo ''
 }
 
