@@ -36,7 +36,7 @@ quit() {
     test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
     # Unset all declared functions
     unset -f quit usage version exec_command cmd_help cmd_firebase load_fb_settings download_dotfiles \
-    parse_and_save_dotfiles build_dotfiles_payload
+    parse_and_save_dotfiles build_dotfiles_payload trim upload_dotfiles
     printf "%s\n" "${NC}"
     exit "$1"
 }
