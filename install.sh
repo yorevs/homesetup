@@ -254,7 +254,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         printf "%s\n" "${GREEN}Done installing files. Reloading bash ...${NC}"
 
         printf "%s\n" "${CYAN}"
-        if command -v figlet; 
+        if command -v figlet >/dev/null; 
         then
             figlet -c "Welcome"
         else
