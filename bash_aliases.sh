@@ -116,7 +116,7 @@ test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {}
 command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Generate a random number int the range [n .. m]
-alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))"; };_'
+alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))" || echo "Usage: rand <min> <max>"; };_'
 
 # -----------------------------------------------------------------------------------
 # Python aliases

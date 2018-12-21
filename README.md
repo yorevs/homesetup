@@ -133,6 +133,7 @@ week     | 'Current week of the month'
 now      | 'Current date'
 now-ms   | 'Current timestamp in milliseconds'
 wget     | 'MacOS has no wget, so use curl instead'
+rand     | 'Generate a random number from `<min>` to  `<max>`'
 
 #### Python aliases
 ALIAS   | Equivalent
