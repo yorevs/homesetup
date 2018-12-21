@@ -74,7 +74,7 @@ FIREBASE_FILE="$HHS_DIR/.firebase"
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
 # Firebase response regex.
-FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+\}$'
+FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+\}$'
 
 # File to store the saved commands.
 CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
@@ -117,6 +117,7 @@ build_dotfiles_payload() {
     local f_colors
     local f_env
     local f_functions
+    local f_path
     local f_profile
     local f_cmdFile
     local f_savedDirs
@@ -125,6 +126,7 @@ build_dotfiles_payload() {
     test -f "$HOME"/.colors && f_colors=$(grep . "$HOME"/.colors | base64)
     test -f "$HOME"/.env && f_env=$(grep . "$HOME"/.env | base64)
     test -f "$HOME"/.functions && f_functions=$(grep . "$HOME"/.functions | base64)
+    test -f "$HOME"/.path && f_path=$(grep . "$HOME"/.path | base64)
     test -f "$HOME"/.profile && f_profile=$(grep . "$HOME"/.profile | base64)
     test -f "$CMD_FILE" && f_cmdFile=$(grep . "$CMD_FILE" | base64)
     test -f "$SAVED_DIRS" && f_savedDirs=$(grep . "$SAVED_DIRS" | base64)
@@ -134,6 +136,7 @@ build_dotfiles_payload() {
     test -n "$f_colors" && payload="${payload}\"colors\" : \"$f_colors\","
     test -n "$f_env" && payload="${payload}\"env\" : \"$f_env\","
     test -n "$f_functions" && payload="${payload}\"functions\" : \"$f_functions\","
+    test -n "$f_path" && payload="${payload}\"path\" : \"$f_path\","
     test -n "$f_profile" && payload="${payload}\"profile\" : \"$f_profile\","
     test -n "$f_cmdFile" && payload="${payload}\"commands\" : \"$f_cmdFile\","
     test -n "$f_savedDirs" && payload="${payload}\"savedDirs\" : \"$f_savedDirs\","

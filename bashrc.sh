@@ -14,6 +14,7 @@
 #   .functions  : To customize your functions
 #   .profile    : To customize your profile
 #   .prompt     : To customize your prompt
+#   .path       : To customize your paths
 
 # If not running interactively, don't do anything.
 [ -z "$PS1" ] && return
