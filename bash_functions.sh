@@ -376,12 +376,14 @@ function paths() {
         echo 'Listing all PATH entries:'
         echo ' '
         (
+            IFS=$'\n'
             for path in $(echo -e "${PATH//:/\\n}"); do
                 printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                 test -d "$path" && printf '%s' "${GREEN} Path exists" || printf '%s'  "${RED} Path does not exist"
                 test -n "$(grep ^"$path"$ ~/.path)" && printf " (custom)\n" || printf "\n"
             done
+            IFS="$RESET_IFS"
         )
         echo -e "${NC}"
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
