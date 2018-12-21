@@ -80,23 +80,34 @@ check_installation() {
 
 uninstall_dotfiles() {
 
-    printf "%s\n" "${NC}Removing installed dotfiles ..."
+    printf "%s\n" "Removing installed dotfiles ..."
     for next in ${ALL_DOTFILES[*]}; do
         test -n "$next" -a -f "$HOME/.${next}" && rm -fv "$HOME/.${next}"
     done
+    rm -rfv "$HOME_SETUP" 
     echo ''
-    if [ -d "$HOME/.hhs" ]; then
-        BACKUPS=( "$(find "$HOME/.hhs" -iname "*.orig")" )
-        printf "%s\n" "${NC}Restoring backups ..."
+
+    if [ -d "$HHS_DIR" ]; then
+        BACKUPS=( "$(find "$HHS_DIR" -iname "*.orig")" )
+        printf "%s\n" "Restoring backups ..."
         for next in ${BACKUPS[*]}; do
             cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
         done
         echo ''
+        rm -rfv "$HHS_DIR"
     fi
     echo ''
 
+    printf "%s\n" "Unsetting aliases and variables ..."
+    unalias -a
+    unset HOME_SETUP
+    unset HHS_DIR
+    unset DOTFILES_VERSION
+    export PS1='\[\h:\W \u \$ '
+
     echo "HomeSetup successfully removed."
-    printf "%s\n" "? To restore your old dotfiles type: #> source ~/.bashrc"
+    printf "%s\n" "? To reload your old dotfiles type: #> source ~/.bashrc"
+    printf "%s\n" "? Your PS1 (prompt) will be restored next time you open the terminal."
     echo "Finished"
     echo ''
 }
