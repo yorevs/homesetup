@@ -369,6 +369,7 @@ function paths() {
         echo "Usage: paths [-a,-r <path>]"
         return 1
     elif [ -z "$1" ]; then
+        test -f ~/.path || touch ~/.path
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=60
         echo ' '
@@ -379,7 +380,7 @@ function paths() {
                 printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                 test -d "$path" && printf '%s' "${GREEN} Path exists" || printf '%s'  "${RED} Path does not exist"
-                test -f ~/.path -a -n "$(grep ^"$path"$ ~/.path)" && printf " (custom)\n" || printf "\n"
+                test -n "$(grep ^"$path"$ ~/.path)" && printf " (custom)\n" || printf "\n"
             done
         )
         echo -e "${NC}"
