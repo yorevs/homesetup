@@ -85,6 +85,7 @@ uninstall_dotfiles() {
         test -n "$next" -a -f "$HOME/.${next}" && rm -fv "$HOME/.${next}"
     done
     rm -rfv "$HOME_SETUP" 
+    test -L "$HOME/bin" && rm -f "$HOME/bin"
     echo ''
 
     if [ -d "$HHS_DIR" ]; then
