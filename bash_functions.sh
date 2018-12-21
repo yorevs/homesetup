@@ -391,6 +391,7 @@ function paths() {
         export PATH=${PATH//$2:/}
         ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HOME/.path"
     fi
+    # Remove all $PATH duplicates
     # shellcheck disable=SC2155
     export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
 

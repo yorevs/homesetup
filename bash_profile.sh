@@ -43,12 +43,6 @@ if [ -n "$(command -v git)" ]; then
     fi;
 fi;
 
-# Enable jenv to take care of JAVA_HOME if it is installed
-if [ -n "$(command -v jenv)" ]; then
-    export PATH="$PATH:$HOME/.jenv/bin"
-    eval "$(jenv init -)"
-fi;
-
 # Add `~/bin` to the `$PATH`
 export PATH="$PATH:$HOME/bin";
 
