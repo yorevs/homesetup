@@ -2,8 +2,8 @@
 # shellcheck disable=SC1117
 
 #  Script: install.sh
-# Purpose: Install and configure all dofiles
-# Created: Aug 26, 2008
+# Purpose: Install and configure HomeSetup
+# Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
@@ -19,7 +19,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
 
     *** [all]: Install all scripts into the user HomeSetup folder.
 "
-    
+
     # GitHub repository URL.
     REPO_URL='https://github.com/yorevs/homesetup.git'
 
@@ -31,20 +31,16 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         # Unset all declared functions
         unset -f quit usage version check_inst_method install_dotfiles clone_repository activate_dotfiles
 
-        test "$1" != '0' -a "$1" != '1' && echo "${RED}"
+        test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
         test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-        test "$1" != '0' -a "$1" != '1' && echo "${NC}"
+        test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
+        echo ''
         exit "$1"
     }
 
     # Usage message.
     usage() {
         quit 2 "$USAGE"
-    }
-
-    # Version message.
-    version() {
-        quit 2 "$VERSION"
     }
 
     # Check which installation method should be used.
@@ -147,17 +143,12 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         echo "# - METHOD: $METHOD"
         echo "# - FILES: ${ALL_DOTFILES[*]}"
         printf "%s\n" "#${NC}"
-        echo ''
 
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
             printf "%s\n" "${RED}"
             read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
-            if [ -z "$ANS" ] || [ "$ANS" = "n" ] || [ "$ANS" = "N" ]; then
-                echo ''
-                test -n "$ANS" && echo ''
-                quit 1 "Installation cancelled!"
-            else
-                echo ''
+            printf "%s\n" "${NC}"
+            if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
                 test -n "$ANS" && echo ''
                 printf "%s\n" "${NC}Copying dotfiles into place ..."
                 # Moving old hhs files into the proper folder
@@ -165,8 +156,10 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 test -f ~/.saved_dir && mv -f ~/.saved_dir "$HHS_DIR/.saved_dirs"
                 test -f ~/.punchs && mv -f ~/.punchs "$HHS_DIR/.punchs"
                 test -f ~/.firebase && mv -f ~/.firebase "$HHS_DIR/.firebase"
+            else
+                test -n "$ANS" && echo ''
+                quit 1 "Installation cancelled!"
             fi
-            printf "%s\n" "${NC}"
         else
             OPT='all'
         fi
@@ -261,11 +254,16 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         printf "%s\n" "${GREEN}Done installing files. Reloading bash ...${NC}"
 
         printf "%s\n" "${CYAN}"
-        echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
-        echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
-        echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
-        echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
-        echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
+        if command -v figlet; 
+        then
+            figlet -c "Welcome"
+        else
+            echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
+            echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
+            echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
+            echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
+            echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
+        fi
         echo ''
         printf "%s\n" "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         printf "%s\n" "${WHITE}"
