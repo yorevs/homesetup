@@ -366,7 +366,7 @@ function paths() {
     local pad_len
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: paths"
+        echo "Usage: paths [-a,-r <path>]"
         return 1
     elif [ -z "$1" ]; then
         pad=$(printf '%0.1s' "."{1..60})
@@ -378,11 +378,21 @@ function paths() {
             for path in $(echo -e "${PATH//:/\\n}"); do
                 printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-                test -d "$path" && printf '%s\n' "${GREEN} Path exists" || printf '%s\n'  "${RED} Path does not exist"
+                test -d "$path" && printf '%s' "${GREEN} Path exists" || printf '%s'  "${RED} Path does not exist"
+                test -n "$(grep ^"$path"$ ~/.path)" && printf " (custom)\n" || printf "\n"
             done
         )
         echo -e "${NC}"
+    elif [ "-a" = "$1" ] && [ -n "$2" ]; then
+        test -d "$2" && echo "$2" >> "$HOME/.path"
+        export PATH="$2:$PATH"
+    elif [ "-r" = "$1" ] && [ -n "$2" ]; then
+        # shellcheck disable=SC2155
+        export PATH=${PATH//$2:/}
+        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HOME/.path"
     fi
+    # shellcheck disable=SC2155
+    export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
 
     return 0
 }
@@ -894,6 +904,7 @@ function cmd() {
             ;;
             -l | --list)
                 if [ ${#allCmds[@]} -ne 0 ]; then
+                
                     pad=$(printf '%0.1s' "."{1..60})
                     pad_len=40
                     echo ' '
@@ -912,23 +923,29 @@ function cmd() {
                         IFS="$RESET_IFS"
                     )
                     printf '%s\n' "${NC}"
+                else
+                    echo "${YELLOW}No commands available yet !${NC}"
                 fi
             ;;
             '')
-                clear
-                echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
-                echo -en "${WHITE}"
-                IFS=$'\n' 
-                mselectFile=$(mktemp)
-                mselect "$mselectFile" "${allCmds[*]}"
-                # shellcheck disable=SC2181
-                if [ "$?" -eq 0 ]; then
-                    selIndex=$(grep . "$mselectFile") # selIndex is zero-based
-                    cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                    test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                    test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
-                fi
-                IFS="$RESET_IFS"
+                if [ ${#allCmds[@]} -ne 0 ]; then
+                    clear
+                    echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
+                    echo -en "${WHITE}"
+                    IFS=$'\n' 
+                    mselectFile=$(mktemp)
+                    mselect "$mselectFile" "${allCmds[*]}"
+                    # shellcheck disable=SC2181
+                    if [ "$?" -eq 0 ]; then
+                        selIndex=$(grep . "$mselectFile") # selIndex is zero-based
+                        cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                        test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                        test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
+                    fi
+                    IFS="$RESET_IFS"
+                else
+                    echo "${YELLOW}No commands available yet !${NC}"
+                fi  
             ;;
             [A-Z0-9_]*)
                 cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
@@ -1279,7 +1296,7 @@ function dv() {
             echo -e "${GREEN}You version is up to date with the repository: ${repoVer} !"
         fi
     else
-        echo "${RED}DOTFILES_VERSION was not defined!${NC}"
+        echo "${RED}DOTFILES_VERSION was not defined !${NC}"
         return 1
     fi
     echo "${NC}"

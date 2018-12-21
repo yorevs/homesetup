@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155,SC1090
 
 #  Script: bash_profile.sh
 # Purpose: Main shell configuration file
@@ -30,8 +31,7 @@ shopt -s cdspell;
 #   source -> ~/.colors can be used to extend/override .bash_colors
 #   source -> ~/.functions can be used to extend/override .bash_functions
 
-# shellcheck disable=SC1090
-for file in ~/.{path,bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,env,aliases,profile,colors,functions}; do
+for file in ~/.{bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,env,aliases,profile,colors,functions}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;
@@ -52,6 +52,10 @@ fi;
 # Add `~/bin` to the `$PATH`
 export PATH="$PATH:$HOME/bin";
 
-# Remove all PATH duplicates
-# shellcheck disable=SC2155
+# Add custom paths to $PATH
+if [ -f ~/.path ]; then
+    export PATH="$(grep . ~/.path | tr '\n' ':'):$PATH"
+fi
+
+# Remove all $PATH duplicates
 export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
