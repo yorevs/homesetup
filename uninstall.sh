@@ -84,6 +84,8 @@ uninstall_dotfiles() {
     for next in ${ALL_DOTFILES[*]}; do
         test -n "$next" -a -f "$HOME/.${next}" && rm -fv "$HOME/.${next}"
     done
+    # shellcheck disable=SC2164
+    cd ~
     rm -rfv "$HOME_SETUP" 
     test -L "$HOME/bin" && rm -f "$HOME/bin"
     echo ''
@@ -107,13 +109,10 @@ uninstall_dotfiles() {
     export PS1='\[\h:\W \u \$ '
     export PS2="$PS1"
 
-    # shellcheck disable=SC2164
-    cd ~
-
     echo "HomeSetup successfully removed."
     printf "%s\n" "? To reload your old dotfiles type: #> source ~/.bashrc"
-    printf "%s\n" "? Your PS1 (prompt) will be restored next time you open the terminal."
-    printf "%s\n" "? Your temporary PS1 => $PS1"
+    printf "%s\n" "? Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
+    printf "%s\n" "? Your temporary PS1 => '$PS1'"
     echo ''
 }
 
