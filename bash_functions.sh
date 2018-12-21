@@ -379,7 +379,7 @@ function paths() {
                 printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                 test -d "$path" && printf '%s' "${GREEN} Path exists" || printf '%s'  "${RED} Path does not exist"
-                test -n "$(grep ^"$path"$ ~/.path)" && printf " (custom)\n" || printf "\n"
+                test -f ~/.path -a -n "$(grep ^"$path"$ ~/.path)" && printf " (custom)\n" || printf "\n"
             done
         )
         echo -e "${NC}"
