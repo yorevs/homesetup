@@ -63,7 +63,7 @@ check_installation() {
         printf "%s\n" "#${NC}"
 
         printf "%s\n" "${RED}"
-            read -r -n 1 -p "HomeSetup will be removed and backups restored. Continue y/[n] ?" ANS
+            read -r -n 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
             printf "%s\n" "${NC}"
             if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
                 

@@ -414,7 +414,7 @@ function ver() {
         # First attempt: app --version
         APP=$1
         tc "${APP}"
-        test $? -ne 0 && printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system!" && return 2
+        test $? -ne 0 && printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}" && return 2
         version=$(${APP} --version 2>&1)
         if test $? -ne 0; then
             # Second attempt: app -version
@@ -1135,7 +1135,7 @@ function plist() {
 # @function: CD into the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
-function go() {
+function godir() {
     
     local dir
     local len
