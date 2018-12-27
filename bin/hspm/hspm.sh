@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117,SC1090,SC2015
 
-#  Script: dotfiles.sh
+#  Script: hspm.sh
 # Purpose: Manage your development tools using installation/uninstallation recipes.
 # Created: Dec 21, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -27,6 +27,7 @@ Usage: $PROC_NAME <add/remove/list> [recipe]
 # Import pre-defined .bash_colors and .bash_env
 test -f ~/.bash_colors && source ~/.bash_colors
 test -f ~/.bash_env && source ~/.bash_env
+test -f ~/.bash_functions && source ~/.bash_functions
 
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
@@ -55,8 +56,8 @@ version() {
 # Check if the user passed the help or version parameters.
 test "$1" = '-h' -o "$1" = '--help' && usage
 test "$1" = '-v' -o "$1" = '--version' && version
-test -z "$1" && usage
-test -z "$2" -a "$1" != "list" && usage
+test "$#" -lt 1 && usage
+test "$#" -eq 1 -a "$1" != "list" && usage
 test -z "$DEFAULT_DEV_TOOLS" -o ${#DEFAULT_DEV_TOOLS[*]} -le 0 && quit 1 "DEFAULT_DEV_TOOLS is not defined!"
 
 # shellcheck disable=SC2206
@@ -71,7 +72,7 @@ function list_recipes() {
     local index=0
     local recipe
     for app in ${DEFAULT_DEV_TOOLS[*]}; do
-        recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-${app}.sh"
+        recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-${app}"
         if [ -n "$recipe" ] && [ -f "$recipe" ]; then
             ALL_RECIPES+=( "$app" )
             index=$((index+1))
@@ -86,10 +87,12 @@ function list_recipes() {
 }
 
 install_recipe() {
-    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1.sh"
+    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1"
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
+        tc "$1" >/dev/null
+        test $? -eq 0 && quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
         install
         test $? -eq 0 && echo "${GREEN}Installation successful${NC}" || quit 1 "${RED}Failed to install app \"$1\" !${NC}"
     else
@@ -98,10 +101,12 @@ install_recipe() {
 }
 
 uninstall_recipe() {
-    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1.sh"
+    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1"
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
+        tc "$1" >/dev/null
+        test $? -eq 1 && quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
         uninstall
         test $? -eq 0 && echo "${GREEN}Uninstallation successful${NC}" || quit 1 "${RED}Failed to uninstall app \"$1\" !${NC}"
     else
@@ -115,12 +120,12 @@ case "$1" in
     # Install the app
     I | install)
         list_recipes "$2"
-        test $? -eq 0 && install_recipe "$2" || quit 1 "${RED}Recipe $2 was not found!${NC}"
+        test $? -eq 0 && install_recipe "$2" || quit 1 "${RED}Recipe for app \"$2\" was not found!${NC}"
     ;;
     # Uninstall the app
     U | uninstall)
         list_recipes "$2"
-        test $? -eq 0 && uninstall_recipe "$2" || quit 1 "${RED}Recipe $2 was not found!${NC}"
+        test $? -eq 0 && uninstall_recipe "$2" || quit 1 "${RED}Recipe for app \"$2\" was not found!${NC}"
     ;;
     # List available apps
     L | list)

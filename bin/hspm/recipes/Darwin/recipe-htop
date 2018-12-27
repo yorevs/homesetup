@@ -1,0 +1,18 @@
+function about() {
+    echo "A better TOP"
+    return 0
+}
+
+function depends() {
+    return 0
+}
+
+function install() {
+    echo 'Installing Htop...'
+    return 0
+}
+
+function uninstall() {
+    echo 'Uninstalling Htop ...'
+    return 0
+}

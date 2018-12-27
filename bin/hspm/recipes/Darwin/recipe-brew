@@ -1,7 +1,5 @@
-#!/usr/bin/env bash
-
 function about() {
-    echo "A programmer's best friend for macOS"
+    echo "The missing package manager for macOS"
     return 0
 }
 
@@ -10,11 +8,11 @@ function depends() {
 }
 
 function install() {
-    echo 'Installing Ruby...'
+    echo 'Installing HomeBrew ...'
     return 0
 }
 
 function uninstall() {
-    echo 'Uninstall'
+    echo 'Uninstalling HomeBrew ...'
     return 0
 }

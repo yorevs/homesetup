@@ -51,7 +51,7 @@ export PUNCH_FILE="$HHS_DIR/.punchs"
 # Development tools. To override it please export DEFAULT_DEV_TOOLS variable at ~/.env
 export DEFAULT_DEV_TOOLS=(
     "bash" "ssh" "brew" "tree" "vim" "pcregrep" "shfmt" "shellcheck"
-    "node" "java" "python" "ruby" "go" "gcc" "make" "qmake"
+    "node" "java" "python" "rvm" "ruby" "go" "gcc" "make" "qmake"
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
     "nvm" "npm" "jenv" "eslint" "gpg" "base64" "md5" "shasum"
     "htop" "dialog" "telnet" "figlet"
