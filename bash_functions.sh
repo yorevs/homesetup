@@ -11,7 +11,6 @@
 #    Site: https://github.com/yorevs/homesetup
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.functions
 
-
 # @function: Encrypt file using GPG encryption.
 # @param $1 [Req] : The file to encrypt.
 # @param $2 [Req] : The passphrase to encrypt the file.
@@ -131,13 +130,15 @@ function ss() {
     local gflags="-HnEI"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
+        echo ''
         echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
         echo ''
         echo 'Options: '
         echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
-        echo '    -w | --words                    : Makes the search treat the search as a STRING not a regex.'
+        echo '    -w | --words                    : Makes the search to use a STRING instead of a REGEX.'
         echo '    -r | --replace <replacement>    : Makes the search to REPLACE all findings by the replacement string.'
-        echo '    -b | --binary                   : Includes binary files in the search.'
+        echo '    -b | --binary                   : Includes BINARY files in the search.'
+        echo ''
         return 1
     else
         while test -n "$1"
@@ -414,19 +415,22 @@ function ver() {
         # First attempt: app --version
         APP=$1
         tc "${APP}"
-        test $? -ne 0 && printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}" && return 2
+        if test $? -ne 0; then
+            printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}"
+            return 2
+        fi
         version=$(${APP} --version 2>&1)
         if test $? -ne 0; then
-            # Second attempt: app -version
-            version=$(${APP} -version 2>&1)
+            # Second attempt: app -v
+            version=$(${APP} -v 2>&1)
             if test $? -ne 0; then
-                # Third attempt: app -V
-                version=$(${APP} -V 2>&1)
+                # Third attempt: app -version
+                version=$(${APP} -version 2>&1)
                 if test $? -ne 0; then
-                    # Last attempt: app -v
-                    version=$(${APP} -v 2>&1)
+                    # Last attempt: app -V
+                    version=$(${APP} -V 2>&1)
                     if test $? -ne 0; then
-                        printf '%s\n' "${RED}Unable to find $APP version using common methods (--version, -version, -V and -v) ${NC}"
+                        printf '%s\n' "${RED}Unable to find \"${APP}\" version using common methods: (--version, -version, -v and -V) ${NC}"
                         return 1
                     fi
                 fi

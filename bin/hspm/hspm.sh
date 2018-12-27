@@ -2,7 +2,7 @@
 # shellcheck disable=SC1117
 
 #  Script: dotfiles.sh
-# Purpose: Manage your installed packages
+# Purpose: Manage your development tools using installation/uninstallation recipes.
 # Created: Dec 21, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
