@@ -199,6 +199,7 @@ fi
 # Gradle Stuff
 if [ "$(command -v gradle)" ]; then
 
+    alias gradle='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
     alias gwb='gradle clean build'
     alias gwr='gradle bootRun'
     alias gwt='gradle Test'
