@@ -55,7 +55,11 @@ Fill in the information required.
 You are now ready to use the Firebase features of HomeSetup.
 Type: `#> dotfiles.sh help fb` for further information about using it.
 
-### 2. Dotfiles in this project
+### 2. Uninstallation
+
+
+
+### 3. Dotfiles in this project
 
 The following files will be added when installing this project:
 
@@ -85,7 +89,7 @@ To override or add customised stuff, you need to create a custom file as follows
 ~/.functions # For functions customisation
 ```
 
-### 3. Aliases
+### 4. Aliases
 
 This project will many aliases (shortcuts) to your shell:
 
@@ -129,18 +133,19 @@ mkcd     | Make a folder and cd into it
 cpu      | `top` shortcut ordered by cpu
 mem      | `top` shortcut ordered by memory
 rmdbc    | 'Recursively delete Dropbox conflicted files from the current directory'
-week     | 'Current week of the month' 
-now      | 'Current date'
-now-ms   | 'Current timestamp in milliseconds'
+week     | 'Current `week` of the month' 
+now      | 'Current `date`'
+ts       | 'Current `timestamp` in milliseconds'
 wget     | 'MacOS has no wget, so use curl instead'
 rand     | 'Generate a random number from `<min>` to  `<max>`'
 
 #### Python aliases
 ALIAS   | Equivalent
 ------- | -------
-calc    | 'Evaluate mathematical expression'
+calc    | 'Evaluate mathematical expressions'
 urle    | 'URL-encode string'
 urld    | 'URL-decode string'
+uuid    | 'Generate a random UUID'
 
 #### IP related
 
@@ -161,7 +166,7 @@ hide-files | 'Hiden hidden files in Finder'
 
 **Please check: [bash_aliases](./bash_aliases.sh) for all aliases**
 
-### 4. Functions
+### 5. Functions
 
 This project adds many script functions the shell. All functions provide a help using the options -h or --help.
 
@@ -170,68 +175,68 @@ Function    | Purpose
 encrypt     | Encrypt file using GPG encryption.
 decrypt     | Decrypt file using GPG encryption.
 hl          | Highlight words from the piped stream.
-sf          | Search for files recursively.
-sd          | Search for directories recursively.
-ss          | Search for strings in files recursively.
+sf          | Search for `files` recursively.
+sd          | Search for `directories` recursively.
+ss          | Search for `strings` in files recursively.
 hist        | Search for a previous issued command from history.
-del-tree    | Send files recursively to Trash (del tree).
+del-tree    | Send files recursively to the Trash.
 jp          | Pretty print (format) JSON string.
-ip-info     | Check information about the IP.
+ip-info     | Check information about the specified IP.
 ip-resolve  | Resolve domain names associated with the IP.
 ip-lookup   | Lookup DNS entries to determine the IP address.
 port-check  | Check the state of a local port.
-envs        | Prints all environment variables.
-paths       | Print each PATH entry on a separate line.
-ver         | Check the version of the app using common ways.
+envs        | Prints all `environment` variables on a separate line.
+paths       | Print each `PATH entry` on a separate line.
+ver         | Check the version of the app using the most common ways.
 tc          | Check whether the `tool` is installed.
 tools       | Check whether some `dev. tools` are installed.
 mselect     | Select an option from a list, using a navigable menu.
 aa          | Manipulate all custom aliases `(add/remove/set)`.
 save        | Save the one directory to be loaded by `load`.
 load        | Pushd into a saved directory issued by `save`.
-punch       | Punch the clock. Add, edit and list punches.
-plist       | Display (maybe kill?) a process list, given process name.
+punch       | Punch the clock. Add, Edit and List clock punches.
+plist       | Display (optionally kill) a process list, given process name.
 cmd         | Add/Remove/List/Execute `saved bash commands`.
-godir       | Pushd into the first match of the specified directory name.
-git-        | GIT Checkout the branch in history (skips branch-to-same-branch ).
+godir       | Push dir from the first match of the specified directory name.
+git-        | GIT Checkout the branch in history (skips `branch-to-same-branch` changes ).
 sysinfo     | Retrieve some important system information.
-parts       | Exhibit a summary about all partitions.
-dv          | Check the latest HomeSetup version.
+parts       | Exhibit a summary about all mounted partitions.
+dv          | Check the latest `HomeSetup` version.
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 
-### 5. Scripts
+### 6. Scripts
 
 The project contains some useful scripts that can be used directly from shell. It is also added to your path variable.
 
-#### 5.1 Python scripts
+#### 6.1 Python scripts
 
 Function                | Purpose
 ----------------------- | -----------------------
-build-java-hierarchy.py | Build a hierarchy spread sheet from a Java project
-calc.py                 | Simple app to do mathematical calculations
-tcalc.py                | Simple app to do mathematical calculations with time
-free.py                 | Report system memory usage
-send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads
+calc.py                 | Simple app to do mathematical calculations.
+tcalc.py                | Simple app to do mathematical calculations with time.
+free.py                 | Report system memory usage.
+json-find.py            | Find a nobject from the json string or file.
+pprint-xml.py           | Pretty print (format) an xml file.
+send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads.
 
-#### 5.2 Shell scripts
+#### 6.2 Shell scripts
 
 Function                | Purpose
 ----------------------- | -----------------------
-dotfiles.sh             | Manage your HomeSetup dotfiles and more
-fetch.sh                | Script to fetch REST APIs data
-git-completion.sh       | bash/zsh completion support for core Git
-git-diff-cmd.sh         | Enable opendiff to be used with git instead of normal diff
-git-pull-all.sh         | Pull all projects within the specified path to the given repository/branch
-hostname-change.sh      | Change the hostname permanently
-ip-utils.sh             | Validate an IP and check details about it
-json-find               | Find a object from the json string or file
-pprint-xml              | Pretty print a xml file
-toolcheck.sh            | Check if the a tool is installed on the system
+dotfiles.sh             | Manage your HomeSetup dotfiles and more.
+hspm.sh                 | Manage your development tools using installation/uninstallation recipes.
+fetch.sh                | Script to fetch REST APIs data.
+git-completion.sh       | bash/zsh completion support for core Git.
+git-diff-cmd.sh         | Enable opendiff to be used with git instead of normal diff.
+git-pull-all.sh         | Pull all projects within the specified path to the given repository/branch.
+hostname-change.sh      | Change the hostname permanently.
+ip-utils.sh             | Validate an IP and check details about it.
+toolcheck.sh            | Check if the a tool is installed on the system.
 
 **Please check: [bin](./bin) for all scripts**
 
-### 6. HomeSetup Terminal
+### 7. HomeSetup Terminal
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
@@ -241,5 +246,5 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 Done! Now you have your terminal just like mine.
 
-**To keep your HomeSetup updated, don't forget to run `#> dv` sometimes to update (git pull) to the latest code**
+**To keep your HomeSetup updated, run `#> dv` often, to update (git pull) to the latest HomeSetup code**
 

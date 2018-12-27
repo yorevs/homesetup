@@ -3,7 +3,7 @@
 """
   @package: -
    @script: pprint-xml.py
-  @purpose: Pretty print a xml file.
+  @purpose: Pretty print (format) an xml file.
   @created: Jan 20, 2017
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@hotmail.com

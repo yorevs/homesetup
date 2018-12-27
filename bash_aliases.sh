@@ -101,13 +101,10 @@ fi
 # Date and time shortcuts
 alias week='date +%V'
 alias now='date +"%d-%m-%Y %T"'
-alias now-ms='date "+%s%S"'
+alias ts='date "+%s%S"'
 
 # macOS has no `wget, so using curl instead`
 command -v wget >/dev/null || alias wget='curl -O'
-
-# linux has no `json_pp`, so using python instead
-command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
 
 # Recursively delete Dropbox conflicted files from the current directory
 test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
@@ -122,6 +119,10 @@ alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $
 # Python aliases
 
 if [ "$(command -v python)" ]; then
+
+    # linux has no `json_pp`, so using python instead
+    command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
+    
     # Evaluate mathematical expression
     alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
 
@@ -175,6 +176,7 @@ command -v sha1sum >/dev/null || alias sha1sum='sha1'
 # -----------------------------------------------------------------------------------
 # Git Stuff
 if [ "$(command -v git)" ]; then
+
     alias gs='git status'
     alias gf='git fetch'
     alias gco='git checkout'
@@ -196,15 +198,19 @@ fi
 # -----------------------------------------------------------------------------------
 # Gradle Stuff
 if [ "$(command -v gradle)" ]; then
-    alias gwb='gradle clean build -x test'
+
+    alias gwb='gradle clean build'
     alias gwr='gradle bootRun'
+    alias gwt='gradle Test'
     alias gwi='gradle init'
+    alias gwq='gradle -q'
     alias gww='gradle wrapper --gradle-version'
 fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
 if [ "$(command -v docker)" ]; then
+
     alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 fi
 
