@@ -73,7 +73,7 @@ function list_recipes() {
     local index=0
     local recipe
     for app in ${DEFAULT_DEV_TOOLS[*]}; do
-        recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-${app}"
+        recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-${app}.sh"
         if [ -n "$recipe" ] && [ -f "$recipe" ]; then
             ALL_RECIPES+=( "$app" )
             index=$((index+1))
@@ -89,7 +89,7 @@ function list_recipes() {
 
 # Install the specified app using the installation recipe
 install_recipe() {
-    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1"
+    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1.sh"
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
@@ -105,7 +105,7 @@ install_recipe() {
 
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
-    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1"
+    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1.sh"
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
