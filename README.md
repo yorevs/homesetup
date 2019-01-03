@@ -57,7 +57,9 @@ Type: `#> dotfiles.sh help fb` for further information about using it.
 
 ### 2. Uninstallation
 
+If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command in a shell: `# HomeSetup> ./uninstall.sh`
 
+The uninstaller will remove all files and foders related to HomeSetup for good.
 
 ### 3. Dotfiles in this project
 

@@ -1,18 +1,22 @@
 function about() {
     echo "The missing package manager for macOS"
-    return 0
 }
 
 function depends() {
+    if [ command -v ruby >/dev/null ]; then
+        echo "${RED}Ruby is required to install HomeBrew${NC}"
+        return 1
+    fi
+
     return 0
 }
 
 function install() {
-    echo 'Installing HomeBrew ...'
-    return 0
+    command ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    return $?
 }
 
 function uninstall() {
-    echo 'Uninstalling HomeBrew ...'
-    return 0
+    command ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
+    return $?
 }

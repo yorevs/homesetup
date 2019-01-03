@@ -1,18 +1,22 @@
 function about() {
-    echo "A better TOP"
-    return 0
+    echo "An interactive process viewer for Unix"
 }
 
 function depends() {
+    if [ command -v brew >/dev/null ]; then
+        echo "${RED}HomeBrew is required to install HomeBrew${NC}"
+        return 1
+    fi
+
     return 0
 }
 
 function install() {
-    echo 'Installing Htop...'
-    return 0
+    command brew instal htop
+    return $?
 }
 
 function uninstall() {
-    echo 'Uninstalling Htop ...'
-    return 0
+    command brew uninstal htop
+    return $?
 }

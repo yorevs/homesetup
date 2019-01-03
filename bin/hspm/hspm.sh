@@ -16,7 +16,7 @@ PROC_NAME=$(basename "$0")
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <add/remove/list> [recipe]
+Usage: $PROC_NAME <install/uninstall/list> [recipe]
 
     Commands:
         install     [recipe]    : Install the app using the app recipe.
@@ -29,6 +29,12 @@ test -f ~/.bash_colors && source ~/.bash_colors
 test -f ~/.bash_env && source ~/.bash_env
 test -f ~/.bash_functions && source ~/.bash_functions
 
+# Unset all declared functions from the recipes
+cleanup_recipes() {
+
+    unset -f about depends install uninstall
+}
+
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
@@ -36,7 +42,7 @@ quit() {
 
     test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
     test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    # Unset all declared functions and recipe functions
+    # Unset all declared functions
     cleanup_recipes
     unset -f quit usage version cleanup_recipes list_recipes install_recipe uninstall_recipe
     printf "%s\n" "${NC}"
@@ -63,11 +69,6 @@ test -z "$DEFAULT_DEV_TOOLS" -o ${#DEFAULT_DEV_TOOLS[*]} -le 0 && quit 1 "DEFAUL
 # shellcheck disable=SC2206
 ALL_RECIPES=()
 
-cleanup_recipes() {
-
-    unset -f about depends install uninstall
-}
-
 function list_recipes() {
     local index=0
     local recipe
@@ -86,6 +87,7 @@ function list_recipes() {
     test -n "$1" && return 1 || return 0
 }
 
+# Install the specified app using the installation recipe
 install_recipe() {
     recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1"
     if [ -f "$recipe" ]; then
@@ -93,13 +95,15 @@ install_recipe() {
         source "$recipe"
         tc "$1" >/dev/null
         test $? -eq 0 && quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
+        echo "${YELLOW}Installing \"$1\", please wait...${NC}"
         install
-        test $? -eq 0 && echo "${GREEN}Installation successful${NC}" || quit 1 "${RED}Failed to install app \"$1\" !${NC}"
+        test $? -eq 0 && echo "${GREEN}Installation successful.${NC}" || quit 1 "${RED}Failed to install app \"$1\" !${NC}"
     else
-        quit 1 "${RED}Unable to find recipe for \"$1\"${NC}"
+        quit 1 "${RED}Unable to find recipe for \"$1\" !${NC}"
     fi
 }
 
+# Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
     recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1"
     if [ -f "$recipe" ]; then
@@ -107,10 +111,11 @@ uninstall_recipe() {
         source "$recipe"
         tc "$1" >/dev/null
         test $? -eq 1 && quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
+        echo "${YELLOW}Uninstalling $1, please wait...${NC}"
         uninstall
-        test $? -eq 0 && echo "${GREEN}Uninstallation successful${NC}" || quit 1 "${RED}Failed to uninstall app \"$1\" !${NC}"
+        test $? -eq 0 && echo "${GREEN}Uninstallation successful.${NC}" || quit 1 "${RED}Failed to uninstall app \"$1\" !${NC}"
     else
-        quit 1 "${RED}Unable to find recipe for \"$1\"${NC}"
+        quit 1 "${RED}Unable to find recipe for \"$1\" !${NC}"
     fi
 }
 
