@@ -6,7 +6,7 @@ function about() {
 
 function depends() {
     if ! command -v brew >/dev/null; then
-        echo "${RED}HomeBrew is required to install jenv${NC}"
+        echo "${RED}HomeBrew is required to install rvm${NC}"
         return 1
     fi
 
@@ -15,7 +15,8 @@ function depends() {
 
 function install() {
     local ret
-    unset nvm
+    unset rvm
+    unset RVM_DIR
     command brew install gnupg
     ret=$?
     if [ $ret -eq 0 ]; then
@@ -32,13 +33,11 @@ function install() {
 
 function uninstall() {
     local ret
+    unset rvm
+    unset RVM_DIR
     command brew uninstall gnupg
-    ret=$?
-    if [ $ret -eq 0 ]; then
-        rvm implode
-        [ -d "$RVM_DIR" ] && rm -rf "$RVM_DIR"
-        unset nvm
-    fi
+    rvm implode
+    [ -d "$RVM_DIR" ] && rm -rf "$RVM_DIR"
 
     return $ret
 }

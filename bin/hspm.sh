@@ -82,7 +82,7 @@ function list_recipes() {
             index=$((index+1))
             source "$recipe"
             if test -z "$1"; then
-                printf "${index} - ${BLUE}${app} "
+                printf '%3s - %s' "${index}" "${BLUE}${app} "
                 printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
                 echo ": $(about) ${NC}"
             fi
