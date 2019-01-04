@@ -329,13 +329,15 @@ function envs() {
     local filter
     local name
     local value
+    local columns
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: envs [regex_filter]"
         return 1
     else
         pad=$(printf '%0.1s' "."{1..60})
-        pad_len=60
+        pad_len=40
+        columns="$(($(tput cols)-pad_len-9))"
         filter="$*"
         test -z "$filter" && filter="^[a-zA-Z0-9_]*.*"
         echo ' '
@@ -349,7 +351,8 @@ function envs() {
                 if [[ $name =~ $filter ]]; then
                     printf "${HIGHLIGHT_COLOR}${name}${NC} "
                     printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                    printf " => ${value} \n"
+                    printf " ${YELLOW}=>${WHITE} ${value:0:$columns} "
+                    [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
                 fi
             done
             IFS="$RESET_IFS"
@@ -477,9 +480,12 @@ function tc() {
 function tools() {
 
     DEFAULT_DEV_TOOLS=${DEFAULT_DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
+    # shellcheck disable=SC2207
+    IFS=$'\n' sorted=($(sort <<<"${DEFAULT_DEV_TOOLS[*]}"))
+    IFS="$RESET_IFS"
 
     echo ''
-    for app in ${DEFAULT_DEV_TOOLS[*]}; do
+    for app in ${sorted[*]}; do
         tc "$app"
     done
     echo "${HIGHLIGHT_COLOR}"
