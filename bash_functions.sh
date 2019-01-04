@@ -348,12 +348,14 @@ function envs() {
             for v in $(env | sort); do
                 name=$(echo "$v" | cut -d '=' -f1)
                 value=$(echo "$v" | cut -d '=' -f2-)
-                if [[ $name =~ $filter ]]; then
+                shopt -s nocasematch
+                if [[ ${name} =~ ${filter} ]]; then
                     printf "${HIGHLIGHT_COLOR}${name}${NC} "
                     printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
                     printf " ${YELLOW}=>${WHITE} ${value:0:$columns} "
                     [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
                 fi
+                shopt -u nocasematch
             done
             IFS="$RESET_IFS"
         )
