@@ -1,9 +1,14 @@
+#!/usr/bin/env bash
+
 function about() {
     echo "The missing package manager for macOS"
 }
 
 function depends() {
-    if [ command -v ruby >/dev/null ]; then
+    if ! command -v xcode-select >/dev/null; then
+        echo "${RED}XCode is required to install HomeBrew${NC}"
+        return 1
+    elif ! command -v ruby >/dev/null; then
         echo "${RED}Ruby is required to install HomeBrew${NC}"
         return 1
     fi

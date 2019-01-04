@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  Script: bash_env.sh
-# Purpose: Configure shell environment variables
+# Purpose: This file is used to configure shell environment variables
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

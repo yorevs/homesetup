@@ -4,7 +4,7 @@
 # shellcheck disable=SC2183
 
 #  Script: bash_functions.sh
-# @function: Configure some shell tools
+# Purpose: This file is used to define some shell tools
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

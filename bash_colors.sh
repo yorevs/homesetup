@@ -2,7 +2,7 @@
 # shellcheck disable=SC1117
 
 #  Script: bash_colors.sh
-# Purpose: Configure shell and command colors
+# Purpose: This file is used to configure shell colors
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

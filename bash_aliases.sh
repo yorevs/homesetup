@@ -3,7 +3,7 @@
 # shellcheck disable=SC2142
 
 #  Script: bash_aliases.sh
-# Purpose: Configure some useful shell aliases
+# Purpose: This file is used to configure some useful shell aliases
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -179,6 +179,7 @@ if [ "$(command -v git)" ]; then
 
     alias gs='git status'
     alias gf='git fetch'
+    alias gh='git log -p'
     alias gco='git checkout'
     alias gta='git add'
     alias gb='git branch'

@@ -1,10 +1,12 @@
+#!/usr/bin/env bash
+
 function about() {
     echo "An interactive process viewer for Unix"
 }
 
 function depends() {
-    if [ command -v brew >/dev/null ]; then
-        echo "${RED}HomeBrew is required to install HomeBrew${NC}"
+    if ! command -v brew >/dev/null; then
+        echo "${RED}HomeBrew is required to install htop${NC}"
         return 1
     fi
 

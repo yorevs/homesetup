@@ -2,7 +2,9 @@
 # shellcheck disable=SC1090,SC1091
 
 #  Script: bashrc.sh
-# Purpose: Shell configuration main entry point file
+# Purpose: This file is user specific file that gets loaded each time user creates a new 
+#          local session i.e. in simple words, opens a new terminal. All environment variables 
+#          created in this file would take effect every time a new local session is started.
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

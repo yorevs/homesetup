@@ -93,8 +93,9 @@ install_recipe() {
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
-        tc "$1" >/dev/null
-        test $? -eq 0 && quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
+        if command -v "$1" &> /dev/null; then
+            quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
+        fi
         echo "${YELLOW}Installing \"$1\", please wait...${NC}"
         install
         test $? -eq 0 && echo "${GREEN}Installation successful.${NC}" || quit 1 "${RED}Failed to install app \"$1\" !${NC}"
@@ -109,8 +110,9 @@ uninstall_recipe() {
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
-        tc "$1" >/dev/null
-        test $? -eq 1 && quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
+        if ! command -v "$1" &> /dev/null; then
+            quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
+        fi
         echo "${YELLOW}Uninstalling $1, please wait...${NC}"
         uninstall
         test $? -eq 0 && echo "${GREEN}Uninstallation successful.${NC}" || quit 1 "${RED}Failed to uninstall app \"$1\" !${NC}"
