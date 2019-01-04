@@ -69,8 +69,11 @@ test -z "$DEFAULT_DEV_TOOLS" -o ${#DEFAULT_DEV_TOOLS[*]} -le 0 && quit 1 "DEFAUL
 # shellcheck disable=SC2206
 ALL_RECIPES=()
 
+# shellcheck disable=2155,SC2059,SC2183
 function list_recipes() {
     local index=0
+    local pad=$(printf '%0.1s' "."{1..60})
+    local pad_len=20
     local recipe
     for app in ${DEFAULT_DEV_TOOLS[*]}; do
         recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-${app}.sh"
@@ -78,7 +81,11 @@ function list_recipes() {
             ALL_RECIPES+=( "$app" )
             index=$((index+1))
             source "$recipe"
-            test -z "$1" && echo -e "${index} - ${BLUE}${app} \t: $(about) ${NC}"
+            if test -z "$1"; then
+                printf "${index} - ${BLUE}${app} "
+                printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
+                echo ": $(about) ${NC}"
+            fi
             cleanup_recipes
             test "$1" == "$app" && return 0
         fi

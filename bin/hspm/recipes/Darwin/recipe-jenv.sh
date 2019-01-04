@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function about() {
-    echo "An interactive process viewer for Unix"
+    echo "Is a command line tool to help you forget how to set the JAVA_HOME environment variable"
 }
 
 function depends() {
@@ -14,11 +14,11 @@ function depends() {
 }
 
 function install() {
-    command brew install htop
+    command brew install jenv
     return $?
 }
 
 function uninstall() {
-    command brew uninstall htop
+    command brew uninstall jenv
     return $?
 }
