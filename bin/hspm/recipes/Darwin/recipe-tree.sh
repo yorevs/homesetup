@@ -6,7 +6,7 @@ function about() {
 
 function depends() {
     if ! command -v brew >/dev/null; then
-        echo "${RED}HomeBrew is required to install jenv${NC}"
+        echo "${RED}HomeBrew is required to install tree${NC}"
         return 1
     fi
 
