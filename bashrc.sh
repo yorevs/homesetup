@@ -32,3 +32,6 @@ if [ -n "$PS1" ] && [ -f ~/.bash_profile ]
 then
     source ~/.bash_profile
 fi
+
+# GIT bash_completion
+[ -s "$HOME_SETUP/bin/git-completion.sh" ] && source "$HOME_SETUP/bin/git-completion.sh"

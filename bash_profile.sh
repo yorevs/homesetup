@@ -65,3 +65,5 @@ fi
 
 # Remove all `$PATH` duplicates
 export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

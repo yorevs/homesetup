@@ -8,11 +8,9 @@ function about() {
 }
 
 function depends() {
-    if ! command -v brew >/dev/null; then
-        echo "${RED}HomeBrew is required to install node${NC}"
-        return 1
-    elif ! command -v nvm >/dev/null; then
+    if ! command -v nvm >/dev/null; then
         echo "${RED}nvm is required to install node${NC}"
+        return 1
     fi
 
     return 0

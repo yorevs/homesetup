@@ -388,6 +388,7 @@ function paths() {
         )
         echo -e "${NC}"
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
+        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HOME/.path"
         test -d "$2" && echo "$2" >> "$HOME/.path"
         export PATH="$2:$PATH"
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then

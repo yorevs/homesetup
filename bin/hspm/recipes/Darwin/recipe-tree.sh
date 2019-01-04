@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function about() {
-    echo "Is a command line tool to help you forget how to set the JAVA_HOME environment variable"
+    echo "Tree is a recursive directory listing program that produces a depth-indented listing of files"
 }
 
 function depends() {
@@ -14,13 +14,11 @@ function depends() {
 }
 
 function install() {
-    unset nvm
-    command brew install jenv
+    command brew install tree
     return $?
 }
 
 function uninstall() {
-    command brew uninstall jenv
-    unset nvm
+    command brew uninstall tree
     return $?
 }
