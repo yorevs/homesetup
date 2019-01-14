@@ -18,7 +18,7 @@
 function __hhs_encrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: encrypt <file_name> <passphrase>"
+        echo "Usage: __hhs_encrypt <file_name> <passphrase>"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
         gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null;
@@ -44,7 +44,7 @@ function __hhs_encrypt() {
 function __hhs_decrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
-        echo "Usage: decrypt <file_name> <passphrase>"
+        echo "Usage: __hhs_decrypt <file_name> <passphrase>"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
         decode -i "$1" -o "$1.gpg"
@@ -87,7 +87,7 @@ function __hhs_hl() {
 function __hhs_sf() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: sf <search_path> <glob_exp_files>"
+        echo "Usage: __hhs_sf <search_path> <glob_exp_files>"
         return 1
     else
         local ext=".${2##*.}"
@@ -103,7 +103,7 @@ function __hhs_sf() {
 function __hhs_sd() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: sd <search_path> <glob_exp_folders>"
+        echo "Usage: __hhs_sd <search_path> <glob_exp_folders>"
         return 1
     else
         local ext=".${2##*.}"
@@ -131,7 +131,7 @@ function __hhs_ss() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
         echo ''
-        echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
+        echo "Usage: __hhs_ss [options] <search_path> <regex/string> <glob_exp_files>"
         echo ''
         echo 'Options: '
         echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
@@ -189,7 +189,7 @@ function __hhs_ss() {
 function __hhs_hist() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: hist [command]"
+        echo "Usage: __hhs_hist [command]"
         return 1
     elif [ "$#" -eq 0 ]; then
         history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "^ *[0-9]*  "
@@ -208,7 +208,7 @@ function __hhs_del-tree() {
     local dst
 
     if [ -z "$1" ] || [ "$1" = "/" ] || [ ! -d "$1" ]; then
-        echo "Usage: del-tree <search_path> <glob_exp>"
+        echo "Usage: __hhs_del-tree <search_path> <glob_exp>"
         return 1
     else
         # Find all files and folders matching the <glob_exp>
@@ -240,7 +240,7 @@ function __hhs_del-tree() {
 function __hhs_jp() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: jp <json_string>"
+        echo "Usage: __hhs_jp <json_string>"
         return 1
     else
         if [ "$(uname -s)" = 'Darwin' ]; then
@@ -260,7 +260,7 @@ function __hhs_ip-info() {
     local ipinfo
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ip-info <IPv4_address>"
+        echo "Usage: __hhs_ip-info <IPv4_address>"
         return 1
     else
         ipinfo=$(curl -m 3 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
@@ -275,7 +275,7 @@ function __hhs_ip-info() {
 function __hhs_ip-resolve() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ip-resolve <IPv4_address>"
+        echo "Usage: __hhs_ip-resolve <IPv4_address>"
         return 1
     else
         dig +short -x "$1"
@@ -289,7 +289,7 @@ function __hhs_ip-resolve() {
 function __hhs_ip-lookup() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ip-lookup <domain_name>"
+        echo "Usage: __hhs_ip-lookup <domain_name>"
         return 1
     else
         host "$1"
@@ -312,7 +312,7 @@ function __hhs_port-check() {
         echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
         netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$1"
     else
-        echo "Usage: port-check <portnum_regex> [state]"
+        echo "Usage: __hhs_port-check <portnum_regex> [state]"
         echo "States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
         return 1
     fi
@@ -332,7 +332,7 @@ function __hhs_envs() {
     local columns
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: envs [regex_filter]"
+        echo "Usage: __hhs_envs [regex_filter]"
         return 1
     else
         pad=$(printf '%0.1s' "."{1..60})
@@ -372,7 +372,7 @@ function __hhs_paths() {
     local pad_len
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: paths [-a,-r <path>]"
+        echo "Usage: __hhs_paths [-a,-r <path>]"
         return 1
     elif [ -z "$1" ]; then
         test -f ~/.path || touch ~/.path
@@ -415,7 +415,7 @@ function __hhs_ver() {
     local version
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ver <appName>"
+        echo "Usage: __hhs_ver <appName>"
         return 1
     else
         # First attempt: app --version
@@ -458,7 +458,7 @@ function __hhs_tc() {
     local check
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: tc <appName>"
+        echo "Usage: __hhs_tc <appName>"
     else
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
@@ -504,7 +504,7 @@ function __hhs_tools() {
 function __hhs_mselect() {
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo 'Usage: mselect <output_file> <option1 option2 ...>'
+        echo 'Usage: __hhs_mselect <output_file> <option1 option2 ...>'
         echo ''
         echo 'Notes: '
         echo '  - If only one option is available, mselect will select it and return.'
@@ -646,7 +646,7 @@ function __hhs_aa() {
     local isSorted=0
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo 'Usage: aa [-s|--sort] [alias] [alias_expr]'
+        echo 'Usage: __hhs_aa [-s|--sort] [alias] [alias_expr]'
         echo ''
         echo 'Options: '
         echo '           -e | --edit    : Edit the aliases file.'
@@ -728,7 +728,7 @@ function __hhs_save() {
     touch "$SAVED_DIRS"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
-        echo "Usage: save [options] | [dir_to_save] [dir_alias]"
+        echo "Usage: __hhs_save [options] | [dir_to_save] [dir_alias]"
         echo ''
         echo 'Options: '
         echo "    -e : Edit the saved dirs file."
@@ -781,7 +781,7 @@ function __hhs_load() {
     touch "$SAVED_DIRS"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: load [-l] | [dir_alias]"
+        echo "Usage: __hhs_load [-l] | [dir_alias]"
         echo ''
         echo 'Options: '
         echo "    [dir_alias] : Change to the directory saved from the alias provided."
@@ -870,7 +870,7 @@ function __hhs_cmd() {
     touch "$CMD_FILE"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: cmd [options [cmd_alias] <cmd_expression>] | [cmd_index]"
+        echo "Usage: __hhs_cmd [options [cmd_alias] <cmd_expression>] | [cmd_index]"
         echo ''
         echo 'Options: '
         echo "    [cmd_index] : Execute the command specified by the command index."
@@ -993,7 +993,7 @@ function __hhs_punch() {
     local opt
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: punch [-l,-e,-r]"
+        echo "Usage: __hhs_punch [-l,-e,-r]"
         echo 'Options: '
         echo "       : !!PUNCH THE CLOCK!! (When no option is provided)."
         echo "    -l : List all registered punches."
@@ -1093,7 +1093,7 @@ function __hhs_plist() {
     local gflags='-E'
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-        echo "Usage: plist [-i,-w] <process_name> [kill]"
+        echo "Usage: __hhs_plist [-i,-w] <process_name> [kill]"
         echo ''
         echo 'Options: '
         echo '    -i : Make case insensitive search'
@@ -1156,7 +1156,7 @@ function __hhs_godir() {
     local results=()
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-        echo "Usage: go [search_path] <dir_name>"
+        echo "Usage: __hhs_go [search_path] <dir_name>"
         return 1
     else
         local searchPath
