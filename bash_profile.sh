@@ -48,22 +48,13 @@ done;
 
 unset file
 
-# Enable tab completion for `git` by marking it as an alias for `git`
-if [ -n "$(command -v git)" ]; then
-    if type _git &> /dev/null && [ -f ~/bin/git-completion.sh ]; then
-        complete -o default -o nospace -F _git g
-    fi;
-fi;
-
 # Add `~/bin` to the system `$PATH`
 export PATH="$PATH:$HOME/bin"
 
 # Add custom paths to the system `$PATH`
-if [ -f ~/.path ]; then
-    export PATH="$(grep . ~/.path | tr '\n' ':'):$PATH"
+if [ -f "$HOME/.path" ]; then
+    export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 fi
 
 # Remove all `$PATH` duplicates
 export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
