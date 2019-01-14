@@ -53,9 +53,6 @@ alias lll='ls -lhd .?* ${COLOR_FLAG}'
 # List all dotdirs
 alias lld='ls -lhd .?*/ ${COLOR_FLAG}'
 
-# List all directories recursively (Nth level depth) as a tree
-command -v tree >/dev/null && alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
-
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
 alias grep='grep --color=auto'
@@ -106,19 +103,25 @@ alias ts='date "+%s%S"'
 # macOS has no `wget, so using curl instead`
 command -v wget >/dev/null || alias wget='curl -O'
 
-# Recursively delete Dropbox conflicted files from the current directory
-test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
-
-# Set JAVA_HOME using jenv
-command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
-
 # Generate a random number int the range <min> <max>
 alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))" || echo "Usage: rand <min> <max>"; };_'
 
 # -----------------------------------------------------------------------------------
+# Tool aliases
+
+# Tree: List all directories recursively (Nth level depth) as a tree
+command -v tree >/dev/null && alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
+
+# Jenv: Set JAVA_HOME using jenv
+command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
+
+# Dropbox: Recursively delete Dropbox conflicted files from the current directory
+test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
+
+# -----------------------------------------------------------------------------------
 # Python aliases
 
-if [ "$(command -v python)" ]; then
+if command -v python &> /dev/null; then
 
     # linux has no `json_pp`, so using python instead
     command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
@@ -175,7 +178,7 @@ command -v sha1sum >/dev/null || alias sha1sum='sha1'
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
-if [ "$(command -v git)" ]; then
+if command -v git &> /dev/null; then
 
     alias gs='git status'
     alias gf='git fetch'
@@ -198,7 +201,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Gradle Stuff
-if [ "$(command -v gradle)" ]; then
+if command -v gradle &> /dev/null; then
 
     # Prefer using the wrapper instead of the command itself
     alias gradle='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
@@ -212,7 +215,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
-if [ "$(command -v docker)" ]; then
+if command -v docker &> /dev/null; then
 
     alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 fi
