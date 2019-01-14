@@ -15,7 +15,7 @@
 # @param $1 [Req] : The file to encrypt.
 # @param $2 [Req] : The passphrase to encrypt the file.
 # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
-function encrypt() {
+function __hhs_encrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo "Usage: encrypt <file_name> <passphrase>"
@@ -41,7 +41,7 @@ function encrypt() {
 # @param $1 [Req] : The file to decrypt.
 # @param $2 [Req] : The passphrase to decrypt the file.
 # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
-function decrypt() {
+function __hhs_decrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
         echo "Usage: decrypt <file_name> <passphrase>"
@@ -66,7 +66,7 @@ function decrypt() {
 # @function: Highlight words matching pattern.
 # @param $1 [Req] : The word to highlight.
 # @param $1 [Pip] : The piped input stream.
-function hl() {
+function __hhs_hl() {
 
     local word
     local search
@@ -84,7 +84,7 @@ function hl() {
 # @function: Search for files recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the file search.
-function sf() {
+function __hhs_sf() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo "Usage: sf <search_path> <glob_exp_files>"
@@ -100,7 +100,7 @@ function sf() {
 # @function: Search for directories recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the directory search.
-function sd() {
+function __hhs_sd() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo "Usage: sd <search_path> <glob_exp_folders>"
@@ -121,7 +121,7 @@ function sd() {
 # @param $4 [Req] : The GLOB expression of the file search.
 # @param $5 [Opt] : Whether to replace the findings.
 # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
-function ss() {
+function __hhs_ss() {
 
     local gflags
     local extra_str
@@ -186,7 +186,7 @@ function ss() {
 
 # @function: Search for a previous issued command from history.
 # @param $1 [Req] : The searching command.
-function hist() {
+function __hhs_hist() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: hist [command]"
@@ -202,7 +202,7 @@ function hist() {
 
 # @function: Send files recursively to Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
-function del-tree() {
+function __hhs_del-tree() {
 
     local all
     local dst
@@ -237,7 +237,7 @@ function del-tree() {
 
 # @function: Pretty print (format) JSON string.
 # @param $1 [Req] : The unformatted JSON string.
-function jp() {
+function __hhs_jp() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: jp <json_string>"
@@ -255,7 +255,7 @@ function jp() {
 
 # @function: Check information about the IP.
 # @param $1 [Req] : The IP to get information about.
-function ip-info() {
+function __hhs_ip-info() {
 
     local ipinfo
 
@@ -272,7 +272,7 @@ function ip-info() {
 
 # @function: Resolve domain names associated with the IP.
 # @param $1 [Req] : The IP address to resolve.
-function ip-resolve() {
+function __hhs_ip-resolve() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ip-resolve <IPv4_address>"
@@ -286,7 +286,7 @@ function ip-resolve() {
 
 # @function: Lookup the DNS to determine the associated IP address.
 # @param $1 [Req] : The domain name to lookup.
-function ip-lookup() {
+function __hhs_ip-lookup() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
         echo "Usage: ip-lookup <domain_name>"
@@ -301,7 +301,7 @@ function ip-lookup() {
 # @function: Check the state of a local port.
 # @param $1 [Req] : The port number regex.
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
-function port-check() {
+function __hhs_port-check() {
 
     if [ -n "$1" ] && [ -n "$2" ]; then
         echo "Checking port \"$1\" state: \"$2\""
@@ -322,7 +322,7 @@ function port-check() {
 
 # @function: Print all environment variables.
 # @param $1 [Opt] : Filter environments.
-function envs() {
+function __hhs_envs() {
 
     local pad
     local pad_len
@@ -366,7 +366,7 @@ function envs() {
 }
 
 # @function: Print each PATH entry on a separate line.
-function paths() {
+function __hhs_paths() {
 
     local pad
     local pad_len
@@ -410,7 +410,7 @@ function paths() {
 
 # @function: Check the version of the app using common ways.
 # @param $1 [Req] : The app to check.
-function ver() {
+function __hhs_ver() {
 
     local version
 
@@ -450,7 +450,7 @@ function ver() {
 
 # @function: Check if the required tool is installed on the system.
 # @param $1 [Req] : The app to check.
-function tc() {
+function __hhs_tc() {
 
     local pad
     local pad_len
@@ -479,7 +479,7 @@ function tc() {
 }
 
 # @function: Check if the development tools are installed on the system.
-function tools() {
+function __hhs_tools() {
 
     DEFAULT_DEV_TOOLS=${DEFAULT_DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
     # shellcheck disable=SC2207
@@ -501,14 +501,14 @@ function tools() {
 # @function: Select an option from a list, using a navigable menu.
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The array of options.
-function mselect() {
+function __hhs_mselect() {
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo 'Usage: mselect <output_file> <option1 option2 ...>'
         echo ''
         echo 'Notes: '
         echo '  - If only one option is available, mselect will select it and return.'
-        echo '  - A temporary file is suggested to used with this function (mktemp).'
+        echo '  - A temporary file is suggested to used with this function: [mktemp].'
         echo '  - The outfile must not exist or be empty.'
 
         return 1
@@ -635,7 +635,7 @@ function mselect() {
 # @function: Manipulate all custom aliases.
 # @param $1 [Req] : The alias name.
 # @param $2 [Opt] : The alias expression.
-function aa() {
+function __hhs_aa() {
 
     local aliasFile
     local aliasName
@@ -717,7 +717,7 @@ function aa() {
 # @function: Save the current directory to be loaded by `load`.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
-function save() {
+function __hhs_save() {
 
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
@@ -767,7 +767,7 @@ function save() {
 
 # @function: CD into the saved directory issued by `save`.
 # @param $1 [Opt] : The alias to access the directory saved.
-function load() {
+function __hhs_load() {
 
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
@@ -854,7 +854,7 @@ function load() {
 
 # @function: Add/Remove/List/Execute saved bash commands.
 # @param $1 [Opt] : The command options.
-function cmd() {
+function __hhs_cmd() {
     
     CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
@@ -983,7 +983,7 @@ function cmd() {
 
 # @function: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
 # @param $1 [Opt] : Punch options
-function punch() {
+function __hhs_punch() {
 
     PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punchs}
 
@@ -1086,7 +1086,7 @@ function punch() {
 # @function: Display a process list of the given process name, killing them if specified.
 # @param $1 [Req] : The process name to check.
 # @param $2 [Opt] : Whether to kill all found processes.
-function plist() {
+function __hhs_plist() {
 
     local allPids
     local pid
@@ -1148,7 +1148,7 @@ function plist() {
 # @function: CD into the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
-function godir() {
+function __hhs_godir() {
     
     local dir
     local len
@@ -1199,7 +1199,7 @@ function godir() {
 }
 
 # @function: GIT Checkout the branch in history (skips branch-to-same-branch ).
-function git-() {
+function __hhs_git-() {
 
     local currBranch
     local prevBranch
@@ -1212,7 +1212,7 @@ function git-() {
 }
 
 # @function: Retrieve some important system information.
-function sysinfo() {
+function __hhs_sysinfo() {
     
     local username
     username="$(whoami)"
@@ -1246,7 +1246,7 @@ function sysinfo() {
 }
 
 # @function: Exhibit a summary about all partitions.
-function parts() {
+function __hhs_parts() {
 
     local pad
     local pad_len
@@ -1287,7 +1287,7 @@ function parts() {
 }
 
 # @function: Check the latest dotfiles version.
-function dv() {
+function __hhs_dv() {
 
     local repoVer
     local isDifferent
