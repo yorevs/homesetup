@@ -10,27 +10,35 @@
 
 # ----------------------------------------------------------------------------
 # Home Sweet Homes
-command -v java >/dev/null && export JAVA_HOME="/Library/Java/JavaVirtualMachines/Current/Contents/Home"
-command -v java >/dev/null && export JDK_HOME="$JAVA_HOME"
+
+# Java
+if command -v java >/dev/null; then
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/Current/Contents/Home"
+    export JDK_HOME="$JAVA_HOME"
+fi
+
 command -v python >/dev/null && export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
 command -v qmake >/dev/null && export QT_HOME="$HOME/Applications/QT/Current/clang_64"
 
-# shellcheck disable=SC2155
-command -v xcode-select >/dev/null && export XCODE_HOME="$(xcode-select -p)"
-command -v xcode-select >/dev/null && export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+# XCode
+if command -v xcode-select >/dev/null; then
+    # shellcheck disable=SC2155
+    export XCODE_HOME="$(xcode-select -p)"
+    export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+fi
 
 # ----------------------------------------------------------------------------
 # Other environment variables
-test -d "$HOME/Dropbox" && export DROPBOX="$HOME/Dropbox"
+export TEMP="${TEMP:-$TMPDIR}"
+export TRASH="${TRASH:-$HOME/.Trash}"
 export HOME_SETUP="$HOME/HomeSetup"
 export HHS_DIR="$HOME/.hhs"
 command -v git >/dev/null && export GIT_REPOS="$HOME/GIT-Repository"
 command -v svn >/dev/null && export SVN_REPOS="$HOME/SVN-Repository"
+test -d "$HOME/Dropbox" && export DROPBOX="$HOME/Dropbox"
 export WORKSPACE="$HOME/Workspace"
 export DESKTOP="$HOME/Desktop"
 export DOWNLOADS="$HOME/Downloads"
-export TEMP="${TEMP:-$TMPDIR}"
-export TRASH="${TRASH:-$HOME/.Trash}"
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash.
 export HISTSIZE=${HISTSIZE:-1000}

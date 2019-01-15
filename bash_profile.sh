@@ -43,18 +43,18 @@ shopt -u nocasematch
 
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 for file in ~/.{bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,env,aliases,profile,colors,functions}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file";
+    [ -r "$file" ] && [ -f "$file" ] && \. "$file";
 done;
 
 unset file
-
-# Add `~/bin` to the system `$PATH`
-export PATH="$PATH:$HOME/bin"
 
 # Add custom paths to the system `$PATH`
 if [ -f "$HOME/.path" ]; then
     export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 fi
+
+# Add `$HOME/bin` to the system `$PATH`
+paths -a "$HOME/bin"
 
 # Remove all `$PATH` duplicates
 export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')

@@ -22,15 +22,13 @@
 [ -z "$PS1" ] && return
 
 # Source global definitions
-if [ -f /etc/bashrc ]
-then
-    source /etc/bashrc
+if [ -s /etc/bashrc ]; then
+    \. /etc/bashrc
 fi
 
 # Source the main profile
-if [ -n "$PS1" ] && [ -f ~/.bash_profile ]
-then
-    source ~/.bash_profile
+if [ -s "$HOME/.bash_profile" ]; then
+    \. "$HOME/.bash_profile"
 fi
 
 # Make bash check its window size after a process completes
