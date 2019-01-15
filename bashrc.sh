@@ -32,3 +32,6 @@ if [ -n "$PS1" ] && [ -f ~/.bash_profile ]
 then
     source ~/.bash_profile
 fi
+
+# Make bash check its window size after a process completes
+shopt -s checkwinsize

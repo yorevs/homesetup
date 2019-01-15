@@ -366,6 +366,7 @@ function __hhs_envs() {
 }
 
 # @function: Print each PATH entry on a separate line.
+# shellcheck disable=SC2155
 function __hhs_paths() {
 
     local pad
@@ -403,12 +404,10 @@ function __hhs_paths() {
         test -d "$2" && echo "$2" >> "$HOME/.path"
         export PATH="$2:$PATH"
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
-        # shellcheck disable=SC2155
         export PATH=${PATH//$2:/}
         ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HOME/.path"
     fi
     # Remove all $PATH duplicates
-    # shellcheck disable=SC2155
     export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
 
     return 0
