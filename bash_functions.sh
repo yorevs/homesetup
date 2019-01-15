@@ -264,7 +264,7 @@ function __hhs_ip-info() {
         return 1
     else
         ipinfo=$(curl -m 3 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
-        test -n "$ipinfo" && jp "$ipinfo"
+        test -n "$ipinfo" && __hhs_jp "$ipinfo"
     fi
 
     return 0
@@ -491,7 +491,8 @@ function __hhs_tools() {
         tc "$app"
     done
     echo "${HIGHLIGHT_COLOR}"
-    echo 'To check the current installed version type: #> ver <tool_name>'
+    echo 'To check the current installed version, type: #> ver <tool_name>'
+    echo 'To install one missing tool, type: #> hspm.sh instal <toll_name>'
     echo "${NC}"
     
     return 0
@@ -816,7 +817,7 @@ function __hhs_load() {
                 echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
                 echo -en "${WHITE}"
                 mselectFile=$(mktemp)
-                mselect "$mselectFile" "${allDirs[*]}"
+                __hhs_mselect "$mselectFile" "${allDirs[*]}"
                 # shellcheck disable=SC2181
                 if [ "$?" -eq 0 ]; then
                     selIndex=$(grep . "$mselectFile")
@@ -951,7 +952,7 @@ function __hhs_cmd() {
                     echo -en "${WHITE}"
                     IFS=$'\n' 
                     mselectFile=$(mktemp)
-                    mselect "$mselectFile" "${allCmds[*]}"
+                    __hhs_mselect "$mselectFile" "${allCmds[*]}"
                     # shellcheck disable=SC2181
                     if [ "$?" -eq 0 ]; then
                         selIndex=$(grep . "$mselectFile") # selIndex is zero-based
@@ -1182,7 +1183,7 @@ function __hhs_godir() {
             echo -en "${NC}"
             IFS=$'\n'
             mselectFile=$(mktemp)
-            mselect "$mselectFile" "${results[*]//$searchPath\/}"
+            __hhs_mselect "$mselectFile" "${results[*]//$searchPath\/}"
             # shellcheck disable=SC2181
             if [ "$?" -eq 0 ]; then
                 selIndex=$(grep . "$mselectFile")
