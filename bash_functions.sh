@@ -492,7 +492,7 @@ function __hhs_tools() {
     done
     echo "${HIGHLIGHT_COLOR}"
     echo 'To check the current installed version, type: #> ver <tool_name>'
-    echo 'To install one missing tool, type: #> hspm.sh instal <toll_name>'
+    echo 'To install one missing tool, type: #> hspm.sh instal <tool_name>'
     echo "${NC}"
     
     return 0
