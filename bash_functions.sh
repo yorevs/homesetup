@@ -371,7 +371,7 @@ function __hhs_paths() {
 
     local pad
     local pad_len
-    local syspath
+    local path_dir
     local custom
     local private
 
@@ -388,20 +388,20 @@ function __hhs_paths() {
         (
             IFS=$'\n'
             for path in $(echo -e "${PATH//:/\\n}"); do
-                syspath="$(grep ^"$path"$ /etc/paths.d/*)"
-                custom="$(grep ^"$path"$ "$HOME"/.path)"
-                private="$(grep ^"$path"$ /private/etc/paths)"
-                printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
+                custom="$(grep ^"$path"$ "$HOME"/.path)" # Custom paths
+                private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
+                path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
+                printf '%s' "${HIGHLIGHT_COLOR}$path"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                 if test -d "$path"; then
-                    printf '%s' "${GREEN} Path exists"
-                    test -n "$custom" && printf " ${GREEN}(custom)${NC}\n"
-                    test -n "$syspath" && printf " ${BLUE}(paths.d)${NC}\n"
-                    test -n "$private" && printf " ${YELLOW}(private)${NC}\n"
-                    test -z "$custom" -a -z "$syspath" -a -z "$private" && printf " ${WHITE}(export)${NC}\n"
+                    printf '%s' "${GREEN} Path exists => "
                 else
-                    printf '%s'  "${RED} Path does not exist"
+                    printf '%s'  "${RED} Path does not exist => "
                 fi
+                test -n "$custom" && printf '%s\n' "custom"
+                test -n "$path_dir" && printf '%s\n' "paths.d"
+                test -n "$private" && printf '%s\n' "private"
+                test -z "$custom" -a -z "$path_dir" -a -z "$private" && printf '%s\n' "exported"
             done
             IFS="$RESET_IFS"
         )
