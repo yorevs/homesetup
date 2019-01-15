@@ -373,6 +373,7 @@ function __hhs_paths() {
     local pad_len
     local syspath
     local custom
+    local private
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: __hhs_paths [-a,-r <path>]"
@@ -389,12 +390,18 @@ function __hhs_paths() {
             for path in $(echo -e "${PATH//:/\\n}"); do
                 syspath="$(grep ^"$path"$ /etc/paths.d/*)"
                 custom="$(grep ^"$path"$ "$HOME"/.path)"
+                private="$(grep ^"$path"$ /private/etc/paths)"
                 printf '%s' "${HIGHLIGHT_COLOR}$path ${WHITE}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-                test -d "$path" && printf '%s' "${GREEN} Path exists" || printf '%s'  "${RED} Path does not exist"
-                test -n "$custom" && printf " (custom)\n"
-                test -n "$syspath" && printf " (system)\n"
-                test -z "$custom" -a -z "$syspath" && printf "\n"
+                if test -d "$path"; then
+                    printf '%s' "${GREEN} Path exists"
+                    test -n "$custom" && printf " ${GREEN}(custom)${NC}\n"
+                    test -n "$syspath" && printf " ${BLUE}(paths.d)${NC}\n"
+                    test -n "$private" && printf " ${YELLOW}(private)${NC}\n"
+                    test -z "$custom" -a -z "$syspath" -a -z "$private" && printf " ${WHITE}(export)${NC}\n"
+                else
+                    printf '%s'  "${RED} Path does not exist"
+                fi
             done
             IFS="$RESET_IFS"
         )
