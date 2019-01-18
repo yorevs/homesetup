@@ -690,18 +690,21 @@ function __hhs_aa() {
                 (
                     local name
                     local expr
+                    local columns="$(($(tput cols)-pad_len-18))"
                     IFS=$'\n'
                     for next in $allAliases; do
                         local re='^alias .+=.+'
                         if [[ $next =~ $re ]]; then
-                            name=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                            expr=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                            name=$(echo -n "$next" | cut -d'=' -f1 | cut -d ' ' -f2)
+                            expr=$(echo -n "$next" | cut -d'=' -f2-)
                             printf "${HIGHLIGHT_COLOR}${name//alias /}"
                             printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                            printf '%s\n' "${WHITE} is aliased to ${expr}"
+                            printf '%s' "${WHITE} is aliased to ${expr:0:$columns}"
                         else
-                            printf '%s\n' "${GREEN}$next${NC}"
+                            printf '%s' "${GREEN}${next:0:$columns}${NC}"
                         fi
+                        [ "${#expr}" -ge "$columns" ] && echo "..."
+                        printf '%s\n' "${NC}"
                     done
                     IFS="$RESET_IFS"
                 )
