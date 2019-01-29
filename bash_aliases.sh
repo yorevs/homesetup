@@ -204,13 +204,13 @@ fi
 if command -v gradle &> /dev/null; then
 
     # Prefer using the wrapper instead of the command itself
-    alias gradle='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
-    alias gwb='gradle clean build'
-    alias gwr='gradle bootRun'
-    alias gwt='gradle Test'
-    alias gwi='gradle init'
-    alias gwq='gradle -q'
-    alias gww='gradle wrapper --gradle-version'
+    alias gw='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
+    alias gwb='gw clean build'
+    alias gwr='gw bootRun'
+    alias gwt='gw Test'
+    alias gwi='gw init'
+    alias gwq='gw -q'
+    alias gww='gw wrapper --gradle-version'
 fi
 
 # -----------------------------------------------------------------------------------
