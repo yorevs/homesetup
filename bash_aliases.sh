@@ -42,16 +42,16 @@ alias sudo='sudo '
 alias ls='command ls ${COLOR_FLAG}'
 
 # List all files colorized in long format
-alias l='ls -lhF ${COLOR_FLAG}'
+alias l='ls -lhF'
 
 # List all files colorized in long format, including dot files
-alias ll='ls -lahF ${COLOR_FLAG}'
+alias ll='ls -lahF'
 
 # List all dotfiles
-alias lll='ls -lhd .?* ${COLOR_FLAG}'
+alias lll='ls -lhd .??*'
 
 # List all dotdirs
-alias lld='ls -lhd .?*/ ${COLOR_FLAG}'
+alias lld='ls -lhd .?*/'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
@@ -146,7 +146,7 @@ alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
 # External
 alias ip='dig +time=1 +short myip.opendns.com @resolver1.opendns.com'
 # Local
-alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP: $(ipconfig getifaddr $iface)"; done'
+alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
 # All IPs
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
