@@ -121,7 +121,7 @@ test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {}
 # -----------------------------------------------------------------------------------
 # Python aliases
 
-if command -v python &> /dev/null; then
+if command -v python > /dev/null; then
 
     # linux has no `json_pp`, so using python instead
     command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
@@ -140,14 +140,18 @@ fi
 # -----------------------------------------------------------------------------------
 # IP related
 
-# Show active network interfaces
-alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+# External IP
+command -v dig >/dev/null && alias ip='dig +time=1 +short myip.opendns.com @resolver1.opendns.com'
 
-# External
-alias ip='dig +time=1 +short myip.opendns.com @resolver1.opendns.com'
-# Local
-alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
-# All IPs
+# Local networking (requires pcregrep)
+if command -v pcregrep > /dev/null; then
+    # Show active network interfaces
+    alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+    # Local IP of active interfaces
+    alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
+fi
+
+# All IPs of all interfaces
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
 # -----------------------------------------------------------------------------------
@@ -178,7 +182,7 @@ command -v sha1sum >/dev/null || alias sha1sum='sha1'
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
-if command -v git &> /dev/null; then
+if command -v git > /dev/null; then
 
     alias gs='git status'
     alias gf='git fetch'
@@ -201,7 +205,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Gradle Stuff
-if command -v gradle &> /dev/null; then
+if command -v gradle > /dev/null; then
 
     # Prefer using the wrapper instead of the command itself
     alias gw='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
@@ -215,7 +219,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
-if command -v docker &> /dev/null; then
+if command -v docker > /dev/null; then
 
     alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 fi
