@@ -96,14 +96,14 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             quit 2 "Installation directory is not valid: ${INSTALL_DIR}"
         fi
 
-        # Create the ~/.hhs folder
+        # Create the $HOME/.hhs folder
         HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
         if [ ! -d "$HHS_DIR" ]; then
             mkdir -p "$HHS_DIR"
-            test -d "$HHS_DIR" || quit 2 "Unable to create directory ~/.hhs"
+            test -d "$HHS_DIR" || quit 2 "Unable to create directory $HOME/.hhs"
         else
             touch "$HHS_DIR/tmpfile"
-            test "$?" -eq 0 || quit 2 "Unable to access the ~/.hhs directory: ${HHS_DIR}"
+            test "$?" -eq 0 || quit 2 "Unable to access the $HOME/.hhs directory: ${HHS_DIR}"
             rm -f "$HHS_DIR/tmpfile"
         fi
         
@@ -152,10 +152,10 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 test -n "$ANS" && echo ''
                 printf "%s\n" "${NC}Copying dotfiles into place ..."
                 # Moving old hhs files into the proper folder
-                test -f ~/.cmd_file && mv -f ~/.cmd_file "$HHS_DIR/.cmd_file"
-                test -f ~/.saved_dir && mv -f ~/.saved_dir "$HHS_DIR/.saved_dirs"
-                test -f ~/.punchs && mv -f ~/.punchs "$HHS_DIR/.punchs"
-                test -f ~/.firebase && mv -f ~/.firebase "$HHS_DIR/.firebase"
+                test -f "$HOME/.cmd_file" && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
+                test -f "$HOME/.saved_dir" && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
+                test -f "$HOME/.punchs" && mv -f "$HOME/.punchs" "$HHS_DIR/.punchs"
+                test -f "$HOME/.firebase" && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
             else
                 test -n "$ANS" && echo ''
                 quit 1 "Installation cancelled!"
@@ -167,23 +167,23 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         # If all option is used, copy all files
         if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
             # Bin folder
-            if ! test -d ~/bin; then
+            if ! test -d "$HOME/bin"; then
                 echo -n "Linking: "
-                ln -sfv "$HOME_SETUP/bin" ~ 
-                if [ -d ~/bin ]; then
+                ln -sfv "$HOME_SETUP/bin" "$HOME"
+                if [ -d "$HOME/bin" ]; then
                     echo '[  OK  ]'
                 else
-                    quit 2 "Unable to link bin folder into ~ !"
+                    quit 2 "Unable to link bin folder into $HOME !"
                 fi
             else
-                cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
-                test -f ~/bin/dotfiles.sh || quit 2 "Unable to copy scripts into ~/bin directory!"
+                cp -nf "$HOME_SETUP"/bin/* "$HOME/bin" &>/dev/null
+                test -f "$HOME/bin/dotfiles.sh" || quit 2 "Unable to copy scripts into $HOME/bin directory!"
             fi
 
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
-                dotfile=~/.${next}
-                # Backup existing dofile into ~/.hhs
+                dotfile=$HOME/.${next}
+                # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
@@ -191,31 +191,31 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             done
         else
             # Bin folder
-            if ! test -d ~/bin; then
+            if ! test -d "$HOME/bin"; then
                 echo ''
-                read -r -n 1 -sp 'Link  ~/bin folder (y/[n])? ' ANS
+                read -r -n 1 -sp "Link  $HOME/bin folder (y/[n])? " ANS
                 if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
                     echo -en "$ANS \nLinking: "
-                    ln -sfv "$HOME_SETUP/bin" ~ 
-                    if [ -d ~/bin ]; then
+                    ln -sfv "$HOME_SETUP/bin" "$HOME" 
+                    if [ -d "$HOME/bin" ]; then
                         echo '[  OK  ]'
                     else
-                        quit 2 "Unable to link bin folder into ~ !"
+                        quit 2 "Unable to link bin folder into $HOME !"
                     fi
                 fi
             else
-                cp -nf "$HOME_SETUP"/bin/* ~/bin &>/dev/null
-                test -f ~/bin/dotfiles.sh || quit 2 "Unable to copy scripts into ~/bin directory!"
+                cp -nf "$HOME_SETUP"/bin/* "$HOME/bin" &>/dev/null
+                test -f "$HOME/bin/dotfiles.sh" || quit 2 "Unable to copy scripts into $HOME/bin directory!"
             fi
 
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
-                dotfile=~/.${next}
+                dotfile=$HOME/.${next}
                 echo ''
                 read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
                 test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
                 echo ''
-                # Backup existing dofile into ~/.hhs
+                # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
                 echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
                 test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
@@ -267,7 +267,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         echo ''
         printf "%s\n" "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         printf "%s\n" "${WHITE}"
-        printf "%s\n" "? To activate dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+        printf "%s\n" "? To activate dotfiles type: #> ${GREEN}source $HOME/.bashrc${NC}"
         printf "%s\n" "? To reload settings type: #> ${GREEN}reload${NC}"
         printf "%s\n" "? To check for updates type: #> ${GREEN}dv${NC}"
         echo '? Check README.md for full details about your new HomeSetup'

@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
-# shellcheck disable=SC2059
-# shellcheck disable=SC2183
+# shellcheck disable=SC1117,SC2059,SC2183,SC1090
 
 #  Script: bash_functions.sh
 # Purpose: This file is used to define some shell tools
@@ -10,6 +8,10 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.functions
+
+[ -f "$HOME/.bash_env" ] && \. "$HOME/.bash_env"
+[ -f "$HOME/.bash_colors" ] && \. "$HOME/.bash_colors"
+[ -f "$HOME/.bash_aliases" ] && \. "$HOME/.bash_aliases"
 
 # @function: Encrypt file using GPG encryption.
 # @param $1 [Req] : The file to encrypt.
@@ -369,6 +371,8 @@ function __hhs_envs() {
 # shellcheck disable=SC2155
 function __hhs_paths() {
 
+    PATHS_FILE=${PATHS_FILE:-$HOME/.path}
+
     local pad
     local pad_len
     local path_dir
@@ -379,7 +383,7 @@ function __hhs_paths() {
         echo "Usage: __hhs_paths [-a,-r <path>]"
         return 1
     elif [ -z "$1" ]; then
-        test -f "$HOME"/.path || touch "$HOME"/.path
+        test -f "$PATHS_FILE" || touch "$PATHS_FILE"
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=60
         echo ' '
@@ -388,7 +392,7 @@ function __hhs_paths() {
         (
             IFS=$'\n'
             for path in $(echo -e "${PATH//:/\\n}"); do
-                custom="$(grep ^"$path"$ "$HOME"/.path)" # Custom paths
+                custom="$(grep ^"$path"$ "$PATHS_FILE")" # Custom paths
                 private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
                 path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
                 printf '%s' "${HIGHLIGHT_COLOR}$path"
@@ -407,12 +411,12 @@ function __hhs_paths() {
         )
         echo -e "${NC}"
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
-        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HOME/.path"
-        test -d "$2" && echo "$2" >> "$HOME/.path"
+        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
+        test -d "$2" && echo "$2" >> "$PATHS_FILE"
         export PATH="$2:$PATH"
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
         export PATH=${PATH//$2:/}
-        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HOME/.path"
+        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
     fi
     # Remove all $PATH duplicates
     export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')

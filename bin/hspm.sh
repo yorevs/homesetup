@@ -24,10 +24,8 @@ Usage: $PROC_NAME <install/uninstall/list> [recipe]
         list                    : List all available recipes based on HomeSetup development tools.
 "
 
-# Import pre-defined .bash_colors and .bash_env
-test -f ~/.bash_colors && source ~/.bash_colors
-test -f ~/.bash_env && source ~/.bash_env
-test -f ~/.bash_functions && source ~/.bash_functions
+# Import bash stuff
+[ -f "$HOME/.bash_functions" ] && \. "$HOME/.bash_functions"
 
 # Unset all declared functions from the recipes
 cleanup_recipes() {
@@ -100,7 +98,7 @@ install_recipe() {
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
-        if command -v "$1" &> /dev/null; then
+        if command -v "$1" > /dev/null; then
             quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
         fi
         echo "${YELLOW}Installing \"$1\", please wait...${NC}"
@@ -117,7 +115,7 @@ uninstall_recipe() {
     if [ -f "$recipe" ]; then
         echo ''
         source "$recipe"
-        if ! command -v "$1" &> /dev/null; then
+        if ! command -v "$1" > /dev/null; then
             quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
         fi
         echo "${YELLOW}Uninstalling $1, please wait...${NC}"

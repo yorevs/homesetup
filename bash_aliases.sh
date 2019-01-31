@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
-# shellcheck disable=SC2142
+# shellcheck disable=SC1117,SC2142
 
 #  Script: bash_aliases.sh
 # Purpose: This file is used to configure some useful shell aliases
@@ -51,7 +50,7 @@ alias ll='ls -lahF'
 alias lll='ls -lhd .??*'
 
 # List all dotdirs
-alias lld='ls -lhd .?*/'
+alias lld='ls -lhd .??*/'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.

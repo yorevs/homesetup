@@ -18,7 +18,7 @@ if command -v java >/dev/null; then
 fi
 
 command -v python >/dev/null && export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
-command -v qmake >/dev/null && export QT_HOME="$HOME/Applications/QT/Current/clang_64"
+command -v qmake >/dev/null && export QT_HOME="/usr/local/opt/qt/bin"
 
 # XCode
 if command -v xcode-select >/dev/null; then
@@ -55,6 +55,7 @@ export MSELECT_MAX_ROWS=10
 export SAVED_DIRS="$HHS_DIR/.saved_dirs"
 export CMD_FILE="$HHS_DIR/.cmd_file"
 export PUNCH_FILE="$HHS_DIR/.punchs"
+export PATHS_FILE="$HOME/.path"
 
 # Development tools. To override it please export DEFAULT_DEV_TOOLS variable at ~/.env
 export DEFAULT_DEV_TOOLS=(
