@@ -17,8 +17,11 @@ if command -v java >/dev/null; then
     export JDK_HOME="$JAVA_HOME"
 fi
 
+# Python
 command -v python >/dev/null && export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
-command -v qmake >/dev/null && export QT_HOME="/usr/local/opt/qt/bin"
+
+# Qt
+[ -d /usr/local/opt/qt/bin ] && export QT_HOME="/usr/local/opt/qt/bin"
 
 # XCode
 if command -v xcode-select >/dev/null; then
@@ -35,7 +38,7 @@ export HOME_SETUP="$HOME/HomeSetup"
 export HHS_DIR="$HOME/.hhs"
 command -v git >/dev/null && export GIT_REPOS="$HOME/GIT-Repository"
 command -v svn >/dev/null && export SVN_REPOS="$HOME/SVN-Repository"
-test -d "$HOME/Dropbox" && export DROPBOX="$HOME/Dropbox"
+[ -d "$HOME/Dropbox" ] && export DROPBOX="$HOME/Dropbox"
 export WORKSPACE="$HOME/Workspace"
 export DESKTOP="$HOME/Desktop"
 export DOWNLOADS="$HOME/Downloads"
