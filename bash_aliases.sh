@@ -41,13 +41,13 @@ alias sudo='sudo '
 alias ls='command ls ${COLOR_FLAG}'
 
 # List all files colorized in long format
-alias l='ls -lhF'
+alias l='ls -lh'
 
 # List all files colorized in long format, including dot files
-alias ll='ls -lahF'
+alias ll='ls -lah'
 
 # List all dotfiles
-alias lll='ls -lhd .??*'
+alias lll='ls -lhd .??* | grep "^-"'
 
 # List all dotdirs
 alias lld='ls -lhd .??*/'
