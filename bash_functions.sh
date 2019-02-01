@@ -223,7 +223,7 @@ function __hhs_del-tree() {
                 for next in $all; do
                     dst=${next##*/}
                     while [ -e "${TRASH}/$dst" ]; do
-                        dst="${next##*/}-$(now-ms)"
+                        dst="${next##*/}-$(ts)"
                     done
                     mv -v "$next" "${TRASH}/$dst"
                 done
