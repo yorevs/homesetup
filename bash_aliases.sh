@@ -29,10 +29,6 @@ alias ?='pwd'
 # -----------------------------------------------------------------------------------
 # General
 alias q="exit"
-alias reload='cls; source ~/.bashrc && echo "${GREEN}HomeSetup bash v$DOTFILES_VERSION reloaded!${NC}"'
-
-# Kills all processes specified by $1
-alias pk='function _() { test -n "$1" && plist $1 kill; };_'
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -104,6 +100,12 @@ command -v wget >/dev/null || alias wget='curl -O'
 
 # Generate a random number int the range <min> <max>
 alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))" || echo "Usage: rand <min> <max>"; };_'
+
+# Reload the bash session
+alias reload='cls; \. ~/.bashrc && echo "${GREEN}Welcome to HomeSetup© v${DOTFILES_VERSION}!${NC}"'
+
+# Kills all processes specified by $1
+alias pk='function _() { test -n "$1" && plist $1 kill; };_'
 
 # -----------------------------------------------------------------------------------
 # Tool aliases
