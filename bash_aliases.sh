@@ -142,7 +142,7 @@ fi
 # IP related
 
 # External IP
-command -v dig >/dev/null && alias ip='dig +time=1 +short myip.opendns.com @resolver1.opendns.com'
+command -v dig >/dev/null && alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
 
 # Local networking (requires pcregrep)
 if command -v pcregrep > /dev/null; then
