@@ -7,7 +7,8 @@
   @created: Aug 26, 2017
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@hotmail.com
-      Site: https://github.com/yorevs/homesetup
+     @site: https://github.com/yorevs/homesetup
+  @license: Please refer to <http://unlicense.org/>
 """
 
 from time import sleep, time as time

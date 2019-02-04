@@ -6,6 +6,8 @@
   @created: Nov 20, 2008
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@gmail.com
+     @site: https://github.com/yorevs/homesetup
+  @license: Please refer to <http://unlicense.org/>
 """
 
 import subprocess

@@ -7,6 +7,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
+# License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.aliases
 
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
@@ -158,6 +159,9 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 # -----------------------------------------------------------------------------------
 # Mac Stuff
 
+# Copy to clipboard
+command -v pbcopy >/dev/null && alias clipboard="sed -E 's/(\(B\[*m?)|\[[0-9;]*m?//g' | pbcopy"
+
 # Delete all .DS_store files
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
@@ -167,9 +171,14 @@ command -v dscacheutil >/dev/null && alias flush="dscacheutil -flushcache && kil
 # Clean up LaunchServices to remove duplicates in the “Open With” menu
 command -v lsregister >/dev/null && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
-# Show/hide hidden files in Finder
-command -v defaults >/dev/null && alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-command -v defaults >/dev/null && alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+if command -v defaults > /dev/null; then
+    # Show/hide hidden files in Finder
+    alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+    # Hide/show all desktop icons
+    alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+    alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+fi
 
 # Canonical hex dump; some systems have this symlinked
 command -v hd >/dev/null || alias hd='hexdump -C'

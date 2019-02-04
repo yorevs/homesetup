@@ -4,5 +4,3 @@
   * [ ] Add authentication to the requests
 
 * [ ] Create a dotfiles folder and split the dotfiles commands into smaller files
-
-* [ ] Create the hspm ( HomeSetup Package Manager ) script.

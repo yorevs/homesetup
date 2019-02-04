@@ -7,6 +7,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
+# License: Please refer to <http://unlicense.org/>
 
 # Current script version.
 VERSION=0.9.0
