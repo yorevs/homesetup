@@ -94,7 +94,7 @@ function __hhs_sf() {
     else
         local ext=".${2##*.}"
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        find -L "$1" -type f -iname "*""$2"  | grep "${ext##*.}"
+        find -L "$1" -type f -iname "*""$2""*"  | grep "${ext##*.}$"
         return $?
     fi
 }
