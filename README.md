@@ -112,34 +112,34 @@ ALIAS   | Equivalent
 ALIAS    | Equivalent
 -------- | --------
 q        | exit
-reload   | 'Reload all dotfiles and check for updates'
-pk       | 'Kills all processes specified by a name'
-sudo     | 'Enable aliases to be sudo’ed'
-ls       | 'Always use color output for `ls`'
+reload   | 'Reload all **.dotfiles**'
+pk       | 'Kills all processes matching the specified **<name>**'
+sudo     | 'Enable aliases to be **sudo’ed**'
+ls       | 'Always use color output for **ls**'
 l        | 'List all files colorized in long format'
 ll       | 'List all files colorized in long format, including dot files'
-lll      | 'List all `.dotfiles`'
-lld      | 'List all `.dotfolders`'
+lll      | 'List all **.dotfiles**'
+lld      | 'List all **.dotfolders**'
 lt       | 'List all directories recursively (Nth level depth) as a tree'
-grep     | 'Always enable colored `grep` output'
-egrep    | 'Always enable colored `egrep` output'
-fgrep    | 'Always enable colored `fgrep` output'
-rm       | rm -i 'For safety, by default this command will input for confirmation'
-cp       | cp -i 'For safety, by default this command will input for confirmation'
-mv       | mv -i 'For safety, by default this command will input for confirmation'
+grep     | 'Always enable colorized **grep** output'
+egrep    | 'Always enable colorized **egrep** output'
+fgrep    | 'Always enable colorized **fgrep** output'
+rm       | **rm -iv** 'For safety, by default this command will input for confirmation'
+cp       | **cp -iv** 'For safety, by default this command will input for confirmation'
+mv       | **mv -iv** 'For safety, by default this command will input for confirmation'
 cls      | clear
 vi       | vim
 tl       | tail -F
 mount    | 'Make mount command output pretty and human readable format'
 mkcd     | Make a folder and cd into it
-cpu      | `top` shortcut ordered by cpu
-mem      | `top` shortcut ordered by memory
+cpu      | **top** shortcut ordered by cpu
+mem      | **top** shortcut ordered by memory
 rmdbc    | 'Recursively delete Dropbox conflicted files from the current directory'
-week     | 'Current `week` of the month' 
-now      | 'Current `date`'
-ts       | 'Current `timestamp` in milliseconds'
-wget     | 'MacOS has no wget, so use curl instead'
-rand     | 'Generate a random number from `<min>` to  `<max>`'
+week     | 'Current **week** of the month' 
+now      | 'Current **date**'
+ts       | 'Current **timestamp** in milliseconds'
+wget     | 'MacOS has no wget, so use **curl** instead'
+rand     | 'Generate a random number from **<min>** to  **<max>**'
 
 #### Python aliases
 ALIAS   | Equivalent
@@ -154,17 +154,17 @@ uuid    | 'Generate a random UUID'
 ALIAS   | Equivalent
 ------- | -------
 ifa     | 'List all active interfaces on the system'
-ip      | 'Get the real IP on the internet'
-ipl     | 'Get the local IPs on the local network'
-ips     | 'Get all associated local IPs of the machine'
+ip      | 'Get the Real IP on the internet'
+ipl     | 'Get all Local IPs on the local network'
+ips     | 'Get all (ipv4 & ipv6) associated local IPs of the machine'
 
 #### Mac Stuff
 
 ALIAS      | Equivalent
 ---------- | ----------
-clean-ds   | 'Delete all .DS_store files'
+clean-ds   | 'Delete all **.DS_store** files'
 show-files | 'Show hidden files in Finder'
-hide-files | 'Hiden hidden files in Finder'
+hide-files | 'Hidden hidden files in Finder'
 
 **Please check: [bash_aliases](./bash_aliases.sh) for all aliases**
 
@@ -177,33 +177,33 @@ Function    | Purpose
 encrypt     | Encrypt file using GPG encryption.
 decrypt     | Decrypt file using GPG encryption.
 hl          | Highlight words from the piped stream.
-sf          | Search for `files` recursively.
-sd          | Search for `directories` recursively.
-ss          | Search for `strings` in files recursively.
+sf          | Search for **files** and **links to files** recursively.
+sd          | Search for **directories** and **links to directories** recursively.
+ss          | Search for **strings** matching the specified criteria in files recursively.
 hist        | Search for a previous issued command from history.
-del-tree    | Send files recursively to the Trash.
-jp          | Pretty print (format) JSON string.
+del-tree    | Move files recursively to the **Trash**.
+jp          | Pretty print **(format) JSON** string.
 ip-info     | Check information about the specified IP.
 ip-resolve  | Resolve domain names associated with the IP.
 ip-lookup   | Lookup DNS entries to determine the IP address.
-port-check  | Check the state of a local port.
-envs        | Prints all `environment` variables on a separate line.
-paths       | Print each `PATH entry` on a separate line.
-ver         | Check the version of the app using the most common ways.
-tc          | Check whether the `tool` is installed.
-tools       | Check whether some `dev. tools` are installed.
-mselect     | Select an option from a list, using a navigable menu.
-aa          | Manipulate all custom aliases `(add/remove/set)`.
-save        | Save the one directory to be loaded by `load`.
-load        | Pushd into a saved directory issued by `save`.
-punch       | Punch the clock. Add, Edit and List clock punches.
-plist       | Display (optionally kill) a process list, given process name.
-cmd         | Add/Remove/List/Execute `saved bash commands`.
-godir       | Push dir from the first match of the specified directory name.
-git-        | GIT Checkout the branch in history (skips `branch-to-same-branch` changes ).
-sysinfo     | Retrieve some important system information.
+port-check  | Check the state of **local port(s)**.
+envs        | Prints all **environment variables** on a separate line using filters.
+paths       | Print each **PATH entry** on a separate line.
+ver         | Check the **version** of the app using the most common ways.
+tc          | Check whether a **tool** is installed on the system.
+tools       | Check whether a list of **development tools** are installed.
+mselect     | Select an option from a list using a navigable menu.
+aa          | Manipulate custom aliases **(add/remove/edit/list)**.
+save        | **Save** the one directory to be loaded by *load*.
+load        | **Pushd** into a saved directory issued by *save*.
+punch       | Punch the Clock. Add/Remove/Edit/List clock punches.
+plist       | Display a process list matching the process name/expression.
+cmd         | Add/Remove/List/Execute saved bash commands.
+godir       | **Pushd** from the first match of the specified directory name.
+git-        | GIT Checkout the previous branch in history **(skips branch-to-same-branch changes )**.
+sysinfo     | Retrieve relevant system information.
 parts       | Exhibit a summary about all mounted partitions.
-dv          | Check the latest `HomeSetup` version.
+dv          | Check the current **HomeSetup** version and find updates.
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 
@@ -218,7 +218,7 @@ Function                | Purpose
 calc.py                 | Simple app to do mathematical calculations.
 tcalc.py                | Simple app to do mathematical calculations with time.
 free.py                 | Report system memory usage.
-json-find.py            | Find a nobject from the json string or file.
+json-find.py            | Find an object from the Json string or file.
 pprint-xml.py           | Pretty print (format) an xml file.
 send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads.
 
@@ -226,7 +226,7 @@ send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-
 
 Function                | Purpose
 ----------------------- | -----------------------
-dotfiles.sh             | Manage your HomeSetup dotfiles and more.
+dotfiles.sh             | Manage your HomeSetup .dotfiles and more.
 hspm.sh                 | Manage your development tools using installation/uninstallation recipes.
 fetch.sh                | Script to fetch REST APIs data.
 git-completion.sh       | bash/zsh completion support for core Git.
