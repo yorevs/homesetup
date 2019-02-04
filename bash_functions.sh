@@ -207,30 +207,37 @@ function __hhs_hist() {
 function __hhs_del-tree() {
 
     local all
-    local dst
+    local dest
 
     if [ -z "$1" ] || [ "$1" = "/" ] || [ ! -d "$1" ]; then
         echo "Usage: __hhs_del-tree <search_path> <glob_exp>"
         return 1
     else
         # Find all files and folders matching the <glob_exp>
-        all=$(find "$1" -name "*$2" 2> /dev/null)
+        all=$(find -L "$1" -name "*$2" 2> /dev/null)
         # Move all to trash
         if [ -n "$all" ]; then
-            read -r -n 1 -sp "### Move all files of type: \"$2\" in \"$1\" recursively to trash (y/[n]) ? " ANS
+            read -r -n 1 -sp "${RED}### Do you want to move all files and folders matching: \"$2\" in \"$1\" recursively to Trash (y/[n]) ? " ANS
+            echo ' '
             if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-                echo "${RED}"
+                echo ' '
                 for next in $all; do
-                    dst=${next##*/}
-                    while [ -e "${TRASH}/$dst" ]; do
-                        dst="${next##*/}-$(ts)"
+                    dest=${next##*/}
+                    while [ -e "${TRASH}/$dest" ]; do
+                        dest="${next##*/}-$(ts)"
                     done
-                    mv -v "$next" "${TRASH}/$dst"
+                    mv -v "$next" "${TRASH}/$dest"
                 done
-                echo -n "${NC}"
             else
-                echo "${NC}"
+                echo -e "${YELLOW}If you decide to delete, the following files will be affected:${NC}"
+                echo ' '
+                echo "$all" | grep "$2"
             fi
+            echo "${NC}"
+        else
+            echo ' '
+            echo "${YELLOW}No files or folders matching \"$2\" were found in \"$1\" !${NC}"
+            echo ' '
         fi
     fi
 
