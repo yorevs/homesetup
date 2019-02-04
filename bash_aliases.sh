@@ -35,7 +35,7 @@ alias q="exit"
 alias sudo='sudo '
 
 # Always use color output for `ls`
-alias ls='command ls ${COLOR_FLAG}'
+alias ls='command ls ${COLOR_FLAG} -t'
 
 # List all files colorized in long format
 alias l='ls -lh'
