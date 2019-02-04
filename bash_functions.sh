@@ -351,7 +351,7 @@ function __hhs_envs() {
         filter="$*"
         test -z "$filter" && filter="^[a-zA-Z0-9_]*.*"
         echo ' '
-        echo "Listing all exported environment variables matching [ $filter ]:"
+        echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
         echo ' '
         (
             IFS=$'\n'
@@ -395,7 +395,7 @@ function __hhs_paths() {
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=60
         echo ' '
-        echo 'Listing all PATH entries:'
+        echo "${YELLOW}Listing all PATH entries:"
         echo ' '
         (
             IFS=$'\n'
@@ -1295,7 +1295,7 @@ function __hhs_parts() {
     allParts="$(df -Ha | tail -n +2)"
     (
         IFS=$'\n'
-        echo "${YELLOW}"
+        echo "${WHITE}"
         printf '%-25s\t%-4s\t%-4s\t%-4s\t%-4s\t\n' 'Mounted-ON' 'Size' 'Used' 'Avail' 'Capacity'
         echo -e "----------------------------------------------------------------${HIGHLIGHT_COLOR}"
         for next in $allParts
