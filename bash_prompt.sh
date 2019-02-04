@@ -7,7 +7,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.prompt
+# !NOTICE: Do not change this file. To customize your prompt edit the file ~/.prompt
 
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles

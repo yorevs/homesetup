@@ -7,7 +7,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.colors
+# !NOTICE: Do not change this file. To customize your colors edit the file ~/.colors
 
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 # improved with: https://misc.flogisoft.com/bash/tip_colors_and_formatting

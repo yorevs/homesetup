@@ -7,7 +7,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.functions
+# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # Dependencies
 [ -f "$HOME/.bash_env" ] && \. "$HOME/.bash_env"

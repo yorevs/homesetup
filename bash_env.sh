@@ -6,7 +6,11 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-# !NOTICE: Do not change this file. To customize your aliases edit the file ~/.env
+# !NOTICE: Do not change this file. To customize your environment variables edit the file ~/.env
+
+# System locale
+export LC_ALL=en_US
+export LANG=en_US.UTF-8
 
 # ----------------------------------------------------------------------------
 # Home Sweet Homes

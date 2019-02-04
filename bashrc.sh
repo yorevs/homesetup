@@ -9,7 +9,8 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-# !NOTICE: Do not change this file. To customize your shell create the custom files: 
+#
+# !NOTICE: Do not change this file. To customize your shell create/change the following files: 
 #   .aliases    : To customize your aliases
 #   .colors     : To customize your colors
 #   .env        : To customize your environment variables
