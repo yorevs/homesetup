@@ -39,7 +39,7 @@ function __hhs_encrypt() {
     return 1
 }
 
-# @function: Decrypt file using GPG encryption..
+# @function: Decrypt file using GPG encryption.
 # @param $1 [Req] : The file to decrypt.
 # @param $2 [Req] : The passphrase to decrypt the file.
 # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
@@ -65,7 +65,7 @@ function __hhs_decrypt() {
     return 1
 }
 
-# @function: Highlight words matching pattern.
+# @function: Highlight words from the piped stream.
 # @param $1 [Req] : The word to highlight.
 # @param $1 [Pip] : The piped input stream.
 function __hhs_hl() {
@@ -83,7 +83,7 @@ function __hhs_hl() {
     return 0
 }
 
-# @function: Search for files recursively.
+# @function: Search for files and links to files recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the file search.
 function __hhs_sf() {
@@ -99,7 +99,7 @@ function __hhs_sf() {
     fi
 }
 
-# @function: Search for directories recursively.
+# @function: Search for directories and links to directories recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expression of the directory search.
 function __hhs_sd() {
@@ -116,7 +116,7 @@ function __hhs_sd() {
     return 0
 }
 
-# @function: Search for strings in files recursively.
+# @function: Search for strings matching the specified criteria in files recursively.
 # @param $1 [Req] : Search options.
 # @param $2 [Req] : The base search path.
 # @param $3 [Req] : The searching string.
@@ -186,7 +186,7 @@ function __hhs_ss() {
     return 0
 }
 
-# @function: Search for a previous issued command from history.
+# @function: Search for previous issued commands from history using filters.
 # @param $1 [Req] : The searching command.
 function __hhs_hist() {
 
@@ -202,7 +202,7 @@ function __hhs_hist() {
     return 0
 }
 
-# @function: Send files recursively to Trash.
+# @function: Move files recursively to the Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function __hhs_del-tree() {
 
@@ -262,7 +262,7 @@ function __hhs_jp() {
     return 0
 }
 
-# @function: Check information about the IP.
+# @function: Check information about the specified IP.
 # @param $1 [Req] : The IP to get information about.
 function __hhs_ip-info() {
 
@@ -293,7 +293,7 @@ function __hhs_ip-resolve() {
     return 0
 }
 
-# @function: Lookup the DNS to determine the associated IP address.
+# @function: Lookup DNS entries to determine the IP address.
 # @param $1 [Req] : The domain name to lookup.
 function __hhs_ip-lookup() {
 
@@ -307,7 +307,7 @@ function __hhs_ip-lookup() {
     return 0
 }
 
-# @function: Check the state of a local port.
+# @function: Check the state of local port(s).
 # @param $1 [Req] : The port number regex.
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
 function __hhs_port-check() {
@@ -329,7 +329,7 @@ function __hhs_port-check() {
     return 0
 }
 
-# @function: Print all environment variables.
+# @function: Prints all environment variables on a separate line using filters.
 # @param $1 [Opt] : Filter environments.
 function __hhs_envs() {
 
@@ -431,7 +431,7 @@ function __hhs_paths() {
     return 0
 }
 
-# @function: Check the version of the app using common ways.
+# @function: Check the version of the app using the most common ways.
 # @param $1 [Req] : The app to check.
 function __hhs_ver() {
 
@@ -471,7 +471,7 @@ function __hhs_ver() {
     return 0
 }
 
-# @function: Check if the required tool is installed on the system.
+# @function: Check whether a tool is installed on the system.
 # @param $1 [Req] : The app to check.
 function __hhs_tc() {
 
@@ -501,7 +501,7 @@ function __hhs_tc() {
     return 1
 }
 
-# @function: Check if the development tools are installed on the system.
+# @function: Check whether a list of development tools are installed.
 function __hhs_tools() {
 
     DEFAULT_DEV_TOOLS=${DEFAULT_DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
@@ -522,7 +522,7 @@ function __hhs_tools() {
 }
 
 
-# @function: Select an option from a list, using a navigable menu.
+# @function: Select an option from a list using a navigable menu.
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The array of options.
 function __hhs_mselect() {
@@ -656,7 +656,7 @@ function __hhs_mselect() {
     return 0
 }
 
-# @function: Manipulate all custom aliases.
+# @function: Manipulate custom aliases (add/remove/edit/list).
 # @param $1 [Req] : The alias name.
 # @param $2 [Opt] : The alias expression.
 function __hhs_aa() {
@@ -741,7 +741,7 @@ function __hhs_aa() {
     return 0
 }
 
-# @function: Save the current directory to be loaded by `load`.
+# @function: Save the one directory to be loaded by load.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
 function __hhs_save() {
@@ -792,7 +792,7 @@ function __hhs_save() {
     return 0
 }
 
-# @function: CD into the saved directory issued by `save`.
+# @function: Pushd into a saved directory issued by save.
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load() {
 
@@ -1008,7 +1008,7 @@ function __hhs_cmd() {
     return 0
 }
 
-# @function: Punch the Clock: Format = DDD dd-mm-YYYY => HH:MM HH:MM ...
+# @function: Punch the Clock. Add/Remove/Edit/List clock punches.
 # @param $1 [Opt] : Punch options
 function __hhs_punch() {
 
@@ -1110,7 +1110,7 @@ function __hhs_punch() {
     return 0
 }
 
-# @function: Display a process list of the given process name, killing them if specified.
+# @function: Display a process list matching the process name/expression.
 # @param $1 [Req] : The process name to check.
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_plist() {
@@ -1172,7 +1172,7 @@ function __hhs_plist() {
     return 0
 }
 
-# @function: CD into the first match of the specified directory name.
+# @function: Pushd from the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
 function __hhs_godir() {
@@ -1225,7 +1225,7 @@ function __hhs_godir() {
     return 0
 }
 
-# @function: GIT Checkout the branch in history (skips branch-to-same-branch ).
+# @function: GIT Checkout the previous branch in history (skips branch-to-same-branch changes ).
 function __hhs_git-() {
 
     local currBranch
@@ -1238,7 +1238,7 @@ function __hhs_git-() {
     command git checkout "$prevBranch"
 }
 
-# @function: Retrieve some important system information.
+# @function: Retrieve relevant system information.
 function __hhs_sysinfo() {
     
     local username
@@ -1275,7 +1275,7 @@ function __hhs_sysinfo() {
     return 0
 }
 
-# @function: Exhibit a summary about all partitions.
+# @function: Exhibit a Human readable summary about all partitions.
 function __hhs_parts() {
 
     local pad
@@ -1316,7 +1316,7 @@ function __hhs_parts() {
     return 0
 }
 
-# @function: Check the latest dotfiles version.
+# @function: Check the current HomeSetup installation and look for updates.
 function __hhs_dv() {
 
     local repoVer

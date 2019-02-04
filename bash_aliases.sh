@@ -102,7 +102,7 @@ command -v wget >/dev/null || alias wget='curl -O'
 alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))" || echo "Usage: rand <min> <max>"; };_'
 
 # Reload the bash session
-alias reload='cls; \. ~/.bashrc && echo "${GREEN}Welcome to HomeSetup© v${DOTFILES_VERSION}!${NC}"'
+alias reload='cls; \. ~/.bashrc && echo "${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup© v${DOTFILES_VERSION} ! ${NC}"'
 
 # Kills all processes specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill; };_'
@@ -117,7 +117,7 @@ command -v tree >/dev/null && alias lt='function _() { test -n "$1" -a -n "$2" &
 command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Dropbox: Recursively delete Dropbox conflicted files from the current directory
-test -d "$DROPBOX" && alias rmdbc="find . -name *\ \(*conflicted* -exec rm -v {} \;"
+test -d "$DROPBOX" && alias db-fix="find . -name *\ \(*conflicted* -exec rm -v {} \;"
 
 # -----------------------------------------------------------------------------------
 # Python aliases

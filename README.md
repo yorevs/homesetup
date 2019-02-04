@@ -180,7 +180,7 @@ hl          | Highlight words from the piped stream.
 sf          | Search for **files** and **links to files** recursively.
 sd          | Search for **directories** and **links to directories** recursively.
 ss          | Search for **strings** matching the specified criteria in files recursively.
-hist        | Search for a previous issued command from history.
+hist        | Search for previous issued commands from history using filters.
 del-tree    | Move files recursively to the **Trash**.
 jp          | Pretty print **(format) JSON** string.
 ip-info     | Check information about the specified IP.
@@ -196,14 +196,14 @@ mselect     | Select an option from a list using a navigable menu.
 aa          | Manipulate custom aliases **(add/remove/edit/list)**.
 save        | **Save** the one directory to be loaded by *load*.
 load        | **Pushd** into a saved directory issued by *save*.
+cmd         | Add/Remove/List/Execute saved bash commands.
 punch       | Punch the Clock. Add/Remove/Edit/List clock punches.
 plist       | Display a process list matching the process name/expression.
-cmd         | Add/Remove/List/Execute saved bash commands.
 godir       | **Pushd** from the first match of the specified directory name.
 git-        | GIT Checkout the previous branch in history **(skips branch-to-same-branch changes )**.
 sysinfo     | Retrieve relevant system information.
-parts       | Exhibit a summary about all mounted partitions.
-dv          | Check the current **HomeSetup** version and find updates.
+parts       | Exhibit a Human readable summary about all partitions.
+dv          | Check the current **HomeSetup** installation and look for updates..
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 
@@ -215,7 +215,6 @@ The project contains some useful scripts that can be used directly from shell. I
 
 Function                | Purpose
 ----------------------- | -----------------------
-calc.py                 | Simple app to do mathematical calculations.
 tcalc.py                | Simple app to do mathematical calculations with time.
 free.py                 | Report system memory usage.
 json-find.py            | Find an object from the Json string or file.
