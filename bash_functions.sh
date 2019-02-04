@@ -1249,7 +1249,7 @@ function __hhs_sysinfo() {
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
     echo -e "\n${WHITE}Storage:"
     printf "  %-15s %-7s %-7s %-7s %-5s %s\n" "Disk" "Size" "Used" "Free" "Cap" "MountedAt"
-    echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s %s\n", $1,$2,$3,$3,$5,$9) }')"
+    echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s %s\n", $1,$2,$3,$4,$5,$9) }')"
     echo -e "\n${WHITE}Network:${HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
     command -v pcregrep >/dev/null && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
