@@ -140,6 +140,16 @@ if command -v python > /dev/null; then
 fi
 
 # -----------------------------------------------------------------------------------
+# Perl aliases
+
+if command -v perl >/dev/null; then
+    # Clean escape codes from text
+    alias cse="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
+    # Copy to clipboard
+    command -v pbcopy >/dev/null && alias clipboard="cse | pbcopy"
+fi
+
+# -----------------------------------------------------------------------------------
 # IP related
 
 # External IP
@@ -158,9 +168,6 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 
 # -----------------------------------------------------------------------------------
 # Mac Stuff
-
-# Copy to clipboard
-command -v pbcopy >/dev/null && alias clipboard="sed -E 's/(\(B\[*m?)|\[[0-9;]*m?//g' | pbcopy"
 
 # Delete all .DS_store files
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"

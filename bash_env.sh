@@ -71,5 +71,5 @@ export DEFAULT_DEV_TOOLS=(
     "node" "java" "python" "rvm" "ruby" "go" "gcc" "make" "qmake"
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
     "nvm" "npm" "jenv" "eslint" "gpg" "base64" "md5" "shasum"
-    "htop" "dialog" "telnet" "figlet" "shellcheck"
+    "htop" "dialog" "telnet" "figlet" "shellcheck" "perl"
 )
