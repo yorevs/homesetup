@@ -831,13 +831,16 @@ function __hhs_load() {
                 echo ' '
                 echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
                 echo ' '
-                for next in ${allDirs[*]}; do
-                    dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-                    dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
-                    printf "${HIGHLIGHT_COLOR}${dirAlias}"
-                    printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                    printf '%s\n' "${WHITE} is saved as '${dir}'"
-                done
+                (
+                    IFS=$'\n'
+                    for next in ${allDirs[*]}; do
+                        dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
+                        dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+                        printf "${HIGHLIGHT_COLOR}${dirAlias}"
+                        printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+                        printf '%s\n' "${WHITE} is saved as '${dir}'"
+                    done
+                )
                 echo "${NC}"
                 return 0
             ;;
@@ -845,15 +848,18 @@ function __hhs_load() {
                 clear
                 echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
                 echo -en "${WHITE}"
-                mselectFile=$(mktemp)
-                __hhs_mselect "$mselectFile" "${allDirs[*]}"
-                # shellcheck disable=SC2181
-                if [ "$?" -eq 0 ]; then
-                    selIndex=$(grep . "$mselectFile")
-                    dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-                    # selIndex is zero-based
-                    dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
-                fi
+                (
+                    IFS=$'\n'
+                    mselectFile=$(mktemp)
+                    __hhs_mselect "$mselectFile" "${allDirs[*]}"
+                    # shellcheck disable=SC2181
+                    if [ "$?" -eq 0 ]; then
+                        selIndex=$(grep . "$mselectFile")
+                        dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+                        # selIndex is zero-based
+                        dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
+                    fi
+                )
             ;;
             [a-zA-Z0-9_]*)
                 dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
