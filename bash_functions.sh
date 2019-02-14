@@ -840,6 +840,7 @@ function __hhs_load() {
                         printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
                         printf '%s\n' "${WHITE} is saved as '${dir}'"
                     done
+                    IFS="$RESET_IFS"
                 )
                 echo "${NC}"
                 return 0
@@ -850,6 +851,7 @@ function __hhs_load() {
                 echo -en "${WHITE}"
                 (
                     IFS=$'\n'
+                    # shellcheck disable=SC2030
                     mselectFile=$(mktemp)
                     __hhs_mselect "$mselectFile" "${allDirs[*]}"
                     # shellcheck disable=SC2181
@@ -859,6 +861,7 @@ function __hhs_load() {
                         # selIndex is zero-based
                         dir=$(awk "NR==$((selIndex+1))" "$SAVED_DIRS" | awk -F '=' '{ print $2 }')
                     fi
+                    IFS="$RESET_IFS"
                 )
             ;;
             [a-zA-Z0-9_]*)
@@ -883,6 +886,7 @@ function __hhs_load() {
         echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
     fi
 
+    # shellcheck disable=SC2031
     test -f "$mselectFile" && command rm -f "$mselectFile"
 
     return 0
