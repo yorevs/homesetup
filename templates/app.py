@@ -43,7 +43,7 @@ def main(argv):
 
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
-        opts, args = getopt.getopt(argv, 'i:o:', ['in=', 'out='])
+        opts, args = getopt.getopt(argv, 'vhi:o:', ['in=', 'out='])
 
         for opt, arg in opts:
             if opt in ('-v', '--version'):
