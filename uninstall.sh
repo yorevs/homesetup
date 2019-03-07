@@ -17,6 +17,10 @@ USAGE="
 Usage: $PROC_NAME
 "
 
+# Import pre-defined Bash Colors
+# shellcheck source=/dev/null
+[ -f ~/.bash_colors ] && \. ~/.bash_colors
+
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
@@ -24,17 +28,19 @@ quit() {
     
     # Unset all declared functions
     unset -f quit usage check_installation uninstall_dotfiles
-
-    test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
-    test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
-    echo ''
-    exit "$1"
+    ret=$1
+    shift
+    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+    [ "$#" -gt 0 ] && printf "%s" "$*"
+    # Unset all declared functions
+    printf "%s\n" "${NC}"
+    exit "$ret"
 }
 
 # Usage message.
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-    quit 2 "$USAGE"
+    quit "$1" "$USAGE"
 }
 
 check_installation() {
@@ -51,9 +57,6 @@ check_installation() {
     )
 
     if [ -n "$HOME_SETUP" ] && [ -d "$HOME_SETUP" ]; then
-        
-        # shellcheck disable=SC1090
-        source "$HOME_SETUP/bash_colors.sh"
 
         printf "%s\n" "${BLUE}"
         echo '#'
@@ -64,16 +67,15 @@ check_installation() {
         printf "%s\n" "#${NC}"
 
         printf "%s\n" "${RED}"
-            read -r -n 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
-            printf "%s\n" "${NC}"
-            if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
-                
-                test -n "$ANS" && echo ''
-                uninstall_dotfiles
-            else
-                test -n "$ANS" && echo ''
-                quit 1 "Uninstallation cancelled!"
-            fi
+        read -r -n 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
+        printf "%s\n" "${NC}"
+        [ -n "$ANS" ] && echo ''
+
+        if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+            uninstall_dotfiles
+        else
+            quit 1 "Uninstallation cancelled!"
+        fi
     else
         quit 2 "Installation files were not found or removed !"
     fi
@@ -85,10 +87,11 @@ uninstall_dotfiles() {
     for next in ${ALL_DOTFILES[*]}; do
         test -n "$next" -a -f "$HOME/.${next}" && rm -fv "$HOME/.${next}"
     done
+
     # shellcheck disable=SC2164
     cd ~
     rm -rfv "$HOME_SETUP" 
-    test -L "$HOME/bin" && rm -f "$HOME/bin"
+    [ -L "$HOME/bin" ] && rm -f "$HOME/bin"
     echo ''
 
     if [ -d "$HHS_DIR" ]; then

@@ -18,36 +18,41 @@ USAGE="
 Usage: $PROC_NAME <IP>
 "
 
-# Import pre-defined .bash_colors
-# shellcheck disable=SC1090
-test -f ~/.bash_colors && source ~/.bash_colors
+# Import pre-defined Bash Colors
+# shellcheck source=/dev/null
+[ -f ~/.bash_colors ] && \. ~/.bash_colors
 
 # Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code.
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
     
-    test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
-    test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
+    unset -f quit usage version 
+    ret=$1
+    shift
+    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+    [ "$#" -gt 0 ] && printf "%s" "$*"
     # Unset all declared functions
-    unset -f quit usage version checkIpClass checkIpType checkIpValid
     printf "%s\n" "${NC}"
-    exit "$1"
+    exit "$ret"
 }
 
 # Usage message.
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-    quit 1 "$USAGE"
+    quit "$1" "$USAGE"
 }
 
 # Version message.
 version() {
-    quit 1 "$VERSION"
+    quit 0 "$VERSION"
 }
 
 # Check if the user passed the help or version parameters.
-test "$1" = '-h' -o "$1" = '--help' -o -z "$1" && usage
-test "$1" = '-v' -o "$1" = '--version' && version
+[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
+[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+# Test if the Ip parameter is not empty
+[ -z "$1" ] && usage 1
 
 # The IP to be validated.
 IP="$1"
@@ -55,26 +60,21 @@ IP_VALID=''
 IP_CLASS=''
 IP_TYPE=''
 
-# Test if the Ip parameter is not empty
-if test -z "$IP"; then
-    quit 1 "$USAGE"
-fi
-
 # Purpose: Find the IP class.
 # @param $1 [Req] : The IP to get information about
 checkIpClass() {
 
     octet_1=$(echo "$1" | cut -d '.' -f1)
 
-    if test "$((octet_1))" -le 127; then
+    if [ "$((octet_1))" -le 127 ] ]; then
         IP_CLASS="A"
-    elif test "$((octet_1))" -gt 127 && test "$((octet_1))" -le 191; then
+    elif [ "$((octet_1))" -gt 127 ] && [ "$((octet_1))" -le 191 ] ]; then
         IP_CLASS="B"
-    elif test "$((octet_1))" -ge 192 && test "$((octet_1))" -le 223; then
+    elif [ "$((octet_1))" -ge 192 ] && [ "$((octet_1))" -le 223 ] ]; then
         IP_CLASS="C"
-    elif test "$((octet_1))" -ge 224 && test "$((octet_1))" -le 239; then
+    elif [ "$((octet_1))" -ge 224 ] && [ "$((octet_1))" -le 239 ] ]; then
         IP_CLASS="D"
-    elif test "$((octet_1))" -ge 240; then
+    elif [ "$((octet_1))" -ge 240 ] ]; then
         IP_CLASS="E"
     else
         IP_CLASS="?"
@@ -96,24 +96,24 @@ checkIpClass() {
 #
 checkIpType() {
 
-    octet_1=$(echo $1 | cut -d '.' -f1)
-    octet_2=$(echo $1 | cut -d '.' -f2)
+    octet_1=$(echo "$1" | cut -d '.' -f1)
+    octet_2=$(echo "$1" | cut -d '.' -f2)
 
-    if test $((octet_1)) -eq 0; then
+    if [ $((octet_1)) -eq 0 ]; then
         IP_TYPE="'This' Network"
-    elif test $((octet_1)) -eq 10; then
+    elif [ $((octet_1)) -eq 10 ]; then
         IP_TYPE="Private"
-    elif test $((octet_1)) -eq 127; then
+    elif [ $((octet_1)) -eq 127 ]; then
         IP_TYPE="Loopback"
-    elif test $((octet_1)) -eq 172 && test $((octet_2)) -eq 16; then
+    elif [ $((octet_1)) -eq 172 ] && [ $((octet_2)) -eq 16 ]; then
         IP_TYPE="Private"
-    elif test $((octet_1)) -eq 192 && test $((octet_2)) -eq 168; then
+    elif [ $((octet_1)) -eq 192 ] && [ $((octet_2)) -eq 168 ]; then
         IP_TYPE="Private"
-    elif test $((octet_1)) -ge 224 && test $((octet_1)) -le 239; then
+    elif [ $((octet_1)) -ge 224 ] && [ $((octet_1)) -le 239 ]; then
         IP_TYPE="Multicast"
-    elif test "$IP" = "255.255.255.255"; then
+    elif [ "$IP" = "255.255.255.255" ]; then
         IP_TYPE="Limited Broadcast"
-    elif test $((octet_1)) -ge 240; then
+    elif [ $((octet_1)) -ge 240 ]; then
         IP_TYPE="Reserved"
     else
         IP_TYPE="Public"
@@ -130,7 +130,7 @@ checkIpValid() {
     test "$(uname -s)" = "Darwin" && extRegexFlag='-E'
     IP_VALID=$(echo "$IP" | sed $extRegexFlag "s/$ip_regex/VALID/")
 
-    if test "$IP_VALID" != "VALID"; then
+    if [ "$IP_VALID" != "VALID" ]; then
         IP_VALID="## Invalid IP ##"
     else
         IP_VALID=
@@ -139,7 +139,7 @@ checkIpValid() {
 
 checkIpValid
 
-if test -z "$IP_VALID"; then
+if [ -z "$IP_VALID" ]; then
     checkIpClass "$IP"
     checkIpType "$IP"
     echo "Valid IP: $IP, Class: $IP_CLASS, Type: $IP_TYPE"

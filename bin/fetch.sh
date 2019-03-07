@@ -30,16 +30,18 @@ Usage: $PROC_NAME <method> [options] <url>
 "
 
 # Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code.
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
     
-    test "$1" != '0' -a "$1" != '1' && printf "%s" "${RED}"
-    test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
-    # Unset all declared functions
     unset -f quit usage version format_json do_fetch
+    ret=$1
+    shift
+    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+    [ "$#" -gt 0 ] && printf "%s" "$*"
+    # Unset all declared functions
     printf "%s\n" "${NC}"
-    exit "$1"
+    exit "$ret"
 }
 
 # Usage message.
@@ -53,8 +55,11 @@ version() {
 }
 
 # Check if the user passed the help or version parameters.
-test "$1" = '-h' -o "$1" = '--help' -o -z "$1" && usage
-test "$1" = '-v' -o "$1" = '--version' && version
+[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
+[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+
+# Request timeout in seconds
+REQ_TIMEOUT=5
 
 shopt -s nocasematch
 case "$1" in
@@ -63,7 +68,7 @@ case "$1" in
         shift
     ;;
     *)
-        quit 2 "Method $1 is not not valid!"
+        quit 2 "Method \"$1\" is not not valid!"
     ;;
 esac
 shopt -u nocasematch
@@ -98,12 +103,12 @@ while test -n "$1"; do
     shift
 done
 
-test -z "$URL" && quit 2 "No URL was defined!"
+[ -z "$URL" ] && quit 2 "No URL was defined!"
 
 if [ "GET" = "${METHOD}" ] || [ "DELETE" = "${METHOD}" ]; then
-    test -n "${BODY}" && quit 2 "${METHOD} does not accept any body"
+    [ -n "${BODY}" ] && quit 2 "${METHOD} does not accept any body"
 elif [ "PUT" = "${METHOD}" ] || [ "POST" = "${METHOD}" ] || [ "PATCH" = "${METHOD}" ]; then
-    test -z "${BODY}" && quit 2 "${METHOD} requires a body"
+    [ -z "${BODY}" ] && quit 2 "${METHOD} requires a body"
 fi
 
 # Format or not the output
@@ -111,28 +116,29 @@ format_json() {
 
     # Piped input
     read -r response
-    test -n "${FORMAT}" && echo "$response" | json_pp -f json -t json -json_opt pretty indent escape_slash
-    test -z "${FORMAT}" && echo "$response"
+    [ -n "${FORMAT}" ] && printf "%s\n" "$response" | json_pp -f json -t json -json_opt pretty indent escape_slash
+    [ -z "${FORMAT}" ] && printf "%s\n" "$response"
 }
 
 # Do the request
 do_fetch() {
 
     if [ -z "$HEADERS" ] && [ -z "${BODY}" ]; then
-        curl -m 3 -X "${METHOD}" "${URL}" 2> /dev/null | format_json
+        curl -m $REQ_TIMEOUT -X "${METHOD}" "${URL}" 2> /dev/null | format_json
     elif [ -z "$HEADERS" ] && [ -n "${BODY}" ]; then
-        curl -m 3 -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
+        curl -m $REQ_TIMEOUT -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
     elif [ -n "$HEADERS" ] && [ -n "${BODY}" ]; then
-        curl -m 3 -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
+        curl -m $REQ_TIMEOUT -X "${METHOD}" -d "${BODY}" "${URL}" 2> /dev/null | format_json
     elif [ -n "$HEADERS" ] && [ -z "${BODY}" ]; then
-        curl -m 3 -X "${METHOD}" "${URL}" 2> /dev/null | format_json
+        curl -m $REQ_TIMEOUT -X "${METHOD}" "${URL}" 2> /dev/null | format_json
     fi
 
     return $?
 }
 
-test -z "${SILENT}" && echo "Fetching (${METHOD}) $URL ..."
+[ -z "${SILENT}" ] && printf "%s\n" "Fetching: ${METHOD} $URL ..."
 
 do_fetch
 ret=$?
+
 quit $ret
