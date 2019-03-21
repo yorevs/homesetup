@@ -59,3 +59,12 @@ paths -a "$HOME/bin"
 
 # Remove all `$PATH` duplicates
 export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
+# Setting PATH for Python 3.6
+# The original version is saved in .bash_profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
+export PATH
+
+# Setting PATH for Python 3.7
+# The original version is saved in .bash_profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.7/bin:${PATH}"
+export PATH

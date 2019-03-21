@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
   @package: This is a template python application
    @script: ${app.py}
@@ -12,8 +14,17 @@
 import sys, os, getopt
 
 PROC_NAME       = os.path.basename(__file__)
+# Version tuple: (major,minor,build)
 VERSION         = (0, 9, 0)
-USAGE           = "Usage: python {} [optionals] <mandatories>".format(PROC_NAME)
+# Usage message
+USAGE           = """
+Usage: python {} [optionals] <mandatories>
+""".format(PROC_NAME)
+
+ARGS_MAP = {
+    'input' : None,
+    'output' : None
+}
 
 def usage(exitCode=0):
     """
@@ -34,6 +45,7 @@ def app_exec():
         Execute the app business logic
     """
     print("Hello Python App")
+    print(ARGS_MAP)
 
 def main(argv):
     """
@@ -45,19 +57,20 @@ def main(argv):
         # Short opts: -<C>, Long opts: --<Word>
         opts, args = getopt.getopt(argv, 'vhi:o:', ['in=', 'out='])
 
+        if len(opts) < 2:
+            raise ValueError('### Invalid number of arguments: ({})'.format(len(opts)))
+
         for opt, arg in opts:
             if opt in ('-v', '--version'):
                 version()
-                sys.exit(0)
             elif opt in ('-h', '--help'):
                 usage()
-                sys.exit(0)
             elif opt in ('-i', '--in'):
-                print('in: {}'.format(arg))
+                ARGS_MAP['input'] = arg
             elif opt in ('-o', '--out'):
-                print('out: {}'.format(arg))
+                ARGS_MAP['output'] = arg
             else:
-                assert False, 'Unhandled option: %s' % opt
+                assert False, '### Unhandled option: {}'.format(opt)
         
         # Execute the app code
         if len(args) > 0:
@@ -65,15 +78,19 @@ def main(argv):
         
         app_exec()
 
-    # Caught getopt exceptions
+    # Catch getopt exceptions
     except getopt.GetoptError as optErr:
-        print('Failed to execute app => {}'.format(optErr.msg))
-        usage()
-        sys.exit(2)
-    
+        print('{}'.format(optErr.msg))
+        usage(2)
+        
+    # Catch ValueErrors
+    except ValueError as valErr:
+        print('{}'.format(valErr))
+        usage(2)
+
     # Caught app exceptions
     except Exception as err:
-        print('An exception was thrown executing the app => {}'.format( err ))
+        print('### A unexpected exception was thrown executing the app => \n\t{}'.format( err ))
         sys.exit(2)
 
 if __name__ == "__main__":

@@ -210,7 +210,7 @@ if command -v git > /dev/null; then
     alias gd='git diff'
     alias gp='git pull'
     alias gprb='git pull --rebase'
-    alias gl='git log --oneline --graph --decorate'
+    alias gl='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
     alias gcm='git commit -m'
     alias gca='git commit --amend --no-edit'
     alias gtps='git push origin HEAD'
