@@ -211,6 +211,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
+
 if __hhs_has "git"; then
 
     alias gs='git status'
@@ -234,6 +235,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Gradle Stuff
+
 if __hhs_has "gradle"; then
 
     # Prefer using the wrapper instead of the command itself
@@ -248,9 +250,18 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
+# inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
+
 if __hhs_has "docker"; then
 
-    alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+    alias dki='docker images'
+    alias dks='docker service'
+    alias dke='function _() { [ -n "$2" ] && docker exec -it "$1" "$2" || docker exec -it "$1" /bin/sh; };_'
+    alias dkrm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+    alias dkps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
+    alias dkpid='function _() { docker ps | grep "$1" | awk '"'"'{print $1}'"'"'; };_'
+    alias dktl='function _() { docker logs -f $(docker ps | grep "$1" | awk '"'"'{print $1}'"'"'); };_'
+    alias dktop='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
 fi
 
 # -----------------------------------------------------------------------------------
