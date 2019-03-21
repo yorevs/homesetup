@@ -145,7 +145,7 @@ function __hhs_ss() {
         echo ''
         return 1
     else
-        while test -n "$1"
+        while [ -n "$1" ]
         do
             case "$1" in
                 -w | --words)
@@ -275,7 +275,7 @@ function __hhs_ip-info() {
         return 1
     else
         ipinfo=$(curl -m 3 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
-        test -n "$ipinfo" && __hhs_jp "$ipinfo"
+        [ -n "$ipinfo" ] && __hhs_jp "$ipinfo"
     fi
 
     return 0
@@ -350,7 +350,7 @@ function __hhs_envs() {
         pad_len=40
         columns="$(($(tput cols)-pad_len-9))"
         filter="$*"
-        test -z "$filter" && filter="^[a-zA-Z0-9_]*.*"
+        [ -z "$filter" ] && filter="^[a-zA-Z0-9_]*.*"
         echo ' '
         echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
         echo ' '
@@ -392,7 +392,7 @@ function __hhs_paths() {
         echo "Usage: paths [-a,-r <path>]"
         return 1
     elif [ -z "$1" ]; then
-        test -f "$PATHS_FILE" || touch "$PATHS_FILE"
+        [ -f "$PATHS_FILE" ] || touch "$PATHS_FILE"
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=60
         echo ' '
@@ -406,22 +406,22 @@ function __hhs_paths() {
                 path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
                 printf '%s' "${HIGHLIGHT_COLOR}$path"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-                if test -d "$path"; then
+                if [ -d "$path" ]; then
                     printf '%s' "${GREEN} Path exists => "
                 else
                     printf '%s'  "${RED} Path does not exist => "
                 fi
-                test -n "$custom" && printf '%s\n' "custom"
-                test -n "$path_dir" && printf '%s\n' "paths.d"
-                test -n "$private" && printf '%s\n' "private"
-                test -z "$custom" -a -z "$path_dir" -a -z "$private" && printf '%s\n' "exported"
+                [ -n "$custom" ] && printf '%s\n' "custom"
+                [ -n "$path_dir" ] && printf '%s\n' "paths.d"
+                [ -n "$private" ] && printf '%s\n' "private"
+                [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && printf '%s\n' "exported"
             done
             IFS="$RESET_IFS"
         )
         echo -e "${NC}"
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
         ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
-        test -d "$2" && echo "$2" >> "$PATHS_FILE"
+        [ -d "$2" ] && echo "$2" >> "$PATHS_FILE"
         export PATH="$2:$PATH"
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
         export PATH=${PATH//$2:/}
@@ -492,7 +492,7 @@ function __hhs_tc() {
         printf "${ORANGE}($(uname -s))${NC} "
         printf "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
-        if [ -n "${check}" ]; then
+        if has "${tool_name}"; then
             printf '%s\n' "${GREEN}INSTALLED${NC} at ${check}"
             return 0
         else
@@ -518,7 +518,7 @@ function __hhs_tools() {
     echo "${HIGHLIGHT_COLOR}"
     echo 'To check the current installed version, type: #> ver <tool_name>'
     echo 'To install/uninstall a tool, type: #> hspm.sh install/uninstall <tool_name>'
-    echo 'To override the list of tools: export DEFAULT_DEV_TOOLS=( "tool1" "tool2", ... )'
+    echo 'To override the list of tools, type: #> export DEFAULT_DEV_TOOLS=( "tool1" "tool2", ... )'
     echo "${NC}"
     
     return 0
@@ -562,7 +562,7 @@ function __hhs_mselect() {
     len=${#allOptions[*]}
 
     # When only one option is provided, select the index 0
-    test "$len" -eq 1 && echo "0" > "$outfile" && return 0
+    [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0
     save-cursor-pos
     disable-line-wrap
 
@@ -612,7 +612,7 @@ function __hhs_mselect() {
                 echo -ne "\033[$((${#index}+1))D\033[K"
                 if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
                     showTo=$((index-1))
-                    test "$showTo" -le "$diffIndex" && showTo=$diffIndex
+                    [ "$showTo" -le "$diffIndex" ] && showTo=$diffIndex
                     showFrom=$((showTo-diffIndex))
                     selIndex=$((index-1))
                 fi
@@ -626,7 +626,7 @@ function __hhs_mselect() {
                         showFrom=$((showFrom-1))
                         showTo=$((showTo-1))
                     fi
-                    test $((selIndex-1)) -ge 0 && selIndex=$((selIndex-1))
+                    [ $((selIndex-1)) -ge 0 ] && selIndex=$((selIndex-1))
                 ;;
                 [B) # Down-arrow
                     # Next
@@ -634,7 +634,7 @@ function __hhs_mselect() {
                         showFrom=$((showFrom+1))
                         showTo=$((showTo+1))
                     fi
-                    test $((selIndex+1)) -lt "$len" && selIndex=$((selIndex+1))
+                    [ $((selIndex+1)) -lt "$len" ] && selIndex=$((selIndex+1))
                 ;;
                 esac
             ;;
@@ -713,7 +713,7 @@ function __hhs_aa() {
                             expr=$(echo -n "$next" | cut -d'=' -f2-)
                             printf "${HIGHLIGHT_COLOR}${name//alias /}"
                             printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                            printf '%s' "${WHITE} is aliased to ${expr:0:$columns}"
+                            printf '%s' "${YELLOW} is aliased to ${WHITE}${expr:0:$columns}"
                         else
                             printf '%s' "${GREEN}${next:0:$columns}${NC}"
                         fi
@@ -724,7 +724,7 @@ function __hhs_aa() {
                 )
                 printf '%s\n' "${NC}"
             else
-                printf '%s\n' "${YELLOW}No aliases were found in \"$aliasFile\" !${NC}"
+                printf '%s\n' "${ORANGE}No aliases were found in \"$aliasFile\" !${NC}"
             fi
         elif [ -n "$aliasName" ] && [ -n "$aliasExpr" ]; then
             # Add/Set one alias
@@ -766,8 +766,8 @@ function __hhs_save() {
         return 1
     else
         
-        test -n "$2" || dirAlias=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        test -n "$2" && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        [ -n "$2" ] || dirAlias=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        [ -n "$2" ] && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         
         if [ "$1" = "-e" ]; then
             vi "$SAVED_DIRS"
@@ -838,7 +838,7 @@ function __hhs_load() {
                         dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
                         printf "${HIGHLIGHT_COLOR}${dirAlias}"
                         printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-                        printf '%s\n' "${WHITE} is saved as '${dir}'"
+                        printf '%s\n' "${YELLOW} is saved as ${WHITE}'${dir}'"
                     done
                     IFS="$RESET_IFS"
                 )
@@ -883,11 +883,11 @@ function __hhs_load() {
         fi
         
     else
-        echo "${YELLOW}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
+        echo "${ORANGE}No directories were saved yet \"$SAVED_DIRS\" !${NC}"
     fi
 
     # shellcheck disable=SC2031
-    test -f "$mselectFile" && command rm -f "$mselectFile"
+    [ -f "$mselectFile" ] && command rm -f "$mselectFile"
 
     return 0
 }
@@ -974,7 +974,7 @@ function __hhs_cmd() {
                             cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
                             printf "${HIGHLIGHT_COLOR}${cmdName}"
                             printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-                            echo "is stored as: ${cmdExpr}"
+                            echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
                             index=$((index + 1))
                         done
                         IFS="$RESET_IFS"
@@ -996,18 +996,18 @@ function __hhs_cmd() {
                     if [ "$?" -eq 0 ]; then
                         selIndex=$(grep . "$mselectFile") # selIndex is zero-based
                         cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                        test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                        test -n "$cmdExpr" && echo "#> $cmdExpr" && eval "$cmdExpr"
+                        [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                        [ -n "$cmdExpr" ] && echo "#> $cmdExpr" && eval "$cmdExpr"
                     fi
                     IFS="$RESET_IFS"
                 else
-                    echo "${YELLOW}No commands available yet !${NC}"
+                    echo "${ORANGE}No commands available yet !${NC}"
                 fi  
             ;;
             [A-Z0-9_]*)
                 cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                test "-z" "$cmdExpr" && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                test -n "$cmdExpr" && echo -e "#> $cmdExpr" && eval "$cmdExpr"
+                [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                [ -n "$cmdExpr" ] && echo -e "#> $cmdExpr" && eval "$cmdExpr"
             ;;
             *)
                 printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
@@ -1016,7 +1016,7 @@ function __hhs_cmd() {
         esac
     fi
 
-    test -f "$mselectFile" && command rm -f "$mselectFile"
+    [ -f "$mselectFile" ] && command rm -f "$mselectFile"
 
     return 0
 }
@@ -1113,7 +1113,7 @@ function __hhs_punch() {
                     echo ''
                 else
                     # Create a new timestamp if it's the first punch for the day
-                    test "$success" = '1' || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
+                    [ "$success" = '1' ] || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
                     grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/${GREEN}Today${NC}/g"
                 fi
             )
@@ -1140,7 +1140,7 @@ function __hhs_plist() {
         echo '    -w : Match full words only'
         return 1
     else
-        while test -n "$1"
+        while [ -n "$1" ]
         do
             case "$1" in
                 -w | --words)
@@ -1202,8 +1202,8 @@ function __hhs_godir() {
         local searchPath
         local name
         local selIndex
-        test -n "$2" && searchPath="$1" || searchPath="$(pwd)"
-        test -n "$2" && name="$(basename "$2")" || name="$(basename "$1")"
+        [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
+        [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
         IFS=$'\n' read -d '' -r -a results <<< "$(find -L "$searchPath" -type d -iname "*""$name" 2> /dev/null)" IFS="$RESET_IFS"
         len=${#results[@]}
         # If no directory is found under the specified name
@@ -1230,10 +1230,10 @@ function __hhs_godir() {
             fi
             IFS="$RESET_IFS"
         fi
-        test -n "$dir" -a -d "$dir" && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
+        [ -n "$dir" ] && [ -d "$dir" ] && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
     fi
 
-    test -f "$mselectFile" && command rm -f "$mselectFile"
+    [ -f "$mselectFile" ] && command rm -f "$mselectFile"
 
     return 0
 }
@@ -1272,8 +1272,8 @@ function __hhs_sysinfo() {
     echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${WHITE}Network:${HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
-    command -v pcregrep >/dev/null && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
-    command -v dig >/dev/null && echo -e "  Real-IP...... : $(ip)"
+    has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
+    has "dig" && echo -e "  Real-IP...... : $(ip)"
     echo -e "\n${WHITE}Logged Users:${HIGHLIGHT_COLOR}"
     ( 
         IFS=$'\n'
@@ -1343,7 +1343,7 @@ function __hhs_dv() {
             echo -e "${YELLOW}You have a different version of HomeSetup:"
             echo -e "  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}."
             read -r -n 1 -sp "Update it now (y/[n]) ?" ANS
-            test -n "$ANS" && echo "${ANS}${NC}"
+            [ -n "$ANS" ] && echo "${ANS}${NC}"
             if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
                 pushd "$HOME_SETUP" &> /dev/null || return 1
                 git pull || return 1

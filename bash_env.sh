@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155
 
 #  Script: bash_env.sh
 # Purpose: This file is used to configure shell environment variables
@@ -12,6 +13,7 @@
 # System locale
 export LC_ALL=en_US
 export LANG=en_US.UTF-8
+export MY_OS="$(uname -s)"
 
 # ----------------------------------------------------------------------------
 # Home Sweet Homes
@@ -30,7 +32,6 @@ command -v python >/dev/null && export PYTHON_HOME="/System/Library/Frameworks/P
 
 # XCode
 if command -v xcode-select >/dev/null; then
-    # shellcheck disable=SC2155
     export XCODE_HOME="$(xcode-select -p)"
     export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 fi
@@ -56,7 +57,7 @@ export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
-# shellcheck disable=SC2155
+export HHS_WELCOME="${ORANGE}${MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup© ${YELLOW}v${DOTFILES_VERSION} ! ${NC}"
 export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export RESET_IFS="$IFS"
 export MSELECT_MAX_ROWS=10

@@ -15,6 +15,12 @@
 # Removes all aliases before setting them
 unalias -a
 
+# @function: Check if a command exists.
+# @param $1 [Req] : The command to check.
+__hhs_has() { 
+    type "$1" > /dev/null 2>&1
+}
+
 # -----------------------------------------------------------------------------------
 # Navigational
 alias ..='cd ..'
@@ -62,7 +68,7 @@ alias mv='mv -iv'
 
 # Setting some defaults
 alias cls='clear'
-command -v vim >/dev/null && alias vi='vim'
+__hhs_has "vim" && alias vi='vim'
 alias tl='tail -F'
 alias df='df -H'
 alias du='du -ch'
@@ -80,15 +86,15 @@ alias cpu='top -o cpu'
 alias mem='top -o rsize'
 
 # Base64 encode shortcuts
-alias encode="base64"
+__hhs_has "base64" && alias encode="base64"
 
 # Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
-if [ "Linux" = "$(uname -s)" ]; then 
+if [ "Linux" = "$MY_OS" ]; then 
     alias ised="sed -i'' -r"
-    alias decode='base64 -d'
-elif [ "Darwin" = "$(uname -s)" ]; then
+    __hhs_has "base64" && alias decode='base64 -d'
+elif [ "Darwin" = "$MY_OS" ]; then
     alias ised="sed -i '' -E"
-    alias decode='base64 -D'
+    __hhs_has "base64" && alias decode='base64 -D'
 fi
 
 # Date and time shortcuts
@@ -97,13 +103,13 @@ alias now='date +"%d-%m-%Y %T"'
 alias ts='date "+%s%S"'
 
 # macOS has no `wget, so using curl instead`
-command -v wget >/dev/null || alias wget='curl -O'
+__hhs_has "wget" || alias wget='curl -O'
 
 # Generate a random number int the range <min> <max>
 alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))" || echo "Usage: rand <min> <max>"; };_'
 
 # Reload the bash session
-alias reload='cls; \. ~/.bashrc && echo "${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup© v${DOTFILES_VERSION} ! ${NC}"'
+alias reload='cls; \. ~/.bashrc && echo "${HHS_WELCOME}"'
 
 # Kills all processes specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill; };_'
@@ -112,21 +118,21 @@ alias pk='function _() { test -n "$1" && plist $1 kill; };_'
 # Tool aliases
 
 # Tree: List all directories recursively (Nth level depth) as a tree
-command -v tree >/dev/null && alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
+__hhs_has "tree" && alias lt='function _() { test -n "$1" -a -n "$2" && tree $1 -L $2 || tree $1; };_'
 
 # Jenv: Set JAVA_HOME using jenv
-command -v jenv >/dev/null && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
+__hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Dropbox: Recursively delete Dropbox conflicted files from the current directory
-test -d "$DROPBOX" && alias db-fix="find . -name *\ \(*conflicted* -exec rm -v {} \;"
+[ -d "$DROPBOX" ] && alias db-clean="find . -name *\ \(*conflicted* -exec rm -v {} \;"
 
 # -----------------------------------------------------------------------------------
 # Python aliases
 
-if command -v python > /dev/null; then
+if __hhs_has "python"; then
 
     # linux has no `json_pp`, so using python instead
-    command -v json_pp >/dev/null || alias json_pp='python -m json.tool'
+    __hhs_has "json_pp" || alias json_pp='python -m json.tool'
     
     # Evaluate mathematical expression
     alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
@@ -142,21 +148,23 @@ fi
 # -----------------------------------------------------------------------------------
 # Perl aliases
 
-if command -v perl >/dev/null; then
+if __hhs_has "perl"; then
+
     # Clean escape codes from text
     alias cse="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
     # Copy to clipboard
-    command -v pbcopy >/dev/null && alias clipboard="cse | pbcopy"
+    __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
 fi
 
 # -----------------------------------------------------------------------------------
 # IP related
 
 # External IP
-command -v dig >/dev/null && alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
+__hhs_has "dig" && alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
 
 # Local networking (requires pcregrep)
-if command -v pcregrep > /dev/null; then
+if __hhs_has "pcregrep"; then
+
     # Show active network interfaces
     alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
     # Local IP of active interfaces
@@ -164,42 +172,46 @@ if command -v pcregrep > /dev/null; then
 fi
 
 # All IPs of all interfaces
-alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+__hhs_has "ifconfig" && alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
 # -----------------------------------------------------------------------------------
 # Mac Stuff
 
-# Delete all .DS_store files
-alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
+if [ "Darwin" = "$MY_OS" ]; then 
 
-# Flush Directory Service cache
-command -v dscacheutil >/dev/null && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+    # Delete all .DS_store files
+    alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
-# Clean up LaunchServices to remove duplicates in the “Open With” menu
-command -v lsregister >/dev/null && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+    # Flush Directory Service cache
+    __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
-if command -v defaults > /dev/null; then
-    # Show/hide hidden files in Finder
-    alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-    alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-    # Hide/show all desktop icons
-    alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-    alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+    # Clean up LaunchServices to remove duplicates in the “Open With” menu
+    __hhs_has "lsregister" && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+
+    if __hhs_has "defaults"; then
+
+        # Show/hide hidden files in Finder
+        alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+        alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+        # Hide/show all desktop icons
+        alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+        alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+    fi
+
+    # Canonical hex dump; some systems have this symlinked
+    __hhs_has "hd" || alias hd='hexdump -C'
+
+    # macOS has no `md5sum`, so use `md5` as a fallback
+    __hhs_has "md5sum" || alias md5sum='md5'
+
+    # macOS has no `sha1sum`, so use `shasum` as a fallback
+    __hhs_has "sha1" || alias sha1='shasum'
+    __hhs_has "sha1sum" || alias sha1sum='sha1'
 fi
-
-# Canonical hex dump; some systems have this symlinked
-command -v hd >/dev/null || alias hd='hexdump -C'
-
-# macOS has no `md5sum`, so use `md5` as a fallback
-command -v md5sum >/dev/null || alias md5sum='md5'
-
-# macOS has no `sha1sum`, so use `shasum` as a fallback
-command -v sha1 >/dev/null || alias sha1='shasum'
-command -v sha1sum >/dev/null || alias sha1sum='sha1'
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
-if command -v git > /dev/null; then
+if __hhs_has "git"; then
 
     alias gs='git status'
     alias gf='git fetch'
@@ -222,7 +234,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Gradle Stuff
-if command -v gradle > /dev/null; then
+if __hhs_has "gradle"; then
 
     # Prefer using the wrapper instead of the command itself
     alias gw='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
@@ -236,7 +248,7 @@ fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
-if command -v docker > /dev/null; then
+if __hhs_has "docker"; then
 
     alias drm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
 fi
@@ -271,6 +283,7 @@ alias disable-line-wrap='echo -ne "\033[?7l"'
 # -----------------------------------------------------------------------------------
 # HomeSetup function aliases
 
+alias has='__hhs_has'
 alias encrypt='__hhs_encrypt'
 alias decrypt='__hhs_decrypt'
 alias hl='__hhs_hl'
