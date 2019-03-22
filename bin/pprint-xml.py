@@ -14,24 +14,39 @@
 import sys, os
 import xml.dom.minidom
 
-# Purpose: Exhibit the usage message.
-def usage():
-    print 'Format an XML file or scans a directory and walk though all subdirectories and format all found xml files.\n'
-    print 'Usage: pprint-xml.py <filename>/<dirname> ...'
+PROC_NAME       = os.path.basename(__file__)
+# Version tuple: (major,minor,build)
+VERSION         = (0, 9, 0)
+# Usage message
+USAGE           = """
+Format an XML file or scans a directory and walk though all subdirectories and format all found xml files.
 
-# Purpose: Format the specified XML file contents and return the formatted XML as a string.
+Usage: python {} <filename>/<dirname> ...
+""".format(PROC_NAME)
+
+# @purpose: Display the usage message and exit with the specified code ( or zero as default )
+def usage(exitCode=0):
+    print(USAGE)
+    sys.exit(exitCode)
+
+# @purpose: Display the current program version and exit
+def version():
+    print('{} v{}.{}.{}'.format(PROC_NAME,VERSION[0],VERSION[1],VERSION[2]))
+    sys.exit(0)
+
+# @purpose: Format the specified XML file contents and return the formatted XML as a string.
 def pretty_print(xml_path):
     xml_dom = xml.dom.minidom.parse(xml_path)
     pretty_xml = xml_dom.toprettyxml()
     
     return pretty_xml
 
-# Purpose: Save the specified contents to the file.
+# @purpose: Save the specified contents to the file.
 def save_xml_file(filename, xml_content):
-    with open(filename, 'w') as text_file:
-        text_file.write(xml_content)
+    with open(filename, 'w') as xmlFile:
+        xmlFile.write(xml_content)
 
-# Purpose: Parse the command line arguments and execute the program accordingly.
+# @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
     retVal = 0
     try:
@@ -45,16 +60,16 @@ def main(argv):
                                 theFile = os.path.join(subdir,next_file)
                                 try:
                                     save_xml_file(theFile, pretty_print(theFile))
-                                except Exception, err:
-                                    print '#### Failed to format XML file \"%s\": \n  |-> %s' % (theFile , str(err))
+                                except Exception as err:
+                                    print('#### Failed to format XML file \"{}\": \n  |-> {}'.format(theFile , str(err)))
                                     pass
                 else:
                     save_xml_file(xml_path, pretty_print(xml_path))
         else:
             usage()
         retVal = 0
-    except Exception, err: # catch *all* exceptions
-        print '\n#### An exception occurred: %s \n' % str(err)
+    except Exception as err: # catch *all* exceptions
+        print('### A unexpected exception was thrown executing the app => \n\t{}'.format( err ))
         retVal = 1
     finally:
         sys.exit(retVal)

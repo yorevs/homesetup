@@ -35,6 +35,7 @@ MAX_DISPLAYED_MSG_LEN = 500
 
 USAGE = """
 IP Message Sender v{}
+
 Usage: {} [opts]
 
     Options:
@@ -49,17 +50,13 @@ Usage: {} [opts]
         -n, --netType    <network_type>     : The network type to be used. Either UDP or TCP ( default is TCP ).
 """.format(str(VERSION), PROC_NAME, MAX_THREADS)
 
+# @purpose: Display the usage message and exit with the specified code ( or zero as default )
 def usage(exitCode=0):
-    """
-        Help message to be displayed by the script.
-    """
     print(USAGE)
     sys.exit(exitCode)
 
+# @purpose: Display the current program version and exit
 def version():
-    """
-        Echoes the current script version.
-    """
     print('{} v{}.{}.{}'.format(PROC_NAME,VERSION[0],VERSION[1],VERSION[2]))
     sys.exit(0)
 
@@ -88,11 +85,11 @@ class TcpUdpIpSender(object):
             try:
                 self.clientSocket.connect(self.host)
             except socket.error as err:
-                print('\n###Error -> %s' % str(err))
+                print('\n###Error -> {}'.format(str(err)))
                 sys.exit(2)
 
     def __interrupt_handler__(self, sigNum, fraNum):
-        print('Program has been interrupted [Ctrl+C] ^%d' % sigNum)
+        print('Program has been interrupted [Ctrl+C] ^{}'.format(sigNum))
         print('Terminating threads')
         self.isAlive = False
         if self.netType == NET_TYPE_TCP:
@@ -100,7 +97,7 @@ class TcpUdpIpSender(object):
             self.clientSocket.close()
 
     def startSending(self):
-        print('Start sending %s packets every %f seconds: max. of[%d] to %s \nTHREADS = %d' % (
+        print('Start sending {} packets every {} seconds: max. of[{}] to {} \nTHREADS = {}'.format(
                 self.netType
                 ,self.interval
                 ,self.packets
@@ -132,13 +129,13 @@ class TcpUdpIpSender(object):
                 try:
                     self.clientSocket.sendall(self.message + '\n')
                 except socket.error as err:
-                    print('\n###Error -> %s' % str(err))
+                    print('\n###Error -> {}'.format(str(err)))
                     sys.exit(2)
             counter+=1
             sleep(self.interval)
 
 def redirectOutput(outFile):
-    print('Redirecting STDOUT to: %s' % outFile)
+    print('Redirecting STDOUT to: {}'.format(outFile))
     sys.stdout = open(outFile, 'w')
 
 def restoreOutput():
@@ -146,15 +143,13 @@ def restoreOutput():
         outFile = sys.stdout
         sys.stdout = sys.__stdout__
         outFile.close()
-        print('Restored STDOUT output from file: %s' % outFile)
+        print('Restored STDOUT output from file: {}'.format(outFile))
 
 def toMillis(dtime):
     retVal = 0
-
     if dtime:
         epoch = int(round(time() * 1000))
         diffTime = dtime - epoch
-
         retVal = diffTime.total_seconds() * 1000000.0
 
     return retVal
@@ -164,7 +159,6 @@ def calcDiffTime(time1, time2):
     if time1 and time2 and time1.isValid and time2.isValid:
         t1 = toMillis(time1.timeStamp)
         t2 = toMillis(time2.timeStamp)
-
         if t2 < t1:
             timeDiff = t1 - t2
         else:
@@ -180,15 +174,12 @@ def humanReadableTime(timeInMicroseconds):
     hours = total_seconds/3600
     microseconds = delta.microseconds
     # Using format: HH:MM:SS.uuuuuu
-    strLine = '%.2d:%.2d:%.2d.%.6d' % (
-        hours, minutes, seconds, microseconds
-    )
+    strLine = '%.2d:%.2d:%.2d.%.6d' % ( hours, minutes, seconds, microseconds )
 
     return strLine
 
 def humanReadableBytes(bytesSize):
     kb, mb, gb, tb = 2**10, 2**20, 2**30, 2**40
-
     if 0 <= bytesSize <= kb:
         retVal = '%.3f[bytes]' % bytesSize
     elif kb < bytesSize <= mb:
@@ -204,7 +195,6 @@ def humanReadableBytes(bytesSize):
 
 def fitToColumns(message):
     msgLen = len(message)
-
     if msgLen > 0:
         message = '%s' % (
             (
@@ -223,6 +213,9 @@ def main(cmdArgs):
     netType = NET_TYPE_TCP
 
     try:
+        if len(sys.argv) == 1 or sys.argv[1] in [ '-h', '--help' ]:
+            usage()
+
         # pylint: disable=W0612
         opts, args = getopt.getopt(cmdArgs, 'hvm:p:a:k:i:t:n:', ['help', 'version', 'message=', 'port=', 'address=', 'packets=', 'interval=', 'threads=', 'netType'])
 
@@ -265,7 +258,7 @@ def main(cmdArgs):
 
     # Caught getopt exceptions
     except (getopt.GetoptError, AssertionError) as err:
-        print('\n###Error -> %s' % str(err))
+        print('\n###Error -> {}'.format(str(err)))
         usage(2)
 
     # Ignore sys.exit
@@ -274,7 +267,7 @@ def main(cmdArgs):
 
     # Caught all other exceptions
     except:
-        print('\n###Exception -> %s' % str(sys.exc_info()[0]))
+        print('### A unexpected exception was thrown executing the app => \n\t{}'.format( str(sys.exc_info()[0]) ))
         sys.exit(2)
 
     sys.exit(0)

@@ -68,10 +68,14 @@ alias mv='mv -iv'
 
 # Setting some defaults
 alias cls='clear'
-__hhs_has "vim" && alias vi='vim'
 alias tl='tail -F'
 alias df='df -H'
 alias du='du -ch'
+__hhs_has "vim" && alias vi='vim'
+
+# Interpret escape sequences
+alias more='more -R'
+alias less='less -R'
 
 # Make mount command output pretty and human readable format
 alias mount='mount | column -t'
@@ -217,20 +221,21 @@ if __hhs_has "git"; then
     alias gs='git status'
     alias gf='git fetch'
     alias gh='git log -p'
-    alias gco='git checkout'
-    alias gta='git add'
     alias gb='git branch'
     alias gd='git diff'
     alias gp='git pull'
-    alias gprb='git pull --rebase'
     alias gl='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
+    alias gco='git checkout'
+    alias gta='git add'
     alias gcm='git commit -m'
     alias gca='git commit --amend --no-edit'
-    alias gtps='git push origin HEAD'
     alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
     alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
+    alias gprb='git pull --rebase'
+    alias gtps='git push origin HEAD'
     alias gshow='git diff-tree --no-commit-id --name-status -r'
     alias gdshow='function _() { git diff $1^1 $1 -- $2; };_'
+    __hhs_has "opendiff" && alias gdt='git difftool -t opendiff'
 fi
 
 # -----------------------------------------------------------------------------------

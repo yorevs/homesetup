@@ -26,40 +26,34 @@ ARGS_MAP = {
     'output' : None
 }
 
+# @purpose: Display the usage message and exit with the specified code ( or zero as default )
 def usage(exitCode=0):
-    """
-        Help message to be displayed by the script.
-    """
     print(USAGE)
     sys.exit(exitCode)
 
+# @purpose: Display the current program version and exit
 def version():
-    """
-        Echoes the current script version.
-    """
     print('{} v{}.{}.{}'.format(PROC_NAME,VERSION[0],VERSION[1],VERSION[2]))
     sys.exit(0)
 
+# @purpose: Execute the app business logic
 def app_exec():
-    """
-        Execute the app business logic
-    """
     print("Hello Python App")
     print(ARGS_MAP)
 
+# @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
-    """
-        App main entry point
-    """
     try:
 
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
         opts, args = getopt.getopt(argv, 'vhi:o:', ['in=', 'out='])
 
+        # Check the minimum arguments passed
         if len(opts) < 2:
             raise ValueError('### Invalid number of arguments: ({})'.format(len(opts)))
 
+        # Parse the command line arguments passed
         for opt, arg in opts:
             if opt in ('-v', '--version'):
                 version()
