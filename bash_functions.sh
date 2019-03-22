@@ -178,8 +178,8 @@ function __hhs_ss() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "$(uname -s)" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i'' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
-            [ "Darwin" = "$(uname -s)" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i '' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
+            [ "Linux" = "${MY_OS}" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i'' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
+            [ "Darwin" = "${MY_OS}" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i '' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
         else
             find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + | grep $gflags "$2"
         fi
@@ -254,7 +254,7 @@ function __hhs_jp() {
         echo "Usage: jp <json_string>"
         return 1
     else
-        if [ "$(uname -s)" = 'Darwin' ]; then
+        if [ "${MY_OS}" = 'Darwin' ]; then
             echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
         else
             grep . "$1" | json_pp
@@ -489,7 +489,7 @@ function __hhs_tc() {
         pad_len=40
         tool_name="$1"
         check=$(command -v "${tool_name}")
-        printf "${ORANGE}($(uname -s))${NC} "
+        printf "${ORANGE}${MY_OS}${NC} "
         printf "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
         if has "${tool_name}"; then
@@ -518,7 +518,7 @@ function __hhs_tools() {
     echo "${HIGHLIGHT_COLOR}"
     echo 'To check the current installed version, type: #> ver <tool_name>'
     echo 'To install/uninstall a tool, type: #> hspm.sh install/uninstall <tool_name>'
-    echo 'To override the list of tools, type: #> export DEFAULT_DEV_TOOLS=( "tool1" "tool2", ... )'
+    echo 'To override the list of tools, type: #> export DEFAULT_DEV_TOOLS=( "tool1" "tool2" ... )'
     echo "${NC}"
     
     return 0
@@ -1257,24 +1257,25 @@ function __hhs_sysinfo() {
     local username
     username="$(whoami)"
 
-    echo -e "\n${YELLOW}System information ------------------------------------------------"
-    echo -e "\n${WHITE}User:${HIGHLIGHT_COLOR}"
-    echo -e "  Name......... : $username"
+    echo -e "\n${ORANGE}System information ------------------------------------------------"
+    echo -e "\n${GREEN}User:${HIGHLIGHT_COLOR}"
+    echo -e "  Username..... : $username"
     echo -e "  UID.......... : $(id -u "$username")"
     echo -e "  GID.......... : $(id -g "$username")"
-    echo -e "\n${WHITE}System:${HIGHLIGHT_COLOR}"
-    echo -e "  Name......... : $(uname -sm) Kernel v$(uname -r)"
+    echo -e "\n${GREEN}System:${HIGHLIGHT_COLOR}"
+    echo -e "  OS........... : ${MY_OS}"
+    echo -e "  Kernel........: v$(uname -pmr)"
     echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
     echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
-    echo -e "\n${WHITE}Storage:"
-    printf "  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
+    echo -e "\n${GREEN}Storage:"
+    printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
     echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
-    echo -e "\n${WHITE}Network:${HIGHLIGHT_COLOR}"
+    echo -e "\n${GREEN}Network:${HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
     has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
     has "dig" && echo -e "  Real-IP...... : $(ip)"
-    echo -e "\n${WHITE}Logged Users:${HIGHLIGHT_COLOR}"
+    echo -e "\n${GREEN}Logged Users:${HIGHLIGHT_COLOR}"
     ( 
         IFS=$'\n'
         for next in $(who)

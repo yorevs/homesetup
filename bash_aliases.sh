@@ -229,8 +229,8 @@ if __hhs_has "git"; then
     alias gtps='git push origin HEAD'
     alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
     alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
-    alias git-show='git diff-tree --no-commit-id --name-status -r'
-    alias git-show-diff='function _() { git diff $1^1 $1 -- $2; };_'
+    alias gshow='git diff-tree --no-commit-id --name-status -r'
+    alias gdshow='function _() { git diff $1^1 $1 -- $2; };_'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -256,6 +256,7 @@ if __hhs_has "docker"; then
 
     alias dki='docker images'
     alias dks='docker service'
+    alias dkl='docker logs'
     alias dke='function _() { [ -n "$2" ] && docker exec -it "$1" "$2" || docker exec -it "$1" /bin/sh; };_'
     alias dkrm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
     alias dkps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
