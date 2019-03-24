@@ -88,3 +88,5 @@ Desktop.ini
 .gitconfig
 .gitignore
 .viminfo
+interview.sh
+feedback.sh

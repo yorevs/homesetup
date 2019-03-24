@@ -35,35 +35,45 @@ def usage(exitCode=0):
 def version():
     print('{} v{}.{}.{}'.format(PROC_NAME,VERSION[0],VERSION[1],VERSION[2]))
     sys.exit(0)
-
-try:
-    if len(sys.argv) == 1 or sys.argv[1] in [ '-h', '--help' ]:
-        usage()
-
-    f_json = None
-    json_obj = None
-    alias = None
-    index=1
-    jutils = JsonUtils()
     
-    opts, args = getopt.getopt(sys.argv[1:], 'f:a:', ['file','alias'])
-    
-    for opt, args in opts:
-        if opt in ('-f', '--file'):
-            f_json = args
-            with open(f_json) as json_file:
-                json_obj = json.load(json_file)
-            index+=2
-        elif opt in ('-a', '--alias'):
-            alias = args
-            index+=2
+# @purpose: Parse the command line arguments and execute the program accordingly.
+def main(argv):
+    retVal = 0
+    try:
+        if len(sys.argv) == 1 or sys.argv[1] in [ '-h', '--help' ]:
+            usage()
 
-    if f_json is None:
-        json_str = ', '.join(str(x) for x in sys.argv[index:])
-        json_obj = json.loads(json_str)
+        f_json = None
+        json_obj = None
+        alias = None
+        index=1
+        jutils = JsonUtils()
         
-    content = jutils.jsonSelect(json_obj, alias)
-    print('{}'.format('' if content is None else content))
-    
-except:
-    pass
+        opts, args = getopt.getopt(sys.argv[1:], 'f:a:', ['file','alias'])
+        
+        for opt, args in opts:
+            if opt in ('-f', '--file'):
+                f_json = args
+                with open(f_json) as json_file:
+                    json_obj = json.load(json_file)
+                index+=2
+            elif opt in ('-a', '--alias'):
+                alias = args
+                index+=2
+
+        if f_json is None:
+            json_str = ', '.join(str(x) for x in sys.argv[index:])
+            json_obj = json.loads(json_str)
+            
+        content = jutils.jsonSelect(json_obj, alias)
+        print('{}'.format('' if content is None else content))
+        
+    except Exception as err: # catch *all* exceptions
+        print('### A unexpected exception was thrown executing the app => \n\t{}'.format( err ))
+        retVal = 1
+    finally:
+        sys.exit(retVal)
+
+# Program entry point.
+if __name__ == '__main__':
+    main(sys.argv[1:])

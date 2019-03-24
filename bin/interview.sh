@@ -1,1 +1,0 @@
-/Users/hjunior/GIT-Repository/ACInterviews/interview.sh
