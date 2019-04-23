@@ -71,6 +71,6 @@ export DEFAULT_DEV_TOOLS=(
     "bash" "ssh" "xcode-select" "brew" "tree" "vim" "pcregrep" "shfmt" 
     "node" "java" "python" "rvm" "ruby" "go" "gcc" "make" "qmake"
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
-    "nvm" "npm" "jenv" "eslint" "gpg" "base64" "md5" "shasum"
+    "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
     "htop" "dialog" "telnet" "figlet" "shellcheck" "perl"
 )

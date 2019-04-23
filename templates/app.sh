@@ -26,7 +26,7 @@ Usage: $PROC_NAME [optionals] <mandatories>
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
     
-    unset -f quit usage version 
+    unset -f quit usage version main
     ret=$1
     shift
     [ "$ret" -gt 1 ] && printf "%s" "${RED}"
