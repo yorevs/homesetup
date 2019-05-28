@@ -43,6 +43,9 @@ alias sudo='sudo '
 # Always use color output for `ls`
 alias ls='command ls ${COLOR_FLAG} -t'
 
+# List all file names sorted by name
+alias lss='function _() { col=$1; [ -z "$1" ] && col=9; ls -la | sort -k "$col"; };_'
+
 # List all files colorized in long format
 alias l='ls -lh'
 
@@ -71,6 +74,8 @@ alias cls='clear'
 alias tl='tail -F'
 alias df='df -H'
 alias du='du -ch'
+
+# Use vim instead of vi
 __hhs_has "vim" && alias vi='vim'
 
 # Interpret escape sequences
@@ -218,8 +223,8 @@ fi
 
 if __hhs_has "git"; then
 
-    alias gs='git status'
-    alias gf='git fetch'
+    alias gs='git status && gl -n 1'
+    alias gf='git fetch -p'
     alias gh='git log -p'
     alias gb='git branch'
     alias gd='git diff'

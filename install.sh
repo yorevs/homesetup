@@ -107,6 +107,15 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             test "$?" -eq 0 || quit 2 "Unable to access the $HOME/.hhs directory: ${HHS_DIR}"
             rm -f "$HHS_DIR/tmpfile"
         fi
+
+        # Create all user custom files.
+        [ -f "$HOME/.path" ] || touch "$HOME/.path"
+        [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
+        [ -f "$HOME/.colors" ] || touch "$HOME/.colors"
+        [ -f "$HOME/.env" ] || touch "$HOME/.env"
+        [ -f "$HOME/.functions" ] || touch "$HOME/.functions"
+        [ -f "$HOME/.profile" ] || touch "$HOME/.profile"
+        [ -f "$HOME/.prompt" ] || touch "$HOME/.prompt"
         
         # Check the installation method.
         if [ -n "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/.VERSION" ]; then
