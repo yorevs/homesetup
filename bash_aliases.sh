@@ -43,6 +43,9 @@ alias sudo='sudo '
 # Always use color output for `ls`
 alias ls='command ls ${COLOR_FLAG} -t'
 
+# List all directories
+alias lsd="ls -d */"
+
 # List all file names sorted by name
 alias lss='function _() { col=$1; [ -z "$1" ] && col=9; ls -la | sort -k "$col"; };_'
 
