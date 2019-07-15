@@ -66,15 +66,15 @@ checkIpClass() {
 
     octet_1=$(echo "$1" | cut -d '.' -f1)
 
-    if [ "$((octet_1))" -le 127 ] ]; then
+    if [ "$((octet_1))" -le 127 ]; then
         IP_CLASS="A"
-    elif [ "$((octet_1))" -gt 127 ] && [ "$((octet_1))" -le 191 ] ]; then
+    elif [ "$((octet_1))" -gt 127 ] && [ "$((octet_1))" -le 191 ]; then
         IP_CLASS="B"
-    elif [ "$((octet_1))" -ge 192 ] && [ "$((octet_1))" -le 223 ] ]; then
+    elif [ "$((octet_1))" -ge 192 ] && [ "$((octet_1))" -le 223 ]; then
         IP_CLASS="C"
-    elif [ "$((octet_1))" -ge 224 ] && [ "$((octet_1))" -le 239 ] ]; then
+    elif [ "$((octet_1))" -ge 224 ] && [ "$((octet_1))" -le 239 ]; then
         IP_CLASS="D"
-    elif [ "$((octet_1))" -ge 240 ] ]; then
+    elif [ "$((octet_1))" -ge 240 ]; then
         IP_CLASS="E"
     else
         IP_CLASS="?"
@@ -85,14 +85,14 @@ checkIpClass() {
 #
 # Rules from RFC 5735 - Special Use IPv4 Addresses:
 #
-# IP<broadcast> Class(A): 0.0.0.0/8      -> [ 0.0.0.1 to 0.255.255.255 ].
-# IP<loopback>  Class(A): 127.0.0.0/8    -> [ 127.0.0.1 to 127.255.255.255 ].
-# IP<private>   Class(A): 10.0.0.0/8     -> [ 10.0.0.1 to 10.255.255.255 ].
-# IP<private>   Class(B): 172.16.0.0/12  -> [ 172.16.0.1 to 172.31.255.255 ].
-# IP<private>   Class(C): 192.168.0.0/16 -> [ 192.168.0.1 to 192.168.255.255 ].
-# IP<multicast> Class(D): 224.0.0.0/4    -> [ 224.0.0.1 to 239.255.255.254 ].
-# IP<reserved>  Class(D): 240.0.0.0/4    -> [ 240.0.0.1 to 255.255.255.254 ].
-# IP<broadcast> Class(D): 255.255.255.255/32 .
+# IP<broadcast> Class(A): 0.0.0.0/8      -> [ 0.0.0.1 to 0.255.255.255 ]
+# IP<loopback>  Class(A): 127.0.0.0/8    -> [ 127.0.0.1 to 127.255.255.255 ]
+# IP<private>   Class(A): 10.0.0.0/8     -> [ 10.0.0.1 to 10.255.255.255 ]
+# IP<private>   Class(B): 172.16.0.0/12  -> [ 172.16.0.1 to 172.31.255.255 ]
+# IP<private>   Class(C): 192.168.0.0/16 -> [ 192.168.0.1 to 192.168.255.25 ]
+# IP<multicast> Class(D): 224.0.0.0/4    -> [ 224.0.0.1 to 239.255.255.254 ]
+# IP<reserved>  Class(D): 240.0.0.0/4    -> [ 240.0.0.1 to 255.255.255.254 ]
+# IP<broadcast> Class(D): 255.255.255.255/32
 #
 checkIpType() {
 
