@@ -1031,25 +1031,41 @@ function __hhs_punch() {
     local timeStamp
     local weekStamp
     local opt
+    local lines
+    local re
+    local file
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: punch [-l,-e,-r]"
         echo 'Options: '
-        echo "       : !!PUNCH THE CLOCK!! (When no option is provided)."
-        echo "    -l : List all registered punches."
-        echo "    -e : Edit current punch file."
-        echo "    -r : Reset punches for the next week."
+        echo "              : !!PUNCH THE CLOCK!! (When no option is provided)."
+        echo "    -l        : List all registered punches."
+        echo "    -e        : Edit current punch file."
+        echo "    -r        : Reset punches for the current week."
+        echo "    -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch."
         return 1
     else
         opt="$1"
         dateStamp="$(date +'%a %d-%m-%Y')"
         timeStamp="$(date +'%H:%M')"
         weekStamp="$(date +%V)"
-        local re="($dateStamp).*"
-        local lines
+        re="($dateStamp).*"
         # Create the punch file if it does not exist
         if [ ! -f "$PUNCH_FILE" ]; then 
             echo "$dateStamp => " >"$PUNCH_FILE"
+        fi
+        if [ "-w" = "$opt" ]; then
+            shift
+            WEEK_PUNCH_FILE="$(dirname "$PUNCH_FILE")/week-$1.punch"
+            if [ -f "$WEEK_PUNCH_FILE" ]; then
+                lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE")
+                weekStamp="$1"
+            else
+                echo "${YELLOW}Week $1 punch file ($WEEK_PUNCH_FILE) not found!"
+                return 1
+            fi
+        else
+            lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$PUNCH_FILE")
         fi
         # Edit punchs
         if [ "-e" = "$opt" ]; then
@@ -1058,7 +1074,6 @@ function __hhs_punch() {
         elif [ "-r" = "$opt" ]; then
             mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
         else
-            lines=$(grep . "$PUNCH_FILE")
             (
                 local lineTotals=()
                 local totals=()
@@ -1071,16 +1086,16 @@ function __hhs_punch() {
                 pad_len=36
 
                 # Display totals of the week when listing - Header
-                if [ "-l" = "$opt" ]; then
+                if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                     echo ''
-                    echo -e "${YELLOW}Week ($weekStamp) punches: $PUNCH_FILE"
+                    echo -e "${YELLOW}Week ($weekStamp) punches:"
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
                 
                 IFS=$'\n'
                 for line in $lines; do
                     # List punchs
-                    if [ "-l" = "$opt" ]; then
+                    if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                         echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
                         # Read all timestamps and append them into an array.
                         IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
@@ -1105,11 +1120,11 @@ function __hhs_punch() {
                 IFS="$RESET_IFS"
 
                 # Display totals of the week when listing - Footer
-                if [ "-l" = "$opt" ]; then
+                if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                     # shellcheck disable=SC2086
                     weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${YELLOW}---------------------------------------------------------------------------"
-                    echo -e "Week total: ${weekTotal}${NC}"
+                    echo -e "Total: ${weekTotal}${NC}"
                     echo ''
                 else
                     # Create a new timestamp if it's the first punch for the day

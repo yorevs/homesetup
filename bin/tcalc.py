@@ -11,7 +11,7 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
-import sys, os
+import sys, os, re, math
 
 PROC_NAME       = os.path.basename(__file__)
 # Version tuple: (major,minor,build)
@@ -51,17 +51,17 @@ def decimal(timeRaw=0):
     return ( int(timeDec) )
 
 for tm in args:
-    if tm in [ '+', '-' ]:
+    if re.match(r"[+-]", tm):
         OP = tm
-    else:
-        parts = [int(s) for s in tm.split(':')]
+    elif re.match(r"^([0-9]{1,2}:?)+", tm):
+        parts = [int(math.floor(float(s))) for s in tm.split(':')]
         f_hours = parts[0] if len(parts) > 0 else 0
         f_mins = parts[1] if len(parts) > 1 else 0
         f_secs = parts[2] if len(parts) > 2 else 0
         tm_amount = ((f_hours * 60 + f_mins) * 60 + f_secs )
         if OP == '+':
             TOTAL_SECONDS += tm_amount
-        else:
+        elif OP == '-':
             TOTAL_SECONDS -= tm_amount
 
 TOTAL_SECONDS, seconds = divmod(TOTAL_SECONDS, 60)

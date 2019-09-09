@@ -35,7 +35,7 @@ alias ?='pwd'
 
 # -----------------------------------------------------------------------------------
 # General
-alias q="exit"
+alias q="exit 0"
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -76,7 +76,7 @@ alias mv='mv -iv'
 alias cls='clear'
 alias tl='tail -F'
 alias df='df -H'
-alias du='du -ch'
+alias du='du -hcd 1'
 
 # Use vim instead of vi
 __hhs_has "vim" && alias vi='vim'
@@ -90,6 +90,9 @@ alias mount='mount | column -t'
 
 # Make a folder and cd into it
 alias mkcd='function _() { mkdir -p $1; cd $1; };_'
+
+# Make all folders using a dot notation path
+alias mkpkg='function _() { if [ -n "$1" -a ! -d "$1" ]; then dir="${1//.//}"; mkdir -p $dir; pushd $dir >/dev/null; echo "${GREEN}Directory created: $dir ${NC}"; fi; };_'
 
 # Top shortcut ordered by cpu
 alias cpu='top -o cpu'
