@@ -1092,39 +1092,41 @@ function __hhs_punch() {
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
                 
-                IFS=$'\n'
-                for line in $lines; do
-                    # List punchs
-                    if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
-                        echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
-                        # Read all timestamps and append them into an array.
-                        IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
-                        # If we have an even number of timestamps, display the subtotals.
-                        if [ ${#lineTotals[@]} -gt 0 ] && [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
-                            # shellcheck disable=SC2086
-                            subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})" # Up to 3 pairs of timestamps.
-                            printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
-                            # If the sub total is gerater or equal to 8 hours, color it green, red otherwise.
-                            [[ "$subTotal" =~ ^([12][0-9]|0[89]):..:.. ]] && echo -e " : Partial = ${GREEN}${subTotal}${NC}" || echo -e " : Partial = ${RED}${subTotal}${NC}"
-                            totals+=("$subTotal")
-                        else
-                            echo "${RED}**:**${NC}"
+                if [ -n "$lines" ]; then
+                    IFS=$'\n'
+                    for line in $lines; do
+                        # List punchs
+                        if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
+                            echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
+                            # Read all timestamps and append them into an array.
+                            IFS=' ' read -r -a lineTotals <<< "$(echo "$line" | awk -F '=> ' '{ print $2 }')"
+                            # If we have an even number of timestamps, display the subtotals.
+                            if [ ${#lineTotals[@]} -gt 0 ] && [ "$(echo "${#lineTotals[@]} % 2" | bc)" -eq 0 ]; then
+                                # shellcheck disable=SC2086
+                                subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})" # Up to 3 pairs of timestamps.
+                                printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
+                                # If the sub total is gerater or equal to 8 hours, color it green, red otherwise.
+                                [[ "$subTotal" =~ ^([12][0-9]|0[89]):..:.. ]] && echo -e " : Total = ${GREEN}${subTotal}${NC}" || echo -e " : Total = ${RED}${subTotal}${NC}"
+                                totals+=("$subTotal")
+                            else
+                                echo "${RED}**:**${NC}"
+                            fi
+                        # Do the punch to the current day
+                        elif [[ "$line" =~ $re ]]; then
+                            ised -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$PUNCH_FILE"
+                            success='1'
+                            break
                         fi
-                    # Do the punch to the current day
-                    elif [[ "$line" =~ $re ]]; then
-                        ised -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$PUNCH_FILE"
-                        success='1'
-                        break
-                    fi
-                done
-                IFS="$RESET_IFS"
+                    done
+                    IFS="$RESET_IFS"
+                fi
 
                 # Display totals of the week when listing - Footer
                 if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                     # shellcheck disable=SC2086
                     weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${YELLOW}---------------------------------------------------------------------------"
-                    echo -e "Total: ${weekTotal}${NC}"
+                    echo -e "Week Total: ${weekTotal}${NC}"
                     echo ''
                 else
                     # Create a new timestamp if it's the first punch for the day
