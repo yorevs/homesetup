@@ -88,11 +88,8 @@ alias less='less -R'
 # Make mount command output pretty and human readable format
 alias mount='mount | column -t'
 
-# Make a folder and cd into it
-alias mkcd='function _() { mkdir -p $1; cd $1; };_'
-
-# Make all folders using a dot notation path
-alias mkpkg='function _() { if [ -n "$1" -a ! -d "$1" ]; then dir="${1//.//}"; mkdir -p $dir; pushd $dir >/dev/null; echo "${GREEN}Directory created: $dir ${NC}"; fi; };_'
+# Create all folders using a dot notation path and immediatelly change into it
+alias mkcd='function _() { if [ -n "$1" -a ! -d "$1" ]; then dir="${1//.//}"; mkdir -p $dir; pushd $dir >/dev/null; echo "${GREEN}Directory created: $dir ${NC}"; fi; };_'
 
 # Top shortcut ordered by cpu
 alias cpu='top -o cpu'
@@ -165,9 +162,9 @@ fi
 
 if __hhs_has "perl"; then
 
-    # Clean escape codes from text
+    # Clean escape (\EscXX) codes from text
     alias cse="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
-    # Copy to clipboard
+    # Copy to clipboard pbcopy required
     __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
 fi
 
@@ -223,6 +220,37 @@ if [ "Darwin" = "$MY_OS" ]; then
     __hhs_has "sha1" || alias sha1='shasum'
     __hhs_has "sha1sum" || alias sha1sum='sha1'
 fi
+
+# -----------------------------------------------------------------------------------
+# Directory Shortcuts
+
+alias desk='cd $DESKTOP'
+alias hhs='cd $HOME_SETUP'
+
+# -----------------------------------------------------------------------------------
+# Handy Terminal Shortcuts
+
+# Show the cursor using tput
+alias show-cursor='tput cnorm'
+
+# Hide the cursor using tput
+alias hide-cursor='tput civis'
+
+# Save current cursor position
+alias save-cursor-pos='tput sc'
+
+# Restore saved cursor position
+alias restore-cursor-pos='tput rc'
+
+# Enable line wrapping
+alias enable-line-wrap='echo -ne "\033[?7h"'
+
+# Disable line wrapping
+alias disable-line-wrap='echo -ne "\033[?7l"'
+
+# 
+# EXPERIMENTAL {
+# 
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
@@ -281,32 +309,9 @@ if __hhs_has "docker"; then
     alias dktop='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
 fi
 
-# -----------------------------------------------------------------------------------
-# Directory Shortcuts
-
-alias desk='cd $DESKTOP'
-alias hhs='cd $HOME_SETUP'
-
-# -----------------------------------------------------------------------------------
-# Handy Terminal Shortcuts
-
-# Show the cursor using tput
-alias show-cursor='tput cnorm'
-
-# Hide the cursor using tput
-alias hide-cursor='tput civis'
-
-# Save current cursor position
-alias save-cursor-pos='tput sc'
-
-# Restore saved cursor position
-alias restore-cursor-pos='tput rc'
-
-# Enable line wrapping
-alias enable-line-wrap='echo -ne "\033[?7h"'
-
-# Disable line wrapping
-alias disable-line-wrap='echo -ne "\033[?7l"'
+#
+# } EXPERIMENTAL
+#
 
 # -----------------------------------------------------------------------------------
 # HomeSetup function aliases

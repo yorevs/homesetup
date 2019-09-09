@@ -1021,7 +1021,7 @@ function __hhs_cmd() {
     return 0
 }
 
-# @function: Punch the Clock. Add/Remove/Edit/List clock punches.
+# @function: Punch the Clock. Add/Remove/Edit/List clock punchs.
 # @param $1 [Opt] : Punch options
 function __hhs_punch() {
 
@@ -1033,16 +1033,15 @@ function __hhs_punch() {
     local opt
     local lines
     local re
-    local file
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: punch [-l,-e,-r]"
         echo 'Options: '
         echo "              : !!PUNCH THE CLOCK!! (When no option is provided)."
-        echo "    -l        : List all registered punches."
+        echo "    -l        : List all registered punchs."
         echo "    -e        : Edit current punch file."
-        echo "    -r        : Reset punches for the current week."
-        echo "    -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch."
+        echo "    -r        : Reset punchs for the current week."
+        echo "    -w <week> : Report (list) all punchs of specified week using the pattern: week-N.punch."
         return 1
     else
         opt="$1"
@@ -1088,7 +1087,7 @@ function __hhs_punch() {
                 # Display totals of the week when listing - Header
                 if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                     echo ''
-                    echo -e "${YELLOW}Week ($weekStamp) punches:"
+                    echo -e "${YELLOW}Week ($weekStamp) punchs:"
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
                 

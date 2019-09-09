@@ -97,15 +97,15 @@ This project will many aliases (shortcuts) to your shell:
 
 #### Navigational
 
-ALIAS   | Equivalent
-------- | ----------
-..      | cd ..
-...     | cd ...
-....    | cd ....
-.....   | cd .....
-~       | cd ~
-\-       | cd -
-?       | pwd
+ALIAS      | Equivalent
+---------- | ----------
+..         | cd ..
+...        | cd ...
+....       | cd ....
+.....      | cd .....
+~          | cd ~
+\-         | cd -
+?          | pwd
 
 #### General
 
@@ -128,13 +128,19 @@ rm       | **rm -iv** 'For safety, by default this command will input for confir
 cp       | **cp -iv** 'For safety, by default this command will input for confirmation'
 mv       | **mv -iv** 'For safety, by default this command will input for confirmation'
 cls      | clear
+pk       | 'Kills all processes matching <ProcName>'
+db-clean | 'Recursively delete Dropbox conflicted files from the current directory'
 vi       | vim
 tl       | tail -F
+df       | df -H
+du       | du -hcd 1
+more     | more -R
+less     | less -R
 mount    | 'Make mount command output pretty and human readable format'
-mkcd     | Make a folder and cd into it
+mkcd     | Create all folders using a **dot notation path** and immediatelly change into it
 cpu      | **top** shortcut ordered by cpu
 mem      | **top** shortcut ordered by memory
-rmdbc    | 'Recursively delete Dropbox conflicted files from the current directory'
+encode   | base64 encode synonym
 week     | 'Current **week** of the month' 
 now      | 'Current **date**'
 ts       | 'Current **timestamp** in milliseconds'
@@ -144,27 +150,41 @@ rand     | 'Generate a random number from **<min>** to  **<max>**'
 #### Python aliases
 ALIAS   | Equivalent
 ------- | -------
+json_pp | linux has no **json_pp**, so using python instead
 calc    | 'Evaluate mathematical expressions'
 urle    | 'URL-encode string'
 urld    | 'URL-decode string'
 uuid    | 'Generate a random UUID'
 
+#### Perl aliases
+ALIAS     | Equivalent
+--------- | ---------
+cse       | Clean escape (\EscXX) codes from text
+clipboard | Copy to clipboard **pbcopy required**
+
 #### IP related
 
 ALIAS   | Equivalent
 ------- | -------
-ifa     | 'List all active interfaces on the system'
 ip      | 'Get the Real IP on the internet'
-ipl     | 'Get all Local IPs on the local network'
-ips     | 'Get all (ipv4 & ipv6) associated local IPs of the machine'
+ifa     | 'List all active interfaces on the system' **pcregrep required**
+ipl     | 'Get all Local IPs on the local network' **pcregrep required**
+ips     | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **ifconfig required**
 
 #### Mac Stuff
 
-ALIAS      | Equivalent
----------- | ----------
-clean-ds   | 'Delete all **.DS_store** files'
-show-files | 'Show hidden files in Finder'
-hide-files | 'Hidden hidden files in Finder'
+ALIAS         | Equivalent
+------------- | -------------
+clean-ds      | 'Delete all **.DS_store** files'
+flush         | 'Flush Directory Service cache'
+ls-cleanup    | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
+show-files    | '**Show** hidden files in Finder' **defaults required**
+hide-files    | '**Hide** hidden files in Finder' **defaults required**
+showdeskicons | 'Show all desktop icons'
+hidedeskicons | 'Hide all desktop icons'
+hd            | 'Canonical hex dump; some systems have this symlinked'
+md5sum        | 'macOS has no **md5sum**, so use **md5** as a fallback'
+sha1          | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
 
 **Please check: [bash_aliases](./bash_aliases.sh) for all aliases**
 
