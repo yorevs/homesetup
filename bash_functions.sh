@@ -87,35 +87,50 @@ function __hhs_hl() {
 
 # @function: Search for files and links to files recursively.
 # @param $1 [Req] : The base search path.
-# @param $2 [Req] : The GLOB expression of the file search.
+# @param $2 [Req] : The GLOB expressions of the file search.
 function __hhs_sf() {
 
+    local fnames
+    local gflags="-HEI"
+
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: sf <search_path> <glob_exp_files>"
+        echo ''
+        echo 'Usage: sf <search_path> <comma_separated_globs>'
+        echo '  ** Globs listed like: "*.txt,*.md,*.rtf"'
+        echo ''
         return 1
     else
-        local ext=".${2##*.}"
+        local files="${2//,/|}"
+        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \{}'.format(s) for s in a]))"
+        fnames=$(python -c "$expr")
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        find -L "$1" -type f -iname "*""$2""*"  | grep "${ext##*.}$"
+        eval "find -L . -type f \( $fnames \) | grep $gflags \"(${files//\*/})$\""
         return $?
     fi
 }
 
 # @function: Search for directories and links to directories recursively.
 # @param $1 [Req] : The base search path.
-# @param $2 [Req] : The GLOB expression of the directory search.
+# @param $2 [Req] : The GLOB expressions of the directory search.
 function __hhs_sd() {
-
+    
+    local dnames
+    local gflags="-HEI"
+    
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: sd <search_path> <glob_exp_folders>"
+        echo ''
+        echo 'Usage: sd <search_path> <comma_separated_dirs>'
+        echo '  ** Dirs listed like: "dir1,dir2,dir2"'
+        echo ''
         return 1
     else
-        local ext=".${2##*.}"
-        echo "Searching for folders or linked folders matching: \"$2\" in \"$1\""
-        find -L "$1" -type d -iname "*""$2""*" | grep "${ext##*.}"
+        local dirs="${2//,/|}"
+        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname *{}*'.format(s) for s in a]))"
+        dnames=$(python -c "$expr")
+        echo "Searching for folders or linked folders matching: [$2] in \"$1\""
+        eval "find -L . -type d \( $dnames \) | grep $gflags \"($dirs)$\""
+        return $?
     fi
-
-    return 0
 }
 
 # @function: Search for strings matching the specified criteria in files recursively.
@@ -130,16 +145,18 @@ function __hhs_ss() {
     local gflags
     local extra_str
     local replace
+    local expr
+    local fnames
     local strType='regex'
     local gflags="-HnEI"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
         echo ''
-        echo "Usage: ss [options] <search_path> <regex/string> <glob_exp_files>"
+        echo 'Usage: ss [options] <search_path> <regex/string> <comma_separated_globs>'
         echo ''
         echo 'Options: '
         echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
-        echo '    -w | --words                    : Makes the search to use a STRING instead of a REGEX.'
+        echo '    -w | --words                    : Makes the search to use the full STRING instead of a REGEX.'
         echo '    -r | --replace <replacement>    : Makes the search to REPLACE all findings by the replacement string.'
         echo '    -b | --binary                   : Includes BINARY files in the search.'
         echo ''
@@ -172,16 +189,18 @@ function __hhs_ss() {
             esac
             shift
         done
+        expr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \{}'.format(s) for s in a]))"
+        fnames=$(python -c "$expr")
         echo "${YELLOW}Searching for \"${strType}\" matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
         if [ -n "$replace" ]; then
             if [ "$strType" = 'string' ]; then
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "${MY_OS}" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i'' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
-            [ "Darwin" = "${MY_OS}" ] && find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + -exec sed -i '' -e "s/$2/$repl_str/g" {} + | sed "s/$2/$repl_str/g" | grep "$repl_str"
+            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $fnames \) -exec grep $gflags $2 {} + -exec sed -i'' -e \"s/$2/$repl_str/g\" {} + | sed \"s/$2/$repl_str/g\" | grep \"$repl_str\""
+            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $fnames \) -exec grep $gflags $2 {} + -exec sed -i '' -e \"s/$2/$repl_str/g\" {} + | sed \"s/$2/$repl_str/g\" | grep \"$repl_str\""
         else
-            find -L "$1" -type f -iname "*""$3" -exec grep $gflags "$2" {} + | grep $gflags "$2"
+            eval "find -L $1 -type f \( $fnames \) -exec grep $gflags $2 {} + | grep $gflags $2"
         fi
     fi
 
@@ -1021,11 +1040,11 @@ function __hhs_cmd() {
     return 0
 }
 
-# @function: Punch the Clock. Add/Remove/Edit/List clock punchs.
+# @function: Punch the Clock. Add/Remove/Edit/List clock punches.
 # @param $1 [Opt] : Punch options
 function __hhs_punch() {
 
-    PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punchs}
+    PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punches}
 
     local dateStamp
     local timeStamp
@@ -1035,13 +1054,13 @@ function __hhs_punch() {
     local re
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: punch [-l,-e,-r]"
+        echo "Usage: punch [-l,-e,-r,-w]"
         echo 'Options: '
         echo "              : !!PUNCH THE CLOCK!! (When no option is provided)."
-        echo "    -l        : List all registered punchs."
+        echo "    -l        : List all registered punches."
         echo "    -e        : Edit current punch file."
-        echo "    -r        : Reset punchs for the current week."
-        echo "    -w <week> : Report (list) all punchs of specified week using the pattern: week-N.punch."
+        echo "    -r        : Reset punches for the current week."
+        echo "    -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch."
         return 1
     else
         opt="$1"
@@ -1055,21 +1074,21 @@ function __hhs_punch() {
         fi
         if [ "-w" = "$opt" ]; then
             shift
-            WEEK_PUNCH_FILE="$(dirname "$PUNCH_FILE")/week-$1.punch"
+            weekStamp="${1:-$weekStamp}"
+            WEEK_PUNCH_FILE="$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
             if [ -f "$WEEK_PUNCH_FILE" ]; then
                 lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE")
-                weekStamp="$1"
             else
-                echo "${YELLOW}Week $1 punch file ($WEEK_PUNCH_FILE) not found!"
+                echo "${YELLOW}Week $weekStamp punch file ($WEEK_PUNCH_FILE) not found!"
                 return 1
             fi
         else
             lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$PUNCH_FILE")
         fi
-        # Edit punchs
+        # Edit punches
         if [ "-e" = "$opt" ]; then
             vi "$PUNCH_FILE"
-        # Reset punchs (backup as week-N.punch)
+        # Reset punches (backup as week-N.punch)
         elif [ "-r" = "$opt" ]; then
             mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
         else
@@ -1087,14 +1106,14 @@ function __hhs_punch() {
                 # Display totals of the week when listing - Header
                 if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                     echo ''
-                    echo -e "${YELLOW}Week ($weekStamp) punchs:"
+                    echo -e "${YELLOW}Week ($weekStamp) punches:"
                     echo "---------------------------------------------------------------------------${NC}"
                 fi
                 
                 if [ -n "$lines" ]; then
                     IFS=$'\n'
                     for line in $lines; do
-                        # List punchs
+                        # List punches
                         if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
                             echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
                             # Read all timestamps and append them into an array.
@@ -1125,7 +1144,7 @@ function __hhs_punch() {
                     # shellcheck disable=SC2086
                     weekTotal="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]} )"
                     echo -e "${YELLOW}---------------------------------------------------------------------------"
-                    echo -e "Week Total: ${weekTotal}${NC}"
+                    echo -e "Week ($weekStamp) Total: ${weekTotal}${NC}"
                     echo ''
                 else
                     # Create a new timestamp if it's the first punch for the day

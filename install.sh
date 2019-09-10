@@ -164,7 +164,7 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
                 # Moving old hhs files into the proper folder
                 test -f "$HOME/.cmd_file" && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
                 test -f "$HOME/.saved_dir" && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
-                test -f "$HOME/.punchs" && mv -f "$HOME/.punchs" "$HHS_DIR/.punchs"
+                test -f "$HOME/.punches" && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
                 test -f "$HOME/.firebase" && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
             else
                 test -n "$ANS" && echo ''

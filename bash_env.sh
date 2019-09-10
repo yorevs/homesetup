@@ -63,7 +63,7 @@ export RESET_IFS="$IFS"
 export MSELECT_MAX_ROWS=10
 export SAVED_DIRS="$HHS_DIR/.saved_dirs"
 export CMD_FILE="$HHS_DIR/.cmd_file"
-export PUNCH_FILE="$HHS_DIR/.punchs"
+export PUNCH_FILE="$HHS_DIR/.punches"
 export PATHS_FILE="$HOME/.path"
 
 # Development tools. To override it please export DEFAULT_DEV_TOOLS variable at ~/.env
