@@ -224,11 +224,14 @@ Usage: $PROC_NAME [OPTIONS] <args>
         fi
 
         # Copy bin scripts into place
-        find "$HOME_SETUP/bin/scripts" -type f \( -iname "**.sh" -o -iname "**.py" \) \
+        command find "$HOME_SETUP/bin/scripts" -type f \( -iname "**.sh" -o -iname "**.py" \) \
             -exec command ln -sfv {} "$BIN_DIR" \; \
             -exec command chmod 755 {} \; \
             &>/dev/null
         [ -L "$BIN_DIR/dotfiles.sh" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
+
+        # Install HomeSetup fonts
+        command cp "$HOME_SETUP/misc/fonts"/*.otf ~/Library/Fonts
     }
     
     # Clone the repository and install dotfiles.
