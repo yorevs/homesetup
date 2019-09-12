@@ -154,7 +154,10 @@ if __hhs_has "python"; then
     alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
     # Generate a UUID
-    alias uuid='python -c "import uuid as ul; print(str(ul.uuid4()));"'
+    alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+
+    # Convert unicode to hexadecimal
+    alias utoh='function _() { print-uni.py $* | hexdump -C; };_'
 fi
 
 # -----------------------------------------------------------------------------------

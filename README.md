@@ -148,13 +148,14 @@ wget     | 'MacOS has no wget, so use **curl** instead'
 rand     | 'Generate a random number from **<min>** to  **<max>**'
 
 #### Python aliases
-ALIAS   | Equivalent
-------- | -------
-json_pp | linux has no **json_pp**, so using python instead
-calc    | 'Evaluate mathematical expressions'
-urle    | 'URL-encode string'
-urld    | 'URL-decode string'
-uuid    | 'Generate a random UUID'
+ALIAS     | Equivalent
+--------- | ---------
+json_pp   | linux has no **json_pp**, so using python instead
+calc      | 'Evaluate mathematical expressions'
+urle      | 'URL-encode string'
+urld      | 'URL-decode string'
+uuid      | 'Generate a random UUID'
+utoh      | 'Convert unicode to hexadecimal'
 
 #### Perl aliases
 ALIAS     | Equivalent
