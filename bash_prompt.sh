@@ -75,33 +75,35 @@ function prompt_git() {
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
 HIST_ICN="\357\207\232"
 USER_ICN="\357\200\207"
+ROOT_ICN="\357\224\205"
 GIT_ICN="\357\204\246"
 AT_ICN="\357\207\272"
+NET_ICN="\357\233\277"
 FOLDER_ICN="\357\201\273"
 
-PROMPT="\$> "
-
+# Command history style
 HIST_STYLE="\[${HIST_ICN}\] ";
 
 # Highlight the user name when logged in as root.
-USER_STYLE="\[${USER_ICN}\] "
 if [[ "${USER}" == "root" ]]; then
-    USER_STYLE+="${RED}";
+    USER_STYLE="\[${ROOT_ICN}\] ${RED}";
 else
-    USER_STYLE+="${WHITE}";
+    USER_STYLE="\[${USER_ICN}\] ${WHITE}";
 fi;
 
 # Highlight the hostname when connected via SSH.
-HOST_STYLE="\[${AT_ICN}\] ";
 if [[ "${SSH_TTY}" ]]; then
-    HOST_STYLE+="${BOLD}${RED}";
+    HOST_STYLE+="\[${NET_ICN}\] ${RED}";
 else
-    HOST_STYLE+="${PURPLE}";
+    HOST_STYLE+="\[${AT_ICN}\] ${PURPLE}";
 fi;
 
 # Folder and Git styles
 FOLDER_STYLE="\[${FOLDER_ICN}\] \[${ORANGE}\]";
 GIT_STYLE="\[${WHITE}\] \[${GIT_ICN}\] \[${CYAN}\]\" \"\[${BLUE}\]";
+
+# User prompt
+PROMPT="\$> "
 
 # Set the terminal title and prompt.
 PS1="\[${WHITE}\]\[${HIST_STYLE}\]\!"; # The history number of this command

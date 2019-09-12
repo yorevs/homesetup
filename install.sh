@@ -231,7 +231,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         [ -L "$BIN_DIR/dotfiles.sh" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
 
         # Install HomeSetup fonts
-        command cp "$HOME_SETUP/misc/fonts"/*.otf ~/Library/Fonts
+        [ -d "$HOME/Library/Fonts" ] && command cp "$HOME_SETUP/misc/fonts"/*.otf "$HOME/Library/Fonts"
     }
     
     # Clone the repository and install dotfiles.
