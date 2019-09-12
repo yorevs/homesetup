@@ -238,7 +238,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
     clone_repository() {
         
         [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely"
-        [ -d "$HOME_SETUP" ] && quit 2 "Installation directory already exists and can't be overriden: ${HOME_SETUP}!"
+        [ ! -d "$HOME_SETUP" ] && quit 2 "Installation directory was not created: ${HOME_SETUP}!"
 
         echo ''
         printf "%s\n" 'Cloning HomeSetup from repository ...'
