@@ -121,7 +121,7 @@ __hhs_has "wget" || alias wget='curl -O'
 alias rand='function _() { test -n "$1" -a -n "$2" && echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))" || echo "Usage: rand <min> <max>"; };_'
 
 # Reload the bash session
-alias reload='cls; \. ~/.bashrc && echo "${HHS_WELCOME}"'
+alias reload='cls; \. ~/.bashrc && echo -e "${HHS_WELCOME}"'
 
 # Kills all processes specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill; };_'
@@ -154,7 +154,10 @@ if __hhs_has "python"; then
     alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
     # Generate a UUID
-    alias uuid='python -c "import uuid as ul; print(str(ul.uuid4()));"'
+    alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+
+    # Convert unicode to hexadecimal
+    alias utoh='function _() { print-uni.py $* | hexdump -Cb; };_'
 fi
 
 # -----------------------------------------------------------------------------------

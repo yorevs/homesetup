@@ -16,13 +16,17 @@
 
     # Help message to be displayed by the script.
     USAGE="
-Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
+Usage: $PROC_NAME [OPTIONS] <args>
 
-    *** [all]: Install all scripts into the user HomeSetup folder.
+  -a | --all           : Install all scripts into the user HomeSetup directory without prompting.
+  -d | --dir <hss_dir> : Specify where to install the HomeSetup files.
 "
 
-    # GitHub repository URL.
+    # HomeSetup GitHub repository URL.
     REPO_URL='https://github.com/yorevs/homesetup.git'
+
+    # Define the user HOME
+    HOME=${HOME:-~}
 
     # Purpose: Quit the program and exhibits an exit message if specified.
     # @param $1 [Req] : The exit return code.
@@ -30,8 +34,10 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
     quit() {
         
         # Unset all declared functions
-        unset -f quit usage version check_inst_method install_dotfiles clone_repository activate_dotfiles
-
+        unset -f \
+            quit usage check_inst_method install_dotfiles \
+            clone_repository activate_dotfiles
+        
         test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
         test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
         test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
@@ -44,31 +50,31 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         quit 2 "$USAGE"
     }
 
+    # shellcheck disable=SC1091
     # Check which installation method should be used.
     check_inst_method() {
         
-        clear
-
-        # shellcheck disable=SC1091
+        # Import bash colors
         [ -f bash_colors.sh ] && source bash_colors.sh
+        printf "%s\n" "${GREEN}HomeSetup© ${YELLOW}v$(grep . .VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
-        test "$1" = '-h' -o "$1" = '--help' && usage
-        test "$1" = '-v' -o "$1" = '--version' && version
+        [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"
+        [ "$1" = '-v' ] || [ "$1" = '--version' ] && version
 
         # Loop through the command line options.
         # Short opts: -w, Long opts: --Word
         while test -n "$1"; do
             case "$1" in
-            -a | --all)
-                OPT="all"
+                -a | --all)
+                    OPT="all"
                 ;;
-            -d | --dir)
-                shift
-                INSTALL_DIR="$1"
+                -d | --dir)
+                    shift
+                    INSTALL_DIR="$1"
                 ;;
-            *)
-                quit 2 "Invalid option: \"$1\""
+                *)
+                    quit 2 "Invalid option: \"$1\""
                 ;;
             esac
             shift
@@ -76,36 +82,48 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
 
         # Dotfiles used by HomeSetup
         ALL_DOTFILES=(
-            "bashrc"
-            "bash_profile"
             "bash_aliases"
-            "bash_prompt"
-            "bash_env"
             "bash_colors"
+            "bash_env"
             "bash_functions"
+            "bash_profile"
+            "bash_prompt"
+            "bashrc"
         )
 
-        test -z "$INSTALL_DIR" && INSTALL_DIR=$HOME
+        # Check for previous custom installation dir
+        [ -z "$INSTALL_DIR" ] && INSTALL_DIR="$HOME/HomeSetup"
 
-        # Define the HomeSetup folder.
-        HOME_SETUP=${HOME_SETUP:-$INSTALL_DIR/HomeSetup/}
-        if [ -d "$INSTALL_DIR" ]; then
-            touch "$INSTALL_DIR/tmpfile"
-            test "$?" -eq 0 || quit 2 "Unable to access the installation directory: ${INSTALL_DIR}"
-            rm -f "$INSTALL_DIR/tmpfile"
+        # Create/Define the HomeSetup directory.
+        HOME_SETUP=${HOME_SETUP:-$INSTALL_DIR}
+        if [ ! -d "$HOME_SETUP" ]; then
+            printf "\n%s" "Creating 'HomeSetup' directory: " && mkdir -p "$HOME_SETUP"
+            [ -d "$HOME_SETUP" ] || quit 2 "Unable to create directory $HOME_SETUP"
         else
-            quit 2 "Installation directory is not valid: ${INSTALL_DIR}"
+            touch "$HOME_SETUP/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HOME_SETUP}"
+            command rm -f "$HOME_SETUP/tmpfile" &>/dev/null
         fi
 
-        # Create the $HOME/.hhs folder
+        # Create/Define the $HOME/.hhs directory
         HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
         if [ ! -d "$HHS_DIR" ]; then
-            mkdir -p "$HHS_DIR"
-            test -d "$HHS_DIR" || quit 2 "Unable to create directory $HOME/.hhs"
+            printf "\n%s" "Creating '.hhs' directory: " && mkdir -p "$HHS_DIR"
+            [ -d "$HHS_DIR" ] || quit 2 "Unable to create directory $HHS_DIR"
         else
-            touch "$HHS_DIR/tmpfile"
-            test "$?" -eq 0 || quit 2 "Unable to access the $HOME/.hhs directory: ${HHS_DIR}"
-            rm -f "$HHS_DIR/tmpfile"
+            touch "$HHS_DIR/tmpfile" &>/dev/null || quit 2 "Unable to access the HomeSetup directory: ${HHS_DIR}"
+            command rm -f "$HHS_DIR/tmpfile" &>/dev/null
+        fi
+
+        # Create/Define the $HOME/bin directory
+        BIN_DIR="$HOME/bin"
+        # Create or directory ~/bin if it does not exist
+        if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
+            printf "\n%s" "Creating 'bin' directory: " && mkdir "$BIN_DIR"
+            if [ -L "$BIN_DIR" ] || [ -d "$BIN_DIR" ]; then
+                printf "%s\n" "[   ${GREEN}OK${NC}   ]"
+            else
+                quit 2 "Unable to create bin directory: $BIN_DIR"
+            fi
         fi
 
         # Create all user custom files.
@@ -128,122 +146,99 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
             quit 2 "Unable to find an installation method!"
         fi
         
-        if [ "${METHOD}" = 'repair' ]; then
-            install_dotfiles
-        elif [ "${METHOD}" = 'local' ] ; then
-            install_dotfiles
-            activate_dotfiles
-        elif [ "${METHOD}" = 'remote' ] ; then
-            clone_repository
-            install_dotfiles
-            activate_dotfiles
-        else
-            quit 2 "Installation method is not valid: ${METHOD}"
-        fi
+        case "$METHOD" in
+            remote)
+                clone_repository
+                install_dotfiles
+                activate_dotfiles
+            ;;
+            local | repair)
+                install_dotfiles
+                activate_dotfiles
+            ;;
+            *)
+                quit 2 "Installation method is not valid: ${METHOD}"
+            ;;
+        esac
     }
     
     # Install all dotfiles.
     install_dotfiles() {
-        
+
+        echo -e ''
+        echo -e '### Installation Settings ###'
         printf "%s\n" "${BLUE}"
-        echo '#'
-        echo '# Install settings:'
-        echo "# - HOME_SETUP: $HOME_SETUP"
-        echo "# - OPTTIONS: $OPT"
-        echo "# - METHOD: $METHOD"
-        echo "# - FILES: ${ALL_DOTFILES[*]}"
-        printf "%s\n" "#${NC}"
+        echo -e "    Home Setup: $HOME_SETUP"
+        echo -e "       Scripts: $BIN_DIR"
+        echo -e "  Install Type: $METHOD"
+        echo -e "       Options: ${OPT:-prompt}"
+        echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
+        printf "%s\n" "${NC}"
 
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
-            printf "%s\n" "${RED}"
+            printf "%s\n" "${ORANGE}"
             read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
             printf "%s\n" "${NC}"
             if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
-                test -n "$ANS" && echo ''
+                [ -n "$ANS" ] && echo ''
                 printf "%s\n" "${NC}Copying dotfiles into place ..."
-                # Moving old hhs files into the proper folder
-                test -f "$HOME/.cmd_file" && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
-                test -f "$HOME/.saved_dir" && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
-                test -f "$HOME/.punches" && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
-                test -f "$HOME/.firebase" && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
+                # Moving old hhs files into the proper directory
+                [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
+                [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
+                [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
+                [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
             else
-                test -n "$ANS" && echo ''
+                [ -n "$ANS" ] && echo ''
                 quit 1 "Installation cancelled!"
             fi
         else
             OPT='all'
         fi
 
-        # If all option is used, copy all files
-        if test "$OPT" = 'all' -o "$OPT" = 'ALL'; then
-            # Bin folder
-            if ! test -d "$HOME/bin"; then
-                echo -n "Linking: "
-                ln -sfv "$HOME_SETUP/bin" "$HOME"
-                if [ -d "$HOME/bin" ]; then
-                    echo '[  OK  ]'
-                else
-                    quit 2 "Unable to link bin folder into $HOME !"
-                fi
-            else
-                cp -nf "$HOME_SETUP"/bin/* "$HOME/bin" &>/dev/null
-                test -f "$HOME/bin/dotfiles.sh" || quit 2 "Unable to copy scripts into $HOME/bin directory!"
-            fi
-
+        # If `all' option is used, copy all files
+        if [ "$OPT" = 'all' ]; then
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=$HOME/.${next}
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
-                test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
+                printf "\n%s" "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                [ -f "$dotfile" ] && printf "%s\n" "[   ${GREEN}OK${NC}   ]"
+                [ -f "$dotfile" ] || printf "%s\n" "[ ${GREEN}FAILED${NC} ]"
             done
+        # If `all' option is NOT used, prompt for confirmation
         else
-            # Bin folder
-            if ! test -d "$HOME/bin"; then
-                echo ''
-                read -r -n 1 -sp "Link  $HOME/bin folder (y/[n])? " ANS
-                if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-                    echo -en "$ANS \nLinking: "
-                    ln -sfv "$HOME_SETUP/bin" "$HOME" 
-                    if [ -d "$HOME/bin" ]; then
-                        echo '[  OK  ]'
-                    else
-                        quit 2 "Unable to link bin folder into $HOME !"
-                    fi
-                fi
-            else
-                cp -nf "$HOME_SETUP"/bin/* "$HOME/bin" &>/dev/null
-                test -f "$HOME/bin/dotfiles.sh" || quit 2 "Unable to copy scripts into $HOME/bin directory!"
-            fi
-
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=$HOME/.${next}
                 echo ''
                 read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
-                test "$ANS" != 'y' -a "$ANS" != 'Y' && continue
+                [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && continue
                 echo ''
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -n "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                test -f "$dotfile" && printf "%s\n" "${GREEN}[   OK   ]${NC}"
-                test -f "$dotfile" || printf "%s\n" "${RED}[ FAILED ]${NC}"
+                printf "%s" "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                [ -f "$dotfile" ] && printf "%s\n" "[   ${GREEN}OK${NC}   ]"
+                [ -f "$dotfile" ] || printf "%s\n" "[ ${GREEN}FAILED${NC} ]"
             done
         fi
 
-        echo ''
+        # Copy bin scripts into place
+        find "$HOME_SETUP/bin/scripts" -type f \( -iname "**.sh" -o -iname "**.py" \) \
+            -exec command ln -sfv {} "$BIN_DIR" \; \
+            -exec command chmod 755 {} \; \
+            &>/dev/null
+        [ -L "$BIN_DIR/dotfiles.sh" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
     }
     
     # Clone the repository and install dotfiles.
     clone_repository() {
         
-        test -z "$(command -v git)" && quit 2 "You need git installed in order to install HomeSetup remotely!"
-        test -d "$HOME_SETUP" && quit 2 "Installation directory already exists and can't be overriden: ${HOME_SETUP}!"
+        [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely"
+        [ -d "$HOME_SETUP" ] && quit 2 "Installation directory already exists and can't be overriden: ${HOME_SETUP}!"
 
         echo ''
-        printf "%s\n" "${NC}Cloning HomeSetup from repository ..."
+        printf "%s\n" 'Cloning HomeSetup from repository ...'
         sleep 1
         command git clone "$REPO_URL" "$HOME_SETUP"
 
@@ -261,31 +256,31 @@ Usage: $PROC_NAME [-a | --all] [-d | --dir <home_setup_dir>]
         
         sleep 1
         echo ''
-        printf "%s\n" "${GREEN}Done installing files. Reloading bash ...${NC}"
+        printf "%s\n" "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
+        printf "%s\n" "${BLUE}"
 
-        printf "%s\n" "${CYAN}"
         if command -v figlet >/dev/null; 
         then
-            figlet -c "Welcome"
+            figlet -f colossal -ck "Welcome"
         else
             echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
             echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
             echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
             echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
             echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
+            echo ''
         fi
+        echo -e "${GREEN}\xef\x85\xb9 Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         echo ''
-        printf "%s\n" "${YELLOW}Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
-        printf "%s\n" "${WHITE}"
-        printf "%s\n" "? To activate dotfiles type: #> ${GREEN}source $HOME/.bashrc${NC}"
-        printf "%s\n" "? To reload settings type: #> ${GREEN}reload${NC}"
-        printf "%s\n" "? To check for updates type: #> ${GREEN}dv${NC}"
-        echo '? Check README.md for full details about your new HomeSetup'
-        printf "%s\n" "${NC}"
-
+        echo -e "${WHITE}\xef\x80\x85 To activate dotfiles type: #> ${GREEN}source $HOME/.bashrc"
+        echo -e "${WHITE}\xef\x80\x85 To check for updates type: #> ${GREEN}dv"
+        echo -e "${WHITE}\xef\x80\x85 To reload HomeSetup© type: #> ${GREEN}reload"
+        echo -e "${WHITE}\xef\x84\x98 Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
+        echo -e "${NC}"
         quit 0
     }
     
+    clear
     check_inst_method "$@"
 
 }

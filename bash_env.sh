@@ -57,8 +57,8 @@ export HISTCONTROL=ignoredups:ignorespace:ignoreboth:erasedups
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
-export HHS_WELCOME="${ORANGE}${MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup© ${YELLOW}v${DOTFILES_VERSION} ! ${NC}"
 export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
+export HHS_WELCOME="${ORANGE}${MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${DOTFILES_VERSION}${NC}"
 export RESET_IFS="$IFS"
 export MSELECT_MAX_ROWS=10
 export SAVED_DIRS="$HHS_DIR/.saved_dirs"

@@ -72,30 +72,45 @@ function prompt_git() {
     fi;
 }
 
+# Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
+HIST_ICN="\357\207\232"
+USER_ICN="\357\200\207"
+GIT_ICN="\357\204\246"
+AT_ICN="\357\207\272"
+FOLDER_ICN="\357\201\273"
+
+PROMPT="\$> "
+
+HIST_STYLE="\[${HIST_ICN}\] ";
+
 # Highlight the user name when logged in as root.
+USER_STYLE="\[${USER_ICN}\] "
 if [[ "${USER}" == "root" ]]; then
-    userStyle="${RED}";
+    USER_STYLE+="${RED}";
 else
-    userStyle="${WHITE}";
+    USER_STYLE+="${WHITE}";
 fi;
 
 # Highlight the hostname when connected via SSH.
+HOST_STYLE="\[${AT_ICN}\] ";
 if [[ "${SSH_TTY}" ]]; then
-    hostStyle="${BOLD}${RED}";
+    HOST_STYLE+="${BOLD}${RED}";
 else
-    hostStyle="${PURPLE}";
+    HOST_STYLE+="${PURPLE}";
 fi;
 
+# Folder and Git styles
+FOLDER_STYLE="\[${FOLDER_ICN}\] \[${ORANGE}\]";
+GIT_STYLE="\[${WHITE}\] \[${GIT_ICN}\] \[${CYAN}\]\" \"\[${BLUE}\]";
+
 # Set the terminal title and prompt.
-PS1="\[\033]0;\W\007\]"; # working directory base name
-PS1+="\[${BOLD}\]"; # newline
-PS1+="(\!) \[${userStyle}\]\u"; # username
-PS1+="\[${WHITE}\]@";
-PS1+="\[${hostStyle}\]\h"; # host
-PS1+="\[${WHITE}\]:";
-PS1+="\[${ORANGE}\]\W"; # working directory full path
-PS1+="\$(prompt_git \"\[${WHITE}\] on \[${CYAN}\]\" \"\[${BLUE}\]\")"; # Git repository details
-PS1+="\[${WHITE}\] #> \[${NC}\]"; # `$` (and reset color)
+PS1="\[${WHITE}\]\[${HIST_STYLE}\]\!"; # The history number of this command
+PS1+="\[${WHITE}\] \[${USER_STYLE}\]\u"; # Logged username
+PS1+="\[${WHITE}\] \[${HOST_STYLE}\]\h"; # Hostname
+PS1+="\[${WHITE}\] \[${FOLDER_STYLE}\]\W"; # Working directory full path
+PS1+="\$(prompt_git \"\[${GIT_STYLE}\]\")"; # Git repository details
+PS1+="\[${WHITE}\] \[${PROMPT}\]"; # Prompt symbol
+PS1+="\[${NC}\]"; # Reset default color
 export PS1;
 
 PS2="\[${YELLOW}\]→ \[${NC}\]";
