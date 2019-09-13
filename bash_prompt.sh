@@ -86,16 +86,16 @@ HIST_STYLE="\[${HIST_ICN}\] ";
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-    USER_STYLE="\[${ROOT_ICN}\] ${RED}";
+    USER_STYLE="\[${ROOT_ICN}\] \[${RED}\]";
 else
-    USER_STYLE="\[${USER_ICN}\] ${WHITE}";
+    USER_STYLE="\[${USER_ICN}\] \[${WHITE}\]";
 fi;
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-    HOST_STYLE+="\[${NET_ICN}\] ${RED}";
+    HOST_STYLE+="\[${NET_ICN}\] \[${RED}\]";
 else
-    HOST_STYLE+="\[${AT_ICN}\] ${PURPLE}";
+    HOST_STYLE+="\[${AT_ICN}\] \[${PURPLE}\]";
 fi;
 
 # Folder and Git styles
