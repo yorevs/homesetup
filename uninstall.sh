@@ -89,19 +89,19 @@ uninstall_dotfiles() {
     done
 
     # shellcheck disable=SC2164
-    cd ~
+    cd "$HOME"
     rm -rfv "$HOME_SETUP" 
-    [ -L "$HOME/bin" ] && rm -f "$HOME/bin"
+    [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "$HOME/bin"
     echo ''
 
     if [ -d "$HHS_DIR" ]; then
         BACKUPS=( "$(find "$HHS_DIR" -iname "*.orig")" )
         printf "%s\n" "Restoring backups ..."
         for next in ${BACKUPS[*]}; do
-            cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
+            [ -f "${next}" ] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
         done
         echo ''
-        rm -rfv "$HHS_DIR"
+        command rm -rfv "$HHS_DIR"
     fi
     echo ''
 
@@ -114,9 +114,9 @@ uninstall_dotfiles() {
     export PS2="$PS1"
 
     echo "HomeSetup successfully removed."
-    echo "? To reload your old dotfiles type: #> source ~/.bashrc"
-    echo "? Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
-    echo "? Your temporary PS1 => '$PS1'"
+    echo "* To reload your old dotfiles type: #> source ~/.bashrc"
+    echo "* Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
+    echo "* Your temporary PS1 => '$PS1'"
     echo ''
 }
 

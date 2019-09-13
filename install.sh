@@ -56,7 +56,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         
         # Import bash colors
         [ -f bash_colors.sh ] && source bash_colors.sh
-        printf "%s\n" "${GREEN}HomeSetup© ${YELLOW}v$(grep . .VERSION) installation ${NC}"
+        printf "%s\n" "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
         [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"

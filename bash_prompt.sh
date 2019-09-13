@@ -93,9 +93,9 @@ fi;
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-    HOST_STYLE+="\[${NET_ICN}\] \[${RED}\]";
+    HOST_STYLE="\[${NET_ICN}\] \[${RED}\]";
 else
-    HOST_STYLE+="\[${AT_ICN}\] \[${PURPLE}\]";
+    HOST_STYLE="\[${AT_ICN}\] \[${PURPLE}\]";
 fi;
 
 # Folder and Git styles
