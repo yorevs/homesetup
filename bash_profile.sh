@@ -43,7 +43,7 @@ shopt -u nocasematch
 #   source -> ~/.functions can be used to extend/override .bash_functions
 
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
-for file in ~/.{bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,env,aliases,profile,colors,functions}; do
+for file in ~/.{bash_env,bash_colors,bash_aliases,bash_prompt,bash_functions,profile,env,aliases,prompt,functions}; do
     [ -r "$file" ] && [ -f "$file" ] && \. "$file";
 done;
 

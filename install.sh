@@ -19,6 +19,7 @@
 Usage: $PROC_NAME [OPTIONS] <args>
 
   -a | --all           : Install all scripts into the user HomeSetup directory without prompting.
+  -q | --quiet         : Do not prompt for questions, use all defaults.
   -d | --dir <hss_dir> : Specify where to install the HomeSetup files.
 "
 
@@ -27,6 +28,11 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
     # Define the user HOME
     HOME=${HOME:-~}
+
+    # ICONS
+    APPLE_ICN="\xef\x85\xb9"
+    STAR_ICN="\xef\x80\x85"
+    NOTE_ICN="\xef\x84\x98"
 
     # Purpose: Quit the program and exhibits an exit message if specified.
     # @param $1 [Req] : The exit return code.
@@ -56,7 +62,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         
         # Import bash colors
         [ -f bash_colors.sh ] && source bash_colors.sh
-        printf "%s\n" "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME"/.VERSION) installation ${NC}"
+        printf "%s\n" "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME_SETUP"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
         [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"
@@ -68,6 +74,10 @@ Usage: $PROC_NAME [OPTIONS] <args>
             case "$1" in
                 -a | --all)
                     OPT="all"
+                ;;
+                -q | --quiet)
+                    OPT="all"
+                    QUIET=1
                 ;;
                 -d | --dir)
                     shift
@@ -273,12 +283,12 @@ Usage: $PROC_NAME [OPTIONS] <args>
             echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
             echo ''
         fi
-        echo -e "${GREEN}\xef\x85\xb9 Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
+        echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         echo ''
-        echo -e "${WHITE}\xef\x80\x85 To activate dotfiles type: #> ${GREEN}source $HOME/.bashrc"
-        echo -e "${WHITE}\xef\x80\x85 To check for updates type: #> ${GREEN}dv"
-        echo -e "${WHITE}\xef\x80\x85 To reload HomeSetup© type: #> ${GREEN}reload"
-        echo -e "${WHITE}\xef\x84\x98 Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
+        echo -e "${WHITE}${STAR_ICN} To activate dotfiles type: #> ${GREEN}source $HOME/.bashrc"
+        echo -e "${WHITE}${STAR_ICN} To check for updates type: #> ${GREEN}dv"
+        echo -e "${WHITE}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
+        echo -e "${WHITE}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
         echo -e "${NC}"
         quit 0
     }

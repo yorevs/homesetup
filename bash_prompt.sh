@@ -20,6 +20,15 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
     export TERM='xterm-256color';
 fi;
 
+# Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
+export HIST_ICN="\357\207\232"
+export USER_ICN="\357\200\207"
+export ROOT_ICN="\357\224\205"
+export GIT_ICN="\357\204\246"
+export AT_ICN="\357\207\272"
+export NET_ICN="\357\233\277"
+export FOLDER_ICN="\357\201\274"
+
 # Configure git stuff
 function prompt_git() {
     local s='';
@@ -71,15 +80,6 @@ function prompt_git() {
         return;
     fi;
 }
-
-# Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
-HIST_ICN="\357\207\232"
-USER_ICN="\357\200\207"
-ROOT_ICN="\357\224\205"
-GIT_ICN="\357\204\246"
-AT_ICN="\357\207\272"
-NET_ICN="\357\233\277"
-FOLDER_ICN="\357\201\273"
 
 # Command history style
 HIST_STYLE="\[${HIST_ICN}\] ";

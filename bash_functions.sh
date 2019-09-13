@@ -1385,6 +1385,7 @@ function __hhs_dv() {
                 git pull || return 1
                 sleep 1
                 popd &> /dev/null || return 1
+                "${HOME_SETUP}"/install.sh --all
                 echo -e "${GREEN}Successfully updated HomeSetup!"
                 reload
             fi
