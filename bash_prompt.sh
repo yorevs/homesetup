@@ -91,7 +91,7 @@ fi;
 
 # Folder and Git styles
 PATH_STYLE="${WHITE} ${FOLDER_ICN} ${ORANGE}";
-GIT_STYLE="${WHITE} ${GIT_ICN} ${CYAN}\" \"${BLUE}";
+GIT_STYLE="${WHITE} ${GIT_ICN} ${CYAN}";
 
 # User prompt
 PROMPT="${WHITE} \$>${NC} "
