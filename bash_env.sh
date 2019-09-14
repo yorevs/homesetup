@@ -74,3 +74,12 @@ export DEFAULT_DEV_TOOLS=(
     "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
     "htop" "dialog" "telnet" "figlet" "shellcheck" "perl"
 )
+
+# Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
+export HIST_ICN="\357\207\232"
+export USER_ICN="\357\200\207"
+export ROOT_ICN="\357\224\205"
+export GIT_ICN="\357\204\246"
+export AT_ICN="\357\207\272"
+export NET_ICN="\357\233\277"
+export FOLDER_ICN="\357\201\273"

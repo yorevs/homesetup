@@ -375,18 +375,18 @@ function __hhs_envs() {
         echo ' '
         (
             IFS=$'\n'
+            shopt -s nocasematch
             for v in $(env | sort); do
                 name=$(echo "$v" | cut -d '=' -f1)
                 value=$(echo "$v" | cut -d '=' -f2-)
-                shopt -s nocasematch
                 if [[ ${name} =~ ${filter} ]]; then
-                    printf "${HIGHLIGHT_COLOR}${name}${NC} "
+                    echo -en "${HIGHLIGHT_COLOR}${name}${NC} "
                     printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                    printf " ${YELLOW}=>${WHITE} ${value:0:$columns} "
+                    echo -en " ${WHITE}=> ${value:0:$columns} "
                     [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
                 fi
-                shopt -u nocasematch
             done
+            shopt -u nocasematch
             IFS="$RESET_IFS"
         )
         echo ' '
@@ -406,29 +406,34 @@ function __hhs_paths() {
     local path_dir
     local custom
     local private
+    local CROSS_ICN="\xef\x81\x97"
+    local CHECK_ICN="\xef\x81\x98"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: paths [-a,-r <path>]"
         return 1
     elif [ -z "$1" ]; then
         [ -f "$PATHS_FILE" ] || touch "$PATHS_FILE"
-        pad=$(printf '%0.1s' "."{1..60})
-        pad_len=60
+        pad=$(printf '%0.1s' "."{1..70})
+        pad_len=70
+        columns=66
         echo ' '
         echo "${YELLOW}Listing all PATH entries:"
         echo ' '
         (
             IFS=$'\n'
             for path in $(echo -e "${PATH//:/\\n}"); do
+                path="${path:0:$columns}"
                 custom="$(grep ^"$path"$ "$PATHS_FILE")" # Custom paths
                 private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
                 path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
-                printf '%s' "${HIGHLIGHT_COLOR}$path"
+                printf "%s" "${HIGHLIGHT_COLOR}${path}"
                 printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+                [ "${#path}" -ge "$columns" ] && echo -n "${NC}" || echo -n "${NC}"
                 if [ -d "$path" ]; then
-                    printf '%s' "${GREEN} Path exists => "
+                    echo -en "${GREEN} ${CHECK_ICN} => "
                 else
-                    printf '%s'  "${RED} Path does not exist => "
+                    echo -en "${RED} ${CROSS_ICN} => "
                 fi
                 [ -n "$custom" ] && printf '%s\n' "custom"
                 [ -n "$path_dir" ] && printf '%s\n' "paths.d"

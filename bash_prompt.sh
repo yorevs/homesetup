@@ -20,15 +20,6 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
     export TERM='xterm-256color';
 fi;
 
-# Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
-export HIST_ICN="\357\207\232"
-export USER_ICN="\357\200\207"
-export ROOT_ICN="\357\224\205"
-export GIT_ICN="\357\204\246"
-export AT_ICN="\357\207\272"
-export NET_ICN="\357\233\277"
-export FOLDER_ICN="\357\201\274"
-
 # Configure git stuff
 function prompt_git() {
     local s='';
@@ -82,38 +73,39 @@ function prompt_git() {
 }
 
 # Command history style
-HIST_STYLE="\[${HIST_ICN}\] ";
+HIST_STYLE="${WHITE}${HIST_ICN} ";
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-    USER_STYLE="\[${ROOT_ICN}\] \[${RED}\]";
+    USER_STYLE="${WHITE} ${ROOT_ICN} ${RED}";
 else
-    USER_STYLE="\[${USER_ICN}\] \[${WHITE}\]";
+    USER_STYLE="${WHITE} ${USER_ICN} ${GREEN}";
 fi;
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-    HOST_STYLE="\[${NET_ICN}\] \[${RED}\]";
+    HOST_STYLE="${WHITE} ${NET_ICN} ${RED}";
 else
-    HOST_STYLE="\[${AT_ICN}\] \[${PURPLE}\]";
+    HOST_STYLE="${WHITE} ${AT_ICN} ${PURPLE}";
 fi;
 
 # Folder and Git styles
-FOLDER_STYLE="\[${FOLDER_ICN}\] \[${ORANGE}\]";
-GIT_STYLE="\[${WHITE}\] \[${GIT_ICN}\] \[${CYAN}\]\" \"\[${BLUE}\]";
+PATH_STYLE="${WHITE} ${FOLDER_ICN} ${ORANGE}";
+GIT_STYLE="${WHITE} ${GIT_ICN} ${CYAN}\" \"${BLUE}";
 
 # User prompt
-PROMPT="\$> "
+PROMPT="${WHITE} \$>${NC} "
 
 # Set the terminal title and prompt.
-PS1="\[${WHITE}\]\[${HIST_STYLE}\]\!"; # The history number of this command
-PS1+="\[${WHITE}\] \[${USER_STYLE}\]\u"; # Logged username
-PS1+="\[${WHITE}\] \[${HOST_STYLE}\]\h"; # Hostname
-PS1+="\[${WHITE}\] \[${FOLDER_STYLE}\]\W"; # Working directory full path
-PS1+="\$(prompt_git \"\[${GIT_STYLE}\]\")"; # Git repository details
-PS1+="\[${WHITE}\] \[${PROMPT}\]"; # Prompt symbol
-PS1+="\[${NC}\]"; # Reset default color
+# Check ${HOME_SETUP}/misc/prompt-codes.txt for more details
+
+PS1="${HIST_STYLE}\!"; # The history number of this command
+PS1+="${USER_STYLE}\u"; # Logged username
+PS1+="${HOST_STYLE}\h"; # Hostname
+PS1+="${PATH_STYLE}\W"; # Working directory base path
+PS1+="\$(prompt_git \"${GIT_STYLE}\")"; # Git repository details
+PS1+="${PROMPT}"; # Prompt symbol
 export PS1;
 
-PS2="\[${YELLOW}\]→ \[${NC}\]";
+PS2="${PROMPT}";
 export PS2;
