@@ -68,11 +68,12 @@ export PATHS_FILE="$HOME/.path"
 
 # Development tools. To override it please export DEFAULT_DEV_TOOLS variable at ~/.env
 export DEFAULT_DEV_TOOLS=(
-    "bash" "ssh" "xcode-select" "brew" "tree" "vim" "pcregrep" "shfmt" 
-    "node" "java" "python" "rvm" "ruby" "go" "gcc" "make" "qmake"
+    "bash" "ssh" "xcode-select" "brew" "tree" "vim" "pcregrep"  
+    "shfmt" "node" "java" "rvm" "ruby" "go" "gcc" "make" "qmake"
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
     "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
-    "htop" "dialog" "telnet" "figlet" "shellcheck" "perl"
+    "htop" "dialog" "telnet" "figlet" "shellcheck" "perl" "hexdump" 
+    "iconfig" "python"
 )
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details

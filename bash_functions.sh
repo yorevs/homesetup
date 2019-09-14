@@ -534,16 +534,17 @@ function __hhs_tools() {
     # shellcheck disable=SC2207
     IFS=$'\n' sorted=($(sort <<<"${DEFAULT_DEV_TOOLS[*]}"))
     IFS="$RESET_IFS"
+    STAR_ICN="\xef\x80\x85"
 
     echo ''
     for app in ${sorted[*]}; do
         tc "$app"
     done
-    echo "${HIGHLIGHT_COLOR}"
-    echo 'To check the current installed version, type: #> ver <tool_name>'
-    echo 'To install/uninstall a tool, type: #> hspm.sh install/uninstall <tool_name>'
-    echo 'To override the list of tools, type: #> export DEFAULT_DEV_TOOLS=( "tool1" "tool2" ... )'
-    echo "${NC}"
+    echo ''
+    echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: #> ${GREEN}ver <tool_name>"
+    echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: #> ${GREEN}hspm.sh install/uninstall <tool_name>"
+    echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: #> ${GREEN}export DEFAULT_DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
+    echo -e "${NC}"
     
     return 0
 }
