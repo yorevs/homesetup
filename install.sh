@@ -77,6 +77,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 ;;
                 -q | --quiet)
                     OPT="all"
+                    ANS="Y"
                     QUIET=1
                 ;;
                 -d | --dir)
@@ -187,7 +188,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
             printf "%s\n" "${ORANGE}"
-            read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+            [ -z ${QUIET} ] && read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
             printf "%s\n" "${NC}"
             if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
                 [ -n "$ANS" ] && echo ''
@@ -222,7 +223,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             for next in ${ALL_DOTFILES[*]}; do
                 dotfile=$HOME/.${next}
                 echo ''
-                read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
+                [ -z ${QUIET} ] && read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
                 [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && continue
                 echo ''
                 # Backup existing dofile into $HOME/.hhs

@@ -1383,11 +1383,14 @@ function __hhs_dv() {
             if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
                 pushd "$HOME_SETUP" &> /dev/null || return 1
                 git pull || return 1
-                sleep 1
                 popd &> /dev/null || return 1
-                "${HOME_SETUP}"/install.sh --all
-                echo -e "${GREEN}Successfully updated HomeSetup!"
-                reload
+                if "${HOME_SETUP}"/install.sh -q; then
+                  echo -e "${GREEN}Successfully updated HomeSetup!"
+                  sleep 1
+                  reload
+                else
+                  echo -e "${RED}Failed to install HomeSetup update"
+                fi
             fi
         else
             echo -e "${GREEN}You version is up to date with the repository: ${repoVer} !"
