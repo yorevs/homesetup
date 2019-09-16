@@ -73,13 +73,13 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi;
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
-HIST_ICN="\357\207\232"
-USER_ICN="\357\200\207"
-ROOT_ICN="\357\224\205"
-GIT_ICN="\357\204\246"
-AT_ICN="\357\207\272"
-NET_ICN="\357\233\277"
-FOLDER_ICN="\357\201\273"
+HIST_ICN="${HIST_ICN:-\357\207\232}"
+USER_ICN="${USER_ICN:-\357\200\207}"
+ROOT_ICN="${ROOT_ICN:-\357\224\205}"
+GIT_ICN="${GIT_ICN:-\357\204\246}"
+AT_ICN="${AT_ICN:-\357\207\272}"
+NET_ICN="${NET_ICN:-\357\233\277}"
+FOLDER_ICN="${FOLDER_ICN:-\357\201\273}"
 
 # Command history style
 HIST_STYLE="\[${WHITE}${HIST_ICN} \]";
@@ -120,6 +120,9 @@ PS1_STYLE+=" ${PROMPT} "; # Prompt symbol
 
 # PS2 Style: No icons, simple prompt.
 PS2_STYLE="\[\W ${PROMPT} ${NC}\]";
+
+unset PS1
+unset PS2
 
 export PS1=${CUSTOM_PS:-$PS1_STYLE};
 export PS2=${CUSTOM_PS:-$PS2_STYLE};
