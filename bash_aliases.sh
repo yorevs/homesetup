@@ -126,6 +126,10 @@ alias reload='cls; \. ~/.bashrc && echo -e "${HHS_WELCOME}"'
 # Kills all processes specified by $1
 alias pk='function _() { test -n "$1" && plist $1 kill; };_'
 
+# Swaps between PS1 & PS2 prompts 
+alias ps1='export PS1=$PS1_STYLE'
+alias ps2='export PS1=$PS2_STYLE'
+
 # -----------------------------------------------------------------------------------
 # Tool aliases
 

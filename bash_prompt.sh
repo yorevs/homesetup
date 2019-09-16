@@ -14,12 +14,6 @@
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
 # Improved with: http://ezprompt.net
 
-if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-    export TERM='gnome-256color';
-elif infocmp xterm-256color >/dev/null 2>&1; then
-    export TERM='xterm-256color';
-fi;
-
 # Configure git stuff
 function prompt_git() {
     local s='';
@@ -72,40 +66,60 @@ function prompt_git() {
     fi;
 }
 
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+    export TERM='gnome-256color';
+elif infocmp xterm-256color >/dev/null 2>&1; then
+    export TERM='xterm-256color';
+fi;
+
+# Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details
+HIST_ICN="\357\207\232"
+USER_ICN="\357\200\207"
+ROOT_ICN="\357\224\205"
+GIT_ICN="\357\204\246"
+AT_ICN="\357\207\272"
+NET_ICN="\357\233\277"
+FOLDER_ICN="\357\201\273"
+
 # Command history style
-HIST_STYLE="${WHITE}${HIST_ICN} ";
+HIST_STYLE="\[${WHITE}${HIST_ICN} \]";
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-    USER_STYLE="${WHITE} ${ROOT_ICN} ${RED}";
+    USER_STYLE="\[${WHITE} ${ROOT_ICN} ${RED}\]";
 else
-    USER_STYLE="${WHITE} ${USER_ICN} ${GREEN}";
+    USER_STYLE="\[${WHITE} ${USER_ICN} ${GREEN}\]";
 fi;
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-    HOST_STYLE="${WHITE} ${NET_ICN} ${RED}";
+    HOST_STYLE="\[${WHITE} ${NET_ICN} ${RED}\]";
 else
-    HOST_STYLE="${WHITE} ${AT_ICN} ${PURPLE}";
+    HOST_STYLE="\[${WHITE} ${AT_ICN} ${PURPLE}\]";
 fi;
 
-# Folder and Git styles
-PATH_STYLE="${WHITE} ${FOLDER_ICN} ${ORANGE}";
-GIT_STYLE="${WHITE} ${GIT_ICN} ${CYAN}";
+# Folder style
+PATH_STYLE="\[${WHITE} ${FOLDER_ICN} ${ORANGE}\]";
 
-# User prompt
-PROMPT="${WHITE} \$>${NC} "
+# Git style
+GIT_STYLE="\[${WHITE} \$(prompt_git \"${GIT_ICN} ${CYAN}\")\]";
+
+# User prompt format
+PROMPT="\[${WHITE}\$>${NC}\]"
 
 # Set the terminal title and prompt.
 # Check ${HOME_SETUP}/misc/prompt-codes.txt for more details
 
-PS1="${HIST_STYLE}\!"; # The history number of this command
-PS1+="${USER_STYLE}\u"; # Logged username
-PS1+="${HOST_STYLE}\h"; # Hostname
-PS1+="${PATH_STYLE}\W"; # Working directory base path
-PS1+="\$(prompt_git \"${GIT_STYLE}\")"; # Git repository details
-PS1+="${PROMPT}"; # Prompt symbol
-export PS1;
+# PS1 Style: Color and icons (default)
+PS1_STYLE="${HIST_STYLE}\!"; # The history number of this command
+PS1_STYLE+="${USER_STYLE}\u"; # Logged username
+PS1_STYLE+="${HOST_STYLE}\h"; # Hostname
+PS1_STYLE+="${PATH_STYLE}\W"; # Working directory base path
+PS1_STYLE+="${GIT_STYLE}"; # Git repository details
+PS1_STYLE+=" ${PROMPT} "; # Prompt symbol
 
-PS2="${PROMPT}";
-export PS2;
+# PS2 Style: No icons, simple prompt.
+PS2_STYLE="\[\W ${PROMPT} ${NC}\]";
+
+export PS1=${CUSTOM_PS:-$PS1_STYLE};
+export PS2=${CUSTOM_PS:-$PS2_STYLE};
