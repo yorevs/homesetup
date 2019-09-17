@@ -26,15 +26,17 @@
 
 if ls --color &> /dev/null; then # GNU `ls`
     export COLOR_FLAG="--color"
-    export LS_COLORS='di=1;34:ln=1;36:so=35:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+    export LS_COLORS="${LS_COLORS:-'di=1;34:ln=1;36:so=35:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'}"
 else # macOS `ls`
     export COLOR_FLAG="-G"
     export CLICOLOR=1
-    export LSCOLORS='ExGxfxdxCxegedabagacad'
+    export LSCOLORS="${LS_COLORS:-'ExGxfxdxCxegedabagacad'}"
 fi
 
-# Setting grep color as RED
-export GREP_COLOR='1;31'
+# Setting grep color: Default is RED
+export GREP_COLOR=${GREP_COLOR:-'1;31'}
+# Color used to highlight text: Default is BLUE
+export HIGHLIGHT_COLOR=${HIGHLIGHT_COLOR:-$BLUE};
 
 if tput setaf 1 &> /dev/null; then
     # Solarized colors, taken from http://git.io/solarized-colors.
@@ -51,20 +53,17 @@ if tput setaf 1 &> /dev/null; then
     VIOLET=$(tput setaf 61);
     WHITE=$(tput setaf 15);
     YELLOW=$(tput setaf 136);
-    # Highlight will affect all HomeSetup functions
-    HIGHLIGHT_COLOR=$(tput setaf 33); # Highlight as BLUE
 else
-    export NC="\e[0m";
-    export BOLD='\e[1m';
-    export BLACK="\e[1;30m";
-    export BLUE="\e[1;34m";
-    export CYAN="\e[1;36m";
-    export GREEN="\e[1;32m";
-    export ORANGE="\e[1;33m";
-    export PURPLE="\e[1;35m";
-    export RED="\e[1;31m";
-    export VIOLET="\e[1;35m";
-    export WHITE="\e[1;37m";
-    export YELLOW="\e[1;33m";
-    export HIGHLIGHT_COLOR="${HIGHLIGHT_COLOR:$BLUE}";
+    export NC=${NC:-'\e[0m'};
+    export BOLD=${BOLD:-'\e[1m'};
+    export BLACK=${BLACK:-'\e[1;30m'};
+    export BLUE=${BLUE:-'\e[1;34m'};
+    export CYAN=${CYAN:-'\e[1;36m'};
+    export GREEN=${GREEN:-'\e[1;32m'};
+    export ORANGE=${ORANGE:-'\e[1;33m'};
+    export PURPLE=${PURPLE:-'\e[1;35m'};
+    export RED=${RED:-'\e[1;31m'};
+    export VIOLET=${VIOLET:-'\e[1;35m'};
+    export WHITE=${WHITE:-'\e[1;37m'};
+    export YELLOW=${YELLOW:-'\e[1;33m'};
 fi;

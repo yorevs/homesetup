@@ -59,14 +59,17 @@ export HISTFILE="$HOME/.bash_history"
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
+
+# Fixed
 export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export HHS_WELCOME="${ORANGE}${MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${DOTFILES_VERSION}${NC}"
 export RESET_IFS="$IFS"
-export MSELECT_MAX_ROWS=10
-export SAVED_DIRS="$HHS_DIR/.saved_dirs"
-export CMD_FILE="$HHS_DIR/.cmd_file"
-export PUNCH_FILE="$HHS_DIR/.punches"
-export PATHS_FILE="$HOME/.path"
+# Customizeable
+export MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:-10}
+export SAVED_DIRS="${SAVED_DIRS:-$HHS_DIR/.saved_dirs}"
+export CMD_FILE="${CMD_FILE:-$HHS_DIR/.cmd_file}"
+export PUNCH_FILE="${PUNCH_FILE:-$HHS_DIR/.punches}"
+export PATHS_FILE="${PATHS_FILE:-$HOME/.path}"
 
 # Development tools. To override it please export DEFAULT_DEV_TOOLS variable at ~/.env
 export DEFAULT_DEV_TOOLS=(
