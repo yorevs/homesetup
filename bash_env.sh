@@ -50,10 +50,12 @@ export DESKTOP="$HOME/Desktop"
 export DOWNLOADS="$HOME/Downloads"
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
-export HISTSIZE=${HISTSIZE:-500}
-export HISTFILESIZE=${HISTFILESIZE:-1000}
+export HISTSIZE=${HISTSIZE:-1000}
+export HISTFILESIZE=${HISTFILESIZE:-2000}
+export HISTTIMEFORMAT="[%F %T] "
 # History control ( ignore duplicates and spaces )
-export HISTCONTROL=ignoreboth:erasedups
+export HISTCONTROL="ignoreboth:erasedups"
+export HISTFILE="$HOME/.bash_history"
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
