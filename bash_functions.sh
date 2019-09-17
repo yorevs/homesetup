@@ -90,8 +90,8 @@ function __hhs_hl() {
 # @param $2 [Req] : The GLOB expressions of the file search.
 function __hhs_sf() {
 
-    local fnames
-    local gflags="-HEI"
+    local inames
+    local gflags="-FHEI"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo ''
@@ -100,11 +100,10 @@ function __hhs_sf() {
         echo ''
         return 1
     else
-        local files="${2//,/|}"
-        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \{}'.format(s) for s in a]))"
-        fnames=$(python -c "$expr")
+        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+        inames=$(python -c "$expr")
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        eval "find -L . -type f \( $fnames \) | grep $gflags \"(${files//\*/})$\""
+        eval "find -L $1 -type f \( $inames \) | grep $gflags \".*\""
         return $?
     fi
 }
@@ -114,8 +113,8 @@ function __hhs_sf() {
 # @param $2 [Req] : The GLOB expressions of the directory search.
 function __hhs_sd() {
     
-    local dnames
-    local gflags="-HEI"
+    local inames
+    local gflags="-FHEI"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo ''
@@ -124,11 +123,10 @@ function __hhs_sd() {
         echo ''
         return 1
     else
-        local dirs="${2//,/|}"
-        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname *{}*'.format(s) for s in a]))"
-        dnames=$(python -c "$expr")
+        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"*{}*\"'.format(s) for s in a]))"
+        inames=$(python -c "$expr")
         echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-        eval "find -L . -type d \( $dnames \) | grep $gflags \"($dirs)$\""
+        eval "find -L $1 -type d \( $inames \) | grep $gflags \".*\""
         return $?
     fi
 }
@@ -145,8 +143,7 @@ function __hhs_ss() {
     local gflags
     local extra_str
     local replace
-    local expr
-    local fnames
+    local inames
     local strType='regex'
     local gflags="-HnEI"
 
@@ -189,18 +186,19 @@ function __hhs_ss() {
             esac
             shift
         done
-        expr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \{}'.format(s) for s in a]))"
-        fnames=$(python -c "$expr")
-        echo "${YELLOW}Searching for \"${strType}\" matching: \"$2\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+        local expr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+        local search_str="$2"
+        inames=$(python -c "$expr")
+        echo "${YELLOW}Searching for \"${strType}\" matching: \"$search_str\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
         if [ -n "$replace" ]; then
             if [ "$strType" = 'string' ]; then
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $fnames \) -exec grep $gflags $2 {} + -exec sed -i'' -e \"s/$2/$repl_str/g\" {} + | sed \"s/$2/$repl_str/g\" | grep \"$repl_str\""
-            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $fnames \) -exec grep $gflags $2 {} + -exec sed -i '' -e \"s/$2/$repl_str/g\" {} + | sed \"s/$2/$repl_str/g\" | grep \"$repl_str\""
+            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i'' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep \"($repl_str\|$search_str)\""
+            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i '' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep \"($repl_str\|$search_str)\""
         else
-            eval "find -L $1 -type f \( $fnames \) -exec grep $gflags $2 {} + | grep $gflags $2"
+            eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} +| grep $gflags \"$search_str\""
         fi
     fi
 
