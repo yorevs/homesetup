@@ -49,11 +49,11 @@ export WORKSPACE="$HOME/Workspace"
 export DESKTOP="$HOME/Desktop"
 export DOWNLOADS="$HOME/Downloads"
 
-# Setting history length ( HISTSIZE and HISTFILESIZE ) in bash.
-export HISTSIZE=${HISTSIZE:-1000}
-export HISTFILESIZE=${HISTFILESIZE:-2000}
-# Don't put duplicate lines in the history.
-export HISTCONTROL=ignoredups:ignorespace:ignoreboth
+# Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
+export HISTSIZE=${HISTSIZE:-500}
+export HISTFILESIZE=${HISTFILESIZE:-1000}
+# History control ( ignore duplicates and spaces )
+export HISTCONTROL=ignoreboth:erasedups
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
@@ -73,5 +73,5 @@ export DEFAULT_DEV_TOOLS=(
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
     "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
     "htop" "dialog" "telnet" "figlet" "shellcheck" "perl" "hexdump" 
-    "iconfig" "python"
+    "iconfig" "python" "python3"
 )
