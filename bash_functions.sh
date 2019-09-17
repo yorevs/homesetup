@@ -191,8 +191,8 @@ function __hhs_ss() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i'' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_hl \"($repl_str|$search_str|\$)\""
-            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i '' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_hl \"($repl_str|$search_str|\$)\""
+            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | __hhs_hl \"($repl_str|\$)\""
+            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | __hhs_hl \"($repl_str|\$)\""
         else
             eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + | __hhs_hl \"($search_str|\$)\""
         fi
@@ -524,9 +524,9 @@ function __hhs_tc() {
 # @function: Check whether a list of development tools are installed.
 function __hhs_tools() {
 
-    DEFAULT_DEV_TOOLS=${DEFAULT_DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
+    DEV_TOOLS=${DEV_TOOLS:-${DEV_TOOLS[*]}}
     # shellcheck disable=SC2207
-    IFS=$'\n' sorted=($(sort <<<"${DEFAULT_DEV_TOOLS[*]}"))
+    IFS=$'\n' sorted=($(sort <<<"${DEV_TOOLS[*]}"))
     IFS="$RESET_IFS"
     STAR_ICN="\xef\x80\x85"
 
@@ -537,7 +537,7 @@ function __hhs_tools() {
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: #> ${GREEN}ver <tool_name>"
     echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: #> ${GREEN}hspm.sh install/uninstall <tool_name>"
-    echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: #> ${GREEN}export DEFAULT_DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
+    echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: #> ${GREEN}export DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
     echo -e "${NC}"
     
     return 0

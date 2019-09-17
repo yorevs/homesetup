@@ -71,8 +71,8 @@ export CMD_FILE="${CMD_FILE:-$HHS_DIR/.cmd_file}"
 export PUNCH_FILE="${PUNCH_FILE:-$HHS_DIR/.punches}"
 export PATHS_FILE="${PATHS_FILE:-$HOME/.path}"
 
-# Development tools. To override it please export DEFAULT_DEV_TOOLS variable at ~/.env
-export DEFAULT_DEV_TOOLS=(
+# Development tools. To override it please export DEV_TOOLS variable at ~/.env
+DEFAULT_DEV_TOOLS=(
     "bash" "ssh" "xcode-select" "brew" "tree" "vim" "pcregrep"  
     "shfmt" "node" "java" "rvm" "ruby" "go" "gcc" "make" "qmake"
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
@@ -80,3 +80,5 @@ export DEFAULT_DEV_TOOLS=(
     "htop" "dialog" "telnet" "figlet" "shellcheck" "perl" "hexdump" 
     "iconfig" "python" "python3"
 )
+
+export DEV_TOOLS=${DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
