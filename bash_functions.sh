@@ -91,7 +91,7 @@ function __hhs_hl() {
 function __hhs_sf() {
 
     local inames
-    local gflags="-FHEI"
+    local gflags="-E"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo ''
@@ -103,7 +103,7 @@ function __hhs_sf() {
         local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
         inames=$(python -c "$expr")
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        eval "find -L $1 -type f \( $inames \) | grep $gflags \".*\""
+        eval "find -L $1 -type f \( $inames \) | grep $gflags \"(${2//\*/.*}|\$)\""
         return $?
     fi
 }
@@ -114,7 +114,7 @@ function __hhs_sf() {
 function __hhs_sd() {
     
     local inames
-    local gflags="-FHEI"
+    local gflags="-E"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo ''
@@ -126,7 +126,7 @@ function __hhs_sd() {
         local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"*{}*\"'.format(s) for s in a]))"
         inames=$(python -c "$expr")
         echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-        eval "find -L $1 -type d \( $inames \) | grep $gflags \".*\""
+        eval "find -L $1 -type d \( $inames \) | grep $gflags \"(${2//\*/.*}|\$)\""
         return $?
     fi
 }
@@ -195,10 +195,10 @@ function __hhs_ss() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i'' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep \"($repl_str\|$search_str)\""
-            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i '' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep \"($repl_str\|$search_str)\""
+            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i'' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep -E \"($repl_str|$search_str|\$)\""
+            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i '' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep -E \"($repl_str|$search_str|\$)\""
         else
-            eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} +| grep $gflags \"$search_str\""
+            eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + | grep -E \"($search_str|\$)\""
         fi
     fi
 
@@ -1390,7 +1390,7 @@ function __hhs_dv() {
                 popd &> /dev/null || return 1
                 if "${HOME_SETUP}"/install.sh -q; then
                   echo -e "${GREEN}Successfully updated HomeSetup!"
-                  sleep 1
+                  sleep 2
                   reload
                 else
                   echo -e "${RED}Failed to install HomeSetup update"

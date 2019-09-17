@@ -268,7 +268,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
     # Reload the bash and apply the dotfiles.
     activate_dotfiles() {
         
-        sleep 1
+        sleep 2
         echo ''
         printf "%s\n" "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
         printf "%s\n" "${BLUE}"
