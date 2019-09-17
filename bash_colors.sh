@@ -55,7 +55,7 @@ if tput setaf 1 &> /dev/null; then
     HIGHLIGHT_COLOR=$(tput setaf 33); # Highlight as BLUE
 else
     export NC="\e[0m";
-    export BOLD='';
+    export BOLD='\e[1m';
     export BLACK="\e[1;30m";
     export BLUE="\e[1;34m";
     export CYAN="\e[1;36m";
@@ -66,5 +66,5 @@ else
     export VIOLET="\e[1;35m";
     export WHITE="\e[1;37m";
     export YELLOW="\e[1;33m";
-    export HIGHLIGHT_COLOR="${BLUE}";
+    export HIGHLIGHT_COLOR="${HIGHLIGHT_COLOR:$BLUE}";
 fi;

@@ -72,17 +72,13 @@ function __hhs_decrypt() {
 # @param $1 [Pip] : The piped input stream.
 function __hhs_hl() {
 
-    local word
-    local search
-
-    search="$1"
-    word="${HIGHLIGHT_COLOR}${1}${NC}"
+    local search="$*"
+    local hl_color=${HIGHLIGHT_COLOR//\e[/}
+    hl_color=${HIGHLIGHT_COLOR/m/}
 
     while read -r stream; do
-        printf '%s\n' "${stream//$search/$word}"
+        echo "$stream" | GREP_COLOR="$hl_color" grep -FE "($search|\$)"
     done
-
-    return 0
 }
 
 # @function: Search for files and links to files recursively.
@@ -103,7 +99,7 @@ function __hhs_sf() {
         local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
         inames=$(python -c "$expr")
         echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-        eval "find -L $1 -type f \( $inames \) | grep $gflags \"(${2//\*/.*}|\$)\""
+        eval "find -L $1 -type f \( $inames \) | __hhs_hl \"(${2//\*/.*}|\$)\""
         return $?
     fi
 }
@@ -123,10 +119,10 @@ function __hhs_sd() {
         echo ''
         return 1
     else
-        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"*{}*\"'.format(s) for s in a]))"
+        local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
         inames=$(python -c "$expr")
         echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-        eval "find -L $1 -type d \( $inames \) | grep $gflags \"(${2//\*/.*}|\$)\""
+        eval "find -L $1 -type d \( $inames \) | __hhs_hl \"(${2//\*/.*}|\$)\""
         return $?
     fi
 }
@@ -195,10 +191,10 @@ function __hhs_ss() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i'' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep -E \"($repl_str|$search_str|\$)\""
-            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i '' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | grep -E \"($repl_str|$search_str|\$)\""
+            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i'' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_hl \"($repl_str|$search_str|\$)\""
+            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + -exec sed -i '' -e \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_hl \"($repl_str|$search_str|\$)\""
         else
-            eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + | grep -E \"($search_str|\$)\""
+            eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + | __hhs_hl \"($search_str|\$)\""
         fi
     fi
 
