@@ -521,6 +521,33 @@ function __hhs_tc() {
     return 1
 }
 
+# @function: Tail a log using colors specified in .tailor file.
+# @param $1 [Req] : The log file name.
+function __hhs_tailor() {
+
+    THREAD_NAME_RE='\[(main|Thread-[0-9]+)\]'
+    THREAD_NAME_STYLE="${VIOLET}"
+    FQDN_RE='(([a-zA-Z][a-zA-Z0-9]*\.)+[a-zA-Z0-9]*)'
+    FQDN_STYLE="${CYAN}"
+    LOG_LEVEL_RE='INFO|SEVERE|FATAL|DEBUG|WARN'
+    LOG_LEVEL_STYLE="${GREEN}"
+    DATE_FMT_RE='([0-9]{2,4}\-?)+ ([0-9]{2}\:?)+\.[0-9]{3}'
+    DATE_FMT_STYLE="${DIM}"
+
+    if [ -z "$1" ] || [ ! -f "$1" ]; then
+        echo "Usage: tailor <log_filename>"
+        return 1
+    else
+        tail -F "$1" | sed -E \
+            -e "s/(${THREAD_NAME_RE})/${THREAD_NAME_STYLE}\1${NC}/" \
+            -e "s/(${FQDN_RE})/${FQDN_STYLE}\1${NC}/" \
+            -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/" \
+            -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/"
+    fi
+
+    return 0
+}
+
 # @function: Check whether a list of development tools are installed.
 function __hhs_tools() {
 

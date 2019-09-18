@@ -74,7 +74,6 @@ alias mv='mv -iv'
 
 # Setting some defaults
 alias cls='clear'
-alias tl='tail -F'
 alias df='df -H'
 alias du='du -hcd 1'
 
@@ -341,6 +340,7 @@ alias envs='__hhs_envs'
 alias paths='__hhs_paths'
 alias ver='__hhs_ver'
 alias tc='__hhs_tc'
+alias tl='__hhs_tailor'
 alias tools='__hhs_tools'
 alias mselect='__hhs_mselect'
 alias aa='__hhs_aa'

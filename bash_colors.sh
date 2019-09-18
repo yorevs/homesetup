@@ -26,11 +26,11 @@
 
 if ls --color &> /dev/null; then # GNU `ls`
     export COLOR_FLAG="--color"
-    export LS_COLORS="${LS_COLORS:-'di=1;34:ln=1;36:so=35:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'}"
+    export LS_COLORS='di=1;34:ln=1;36:so=35:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 else # macOS `ls`
     export COLOR_FLAG="-G"
     export CLICOLOR=1
-    export LSCOLORS="${LS_COLORS:-'ExGxfxdxCxegedabagacad'}"
+    export LSCOLORS='ExGxfxdxCxegedabagacad'
 fi
 
 # Setting grep color: Default is RED
@@ -43,6 +43,7 @@ if tput setaf 1 &> /dev/null; then
     tput sgr0; # NC colors
     NC=$(tput sgr0);
     BOLD=$(tput bold);
+    DIM=$(tput dim);
     BLACK=$(tput setaf 0);
     BLUE=$(tput setaf 33);
     CYAN=$(tput setaf 37);
@@ -56,6 +57,7 @@ if tput setaf 1 &> /dev/null; then
 else
     export NC=${NC:-'\e[0m'};
     export BOLD=${BOLD:-'\e[1m'};
+    export DIM=${BOLD:-'\e[4m'};
     export BLACK=${BLACK:-'\e[1;30m'};
     export BLUE=${BLUE:-'\e[1;34m'};
     export CYAN=${CYAN:-'\e[1;36m'};
