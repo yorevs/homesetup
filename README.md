@@ -84,11 +84,13 @@ If this folder already exists, the install script will copy all files into it.
 To override or add customised stuff, you need to create a custom file as follows:
 
 ```
-~/.aliases # For aliases customisation
-~/.profile # For profile customisation
-~/.env # For environment variables customisation
-~/.colors # For bash color customisation
-~/.functions # For functions customisation
+~/.colors     : To customize your colors
+~/.env        : To customize your environment variables
+~/.aliases    : To customize your aliases
+~/.prompt     : To customize your prompt
+~/.functions  : To customize your functions
+~/.profile    : To customize your profile
+~/.path       : To customize your paths
 ```
 
 ### 4. Aliases
@@ -131,7 +133,7 @@ cls      | clear
 pk       | 'Kills all processes matching <ProcName>'
 db-clean | 'Recursively delete Dropbox conflicted files from the current directory'
 vi       | vim
-tl       | tail -F
+tl       | 'Tail a log using colors specified in .tailor file.'
 df       | df -H
 du       | du -hcd 1
 more     | more -R

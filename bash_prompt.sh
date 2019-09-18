@@ -119,7 +119,7 @@ PS1_STYLE+="${GIT_STYLE}"; # Git repository details
 PS1_STYLE+="${PROMPT}"; # Prompt symbol
 
 # PS2 Style: No icons, simple prompt.
-PS2_STYLE="\h:\W \u\$ ";
+PS2_STYLE=":\[${YELLOW}\]\W \[${WHITE}\]\$> ";
 
 unset PS1;
 unset PS2;

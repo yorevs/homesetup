@@ -35,7 +35,8 @@ shopt -u nocasematch
 [ "Linux" = "${MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
 
 # Load the shell dotfiles, and then:
-#   source -> ~/.path can be used to extend `$PATH`.
+#   source -> ~/.path can be used to extend `$PATH`
+#   source -> ~/.prompt can be used to extend/override .bash_prompt
 #   source -> ~/.aliases can be used to extend/override .bash_aliases
 #   source -> ~/.profile can be used to extend/override .bash_profile
 #   source -> ~/.env can be used to extend/override .bash_env

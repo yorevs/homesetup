@@ -525,27 +525,31 @@ function __hhs_tc() {
 # @param $1 [Req] : The log file name.
 function __hhs_tailor() {
 
-    THREAD_NAME_RE='\[(main|Thread-[0-9]+)\]'
-    THREAD_NAME_STYLE="${VIOLET}"
-    FQDN_RE='(([a-zA-Z][a-zA-Z0-9]*\.)+[a-zA-Z0-9]*)'
-    FQDN_STYLE="${CYAN}"
-    LOG_LEVEL_RE='INFO|SEVERE|FATAL|DEBUG|WARN'
-    LOG_LEVEL_STYLE="${GREEN}"
-    DATE_FMT_RE='([0-9]{2,4}\-?)+ ([0-9]{2}\:?)+\.[0-9]{3}'
-    DATE_FMT_STYLE="${DIM}"
+    [ -f "$HHS_DIR/.tailor" ] || printf '%s\n' "
+THREAD_NAME_RE='\[(.*main.*|Thread-[0-9]+)\]'
+THREAD_NAME_STYLE=\"${VIOLET}\"
+FQDN_RE='(([a-zA-Z][a-zA-Z0-9]*\.)+[a-zA-Z0-9]*)'
+FQDN_STYLE=\"${CYAN}\"
+LOG_LEVEL_RE='INFO|SEVERE|FATAL|DEBUG|WARN'
+LOG_LEVEL_STYLE=\"${GREEN}\"
+DATE_FMT_RE='([0-9]{2,4}\-?)+ ([0-9]{2}\:?)+\.[0-9]{3}'
+DATE_FMT_STYLE=\"${DIM}\"
+PATH_FMT_RE='(((http|https|ftp|file)\:\/)?\/[a-zA-Z0-9]+\/?([a-zA-Z0-9]+\/?)+[^ \.]*)'
+PATH_FMT_STYLE=\"${ORANGE}\"
+    " > "$HHS_DIR/.tailor" && source "$HHS_DIR/.tailor"
 
     if [ -z "$1" ] || [ ! -f "$1" ]; then
-        echo "Usage: tailor <log_filename>"
+        echo "Usage: tl <log_filename>"
         return 1
     else
-        tail -F "$1" | sed -E \
+        tail -n 20 -F "$1" | sed -E \
             -e "s/(${THREAD_NAME_RE})/${THREAD_NAME_STYLE}\1${NC}/" \
             -e "s/(${FQDN_RE})/${FQDN_STYLE}\1${NC}/" \
             -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/" \
-            -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/"
+            -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/" \
+            -e "s/(${PATH_FMT_RE})/${PATH_FMT_STYLE}\1${NC}/"
+        return $?
     fi
-
-    return 0
 }
 
 # @function: Check whether a list of development tools are installed.

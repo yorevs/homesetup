@@ -12,13 +12,13 @@
 # License: Please refer to <http://unlicense.org/>
 #
 # !NOTICE: Do not change this file. To customize your shell create/change the following files: 
-#   .aliases    : To customize your aliases
-#   .colors     : To customize your colors
-#   .env        : To customize your environment variables
-#   .functions  : To customize your functions
-#   .profile    : To customize your profile
-#   .prompt     : To customize your prompt
-#   .path       : To customize your paths
+#   ~/.colors     : To customize your colors
+#   ~/.env        : To customize your environment variables
+#   ~/.aliases    : To customize your aliases
+#   ~/.prompt     : To customize your prompt
+#   ~/.functions  : To customize your functions
+#   ~/.profile    : To customize your profile
+#   ~/.path       : To customize your paths
 
 # If not running interactively, don't do anything.
 [ -z "$PS1" ] && return
