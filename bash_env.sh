@@ -56,6 +56,8 @@ export HISTTIMEFORMAT="[%F %T] "
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL="ignoreboth:erasedups"
 export HISTFILE="$HOME/.bash_history"
+# Hide the annoying warning about zsh
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
