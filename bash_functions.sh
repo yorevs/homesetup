@@ -287,7 +287,7 @@ function __hhs_ip-info() {
         echo "Usage: ip-info <IPv4_address>"
         return 1
     else
-        ipinfo=$(curl -m 3 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
+        ipinfo=$(curl -m 5 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
         [ -n "$ipinfo" ] && __hhs_jp "$ipinfo"
     fi
 
