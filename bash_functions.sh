@@ -84,7 +84,7 @@ function __hhs_hl() {
 # @function: Search for files and links to files recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expressions of the file search.
-function __hhs_sf() {
+function __hhs_search-file() {
 
     local inames
     local gflags="-E"
@@ -107,7 +107,7 @@ function __hhs_sf() {
 # @function: Search for directories and links to directories recursively.
 # @param $1 [Req] : The base search path.
 # @param $2 [Req] : The GLOB expressions of the directory search.
-function __hhs_sd() {
+function __hhs_search-dir() {
     
     local inames
     local gflags="-E"
@@ -376,7 +376,7 @@ function __hhs_envs() {
                 if [[ ${name} =~ ${filter} ]]; then
                     echo -en "${HIGHLIGHT_COLOR}${name}${NC} "
                     printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                    echo -en " ${WHITE}=> ${value:0:$columns} "
+                    echo -n " ${GREEN}=> ${NC}${value:0:$columns} "
                     [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
                 fi
             done
@@ -404,48 +404,59 @@ function __hhs_paths() {
     local CHECK_ICN="\xef\x81\x98"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: paths [-a,-r <path>]"
+        echo "Usage: paths [options] <args>"
+        echo ''
+        echo 'Options: '
+        echo '                     : Lists all path entries.'
+        echo '           -a <path> : Add to the current <path> .'
+        echo '           -r <path> : Remove from the current <path> .'
+        echo '           -e        : Edit current PATHS_FILE .'
         return 1
-    elif [ -z "$1" ]; then
-        [ -f "$PATHS_FILE" ] || touch "$PATHS_FILE"
-        pad=$(printf '%0.1s' "."{1..70})
-        pad_len=70
-        columns=66
-        echo ' '
-        echo "${YELLOW}Listing all PATH entries:"
-        echo ' '
-        (
-            IFS=$'\n'
-            for path in $(echo -e "${PATH//:/\\n}"); do
-                path="${path:0:$columns}"
-                custom="$(grep ^"$path"$ "$PATHS_FILE")" # Custom paths
-                private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
-                path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
-                printf "%s" "${HIGHLIGHT_COLOR}${path}"
-                printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-                [ "${#path}" -ge "$columns" ] && echo -n "${NC}" || echo -n "${NC}"
-                if [ -d "$path" ]; then
-                    echo -en "${GREEN} ${CHECK_ICN} => "
-                else
-                    echo -en "${RED} ${CROSS_ICN} => "
-                fi
-                [ -n "$custom" ] && printf '%s\n' "custom"
-                [ -n "$path_dir" ] && printf '%s\n' "paths.d"
-                [ -n "$private" ] && printf '%s\n' "private"
-                [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && printf '%s\n' "exported"
-            done
-            IFS="$RESET_IFS"
-        )
-        echo -e "${NC}"
-    elif [ "-a" = "$1" ] && [ -n "$2" ]; then
-        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
-        [ -d "$2" ] && echo "$2" >> "$PATHS_FILE"
-        export PATH="$2:$PATH"
-    elif [ "-r" = "$1" ] && [ -n "$2" ]; then
-        export PATH=${PATH//$2:/}
-        ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
+    else
+        if [ -z "$1" ]; then
+            [ -f "$PATHS_FILE" ] || touch "$PATHS_FILE"
+            pad=$(printf '%0.1s' "."{1..70})
+            pad_len=70
+            columns=66
+            echo ' '
+            echo "${YELLOW}Listing all PATH entries:"
+            echo ' '
+            (
+                IFS=$'\n'
+                for path in $(echo -e "${PATH//:/\\n}"); do
+                    path="${path:0:$columns}"
+                    custom="$(grep ^"$path"$ "$PATHS_FILE")" # Custom paths
+                    private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
+                    path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
+                    printf "%s" "${HIGHLIGHT_COLOR}${path}"
+                    printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+                    [ "${#path}" -ge "$columns" ] && echo -n "${NC}" || echo -n "${NC}"
+                    if [ -d "$path" ]; then
+                        echo -en "${GREEN} ${CHECK_ICN} => "
+                    else
+                        echo -en "${RED} ${CROSS_ICN} => "
+                    fi
+                    [ -n "$custom" ] && printf '%s\n' "custom"
+                    [ -n "$path_dir" ] && printf '%s\n' "paths.d"
+                    [ -n "$private" ] && printf '%s\n' "private"
+                    [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && printf '%s\n' "exported"
+                done
+                IFS="$RESET_IFS"
+            )
+            echo -e "${NC}"
+        elif [ "-e" = "$1" ]; then
+            vi "$PATHS_FILE"
+            return 0
+        elif [ "-a" = "$1" ] && [ -n "$2" ]; then
+            ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
+            [ -d "$2" ] && echo "$2" >> "$PATHS_FILE"
+            export PATH="$2:$PATH"
+        elif [ "-r" = "$1" ] && [ -n "$2" ]; then
+            export PATH=${PATH//$2:/}
+            ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
+        fi
     fi
-    # Remove all $PATH duplicates
+    # Remove all $PATH duplicated entries
     export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
 
     return 0
@@ -453,7 +464,7 @@ function __hhs_paths() {
 
 # @function: Check the version of the app using the most common ways.
 # @param $1 [Req] : The app to check.
-function __hhs_ver() {
+function __hhs_version() {
 
     local version
 
@@ -493,7 +504,7 @@ function __hhs_ver() {
 
 # @function: Check whether a tool is installed on the system.
 # @param $1 [Req] : The app to check.
-function __hhs_tc() {
+function __hhs_toolcheck() {
 
     local pad
     local pad_len
@@ -526,20 +537,20 @@ function __hhs_tc() {
 function __hhs_tailor() {
 
     echo -e "
-THREAD_NAME_RE=\"\[ ?(.*main.*|Thread-[0-9]*) ?\] \"
-THREAD_NAME_STYLE=\"${VIOLET}\"
-FQDN_RE=\"(([a-zA-Z][a-zA-Z0-9]*\.)+[a-zA-Z0-9]*)\"
-FQDN_STYLE=\"${CYAN}\"
-LOG_LEVEL_RE=\"INFO|DEBUG|FINE\"
-LOG_LEVEL_STYLE=\"${BLUE}\"
-LOG_LEVEL_WARN_RE=\"WARN|WARNING\"
-LOG_LEVEL_WARN_STYLE=\"${YELLOW}\"
-LOG_LEVEL_ERR_RE=\"SEVERE|FATAL|ERROR\"
-LOG_LEVEL_ERR_STYLE=\"${RED}\"
-DATE_FMT_RE=\"([0-9]{2,4}\-?)* ([0-9]{2}\:?)+\.[0-9]{3}\"
-DATE_FMT_STYLE=\"${DIM}\"
-URI_FMT_RE=\"(([a-zA-Z0-9+.-]+:\/|[a-zA-Z0-9+.-]+)?\/([a-zA-Z0-9.\-_/]*)(:([0-9]+))?\/?([a-zA-Z0-9.\-_/]*)?)\"
-URI_FMT_STYLE=\"${ORANGE}\"
+    THREAD_NAME_RE=\"\[ ?(.*main.*|Thread-[0-9]*) ?\] \"
+    THREAD_NAME_STYLE=\"${VIOLET}\"
+    FQDN_RE=\"(([a-zA-Z][a-zA-Z0-9]*\.)+[a-zA-Z0-9]*)\"
+    FQDN_STYLE=\"${CYAN}\"
+    LOG_LEVEL_RE=\"INFO|DEBUG|FINE\"
+    LOG_LEVEL_STYLE=\"${BLUE}\"
+    LOG_LEVEL_WARN_RE=\"WARN|WARNING\"
+    LOG_LEVEL_WARN_STYLE=\"${YELLOW}\"
+    LOG_LEVEL_ERR_RE=\"SEVERE|FATAL|ERROR\"
+    LOG_LEVEL_ERR_STYLE=\"${RED}\"
+    DATE_FMT_RE=\"([0-9]{2,4}\-?)* ([0-9]{2}\:?)+\.[0-9]{3}\"
+    DATE_FMT_STYLE=\"${DIM}\"
+    URI_FMT_RE=\"(([a-zA-Z0-9+.-]+:\/|[a-zA-Z0-9+.-]+)?\/([a-zA-Z0-9.\-_/]*)(:([0-9]+))?\/?([a-zA-Z0-9.\-_/]*)?)\"
+    URI_FMT_STYLE=\"${ORANGE}\"
     " > "$HHS_DIR/.tailor" && source "$HHS_DIR/.tailor"
 
     if [ -z "$1" ] || [ ! -f "$1" ]; then
@@ -718,7 +729,7 @@ function __hhs_mselect() {
 # @function: Manipulate custom aliases (add/remove/edit/list).
 # @param $1 [Req] : The alias name.
 # @param $2 [Opt] : The alias expression.
-function __hhs_aa() {
+function __hhs_aliases() {
 
     local aliasFile
     local aliasName
@@ -803,7 +814,7 @@ function __hhs_aa() {
 # @function: Save the one directory to be loaded by load.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
-function __hhs_save() {
+function __hhs_save-dir() {
 
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
@@ -853,7 +864,7 @@ function __hhs_save() {
 
 # @function: Pushd into a saved directory issued by save.
 # @param $1 [Opt] : The alias to access the directory saved.
-function __hhs_load() {
+function __hhs_load-dir() {
 
     SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
@@ -950,7 +961,7 @@ function __hhs_load() {
 
 # @function: Add/Remove/List/Execute saved bash commands.
 # @param $1 [Opt] : The command options.
-function __hhs_cmd() {
+function __hhs_command() {
     
     CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
@@ -1091,7 +1102,7 @@ function __hhs_punch() {
     local re
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: punch [-l,-e,-r,-w]"
+        echo "Usage: punch [options] <args>"
         echo 'Options: '
         echo "              : !!PUNCH THE CLOCK!! (When no option is provided)."
         echo "    -l        : List all registered punches."
@@ -1198,7 +1209,7 @@ function __hhs_punch() {
 # @function: Display a process list matching the process name/expression.
 # @param $1 [Req] : The process name to check.
 # @param $2 [Opt] : Whether to kill all found processes.
-function __hhs_plist() {
+function __hhs_ps_list() {
 
     local allPids
     local pid
@@ -1260,7 +1271,7 @@ function __hhs_plist() {
 # @function: Pushd from the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
-function __hhs_godir() {
+function __hhs_go-dir() {
     
     local dir
     local len
@@ -1362,7 +1373,7 @@ function __hhs_sysinfo() {
 }
 
 # @function: Exhibit a Human readable summary about all partitions.
-function __hhs_parts() {
+function __hhs_partitions() {
 
     local pad
     local pad_len
@@ -1403,7 +1414,7 @@ function __hhs_parts() {
 }
 
 # @function: Check the current HomeSetup installation and look for updates.
-function __hhs_dv() {
+function __hhs_update() {
 
     local repoVer
     local isDifferent

@@ -56,8 +56,8 @@ if [ -f "$HOME/.path" ]; then
     export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 fi
 
-# Add `$HOME/bin` to the system `$PATH`
-paths -a "$HOME/bin"
+# Add `$HHS_DIR/bin` to the system `$PATH`
+paths -a "$HHS_DIR/bin"
 
 # Remove all `$PATH` duplicates
 export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')

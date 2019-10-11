@@ -47,13 +47,14 @@ check_installation() {
     
     # Dotfiles used by HomeSetup
     ALL_DOTFILES=(
-        "bashrc"
-        "bash_profile"
+        "bash_aliasdef"
         "bash_aliases"
-        "bash_prompt"
-        "bash_env"
         "bash_colors"
+        "bash_env"
         "bash_functions"
+        "bash_profile"
+        "bash_prompt"
+        "bashrc"
     )
 
     if [ -n "$HOME_SETUP" ] && [ -d "$HOME_SETUP" ]; then
@@ -91,7 +92,7 @@ uninstall_dotfiles() {
     # shellcheck disable=SC2164
     cd "$HOME"
     rm -rfv "$HOME_SETUP" 
-    [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "$HOME/bin"
+    [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -f "$HHS_DIR/bin"
     echo ''
 
     if [ -d "$HHS_DIR" ]; then

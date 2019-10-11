@@ -45,7 +45,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             clone_repository activate_dotfiles
         
         test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
-        test -n "$2" -a "$2" != "" && printf "%s\n" "${2}"
+        test -n "$2" -a "$2" != "" && echo -e "${2}"
         test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
         echo ''
         exit "$1"
@@ -62,7 +62,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         
         # Import bash colors
         [ -f bash_colors.sh ] && source bash_colors.sh
-        printf "%s\n" "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME_SETUP"/.VERSION) installation ${NC}"
+        echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME_SETUP"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
         [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"
@@ -93,6 +93,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
         # Dotfiles used by HomeSetup
         ALL_DOTFILES=(
+            "bash_aliasdef"
             "bash_aliases"
             "bash_colors"
             "bash_env"
@@ -108,7 +109,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Create/Define the HomeSetup directory.
         HOME_SETUP=${HOME_SETUP:-$INSTALL_DIR}
         if [ ! -d "$HOME_SETUP" ]; then
-            printf "\n%s" "Creating 'HomeSetup' directory: " && mkdir -p "$HOME_SETUP"
+            echo -e "\nCreating 'HomeSetup' directory: " && mkdir -p "$HOME_SETUP"
             [ -d "$HOME_SETUP" ] || quit 2 "Unable to create directory $HOME_SETUP"
         else
             touch "$HOME_SETUP/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HOME_SETUP}"
@@ -118,20 +119,20 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Create/Define the $HOME/.hhs directory
         HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
         if [ ! -d "$HHS_DIR" ]; then
-            printf "\n%s" "Creating '.hhs' directory: " && mkdir -p "$HHS_DIR"
+            echo -e "\nCreating '.hhs' directory: " && mkdir -p "$HHS_DIR"
             [ -d "$HHS_DIR" ] || quit 2 "Unable to create directory $HHS_DIR"
         else
             touch "$HHS_DIR/tmpfile" &>/dev/null || quit 2 "Unable to access the HomeSetup directory: ${HHS_DIR}"
             command rm -f "$HHS_DIR/tmpfile" &>/dev/null
         fi
 
-        # Create/Define the $HOME/bin directory
-        BIN_DIR="$HOME/bin"
+        # Create/Define the $HHS_DIR/bin directory
+        BIN_DIR="$HHS_DIR/bin"
         # Create or directory ~/bin if it does not exist
         if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
-            printf "\n%s" "Creating 'bin' directory: " && mkdir "$BIN_DIR"
+            echo -e "\nCreating 'bin' directory: " && mkdir "$BIN_DIR"
             if [ -L "$BIN_DIR" ] || [ -d "$BIN_DIR" ]; then
-                printf "%s\n" "[   ${GREEN}OK${NC}   ]"
+                echo -e "[   ${GREEN}OK${NC}   ]"
             else
                 quit 2 "Unable to create bin directory: $BIN_DIR"
             fi
@@ -178,26 +179,28 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
         echo -e ''
         echo -e '### Installation Settings ###'
-        printf "%s\n" "${BLUE}"
+        echo -e "${BLUE}"
         echo -e "    Home Setup: $HOME_SETUP"
         echo -e "       Scripts: $BIN_DIR"
         echo -e "  Install Type: $METHOD"
         echo -e "       Options: ${OPT:-prompt}"
         echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
-        printf "%s\n" "${NC}"
+        echo -e "${NC}"
 
         if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
-            printf "%s\n" "${ORANGE}"
+            echo -e "${ORANGE}"
             [ -z ${QUIET} ] && read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
-            printf "%s\n" "${NC}"
+            echo -e "${NC}"
             if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
                 [ -n "$ANS" ] && echo ''
-                printf "%s\n" "${NC}Copying dotfiles into place ..."
+                echo -e "${NC}Copying dotfiles into place ..."
                 # Moving old hhs files into the proper directory
                 [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
                 [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
                 [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
                 [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
+                # Removing the old $HOME/bin folder
+                [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "$HOME/bin"
             else
                 [ -n "$ANS" ] && echo ''
                 quit 1 "Installation cancelled!"
@@ -213,9 +216,9 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 dotfile=$HOME/.${next}
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                printf "\n%s" "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                [ -f "$dotfile" ] && printf "%s\n" "[   ${GREEN}OK${NC}   ]"
-                [ -f "$dotfile" ] || printf "%s\n" "[ ${GREEN}FAILED${NC} ]"
+                echo -e "\nLinking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
+                [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
         # If `all' option is NOT used, prompt for confirmation
         else
@@ -228,9 +231,9 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 echo ''
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                printf "%s" "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
-                [ -f "$dotfile" ] && printf "%s\n" "[   ${GREEN}OK${NC}   ]"
-                [ -f "$dotfile" ] || printf "%s\n" "[ ${GREEN}FAILED${NC} ]"
+                echo -en "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
+                [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
         fi
 
@@ -252,7 +255,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         [ ! -d "$HOME_SETUP" ] && quit 2 "Installation directory was not created: ${HOME_SETUP}!"
 
         echo ''
-        printf "%s\n" 'Cloning HomeSetup from repository ...'
+        echo -e 'Cloning HomeSetup from repository ...'
         sleep 1
         command git clone "$REPO_URL" "$HOME_SETUP"
 
@@ -270,8 +273,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
         
         sleep 2
         echo ''
-        printf "%s\n" "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
-        printf "%s\n" "${BLUE}"
+        echo -e "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
+        echo -e "${BLUE}"
 
         if command -v figlet >/dev/null; 
         then

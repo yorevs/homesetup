@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2142
+# shellcheck disable=SC1117,SC2142,SC1090
 
 #  Script: bash_aliases.sh
 # Purpose: This file is used to configure some useful shell aliases
@@ -41,16 +41,16 @@ alias q="exit 0"
 alias sudo='sudo '
 
 # Always use color output for `ls`
-alias ls='command ls ${COLOR_FLAG} -t'
+alias ls='command ls ${COLOR_FLAG} -F'
+
+# List all files colorized in long format
+alias l='ls -lh'
 
 # List all directories
 alias lsd="ls -d */"
 
 # List all file names sorted by name
 alias lss='function _() { col=$1; [ -z "$1" ] && col=9; ls -la | sort -k "$col"; };_'
-
-# List all files colorized in long format
-alias l='ls -lh'
 
 # List all files colorized in long format, including dot files
 alias ll='ls -lah'
@@ -230,8 +230,9 @@ fi
 # -----------------------------------------------------------------------------------
 # Directory Shortcuts
 
-alias desk='cd $DESKTOP'
-alias hhs='cd $HOME_SETUP'
+alias desk='cd ${DESKTOP}'
+alias hhs='cd ${HOME_SETUP}'
+alias temp='cd ${TEMP}'
 
 # -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts
@@ -249,10 +250,10 @@ alias save-cursor-pos='tput sc'
 alias restore-cursor-pos='tput rc'
 
 # Enable line wrapping
-alias enable-line-wrap='echo -ne "\033[?7h"'
+alias enable-line-wrap='tput smam'
 
 # Disable line wrapping
-alias disable-line-wrap='echo -ne "\033[?7l"'
+alias disable-line-wrap='tput rmam'
 
 # 
 # EXPERIMENTAL {
@@ -263,24 +264,24 @@ alias disable-line-wrap='echo -ne "\033[?7l"'
 
 if __hhs_has "git"; then
 
-    alias gs='git status && gl -n 1'
-    alias gf='git fetch -p'
-    alias gh='git log -p'
-    alias gb='git branch'
-    alias gd='git diff'
-    alias gp='git pull'
-    alias gl='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
-    alias gco='git checkout'
-    alias gta='git add'
-    alias gcm='git commit -m'
-    alias gca='git commit --amend --no-edit'
-    alias gba='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
-    alias gsa='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
-    alias gprb='git pull --rebase'
-    alias gtps='git push origin HEAD'
-    alias gshow='git diff-tree --no-commit-id --name-status -r'
-    alias gdshow='function _() { git diff $1^1 $1 -- $2; };_'
-    __hhs_has "opendiff" && alias gdt='git difftool -t opendiff'
+    alias __hhs_git_status='git status && gl -n 1'
+    alias __hhs_git_fetch='git fetch -p'
+    alias __hhs_git_history='git log -p'
+    alias __hhs_git_branch='git branch'
+    alias __hhs_git_diff='git diff'
+    alias __hhs_git_pull='git pull'
+    alias __hhs_git_log='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
+    alias __hhs_git_checkout='git checkout'
+    alias __hhs_git_add='git add'
+    alias __hhs_git_commit='git commit -m'
+    alias __hhs_git_amend='git commit --amend --no-edit'
+    alias __hhs_git_branch_all='function _() { test -n "$1" -a -n "$2" && for x in $(find "$1" -maxdepth 1 -type d -iname "$2"); do cd $x; pwd; git status | head -n 1; cd - > /dev/null; done || echo "Usage: gba <dirname> <fileext>"; };_'
+    alias __hhs_git_status_all='function _() { test -n "$1" && for x in $(find "$1" -maxdepth 1 -type d -iname "*.git"); do cd $x; pwd; git status; cd - > /dev/null; done || echo "Usage: gsa <dirname>"; };_'
+    alias __hhs_git_pull_rebase='git pull --rebase'
+    alias __hhs_git_push='git push origin HEAD'
+    alias __hhs_git_show='git diff-tree --no-commit-id --name-status -r'
+    alias __hhs_git_diff_show='function _() { git diff $1^1 $1 -- $2; };_'
+    alias __hhs_git_difftool='git difftool -t opendiff'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -289,13 +290,15 @@ fi
 if __hhs_has "gradle"; then
 
     # Prefer using the wrapper instead of the command itself
-    alias gw='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
-    alias gwb='gw clean build'
-    alias gwr='gw bootRun'
-    alias gwt='gw Test'
-    alias gwi='gw init'
-    alias gwq='gw -q'
-    alias gww='gw wrapper --gradle-version'
+    alias __hhs_gradlew='function _() { [ -f "./gradlew" ] && ./gradlew $* || gradle $*; };_'
+    alias __hhs_gradle_build='gw clean build'
+    alias __hhs_gradle_run='gw bootRun -x Test'
+    alias __hhs_gradle_test='gw Test'
+    alias __hhs_gradle_init='gw init'
+    alias __hhs_gradle_quiet='gw -q'
+    alias __hhs_gradle_wrapper='gw wrapper --gradle-version'
+    alias __hhs_gradle_tasks='gradle -q :tasks --all'
+    alias __hhs_gradle_projects='gradle -q projects'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -304,53 +307,23 @@ fi
 
 if __hhs_has "docker"; then
 
-    alias dki='docker images'
-    alias dks='docker service'
-    alias dkl='docker logs'
-    alias dke='function _() { [ -n "$2" ] && docker exec -it "$1" "$2" || docker exec -it "$1" /bin/sh; };_'
-    alias dkrm='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
-    alias dkps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
-    alias dkpid='function _() { docker ps | grep "$1" | awk '"'"'{print $1}'"'"'; };_'
-    alias dktl='function _() { docker logs -f $(docker ps | grep "$1" | awk '"'"'{print $1}'"'"'); };_'
-    alias dktop='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
+    alias __hhs_docker_images='docker images'
+    alias __hhs_docker_service='docker service'
+    alias __hhs_docker_logs='docker logs'
+    alias __hhs_docker_exec='function _() { [ -n "$2" ] && docker exec -it "$1" "$2" || docker exec -it "$1" /bin/sh; };_'
+    alias __hhs_docker_remove='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+    alias __hhs_docker_remove_image='docker rmi'
+    alias __hhs_docker_ps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
+    alias __hhs_docker_pidof='function _() { docker ps | grep "$1" | awk '"'"'{print $1}'"'"'; };_'
+    alias __hhs_docker_tail_logs='function _() { docker logs -f $(docker ps | grep "$1" | awk '"'"'{print $1}'"'"'); };_'
+    alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
 fi
 
 #
 # } EXPERIMENTAL
 #
 
-# -----------------------------------------------------------------------------------
-# HomeSetup function aliases
-
-alias has='__hhs_has'
-alias encrypt='__hhs_encrypt'
-alias decrypt='__hhs_decrypt'
-alias hl='__hhs_hl'
-alias sf='__hhs_sf'
-alias sd='__hhs_sd'
-alias ss='__hhs_ss'
-alias hist='__hhs_hist'
-alias del-tree='__hhs_del-tree'
-alias jp='__hhs_jp'
-alias ip-info='__hhs_ip-info'
-alias ip-resolve='__hhs_ip-resolve'
-alias ip-lookup='__hhs_ip-lookup'
-alias port-check='__hhs_port-check'
-alias envs='__hhs_envs'
-alias paths='__hhs_paths'
-alias ver='__hhs_ver'
-alias tc='__hhs_tc'
-alias tl='__hhs_tailor'
-alias tools='__hhs_tools'
-alias mselect='__hhs_mselect'
-alias aa='__hhs_aa'
-alias save='__hhs_save'
-alias load='__hhs_load'
-alias cmd='__hhs_cmd'
-alias punch='__hhs_punch'
-alias plist='__hhs_plist'
-alias godir='__hhs_godir'
-alias git-='__hhs_git-'
-alias sysinfo='__hhs_sysinfo'
-alias parts='__hhs_parts'
-alias dv='__hhs_dv'
+# Source the custom alias shortcuts
+if [ -s "$HOME/.bash_aliasdef" ]; then
+    \. "$HOME/.bash_aliasdef"
+fi

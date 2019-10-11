@@ -40,8 +40,7 @@ export HIGHLIGHT_COLOR=${HIGHLIGHT_COLOR:-$BLUE};
 
 if tput setaf 1 &> /dev/null; then
     # Solarized colors, taken from http://git.io/solarized-colors.
-    tput sgr0; # NC colors
-    NC=$(tput sgr0);
+    NC=$(tput sgr0); # NC colors
     BOLD=$(tput bold);
     DIM=$(tput dim);
     BLACK=$(tput setaf 0);
