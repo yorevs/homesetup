@@ -28,6 +28,8 @@ Usage: $PROC_NAME <install/uninstall/list> [recipe]
 # Import bash stuff
 [ -f "$HOME/.bash_functions" ] && \. "$HOME/.bash_functions"
 
+RECIPES_DIR=${RECIPES_DIR:-$HOME_SETUP/bin/hspm-recipes}
+
 # Unset all declared functions from the recipes
 cleanup_recipes() {
 
@@ -80,7 +82,7 @@ function list_recipes() {
     local recipe
 
     for app in ${DEV_TOOLS[*]}; do
-        recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-${app}.sh"
+        recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.sh"
         if [ -n "$recipe" ] && [ -f "$recipe" ]; then
             ALL_RECIPES+=( "$app" )
             index=$((index+1))
@@ -88,7 +90,7 @@ function list_recipes() {
             if test -z "$1"; then
                 printf '%3s - %s' "${index}" "${BLUE}${app} "
                 printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
-                printf "%s\n" ": ${WHITE}$(about) ${NC}"
+                printf "%s\n" "${GREEN} => ${WHITE}$(about) ${NC}"
             fi
             cleanup_recipes
             [ "$1" == "$app" ] && return 0
@@ -101,7 +103,7 @@ function list_recipes() {
 # Install the specified app using the installation recipe
 install_recipe() {
 
-    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1.sh"
+    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.sh"
     if [ -f "$recipe" ]; then
         echo ''
         \. "$recipe"
@@ -119,7 +121,7 @@ install_recipe() {
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
-    recipe="$HOME_SETUP/bin/hspm/recipes/$(uname -s)/recipe-$1.sh"
+    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.sh"
     if [ -f "$recipe" ]; then
         echo ''
         \. "$recipe"

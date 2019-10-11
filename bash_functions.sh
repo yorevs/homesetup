@@ -10,6 +10,11 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# Fontawesome icons
+CROSS_ICN="\xef\x81\x97"
+CHECK_ICN="\xef\x81\x98"
+STAR_ICN="\xef\x80\x85"
+
 # Dependencies
 [ -f "$HOME/.bash_env" ] && \. "$HOME/.bash_env"
 [ -f "$HOME/.bash_colors" ] && \. "$HOME/.bash_colors"
@@ -400,8 +405,6 @@ function __hhs_paths() {
     local path_dir
     local custom
     local private
-    local CROSS_ICN="\xef\x81\x97"
-    local CHECK_ICN="\xef\x81\x98"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: paths [options] <args>"
@@ -474,7 +477,7 @@ function __hhs_version() {
     else
         # First attempt: app --version
         APP=$1
-        tc "${APP}"
+        __hhs_toolcheck "${APP}"
         if test $? -ne 0; then
             printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}"
             return 2
@@ -518,14 +521,14 @@ function __hhs_toolcheck() {
         pad_len=40
         tool_name="$1"
         check=$(command -v "${tool_name}")
-        printf "${ORANGE}${MY_OS}${NC} "
-        printf "Checking: ${YELLOW}${tool_name}${NC} "
+        echo -en "${ORANGE}${MY_OS}${NC} "
+        echo -en "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
         if has "${tool_name}"; then
-            printf '%s\n' "${GREEN}INSTALLED${NC} at ${check}"
+            echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
             return 0
         else
-            printf '%s\n' "${RED}NOT INSTALLED${NC}"
+            echo -e "${RED} ${CROSS_ICN} NOT INSTALLED${NC}"
         fi
     fi
 
@@ -576,11 +579,10 @@ function __hhs_tools() {
     # shellcheck disable=SC2207
     IFS=$'\n' sorted=($(sort <<<"${DEV_TOOLS[*]}"))
     IFS="$RESET_IFS"
-    STAR_ICN="\xef\x80\x85"
 
     echo ''
     for app in ${sorted[*]}; do
-        tc "$app"
+        __hhs_toolcheck "$app"
     done
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: #> ${GREEN}ver <tool_name>"

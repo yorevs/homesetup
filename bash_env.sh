@@ -80,7 +80,7 @@ DEFAULT_DEV_TOOLS=(
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
     "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
     "htop" "dialog" "telnet" "figlet" "shellcheck" "perl" "hexdump" 
-    "iconfig" "python" "python3"
+    "python" "python3"
 )
 
 export DEV_TOOLS=${DEV_TOOLS:-${DEFAULT_DEV_TOOLS[*]}}
