@@ -20,8 +20,8 @@ export MY_OS="$(uname -s)"
 
 # Java
 if command -v java >/dev/null; then
-    export JAVA_HOME="/Library/Java/JavaVirtualMachines/Current/Contents/Home"
-    export JDK_HOME="$JAVA_HOME"
+    export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
+    export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
 fi
 
 # Python
@@ -40,8 +40,7 @@ fi
 # Other environment variables
 export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-$HOME/.Trash}"
-export HOME_SETUP="$HOME/HomeSetup"
-export HHS_DIR="$HOME/.hhs"
+
 command -v git >/dev/null && export GIT_REPOS="$HOME/GIT-Repository"
 command -v svn >/dev/null && export SVN_REPOS="$HOME/SVN-Repository"
 [ -d "$HOME/Dropbox" ] && export DROPBOX="$HOME/Dropbox"
@@ -52,10 +51,11 @@ export DOWNLOADS="$HOME/Downloads"
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
 export HISTSIZE=${HISTSIZE:-1000}
 export HISTFILESIZE=${HISTFILESIZE:-2000}
-export HISTTIMEFORMAT="[%F %T] "
+export HISTTIMEFORMAT=${HISTTIMEFORMAT:-"[%F %T] "}
 # History control ( ignore duplicates and spaces )
-export HISTCONTROL="ignoreboth:erasedups"
-export HISTFILE="$HOME/.bash_history"
+export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
+export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
+
 # Hide the annoying warning about zsh
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
@@ -63,6 +63,8 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 # HomeSetup variables
 
 # Fixed
+export HOME_SETUP="$HOME/HomeSetup"
+export HHS_DIR="$HOME/.hhs"
 export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export HHS_WELCOME="${ORANGE}${MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${DOTFILES_VERSION}${NC}"
 export RESET_IFS="$IFS"
