@@ -35,21 +35,33 @@ shopt -u nocasematch
 [ "Linux" = "${MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
 
 # Load the shell dotfiles, and then:
-#   source -> ~/.path can be used to extend `$PATH`
-#   source -> ~/.prompt can be used to extend/override .bash_prompt
-#   source -> ~/.aliases can be used to extend/override .bash_aliases
-#   source -> ~/.profile can be used to extend/override .bash_profile
-#   source -> ~/.env can be used to extend/override .bash_env
-#   source -> ~/.colors can be used to extend/override .bash_colors
-#   source -> ~/.functions can be used to extend/override .bash_functions
+#   \. -> ~/.path can be used to extend `$PATH`
+#   \. -> ~/.prompt can be used to extend/override .bash_prompt
+#   \. -> ~/.aliases can be used to extend/override .bash_aliases
+#   \. -> ~/.profile can be used to extend/override .bash_profile
+#   \. -> ~/.env can be used to extend/override .bash_env
+#   \. -> ~/.colors can be used to extend/override .bash_colors
+#   \. -> ~/.functions can be used to extend/override .bash_functions
+
+# Removes all aliases before setting them
+unalias -a
 
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
-for file in ~/.{colors,bash_colors,env,bash_env,bash_aliases,prompt,bash_prompt,bash_functions,profile,aliases,functions}; do
-    [ -r "$file" ] && [ -f "$file" ] && \. "$file";
+
+for file in ~/.{profile,bash_colors,colors,bash_env,env,bash_aliases,aliases,bash_prompt,prompt,bash_functions,functions}; do
+    [ -f "$file" ] && \. "$file";
 done;
 
 unset file
+
+# Enable tab completion for `git` by marking it as an alias for `git`
+if command -v git &> /dev/null; then
+    if [ -s "$HHS_DIR/bin/git-completion.sh" ]; then
+        \. "$HHS_DIR/bin/git-completion.sh" # This loads git bash complete
+        complete -o default -o nospace -F _git g
+    fi
+fi
 
 # Add custom paths to the system `$PATH`
 if [ -f "$HOME/.path" ]; then

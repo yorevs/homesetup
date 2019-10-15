@@ -12,9 +12,6 @@
 
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 
-# Removes all aliases before setting them
-unalias -a
-
 # @function: Check if a command exists.
 # @param $1 [Req] : The command to check.
 __hhs_has() { 

@@ -25,8 +25,8 @@ Usage: $PROC_NAME <command> [<args>]
 "
 
 # Import pre-defined .bash_colors
-test -f ~/.bash_colors && source ~/.bash_colors
-test -f ~/.bash_functions && source ~/.bash_functions
+test -f ~/.bash_colors && \. ~/.bash_colors
+test -f ~/.bash_functions && \. ~/.bash_functions
 
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}

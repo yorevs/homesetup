@@ -554,7 +554,7 @@ function __hhs_tailor() {
     DATE_FMT_STYLE=\"${DIM}\"
     URI_FMT_RE=\"(([a-zA-Z0-9+.-]+:\/|[a-zA-Z0-9+.-]+)?\/([a-zA-Z0-9.\-_/]*)(:([0-9]+))?\/?([a-zA-Z0-9.\-_/]*)?)\"
     URI_FMT_STYLE=\"${ORANGE}\"
-    " > "$HHS_DIR/.tailor" && source "$HHS_DIR/.tailor"
+    " > "$HHS_DIR/.tailor" && \. "$HHS_DIR/.tailor"
 
     if [ -z "$1" ] || [ ! -f "$1" ]; then
         echo "Usage: tl <log_filename>"
@@ -801,7 +801,7 @@ function __hhs_aliases() {
             echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
             printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
             # shellcheck disable=SC1090
-            source "$aliasFile"
+            \. "$aliasFile"
         elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then
             # Remove one alias
             unalias "$aliasName" &> /dev/null

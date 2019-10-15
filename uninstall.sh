@@ -115,7 +115,7 @@ uninstall_dotfiles() {
     export PS2="$PS1"
 
     echo "HomeSetup successfully removed."
-    echo "* To reload your old dotfiles type: #> source ~/.bashrc"
+    echo "* To reload your old dotfiles type: #> \. ~/.bashrc"
     echo "* Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
     echo "* Your temporary PS1 => '$PS1'"
     echo ''

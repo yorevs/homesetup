@@ -41,17 +41,19 @@ fi
 export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-$HOME/.Trash}"
 
-command -v git >/dev/null && export GIT_REPOS="$HOME/GIT-Repository"
-command -v svn >/dev/null && export SVN_REPOS="$HOME/SVN-Repository"
-[ -d "$HOME/Dropbox" ] && export DROPBOX="$HOME/Dropbox"
-export WORKSPACE="$HOME/Workspace"
-export DESKTOP="$HOME/Desktop"
-export DOWNLOADS="$HOME/Downloads"
+command -v git >/dev/null && export GIT_REPOS="${GIT_REPOS:-$HOME/GIT-Repository}"
+command -v svn >/dev/null && export SVN_REPOS="${SVN_REPOS:-$HOME/SVN-Repository}"
+
+[ -d "$HOME/Workspace" ] && export WORKSPACE="${WORKSPACE:-$HOME/Workspace}"
+[ -d "$HOME/Desktop" ] && export DESKTOP="${DESKTOP:-$HOME/Desktop}"
+[ -d "$HOME/Downloads" ] && export DOWNLOADS="${DOWNLOADS:-$HOME/Downloads}"
+[ -d "$HOME/Dropbox" ] && export DROPBOX="${DROPBOX:-$HOME/Dropbox}"
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
 export HISTSIZE=${HISTSIZE:-1000}
 export HISTFILESIZE=${HISTFILESIZE:-2000}
 export HISTTIMEFORMAT=${HISTTIMEFORMAT:-"[%F %T] "}
+
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
@@ -68,6 +70,7 @@ export HHS_DIR="$HOME/.hhs"
 export DOTFILES_VERSION=$(grep . "$HOME_SETUP/.VERSION")
 export HHS_WELCOME="${ORANGE}${MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${DOTFILES_VERSION}${NC}"
 export RESET_IFS="$IFS"
+
 # Customizeable
 export MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:-10}
 export SAVED_DIRS="${SAVED_DIRS:-$HHS_DIR/.saved_dirs}"

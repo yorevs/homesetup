@@ -61,7 +61,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
     check_inst_method() {
         
         # Import bash colors
-        [ -f bash_colors.sh ] && source bash_colors.sh
+        [ -f bash_colors.sh ] && \. bash_colors.sh
         echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME_SETUP"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
@@ -262,7 +262,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         if [ -f "$HOME_SETUP/bash_colors.sh" ]; 
         then
             # shellcheck disable=SC1090
-            source "$HOME_SETUP/bash_colors.sh"
+            \. "$HOME_SETUP/bash_colors.sh"
         else
             quit 2 "Unable to properly clone the repository!"
         fi
@@ -289,7 +289,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         fi
         echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         echo ''
-        echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}source $HOME/.bashrc"
+        echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.bashrc"
         echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}dv"
         echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
         echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
