@@ -1340,6 +1340,7 @@ function __hhs_git-() {
 function __hhs_sysinfo() {
     
     local username
+    local containers
     username="$(whoami)"
 
     echo -e "\n${ORANGE}System information ------------------------------------------------"
@@ -1358,6 +1359,7 @@ function __hhs_sysinfo() {
     echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${GREEN}Network:${HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
+    echo -e "  Gateway...... : $(route get default  | grep gateway | cut -b 14-)"
     has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
     has "dig" && echo -e "  Real-IP...... : $(ip)"
     echo -e "\n${GREEN}Logged Users:${HIGHLIGHT_COLOR}"
@@ -1369,6 +1371,21 @@ function __hhs_sysinfo() {
         done 
         IFS=$RESET_IFS
     )
+
+    if has "docker"; then
+        containers=$(__hhs_docker_ls | awk '{if(NR>1)print}')
+        if [ -n "$containers" ]; then
+            echo -e "\n${GREEN}Docker Containers: ${BLUE}"
+            ( 
+                IFS=$'\n'
+                for next in ${containers}
+                do 
+                    echo -e "  $next"
+                done 
+                IFS=$RESET_IFS
+            )
+        fi
+    fi
     echo -e "${NC}"
 
     return 0

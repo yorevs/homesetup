@@ -314,6 +314,7 @@ if __hhs_has "docker"; then
     alias __hhs_docker_pidof='function _() { docker ps | grep "$1" | awk '"'"'{print $1}'"'"'; };_'
     alias __hhs_docker_tail_logs='function _() { docker logs -f $(docker ps | grep "$1" | awk '"'"'{print $1}'"'"'); };_'
     alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
+    alias __hhs_docker_ls='docker container ls'
 fi
 
 #
