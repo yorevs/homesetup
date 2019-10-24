@@ -1373,7 +1373,7 @@ function __hhs_sysinfo() {
     )
 
     if has "docker"; then
-        containers=$(__hhs_docker_ls | awk '{if(NR>1)print}')
+        containers=$(__hhs_docker_ps)
         if [ -n "$containers" ]; then
             echo -e "\n${GREEN}Docker Containers: ${BLUE}"
             ( 
