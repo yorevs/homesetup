@@ -20,7 +20,7 @@ __hhs_has() {
 
 # -----------------------------------------------------------------------------------
 # Navigational
-alias ..='function _() { [ -z "$1" ] && cd ..; [ -n "$1" ] && old_pwd=`pwd`; for x in `seq 1 "$1"`; do cd ..; export OLDPWD="$old_pwd"; done };_'
+alias ..='function _() { [ -z "$1" ] && cd ..; if [ -n "$1" ]; then old_pwd=`pwd`; for x in `seq 1 "$1"`; do cd ..; done; fi; export OLDPWD="$old_pwd"; };_'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
