@@ -19,53 +19,60 @@ import sys, re, getpass
 from subprocess import check_output
 from os import path, remove
 
+# App arguments
+branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
+user_name = getpass.getuser()
 top_level_dir = check_output(['git', 'rev-parse', '--show-toplevel']).strip()
 commit_msg_filepath = sys.argv[1]
 commit_msg = None
 
+# CARDS
 card_prefix = '[a-zA-Z][a-zA-Z0-9\-_]+'
+card_format = '%s - [%s-%s:{@%s}]'
+card_regex = '(' + card_prefix + ')-(\d+)'
+
+# NO CARDS
 no_card_prefix = 'test|hotfix|feature'
+no_card_format = '%s - [%s:{@%s}]'
+no_card_regex = '(' + no_card_prefix + ')-(\w+(-\d+)*)'
+
+# Master protection
 master_unlock_file = 'master-unlock'
-
-branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
-user_name = getpass.getuser()
-
-re_no_card = '(' + no_card_prefix + ')-(\w+(-\d+)*)'
-re_card = '(' + card_prefix + ')-(\d+)'
 master_unlock_path = '%s/%s' % (top_level_dir, master_unlock_file)
 
 # This will prevent any commit to master, unless, you are sure of it by creating a master unlock file
 if branch_name == 'master':
     if not path.exists(master_unlock_path):
-        print 'Can\'t commit direct to [MASTER]. Please use the a proper branch instead!'
-        print 'E.g: git checkout -B ISSUE-1230'
+        print '[ERROR] Can\'t commit direct to [MASTER]. Please use the a proper branch instead!'
+        print 'E.g: ISSUE-1230'
+        print 'To create the branch type: git checkout -B ISSUE-1230'
         sys.exit(1)
     else:
-        print '@@# Commit to master unlocked ONCE. Create another %s to commit to master again' % master_unlock_path
+        print '[WARN] Commit to master unlocked ONCE. Create another %s to commit to master again' % master_unlock_path
         try:
             remove(master_unlock_path)
         except:
-            print 'Unable to remove master unlock file: %s. Commit to master aborted!' % master_unlock_path
+            print '[ERROR] Unable to remove master unlock file: %s. Commit to master aborted!' % master_unlock_path
             sys.exit(1)
 
 # Matching non-CARD branches
-if re.match(re_no_card, branch_name):
-    mat = re.match(re_no_card, branch_name)
+if re.match(no_card_regex, branch_name):
+    mat = re.match(no_card_regex, branch_name)
     issue = mat.group(1)
     with open(commit_msg_filepath, 'r+') as fh:
         commit_msg = fh.read().strip()
         fh.seek(0, 0)
-        fh.write('[%s:{@%s}] - %s' % (issue.upper(), user_name, commit_msg))
+        fh.write(no_card_format % (issue.upper(), user_name, commit_msg))
 # Macthing CARD branches
-elif re.match(re_card, branch_name):
-    mat = re.match(re_card, branch_name)
+elif re.match(card_regex, branch_name):
+    mat = re.match(card_regex, branch_name)
     card_name = mat.group(1)
     card_number = mat.group(2)
     with open(commit_msg_filepath, 'r+') as fh:
         commit_msg = fh.read().strip()
         fh.seek(0, 0)
-        fh.write('[%s-%s:{@%s}] - %s' % (card_name.upper(), card_number, user_name, commit_msg))
+        fh.write(card_format % (card_name.upper(), card_number, user_name, commit_msg))
 # Rejecting unknown branc names
 else:
-    print 'Incorrect branch name: %s' % branch_name
+    print '[ERROR] Incorrect branch name: %s' % branch_name
     sys.exit(1)
