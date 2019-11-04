@@ -17,23 +17,38 @@
 
 import sys, re, getpass
 from subprocess import check_output
+from os import path, remove
 
+top_level_dir = check_output(['git', 'rev-parse', '--show-toplevel']).strip()
 commit_msg_filepath = sys.argv[1]
 commit_msg = None
 
-card_prefix = '.*'
+card_prefix = '[a-zA-Z][a-zA-Z0-9\-_]+'
 no_card_prefix = 'test|hotfix|feature'
+master_unlock_file = 'master-unlock'
 
 branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
 user_name = getpass.getuser()
 
 re_no_card = '(' + no_card_prefix + ')-(\w+(-\d+)*)'
 re_card = '(' + card_prefix + ')-(\d+)'
+master_unlock_path = '%s/%s' % (top_level_dir, master_unlock_file)
 
+# This will prevent any commit to master, unless, you are sure of it by creating a master unlock file
 if branch_name == 'master':
-    print 'Can\'t commit to master. Please use the proper branch: git checkout -B <branch_name>'
-    sys.exit(1)
+    if not path.exists(master_unlock_path):
+        print 'Can\'t commit direct to [MASTER]. Please use the a proper branch instead!'
+        print 'E.g: git checkout -B ISSUE-1230'
+        sys.exit(1)
+    else:
+        print '@@# Commit to master unlocked ONCE. Create another %s to commit to master again' % master_unlock_path
+        try:
+            remove(master_unlock_path)
+        except:
+            print 'Unable to remove master unlock file: %s. Commit to master aborted!' % master_unlock_path
+            sys.exit(1)
 
+# Matching non-CARD branches
 if re.match(re_no_card, branch_name):
     mat = re.match(re_no_card, branch_name)
     issue = mat.group(1)
@@ -41,6 +56,7 @@ if re.match(re_no_card, branch_name):
         commit_msg = fh.read().strip()
         fh.seek(0, 0)
         fh.write('[%s:{@%s}] - %s' % (issue.upper(), user_name, commit_msg))
+# Macthing CARD branches
 elif re.match(re_card, branch_name):
     mat = re.match(re_card, branch_name)
     card_name = mat.group(1)
@@ -49,6 +65,7 @@ elif re.match(re_card, branch_name):
         commit_msg = fh.read().strip()
         fh.seek(0, 0)
         fh.write('[%s-%s:{@%s}] - %s' % (card_name.upper(), card_number, user_name, commit_msg))
+# Rejecting unknown branc names
 else:
     print 'Incorrect branch name: %s' % branch_name
     sys.exit(1)
