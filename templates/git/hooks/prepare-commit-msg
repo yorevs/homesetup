@@ -23,6 +23,7 @@ from os import path, remove
 branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
 user_name = getpass.getuser()
 top_level_dir = check_output(['git', 'rev-parse', '--show-toplevel']).strip()
+
 commit_msg_filepath = sys.argv[1]
 commit_msg = None
 
@@ -58,23 +59,30 @@ if branch_name == 'master':
 # Matching non-CARD branches
 if re.match(no_card_regex, branch_name):
     mat = re.match(no_card_regex, branch_name)
-    issue = mat.group(1)
+    issue = mat.group(1).upper()
+    commit_msg_format = '.* - \[%s\:\{\@%s\}\]' % (issue, user_name)
     with open(commit_msg_filepath, 'r+') as fh:
         commit_msg = fh.read().strip()
-        # TODO Check if commit already matches the expected format
-        fh.seek(0, 0)
-        fh.write(no_card_format % (commit_msg, issue.upper(), user_name))
+        # Check if the commit message already matches the expected format
+        if not re.match(commit_msg_format, commit_msg):
+            formatted_msg = no_card_format % (commit_msg, issue, user_name)
+            fh.seek(0, 0)
+            fh.write(formatted_msg)
 # Macthing CARD branches
 elif re.match(card_regex, branch_name):
     mat = re.match(card_regex, branch_name)
-    card_name = mat.group(1)
+    card_name = mat.group(1).upper()
     card_number = mat.group(2)
+    commit_msg_format = '.* - \[%s\:\{\@%s\}\]' % (card_name, user_name)
     with open(commit_msg_filepath, 'r+') as fh:
         commit_msg = fh.read().strip()
-        # TODO Check if commit already matches the expected format
-        fh.seek(0, 0)
-        fh.write(card_format % (commit_msg, card_name.upper(), card_number, user_name))
+        # Check if the commit message already matches the expected format
+        if not re.match(commit_msg_format, commit_msg):
+            formatted_msg = card_format % (commit_msg, card_name, card_number, user_name)
+            fh.seek(0, 0)
+            fh.write(formatted_msg)
 # Rejecting unknown branc names
 else:
     print '[ERROR] Incorrect branch name: %s' % branch_name
     sys.exit(1)
+
