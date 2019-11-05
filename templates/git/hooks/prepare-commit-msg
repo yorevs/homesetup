@@ -28,13 +28,13 @@ commit_msg = None
 
 # CARDS
 card_prefix = '[a-zA-Z][a-zA-Z0-9\-_]+'
-card_format = '%s - [%s-%s:{@%s}]'
+card_format = '%s - [%s-%s:{@%s}]' # Msg/Card/Number/User
 card_regex = '(' + card_prefix + ')-(\d+)'
 
 # NO CARDS
-no_card_prefix = 'test|hotfix|feature'
-no_card_format = '%s - [%s:{@%s}]'
-no_card_regex = '(' + no_card_prefix + ')-(\w+(-\d+)*)'
+no_card_prefix = 'test|hotfix|feature|develop'
+no_card_format = '%s - [%s:{@%s}]' # Msg/Issue/User
+no_card_regex = '(' + no_card_prefix + ')(-(\w+(-\d+)*))?'
 
 # Master protection
 master_unlock_file = 'master-unlock'
@@ -62,7 +62,7 @@ if re.match(no_card_regex, branch_name):
     with open(commit_msg_filepath, 'r+') as fh:
         commit_msg = fh.read().strip()
         fh.seek(0, 0)
-        fh.write(no_card_format % (issue.upper(), user_name, commit_msg))
+        fh.write(no_card_format % (commit_msg, issue.upper(), user_name))
 # Macthing CARD branches
 elif re.match(card_regex, branch_name):
     mat = re.match(card_regex, branch_name)
@@ -71,7 +71,7 @@ elif re.match(card_regex, branch_name):
     with open(commit_msg_filepath, 'r+') as fh:
         commit_msg = fh.read().strip()
         fh.seek(0, 0)
-        fh.write(card_format % (card_name.upper(), card_number, user_name, commit_msg))
+        fh.write(card_format % (commit_msg, card_name.upper(), card_number, user_name))
 # Rejecting unknown branc names
 else:
     print '[ERROR] Incorrect branch name: %s' % branch_name
