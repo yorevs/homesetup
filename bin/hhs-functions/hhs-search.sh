@@ -18,7 +18,7 @@ function __hhs_search-file() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo ''
-        echo 'Usage: sf <search_path> <comma_separated_globs>'
+        echo "Usage: ${FUNCNAME[0]} <search_path> <comma_separated_globs>"
         echo '  ** Globs listed like: "*.txt,*.md,*.rtf"'
         echo ''
         return 1
@@ -41,7 +41,7 @@ function __hhs_search-dir() {
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
         echo ''
-        echo 'Usage: sd <search_path> <comma_separated_dirs>'
+        echo "Usage: ${FUNCNAME[0]} <search_path> <comma_separated_dirs>"
         echo '  ** Dirs listed like: "dir1,dir2,dir2"'
         echo ''
         return 1
@@ -72,7 +72,7 @@ function __hhs_search-string() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
         echo ''
-        echo 'Usage: ss [options] <search_path> <regex/string> <comma_separated_globs>'
+        echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <comma_separated_globs>"
         echo ''
         echo 'Options: '
         echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'

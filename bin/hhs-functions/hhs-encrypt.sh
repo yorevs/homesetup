@@ -15,7 +15,7 @@
 function __hhs_encrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-        echo "Usage: encrypt <file_name> <passphrase>"
+        echo "Usage: ${FUNCNAME[0]} <file_name> <passphrase>"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
         gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null;
@@ -41,7 +41,7 @@ function __hhs_encrypt() {
 function __hhs_decrypt() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
-        echo "Usage: decrypt <file_name> <passphrase>"
+        echo "Usage: ${FUNCNAME[0]} <file_name> <passphrase>"
         return 1
     elif [ -n "$(command -v gpg)" ]; then
         decode -i "$1" -o "$1.gpg"

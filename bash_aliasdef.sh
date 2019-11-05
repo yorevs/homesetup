@@ -42,7 +42,7 @@ alias plist='__hhs_process_list'
 alias godir='__hhs_go-dir'
 alias sysinfo='__hhs_sysinfo'
 alias parts='__hhs_partitions'
-alias dv='__hhs_update'
+alias hhu='__hhs_update'
 alias git-='__hhs_git-'
 
 # Git shortcuts

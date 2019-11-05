@@ -22,7 +22,7 @@ function __hhs_aliases() {
     local isSorted=0
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo 'Usage: aa [-s|--sort] [alias] [alias_expr]'
+        echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"
         echo ''
         echo 'Options: '
         echo '           -e | --edit    : Edit the aliases file.'

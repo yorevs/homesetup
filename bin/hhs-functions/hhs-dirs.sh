@@ -22,7 +22,7 @@ function __hhs_save-dir() {
     touch "$SAVED_DIRS"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
-        echo "Usage: save [options] | [dir_to_save] [dir_alias]"
+        echo "Usage: ${FUNCNAME[0]} [options] | [dir_to_save] [dir_alias]"
         echo ''
         echo 'Options: '
         echo "    -e : Edit the saved dirs file."
@@ -59,6 +59,7 @@ function __hhs_save-dir() {
     return 0
 }
 
+# shellcheck disable=SC2059
 # @function: Pushd into a saved directory issued by save.
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load-dir() {
@@ -75,7 +76,7 @@ function __hhs_load-dir() {
     touch "$SAVED_DIRS"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: load [-l] | [dir_alias]"
+        echo "Usage: ${FUNCNAME[0]} [-l] | [dir_alias]"
         echo ''
         echo 'Options: '
         echo "    [dir_alias] : Change to the directory saved from the alias provided."
@@ -167,7 +168,7 @@ function __hhs_go-dir() {
     local results=()
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-        echo "Usage: go [search_path] <dir_name>"
+        echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
         return 1
     else
         local searchPath

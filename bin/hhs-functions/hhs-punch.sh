@@ -22,7 +22,7 @@ function __hhs_punch() {
     local re
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: punch [options] <args>"
+        echo "Usage: ${FUNCNAME[0]} [options] <args>"
         echo 'Options: '
         echo "              : !!PUNCH THE CLOCK!! (When no option is provided)."
         echo "    -l        : List all registered punches."

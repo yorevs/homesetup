@@ -14,7 +14,7 @@
 function __hhs_mselect() {
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo 'Usage: mselect <output_file> <option1 option2 ...>'
+        echo "Usage: ${FUNCNAME[0]} <output_file> <option1 option2 ...>"
         echo ''
         echo 'Notes: '
         echo '  - If only one option is available, mselect will select it and return.'

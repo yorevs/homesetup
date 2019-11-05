@@ -21,7 +21,7 @@ function __hhs_paths() {
     local private
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: paths [options] <args>"
+        echo "Usage: ${FUNCNAME[0]} [options] <args>"
         echo ''
         echo 'Options: '
         echo '                     : Lists all path entries.'

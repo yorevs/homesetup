@@ -290,7 +290,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
         echo ''
         echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.bashrc"
-        echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}dv"
+        echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
         echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
         echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
         echo -e "${NC}"

@@ -226,7 +226,7 @@ godir       | **Pushd** from the first match of the specified directory name.
 git-        | GIT Checkout the previous branch in history **(skips branch-to-same-branch changes )**.
 sysinfo     | Retrieve relevant system information.
 parts       | Exhibit a Human readable summary about all partitions.
-dv          | Check the current **HomeSetup** installation and look for updates..
+hhu          | Check the current **HomeSetup** installation and look for updates..
 
 **Please check: [bash_functions](./bash_functions.sh) for all functions**
 
@@ -270,5 +270,5 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 Done! Now you have your terminal just like mine.
 
-**To keep your HomeSetup updated, run `#> dv` often, to update (git pull) to the latest HomeSetup code**
+**To keep your HomeSetup updated, run `#> hhu` often, to update (git pull) to the latest HomeSetup code**
 
