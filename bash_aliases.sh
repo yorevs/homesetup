@@ -107,7 +107,7 @@ fi
 
 # Date and time shortcuts
 alias week='date +%V'
-alias now='date +"%d-%m-%Y %T"'
+alias now='date +"(Week:%V) %Y-%m-%d %T %Z"'
 alias ts='date "+%s%S"'
 
 # macOS has no `wget, so using curl instead`

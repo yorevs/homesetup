@@ -48,7 +48,6 @@ unalias -a
 
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
-
 for file in ~/.{profile,bash_colors,colors,bash_env,env,bash_aliases,aliases,bash_prompt,prompt,bash_functions,functions}; do
     [ -f "$file" ] && \. "$file";
 done;
