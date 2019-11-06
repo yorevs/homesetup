@@ -14,8 +14,6 @@
 CROSS_ICN="\xef\x81\x97"
 CHECK_ICN="\xef\x81\x98"
 STAR_ICN="\xef\x80\x85"
-FILE_ICN="\xef\x87\x89"
-PLAY_ICN="\xef\x81\x8b"
 
 # Dependencies
 [ -f "$HOME/.bash_env" ] && \. "$HOME/.bash_env"
@@ -29,7 +27,7 @@ for file in $(find "${HOME_SETUP}/bin/hhs-functions" -type f -name "hhs-*" | sor
 done;
 
 # To check for all functions provided by HHS issue the following command: 
-__hhs_() {
+__hhs() {
 
     local pad
     local pad_len=30
@@ -47,14 +45,15 @@ __hhs_() {
             echo 'If no argument is passed, lists all available hhs-functions'
         fi
     else
-        echo ''
+        echo -e "\n${ORANGE}HomeSetup available functions -------------------------------------\n"
         for fn in $all_fn; do
             filename=$(basename "$fn" | awk -F ":function" '{print $1}')
             fnname=$(awk -F ":function" '{print $2}' <<< "$fn")
-            echo -en "${WHITE} ${FILE_ICN} File: ${BLUE}${filename}"
+            echo -en "${WHITE}${BLUE}${filename}"
             printf '%*.*s' 0 $((pad_len - ${#filename})) "$pad"
-            echo -e "${WHITE} ${PLAY_ICN} Function: ${GREEN}${fnname//\(\)/}"
+            echo -e "${WHITE} => ${GREEN}${fnname//\(\)/}"
         done
+        echo -e "\n${YELLOW}${STAR_ICN} To display help about a function type: #> ${GREEN}__hhs help <function_name>"
     fi
     echo "${NR}"
     shopt -u nocasematch

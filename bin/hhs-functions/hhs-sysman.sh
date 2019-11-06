@@ -8,6 +8,64 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: Retrieve relevant system information.
+function __hhs_sysinfo() {
+    
+    local username
+    local containers
+
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: ${FUNCNAME[0]} "
+    else
+        username="$(whoami)"
+        echo -e "\n${ORANGE}System information ------------------------------------------------"
+        echo -e "\n${GREEN}User:${HIGHLIGHT_COLOR}"
+        echo -e "  Username..... : $username"
+        echo -e "  UID.......... : $(id -u "$username")"
+        echo -e "  GID.......... : $(id -g "$username")"
+        echo -e "\n${GREEN}System:${HIGHLIGHT_COLOR}"
+        echo -e "  OS........... : ${MY_OS}"
+        echo -e "  Kernel........: v$(uname -pmr)"
+        echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
+        echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
+        echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
+        echo -e "\n${GREEN}Storage:"
+        printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
+        echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
+        echo -e "\n${GREEN}Network:${HIGHLIGHT_COLOR}"
+        echo -e "  Hostname..... : $(hostname)"
+        echo -e "  Gateway...... : $(route get default  | grep gateway | cut -b 14-)"
+        has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
+        has "dig" && echo -e "  Real-IP...... : $(ip)"
+        echo -e "\n${GREEN}Logged Users:${HIGHLIGHT_COLOR}"
+        ( 
+            IFS=$'\n'
+            for next in $(who)
+            do 
+                echo -e "  ${next}"
+            done 
+            IFS=$RESET_IFS
+        )
+        if has "docker"; then
+            containers=$(__hhs_docker_ps)
+            if [ -n "${containers}" ]; then
+                echo -e "\n${GREEN}Docker Containers: ${BLUE}"
+                ( 
+                    IFS=$'\n'
+                    for next in ${containers}
+                    do 
+                        echo -e "  ${next}"
+                    done 
+                    IFS=$RESET_IFS
+                )
+            fi
+        fi
+        echo -e "${NC}"
+    fi
+
+    return 0
+}
+
 # @function: Display a process list matching the process name/expression.
 # @param $1 [Req] : The process name to check.
 # @param $2 [Opt] : Whether to kill all found processes.
@@ -81,28 +139,32 @@ function __hhs_partitions() {
     local avail
     local cap
 
-    allParts="$(df -Ha | tail -n +2)"
-    (
-        IFS=$'\n'
-        echo "${WHITE}"
-        printf '%-25s\t%-4s\t%-4s\t%-4s\t%-4s\t\n' 'Mounted-ON' 'Size' 'Used' 'Avail' 'Capacity'
-        echo -e "----------------------------------------------------------------${HIGHLIGHT_COLOR}"
-        for next in $allParts
-        do
-            strText=${next:16}
-            mounted="$(echo "$strText" | awk '{ print $8 }')"
-            size="$(echo "$strText" | awk '{ print $1 }')"
-            used="$(echo "$strText" | awk '{ print $2 }')"
-            avail="$(echo "$strText" | awk '{ print $3 }')"
-            cap="$(echo "$strText" | awk '{ print $4 }')"
-            printf '%-25s\t' "${mounted:0:25}"
-            printf '%4s\t'  "${size:0:4}"
-            printf '%4s\t'  "${used:0:4}"
-            printf '%4s\t'  "${avail:0:4}"
-            printf '%4s\n'  "${cap:0:4}"
-        done
-        echo "${NC}"
-    )
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: ${FUNCNAME[0]} "
+    else
+        allParts="$(df -Ha | tail -n +2)"
+        (
+            IFS=$'\n'
+            echo "${WHITE}"
+            printf '%-25s\t%-4s\t%-4s\t%-4s\t%-4s\t\n' 'Mounted-ON' 'Size' 'Used' 'Avail' 'Capacity'
+            echo -e "----------------------------------------------------------------${HIGHLIGHT_COLOR}"
+            for next in $allParts
+            do
+                strText=${next:16}
+                mounted="$(echo "$strText" | awk '{ print $8 }')"
+                size="$(echo "$strText" | awk '{ print $1 }')"
+                used="$(echo "$strText" | awk '{ print $2 }')"
+                avail="$(echo "$strText" | awk '{ print $3 }')"
+                cap="$(echo "$strText" | awk '{ print $4 }')"
+                printf '%-25s\t' "${mounted:0:25}"
+                printf '%4s\t'  "${size:0:4}"
+                printf '%4s\t'  "${used:0:4}"
+                printf '%4s\t'  "${avail:0:4}"
+                printf '%4s\n'  "${cap:0:4}"
+            done
+            echo "${NC}"
+        )
+    fi
 
     return 0
 }

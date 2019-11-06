@@ -81,20 +81,24 @@ function __hhs_version() {
 # @function: Check whether a list of development tools are installed.
 function __hhs_tools() {
 
-    DEV_TOOLS=${DEV_TOOLS:-${DEV_TOOLS[*]}}
-    # shellcheck disable=SC2207
-    IFS=$'\n' sorted=($(sort <<<"${DEV_TOOLS[*]}"))
-    IFS="$RESET_IFS"
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: ${FUNCNAME[0]} "
+    else
+        DEV_TOOLS=${DEV_TOOLS:-${DEV_TOOLS[*]}}
+        # shellcheck disable=SC2207
+        IFS=$'\n' sorted=($(sort <<<"${DEV_TOOLS[*]}"))
+        IFS="$RESET_IFS"
 
-    echo ''
-    for app in ${sorted[*]}; do
-        __hhs_toolcheck "$app"
-    done
-    echo ''
-    echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"
-    echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: ${GREEN}#> hspm.sh install/uninstall <tool_name>"
-    echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: ${GREEN}#> export DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
-    echo -e "${NC}"
+        echo ''
+        for app in ${sorted[*]}; do
+            __hhs_toolcheck "$app"
+        done
+        echo ''
+        echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"
+        echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: ${GREEN}#> hspm.sh install/uninstall <tool_name>"
+        echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: ${GREEN}#> export DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
+        echo -e "${NC}"
+    fi
     
     return 0
 }

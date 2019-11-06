@@ -14,11 +14,16 @@ function __hhs_git-() {
     local currBranch
     local prevBranch
 
-    # Get the current branch.
-    currBranch="$(command git rev-parse --abbrev-ref HEAD)"
-    # Get the previous branch. Skip the same branch change (that is what is different from git checkout -).
-    prevBranch=$(command git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6 }')
-    command git checkout "$prevBranch"
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: ${FUNCNAME[0]} "
+    else
+        # Get the current branch.
+        currBranch="$(command git rev-parse --abbrev-ref HEAD)"
+        # Get the previous branch. Skip the same branch change (that is what is different from git checkout -).
+        prevBranch=$(command git reflog | grep 'checkout: ' | grep -v "from $currBranch to $currBranch" | head -n1 | awk '{ print $6 }')
+        command git checkout "$prevBranch"
+        return $?
+    fi
 
-    return $?
+    return 0
 }

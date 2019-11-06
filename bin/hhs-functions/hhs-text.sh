@@ -15,11 +15,17 @@ function __hhs_highlight() {
 
     local search="$*"
     local hl_color=${HIGHLIGHT_COLOR//\e[/}
-    hl_color=${HIGHLIGHT_COLOR/m/}
 
-    while read -r stream; do
-        echo "$stream" | GREP_COLOR="$hl_color" grep -FE "($search|\$)"
-    done
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Usage: ${FUNCNAME[0]} "
+    else
+        hl_color=${HIGHLIGHT_COLOR/m/}
+        while read -r stream; do
+            echo "$stream" | GREP_COLOR="$hl_color" grep -FE "($search|\$)"
+        done
+    fi
+
+    return 0
 }
 
 # @function: Pretty print (format) JSON string.
