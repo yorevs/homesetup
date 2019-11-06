@@ -5,3 +5,4 @@
 - [ ] Sync HSPM with current dev-tools
 - [ ] Change the script dotfiles.sh into hhs.sh
 - [ ] Prefix all environment variables with HHS_
+- [ ] Convert function aliases into functions hhs-aliases

@@ -131,7 +131,7 @@ cp       | **cp -iv** 'For safety, by default this command will input for confir
 mv       | **mv -iv** 'For safety, by default this command will input for confirmation'
 cls      | clear
 pk       | 'Kills all processes matching <ProcName>'
-db-clean | 'Recursively delete Dropbox conflicted files from the current directory'
+db-cleanup | 'Recursively delete Dropbox conflicted files from the current directory'
 vi       | vim
 tl       | 'Tail a log using colors specified in .tailor file.'
 df       | df -H
@@ -178,7 +178,7 @@ ips     | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **ifconfig
 
 ALIAS         | Equivalent
 ------------- | -------------
-clean-ds      | 'Delete all **.DS_store** files'
+ds-cleanup      | 'Delete all **.DS_store** files'
 flush         | 'Flush Directory Service cache'
 ls-cleanup    | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
 show-files    | '**Show** hidden files in Finder' **defaults required**
