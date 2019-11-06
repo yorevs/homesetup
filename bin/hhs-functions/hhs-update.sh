@@ -11,8 +11,7 @@
 # @function: Check the current HomeSetup installation and look for updates.
 function __hhs_update() {
 
-    local repoVer
-    local isDifferent
+    local repoVer isDifferent
     local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -23,9 +22,9 @@ function __hhs_update() {
             if [ -n "$repoVer" ]; then
                 isDifferent=$(test -n "$repoVer" -a "$DOTFILES_VERSION" != "$repoVer" && echo 1)
                 if [ -n "$isDifferent" ];then
-                    echo -e "${YELLOW}You have a different version of HomeSetup:"
-                    echo -e "  => Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}."
-                    read -r -n 1 -sp "Update it now (y/[n]) ?" ANS
+                    echo -e "${YELLOW}You have a different version of HomeSetup: "
+                    echo -e "=> Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}"
+                    read -r -n 1 -sp "Would you like to update it now (y/[n]) ?" ANS
                     [ -n "$ANS" ] && echo "${ANS}${NC}"
                     if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
                         pushd "$HOME_SETUP" &> /dev/null || return 1

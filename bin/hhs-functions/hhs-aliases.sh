@@ -13,13 +13,7 @@
 # @param $2 [Opt] : The alias expression.
 function __hhs_aliases() {
 
-    local aliasFile
-    local aliasName
-    local aliasExpr
-    local pad
-    local pad_len
-    local allAliases
-    local isSorted=0
+    local aliasFile aliasName aliasExpr pad pad_len allAliases isSorted=0
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"

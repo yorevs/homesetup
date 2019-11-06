@@ -37,7 +37,9 @@ __hhs() {
 
     shopt -s nocasematch
     if [ "$1" = "help" ] && [ -n "$2" ]; then
-        if [[ $all_fn == *"$2"* ]]; then
+        # If the function exists, invoke it's help
+        if [[ ${all_fn} == *"$2"* ]]; then
+            #echo "Found help for: $(echo ${all_fn} | awk -F: '/regex/ { $2; print $0 }')"
             eval "${2} -h"
         else
             echo "Usage: ${FUNCNAME[0]} [help <hhs-function-name>]"

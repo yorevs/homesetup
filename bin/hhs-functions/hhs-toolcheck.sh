@@ -12,13 +12,10 @@
 # @param $1 [Req] : The app to check.
 function __hhs_toolcheck() {
 
-    local pad
-    local pad_len
-    local tool_name
-    local check
+    local pad pad_len tool_name check
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ${FUNCNAME[0]} <appName>"
+        echo "Usage: ${FUNCNAME[0]} <app_name>"
     else
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
@@ -45,7 +42,7 @@ function __hhs_version() {
     local version
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ${FUNCNAME[0]} <appName>"
+        echo "Usage: ${FUNCNAME[0]} <app_name>"
         return 1
     else
         # First attempt: app --version

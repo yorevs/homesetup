@@ -63,10 +63,7 @@ function __hhs_search-dir() {
 # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
 function __hhs_search-string() {
 
-    local gflags
-    local extra_str
-    local replace
-    local inames
+    local gflags extra_str replace inames
     local strType='regex'
     local gflags="-HnEI"
 
@@ -109,10 +106,13 @@ function __hhs_search-string() {
             esac
             shift
         done
+        
         local expr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
         local search_str="$2"
+        
         inames=$(python -c "$expr")
         echo "${YELLOW}Searching for \"${strType}\" matching: \"$search_str\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+        
         if [ -n "$replace" ]; then
             if [ "$strType" = 'string' ]; then
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"

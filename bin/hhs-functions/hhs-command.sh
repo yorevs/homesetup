@@ -14,14 +14,7 @@ function __hhs_command() {
     
     CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
 
-    local cmdName
-    local cmdId
-    local cmdExpr
-    local pad
-    local pad_len
-    local mselectFile
-    local allCmds=()
-    local index=1
+    local cmdName cmdId cmdExpr pad pad_len mselectFile allCmds=() index=1
 
     touch "$CMD_FILE"
     

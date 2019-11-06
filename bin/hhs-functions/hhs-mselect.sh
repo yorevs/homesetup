@@ -28,16 +28,9 @@ function __hhs_mselect() {
 
     MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:=10}
 
-    local len
-    local allOptions=()
-    local selIndex=0
-    local showFrom=0
+    local len allOptions=() selIndex=0 showFrom=0 index='' outfile="$1" columns optStr
     local showTo=$((MSELECT_MAX_ROWS-1))
     local diffIndex=$((showTo-showFrom))
-    local index=''
-    local outfile=$1
-    local columns
-    local optStr
 
     shift
     # shellcheck disable=SC2206
@@ -53,8 +46,8 @@ function __hhs_mselect() {
     do
         columns="$(($(tput cols)-7))"
         hide-cursor
-
         echo "${WHITE}"
+
         for i in $(seq "$showFrom" "$showTo"); do
             optStr="${allOptions[i]:0:$columns}"
             # Erase current line before repaint

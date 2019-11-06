@@ -12,8 +12,7 @@
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function __hhs_del-tree() {
 
-    local all
-    local dest
+    local all dest
 
     if [ -z "$1" ] || [ "$1" = "/" ] || [ ! -d "$1" ]; then
         echo "Usage: del-tree <search_path> <glob_exp>"

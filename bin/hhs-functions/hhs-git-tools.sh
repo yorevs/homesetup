@@ -11,8 +11,7 @@
 # @function: Checkout the previous branch in history (skips branch-to-same-branch changes ).
 function __hhs_git-() {
 
-    local currBranch
-    local prevBranch
+    local currBranch prevBranch
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} "

@@ -13,12 +13,9 @@
 # @param $2 [Opt] : The alias to access the directory saved.
 function __hhs_save-dir() {
 
-    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
+    local dir dirAlias allDirs=()
 
-    local dir
-    local dirAlias
-    local allDirs=()
-    
+    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
     touch "$SAVED_DIRS"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
@@ -64,15 +61,9 @@ function __hhs_save-dir() {
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load-dir() {
 
-    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
-
-    local dirAlias
-    local allDirs=()
-    local dir
-    local pad
-    local pad_len
-    local mselectFile
+    local dirAlias allDirs=() dir pad pad_len mselectFile
     
+    SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
     touch "$SAVED_DIRS"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -162,18 +153,13 @@ function __hhs_load-dir() {
 # @param $1 [Req] : The directory name to go.
 function __hhs_go-dir() {
     
-    local dir
-    local len
-    local mselectFile
-    local results=()
+    local dir len mselectFile results=()
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
         echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
         return 1
     else
-        local searchPath
-        local name
-        local selIndex
+        local searchPath name selIndex
         [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
         [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
         IFS=$'\n' read -d '' -r -a results <<< "$(find -L "$searchPath" -type d -iname "*""$name" 2> /dev/null)" IFS="$RESET_IFS"

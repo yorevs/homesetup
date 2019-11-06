@@ -12,13 +12,9 @@
 # shellcheck disable=SC2155
 function __hhs_paths() {
 
-    PATHS_FILE=${PATHS_FILE:-$HOME/.path}
+    local pad pad_len path_dir custom private
 
-    local pad
-    local pad_len
-    local path_dir
-    local custom
-    local private
+    PATHS_FILE=${PATHS_FILE:-$HOME/.path}
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -73,6 +69,7 @@ function __hhs_paths() {
             ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
         fi
     fi
+    
     # Remove all $PATH duplicated entries
     export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
 

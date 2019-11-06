@@ -12,14 +12,9 @@
 # @param $1 [Opt] : Punch options
 function __hhs_punch() {
 
-    PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punches}
+    local dateStamp timeStamp weekStamp opt lines re
 
-    local dateStamp
-    local timeStamp
-    local weekStamp
-    local opt
-    local lines
-    local re
+    PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punches}
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -61,13 +56,7 @@ function __hhs_punch() {
             mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
         else
             (
-                local lineTotals=()
-                local totals=()
-                local pad
-                local pad_len
-                local subTotal
-                local weekTotal
-                local success
+                local lineTotals=() totals=() pad pad_len subTotal weekTotal success
                 pad=$(printf '%0.1s' "."{1..60})
                 pad_len=36
 

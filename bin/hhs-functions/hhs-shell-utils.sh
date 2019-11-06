@@ -28,12 +28,7 @@ function __hhs_history() {
 # @param $1 [Opt] : Filter environments.
 function __hhs_envs() {
 
-    local pad
-    local pad_len
-    local filter
-    local name
-    local value
-    local columns
+    local pad pad_len filter name value columns
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [regex_filter]"

@@ -11,8 +11,7 @@
 # @function: Retrieve relevant system information.
 function __hhs_sysinfo() {
     
-    local username
-    local containers
+    local username containers
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} "
@@ -71,8 +70,7 @@ function __hhs_sysinfo() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_process_list() {
 
-    local allPids
-    local pid
+    local allPids pid
     local gflags='-E'
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
@@ -131,13 +129,7 @@ function __hhs_process_list() {
 # @function: Exhibit a Human readable summary about all partitions.
 function __hhs_partitions() {
 
-    local allParts
-    local strText
-    local mounted
-    local size
-    local used
-    local avail
-    local cap
+    local allParts strText mounted size used avail cap
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} "
