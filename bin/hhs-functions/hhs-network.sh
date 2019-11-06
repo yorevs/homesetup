@@ -15,7 +15,7 @@ function __hhs_ip-info() {
     local ipinfo
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ip-info <IPv4_address>"
+        echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
         return 1
     else
         ipinfo=$(curl -m 5 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
@@ -30,7 +30,7 @@ function __hhs_ip-info() {
 function __hhs_ip-resolve() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ip-resolve <IPv4_address>"
+        echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
         return 1
     else
         dig +short -x "$1"
@@ -44,7 +44,7 @@ function __hhs_ip-resolve() {
 function __hhs_ip-lookup() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ip-lookup <domain_name>"
+        echo "Usage: ${FUNCNAME[0]} <domain_name>"
         return 1
     else
         host "$1"
@@ -58,7 +58,11 @@ function __hhs_ip-lookup() {
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
 function __hhs_port-check() {
 
-    if [ -n "$1" ] && [ -n "$2" ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+        echo "Usage: ${FUNCNAME[0]} <port_number> [port_state]"
+        echo 'States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]'
+        return 1
+    elif [ -n "$1" ] && [ -n "$2" ]; then
         echo "Checking port \"$1\" state: \"$2\""
         echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
         netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$2"
@@ -66,10 +70,6 @@ function __hhs_port-check() {
         echo "Checking port \"$1\" state: \"ALL\""
         echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
         netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$1"
-    else
-        echo "Usage: port-check <portnum_regex> [state]"
-        echo "States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
-        return 1
     fi
 
     return 0

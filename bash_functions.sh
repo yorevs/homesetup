@@ -24,7 +24,7 @@ PLAY_ICN="\xef\x81\x8b"
 
 # Load all function files prefixed with 'hhs-`
 # shellcheck disable=SC2044
-for file in $(find "${HOME_SETUP}/bin/hhs-functions" -type f -name "hhs-*"); do
+for file in $(find "${HOME_SETUP}/bin/hhs-functions" -type f -name "hhs-*" | sort); do
     \. "$file";
 done;
 
