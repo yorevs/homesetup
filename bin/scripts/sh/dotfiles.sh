@@ -205,7 +205,7 @@ parse_and_save_dotfiles() {
 # Provides a help about the command.
 cmd_help() {
 
-    shopt -s nocasematch
+    set-nocasematch
     case "$1" in
         # Do stuff related to firebase
         FB | firebase)
@@ -227,7 +227,7 @@ cmd_help() {
             quit 2 "Command \"$1\" does not exist!"
         ;;
     esac
-    shopt -u nocasematch
+    unset-nocasematch
     quit 1
 }
 
@@ -250,7 +250,7 @@ cmd_firebase() {
     u_name=$(whoami)
     u_uuid=$(python -c "import uuid as ul; print(str(ul.uuid4()));")
 
-    shopt -s nocasematch
+    set-nocasematch
     case "$task" in
         s | setup)
             test -f "$FIREBASE_FILE" && rm -f "$FIREBASE_FILE"
@@ -301,7 +301,7 @@ cmd_firebase() {
             quit 2 "Invalid firebase task: \"$task\" !"
         ;;
     esac
-    shopt -u nocasematch
+    unset-nocasematch
 
     return 0
 }
@@ -309,7 +309,7 @@ cmd_firebase() {
 # Execute a dotfiles command.
 exec_command() {
 
-    shopt -s nocasematch
+    set-nocasematch
     case "${COMMAND}" in
         # Do stuff related to firebase
         cmd_firebase)
@@ -324,13 +324,13 @@ exec_command() {
             quit 1 "Invalid command \"${COMMAND}\" !"
         ;;
     esac
-    shopt -u nocasematch
+    unset-nocasematch
     quit $ret
 }
 
 test -z "$1" && usage
 
-shopt -s nocasematch
+set-nocasematch
 # Loop through the command line options.
 case "$1" in
 
@@ -348,7 +348,7 @@ case "$1" in
         quit 1 "Invalid option: \"$1\""
     ;;
 esac
-shopt -u nocasematch
+unset-nocasematch
 
 exec_command "$@"
 

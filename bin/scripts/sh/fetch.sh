@@ -61,7 +61,7 @@ version() {
 # Request timeout in seconds
 REQ_TIMEOUT=5
 
-shopt -s nocasematch
+set-nocasematch
 case "$1" in
     'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
         METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
@@ -71,7 +71,7 @@ case "$1" in
         quit 2 "Method \"$1\" is not not valid!"
     ;;
 esac
-shopt -u nocasematch
+unset-nocasematch
 
 # Loop through the command line options.
 while test -n "$1"; do

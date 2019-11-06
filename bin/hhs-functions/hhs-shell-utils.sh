@@ -44,7 +44,7 @@ function __hhs_envs() {
         echo ' '
         (
             IFS=$'\n'
-            shopt -s nocasematch
+            set-nocasematch
             for v in $(env | sort); do
                 name=$(echo "$v" | cut -d '=' -f1)
                 value=$(echo "$v" | cut -d '=' -f2-)
@@ -55,7 +55,7 @@ function __hhs_envs() {
                     [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
                 fi
             done
-            shopt -u nocasematch
+            unset-nocasematch
             IFS="$HHS_RESET_IFS"
         )
         echo ' '

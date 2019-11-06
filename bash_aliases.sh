@@ -296,6 +296,24 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     alias __hhs_docker_ls='docker container ls'
 fi
 
+# -----------------------------------------------------------------------------------
+# Experimental: Compatibility with different shells {
+
+if [ "bash" = "$HHS_MY_SHELL" ]; then
+    alias set-nocasematch='shopt -s nocasematch'
+    alias unset-nocasematch='shopt -u nocasematch'
+    alias set-checkwinsize='shopt -s checkwinsize'
+    alias unset-checkwinsize='shopt -u checkwinsize'
+    alias set-cdspell='shopt -s cdspell'
+    alias unset-cdspell='shopt -u cdspell'
+    alias set-extglob='shopt -s extglob'
+    alias unset-extglob='shopt -u extglob'
+    alias set-nocaseglob='shopt -s nocaseglob'
+    alias unset-nocaseglob='shopt -u nocaseglob'
+fi
+
+# } Experimental
+
 # Source the custom alias shortcuts
 if [ -s "$HOME/.bash_aliasdef" ]; then
     \. "$HOME/.bash_aliasdef"

@@ -136,7 +136,7 @@ uninstall_recipe() {
     fi
 }
 
-shopt -s nocasematch
+set-nocasematch
 # Check the command line options.
 case "$1" in
     # Install the app
@@ -162,6 +162,6 @@ case "$1" in
         quit 2 "Invalid option: \"$1\""
     ;;
 esac
-shopt -u nocasematch
+unset-nocasematch
 
 echo ''

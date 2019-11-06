@@ -17,23 +17,6 @@
 export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
 
-# If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
-shopt -u nocaseglob
-
-# If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-shopt -s extglob
-
-# If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-shopt -s cdspell
-
-# If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
-shopt -u nocasematch
-
-# This turns off the case-sensitive completion.
-[ -f ~/.inputrc ] || echo "set completion-ignore-case On" > ~/.inputrc
-[ "Darwin" = "${HHS_MY_OS}" ] && sed -i '' -E "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
-[ "Linux" = "${HHS_MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
-
 # Load the shell dotfiles, and then:
 #   \. -> ~/.path can be used to extend `$PATH`
 #   \. -> ~/.prompt can be used to extend/override .bash_prompt
@@ -54,11 +37,39 @@ done;
 
 unset file
 
+# -----------------------------------------------------------------------------------
+# Set default shell options
+
+# If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
+#unset-nocaseglob
+
+# If set, the extended pattern matching features described above under Pathname Expansion are enabled.
+#set-extglob
+
+# If set, minor errors in the spelling of a directory component in a cd command will be corrected.
+#set-cdspell
+
+# Make bash check its window size after a process completes
+#set-checkwinsize
+
+# If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
+#unset-nocasematch
+
+# This turns off the case-sensitive completion.
+[ -f ~/.inputrc ] || echo "set completion-ignore-case On" > ~/.inputrc
+[ "Darwin" = "${HHS_MY_OS}" ] && sed -i '' -E "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
+[ "Linux" = "${HHS_MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
+
+# -----------------------------------------------------------------------------------
+# Load other stuff
+
 # Enable tab completion for `git` by marking it as an alias for `git`
 if command -v git &> /dev/null; then
-    if [ -s "$HHS_DIR/bin/git-completion.sh" ]; then
-        \. "$HHS_DIR/bin/git-completion.sh" # This loads git bash complete
-        complete -o default -o nospace -F _git g
+    if [ "bash" = "$HHS_MY_SHELL" ]; then
+        if [ -s "$HHS_DIR/bin/git-completion.sh" ]; then
+            \. "$HHS_DIR/bin/git-completion.sh" # This loads git bash complete
+            complete -o default -o nospace -F _git g
+        fi
     fi
 fi
 

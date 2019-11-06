@@ -34,7 +34,7 @@ __hhs() {
     pad=$(printf '%0.1s' "."{1..30})
     all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.sh" | awk "NR != 1 {print \$1 \$2}")
 
-    shopt -s nocasematch
+    set-nocasematch
     if [ "$1" = "help" ] && [ -n "$2" ]; then
         # If the function exists, invoke it's help
         if [[ ${all_fn} == *"$2"* ]]; then
@@ -56,7 +56,7 @@ __hhs() {
         echo -e "\n${YELLOW}${STAR_ICN} To display help about a function, type: #> ${GREEN}__hhs help __hhs_<function-name>"
     fi
     echo "${NR}"
-    shopt -u nocasematch
+    unset-nocasematch
 
     return 0
 }

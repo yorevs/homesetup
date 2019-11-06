@@ -15,6 +15,7 @@ export LC_ALL=en_US
 export LANG=en_US.UTF-8
 
 export HHS_MY_OS="$(uname -s)"
+export HHS_MY_SHELL="${SHELL//\/bin\//}"
 
 # ----------------------------------------------------------------------------
 # Home Sweet Homes

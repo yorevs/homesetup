@@ -160,3 +160,37 @@ function __hhs_partitions() {
 
     return 0
 }
+
+function __hhs_select-shell() {
+
+    local selIndex selShell mselectFile results=()
+
+    clear
+    echo "${YELLOW}@@ Please select your new default shell:"
+    echo "-------------------------------------------------------------"
+    echo -en "${NC}"
+    IFS=$'\n' read -d '' -r -a results <<< "$(grep '/.*' '/etc/shells')"
+    mselectFile=$(mktemp)
+    __hhs_mselect "$mselectFile" "${results[*]}"
+    # shellcheck disable=SC2181
+    if [ "$?" -eq 0 ]; then
+        selIndex=$(grep . "$mselectFile")
+        selShell=${results[$selIndex]}
+        if [ -n "$selShell" ] && [ -f "$selShell" ]; then
+            chsh -s "$selShell"
+            export SHELL="$selShell"
+            if [ $? -eq 0 ]; then
+                clear
+                echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
+                echo "${ORANGE}Next time you open a terminal window you will use the new shell"
+            fi
+        fi
+    fi
+    IFS="$HHS_RESET_IFS"
+    echo -e "${NC}"
+
+    # Find all dotfiles
+    # find . -maxdepth 1 -type l -name ".bash*"
+
+    return 0
+}

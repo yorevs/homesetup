@@ -24,14 +24,17 @@
 [ -z "$PS1" ] && return
 
 # Source global definitions
-if [ -s /etc/bashrc ]; then
-    \. /etc/bashrc
+if [[ "bash.*" =~ $HHS_MY_SHELL ]]; then
+    if [ -s /etc/bashrc ]; then
+        \. /etc/bashrc
+    fi
+    # Source the main profile
+    if [ -s "$HOME/.bash_profile" ]; then
+        \. "$HOME/.bash_profile"
+    fi
+else
+    echo ''
+    echo "Sorry ! HomeSetup is only compatible with bash for now."
+    echo "You can change your default shell by typing: #> chsh -s /bin/bash"
+    echo ''
 fi
-
-# Source the main profile
-if [ -s "$HOME/.bash_profile" ]; then
-    \. "$HOME/.bash_profile"
-fi
-
-# Make bash check its window size after a process completes
-shopt -s checkwinsize
