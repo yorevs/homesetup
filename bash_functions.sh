@@ -29,8 +29,7 @@ done;
 # To check for all functions provided by HHS issue the following command: 
 __hhs() {
 
-    local pad
-    local pad_len=30
+    local pad pad_len=30
 
     pad=$(printf '%0.1s' "."{1..30})
     all_fn=$(ss "${HOME_SETUP}" "function __hhs_" "hhs-*.sh" | awk "NR != 1 {print \$1 \$2}")
@@ -39,12 +38,11 @@ __hhs() {
     if [ "$1" = "help" ] && [ -n "$2" ]; then
         # If the function exists, invoke it's help
         if [[ ${all_fn} == *"$2"* ]]; then
-            #echo "Found help for: $(echo ${all_fn} | awk -F: '/regex/ { $2; print $0 }')"
             eval "${2} -h"
         else
-            echo "Usage: ${FUNCNAME[0]} [help <hhs-function-name>]"
+            echo "Usage: ${FUNCNAME[0]} [help __hhs_<function-name>]"
             echo ''
-            echo 'If no argument is passed, lists all available hhs-functions'
+            echo 'If no argument is passed, lists all available __hhs_ functions'
         fi
     else
         echo -e "\n${ORANGE}HomeSetup available functions -------------------------------------\n"
@@ -55,7 +53,7 @@ __hhs() {
             printf '%*.*s' 0 $((pad_len - ${#filename})) "$pad"
             echo -e "${WHITE} => ${GREEN}${fnname//\(\)/}"
         done
-        echo -e "\n${YELLOW}${STAR_ICN} To display help about a function type: #> ${GREEN}__hhs help <function_name>"
+        echo -e "\n${YELLOW}${STAR_ICN} To display help about a function, type: #> ${GREEN}__hhs help __hhs_<function-name>"
     fi
     echo "${NR}"
     shopt -u nocasematch
