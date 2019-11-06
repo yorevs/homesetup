@@ -264,8 +264,8 @@ toolcheck.sh            | Check if the a tool is installed on the system.
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
-* [x] Install the terminal font from '$HOME_SETUP/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
-* [x] Import the HomeSetup.terminal from "$HOME_SETUP/misc/HomeSetup.terminal" to your Terminal App.
+* [x] Install the terminal font from '$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
+* [x] Import the HomeSetup.terminal from "$HHS_HOME/misc/HomeSetup.terminal" to your Terminal App.
 * [x] Set HomeSetup as the default profile.
 
 Done! Now you have your terminal just like mine.

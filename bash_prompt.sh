@@ -108,7 +108,7 @@ GIT_STYLE="\[${WHITE}\]\$(prompt_git \" ${GIT_ICN} \[${CYAN}\]\")";
 PROMPT="\[${WHITE}\] \$>\[${NC}\] ";
 
 # Set the terminal title and prompt.
-# Check ${HOME_SETUP}/misc/prompt-codes.txt for more details
+# Check ${HHS_HOME}/misc/prompt-codes.txt for more details
 
 # PS1 Style: Color and icons (default)
 PS1_STYLE="${HIST_STYLE}"; # The history number of this command

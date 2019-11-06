@@ -62,7 +62,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         
         # Import bash colors
         [ -f bash_colors.sh ] && \. bash_colors.sh
-        echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HOME_SETUP"/.VERSION) installation ${NC}"
+        echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
         [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"
@@ -107,13 +107,13 @@ Usage: $PROC_NAME [OPTIONS] <args>
         [ -z "$INSTALL_DIR" ] && INSTALL_DIR="$HOME/HomeSetup"
 
         # Create/Define the HomeSetup directory.
-        HOME_SETUP=${HOME_SETUP:-$INSTALL_DIR}
-        if [ ! -d "$HOME_SETUP" ]; then
-            echo -e "\nCreating 'HomeSetup' directory: " && mkdir -p "$HOME_SETUP"
-            [ -d "$HOME_SETUP" ] || quit 2 "Unable to create directory $HOME_SETUP"
+        HHS_HOME=${HHS_HOME:-$INSTALL_DIR}
+        if [ ! -d "$HHS_HOME" ]; then
+            echo -e "\nCreating 'HomeSetup' directory: " && mkdir -p "$HHS_HOME"
+            [ -d "$HHS_HOME" ] || quit 2 "Unable to create directory $HHS_HOME"
         else
-            touch "$HOME_SETUP/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HOME_SETUP}"
-            command rm -f "$HOME_SETUP/tmpfile" &>/dev/null
+            touch "$HHS_HOME/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
+            command rm -f "$HHS_HOME/tmpfile" &>/dev/null
         fi
 
         # Create/Define the $HOME/.hhs directory
@@ -148,11 +148,11 @@ Usage: $PROC_NAME [OPTIONS] <args>
         [ -f "$HOME/.prompt" ] || touch "$HOME/.prompt"
         
         # Check the installation method.
-        if [ -n "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/.VERSION" ]; then
+        if [ -n "$HHS_VERSION" ] && [ -f "$HHS_HOME/.VERSION" ]; then
             METHOD='repair'
-        elif [ -z "$DOTFILES_VERSION" ] && [ -f "$HOME_SETUP/.VERSION" ]; then
+        elif [ -z "$HHS_VERSION" ] && [ -f "$HHS_HOME/.VERSION" ]; then
             METHOD='local'
-        elif [ -z "$DOTFILES_VERSION" ] && [ ! -f "$HOME_SETUP/.VERSION" ]; then
+        elif [ -z "$HHS_VERSION" ] && [ ! -f "$HHS_HOME/.VERSION" ]; then
             METHOD='remote'
         else
             quit 2 "Unable to find an installation method!"
@@ -180,7 +180,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         echo -e ''
         echo -e '### Installation Settings ###'
         echo -e "${BLUE}"
-        echo -e "    Home Setup: $HOME_SETUP"
+        echo -e "    Home Setup: $HHS_HOME"
         echo -e "       Scripts: $BIN_DIR"
         echo -e "  Install Type: $METHOD"
         echo -e "       Options: ${OPT:-prompt}"
@@ -216,7 +216,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 dotfile=$HOME/.${next}
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -e "\nLinking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                echo -e "\nLinking: " && ln -sfv "$HHS_HOME/${next}.sh" "$dotfile"
                 [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
                 [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
@@ -231,38 +231,38 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 echo ''
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -en "Linking: " && ln -sfv "$HOME_SETUP/${next}.sh" "$dotfile"
+                echo -en "Linking: " && ln -sfv "$HHS_HOME/${next}.sh" "$dotfile"
                 [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
                 [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
         fi
 
         # Copy bin scripts into place
-        command find "$HOME_SETUP/bin/scripts" -type f \( -iname "**.sh" -o -iname "**.py" \) \
+        command find "$HHS_HOME/bin/scripts" -type f \( -iname "**.sh" -o -iname "**.py" \) \
             -exec command ln -sfv {} "$BIN_DIR" \; \
             -exec command chmod 755 {} \; \
             &>/dev/null
         [ -L "$BIN_DIR/dotfiles.sh" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
 
         # Install HomeSetup fonts
-        [ -d "$HOME/Library/Fonts" ] && command cp "$HOME_SETUP/misc/fonts"/*.otf "$HOME/Library/Fonts"
+        [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
     }
     
     # Clone the repository and install dotfiles.
     clone_repository() {
         
         [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely"
-        [ ! -d "$HOME_SETUP" ] && quit 2 "Installation directory was not created: ${HOME_SETUP}!"
+        [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: ${HHS_HOME}!"
 
         echo ''
         echo -e 'Cloning HomeSetup from repository ...'
         sleep 1
-        command git clone "$REPO_URL" "$HOME_SETUP"
+        command git clone "$REPO_URL" "$HHS_HOME"
 
-        if [ -f "$HOME_SETUP/bash_colors.sh" ]; 
+        if [ -f "$HHS_HOME/bash_colors.sh" ]; 
         then
             # shellcheck disable=SC1090
-            \. "$HOME_SETUP/bash_colors.sh"
+            \. "$HHS_HOME/bash_colors.sh"
         else
             quit 2 "Unable to properly clone the repository!"
         fi
@@ -287,7 +287,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
             echo ''
         fi
-        echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HOME_SETUP/.VERSION") installed!"
+        echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") installed!"
         echo ''
         echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.bashrc"
         echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"

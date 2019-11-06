@@ -57,12 +57,12 @@ check_installation() {
         "bashrc"
     )
 
-    if [ -n "$HOME_SETUP" ] && [ -d "$HOME_SETUP" ]; then
+    if [ -n "$HHS_HOME" ] && [ -d "$HHS_HOME" ]; then
 
         printf "%s\n" "${BLUE}"
         echo '#'
         echo '# Uninstall settings:'
-        echo "# - HOME_SETUP: $HOME_SETUP"
+        echo "# - HHS_HOME: $HHS_HOME"
         echo "# - METHOD: Remove"
         echo "# - FILES: ${ALL_DOTFILES[*]}"
         printf "%s\n" "#${NC}"
@@ -91,7 +91,7 @@ uninstall_dotfiles() {
 
     # shellcheck disable=SC2164
     cd "$HOME"
-    rm -rfv "$HOME_SETUP" 
+    rm -rfv "$HHS_HOME" 
     [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -f "$HHS_DIR/bin"
     echo ''
 
@@ -108,9 +108,9 @@ uninstall_dotfiles() {
 
     printf "%s\n" "Unsetting aliases and variables ..."
     unalias -a
-    unset HOME_SETUP
+    unset HHS_HOME
     unset HHS_DIR
-    unset DOTFILES_VERSION
+    unset HHS_VERSION
     export PS1='\[\h:\W \u \$ '
     export PS2="$PS1"
 

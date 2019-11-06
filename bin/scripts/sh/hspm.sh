@@ -28,7 +28,7 @@ Usage: $PROC_NAME <install/uninstall/list> [recipe]
 # Import bash stuff
 [ -f "$HOME/.bash_functions" ] && \. "$HOME/.bash_functions"
 
-RECIPES_DIR=${RECIPES_DIR:-$HOME_SETUP/bin/hspm-recipes}
+RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/hspm-recipes}
 
 # Unset all declared functions from the recipes
 cleanup_recipes() {
@@ -68,7 +68,7 @@ version() {
 [ "$#" -lt 1 ] && usage 1
 [ "$#" -eq 1 ] && [ "$1" != "list" ] && usage 1
 
-[ -z "$DEV_TOOLS" ] || [ ${#DEV_TOOLS[*]} -le 0 ] && quit 1 "DEV_TOOLS variable is undefined!"
+[ -z "$HHS_DEV_TOOLS" ] || [ ${#HHS_DEV_TOOLS[*]} -le 0 ] && quit 1 "HHS_DEV_TOOLS variable is undefined!"
 
 # shellcheck disable=SC2206
 ALL_RECIPES=()
@@ -81,7 +81,7 @@ function list_recipes() {
     local pad_len=20
     local recipe
 
-    for app in ${DEV_TOOLS[*]}; do
+    for app in ${HHS_DEV_TOOLS[*]}; do
         recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.sh"
         if [ -n "$recipe" ] && [ -f "$recipe" ]; then
             ALL_RECIPES+=( "$app" )
@@ -156,7 +156,7 @@ case "$1" in
         echo ''
         list_recipes
         echo ''
-        echo "Found (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
+        echo "Found (${#ALL_RECIPES[*]}) recipes out of (${#HHS_DEV_TOOLS[*]}) development tools"
     ;;
     *)
         quit 2 "Invalid option: \"$1\""

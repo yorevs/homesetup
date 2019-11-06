@@ -21,7 +21,7 @@ function __hhs_toolcheck() {
         pad_len=40
         tool_name="$1"
         check=$(command -v "${tool_name}")
-        echo -en "${ORANGE}[${MY_OS}]${NC} "
+        echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
         echo -en "Checking: ${YELLOW}${tool_name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
         if has "${tool_name}"; then
@@ -81,10 +81,10 @@ function __hhs_tools() {
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} "
     else
-        DEV_TOOLS=${DEV_TOOLS:-${DEV_TOOLS[*]}}
+        HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-${HHS_DEV_TOOLS[*]}}
         # shellcheck disable=SC2207
-        IFS=$'\n' sorted=($(sort <<<"${DEV_TOOLS[*]}"))
-        IFS="$RESET_IFS"
+        IFS=$'\n' sorted=($(sort <<<"${HHS_DEV_TOOLS[*]}"))
+        IFS="$HHS_RESET_IFS"
 
         echo ''
         for app in ${sorted[*]}; do
@@ -93,7 +93,7 @@ function __hhs_tools() {
         echo ''
         echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"
         echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: ${GREEN}#> hspm.sh install/uninstall <tool_name>"
-        echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: ${GREEN}#> export DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
+        echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: ${GREEN}#> export HHS_DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
         echo -e "${NC}"
     fi
     

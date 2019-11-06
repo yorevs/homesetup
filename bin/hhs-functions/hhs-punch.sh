@@ -14,7 +14,7 @@ function __hhs_punch() {
 
     local dateStamp timeStamp weekStamp opt lines re
 
-    PUNCH_FILE=${PUNCH_FILE:-$HHS_DIR/.punches}
+    HHS_PUNCH_FILE=${HHS_PUNCH_FILE:-$HHS_DIR/.punches}
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -32,13 +32,13 @@ function __hhs_punch() {
         weekStamp="$(date +%V)"
         re="($dateStamp).*"
         # Create the punch file if it does not exist
-        if [ ! -f "$PUNCH_FILE" ]; then 
-            echo "$dateStamp => " >"$PUNCH_FILE"
+        if [ ! -f "$HHS_PUNCH_FILE" ]; then 
+            echo "$dateStamp => " >"$HHS_PUNCH_FILE"
         fi
         if [ "-w" = "$opt" ]; then
             shift
             weekStamp="${1:-$weekStamp}"
-            WEEK_PUNCH_FILE="$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
+            WEEK_PUNCH_FILE="$(dirname "$HHS_PUNCH_FILE")/week-$weekStamp.punch"
             if [ -f "$WEEK_PUNCH_FILE" ]; then
                 lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE")
             else
@@ -46,14 +46,14 @@ function __hhs_punch() {
                 return 1
             fi
         else
-            lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$PUNCH_FILE")
+            lines=$(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$HHS_PUNCH_FILE")
         fi
         # Edit punches
         if [ "-e" = "$opt" ]; then
-            vi "$PUNCH_FILE"
+            vi "$HHS_PUNCH_FILE"
         # Reset punches (backup as week-N.punch)
         elif [ "-r" = "$opt" ]; then
-            mv -f "$PUNCH_FILE" "$(dirname "$PUNCH_FILE")/week-$weekStamp.punch"
+            mv -f "$HHS_PUNCH_FILE" "$(dirname "$HHS_PUNCH_FILE")/week-$weekStamp.punch"
         else
             (
                 local lineTotals=() totals=() pad pad_len subTotal weekTotal success
@@ -88,12 +88,12 @@ function __hhs_punch() {
                             fi
                         # Do the punch to the current day
                         elif [[ "$line" =~ $re ]]; then
-                            ised -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$PUNCH_FILE"
+                            ised -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$HHS_PUNCH_FILE"
                             success='1'
                             break
                         fi
                     done
-                    IFS="$RESET_IFS"
+                    IFS="$HHS_RESET_IFS"
                 fi
 
                 # Display totals of the week when listing - Footer
@@ -105,8 +105,8 @@ function __hhs_punch() {
                     echo ''
                 else
                     # Create a new timestamp if it's the first punch for the day
-                    [ "$success" = '1' ] || echo "$dateStamp => $timeStamp " >>"$PUNCH_FILE"
-                    grep "$dateStamp" "$PUNCH_FILE" | sed "s/$dateStamp/${GREEN}Today${NC}/g"
+                    [ "$success" = '1' ] || echo "$dateStamp => $timeStamp " >>"$HHS_PUNCH_FILE"
+                    grep "$dateStamp" "$HHS_PUNCH_FILE" | sed "s/$dateStamp/${GREEN}Today${NC}/g"
                 fi
             )
         fi

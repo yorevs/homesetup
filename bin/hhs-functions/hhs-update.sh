@@ -17,20 +17,20 @@ function __hhs_update() {
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} "
     else
-        if [ -n "$DOTFILES_VERSION" ]; then
+        if [ -n "$HHS_VERSION" ]; then
             repoVer=$(curl -s -m 3 "$VERSION_URL")
             if [ -n "$repoVer" ]; then
-                isDifferent=$(test -n "$repoVer" -a "$DOTFILES_VERSION" != "$repoVer" && echo 1)
+                isDifferent=$(test -n "$repoVer" -a "$HHS_VERSION" != "$repoVer" && echo 1)
                 if [ -n "$isDifferent" ];then
                     echo -e "${YELLOW}You have a different version of HomeSetup: "
-                    echo -e "=> Repository: ${repoVer} , Yours: ${DOTFILES_VERSION}"
+                    echo -e "=> Repository: ${repoVer} , Yours: ${HHS_VERSION}"
                     read -r -n 1 -sp "Would you like to update it now (y/[n]) ?" ANS
                     [ -n "$ANS" ] && echo "${ANS}${NC}"
                     if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-                        pushd "$HOME_SETUP" &> /dev/null || return 1
+                        pushd "$HHS_HOME" &> /dev/null || return 1
                         git pull || return 1
                         popd &> /dev/null || return 1
-                        if "${HOME_SETUP}"/install.sh -q; then
+                        if "${HHS_HOME}"/install.sh -q; then
                         echo -e "${GREEN}Successfully updated HomeSetup!"
                         sleep 2
                         reload
@@ -47,7 +47,7 @@ function __hhs_update() {
                 return 1
             fi
         else
-            echo "${RED}DOTFILES_VERSION was not defined !${NC}"
+            echo "${RED}HHS_VERSION was not defined !${NC}"
             return 1
         fi
         echo "${NC}"

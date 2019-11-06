@@ -80,10 +80,10 @@ DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+\}$'
 
 # File to store the saved commands.
-CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
+HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
 # File to store the saved directories.
-SAVED_DIRS=${SAVED_DIRS:-$HHS_DIR/.saved_dirs}
+HHS_SAVED_DIRS=${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 
 # Loads Firebase settings from file.
 load_fb_settings() {
@@ -135,8 +135,8 @@ build_dotfiles_payload() {
     [ -f "$HOME"/.functions ] && f_functions=$(grep . "$HOME"/.functions | base64)
     [ -f "$HOME"/.path ] && f_path=$(grep . "$HOME"/.path | base64)
     [ -f "$HOME"/.profile ] && f_profile=$(grep . "$HOME"/.profile | base64)
-    [ -f "$CMD_FILE" ] && f_cmdFile=$(grep . "$CMD_FILE" | base64)
-    [ -f "$SAVED_DIRS" ] && f_savedDirs=$(grep . "$SAVED_DIRS" | base64)
+    [ -f "$HHS_CMD_FILE" ] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
+    [ -f "$HHS_SAVED_DIRS" ] && f_savedDirs=$(grep . "$HHS_SAVED_DIRS" | base64)
 
     # Generate the request payload using the files above
     payload="{ \"$fb_alias\" : { "
@@ -198,8 +198,8 @@ parse_and_save_dotfiles() {
     [ -n "$f_env" ] && echo "$f_env" > "$HOME/.env"
     [ -n "$f_functions" ] && echo "$f_functions" > "$HOME/.functions"
     [ -n "$f_profile" ] && echo "$f_profile" > "$HOME/.profile"
-    [ -n "$f_cmdFile" ] && echo "$f_cmdFile" > "$CMD_FILE"
-    [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$SAVED_DIRS"
+    [ -n "$f_cmdFile" ] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
+    [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$HHS_SAVED_DIRS"
 }
 
 # Provides a help about the command.

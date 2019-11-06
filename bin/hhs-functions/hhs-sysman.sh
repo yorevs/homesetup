@@ -23,7 +23,7 @@ function __hhs_sysinfo() {
         echo -e "  UID.......... : $(id -u "$username")"
         echo -e "  GID.......... : $(id -g "$username")"
         echo -e "\n${GREEN}System:${HIGHLIGHT_COLOR}"
-        echo -e "  OS........... : ${MY_OS}"
+        echo -e "  OS........... : ${HHS_MY_OS}"
         echo -e "  Kernel........: v$(uname -pmr)"
         echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
         echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
@@ -43,7 +43,7 @@ function __hhs_sysinfo() {
             do 
                 echo -e "  ${next}"
             done 
-            IFS=$RESET_IFS
+            IFS=$HHS_RESET_IFS
         )
         if has "docker"; then
             containers=$(__hhs_docker_ps)
@@ -55,7 +55,7 @@ function __hhs_sysinfo() {
                     do 
                         echo -e "  ${next}"
                     done 
-                    IFS=$RESET_IFS
+                    IFS=$HHS_RESET_IFS
                 )
             fi
         fi
@@ -114,7 +114,7 @@ function __hhs_process_list() {
                         ps -p "$pid" &>/dev/null && echo -e "${GREEN}**" || echo -e "${RED}**"
                     fi
                 done
-                IFS="$RESET_IFS"
+                IFS="$HHS_RESET_IFS"
             )
         else
             echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""

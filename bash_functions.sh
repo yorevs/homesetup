@@ -22,7 +22,7 @@ STAR_ICN="\xef\x80\x85"
 
 # Load all function files prefixed with 'hhs-`
 # shellcheck disable=SC2044
-for file in $(find "${HOME_SETUP}/bin/hhs-functions" -type f -name "hhs-*.sh" | sort); do
+for file in $(find "${HHS_HOME}/bin/hhs-functions" -type f -name "hhs-*.sh" | sort); do
     \. "$file";
 done;
 
@@ -32,7 +32,7 @@ __hhs() {
     local pad pad_len=30
 
     pad=$(printf '%0.1s' "."{1..30})
-    all_fn=$(ss "${HOME_SETUP}" "function __hhs_" "hhs-*.sh" | awk "NR != 1 {print \$1 \$2}")
+    all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.sh" | awk "NR != 1 {print \$1 \$2}")
 
     shopt -s nocasematch
     if [ "$1" = "help" ] && [ -n "$2" ]; then

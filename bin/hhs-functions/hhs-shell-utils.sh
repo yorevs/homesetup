@@ -56,7 +56,7 @@ function __hhs_envs() {
                 fi
             done
             shopt -u nocasematch
-            IFS="$RESET_IFS"
+            IFS="$HHS_RESET_IFS"
         )
         echo ' '
     fi

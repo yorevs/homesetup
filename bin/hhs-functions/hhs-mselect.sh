@@ -26,10 +26,10 @@ function __hhs_mselect() {
 
     test -d "$1" -o -s "$1" && echo -e "${RED}\"$1\" is a directory or an existing non-empty file!${NC}" && return 1
 
-    MSELECT_MAX_ROWS=${MSELECT_MAX_ROWS:=10}
+    HHS_MSELECT_MAX_ROWS=${HHS_MSELECT_MAX_ROWS:=10}
 
     local len allOptions=() selIndex=0 showFrom=0 index='' outfile="$1" columns optStr
-    local showTo=$((MSELECT_MAX_ROWS-1))
+    local showTo=$((HHS_MSELECT_MAX_ROWS-1))
     local diffIndex=$((showTo-showFrom))
 
     shift
@@ -125,7 +125,7 @@ function __hhs_mselect() {
         restore-cursor-pos
 
     done
-    IFS="$RESET_IFS"
+    IFS="$HHS_RESET_IFS"
     
     show-cursor
     enable-line-wrap

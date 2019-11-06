@@ -31,8 +31,8 @@ shopt -u nocasematch
 
 # This turns off the case-sensitive completion.
 [ -f ~/.inputrc ] || echo "set completion-ignore-case On" > ~/.inputrc
-[ "Darwin" = "${MY_OS}" ] && sed -i '' -E "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
-[ "Linux" = "${MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
+[ "Darwin" = "${HHS_MY_OS}" ] && sed -i '' -E "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
+[ "Linux" = "${HHS_MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
 
 # Load the shell dotfiles, and then:
 #   \. -> ~/.path can be used to extend `$PATH`

@@ -16,8 +16,8 @@ function depends() {
 function install() {
     command brew install qt
     local ret=$?
-    sed -i '' -E -e "s#(^/usr/local/opt/qt/bin$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
-    echo '/usr/local/opt/qt/bin' >> "$PATHS_FILE"
+    sed -i '' -E -e "s#(^/usr/local/opt/qt/bin$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+    echo '/usr/local/opt/qt/bin' >> "$HHS_PATHS_FILE"
     export PATH="/usr/local/opt/qt/bin:$PATH"
     if ! command -v qmake >/dev/null; then return 1; fi
 
@@ -27,7 +27,7 @@ function install() {
 function uninstall() {
     command brew uninstall qt
     local ret=$?
-    sed -i '' -E -e "s#(^/usr/local/opt/qt/bin$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
+    sed -i '' -E -e "s#(^/usr/local/opt/qt/bin$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
     export PATH="${PATH//\/usr\/local\/opt\/qt\/bin}"
     if command -v qmake >/dev/null; then return 1; fi
 

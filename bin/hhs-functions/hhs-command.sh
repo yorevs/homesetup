@@ -12,11 +12,11 @@
 # @param $1 [Opt] : The command options.
 function __hhs_command() {
     
-    CMD_FILE=${CMD_FILE:-$HHS_DIR/.cmd_file}
+    HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
     local cmdName cmdId cmdExpr pad pad_len mselectFile allCmds=() index=1
 
-    touch "$CMD_FILE"
+    touch "$HHS_CMD_FILE"
     
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [options [cmd_alias] <cmd_expression>] | [cmd_index]"
@@ -31,11 +31,11 @@ function __hhs_command() {
     else
     
         # shellcheck disable=SC2046
-        IFS=$'\n' read -d '' -r -a allCmds < "$CMD_FILE" IFS="$RESET_IFS"
+        IFS=$'\n' read -d '' -r -a allCmds < "$HHS_CMD_FILE" IFS="$HHS_RESET_IFS"
         
         case "$1" in
             -e | --edit)
-                vi "$CMD_FILE"
+                vi "$HHS_CMD_FILE"
                 return 0
             ;;
             -a | --add)
@@ -47,9 +47,9 @@ function __hhs_command() {
                     printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}"
                     return 1
                 fi
-                ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
-                echo "Command $cmdName: $cmdExpr" >>"$CMD_FILE"
-                sort "$CMD_FILE" -o "$CMD_FILE"
+                ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+                echo "Command $cmdName: $cmdExpr" >>"$HHS_CMD_FILE"
+                sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
                 echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${HIGHLIGHT_COLOR}$cmdExpr ${NC}"
             ;;
             -r | --remove)
@@ -58,10 +58,10 @@ function __hhs_command() {
                 cmdId=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
                 local re='^[1-9]+$'
                 if [[ $cmdId =~ $re ]]; then
-                    cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $0 }')
-                    ised -e "s#(^$cmdExpr)*##" -e '/^\s*$/d' "$CMD_FILE"
+                    cmdExpr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
+                    ised -e "s#(^$cmdExpr)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
                 elif [ -n "$cmdId" ]; then
-                    ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$CMD_FILE"
+                    ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
                 else
                     printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}"
                     return 1
@@ -86,7 +86,7 @@ function __hhs_command() {
                             echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
                             index=$((index + 1))
                         done
-                        IFS="$RESET_IFS"
+                        IFS="$HHS_RESET_IFS"
                     )
                     printf '%s\n' "${NC}"
                 else
@@ -104,18 +104,18 @@ function __hhs_command() {
                     # shellcheck disable=SC2181
                     if [ "$?" -eq 0 ]; then
                         selIndex=$(grep . "$mselectFile") # selIndex is zero-based
-                        cmdExpr=$(awk "NR==$((selIndex+1))" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                        [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                        cmdExpr=$(awk "NR==$((selIndex+1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+                        [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
                         [ -n "$cmdExpr" ] && echo "#> $cmdExpr" && eval "$cmdExpr"
                     fi
-                    IFS="$RESET_IFS"
+                    IFS="$HHS_RESET_IFS"
                 else
                     echo "${ORANGE}No commands available yet !${NC}"
                 fi  
             ;;
             [A-Z0-9_]*)
-                cmdExpr=$(awk "NR==$1" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
-                [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$CMD_FILE" | awk -F ': ' '{ print $2 }')
+                cmdExpr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+                [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
                 [ -n "$cmdExpr" ] && echo -e "#> $cmdExpr" && eval "$cmdExpr"
             ;;
             *)

@@ -14,7 +14,7 @@ function __hhs_paths() {
 
     local pad pad_len path_dir custom private
 
-    PATHS_FILE=${PATHS_FILE:-$HOME/.path}
+    HHS_PATHS_FILE=${HHS_PATHS_FILE:-$HOME/.path}
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -23,11 +23,11 @@ function __hhs_paths() {
         echo '                     : Lists all path entries.'
         echo '           -a <path> : Add to the current <path> .'
         echo '           -r <path> : Remove from the current <path> .'
-        echo '           -e        : Edit current PATHS_FILE .'
+        echo '           -e        : Edit current HHS_PATHS_FILE .'
         return 1
     else
         if [ -z "$1" ]; then
-            [ -f "$PATHS_FILE" ] || touch "$PATHS_FILE"
+            [ -f "$HHS_PATHS_FILE" ] || touch "$HHS_PATHS_FILE"
             pad=$(printf '%0.1s' "."{1..70})
             pad_len=70
             columns=66
@@ -38,7 +38,7 @@ function __hhs_paths() {
                 IFS=$'\n'
                 for path in $(echo -e "${PATH//:/\\n}"); do
                     path="${path:0:$columns}"
-                    custom="$(grep ^"$path"$ "$PATHS_FILE")" # Custom paths
+                    custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")" # Custom paths
                     private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
                     path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
                     printf "%s" "${HIGHLIGHT_COLOR}${path}"
@@ -54,19 +54,19 @@ function __hhs_paths() {
                     [ -n "$private" ] && printf '%s\n' "private"
                     [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && printf '%s\n' "exported"
                 done
-                IFS="$RESET_IFS"
+                IFS="$HHS_RESET_IFS"
             )
             echo -e "${NC}"
         elif [ "-e" = "$1" ]; then
-            vi "$PATHS_FILE"
+            vi "$HHS_PATHS_FILE"
             return 0
         elif [ "-a" = "$1" ] && [ -n "$2" ]; then
-            ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
-            [ -d "$2" ] && echo "$2" >> "$PATHS_FILE"
+            ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+            [ -d "$2" ] && echo "$2" >> "$HHS_PATHS_FILE"
             export PATH="$2:$PATH"
         elif [ "-r" = "$1" ] && [ -n "$2" ]; then
             export PATH=${PATH//$2:/}
-            ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$PATHS_FILE"
+            ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
         fi
     fi
     

@@ -113,11 +113,11 @@ alias ps2='export PS1=$PS2_STYLE'
 # Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
 
 # -- LINUX --
-if [ "Linux" = "$MY_OS" ]; then
+if [ "Linux" = "$HHS_MY_OS" ]; then
     alias ised="sed -i'' -r"
     __hhs_has "base64" && alias decode='base64 -d'
 # -- DARWIN --
-elif [ "Darwin" = "$MY_OS" ]; then
+elif [ "Darwin" = "$HHS_MY_OS" ]; then
     alias ised="sed -i '' -E"
     __hhs_has "base64" && alias decode='base64 -D'
 fi
@@ -183,7 +183,7 @@ __hhs_has "ifconfig" && alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\
 # -----------------------------------------------------------------------------------
 # Mac Stuff
 
-if [ "Darwin" = "$MY_OS" ]; then
+if [ "Darwin" = "$HHS_MY_OS" ]; then
 
     # Delete all .DS_store files
     alias ds-cleanup="find . -type f -name '*.DS_Store' -ls -delete"
@@ -219,7 +219,7 @@ fi
 # Directory Shortcuts
 
 alias desk='cd ${DESKTOP}'
-alias hhs='cd ${HOME_SETUP}'
+alias hhs='cd ${HHS_HOME}'
 alias temp='cd ${TEMP}'
 
 # -----------------------------------------------------------------------------------
@@ -303,6 +303,6 @@ fi
 
 # Load all functions that were previously aliased in here
 # shellcheck disable=SC2044
-for file in $(find "$HOME_SETUP/bin/old-aliased" -type f -name "*.sh" | sort); do
+for file in $(find "$HHS_HOME/bin/old-aliased" -type f -name "*.sh" | sort); do
     \. "$file"
 done

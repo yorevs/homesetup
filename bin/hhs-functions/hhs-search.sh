@@ -118,8 +118,8 @@ function __hhs_search-string() {
                 echo "${RED}Can't replace non-Regex expressions in search!${NC}"
                 return 1
             fi
-            [ "Linux" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight \"($repl_str|\$)\""
-            [ "Darwin" = "${MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight \"($repl_str|\$)\""
+            [ "Linux" = "${HHS_MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight \"($repl_str|\$)\""
+            [ "Darwin" = "${HHS_MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight \"($repl_str|\$)\""
         else
             eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + | __hhs_highlight \"($search_str|\$)\""
         fi
