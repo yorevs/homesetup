@@ -60,8 +60,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
     # Check which installation method should be used.
     check_inst_method() {
         
-        # Import bash colors
-        [ -f bash_colors.bash ] && \. bash_colors.bash
+        # Enable install script to use colors
+        [ -f 'dotfiles/hhs_colors.bash' ] && \. 'dotfiles/hhs_colors.bash'
         echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
@@ -93,14 +93,14 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
         # Dotfiles used by HomeSetup
         ALL_DOTFILES=(
-            "bash_aliasdef"
-            "bash_aliases"
-            "bash_colors"
-            "bash_env"
-            "bash_functions"
-            "bash_profile"
-            "bash_prompt"
-            "bashrc"
+            "hhs_aliasdef"
+            "hhs_aliases"
+            "hhs_colors"
+            "hhs_env"
+            "hhs_functions"
+            "hhs_profile"
+            "hhs_prompt"
+            "hhsrc"
         )
 
         # Check for previous custom installation dir
@@ -209,14 +209,17 @@ Usage: $PROC_NAME [OPTIONS] <args>
             OPT='all'
         fi
 
+        pushd "dotfiles" || quit 1 "Unable to enter dotfiles directory!"
+
         # If `all' option is used, copy all files
         if [ "$OPT" = 'all' ]; then
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
-                dotfile=$HOME/.${next}
+                dotfile="$HOME/.${next}"
+                dotfile="${dotfile//hhs/bash}"
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -e "\nLinking: " && ln -sfv "$HHS_HOME/${next}.bash" "$dotfile"
+                echo -e "\nLinking: " && ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile"
                 [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
                 [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
@@ -224,14 +227,15 @@ Usage: $PROC_NAME [OPTIONS] <args>
         else
             # Copy all dotfiles
             for next in ${ALL_DOTFILES[*]}; do
-                dotfile=$HOME/.${next}
+                dotfile="$HOME/.${next}"
+                dotfile="${dotfile//hhs/bash}"
                 echo ''
                 [ -z ${QUIET} ] && read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
                 [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && continue
                 echo ''
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -en "Linking: " && ln -sfv "$HHS_HOME/${next}.bash" "$dotfile"
+                echo -en "Linking: " && ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile"
                 [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
                 [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
@@ -246,6 +250,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
         # Install HomeSetup fonts
         [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
+
+        popd || quit 1 "Unable to leave dotfiles directory!"
     }
     
     # Clone the repository and install dotfiles.
@@ -292,6 +298,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
         echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.bashrc"
         echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
         echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
+        echo -e "${YELLOW}${STAR_ICN} To customize your aliases definitions change the file: ${GREEN}$HOME/.aliasdef"
+        echo ''
         echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
         echo -e "${NC}"
         quit 0
