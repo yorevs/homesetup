@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: install.sh
+#  Script: install.bash
 # Purpose: Install and configure HomeSetup
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -61,7 +61,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
     check_inst_method() {
         
         # Import bash colors
-        [ -f bash_colors.sh ] && \. bash_colors.sh
+        [ -f bash_colors.bash ] && \. bash_colors.bash
         echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME"/.VERSION) installation ${NC}"
 
         # Check if the user passed the help or version parameters.
@@ -216,7 +216,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 dotfile=$HOME/.${next}
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -e "\nLinking: " && ln -sfv "$HHS_HOME/${next}.sh" "$dotfile"
+                echo -e "\nLinking: " && ln -sfv "$HHS_HOME/${next}.bash" "$dotfile"
                 [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
                 [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
@@ -231,18 +231,18 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 echo ''
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -en "Linking: " && ln -sfv "$HHS_HOME/${next}.sh" "$dotfile"
+                echo -en "Linking: " && ln -sfv "$HHS_HOME/${next}.bash" "$dotfile"
                 [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
                 [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
             done
         fi
 
         # Copy bin scripts into place
-        command find "$HHS_HOME/bin/scripts" -type f \( -iname "**.sh" -o -iname "**.py" \) \
+        command find "$HHS_HOME/bin/scripts" -type f \( -iname "**.bash" -o -iname "**.py" \) \
             -exec command ln -sfv {} "$BIN_DIR" \; \
             -exec command chmod 755 {} \; \
             &>/dev/null
-        [ -L "$BIN_DIR/dotfiles.sh" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
+        [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
 
         # Install HomeSetup fonts
         [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
@@ -259,10 +259,10 @@ Usage: $PROC_NAME [OPTIONS] <args>
         sleep 1
         command git clone "$REPO_URL" "$HHS_HOME"
 
-        if [ -f "$HHS_HOME/bash_colors.sh" ]; 
+        if [ -f "$HHS_HOME/bash_colors.bash" ]; 
         then
             # shellcheck disable=SC1090
-            \. "$HHS_HOME/bash_colors.sh"
+            \. "$HHS_HOME/bash_colors.bash"
         else
             quit 2 "Unable to properly clone the repository!"
         fi

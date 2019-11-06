@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2155
 
-#  Script: bash_env.sh
+#  Script: bash_env.bash
 # Purpose: This file is used to configure shell environment variables
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

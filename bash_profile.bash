@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2155,SC1090
 
-#  Script: bash_profile.sh
+#  Script: bash_profile.bash
 # Purpose: This file is user specific remote login file. Environment variables listed in this 
 #          file are invoked every time the user is logged in remotely i.e. using ssh session. 
 #          If this file is not present, system looks for either .bash_login or .profile files.

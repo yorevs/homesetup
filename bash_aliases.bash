@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117,SC2142,SC1090
 
-#  Script: bash_aliases.sh
+#  Script: bash_aliases.bash
 # Purpose: This file is used to configure some useful shell aliases
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

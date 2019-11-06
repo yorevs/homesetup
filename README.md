@@ -189,7 +189,7 @@ hd            | 'Canonical hex dump; some systems have this symlinked'
 md5sum        | 'macOS has no **md5sum**, so use **md5** as a fallback'
 sha1          | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
 
-**Please check: [bash_aliases](./bash_aliases.sh) for all aliases**
+**Please check: [bash_aliases](./bash_aliases.bash) for all aliases**
 
 ### 5. Functions
 
@@ -228,7 +228,7 @@ sysinfo     | Retrieve relevant system information.
 parts       | Exhibit a Human readable summary about all partitions.
 hhu          | Check the current **HomeSetup** installation and look for updates..
 
-**Please check: [bash_functions](./bash_functions.sh) for all functions**
+**Please check: [bash_functions](./bash_functions.bash) for all functions**
 
 ### 6. Scripts
 

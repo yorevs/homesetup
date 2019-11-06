@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1090,SC1091
 
-#  Script: bashrc.sh
+#  Script: bashrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new 
 #          local session i.e. in simple words, opens a new terminal. All environment variables 
 #          created in this file would take effect every time a new local session is started.

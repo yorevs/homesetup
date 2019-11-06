@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: bash_prompt.sh
+#  Script: bash_prompt.bash
 # Purpose: Shell prompt configuration file
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

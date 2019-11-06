@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1090,SC2034
 
-#  Script: bash_functions.sh
+#  Script: bash_functions.bash
 # Purpose: This file is used to define some shell tools
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

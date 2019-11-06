@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: bash_colors.sh
+#  Script: bash_colors.bash
 # Purpose: This file is used to configure shell colors
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
