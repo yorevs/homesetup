@@ -109,8 +109,10 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Create/Define the HomeSetup directory.
         HHS_HOME=${HHS_HOME:-$INSTALL_DIR}
         if [ ! -d "$HHS_HOME" ]; then
-            echo -e "\nCreating 'HomeSetup' directory: " && mkdir -p "$HHS_HOME"
+            echo -e "\nCreating 'HomeSetup' directory: "
+            echo -en "$(mkdir -p "$HHS_HOME")"
             [ -d "$HHS_HOME" ] || quit 2 "Unable to create directory $HHS_HOME"
+            echo -e " ... [   ${GREEN}OK${NC}   ]"
         else
             touch "$HHS_HOME/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
             command rm -f "$HHS_HOME/tmpfile" &>/dev/null
@@ -119,8 +121,10 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Create/Define the $HOME/.hhs directory
         HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
         if [ ! -d "$HHS_DIR" ]; then
-            echo -e "\nCreating '.hhs' directory: " && mkdir -p "$HHS_DIR"
+            echo -en "\nCreating '.hhs' directory: "
+            echo -en "$(mkdir -p "$HHS_DIR")"
             [ -d "$HHS_DIR" ] || quit 2 "Unable to create directory $HHS_DIR"
+            echo -e " ... [   ${GREEN}OK${NC}   ]"
         else
             touch "$HHS_DIR/tmpfile" &>/dev/null || quit 2 "Unable to access the HomeSetup directory: ${HHS_DIR}"
             command rm -f "$HHS_DIR/tmpfile" &>/dev/null
@@ -130,9 +134,10 @@ Usage: $PROC_NAME [OPTIONS] <args>
         BIN_DIR="$HHS_DIR/bin"
         # Create or directory ~/bin if it does not exist
         if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
-            echo -e "\nCreating 'bin' directory: " && mkdir "$BIN_DIR"
+            echo -e "\nCreating 'bin' directory: "
+            echo -en "$(mkdir "$BIN_DIR")"
             if [ -L "$BIN_DIR" ] || [ -d "$BIN_DIR" ]; then
-                echo -e "[   ${GREEN}OK${NC}   ]"
+                echo -e " ... [   ${GREEN}OK${NC}   ]"
             else
                 quit 2 "Unable to create bin directory: $BIN_DIR"
             fi
@@ -152,10 +157,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
             METHOD='repair'
         elif [ -z "$HHS_VERSION" ] && [ -f "$HHS_HOME/.VERSION" ]; then
             METHOD='local'
-        elif [ -z "$HHS_VERSION" ] && [ ! -f "$HHS_HOME/.VERSION" ]; then
-            METHOD='remote'
         else
-            quit 2 "Unable to find an installation method!"
+            METHOD='remote'
         fi
         
         case "$METHOD" in
