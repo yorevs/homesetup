@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: hhs-docker-tools.sh
+#  Script: hhs-docker-tools.bash
 # Created: Oct 6, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

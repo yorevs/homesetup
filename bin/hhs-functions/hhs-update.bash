@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: hhs-paths.sh
+#  Script: hhs-paths.bash
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -30,7 +30,7 @@ function __hhs_update() {
                         pushd "$HHS_HOME" &> /dev/null || return 1
                         git pull || return 1
                         popd &> /dev/null || return 1
-                        if "${HHS_HOME}"/install.sh -q; then
+                        if "${HHS_HOME}"/install.bash -q; then
                         echo -e "${GREEN}Successfully updated HomeSetup!"
                         sleep 2
                         reload

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: hhs-toolcheck.sh
+#  Script: hhs-toolcheck.bash
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -92,7 +92,7 @@ function __hhs_tools() {
         done
         echo ''
         echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"
-        echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: ${GREEN}#> hspm.sh install/uninstall <tool_name>"
+        echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: ${GREEN}#> hspm.bash install/uninstall <tool_name>"
         echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: ${GREEN}#> export HHS_DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
         echo -e "${NC}"
     fi

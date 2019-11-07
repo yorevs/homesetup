@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: checkip.sh
+#  Script: checkip.bash
 # Purpose: Validate an IP and check details about it.
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

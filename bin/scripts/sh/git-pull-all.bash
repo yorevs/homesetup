@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117,SC1090
 
-#  Script: git-pull-all.sh
+#  Script: git-pull-all.bash
 # Purpose: Pull all projects within the specified path to the given repository/branch
 # Created: Mar 21, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

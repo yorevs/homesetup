@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: fetch.sh
+#  Script: fetch.bash
 # Purpose: Script to fetch REST APIs data.
 # Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

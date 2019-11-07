@@ -66,8 +66,8 @@ unset file
 # Enable tab completion for `git` by marking it as an alias for `git`
 if command -v git &> /dev/null; then
     if [ "bash" = "$HHS_MY_SHELL" ]; then
-        if [ -s "$HHS_DIR/bin/git-completion.sh" ]; then
-            \. "$HHS_DIR/bin/git-completion.sh" # This loads git bash complete
+        if [ -s "$HHS_DIR/bin/git-completion.bash" ]; then
+            \. "$HHS_DIR/bin/git-completion.bash" # This loads git bash complete
             complete -o default -o nospace -F _git g
         fi
     fi

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117,SC1090
 
-#  Script: dotfiles.sh
+#  Script: dotfiles.bash
 # Purpose: Manage your HomeSetup dotfiles and more
 # Created: Oct 25, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

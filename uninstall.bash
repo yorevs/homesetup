@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117
 
-#  Script: uninstall.sh
+#  Script: uninstall.bash
 # Purpose: Uninstall HomeSetup
 # Created: Dec 21, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

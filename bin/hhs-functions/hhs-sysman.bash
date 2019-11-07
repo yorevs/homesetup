@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: hhs-sysman.sh
+#  Script: hhs-sysman.bash
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

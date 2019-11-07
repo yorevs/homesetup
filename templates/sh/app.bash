@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: ${app.sh}
+#  Script: ${app.bash}
 # Purpose: ${purpose}
 # Created: Mon DD, YYYY
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

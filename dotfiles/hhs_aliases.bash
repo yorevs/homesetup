@@ -303,6 +303,6 @@ fi
 
 # Load all functions that were previously aliased in here
 # shellcheck disable=SC2044
-for file in $(find "$HHS_HOME/bin/old-aliased" -type f -name "*.sh" | sort); do
+for file in $(find "$HHS_HOME/bin/old-aliased" -type f -name "*.bash" | sort); do
     \. "$file"
 done

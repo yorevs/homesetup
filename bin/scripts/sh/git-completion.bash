@@ -21,7 +21,7 @@
 #    2) Add the following line to your .bashrc/.zshrc:
 #        \. ~/.git-completion.bash
 #    3) Consider changing your PS1 to also show the current branch,
-#       see git-prompt.sh for details.
+#       see git-prompt.bash for details.
 #
 # If you use complex aliases of form '!f() { ... }; f', you can use the null
 # command ':' as the first command in the function body to declare the desired
