@@ -60,6 +60,12 @@ Usage: $PROC_NAME [OPTIONS] <args>
     # Check which installation method should be used.
     check_inst_method() {
 
+        # Check for previous custom installation dir
+        [ -z "$INSTALL_DIR" ] && INSTALL_DIR="$HOME/HomeSetup"
+
+        # Define the HomeSetup directory.
+        HHS_HOME=${HHS_HOME:-$INSTALL_DIR}
+
         # Enable install script to use colors
         [ -f 'dotfiles/hhs_colors.bash' ] && \. 'dotfiles/hhs_colors.bash'
         [ -f "$HHS_HOME/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME/.VERSION") installation ${NC}"
@@ -103,11 +109,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             "hhsrc"
         )
 
-        # Check for previous custom installation dir
-        [ -z "$INSTALL_DIR" ] && INSTALL_DIR="$HOME/HomeSetup"
-
-        # Create/Define the HomeSetup directory.
-        HHS_HOME=${HHS_HOME:-$INSTALL_DIR}
+        # Create HomeSetup directory
         if [ ! -d "$HHS_HOME" ]; then
             echo -e "\nCreating 'HomeSetup' directory: "
             echo -en "$(mkdir -p "$HHS_HOME")"
