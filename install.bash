@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
+# shellcheck disable=SC1117,SC1090
 
 #  Script: install.bash
 # Purpose: Install and configure HomeSetup
@@ -38,12 +38,12 @@ Usage: $PROC_NAME [OPTIONS] <args>
     # @param $1 [Req] : The exit return code.
     # @param $2 [Opt] : The exit message to be displayed.
     quit() {
-        
+
         # Unset all declared functions
         unset -f \
             quit usage check_inst_method install_dotfiles \
             clone_repository activate_dotfiles
-        
+
         test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
         test -n "$2" -a "$2" != "" && echo -e "${2}"
         test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
@@ -59,7 +59,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
     # shellcheck disable=SC1091
     # Check which installation method should be used.
     check_inst_method() {
-        
+
         # Enable install script to use colors
         [ -f 'dotfiles/hhs_colors.bash' ] && \. 'dotfiles/hhs_colors.bash'
         [ -f "$HHS_HOME/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME/.VERSION") installation ${NC}"
@@ -72,20 +72,20 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Short opts: -w, Long opts: --Word
         while test -n "$1"; do
             case "$1" in
-                -a | --all)
-                    OPT="all"
+            -a | --all)
+                OPT="all"
                 ;;
-                -q | --quiet)
-                    OPT="all"
-                    ANS="Y"
-                    QUIET=1
+            -q | --quiet)
+                OPT="all"
+                ANS="Y"
+                QUIET=1
                 ;;
-                -d | --dir)
-                    shift
-                    INSTALL_DIR="$1"
+            -d | --dir)
+                shift
+                INSTALL_DIR="$1"
                 ;;
-                *)
-                    quit 2 "Invalid option: \"$1\""
+            *)
+                quit 2 "Invalid option: \"$1\""
                 ;;
             esac
             shift
@@ -151,7 +151,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         [ -f "$HOME/.functions" ] || touch "$HOME/.functions"
         [ -f "$HOME/.profile" ] || touch "$HOME/.profile"
         [ -f "$HOME/.prompt" ] || touch "$HOME/.prompt"
-        
+
         # Check the installation method.
         if [ -n "$HHS_VERSION" ] && [ -f "$HHS_HOME/.VERSION" ]; then
             METHOD='repair'
@@ -160,23 +160,23 @@ Usage: $PROC_NAME [OPTIONS] <args>
         else
             METHOD='remote'
         fi
-        
+
         case "$METHOD" in
-            remote)
-                clone_repository
-                install_dotfiles
-                activate_dotfiles
+        remote)
+            clone_repository
+            install_dotfiles
+            activate_dotfiles
             ;;
-            local | repair)
-                install_dotfiles
-                activate_dotfiles
+        local | repair)
+            install_dotfiles
+            activate_dotfiles
             ;;
-            *)
-                quit 2 "Installation method is not valid: ${METHOD}"
+        *)
+            quit 2 "Installation method is not valid: ${METHOD}"
             ;;
         esac
     }
-    
+
     # Install all dotfiles.
     install_dotfiles() {
 
@@ -212,7 +212,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             OPT='all'
         fi
 
-        pushd "dotfiles" &> /dev/null || quit 1 "Unable to enter dotfiles directory!"
+        pushd "dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
 
         # If `all' option is used, copy all files
         if [ "$OPT" = 'all' ]; then
@@ -258,12 +258,12 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Install HomeSetup fonts
         [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
 
-        popd &> /dev/null || quit 1 "Unable to leave dotfiles directory!"
+        popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
     }
-    
+
     # Clone the repository and install dotfiles.
     clone_repository() {
-        
+
         [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely"
         [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: ${HHS_HOME}!"
 
@@ -272,10 +272,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
         sleep 1
         command git clone "$REPO_URL" "$HHS_HOME"
 
-        if [ -f "$HHS_HOME/bash_colors.bash" ]; 
-        then
-            # shellcheck disable=SC1090
-            \. "$HHS_HOME/bash_colors.bash"
+        if [ -f "$HHS_HOME/dotfiles/bash_colors.bash" ]; then
+            \. "$HHS_HOME/dotfiles/bash_colors.bash"
         else
             quit 2 "Unable to properly clone the repository!"
         fi
@@ -283,14 +281,13 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
     # Reload the bash and apply the dotfiles.
     activate_dotfiles() {
-        
+
         sleep 2
         echo ''
         echo -e "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
         echo -e "${BLUE}"
 
-        if command -v figlet >/dev/null; 
-        then
+        if command -v figlet >/dev/null; then
             figlet -f colossal -ck "Welcome"
         else
             echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
@@ -311,7 +308,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         echo -e "${NC}"
         quit 0
     }
-    
+
     clear
     check_inst_method "$@"
 

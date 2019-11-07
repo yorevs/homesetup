@@ -33,7 +33,7 @@ quit() {
     [ "$ret" -gt 1 ] && printf "%s" "${RED}"
     [ "$#" -gt 0 ] && printf "%s" "$*"
     # Unset all declared functions
-    printf "%s\n" "${NC}"
+    echo "${NC}"
     exit "$ret"
 }
 
@@ -59,17 +59,17 @@ check_installation() {
 
     if [ -n "$HHS_HOME" ] && [ -d "$HHS_HOME" ]; then
 
-        printf "%s\n" "${BLUE}"
+        echo "${BLUE}"
         echo '#'
         echo '# Uninstall settings:'
         echo "# - HHS_HOME: $HHS_HOME"
         echo "# - METHOD: Remove"
         echo "# - FILES: ${ALL_DOTFILES[*]}"
-        printf "%s\n" "#${NC}"
+        echo "#${NC}"
 
-        printf "%s\n" "${RED}"
+        echo "${RED}"
         read -r -n 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
-        printf "%s\n" "${NC}"
+        echo "${NC}"
         [ -n "$ANS" ] && echo ''
 
         if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
@@ -84,20 +84,20 @@ check_installation() {
 
 uninstall_dotfiles() {
 
-    printf "%s\n" "Removing installed dotfiles ..."
+    echo -e "Removing installed dotfiles ..."
     for next in ${ALL_DOTFILES[*]}; do
-        test -n "$next" -a -f "$HOME/.${next}" && rm -fv "$HOME/.${next}"
+        test -n "$next" -a -f "$HOME/.${next}" && command rm -fv "$HOME/.${next}"
     done
 
     # shellcheck disable=SC2164
     cd "$HOME"
-    rm -rfv "$HHS_HOME" 
+    command rm -rfv "$HHS_HOME" 
     [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -f "$HHS_DIR/bin"
     echo ''
 
     if [ -d "$HHS_DIR" ]; then
         BACKUPS=( "$(find "$HHS_DIR" -iname "*.orig")" )
-        printf "%s\n" "Restoring backups ..."
+        echo "Restoring backups ..."
         for next in ${BACKUPS[*]}; do
             [ -f "${next}" ] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
         done
@@ -106,7 +106,7 @@ uninstall_dotfiles() {
     fi
     echo ''
 
-    printf "%s\n" "Unsetting aliases and variables ..."
+    echo "Unsetting aliases and variables ..."
     unalias -a
     unset HHS_HOME
     unset HHS_DIR
