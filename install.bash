@@ -111,7 +111,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
 
         # Create HomeSetup directory
         if [ ! -d "$HHS_HOME" ]; then
-            echo -e "\nCreating 'HomeSetup' directory: "
+            echo -en "\nCreating 'HomeSetup' directory: "
             echo -en "$(mkdir -p "$HHS_HOME")"
             [ -d "$HHS_HOME" ] || quit 2 "Unable to create directory $HHS_HOME"
             echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -136,13 +136,15 @@ Usage: $PROC_NAME [OPTIONS] <args>
         BIN_DIR="$HHS_DIR/bin"
         # Create or directory ~/bin if it does not exist
         if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
-            echo -e "\nCreating 'bin' directory: "
+            echo -en "\nCreating 'bin' directory: "
             echo -en "$(mkdir "$BIN_DIR")"
             if [ -L "$BIN_DIR" ] || [ -d "$BIN_DIR" ]; then
                 echo -e " ... [   ${GREEN}OK${NC}   ]"
             else
                 quit 2 "Unable to create bin directory: $BIN_DIR"
             fi
+            [ ! -L "$BIN_DIR" ] && [ ! -d "$BIN_DIR" ] && quit 2 "Unable to create directory $HHS_DIR"
+            echo -e " ... [   ${GREEN}OK${NC}   ]"
         fi
 
         # Create all user custom files.
