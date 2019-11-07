@@ -88,7 +88,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 ;;
             -d | --dir)
                 shift
-                INSTALL_DIR="$1"
+                INSTALL_DIR="${1:-$(pwd)}"
                 ;;
             *)
                 quit 2 "Invalid option: \"$1\""
@@ -214,7 +214,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             OPT='all'
         fi
 
-        pushd "dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
+        pushd "dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory => $(pwd)"
 
         # If `all' option is used, copy all files
         if [ "$OPT" = 'all' ]; then
@@ -260,7 +260,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Install HomeSetup fonts
         [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
 
-        popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
+        popd &>/dev/null || quit 1 "Unable to leave dotfiles directory => $(pwd)"
     }
 
     # Clone the repository and install dotfiles.
