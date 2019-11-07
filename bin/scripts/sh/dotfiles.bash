@@ -25,8 +25,9 @@ Usage: $PROC_NAME <command> [<args>]
 "
 
 # Import pre-defined .bash_colors
-test -f ~/.bash_colors && \. ~/.bash_colors
-test -f ~/.bash_functions && \. ~/.bash_functions
+[ -f ~/.bash_colors ] && \. ~/.bash_colors
+[ -f ~/.bash_aliases ] && \. ~/.bash_aliases
+[ -f ~/.bash_functions ] && \. ~/.bash_functions
 
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
@@ -101,7 +102,7 @@ download_dotfiles() {
     local fb_alias="$1"
 
     rm -f "$DOTFILES_FILE"
-    fetch.sh GET --silent "$FIREBASE_URL/dotfiles/$UUID/${fb_alias}.json" > "$DOTFILES_FILE" 
+    fetch.bash GET --silent "$FIREBASE_URL/dotfiles/$UUID/${fb_alias}.json" > "$DOTFILES_FILE" 
     ret=$?
 
     if [ $ret -eq 0 ] && [ -f "$DOTFILES_FILE" ] && [[ "$(grep . "$DOTFILES_FILE")" =~ $FB_RE_RESP ]];then 
@@ -163,7 +164,7 @@ upload_dotfiles() {
     local fb_alias="$1"
 
     body=$(build_dotfiles_payload)
-    fetch.sh PATCH --silent --body "$body" "$FIREBASE_URL/dotfiles/$UUID.json" &> /dev/null
+    fetch.bash PATCH --silent --body "$body" "$FIREBASE_URL/dotfiles/$UUID.json" &> /dev/null
     ret=$?
     [ $ret -eq 0 ] && echo "${GREEN}Dotfiles \"${fb_alias}\" sucessfully uploaded!${NC}"
     [ $ret -eq 0 ] || quit 2 "Failed to upload Dotfiles as ${fb_alias}"
@@ -205,7 +206,7 @@ parse_and_save_dotfiles() {
 # Provides a help about the command.
 cmd_help() {
 
-    set-nocasematch
+    shopt -s nocasematch
     case "$1" in
         # Do stuff related to firebase
         FB | firebase)
@@ -227,7 +228,7 @@ cmd_help() {
             quit 2 "Command \"$1\" does not exist!"
         ;;
     esac
-    unset-nocasematch
+    shopt -u nocasematch
     quit 1
 }
 
@@ -250,7 +251,7 @@ cmd_firebase() {
     u_name=$(whoami)
     u_uuid=$(python -c "import uuid as ul; print(str(ul.uuid4()));")
 
-    set-nocasematch
+    shopt -s nocasematch
     case "$task" in
         s | setup)
             test -f "$FIREBASE_FILE" && rm -f "$FIREBASE_FILE"
@@ -301,7 +302,7 @@ cmd_firebase() {
             quit 2 "Invalid firebase task: \"$task\" !"
         ;;
     esac
-    unset-nocasematch
+    shopt -u nocasematch
 
     return 0
 }
@@ -309,7 +310,7 @@ cmd_firebase() {
 # Execute a dotfiles command.
 exec_command() {
 
-    set-nocasematch
+    shopt -s nocasematch
     case "${COMMAND}" in
         # Do stuff related to firebase
         cmd_firebase)
@@ -324,13 +325,13 @@ exec_command() {
             quit 1 "Invalid command \"${COMMAND}\" !"
         ;;
     esac
-    unset-nocasematch
+    shopt -u nocasematch
     quit $ret
 }
 
 test -z "$1" && usage
 
-set-nocasematch
+shopt -s nocasematch
 # Loop through the command line options.
 case "$1" in
 
@@ -348,7 +349,7 @@ case "$1" in
         quit 1 "Invalid option: \"$1\""
     ;;
 esac
-unset-nocasematch
+shopt -u nocasematch
 
 exec_command "$@"
 

@@ -41,19 +41,19 @@ unset file
 # Set default shell options
 
 # If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
-#unset-nocaseglob
+#shopt -u nocaseglob
 
 # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-#set-extglob
+#shopt -s extglob
 
 # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-#set-cdspell
+#shopt -s cdspell
 
 # Make bash check its window size after a process completes
-#set-checkwinsize
+#shopt -s checkwinsize
 
 # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
-#unset-nocasematch
+#shopt -u nocasematch
 
 # This turns off the case-sensitive completion.
 [ -f ~/.inputrc ] || echo "set completion-ignore-case On" > ~/.inputrc

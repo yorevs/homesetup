@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117,SC1090,SC2015
 
-#  Script: hspm.sh
+#  Script: hspm.bash
 # Purpose: Manage your development tools using installation/uninstallation recipes.
 # Created: Dec 21, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -82,7 +82,7 @@ function list_recipes() {
     local recipe
 
     for app in ${HHS_DEV_TOOLS[*]}; do
-        recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.sh"
+        recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.bash"
         if [ -n "$recipe" ] && [ -f "$recipe" ]; then
             ALL_RECIPES+=( "$app" )
             index=$((index+1))
@@ -103,7 +103,7 @@ function list_recipes() {
 # Install the specified app using the installation recipe
 install_recipe() {
 
-    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.sh"
+    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.bash"
     if [ -f "$recipe" ]; then
         echo ''
         \. "$recipe"
@@ -121,7 +121,7 @@ install_recipe() {
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
-    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.sh"
+    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.bash"
     if [ -f "$recipe" ]; then
         echo ''
         \. "$recipe"
@@ -136,7 +136,7 @@ uninstall_recipe() {
     fi
 }
 
-set-nocasematch
+shopt -s nocasematch
 # Check the command line options.
 case "$1" in
     # Install the app
@@ -162,6 +162,6 @@ case "$1" in
         quit 2 "Invalid option: \"$1\""
     ;;
 esac
-unset-nocasematch
+shopt -u nocasematch
 
 echo ''

@@ -49,15 +49,15 @@ Access: https://console.firebase.google.com/
         - Click on the *Publish* button and accept changes.
 3. Grab you *Project ID* from the settings Settings menu.
 
-Type in a shell: `#> dotfiles.sh fb setup`
+Type in a shell: `#> dotfiles.bash fb setup`
 
 Fill in the information required.
 You are now ready to use the Firebase features of HomeSetup.
-Type: `#> dotfiles.sh help fb` for further information about using it.
+Type: `#> dotfiles.bash help fb` for further information about using it.
 
 ### 2. Uninstallation
 
-If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command in a shell: `# HomeSetup> ./uninstall.sh`
+If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command in a shell: `# HomeSetup> ./uninstall.bash`
 
 The uninstaller will remove all files and foders related to HomeSetup for good.
 
@@ -248,15 +248,15 @@ send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-
 
 Function                | Purpose
 ----------------------- | -----------------------
-dotfiles.sh             | Manage your HomeSetup .dotfiles and more.
-hspm.sh                 | Manage your development tools using installation/uninstallation recipes.
-fetch.sh                | Script to fetch REST APIs data.
-git-completion.sh       | bash/zsh completion support for core Git.
-git-diff-cmd.sh         | Enable opendiff to be used with git instead of normal diff.
-git-pull-all.sh         | Pull all projects within the specified path to the given repository/branch.
-hostname-change.sh      | Change the hostname permanently.
-ip-utils.sh             | Validate an IP and check details about it.
-toolcheck.sh            | Check if the a tool is installed on the system.
+dotfiles.bash             | Manage your HomeSetup .dotfiles and more.
+hspm.bash                 | Manage your development tools using installation/uninstallation recipes.
+fetch.bash                | Script to fetch REST APIs data.
+git-completion.bash       | bash/zsh completion support for core Git.
+git-diff-cmd.bash         | Enable opendiff to be used with git instead of normal diff.
+git-pull-all.bash         | Pull all projects within the specified path to the given repository/branch.
+hostname-change.bash      | Change the hostname permanently.
+ip-utils.bash             | Validate an IP and check details about it.
+toolcheck.bash            | Check if the a tool is installed on the system.
 
 **Please check: [bin](./bin) for all scripts**
 
