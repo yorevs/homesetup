@@ -11,11 +11,11 @@ Clone the repository using the following command:
 
 And then install dotfiles using the following command:
 
-`#> cd ~/HomeSetup && ./install.sh` => **To install one by one**
+`#> cd ~/HomeSetup && ./install.bash` => **To install one by one**
 
 or
 
-`#> cd ~/HomeSetup && ./install.sh -a` => **To install all files**
+`#> cd ~/HomeSetup && ./install.bash --all` => **To install all files**
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 
@@ -23,11 +23,11 @@ Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/
 
 Use the following command to clone and install the HomeSetup.
 
-`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash`
+`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 or
 
-`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.sh | bash`
+`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 #### 1.3 Setup a Firebase account for custom files synchronization
 

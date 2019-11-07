@@ -62,7 +62,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         
         # Enable install script to use colors
         [ -f 'dotfiles/hhs_colors.bash' ] && \. 'dotfiles/hhs_colors.bash'
-        echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME"/.VERSION) installation ${NC}"
+        [ -f "$HHS_HOME/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME/.VERSION") installation ${NC}"
 
         # Check if the user passed the help or version parameters.
         [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"
