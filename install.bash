@@ -272,8 +272,8 @@ Usage: $PROC_NAME [OPTIONS] <args>
         sleep 1
         command git clone "$REPO_URL" "$HHS_HOME"
 
-        if [ -f "$HHS_HOME/dotfiles/bash_colors.bash" ]; then
-            \. "$HHS_HOME/dotfiles/bash_colors.bash"
+        if [ -f "$HHS_HOME/dotfiles/hhs_colors.bash" ]; then
+            \. "$HHS_HOME/dotfiles/hhs_colors.bash"
         else
             quit 2 "Unable to properly clone the repository!"
         fi
