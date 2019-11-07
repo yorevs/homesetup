@@ -195,7 +195,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             echo -e "${NC}"
             if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
                 [ -n "$ANS" ] && echo ''
-                echo -e "${NC}Copying dotfiles into place ..."
+                echo -e "${WHITE}Backing up existing dotfiles ...${NC}"
                 # Moving old hhs files into the proper directory
                 [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
                 [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
@@ -212,6 +212,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         fi
 
         pushd "$HHS_HOME/dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
+        echo -e "\n${WHITE}Copying dotfiles into place ...${NC}"
 
         # If `all' option is used, copy all files
         if [ "$OPT" = 'all' ]; then
@@ -258,6 +259,9 @@ Usage: $PROC_NAME [OPTIONS] <args>
         [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
 
         popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
+
+        # Link git hook
+        command cp templates/git/hooks/prepare-commit-msg .git/hooks/
     }
 
     # Clone the repository and install dotfiles.
@@ -281,10 +285,10 @@ Usage: $PROC_NAME [OPTIONS] <args>
     # Reload the bash and apply the dotfiles.
     activate_dotfiles() {
 
-        sleep 2
         echo ''
         echo -e "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
         echo -e "${BLUE}"
+        sleep 2
 
         if command -v figlet >/dev/null; then
             figlet -f colossal -ck "Welcome"

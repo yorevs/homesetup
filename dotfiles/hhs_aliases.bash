@@ -107,6 +107,9 @@ alias reload='cls; \. ~/.bashrc && echo -e "${HHS_WELCOME}"'
 alias ps1='export PS1=$PS1_STYLE'
 alias ps2='export PS1=$PS2_STYLE'
 
+# Change your shell by selecting from the current shell list
+alias chsh='__hhs_select-shell'
+
 # -----------------------------------------------------------------------------------
 # OS based aliases
 

@@ -43,9 +43,9 @@ alias godir='__hhs_go-dir'
 alias sysinfo='__hhs_sysinfo'
 alias parts='__hhs_partitions'
 alias hhu='__hhs_update'
-alias git-='__hhs_git-'
 
 # Git shortcuts
+alias git-='__hhs_git-'
 alias gs='__hhs_git_status'
 alias gf='__hhs_git_fetch'
 alias gh='__hhs_git_history'

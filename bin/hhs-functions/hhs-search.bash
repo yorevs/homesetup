@@ -73,8 +73,8 @@ function __hhs_search-string() {
         echo ''
         echo 'Options: '
         echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
-        echo '    -w | --words                    : Makes the search to use the full STRING instead of a REGEX.'
-        echo '    -r | --replace <replacement>    : Makes the search to REPLACE all findings by the replacement string.'
+        echo '    -w | --words                    : Makes the search to use the STRING words instead of a REGEX.'
+        echo '    -r | --replace <replacement>    : Makes the search to REPLACE all occurrences by the replacement string.'
         echo '    -b | --binary                   : Includes BINARY files in the search.'
         echo ''
         return 1

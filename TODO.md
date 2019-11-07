@@ -3,4 +3,4 @@
 - [ ] Add a deployer system
 - [ ] Sync HSPM with current dev-tools
 - [ ] Change the script dotfiles.sh into hhs.sh
-- [ ] Prefix all environment variables with HHS_
+- [ ] cp templates/git/hooks/prepare-commit-msg .git/hooks/
