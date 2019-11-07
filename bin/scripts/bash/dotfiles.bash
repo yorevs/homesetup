@@ -13,14 +13,14 @@
 VERSION=0.9.0
 
 # This script name.
-PROC_NAME=$(basename "$0")
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <command> [<args>]
+Usage: $APP_NAME <command> [<args>]
 
     Commands:
-        FB | firebase   : Execute Firebase tasks; type: '$PROC_NAME help FB' for details.
+        FB | firebase   : Execute Firebase tasks; type: '$APP_NAME help FB' for details.
         H  | help       : Provides a help about the command.
 "
 
@@ -212,7 +212,7 @@ cmd_help() {
         FB | firebase)
             echo ''
             echo 'Execute firebase synchronization tasks.'
-            echo "Usage: $PROC_NAME firebase <task> [args]"
+            echo "Usage: $APP_NAME firebase <task> [args]"
             echo ''
             echo '  Tasks:'
             echo '      s |    setup               : Setup your Firebase account to use with your HomeSetup installation.'
@@ -221,7 +221,7 @@ cmd_help() {
         ;;
         H | help)
             echo 'Provides a help to the given command.'
-            echo "Usage: $PROC_NAME help <command>"
+            echo "Usage: $APP_NAME help <command>"
         ;;
 
         *)

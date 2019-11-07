@@ -10,11 +10,11 @@
 VERSION=0.9.0
 
 # This script name.
-PROC_NAME=$(basename "$0")
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME [optionals] <mandatories>
+Usage: $APP_NAME [optionals] <mandatories>
 "
 
 # Import pre-defined Bash Colors

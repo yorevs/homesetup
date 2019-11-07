@@ -11,11 +11,11 @@
 VERSION=0.9.0
 
 # This script name.
-PROC_NAME="$(basename $0)"
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <search_path> [repository=[origin]] [branch=[HEAD]]
+Usage: $APP_NAME <search_path> [repository=[origin]] [branch=[HEAD]]
 "
 
 # Import pre-defined Bash Colors

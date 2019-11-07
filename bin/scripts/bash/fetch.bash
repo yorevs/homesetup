@@ -13,11 +13,11 @@
 VERSION=0.9.0
 
 # This script name.
-PROC_NAME=$(basename "$0")
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <method> [options] <url>
+Usage: $APP_NAME <method> [options] <url>
 
         method                      : The http method to be used [ GET, POST, PUT, PATCH, DELETE ].
         url                         : The url to make the request.

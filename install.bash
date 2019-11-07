@@ -12,11 +12,11 @@
 {
 
     # This script name.
-    PROC_NAME=$(basename "$0")
+    APP_NAME="${0##*/}"
 
     # Help message to be displayed by the script.
     USAGE="
-Usage: $PROC_NAME [OPTIONS] <args>
+Usage: $APP_NAME [OPTIONS] <args>
 
   -a | --all           : Install all scripts into the user HomeSetup directory without prompting.
   -q | --quiet         : Do not prompt for questions, use all defaults.

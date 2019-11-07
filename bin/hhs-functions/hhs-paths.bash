@@ -38,9 +38,9 @@ function __hhs_paths() {
                 IFS=$'\n'
                 for path in $(echo -e "${PATH//:/\\n}"); do
                     path="${path:0:$columns}"
-                    custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")" # Custom paths
-                    private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
-                    path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
+                    [ -f "$HHS_PATHS_FILE" ] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")" # Custom paths
+                    [ -d "/private/etc/paths" ] && private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
+                    [ -d "/etc/paths.d" ] && path_dir="$(grep ^"$path"$ /etc/paths.d/*)" # General system path dir
                     printf "%s" "${HIGHLIGHT_COLOR}${path}"
                     printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
                     [ "${#path}" -ge "$columns" ] && echo -n "${NC}" || echo -n "${NC}"
@@ -49,10 +49,10 @@ function __hhs_paths() {
                     else
                         echo -en "${RED} ${CROSS_ICN} => "
                     fi
-                    [ -n "$custom" ] && printf '%s\n' "custom"
-                    [ -n "$path_dir" ] && printf '%s\n' "paths.d"
-                    [ -n "$private" ] && printf '%s\n' "private"
-                    [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && printf '%s\n' "exported"
+                    [ -n "$custom" ] && echo "custom"
+                    [ -n "$path_dir" ] && echo "paths.d"
+                    [ -n "$private" ] && echo "private"
+                    [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && echo "exported"
                 done
                 IFS="$HHS_RESET_IFS"
             )

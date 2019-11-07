@@ -1,5 +1,6 @@
 # HomeSetup - TODOs
 
 - [ ] Add a deployer system
-- [ ] Change the script dotfiles.sh into hhs.sh
-- [ ] cp templates/git/hooks/prepare-commit-msg.
+- [ ] Merge the scripts dotfiles.bash and hspm.bash into hhs.bash
+- [ ] Save aliasdef to firebase
+- [ ] Add paths -c -> cleanup paths

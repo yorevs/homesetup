@@ -10,11 +10,11 @@
 # License: Please refer to <http://unlicense.org/>
     
 # This script name.
-PROC_NAME=$(basename "$0")
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME
+Usage: $APP_NAME
 "
 
 # Import pre-defined Bash Colors

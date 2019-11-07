@@ -13,11 +13,11 @@
 VERSION=0.9.0
 
 # This script name.
-PROC_NAME=$(basename "$0")
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <install/uninstall/list> [recipe]
+Usage: $APP_NAME <install/uninstall/list> [recipe]
 
     Commands:
         install     [recipe]    : Install the app using the app recipe.

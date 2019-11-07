@@ -11,11 +11,11 @@
 VERSION=1.0.0
 
 # This script name.
-PROC_NAME=$(basename "$0")
+APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $PROC_NAME <tool_name> [exit_on_error 'true/[false]']
+Usage: $APP_NAME <tool_name> [exit_on_error 'true/[false]']
 "
 
 # Import pre-defined Bash Colors
