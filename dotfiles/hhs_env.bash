@@ -86,11 +86,11 @@ export HHS_PATHS_FILE="${HHS_PATHS_FILE:-$HOME/.path}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 HHS_DEFAULT_DEV_TOOLS=(
-    "bash" "ssh" "xcode-select" "brew" "tree" "vim" "pcregrep"  
-    "shfmt" "node" "java" "rvm" "ruby" "go" "gcc" "make" "qmake"
-    "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
-    "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
-    "htop" "dialog" "telnet" "figlet" "shellcheck" "perl" "hexdump" 
+    "bash" "ssh" "hexdump" "vim" "xcode-select" "brew" "tree"   
+    "pcregrep" "shfmt" "shellcheck" "java" "rvm" "ruby" "go" 
+    "gcc" "make" "qmake" "doxygen" "ant" "mvn" "gradle" "git" 
+    "svn" "docker" "nvm" "node" "jenv" "eslint" "gpg" "base64" 
+    "md5" "shasum" "htop" "dialog" "telnet" "figlet"  "perl"  
     "python" "python3" "jq"
 )
 

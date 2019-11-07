@@ -82,14 +82,12 @@ function __hhs_tools() {
         echo "Usage: ${FUNCNAME[0]} "
     else
         HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-${HHS_DEV_TOOLS[*]}}
-        # shellcheck disable=SC2207
-        IFS=$'\n' sorted=($(sort <<<"${HHS_DEV_TOOLS[*]}"))
-        IFS="$HHS_RESET_IFS"
-
         echo ''
-        for app in ${sorted[*]}; do
+
+        for app in ${HHS_DEV_TOOLS[*]}; do
             __hhs_toolcheck "$app"
         done
+
         echo ''
         echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"
         echo -e "${YELLOW}${STAR_ICN} To install/uninstall a tool, type: ${GREEN}#> hspm.bash install/uninstall <tool_name>"
