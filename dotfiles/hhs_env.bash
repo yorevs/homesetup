@@ -89,9 +89,9 @@ HHS_DEFAULT_DEV_TOOLS=(
     "bash" "ssh" "hexdump" "vim" "xcode-select" "brew" "tree"   
     "pcregrep" "shfmt" "shellcheck" "java" "rvm" "ruby" "go" 
     "gcc" "make" "qmake" "doxygen" "ant" "mvn" "gradle" "git" 
-    "svn" "docker" "nvm" "node" "jenv" "eslint" "gpg" "base64" 
+    "svn" "docker" "nvm" "node" "vue" "eslint" "gpg" "base64" 
     "md5" "shasum" "htop" "dialog" "telnet" "figlet"  "perl"  
-    "python" "python3" "jq"
+    "python" "python3" "jq" "jenv"
 )
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-${HHS_DEFAULT_DEV_TOOLS[*]}}
