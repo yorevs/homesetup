@@ -110,6 +110,9 @@ alias ps2='export PS1=$PS2_STYLE'
 # Change your shell by selecting from the current shell list
 alias chsh='__hhs_select-shell'
 
+# Use jq for format json instead of json_pp if it is installed
+__hhs_has "jq" && alias json_pp='jq'
+
 # -----------------------------------------------------------------------------------
 # OS based aliases
 

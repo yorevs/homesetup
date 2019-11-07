@@ -91,7 +91,7 @@ HHS_DEFAULT_DEV_TOOLS=(
     "doxygen" "ant" "mvn" "gradle" "git" "svn" "cvs" "docker"
     "nvm" "npm" "jenv" "vue" "eslint" "gpg" "base64" "md5" "shasum"
     "htop" "dialog" "telnet" "figlet" "shellcheck" "perl" "hexdump" 
-    "python" "python3"
+    "python" "python3" "jq"
 )
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-${HHS_DEFAULT_DEV_TOOLS[*]}}

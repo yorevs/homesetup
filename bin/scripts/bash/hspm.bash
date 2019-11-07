@@ -30,6 +30,9 @@ Usage: $PROC_NAME <install/uninstall/list> [recipe]
 
 RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/hspm-recipes}
 
+# Flag to enlist even the missing recipes
+LIST_ALL=
+
 # Unset all declared functions from the recipes
 cleanup_recipes() {
 
@@ -76,11 +79,9 @@ ALL_RECIPES=()
 # shellcheck disable=2155,SC2059,SC2183
 function list_recipes() {
 
-    local index=0
+    local index=0 recipe pad_len=20
     local pad=$(printf '%0.1s' "."{1..60})
-    local pad_len=20
-    local recipe
-
+    
     for app in ${HHS_DEV_TOOLS[*]}; do
         recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.bash"
         if [ -n "$recipe" ] && [ -f "$recipe" ]; then
@@ -93,7 +94,12 @@ function list_recipes() {
                 printf "%s\n" "${GREEN} => ${WHITE}$(about) ${NC}"
             fi
             cleanup_recipes
-            [ "$1" == "$app" ] && return 0
+            [ "$1" = "$app" ] && return 0
+        elif [ "${LIST_ALL}" = "1" ]; then
+            index=$((index+1))
+            printf '%3s - %s' "${index}" "${ORANGE}${app} "
+            printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
+            printf "%s\n" "${GREEN} => ${RED}[Recipe not found] ${NC}"
         fi
     done
 
@@ -140,19 +146,21 @@ shopt -s nocasematch
 # Check the command line options.
 case "$1" in
     # Install the app
-    I | install)
+    i | install)
         list_recipes "$2"
         test $? -eq 0 && install_recipe "$2" || quit 2 "Recipe for app \"$2\" was not found!"
     ;;
     # Uninstall the app
-    U | uninstall)
+    u | uninstall)
         list_recipes "$2"
         test $? -eq 0 && uninstall_recipe "$2" || quit 2 "Recipe for app \"$2\" was not found!"
     ;;
     # List available apps
-    L | list)
+    l | list)
+        shift
+        [ -n "$1" ] && [ "$1" = "-a" ] && all="all " && LIST_ALL=1
         echo ''
-        printf "%s\n" "${YELLOW}Listing all available recipes ...${NC}"
+        printf "%s\n" "${YELLOW}Listing ${all}available recipes ...${NC}"
         echo ''
         list_recipes
         echo ''
