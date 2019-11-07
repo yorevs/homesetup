@@ -209,7 +209,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
             OPT='all'
         fi
 
-        pushd "dotfiles" || quit 1 "Unable to enter dotfiles directory!"
+        pushd "dotfiles" &> /dev/null || quit 1 "Unable to enter dotfiles directory!"
 
         # If `all' option is used, copy all files
         if [ "$OPT" = 'all' ]; then
@@ -219,9 +219,11 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 dotfile="${dotfile//hhs/bash}"
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -e "\nLinking: " && ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile"
-                [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
-                [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
+                echo -en "\n${WHITE}Linking: ${BLUE}"
+                echo -en "$(ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile")"
+                echo -en "${NC}"
+                [ -f "$dotfile" ] && echo -e " ... [   ${GREEN}OK${NC}   ]"
+                [ -f "$dotfile" ] || echo -e " ... [ ${GREEN}FAILED${NC} ]"
             done
         # If `all' option is NOT used, prompt for confirmation
         else
@@ -235,9 +237,11 @@ Usage: $PROC_NAME [OPTIONS] <args>
                 echo ''
                 # Backup existing dofile into $HOME/.hhs
                 [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
-                echo -en "Linking: " && ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile"
-                [ -f "$dotfile" ] && echo -e "[   ${GREEN}OK${NC}   ]"
-                [ -f "$dotfile" ] || echo -e "[ ${GREEN}FAILED${NC} ]"
+                echo -en "${WHITE}Linking: ${BLUE}"
+                echo -en "$(ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile")"
+                echo -en "${NC}"
+                [ -f "$dotfile" ] && echo -e " ... [   ${GREEN}OK${NC}   ]"
+                [ -f "$dotfile" ] || echo -e " ... [ ${GREEN}FAILED${NC} ]"
             done
         fi
 
@@ -251,7 +255,7 @@ Usage: $PROC_NAME [OPTIONS] <args>
         # Install HomeSetup fonts
         [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
 
-        popd || quit 1 "Unable to leave dotfiles directory!"
+        popd &> /dev/null || quit 1 "Unable to leave dotfiles directory!"
     }
     
     # Clone the repository and install dotfiles.
