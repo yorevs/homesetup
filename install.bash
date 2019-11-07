@@ -138,11 +138,6 @@ Usage: $PROC_NAME [OPTIONS] <args>
         if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
             echo -en "\nCreating 'bin' directory: "
             echo -en "$(mkdir "$BIN_DIR")"
-            if [ -L "$BIN_DIR" ] || [ -d "$BIN_DIR" ]; then
-                echo -e " ... [   ${GREEN}OK${NC}   ]"
-            else
-                quit 2 "Unable to create bin directory: $BIN_DIR"
-            fi
             [ ! -L "$BIN_DIR" ] && [ ! -d "$BIN_DIR" ] && quit 2 "Unable to create directory $HHS_DIR"
             echo -e " ... [   ${GREEN}OK${NC}   ]"
         fi
