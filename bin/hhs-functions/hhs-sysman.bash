@@ -185,8 +185,5 @@ function __hhs_select-shell() {
   IFS="$HHS_RESET_IFS"
   echo -e "${NC}"
 
-  # Find all dotfiles
-  # find . -maxdepth 1 -type l -name ".bash*"
-
   return 0
 }

@@ -9,6 +9,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: TODO Comment it
 function activate-nvm() {
   echo -en "Activating NVM app ... "
   # NVM Setup
@@ -23,6 +24,7 @@ function activate-nvm() {
   fi
 }
 
+# @function: TODO Comment it
 function activate-rvm() {
   echo -en "Activating RVM app ... "
   # RVM Setup

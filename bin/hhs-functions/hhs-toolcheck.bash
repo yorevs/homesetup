@@ -81,8 +81,6 @@ function __hhs_tools() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
-    HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-${HHS_DEV_TOOLS[*]}}
-    echo ''
 
     for app in ${HHS_DEV_TOOLS[*]}; do
       __hhs_toolcheck "$app"

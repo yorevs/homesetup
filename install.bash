@@ -249,7 +249,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Copy bin scripts into place
-    command find "$HHS_HOME/bin/scripts" -type f \( -iname "**.bash" -o -iname "**.py" \) \
+    command find "$HHS_HOME/bin/apps" -type f \( -iname "**.bash" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; \
       &>/dev/null

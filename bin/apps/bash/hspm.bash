@@ -22,7 +22,8 @@ Usage: $APP_NAME <install/uninstall/list> [recipe]
     Commands:
         install     [recipe]    : Install the app using the app recipe.
         uninstall   [recipe]    : Uninstall the app using the app recipe.
-        list                    : List all available recipes based on HomeSetup development tools.
+        list        [-a|--all]  : List all available recipes based on HomeSetup development tools
+                                  if option -a is used, displays even apps without recipes.
 "
 
 # Import bash stuff
