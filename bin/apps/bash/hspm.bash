@@ -29,7 +29,7 @@ Usage: $APP_NAME <install/uninstall/list> [recipe]
 # Import bash stuff
 [ -f "$HOME/.bash_functions" ] && \. "$HOME/.bash_functions"
 
-RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/hspm-recipes}
+RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/hhs-recipes}
 
 # Flag to enlist even the missing recipes
 LIST_ALL=

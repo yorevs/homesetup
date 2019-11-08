@@ -117,7 +117,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       touch "$HHS_HOME/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
-      command rm -f "$HHS_HOME/tmpfile" &>/dev/null
+      command rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
     fi
 
     # Create/Define the $HOME/.hhs directory
@@ -129,7 +129,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       touch "$HHS_DIR/tmpfile" &>/dev/null || quit 2 "Unable to access the HomeSetup directory: ${HHS_DIR}"
-      command rm -f "$HHS_DIR/tmpfile" &>/dev/null
+      command rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
     fi
 
     # Create/Define the $HHS_DIR/bin directory
@@ -140,6 +140,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "$(mkdir "$BIN_DIR")"
       [ ! -L "$BIN_DIR" ] && [ ! -d "$BIN_DIR" ] && quit 2 "Unable to create directory $HHS_DIR"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
+    else
+      # Cleaning up old hhs in links
+      [ -d "$BIN_DIR" ] && rm -f "${BIN_DIR:?}/*.*"
     fi
 
     # Create all user custom files.
@@ -202,7 +205,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
         [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
         # Removing the old $HOME/bin folder
-        [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "$HOME/bin"
+        [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "${HOME:?}/bin"
       else
         [ -n "$ANS" ] && echo ''
         quit 1 "Installation cancelled!"
@@ -248,12 +251,21 @@ Usage: $APP_NAME [OPTIONS] <args>
       done
     fi
 
-    # Copy bin scripts into place
+    echo -e "\n${WHITE}Copying scripts into place ...${NC}"
+
+    # Link bin apps into place
     command find "$HHS_HOME/bin/apps" -type f \( -iname "**.bash" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; \
       &>/dev/null
-    [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to copy scripts into $BIN_DIR directory"
+    [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
+
+    # Link auto-completes into place
+    command find "$HHS_HOME/bin/auto-completions" -type f \( -iname "**.bash" \) \
+      -exec command ln -sfv {} "$BIN_DIR" \; \
+      -exec command chmod 755 {} \; \
+      &>/dev/null
+    [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into $BIN_DIR directory"
 
     # Install HomeSetup fonts
     [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
@@ -261,6 +273,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
 
     # Link git hook
+    echo -e "\n${WHITE}Copying git hooks into place ...${NC}"
     command cp templates/git/hooks/prepare-commit-msg .git/hooks/
   }
 

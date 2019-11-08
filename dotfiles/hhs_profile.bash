@@ -63,24 +63,25 @@ unset file
 # -----------------------------------------------------------------------------------
 # Load other stuff
 
+AUTO_CPL_D="$HHS_DIR/bin"
+
 # Enable tab completion for `git` by marking it as an alias for `git`
 if command -v git &>/dev/null; then
   if [ "bash" = "$HHS_MY_SHELL" ]; then
-    [ -s "$HHS_DIR/bin/git-completion.bash" ] &&
-    \. "$HHS_DIR/bin/git-completion.bash" # This loads git bash complete completetion
-    complete -o default -o nospace -F _git g
+    #[ -s "$AUTO_CPL_D/git-completion.bash" ] &&
+    \. "$AUTO_CPL_D/git-completion.bash" # This loads git bash complete completetion
   fi
 fi
 
 # Enable tab completion for `docker` by marking it as an alias for `git`
 if command -v docker &>/dev/null; then
   if [ "bash" = "$HHS_MY_SHELL" ]; then
-    [ -s "$HHS_DIR/bin/docker-compose-completion.bash" ] &&
-    \. "$HHS_DIR/bin/docker-compose-completion.bash" # This loads docker compose bash completetion
-    [ -s "$HHS_DIR/bin/docker-machine-completion.bash" ] &&
-    \. "$HHS_DIR/bin/docker-machine-completion.bash" # This loads docker machine bash completetion
-    [ -s "$HHS_DIR/bin/docker-completion.bash" ] &&
-    \. "$HHS_DIR/bin/docker-completion.bash" # This loads docker bash completetion
+    #[ -s "$AUTO_CPL_D/docker-compose-completion.bash" ] &&
+    \. "$AUTO_CPL_D/docker-compose-completion.bash" # This loads docker compose bash completetion
+    #[ -s "$AUTO_CPL_D/docker-machine-completion.bash" ] &&
+    \. "$AUTO_CPL_D/docker-machine-completion.bash" # This loads docker machine bash completetion
+    #[ -s "$AUTO_CPL_D/docker-completion.bash" ] &&
+    \. "$AUTO_CPL_D/docker-completion.bash" # This loads docker bash completetion
   fi
 fi
 

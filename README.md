@@ -84,13 +84,14 @@ If this folder already exists, the install script will copy all files into it.
 To override or add customised stuff, you need to create a custom file as follows:
 
 ```
-~/.colors     : To customize your colors
-~/.env        : To customize your environment variables
-~/.aliases    : To customize your aliases
-~/.prompt     : To customize your prompt
-~/.functions  : To customize your functions
-~/.profile    : To customize your profile
-~/.path       : To customize your paths
+~/.colors           : To customize your colors
+~/.env              : To customize your environment variables
+~/.aliases          : To customize your aliases
+~/.prompt           : To customize your prompt
+~/.functions        : To customize your functions
+~/.profile          : To customize your profile
+~/.path             : To customize your paths
+~/.bash_aliasdef    : To customize your alias definitions
 ```
 
 ### 4. Aliases
@@ -99,95 +100,95 @@ This project will many aliases (shortcuts) to your shell:
 
 #### Navigational
 
-ALIAS      | Equivalent
----------- | ----------
-..         | cd ..
-...        | cd ...
-....       | cd ....
-.....      | cd .....
-~          | cd ~
-\-         | cd -
-?          | pwd
+ALIAS           | Equivalent
+--------------- | ---------------
+..              | cd ..
+...             | cd ...
+....            | cd ....
+.....           | cd .....
+~               | cd ~
+\-              | cd -
+?               | pwd
 
 #### General
 
-ALIAS    | Equivalent
--------- | --------
-q        | exit
-reload   | 'Reload all **.dotfiles**'
-pk       | 'Kills all processes matching the specified **<name>**'
-sudo     | 'Enable aliases to be **sudo’ed**'
-ls       | 'Always use color output for **ls**'
-l        | 'List all files colorized in long format'
-ll       | 'List all files colorized in long format, including dot files'
-lll      | 'List all **.dotfiles**'
-lld      | 'List all **.dotfolders**'
-lt       | 'List all directories recursively (Nth level depth) as a tree'
-grep     | 'Always enable colorized **grep** output'
-egrep    | 'Always enable colorized **egrep** output'
-fgrep    | 'Always enable colorized **fgrep** output'
-rm       | **rm -iv** 'For safety, by default this command will input for confirmation'
-cp       | **cp -iv** 'For safety, by default this command will input for confirmation'
-mv       | **mv -iv** 'For safety, by default this command will input for confirmation'
-cls      | clear
-pk       | 'Kills all processes matching <ProcName>'
-db-cleanup | 'Recursively delete Dropbox conflicted files from the current directory'
-vi       | vim
-tl       | 'Tail a log using colors specified in .tailor file.'
-df       | df -H
-du       | du -hcd 1
-more     | more -R
-less     | less -R
-mount    | 'Make mount command output pretty and human readable format'
-mkcd     | Create all folders using a **dot notation path** and immediatelly change into it
-cpu      | **top** shortcut ordered by cpu
-mem      | **top** shortcut ordered by memory
-encode   | base64 encode synonym
-week     | 'Current **week** of the month' 
-now      | 'Current **date**'
-ts       | 'Current **timestamp** in milliseconds'
-wget     | 'MacOS has no wget, so use **curl** instead'
-rand     | 'Generate a random number from **<min>** to  **<max>**'
+ALIAS           | Equivalent
+--------------- | ---------------
+q               | exit
+reload          | 'Reload all **.dotfiles**'
+pk              | 'Kills all processes matching the specified **<name>**'
+sudo            | 'Enable aliases to be **sudo’ed**'
+ls              | 'Always use color output for **ls**'
+l               | 'List all files colorized in long format'
+ll              | 'List all files colorized in long format, including dot files'
+lll             | 'List all **.dotfiles**'
+lld             | 'List all **.dotfolders**'
+lt              | 'List all directories recursively (Nth level depth) as a tree'
+grep            | 'Always enable colorized **grep** output'
+egrep           | 'Always enable colorized **egrep** output'
+fgrep           | 'Always enable colorized **fgrep** output'
+rm              | **rm -iv** 'For safety, by default this command will input for confirmation'
+cp              | **cp -iv** 'For safety, by default this command will input for confirmation'
+mv              | **mv -iv** 'For safety, by default this command will input for confirmation'
+cls             | clear
+pk              | 'Kills all processes matching <ProcName>'
+db-cleanup      | 'Recursively delete Dropbox conflicted files from the current directory'
+vi              | vim
+tl              | 'Tail a log using colors specified in .tailor file.'
+df              | df -H
+du              | du -hcd 1
+more            | more -R
+less            | less -R
+mount           | 'Make mount command output pretty and human readable format'
+mkcd            | Create all folders using a **dot notation path** and immediatelly change into it
+cpu             | **top** shortcut ordered by cpu
+mem             | **top** shortcut ordered by memory
+encode          | base64 encode synonym
+week            | 'Current **week** of the month' 
+now             | 'Current **date**'
+ts              | 'Current **timestamp** in milliseconds'
+wget            | 'MacOS has no wget, so use **curl** instead'
+rand            | 'Generate a random number from **<min>** to  **<max>**'
 
 #### Python aliases
-ALIAS     | Equivalent
---------- | ---------
-json_pp   | linux has no **json_pp**, so using python instead
-calc      | 'Evaluate mathematical expressions'
-urle      | 'URL-encode string'
-urld      | 'URL-decode string'
-uuid      | 'Generate a random UUID'
-utoh      | 'Convert unicode to hexadecimal'
+ALIAS           | Equivalent
+--------------- | ---------------
+json_pp         | linux has no **json_pp**, so using python instead
+calc            | 'Evaluate mathematical expressions'
+urle            | 'URL-encode string'
+urld            | 'URL-decode string'
+uuid            | 'Generate a random UUID'
+utoh            | 'Convert unicode to hexadecimal'
 
 #### Perl aliases
-ALIAS     | Equivalent
---------- | ---------
-cse       | Clean escape (\EscXX) codes from text
-clipboard | Copy to clipboard **pbcopy required**
+ALIAS           | Equivalent
+--------------- | ---------------
+cse             | Clean escape (\EscXX) codes from text
+clipboard       | Copy to clipboard **pbcopy required**
 
-#### IP related
+#### IP related aliases
 
-ALIAS   | Equivalent
-------- | -------
-ip      | 'Get the Real IP on the internet'
-ifa     | 'List all active interfaces on the system' **pcregrep required**
-ipl     | 'Get all Local IPs on the local network' **pcregrep required**
-ips     | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **ifconfig required**
+ALIAS           | Equivalent
+--------------- | ---------------
+ip              | 'Get the Real IP on the internet'
+ifa             | 'List all active interfaces on the system' **pcregrep required**
+ipl             | 'Get all Local IPs on the local network' **pcregrep required**
+ips             | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **ifconfig required**
 
-#### Mac Stuff
+#### Mac Stuff aliases
 
-ALIAS         | Equivalent
-------------- | -------------
+ALIAS           | Equivalent
+--------------- | ---------------
 ds-cleanup      | 'Delete all **.DS_store** files'
-flush         | 'Flush Directory Service cache'
-ls-cleanup    | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
-show-files    | '**Show** hidden files in Finder' **defaults required**
-hide-files    | '**Hide** hidden files in Finder' **defaults required**
-showdeskicons | 'Show all desktop icons'
-hidedeskicons | 'Hide all desktop icons'
-hd            | 'Canonical hex dump; some systems have this symlinked'
-md5sum        | 'macOS has no **md5sum**, so use **md5** as a fallback'
-sha1          | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
+flush           | 'Flush Directory Service cache'
+ls-cleanup      | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
+show-files      | '**Show** hidden files in Finder' **defaults required**
+hide-files      | '**Hide** hidden files in Finder' **defaults required**
+showdeskicons   | 'Show all desktop icons'
+hidedeskicons   | 'Hide all desktop icons'
+hd              | 'Canonical hex dump; some systems have this symlinked'
+md5sum          | 'macOS has no **md5sum**, so use **md5** as a fallback'
+sha1            | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
 
 **Please check: [bash_aliases](./bash_aliases.bash) for all aliases**
 
@@ -195,38 +196,38 @@ sha1          | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
 
 This project adds many script functions the shell. All functions provide a help using the options -h or --help.
 
-Function    | Purpose
------------ | -----------
-encrypt     | Encrypt file using GPG encryption.
-decrypt     | Decrypt file using GPG encryption.
-hl          | Highlight words from the piped stream.
-sf          | Search for **files** and **links to files** recursively.
-sd          | Search for **directories** and **links to directories** recursively.
-ss          | Search for **strings** matching the specified criteria in files recursively.
-hist        | Search for previous issued commands from history using filters.
-del-tree    | Move files recursively to the **Trash**.
-jp          | Pretty print **(format) JSON** string.
-ip-info     | Check information about the specified IP.
-ip-resolve  | Resolve domain names associated with the IP.
-ip-lookup   | Lookup DNS entries to determine the IP address.
-port-check  | Check the state of **local port(s)**.
-envs        | Prints all **environment variables** on a separate line using filters.
-paths       | Print each **PATH entry** on a separate line.
-ver         | Check the **version** of the app using the most common ways.
-tc          | Check whether a **tool** is installed on the system.
-tools       | Check whether a list of **development tools** are installed.
-mselect     | Select an option from a list using a navigable menu.
-aa          | Manipulate custom aliases **(add/remove/edit/list)**.
-save        | **Save** the one directory to be loaded by *load*.
-load        | **Pushd** into a saved directory issued by *save*.
-cmd         | Add/Remove/List/Execute saved bash commands.
-punch       | Punch the Clock. Add/Remove/Edit/List clock punches.
-plist       | Display a process list matching the process name/expression.
-godir       | **Pushd** from the first match of the specified directory name.
-git-        | GIT Checkout the previous branch in history **(skips branch-to-same-branch changes )**.
-sysinfo     | Retrieve relevant system information.
-parts       | Exhibit a Human readable summary about all partitions.
-hhu          | Check the current **HomeSetup** installation and look for updates..
+Function        | Purpose
+--------------- | ---------------
+encrypt         | Encrypt file using GPG encryption.
+decrypt         | Decrypt file using GPG encryption.
+hl              | Highlight words from the piped stream.
+sf              | Search for **files** and **links to files** recursively.
+sd              | Search for **directories** and **links to directories** recursively.
+ss              | Search for **strings** matching the specified criteria in files recursively.
+hist            | Search for previous issued commands from history using filters.
+del-tree        | Move files recursively to the **Trash**.
+jp              | Pretty print **(format) JSON** string.
+ip-info         | Check information about the specified IP.
+ip-resolve      | Resolve domain names associated with the IP.
+ip-lookup       | Lookup DNS entries to determine the IP address.
+port-check      | Check the state of **local port(s)**.
+envs            | Prints all **environment variables** on a separate line using filters.
+paths           | Print each **PATH entry** on a separate line.
+ver             | Check the **version** of the app using the most common ways.
+tc              | Check whether a **tool** is installed on the system.
+tools           | Check whether a list of **development tools** are installed.
+mselect         | Select an option from a list using a navigable menu.
+aa              | Manipulate custom aliases **(add/remove/edit/list)**.
+save            | **Save** the one directory to be loaded by *load*.
+load            | **Pushd** into a saved directory issued by *save*.
+cmd             | Add/Remove/List/Execute saved bash commands.
+punch           | Punch the Clock. Add/Remove/Edit/List clock punches.
+plist           | Display a process list matching the process name/expression.
+godir           | **Pushd** from the first match of the specified directory name.
+git-            | GIT Checkout the previous branch in history **(skips branch-to-same-branch changes )**.
+sysinfo         | Retrieve relevant system information.
+parts           | Exhibit a Human readable summary about all partitions.
+hhu             | Check the current **HomeSetup** installation and look for updates..
 
 **Please check: [bash_functions](./bash_functions.bash) for all functions**
 
@@ -236,27 +237,28 @@ The project contains some useful scripts that can be used directly from shell. I
 
 #### 6.1 Python scripts
 
-Function                | Purpose
------------------------ | -----------------------
-tcalc.py                | Simple app to do mathematical calculations with time.
-free.py                 | Report system memory usage.
-json-find.py            | Find an object from the Json string or file.
-pprint-xml.py           | Pretty print (format) an xml file.
-send-msg.py             | IP Message Sender. Sends UDP/TCP messages using multi-threads.
+Function        | Purpose
+--------------- | ---------------
+tcalc.py        | Simple app to do mathematical calculations with time.
+free.py         | Report system memory usage.
+json-find.py    | Find an object from the Json string or file.
+pprint-xml.py   | Pretty print (format) an xml file.
+send-msg.py     | IP Message Sender. Sends UDP/TCP messages using multi-threads.
+hhu             | Check for HomeSetup updates.
 
 #### 6.2 Shell scripts
 
 Function                | Purpose
 ----------------------- | -----------------------
-dotfiles.bash             | Manage your HomeSetup .dotfiles and more.
-hspm.bash                 | Manage your development tools using installation/uninstallation recipes.
-fetch.bash                | Script to fetch REST APIs data.
-git-completion.bash       | bash/zsh completion support for core Git.
-git-diff-cmd.bash         | Enable opendiff to be used with git instead of normal diff.
-git-pull-all.bash         | Pull all projects within the specified path to the given repository/branch.
-hostname-change.bash      | Change the hostname permanently.
-ip-utils.bash             | Validate an IP and check details about it.
-toolcheck.bash            | Check if the a tool is installed on the system.
+dotfiles.bash           | Manage your HomeSetup .dotfiles and more.
+hspm.bash               | Manage your development tools using installation/uninstallation recipes.
+fetch.bash              | Script to fetch REST APIs data.
+git-completion.bash     | bash/zsh completion support for core Git.
+git-diff-cmd.bash       | Enable opendiff to be used with git instead of normal diff.
+git-pull-all.bash       | Pull all projects within the specified path to the given repository/branch.
+hostname-change.bash    | Change the hostname permanently.
+ip-utils.bash           | Validate an IP and check details about it.
+toolcheck.bash          | Check if the a tool is installed on the system.
 
 **Please check: [bin](./bin) for all scripts**
 
