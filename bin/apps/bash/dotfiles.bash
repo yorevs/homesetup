@@ -226,11 +226,7 @@ cmd_help() {
 # Execute a Firebase command
 cmd_firebase() {
 
-  local body
-  local fb_alias
-  local u_uuid
-  local u_name
-  local setupContent=""
+  local body fb_alias u_uuid u_name setupContent=""
 
   test -z "$1" && cmd_help 'FB'
   task="$1"
