@@ -8,31 +8,31 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-if __hhs_has "docker" && docker info &> /dev/null; then
+if __hhs_has "docker" && docker info &>/dev/null; then
 
-    # @function: TODO Comment it
-    __hhs_docker_exec() {
-        if [ -n "$2" ]; then
-            docker exec -it "$1" "$2"
-        else
-            docker exec -it "$1" /bin/sh
-        fi
+  # @function: TODO Comment it
+  __hhs_docker_exec() {
+    if [ -n "$2" ]; then
+      docker exec -it "$1" "$2"
+    else
+      docker exec -it "$1" /bin/sh
+    fi
 
-        return $?
-    }
+    return $?
+  }
 
-    # @function: TODO Comment it
-    __hhs_docker_pidof() {
-        docker ps | grep "$1" | awk '"'"'{print $1}'"'"'
+  # @function: TODO Comment it
+  __hhs_docker_pidof() {
+    docker ps | grep "$1" | awk '"'"'{print $1}'"'"'
 
-        return $?
-    }
+    return $?
+  }
 
-    # @function: TODO Comment it
-    __hhs_docker_tail_logs() {
-        docker logs -f "$(docker ps | grep "$1" | awk '"'"'{print $1}'"'"')"
+  # @function: TODO Comment it
+  __hhs_docker_tail_logs() {
+    docker logs -f "$(docker ps | grep "$1" | awk '"'"'{print $1}'"'"')"
 
-        return $?
-    }
+    return $?
+  }
 
 fi

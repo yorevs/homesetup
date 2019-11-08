@@ -10,13 +10,13 @@
 
 if __hhs_has "gradle"; then
 
-    # @function: Prefer using the wrapper instead of the command itself, but, use the command if the wrapper was not found
-    __hhs_gradlew() {
-        if [ -f "./gradlew" ]; then
-            ./gradlew "$@"
-        else
-            command gradle "$@"
-        fi
-    }
+  # @function: Prefer using the wrapper instead of the command itself, but, use the command if the wrapper was not found
+  __hhs_gradlew() {
+    if [ -f "./gradlew" ]; then
+      ./gradlew "$@"
+    else
+      command gradle "$@"
+    fi
+  }
 
 fi

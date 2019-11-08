@@ -26,26 +26,26 @@ Usage: $APP_NAME <tool_name> [exit_on_error 'true/[false]']
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-    
-    unset -f quit usage version 
-    ret=$1
-    shift
-    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-    [ "$#" -gt 0 ] && printf "%s" "$*"
-    # Unset all declared functions
-    printf "%s\n" "${NC}"
-    exit "$ret"
+
+  unset -f quit usage version
+  ret=$1
+  shift
+  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+  [ "$#" -gt 0 ] && printf "%s" "$*"
+  # Unset all declared functions
+  printf "%s\n" "${NC}"
+  exit "$ret"
 }
 
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-    quit "$1" "$USAGE"
+  quit "$1" "$USAGE"
 }
 
 # Version message.
 version() {
-    quit 0 "$VERSION"
+  quit 0 "$VERSION"
 }
 
 # Check if the user passed the help or version parameters.
@@ -55,9 +55,9 @@ version() {
 TOOL_NAME="$1"
 
 if test -z "$2" -o "$2" = ""; then
-    EXIT_ON_FAIL="false"
+  EXIT_ON_FAIL="false"
 else
-    EXIT_ON_FAIL="$2"
+  EXIT_ON_FAIL="$2"
 fi
 
 PAD=$(printf '%0.1s' "."{1..60})
@@ -70,15 +70,15 @@ printf '%*.*s' 0 $((PAD_LEN - ${#1})) "$PAD"
 CHECK=$(command -v "${TOOL_NAME}")
 
 if [ -n "${CHECK}" ]; then
-    printf '%s\n' "${GREEN}INSTALLED${NC} at ${CHECK}\n"
+  printf '%s\n' "${GREEN}INSTALLED${NC} at ${CHECK}\n"
 else
-    printf '%s\n' "${RED}NOT INSTALLED${NC}\n"
-    if [ "$EXIT_ON_FAIL" = "true" ]; then
-        printf '%s\n' "${RED}### Error: Unable to continue without the required tool: \"${TOOL_NAME}\"${NC}\n" >&2
-        quit 2
-    else
-        quit 1
-    fi
+  printf '%s\n' "${RED}NOT INSTALLED${NC}\n"
+  if [ "$EXIT_ON_FAIL" = "true" ]; then
+    printf '%s\n' "${RED}### Error: Unable to continue without the required tool: \"${TOOL_NAME}\"${NC}\n" >&2
+    quit 2
+  else
+    quit 1
+  fi
 fi
 
 quit 0

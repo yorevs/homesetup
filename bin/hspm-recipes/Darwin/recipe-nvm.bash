@@ -4,40 +4,40 @@
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 function about() {
-    echo "Simple bash script to manage multiple active node.js versions"
+  echo "Simple bash script to manage multiple active node.js versions"
 }
 
 function depends() {
-    if ! command -v brew >/dev/null; then
-        echo "${RED}HomeBrew is required to install nvm${NC}"
-        return 1
-    fi
+  if ! command -v brew >/dev/null; then
+    echo "${RED}HomeBrew is required to install nvm${NC}"
+    return 1
+  fi
 
-    return 0
+  return 0
 }
 
 function install() {
-    local ret
-    unset nvm
-    unset NVM_DIR
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-    ret=$?
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/nvm.sh" ] && "$NVM_DIR/nvm.sh" install N/A
+  local ret
+  unset nvm
+  unset NVM_DIR
+  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+  ret=$?
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/nvm.sh" ] && "$NVM_DIR/nvm.sh" install N/A
 
-    return $ret
+  return $ret
 }
 
 function uninstall() {
-    local ret
-    [ -d "$NVM_DIR" ] && rm -rf "$NVM_DIR" &> /dev/null
-    ret=$?
-    unset nvm
-    unset NVM_DIR
-    [ -d "$HOME/.nvm" ] &&  rm -rf "$HOME/.nvm" &> /dev/null
-    [ -d "$HOME/.npm" ] &&  rm -rf "$HOME/.npm" &> /dev/null
-    [ -d "$HOME/.bower" ] &&  rm -rf "$HOME/.bower" &> /dev/null
+  local ret
+  [ -d "$NVM_DIR" ] && rm -rf "$NVM_DIR" &>/dev/null
+  ret=$?
+  unset nvm
+  unset NVM_DIR
+  [ -d "$HOME/.nvm" ] && rm -rf "$HOME/.nvm" &>/dev/null
+  [ -d "$HOME/.npm" ] && rm -rf "$HOME/.npm" &>/dev/null
+  [ -d "$HOME/.bower" ] && rm -rf "$HOME/.bower" &>/dev/null
 
-    return $ret
+  return $ret
 }

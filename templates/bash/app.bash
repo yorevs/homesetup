@@ -25,26 +25,26 @@ Usage: $APP_NAME [optionals] <mandatories>
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-    
-    unset -f quit usage version main
-    ret=$1
-    shift
-    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-    [ "$#" -gt 0 ] && printf "%s" "$*"
-    # Unset all declared functions
-    printf "%s\n" "${NC}"
-    exit "$ret"
+
+  unset -f quit usage version main
+  ret=$1
+  shift
+  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+  [ "$#" -gt 0 ] && printf "%s" "$*"
+  # Unset all declared functions
+  printf "%s\n" "${NC}"
+  exit "$ret"
 }
 
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-    quit "$1" "$USAGE"
+  quit "$1" "$USAGE"
 }
 
 # Version message.
 version() {
-    quit 0 "$VERSION"
+  quit 0 "$VERSION"
 }
 
 # Check if the user passed the help or version parameters.
@@ -52,24 +52,23 @@ version() {
 [ "$1" = '-v' ] || [ "$1" = '--version' ] && version
 
 main() {
-    usage 1
+  usage 1
 }
 
 # Loop through the command line options.
 # Short opts: -<C>, Long opts: --<Word>
-while test -n "$1"
-do
-    case "$1" in
-        -s | --stuff)
-            shift
-            # Do stuff
-        ;;
-        
-        *)
-            quit 2 "Invalid option: \"$1\""
-        ;;
-    esac
+while test -n "$1"; do
+  case "$1" in
+  -s | --stuff)
     shift
+    # Do stuff
+    ;;
+
+  *)
+    quit 2 "Invalid option: \"$1\""
+    ;;
+  esac
+  shift
 done
 
 main

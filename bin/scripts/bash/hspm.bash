@@ -36,7 +36,7 @@ LIST_ALL=
 # Unset all declared functions from the recipes
 cleanup_recipes() {
 
-    unset -f about depends install uninstall
+  unset -f about depends install uninstall
 }
 
 # Purpose: Quit the program and exhibits an exit message if specified.
@@ -44,25 +44,25 @@ cleanup_recipes() {
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
 
-    cleanup_recipes
-    unset -f quit usage version cleanup_recipes list_recipes install_recipe uninstall_recipe
-    ret=$1
-    shift
-    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-    [ "$#" -gt 0 ] && printf "%s" "$*"
-    # Unset all declared functions
-    printf "%s\n" "${NC}"
-    exit "$ret"
+  cleanup_recipes
+  unset -f quit usage version cleanup_recipes list_recipes install_recipe uninstall_recipe
+  ret=$1
+  shift
+  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+  [ "$#" -gt 0 ] && printf "%s" "$*"
+  # Unset all declared functions
+  printf "%s\n" "${NC}"
+  exit "$ret"
 }
 
 # Usage message.
 usage() {
-    quit 1 "$USAGE"
+  quit 1 "$USAGE"
 }
 
 # Version message.
 version() {
-    quit 1 "$VERSION"
+  quit 1 "$VERSION"
 }
 
 # Check if the user passed the help or version parameters.
@@ -79,96 +79,96 @@ ALL_RECIPES=()
 # shellcheck disable=2155,SC2059,SC2183
 function list_recipes() {
 
-    local index=0 recipe pad_len=20
-    local pad=$(printf '%0.1s' "."{1..60})
-    
-    for app in ${HHS_DEV_TOOLS[*]}; do
-        recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.bash"
-        if [ -n "$recipe" ] && [ -f "$recipe" ]; then
-            ALL_RECIPES+=( "$app" )
-            index=$((index+1))
-            \. "$recipe"
-            if test -z "$1"; then
-                printf '%3s - %s' "${index}" "${BLUE}${app} "
-                printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
-                printf "%s\n" "${GREEN} => ${WHITE}$(about) ${NC}"
-            fi
-            cleanup_recipes
-            [ "$1" = "$app" ] && return 0
-        elif [ "${LIST_ALL}" = "1" ]; then
-            index=$((index+1))
-            printf '%3s - %s' "${index}" "${ORANGE}${app} "
-            printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
-            printf "%s\n" "${GREEN} => ${RED}[Recipe not found] ${NC}"
-        fi
-    done
+  local index=0 recipe pad_len=20
+  local pad=$(printf '%0.1s' "."{1..60})
 
-    [ -n "$1" ] && return 1 || return 0
+  for app in ${HHS_DEV_TOOLS[*]}; do
+    recipe="$RECIPES_DIR/$(uname -s)/recipe-${app}.bash"
+    if [ -n "$recipe" ] && [ -f "$recipe" ]; then
+      ALL_RECIPES+=("$app")
+      index=$((index + 1))
+      \. "$recipe"
+      if test -z "$1"; then
+        printf '%3s - %s' "${index}" "${BLUE}${app} "
+        printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
+        printf "%s\n" "${GREEN} => ${WHITE}$(about) ${NC}"
+      fi
+      cleanup_recipes
+      [ "$1" = "$app" ] && return 0
+    elif [ "${LIST_ALL}" = "1" ]; then
+      index=$((index + 1))
+      printf '%3s - %s' "${index}" "${ORANGE}${app} "
+      printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
+      printf "%s\n" "${GREEN} => ${RED}[Recipe not found] ${NC}"
+    fi
+  done
+
+  [ -n "$1" ] && return 1 || return 0
 }
 
 # Install the specified app using the installation recipe
 install_recipe() {
 
-    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.bash"
-    if [ -f "$recipe" ]; then
-        echo ''
-        \. "$recipe"
-        if command -v "$1" > /dev/null; then
-            quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
-        fi
-        printf "%s\n" "${YELLOW}Installing \"$1\", please wait...${NC}"
-        install
-        test $? -eq 0 && printf "%s\n" "${GREEN}Installation successful.${NC}" || quit 2 "Failed to install app \"$1\" !"
-    else
-        quit 1 "Unable to find recipe for \"$1\" !"
+  recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.bash"
+  if [ -f "$recipe" ]; then
+    echo ''
+    \. "$recipe"
+    if command -v "$1" >/dev/null; then
+      quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
     fi
+    printf "%s\n" "${YELLOW}Installing \"$1\", please wait...${NC}"
+    install
+    test $? -eq 0 && printf "%s\n" "${GREEN}Installation successful.${NC}" || quit 2 "Failed to install app \"$1\" !"
+  else
+    quit 1 "Unable to find recipe for \"$1\" !"
+  fi
 }
 
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
-    recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.bash"
-    if [ -f "$recipe" ]; then
-        echo ''
-        \. "$recipe"
-        if ! command -v "$1" > /dev/null; then
-            quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
-        fi
-        printf "%s\n" "${YELLOW}Uninstalling $1, please wait...${NC}"
-        uninstall
-        test $? -eq 0 && printf "%s\n" "${GREEN}Uninstallation successful.${NC}" || quit 2 "Failed to uninstall app \"$1\" !"
-    else
-        quit 2 "Unable to find recipe for \"$1\" !"
+  recipe="$RECIPES_DIR/$(uname -s)/recipe-$1.bash"
+  if [ -f "$recipe" ]; then
+    echo ''
+    \. "$recipe"
+    if ! command -v "$1" >/dev/null; then
+      quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
     fi
+    printf "%s\n" "${YELLOW}Uninstalling $1, please wait...${NC}"
+    uninstall
+    test $? -eq 0 && printf "%s\n" "${GREEN}Uninstallation successful.${NC}" || quit 2 "Failed to uninstall app \"$1\" !"
+  else
+    quit 2 "Unable to find recipe for \"$1\" !"
+  fi
 }
 
 shopt -s nocasematch
 # Check the command line options.
 case "$1" in
-    # Install the app
-    i | install)
-        list_recipes "$2"
-        test $? -eq 0 && install_recipe "$2" || quit 2 "Recipe for app \"$2\" was not found!"
-    ;;
-    # Uninstall the app
-    u | uninstall)
-        list_recipes "$2"
-        test $? -eq 0 && uninstall_recipe "$2" || quit 2 "Recipe for app \"$2\" was not found!"
-    ;;
-    # List available apps
-    l | list)
-        shift
-        [ -n "$1" ] && [ "$1" = "-a" ] && all="all " && LIST_ALL=1
-        echo ''
-        printf "%s\n" "${YELLOW}Listing ${all}available recipes ...${NC}"
-        echo ''
-        list_recipes
-        echo ''
-        echo "Found (${#ALL_RECIPES[*]}) recipes out of (${#HHS_DEV_TOOLS[*]}) development tools"
-    ;;
-    *)
-        quit 2 "Invalid option: \"$1\""
-    ;;
+# Install the app
+i | install)
+  list_recipes "$2"
+  test $? -eq 0 && install_recipe "$2" || quit 2 "Recipe for app \"$2\" was not found!"
+  ;;
+# Uninstall the app
+u | uninstall)
+  list_recipes "$2"
+  test $? -eq 0 && uninstall_recipe "$2" || quit 2 "Recipe for app \"$2\" was not found!"
+  ;;
+# List available apps
+l | list)
+  shift
+  [ -n "$1" ] && [ "$1" = "-a" ] && all="all " && LIST_ALL=1
+  echo ''
+  printf "%s\n" "${YELLOW}Listing ${all}available recipes ...${NC}"
+  echo ''
+  list_recipes
+  echo ''
+  echo "Found (${#ALL_RECIPES[*]}) recipes out of (${#HHS_DEV_TOOLS[*]}) development tools"
+  ;;
+*)
+  quit 2 "Invalid option: \"$1\""
+  ;;
 esac
 shopt -u nocasematch
 

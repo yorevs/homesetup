@@ -17,7 +17,7 @@
 # @function: Check if a command exists.
 # @param $1 [Req] : The command to check.
 __hhs_has() {
-    type "$1" >/dev/null 2>&1
+  type "$1" >/dev/null 2>&1
 }
 
 # -----------------------------------------------------------------------------------
@@ -120,12 +120,12 @@ __hhs_has "jq" && alias json_pp='jq'
 
 # -- LINUX --
 if [ "Linux" = "$HHS_MY_OS" ]; then
-    alias ised="sed -i'' -r"
-    __hhs_has "base64" && alias decode='base64 -d'
+  alias ised="sed -i'' -r"
+  __hhs_has "base64" && alias decode='base64 -d'
 # -- DARWIN --
 elif [ "Darwin" = "$HHS_MY_OS" ]; then
-    alias ised="sed -i '' -E"
-    __hhs_has "base64" && alias decode='base64 -D'
+  alias ised="sed -i '' -E"
+  __hhs_has "base64" && alias decode='base64 -D'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -142,18 +142,18 @@ __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/vers
 
 if __hhs_has "python"; then
 
-    # linux has no `json_pp`, so using python instead
-    __hhs_has "json_pp" || alias json_pp='python -m json.tool'
+  # linux has no `json_pp`, so using python instead
+  __hhs_has "json_pp" || alias json_pp='python -m json.tool'
 
-    # Evaluate mathematical expression
-    alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+  # Evaluate mathematical expression
+  alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
 
-    # URL-encode strings
-    alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-    alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+  # URL-encode strings
+  alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
-    # Generate a UUID
-    alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+  # Generate a UUID
+  alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
 
 fi
 
@@ -162,10 +162,10 @@ fi
 
 if __hhs_has "perl"; then
 
-    # Clean escape (\EscXX) codes from text
-    alias cse="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
-    # Copy to clipboard pbcopy required
-    __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
+  # Clean escape (\EscXX) codes from text
+  alias cse="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
+  # Copy to clipboard pbcopy required
+  __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
 fi
 
 # -----------------------------------------------------------------------------------
@@ -177,10 +177,10 @@ __hhs_has "dig" && alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.c
 # Local networking (requires pcregrep)
 if __hhs_has "pcregrep"; then
 
-    # Show active network interfaces
-    alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
-    # Local IP of active interfaces
-    alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
+  # Show active network interfaces
+  alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+  # Local IP of active interfaces
+  alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
 fi
 
 # All IPs of all interfaces
@@ -191,34 +191,34 @@ __hhs_has "ifconfig" && alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\
 
 if [ "Darwin" = "$HHS_MY_OS" ]; then
 
-    # Delete all .DS_store files
-    alias ds-cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+  # Delete all .DS_store files
+  alias ds-cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 
-    # Flush Directory Service cache
-    __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+  # Flush Directory Service cache
+  __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
-    # Clean up LaunchServices to remove duplicates in the “Open With” menu
-    __hhs_has "lsregister" && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+  # Clean up LaunchServices to remove duplicates in the “Open With” menu
+  __hhs_has "lsregister" && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
-    if __hhs_has "defaults"; then
+  if __hhs_has "defaults"; then
 
-        # Show/hide hidden files in Finder
-        alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-        alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-        # Hide/show all desktop icons
-        alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-        alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-    fi
+    # Show/hide hidden files in Finder
+    alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+    # Hide/show all desktop icons
+    alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+    alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+  fi
 
-    # Canonical hex dump; some systems have this symlinked
-    __hhs_has "hd" || alias hd='hexdump -C'
+  # Canonical hex dump; some systems have this symlinked
+  __hhs_has "hd" || alias hd='hexdump -C'
 
-    # macOS has no `md5sum`, so use `md5` as a fallback
-    __hhs_has "md5sum" || alias md5sum='md5'
+  # macOS has no `md5sum`, so use `md5` as a fallback
+  __hhs_has "md5sum" || alias md5sum='md5'
 
-    # macOS has no `sha1sum`, so use `shasum` as a fallback
-    __hhs_has "sha1" || alias sha1='shasum'
-    __hhs_has "sha1sum" || alias sha1sum='sha1'
+  # macOS has no `sha1sum`, so use `shasum` as a fallback
+  __hhs_has "sha1" || alias sha1='shasum'
+  __hhs_has "sha1sum" || alias sha1sum='sha1'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -254,21 +254,21 @@ alias disable-line-wrap='tput rmam'
 
 if __hhs_has "git"; then
 
-    alias __hhs_git_status='git status && gl -n 1'
-    alias __hhs_git_fetch='git fetch -p'
-    alias __hhs_git_history='git log -p'
-    alias __hhs_git_branch='git branch'
-    alias __hhs_git_diff='git diff'
-    alias __hhs_git_pull='git pull'
-    alias __hhs_git_log='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
-    alias __hhs_git_checkout='git checkout'
-    alias __hhs_git_add='git add'
-    alias __hhs_git_commit='git commit -m'
-    alias __hhs_git_amend='git commit --amend --no-edit'
-    alias __hhs_git_pull_rebase='git pull --rebase'
-    alias __hhs_git_push='git push origin HEAD'
-    alias __hhs_git_show='git diff-tree --no-commit-id --name-status -r'
-    alias __hhs_git_difftool='git difftool -t opendiff'
+  alias __hhs_git_status='git status && gl -n 1'
+  alias __hhs_git_fetch='git fetch -p'
+  alias __hhs_git_history='git log -p'
+  alias __hhs_git_branch='git branch'
+  alias __hhs_git_diff='git diff'
+  alias __hhs_git_pull='git pull'
+  alias __hhs_git_log='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
+  alias __hhs_git_checkout='git checkout'
+  alias __hhs_git_add='git add'
+  alias __hhs_git_commit='git commit -m'
+  alias __hhs_git_amend='git commit --amend --no-edit'
+  alias __hhs_git_pull_rebase='git pull --rebase'
+  alias __hhs_git_push='git push origin HEAD'
+  alias __hhs_git_show='git diff-tree --no-commit-id --name-status -r'
+  alias __hhs_git_difftool='git difftool -t opendiff'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -276,39 +276,39 @@ fi
 
 if __hhs_has "gradle"; then
 
-    alias __hhs_gradle_build='gw clean build'
-    alias __hhs_gradle_run='gw bootRun -x Test'
-    alias __hhs_gradle_test='gw Test'
-    alias __hhs_gradle_init='gw init'
-    alias __hhs_gradle_quiet='gw -q'
-    alias __hhs_gradle_wrapper='gw wrapper --gradle-version'
-    alias __hhs_gradle_tasks='gradle -q :tasks --all'
-    alias __hhs_gradle_projects='gradle -q projects'
+  alias __hhs_gradle_build='gw clean build'
+  alias __hhs_gradle_run='gw bootRun -x Test'
+  alias __hhs_gradle_test='gw Test'
+  alias __hhs_gradle_init='gw init'
+  alias __hhs_gradle_quiet='gw -q'
+  alias __hhs_gradle_wrapper='gw wrapper --gradle-version'
+  alias __hhs_gradle_tasks='gradle -q :tasks --all'
+  alias __hhs_gradle_projects='gradle -q projects'
 fi
 
 # -----------------------------------------------------------------------------------
 # Docker stuff
 # inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
 
-if __hhs_has "docker" && docker info &> /dev/null; then
+if __hhs_has "docker" && docker info &>/dev/null; then
 
-    alias __hhs_docker_images='docker images'
-    alias __hhs_docker_service='docker service'
-    alias __hhs_docker_logs='docker logs'
-    alias __hhs_docker_remove='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
-    alias __hhs_docker_remove_image='docker rmi'
-    alias __hhs_docker_ps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
-    alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
-    alias __hhs_docker_ls='docker container ls'
+  alias __hhs_docker_images='docker images'
+  alias __hhs_docker_service='docker service'
+  alias __hhs_docker_logs='docker logs'
+  alias __hhs_docker_remove='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
+  alias __hhs_docker_remove_image='docker rmi'
+  alias __hhs_docker_ps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
+  alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
+  alias __hhs_docker_ls='docker container ls'
 fi
 
 # Source the custom alias shortcuts
 if [ -s "$HOME/.bash_aliasdef" ]; then
-    \. "$HOME/.bash_aliasdef"
+  \. "$HOME/.bash_aliasdef"
 fi
 
 # Load all functions that were previously aliased in here
 # shellcheck disable=SC2044
 for file in $(find "$HHS_HOME/bin/old-aliased" -type f -name "*.bash" | sort); do
-    \. "$file"
+  \. "$file"
 done

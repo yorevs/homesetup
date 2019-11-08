@@ -16,113 +16,114 @@
 
 # Configure git stuff.
 function prompt_git() {
-    local s='';
-    local branchName='';
+  local s='' branchName=''
 
-    # Check if the current directory is in a Git repository.
-    if [ -n "$(command -v git)" ] && [ "$(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}")" == '0' ]
-    then
+  # Check if the current directory is in a Git repository.
+  if [ -n "$(command -v git)" ] && [ "$(
+    git rev-parse --is-inside-work-tree &>/dev/null
+    echo "${?}"
+  )" == '0' ]; then
 
-        # check if the current directory is in .git before running git checks
-        if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]; then
+    # check if the current directory is in .git before running git checks
+    if [ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == 'false' ]; then
 
-            # Ensure the index is up to date.
-            git update-index --really-refresh -q &>/dev/null;
+      # Ensure the index is up to date.
+      git update-index --really-refresh -q &>/dev/null
 
-            # Check for uncommitted changes in the index.
-            if ! git diff --quiet --ignore-submodules --cached; then
-                s+='+';
-            fi;
+      # Check for uncommitted changes in the index.
+      if ! git diff --quiet --ignore-submodules --cached; then
+        s+='+'
+      fi
 
-            # Check for unstaged changes.
-            if ! git diff-files --quiet --ignore-submodules --; then
-                s+='!';
-            fi;
+      # Check for unstaged changes.
+      if ! git diff-files --quiet --ignore-submodules --; then
+        s+='!'
+      fi
 
-            # Check for untracked files.
-            if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-                s+='?';
-            fi;
+      # Check for untracked files.
+      if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+        s+='?'
+      fi
 
-            # Check for stashed files.
-            if git rev-parse --verify refs/stash &>/dev/null; then
-                s+='$';
-            fi;
+      # Check for stashed files.
+      if git rev-parse --verify refs/stash &>/dev/null; then
+        s+='$'
+      fi
 
-        fi;
+    fi
 
-        # Get the short symbolic ref.
-        # If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
-        # Otherwise, just give up.
-        branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-            git rev-parse --short HEAD 2> /dev/null || \
-            echo '(unknown)')";
+    # Get the short symbolic ref.
+    # If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
+    # Otherwise, just give up.
+    branchName="$(git symbolic-ref --quiet --short HEAD 2>/dev/null ||
+      git rev-parse --short HEAD 2>/dev/null ||
+      echo '(unknown)')"
 
-        [ -n "${s}" ] && s=" [${s}]";
+    [ -n "${s}" ] && s=" [${s}]"
 
-        echo -e "${1}${branchName}${2}${s}";
-    else
-        return;
-    fi;
+    echo -e "${1}${branchName}${2}${s}"
+  else
+    return
+  fi
 }
 
-if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-    export TERM='gnome-256color';
+if [[ $COLORTERM == gnome-* && $TERM == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+  export TERM='gnome-256color'
 elif infocmp xterm-256color >/dev/null 2>&1; then
-    export TERM='xterm-256color';
-fi;
+  export TERM='xterm-256color'
+fi
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details.
-HIST_ICN="${HIST_ICN:-\357\207\232}";
-USER_ICN="${USER_ICN:-\357\200\207}";
-ROOT_ICN="${ROOT_ICN:-\357\224\205}";
-GIT_ICN="${GIT_ICN:-\357\204\246}";
-AT_ICN="${AT_ICN:-\357\207\272}";
-NET_ICN="${NET_ICN:-\357\233\277}";
-FOLDER_ICN="${FOLDER_ICN:-\357\201\273}";
+HIST_ICN="${HIST_ICN:-\357\207\232}"
+USER_ICN="${USER_ICN:-\357\200\207}"
+ROOT_ICN="${ROOT_ICN:-\357\224\205}"
+GIT_ICN="${GIT_ICN:-\357\204\246}"
+AT_ICN="${AT_ICN:-\357\207\272}"
+NET_ICN="${NET_ICN:-\357\233\277}"
+FOLDER_ICN="${FOLDER_ICN:-\357\201\273}"
 
 # Command history style.
-HIST_STYLE="\[${WHITE}\]${HIST_ICN} \!";
+HIST_STYLE="\[${WHITE}\]${HIST_ICN} \!"
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-    USER_STYLE="\[${WHITE}\] ${ROOT_ICN}\[${RED}\] \u";
+  USER_STYLE="\[${WHITE}\] ${ROOT_ICN}\[${RED}\] \u"
 else
-    USER_STYLE="\[${WHITE}\] ${USER_ICN}\[${GREEN}\] \u";
-fi;
+  USER_STYLE="\[${WHITE}\] ${USER_ICN}\[${GREEN}\] \u"
+fi
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-    HOST_STYLE="\[${WHITE}\] ${NET_ICN}\[${RED}\] \h";
+  HOST_STYLE="\[${WHITE}\] ${NET_ICN}\[${RED}\] \h"
 else
-    HOST_STYLE="\[${WHITE}\] ${AT_ICN}\[${PURPLE}\] \h";
-fi;
+  HOST_STYLE="\[${WHITE}\] ${AT_ICN}\[${PURPLE}\] \h"
+fi
 
 # Current directory path style.
-PATH_STYLE="\[${WHITE}\] ${FOLDER_ICN}\[${ORANGE}\] \W";
+PATH_STYLE="\[${WHITE}\] ${FOLDER_ICN}\[${ORANGE}\] \W"
 
 # Git style
-GIT_STYLE="\[${WHITE}\]\$(prompt_git \" ${GIT_ICN} \[${CYAN}\]\")";
+GIT_STYLE="\[${WHITE}\]\$(prompt_git \" ${GIT_ICN} \[${CYAN}\]\")"
 
 # User prompt format
-PROMPT="\[${WHITE}\] \$>\[${NC}\] ";
+PROMPT="\[${WHITE}\] \$>\[${NC}\] "
 
 # Set the terminal title and prompt.
 # Check ${HHS_HOME}/misc/prompt-codes.txt for more details
 
 # PS1 Style: Color and icons (default)
-PS1_STYLE="${HIST_STYLE}"; # The history number of this command
-PS1_STYLE+="${USER_STYLE}"; # Logged username
-PS1_STYLE+="${HOST_STYLE}"; # Hostname
-PS1_STYLE+="${PATH_STYLE}"; # Working directory base path
-PS1_STYLE+="${GIT_STYLE}"; # Git repository details
-PS1_STYLE+="${PROMPT}"; # Prompt symbol
+PS1_STYLE="${HIST_STYLE}"  # The history number of this command
+PS1_STYLE+="${USER_STYLE}" # Logged username
+PS1_STYLE+="${HOST_STYLE}" # Hostname
+PS1_STYLE+="${PATH_STYLE}" # Working directory base path
+PS1_STYLE+="${GIT_STYLE}"  # Git repository details
+PS1_STYLE+="${PROMPT}"     # Prompt symbol
 
 # PS2 Style: No icons, simple prompt.
-PS2_STYLE=":\[${YELLOW}\]\W \[${WHITE}\]\$> ";
+PS2_STYLE=":\[${YELLOW}\]\W \[${WHITE}\]\$> "
 
-unset PS1;
-unset PS2;
+unset PS1
+unset PS2
 
-export PS1=${CUSTOM_PS:-$PS1_STYLE};
-export PS2=${CUSTOM_PS:-$PS2_STYLE};
+export PS1=${CUSTOM_PS:-$PS1_STYLE}
+export PS2=${CUSTOM_PS:-$PS2_STYLE}

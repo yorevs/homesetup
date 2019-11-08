@@ -9,25 +9,24 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: Change back the shell working directory by N directories
-..() { 
+..() {
   [ -z "$1" ] && cd ..
-  if [ -n "$1" ]; 
-    then 
-      old_pwd=$(pwd)
-      for x in $(seq 1 "$1"); do 
-        pushd "$x" || return 1
-        cd ..
-      done
+  if [ -n "$1" ]; then
+    old_pwd=$(pwd)
+    for x in $(seq 1 "$1"); do
+      pushd "$x" || return 1
+      cd ..
+    done
   fi
 
-  export OLDPWD="$old_pwd"; 
-  
+  export OLDPWD="$old_pwd"
+
   return 1
 }
 
 # shellcheck disable=SC2012
 # @function: List all file names sorted by name
-lss() { 
+lss() {
   col="$1"
   [ -z "$1" ] && col=9 # by default, sort by the filename
   command ls -la | sort -k "$col"
@@ -36,8 +35,8 @@ lss() {
 }
 
 # @function: Create all folders using a dot notation path and immediatelly change into it
-mkcd() { 
-  if [ -n "$1" ] && [ ! -d "$1" ]; then 
+mkcd() {
+  if [ -n "$1" ] && [ ! -d "$1" ]; then
     # Create the java package like dirs using dot notation: E.g java.lang.util => java/lang/util
     dir="${1//.//}"
     mkdir -p "${dir}" || return 1
@@ -49,16 +48,16 @@ mkcd() {
 }
 
 # @function: Kills ALL processes specified by $1
-pk() { 
+pk() {
   [ -n "$1" ] && plist "$1" kill
 
   return $?
 }
 
 # @function: Generate a random number int the range <min> <max>
-rand() { 
+rand() {
   if [ -n "$1" ] && [ -n "$2" ]; then
-    echo "$(( RANDOM % ($2 - $1 + 1 ) + $1 ))"
+    echo "$((RANDOM % ($2 - $1 + 1) + $1))"
   else
     echo "Usage: rand <min> <max>"
   fi
@@ -80,10 +79,10 @@ lt() {
 }
 
 # @function: Convert unicode to hexadecimal
-utoh() { 
+utoh() {
   if __hhs_has "python"; then
-    print-uni.py "$@" | hexdump -Cb;
-    
+    print-uni.py "$@" | hexdump -Cb
+
     return $?
   fi
 

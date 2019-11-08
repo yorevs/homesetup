@@ -13,37 +13,37 @@
 # @param $1 [Pip] : The piped input stream.
 function __hhs_highlight() {
 
-    local search="$*"
-    local hl_color="${HIGHLIGHT_COLOR}"
-    local gflags="-FEi"
+  local search="$*"
+  local hl_color="${HIGHLIGHT_COLOR}"
+  local gflags="-FEi"
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: ${FUNCNAME[0]} [options]"
-    else
-        hl_color=${HIGHLIGHT_COLOR//\e[/}
-        hl_color=${HIGHLIGHT_COLOR/m/}
-        while read -r stream; do
-            echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "($search|\$)"
-        done
-    fi
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ${FUNCNAME[0]} [options]"
+  else
+    hl_color=${HIGHLIGHT_COLOR//\e[/}
+    hl_color=${HIGHLIGHT_COLOR/m/}
+    while read -r stream; do
+      echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "($search|\$)"
+    done
+  fi
 
-    return 0
+  return 0
 }
 
 # @function: Pretty print (format) JSON string.
 # @param $1 [Req] : The unformatted JSON string.
 function __hhs_json-print() {
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-        echo "Usage: ${FUNCNAME[0]} <json_string>"
-        return 1
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} <json_string>"
+    return 1
+  else
+    if [ "${HHS_MY_OS}" = 'Darwin' ]; then
+      echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
     else
-        if [ "${HHS_MY_OS}" = 'Darwin' ]; then
-            echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
-        else
-            grep . "$1" | json_pp
-        fi
+      grep . "$1" | json_pp
     fi
+  fi
 
-    return 0
+  return 0
 }

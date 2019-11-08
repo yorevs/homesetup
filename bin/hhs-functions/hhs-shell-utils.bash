@@ -12,54 +12,54 @@
 # @param $1 [Req] : The searching command.
 function __hhs_history() {
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: ${FUNCNAME[0]} [command]"
-        return 1
-    elif [ "$#" -eq 0 ]; then
-        history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "^ *[0-9]*  "
-    else
-        history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "$*"
-    fi
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ${FUNCNAME[0]} [command]"
+    return 1
+  elif [ "$#" -eq 0 ]; then
+    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "^ *[0-9]*  "
+  else
+    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "$*"
+  fi
 
-    return 0
+  return 0
 }
 
 # @function: Prints all environment variables on a separate line using filters.
 # @param $1 [Opt] : Filter environments.
 function __hhs_envs() {
 
-    local pad pad_len filter name value columns
+  local pad pad_len filter name value columns
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        echo "Usage: ${FUNCNAME[0]} [regex_filter]"
-        return 1
-    else
-        pad=$(printf '%0.1s' "."{1..60})
-        pad_len=40
-        columns="$(($(tput cols)-pad_len-9))"
-        filter="$*"
-        [ -z "$filter" ] && filter="^[a-zA-Z0-9_]*.*"
-        echo ' '
-        echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
-        echo ' '
-        (
-            IFS=$'\n'
-            shopt -s nocasematch
-            for v in $(env | sort); do
-                name=$(echo "$v" | cut -d '=' -f1)
-                value=$(echo "$v" | cut -d '=' -f2-)
-                if [[ ${name} =~ ${filter} ]]; then
-                    echo -en "${HIGHLIGHT_COLOR}${name}${NC} "
-                    printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-                    echo -n " ${GREEN}=> ${NC}${value:0:$columns} "
-                    [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
-                fi
-            done
-            shopt -u nocasematch
-            IFS="$HHS_RESET_IFS"
-        )
-        echo ' '
-    fi
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ${FUNCNAME[0]} [regex_filter]"
+    return 1
+  else
+    pad=$(printf '%0.1s' "."{1..60})
+    pad_len=40
+    columns="$(($(tput cols) - pad_len - 9))"
+    filter="$*"
+    [ -z "$filter" ] && filter="^[a-zA-Z0-9_]*.*"
+    echo ' '
+    echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
+    echo ' '
+    (
+      IFS=$'\n'
+      shopt -s nocasematch
+      for v in $(env | sort); do
+        name=$(echo "$v" | cut -d '=' -f1)
+        value=$(echo "$v" | cut -d '=' -f2-)
+        if [[ ${name} =~ ${filter} ]]; then
+          echo -en "${HIGHLIGHT_COLOR}${name}${NC} "
+          printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+          echo -n " ${GREEN}=> ${NC}${value:0:$columns} "
+          [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
+        fi
+      done
+      shopt -u nocasematch
+      IFS="$HHS_RESET_IFS"
+    )
+    echo ' '
+  fi
 
-    return 0
+  return 0
 }

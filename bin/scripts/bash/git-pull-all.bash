@@ -26,26 +26,26 @@ Usage: $APP_NAME <search_path> [repository=[origin]] [branch=[HEAD]]
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-    
-    unset -f quit usage version 
-    ret=$1
-    shift
-    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-    [ "$#" -gt 0 ] && printf "%s" "$*"
-    # Unset all declared functions
-    printf "%s\n" "${NC}"
-    exit "$ret"
+
+  unset -f quit usage version
+  ret=$1
+  shift
+  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+  [ "$#" -gt 0 ] && printf "%s" "$*"
+  # Unset all declared functions
+  printf "%s\n" "${NC}"
+  exit "$ret"
 }
 
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-    quit "$1" "$USAGE"
+  quit "$1" "$USAGE"
 }
 
 # Version message.
 version() {
-    quit 0 "$VERSION"
+  quit 0 "$VERSION"
 }
 
 # Check if the user passed the help or version parameters.
@@ -66,7 +66,7 @@ BRANCH=${BRANCH:-'current'}
 
 echo 'GIT Projects found: '
 echo ''
-printf "%s\n" "${GREEN}${ALL}${NC}" 
+printf "%s\n" "${GREEN}${ALL}${NC}"
 echo ''
 printf "%s\n" "Repository: ${CYAN}$REPO${NC}, Branch: ${CYAN}$BRANCH${NC}"
 echo ''
@@ -74,23 +74,22 @@ echo ''
 read -r -n 1 -p "Reset all changes and pull all of the above repositories (y/[n])? " ANS
 [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && quit 2 "$ANS \nOperation aborted by the user!"
 
-for gdir in $ALL
-do
-    echo ''
-    pdir=$(dirname "$gdir")
-    printf "%s\n" "${GREEN}Pulling project: \"$pdir\" ...${NC}"
-    cd "$pdir" || continue
-    [ "$BRANCH" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
-    [ "$BRANCH" = "current" ] || gitbranch="$BRANCH"
-    printf "%s\n" "${YELLOW}Resetting all of your changes...${NC}"
-    git fetch
-    git reset --hard "$gitbranch"
-    test $? -ne 0 && quit 2 "Unable to checkout the code. Aborting!"
-    printf "%s\n" "${GREEN}Pulling the new code ($REPO/$gitbranch) ...${NC}"
-    echo ''
-    git pull "$REPO" "$gitbranch"
-    test $? -ne 0 && quit 2 "Unable to pull the code. Aborting!"
-    cd - > /dev/null || continue
+for gdir in $ALL; do
+  echo ''
+  pdir=$(dirname "$gdir")
+  printf "%s\n" "${GREEN}Pulling project: \"$pdir\" ...${NC}"
+  cd "$pdir" || continue
+  [ "$BRANCH" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
+  [ "$BRANCH" = "current" ] || gitbranch="$BRANCH"
+  printf "%s\n" "${YELLOW}Resetting all of your changes...${NC}"
+  git fetch
+  git reset --hard "$gitbranch"
+  test $? -ne 0 && quit 2 "Unable to checkout the code. Aborting!"
+  printf "%s\n" "${GREEN}Pulling the new code ($REPO/$gitbranch) ...${NC}"
+  echo ''
+  git pull "$REPO" "$gitbranch"
+  test $? -ne 0 && quit 2 "Unable to pull the code. Aborting!"
+  cd - >/dev/null || continue
 done
 
 echo ''

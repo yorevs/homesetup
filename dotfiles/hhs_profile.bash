@@ -2,8 +2,8 @@
 # shellcheck disable=SC2155,SC1090
 
 #  Script: bash_profile.bash
-# Purpose: This file is user specific remote login file. Environment variables listed in this 
-#          file are invoked every time the user is logged in remotely i.e. using ssh session. 
+# Purpose: This file is user specific remote login file. Environment variables listed in this
+#          file are invoked every time the user is logged in remotely i.e. using ssh session.
 #          If this file is not present, system looks for either .bash_login or .profile files.
 # Created: Aug 26, 2008
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -32,8 +32,8 @@ unalias -a
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
 for file in ~/.{profile,bash_colors,colors,bash_env,env,bash_aliases,aliases,bash_prompt,prompt,bash_functions,functions}; do
-    [ -f "$file" ] && \. "$file";
-done;
+  [ -f "$file" ] && \. "$file"
+done
 
 unset file
 
@@ -56,7 +56,7 @@ unset file
 #shopt -u nocasematch
 
 # This turns off the case-sensitive completion.
-[ -f ~/.inputrc ] || echo "set completion-ignore-case On" > ~/.inputrc
+[ -f ~/.inputrc ] || echo "set completion-ignore-case On" >~/.inputrc
 [ "Darwin" = "${HHS_MY_OS}" ] && sed -i '' -E "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
 [ "Linux" = "${HHS_MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
 
@@ -64,18 +64,18 @@ unset file
 # Load other stuff
 
 # Enable tab completion for `git` by marking it as an alias for `git`
-if command -v git &> /dev/null; then
-    if [ "bash" = "$HHS_MY_SHELL" ]; then
-        if [ -s "$HHS_DIR/bin/git-completion.bash" ]; then
-            \. "$HHS_DIR/bin/git-completion.bash" # This loads git bash complete
-            complete -o default -o nospace -F _git g
-        fi
+if command -v git &>/dev/null; then
+  if [ "bash" = "$HHS_MY_SHELL" ]; then
+    if [ -s "$HHS_DIR/bin/git-completion.bash" ]; then
+      \. "$HHS_DIR/bin/git-completion.bash" # This loads git bash complete
+      complete -o default -o nospace -F _git g
     fi
+  fi
 fi
 
 # Add custom paths to the system `$PATH`
 if [ -f "$HOME/.path" ]; then
-    export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
+  export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 fi
 
 # Add `$HHS_DIR/bin` to the system `$PATH`

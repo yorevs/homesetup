@@ -22,24 +22,24 @@ export HHS_MY_SHELL="${SHELL//\/bin\//}"
 
 # Java
 if command -v java >/dev/null; then
-    export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
-    export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
+  export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
+  export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
 fi
 
 # Python
 if command -v python >/dev/null; then
-    export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
+  export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
 fi
 
 # Qt
-if command -v qmake >/dev/null|| [ -d /usr/local/opt/qt/bin ]; then
-    export QT_HOME="/usr/local/opt/qt/bin"
+if command -v qmake >/dev/null || [ -d /usr/local/opt/qt/bin ]; then
+  export QT_HOME="/usr/local/opt/qt/bin"
 fi
 
 # XCode
 if command -v xcode-select >/dev/null; then
-    export XCODE_HOME="$(xcode-select -p)"
-    export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+  export XCODE_HOME="$(xcode-select -p)"
+  export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 fi
 
 # ----------------------------------------------------------------------------
@@ -86,12 +86,12 @@ export HHS_PATHS_FILE="${HHS_PATHS_FILE:-$HOME/.path}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 HHS_DEFAULT_DEV_TOOLS=(
-    "bash" "ssh" "hexdump" "vim" "xcode-select" "brew" "tree"   
-    "pcregrep" "shfmt" "shellcheck" "java" "rvm" "ruby" "go" 
-    "gcc" "make" "qmake" "doxygen" "ant" "mvn" "gradle" "git" 
-    "svn" "docker" "nvm" "node" "vue" "eslint" "gpg" "base64" 
-    "md5" "shasum" "htop" "dialog" "telnet" "figlet"  "perl"  
-    "python" "python3" "jq" "jenv"
+  "bash" "ssh" "hexdump" "vim" "xcode-select" "brew" "tree"
+  "pcregrep" "shfmt" "shellcheck" "java" "rvm" "ruby" "go"
+  "gcc" "make" "qmake" "doxygen" "ant" "mvn" "gradle" "git"
+  "svn" "docker" "nvm" "node" "vue" "eslint" "gpg" "base64"
+  "md5" "shasum" "htop" "dialog" "telnet" "figlet" "perl"
+  "python" "python3" "jq" "jenv"
 )
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-${HHS_DEFAULT_DEV_TOOLS[*]}}

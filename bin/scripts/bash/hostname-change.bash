@@ -26,26 +26,26 @@ Usage: $APP_NAME <new_hostname>
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-    
-    unset -f quit usage version 
-    ret=$1
-    shift
-    [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-    [ "$#" -gt 0 ] && printf "%s" "$*"
-    # Unset all declared functions
-    printf "%s\n" "${NC}"
-    exit "$ret"
+
+  unset -f quit usage version
+  ret=$1
+  shift
+  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
+  [ "$#" -gt 0 ] && printf "%s" "$*"
+  # Unset all declared functions
+  printf "%s\n" "${NC}"
+  exit "$ret"
 }
 
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-    quit "$1" "$USAGE"
+  quit "$1" "$USAGE"
 }
 
 # Version message.
 version() {
-    quit 0 "$VERSION"
+  quit 0 "$VERSION"
 }
 
 # Check if the user passed the help or version parameters.
@@ -59,17 +59,17 @@ read -r -p "Enter new hostname (ENTER to cancel): " NEW_HOSTN
 
 if [ -n "$NEW_HOSTN" ] && [ "$HOSTN" != "$NEW_HOSTN" ]; then
 
-    echo "Your new hostname has changed to: \"$NEW_HOSTN\""
+  echo "Your new hostname has changed to: \"$NEW_HOSTN\""
 
-    if [ "$(uname -s)" = "Darwin" ]; then
-        sudo scutil --set HostName "$NEW_HOSTN"
-    else
-        # Change the hostname in /etc/hosts & /etc/hostname
-        sudo sed -i "s/$HOSTN/$NEW_HOSTN/g" /etc/hosts
-        sudo sed -i "s/$HOSTN/$NEW_HOSTN/g" /etc/hostname
-        read -r -n 1 -p "Press 'y' key to reboot now: " ANS
-        [ "$ANS" = "y" ] || [ "$ANS" = "Y" ] && sudo reboot
-    fi
+  if [ "$(uname -s)" = "Darwin" ]; then
+    sudo scutil --set HostName "$NEW_HOSTN"
+  else
+    # Change the hostname in /etc/hosts & /etc/hostname
+    sudo sed -i "s/$HOSTN/$NEW_HOSTN/g" /etc/hosts
+    sudo sed -i "s/$HOSTN/$NEW_HOSTN/g" /etc/hostname
+    read -r -n 1 -p "Press 'y' key to reboot now: " ANS
+    [ "$ANS" = "y" ] || [ "$ANS" = "Y" ] && sudo reboot
+  fi
 fi
 
 quit 0
