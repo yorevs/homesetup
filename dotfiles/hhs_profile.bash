@@ -74,9 +74,9 @@ fi
 # Enable tab completion for `docker` by marking it as an alias for `git`
 if command -v docker &>/dev/null; then
   if [ "bash" = "$HHS_MY_SHELL" ]; then
-    \. "$HHS_DIR/bin/docker-compose.bash" # This loads docker compose bash completetion
-    \. "$HHS_DIR/bin/docker-machine.bash" # This loads docker machine bash completetion
-    \. "$HHS_DIR/bin/docker.bash" # This loads docker bash completetion
+    \. "$HHS_DIR/bin/docker-compose-completion.bash" # This loads docker compose bash completetion
+    \. "$HHS_DIR/bin/docker-machine-completion.bash" # This loads docker machine bash completetion
+    \. "$HHS_DIR/bin/docker-completion.bash" # This loads docker bash completetion
   fi
 fi
 
