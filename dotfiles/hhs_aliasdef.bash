@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # shellcheck disable=
-
 #  Script: bash_aliasdef.bash
 # Purpose: This file is used to customize your prompt alias shortcuts
 # Created: Aug 26, 2008
@@ -8,10 +7,8 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
-
 # -----------------------------------------------------------------------------------
 # Function alias shortcuts
-
 alias has='__hhs_has'
 alias encrypt='__hhs_encrypt'
 alias decrypt='__hhs_decrypt'
@@ -43,7 +40,6 @@ alias godir='__hhs_go-dir'
 alias sysinfo='__hhs_sysinfo'
 alias parts='__hhs_partitions'
 alias hhu='__hhs_update'
-
 # Git shortcuts
 alias git-='__hhs_git-'
 alias gs='__hhs_git_status'
@@ -64,7 +60,6 @@ alias gtps='__hhs_git_push'
 alias gshow='__hhs_git_show'
 alias gdshow='__hhs_git_diff_show'
 alias gdt='__hhs_git_difftool'
-
 # Gradle shortcuts
 alias gw='__hhs_gradlew'
 alias gwb='__hhs_gradle_build'
@@ -75,7 +70,6 @@ alias gwq='__hhs_gradle_quiet'
 alias gww='__hhs_gradle_wrapper'
 alias gwt='__hhs_gradle_tasks'
 alias gwp='__hhs_gradle_projects'
-
 # Docker shortcuts
 alias dki='__hhs_docker_images'
 alias dks='__hhs_docker_service'

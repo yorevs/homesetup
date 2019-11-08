@@ -78,7 +78,7 @@ FIREBASE_FILE="$HHS_DIR/.firebase"
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
 # Firebase response regex.
-FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*)+\}$'
+FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*(,*"aliasdef":".*")*)+\}$'
 
 # File to store the saved commands.
 HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
@@ -105,8 +105,8 @@ download_dotfiles() {
   fetch.bash GET --silent "$FIREBASE_URL/dotfiles/$UUID/${fb_alias}.json" >"$DOTFILES_FILE"
   ret=$?
 
-  if [ $ret -eq 0 ] && [ -f "$DOTFILES_FILE" ] && [[ "$(grep . "$DOTFILES_FILE")" =~ $FB_RE_RESP ]]; then
-    echo "${GREEN}Dotfiles \"${fb_alias}\" sucessfully downloaded!${NC}"
+  if [ $ret -eq 0 ] && [ -f "$DOTFILES_FILE" ] && [[ "$(grep . "$DOTFILES_FILE")" =~ ${FB_RE_RESP// /} ]]; then
+    echo -e "\n${GREEN}Dotfiles \"${fb_alias}\" sucessfully downloaded!${NC}"
   else
     quit 2 "Failed to download \"${fb_alias}\" Dotfiles!"
   fi
@@ -117,17 +117,10 @@ download_dotfiles() {
 # Build the dotfiles jso payload.
 build_dotfiles_payload() {
 
+  local f_aliases f_colors f_env f_functions f_path f_profile f_cmdFile f_savedDirs f_aliasdef
   local payload=''
   local match=', } }'
   local repl=' } }'
-  local f_aliases
-  local f_colors
-  local f_env
-  local f_functions
-  local f_path
-  local f_profile
-  local f_cmdFile
-  local f_savedDirs
 
   # Encode all present dotfiles
   [ -f "$HOME"/.aliases ] && f_aliases=$(grep . "$HOME"/.aliases | base64)
@@ -138,6 +131,7 @@ build_dotfiles_payload() {
   [ -f "$HOME"/.profile ] && f_profile=$(grep . "$HOME"/.profile | base64)
   [ -f "$HHS_CMD_FILE" ] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
   [ -f "$HHS_SAVED_DIRS" ] && f_savedDirs=$(grep . "$HHS_SAVED_DIRS" | base64)
+  [ -f "$HOME"/.bash_aliasdef ] && f_aliasdef=$(grep . "$HOME"/.bash_aliasdef | base64)
 
   # Generate the request payload using the files above
   payload="{ \"$fb_alias\" : { "
@@ -149,6 +143,7 @@ build_dotfiles_payload() {
   [ -n "$f_profile" ] && payload="${payload}\"profile\" : \"$f_profile\","
   [ -n "$f_cmdFile" ] && payload="${payload}\"commands\" : \"$f_cmdFile\","
   [ -n "$f_savedDirs" ] && payload="${payload}\"savedDirs\" : \"$f_savedDirs\","
+  [ -n "$f_aliasdef" ] && payload="${payload}\"aliasdef\" : \"$f_aliasdef\","
   payload="${payload}\"lastUpdate\" : \"$(date +'%d-%m-%Y %T')\","
   payload="${payload}\"lastUser\" : \"$(whoami)\""
   payload="${payload} } }"
@@ -173,13 +168,7 @@ upload_dotfiles() {
 # Parse the dotfiles response payload and save the files.
 parse_and_save_dotfiles() {
 
-  local f_aliases
-  local f_colors
-  local f_env
-  local f_functions
-  local f_profile
-  local f_cmdFile
-  local f_savedDirs
+  local f_aliases f_colors f_env f_functions f_profile f_cmdFile f_savedDirs f_aliasdef
   local b64flag
 
   [ "$(uname -s)" = "Linux" ] && b64flag='-d' || b64flag='-D'
@@ -192,6 +181,7 @@ parse_and_save_dotfiles() {
   f_profile=$(json-find.py -a profile -f "$DOTFILES_FILE" | base64 "${b64flag}")
   f_cmdFile=$(json-find.py -a commands -f "$DOTFILES_FILE" | base64 "${b64flag}")
   f_savedDirs=$(json-find.py -a savedDirs -f "$DOTFILES_FILE" | base64 "${b64flag}")
+  f_aliasdef=$(json-find.py -a aliasdef -f "$DOTFILES_FILE" | base64 "${b64flag}")
 
   # Write all files into place
   [ -n "$f_aliases" ] && echo "$f_aliases" >"$HOME/.aliases"
@@ -201,6 +191,7 @@ parse_and_save_dotfiles() {
   [ -n "$f_profile" ] && echo "$f_profile" >"$HOME/.profile"
   [ -n "$f_cmdFile" ] && echo "$f_cmdFile" >"$HHS_CMD_FILE"
   [ -n "$f_savedDirs" ] && echo "$f_savedDirs" >"$HHS_SAVED_DIRS"
+  [ -n "$f_aliasdef" ] && echo "$f_aliasdef" >"$HOME/.bash_aliasdef"
 }
 
 # Provides a help about the command.
@@ -291,11 +282,12 @@ cmd_firebase() {
     echo -e "${RED}"
     read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
     echo -e "${NC}"
-    test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
-    load_fb_settings
-    download_dotfiles "$fb_alias"
-    parse_and_save_dotfiles
-    echo -e "${YELLOW}? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+    if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+      load_fb_settings
+      download_dotfiles "$fb_alias"
+      parse_and_save_dotfiles
+      echo -e "${YELLOW}? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+    fi
     ;;
   *)
     quit 2 "Invalid firebase task: \"$task\" !"
