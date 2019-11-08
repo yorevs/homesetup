@@ -34,8 +34,8 @@ function __hhs_sysinfo() {
     echo -e "\n${GREEN}Network:${HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
     echo -e "  Gateway...... : $(route get default | grep gateway | cut -b 14-)"
-    has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
-    has "dig" && echo -e "  Real-IP...... : $(ip)"
+    __hhs_has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
+    __hhs_has "dig" && echo -e "  Real-IP...... : $(ip)"
     echo -e "\n${GREEN}Logged Users:${HIGHLIGHT_COLOR}"
     (
       IFS=$'\n'
@@ -44,7 +44,7 @@ function __hhs_sysinfo() {
       done
       IFS=$HHS_RESET_IFS
     )
-    if has "docker"; then
+    if __hhs_has "docker"; then
       containers=$(__hhs_docker_ps)
       if [ -n "${containers}" ]; then
         echo -e "\n${GREEN}Docker Containers: ${BLUE}"

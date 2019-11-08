@@ -24,7 +24,7 @@ function __hhs_toolcheck() {
     echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
     echo -en "Checking: ${YELLOW}${tool_name}${NC} "
     printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
-    if has "${tool_name}"; then
+    if __hhs_has "${tool_name}"; then
       echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
       return 0
     else
