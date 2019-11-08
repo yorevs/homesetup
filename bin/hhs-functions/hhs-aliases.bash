@@ -24,6 +24,7 @@ function __hhs_aliases() {
     echo '      List all aliases    : When both [alias] and [alias_expr] are NOT provided.'
     echo '      Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
     echo '      Remove the alias    : When [alias] is provided but [alias_expr] is not provided.'
+    echo ''
     return 1
   else
     aliasFile="$HOME/.aliases"

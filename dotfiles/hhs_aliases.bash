@@ -302,11 +302,6 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   alias __hhs_docker_ls='docker container ls'
 fi
 
-# Source the custom alias shortcuts
-if [ -s "$HOME/.bash_aliasdef" ]; then
-  \. "$HOME/.bash_aliasdef"
-fi
-
 # Load all functions that were previously aliased in here
 # shellcheck disable=SC2044
 for file in $(find "$HHS_HOME/bin/old-aliased" -type f -name "*.bash" | sort); do
