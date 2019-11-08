@@ -38,10 +38,10 @@ function __hhs_json-print() {
     echo "Usage: ${FUNCNAME[0]} <json_string>"
     return 1
   else
-    if [ "${HHS_MY_OS}" = 'Darwin' ]; then
+    if __hhs_has jq; then
+      echo "$1" | jq
+    elif __hhs_has json_pp; then
       echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
-    else
-      grep . "$1" | json_pp
     fi
   fi
 

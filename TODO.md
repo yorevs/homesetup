@@ -8,3 +8,4 @@
 - [ ] Improve command helps
 - [ ] Add bi-weekly automatic updates
 - [ ] Refactoring HHS to be plug-in like
+- [ ] Add authentication to FB requests

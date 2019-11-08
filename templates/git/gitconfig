@@ -75,7 +75,7 @@
     guitool = opendiff
     # Detect copies as well as renames
     renames = copies
-	external = $HHS_DIR/bin/git-diff-cmd.sh
+	external = $HHS_DIR/bin/git-diff-cmd.bash
 
 [diff "bin"]
     # Use `hexdump` to diff binary files
