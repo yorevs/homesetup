@@ -37,10 +37,10 @@ quit() {
   unset -f quit usage version format_json do_fetch
   ret=$1
   shift
-  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-  [ "$#" -gt 0 ] && printf "%s" "$*"
+  [ "$ret" -gt 1 ] && echo -en "${RED}"
+  [ "$#" -gt 0 ] && echo -en "$*"
   # Unset all declared functions
-  printf "%s\n" "${NC}"
+  echo -e "${NC}"
   exit "$ret"
 }
 
@@ -116,8 +116,8 @@ format_json() {
 
   # Piped input
   read -r response
-  [ -n "${FORMAT}" ] && printf "%s\n" "$response" | json_pp -f json -t json -json_opt pretty indent escape_slash
-  [ -z "${FORMAT}" ] && printf "%s\n" "$response"
+  [ -n "${FORMAT}" ] && echo -e "$response" | json_pp -f json -t json -json_opt pretty indent escape_slash
+  [ -z "${FORMAT}" ] && echo -e "$response"
 }
 
 # Do the request
@@ -136,7 +136,7 @@ do_fetch() {
   return $?
 }
 
-[ -z "${SILENT}" ] && printf "%s\n" "Fetching: ${METHOD} $URL ..."
+[ -z "${SILENT}" ] && echo -e "Fetching: ${METHOD} $URL ..."
 
 do_fetch
 ret=$?

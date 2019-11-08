@@ -30,10 +30,10 @@ quit() {
   unset -f quit usage version
   ret=$1
   shift
-  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-  [ "$#" -gt 0 ] && printf "%s" "$*"
+  [ "$ret" -gt 1 ] && echo -en "${RED}"
+  [ "$#" -gt 0 ] && echo -en "$*"
   # Unset all declared functions
-  printf "%s\n" "${NC}"
+  echo -e "${NC}"
   exit "$ret"
 }
 
@@ -63,18 +63,18 @@ fi
 PAD=$(printf '%0.1s' "."{1..60})
 PAD_LEN=20
 
-printf '%s\n' "${ORANGE}($(uname -s))${NC} "
-printf '%s\n' "Checking: ${YELLOW}${TOOL_NAME}${NC} "
+echo -e "${ORANGE}($(uname -s))${NC} "
+echo -e "Checking: ${YELLOW}${TOOL_NAME}${NC} "
 printf '%*.*s' 0 $((PAD_LEN - ${#1})) "$PAD"
 
 CHECK=$(command -v "${TOOL_NAME}")
 
 if [ -n "${CHECK}" ]; then
-  printf '%s\n' "${GREEN}INSTALLED${NC} at ${CHECK}\n"
+  echo -e "${GREEN}INSTALLED${NC} at ${CHECK}\n"
 else
-  printf '%s\n' "${RED}NOT INSTALLED${NC}\n"
+  echo -e "${RED}NOT INSTALLED${NC}\n"
   if [ "$EXIT_ON_FAIL" = "true" ]; then
-    printf '%s\n' "${RED}### Error: Unable to continue without the required tool: \"${TOOL_NAME}\"${NC}\n" >&2
+    echo -e "${RED}### Error: Unable to continue without the required tool: \"${TOOL_NAME}\"${NC}\n" >&2
     quit 2
   else
     quit 1

@@ -72,7 +72,7 @@ function __hhs_punch() {
           for line in $lines; do
             # List punches
             if [ "-l" = "$opt" ] || [ "-w" = "$opt" ]; then
-              echo -n "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
+              echo -en "${line//${dateStamp}/${HIGHLIGHT_COLOR}${dateStamp}}"
               # Read all timestamps and append them into an array.
               IFS=' ' read -r -a lineTotals <<<"$(echo "$line" | awk -F '=> ' '{ print $2 }')"
               # If we have an even number of timestamps, display the subtotals.

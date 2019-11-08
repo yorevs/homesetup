@@ -82,4 +82,4 @@ fi
 paths -a "$HHS_DIR/bin"
 
 # Remove all `$PATH` duplicates
-export PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
+export PATH=$(echo -en "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')

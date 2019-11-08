@@ -52,35 +52,35 @@ function __hhs_aliases() {
           for next in $allAliases; do
             local re='^alias .+=.+'
             if [[ $next =~ $re ]]; then
-              name=$(echo -n "$next" | cut -d'=' -f1 | cut -d ' ' -f2)
-              expr=$(echo -n "$next" | cut -d'=' -f2-)
+              name=$(echo -en "$next" | cut -d'=' -f1 | cut -d ' ' -f2)
+              expr=$(echo -en "$next" | cut -d'=' -f2-)
               printf "${HIGHLIGHT_COLOR}${name//alias /}"
               printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-              printf '%s' "${YELLOW} is aliased to ${WHITE}${expr:0:$columns}"
+              echo -en "${YELLOW} is aliased to ${WHITE}${expr:0:$columns}"
             else
-              printf '%s' "${GREEN}${next:0:$columns}${NC}"
+              echo -en "${GREEN}${next:0:$columns}${NC}"
             fi
             [ "${#expr}" -ge "$columns" ] && echo "..."
-            printf '%s\n' "${NC}"
+            echo -e "${NC}"
           done
           IFS="$HHS_RESET_IFS"
         )
-        printf '%s\n' "${NC}"
+        echo -e "${NC}"
       else
-        printf '%s\n' "${ORANGE}No aliases were found in \"$aliasFile\" !${NC}"
+        echo -e "${ORANGE}No aliases were found in \"$aliasFile\" !${NC}"
       fi
     elif [ -n "$aliasName" ] && [ -n "$aliasExpr" ]; then
       # Add/Set one alias
       ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
       echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
-      printf '%s\n' "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
+      echo -e "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
       # shellcheck disable=SC1090
       \. "$aliasFile"
     elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then
       # Remove one alias
       unalias "$aliasName" &>/dev/null
       ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
-      printf '%s\n' "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
+      echo -e "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
     fi
   fi
 

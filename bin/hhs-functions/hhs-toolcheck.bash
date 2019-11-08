@@ -49,7 +49,7 @@ function __hhs_version() {
     APP=$1
     __hhs_toolcheck "${APP}"
     if test $? -ne 0; then
-      printf '%s\n' "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}"
+      echo -e "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}"
       return 2
     fi
     version=$(${APP} --version 2>&1)
@@ -63,13 +63,13 @@ function __hhs_version() {
           # Last attempt: app -V
           version=$(${APP} -V 2>&1)
           if test $? -ne 0; then
-            printf '%s\n' "${RED}Unable to find \"${APP}\" version using common methods: (--version, -version, -v and -V) ${NC}"
+            echo -e "${RED}Unable to find \"${APP}\" version using common methods: (--version, -version, -v and -V) ${NC}"
             return 1
           fi
         fi
       fi
     fi
-    printf '%s\n' "${version}"
+    echo -e "${version}"
   fi
 
   return 0

@@ -30,10 +30,10 @@ quit() {
   unset -f quit usage version
   ret=$1
   shift
-  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-  [ "$#" -gt 0 ] && printf "%s" "$*"
+  [ "$ret" -gt 1 ] && echo -en "${RED}"
+  [ "$#" -gt 0 ] && echo -en "$*"
   # Unset all declared functions
-  printf "%s\n" "${NC}"
+  echo -e "${NC}"
   exit "$ret"
 }
 

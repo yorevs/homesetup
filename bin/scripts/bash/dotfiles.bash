@@ -38,10 +38,10 @@ quit() {
     parse_and_save_dotfiles build_dotfiles_payload trim upload_dotfiles
   ret=$1
   shift
-  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-  [ "$#" -gt 0 ] && printf "%s" "$*"
+  [ "$ret" -gt 1 ] && echo -en "${RED}"
+  [ "$#" -gt 0 ] && echo -en "$*"
   # Unset all declared functions
-  printf "%s\n" "${NC}"
+  echo -e "${NC}"
   exit "$ret"
 }
 
@@ -64,7 +64,7 @@ trim() {
 
   # remove trailing whitespace characters
   var="${var%"${var##*[![:space:]]}"}"
-  echo -n "$var"
+  echo -en "$var"
 }
 
 # Check if the user passed the help or version parameters.
@@ -154,7 +154,7 @@ build_dotfiles_payload() {
   payload="${payload} } }"
   payload="${payload//$match/$repl}"
 
-  printf "%s" "$payload"
+  echo -en "$payload"
 }
 
 # Upload the User dotfiles to Firebase.
@@ -260,18 +260,18 @@ cmd_firebase() {
       echo "### Firebase setup"
       echo "-------------------------------"
       read -r -p 'Please type you Project ID: ' ANS
-      [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
+      [ -z "$ANS" ] || [ "$ANS" = "" ] && echo -e "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
       setupContent="${setupContent}PROJECT_ID=${ANS}\n"
       setupContent="${setupContent}USERNAME=$u_name\n"
       setupContent="${setupContent}FIREBASE_URL=https://${ANS}.firebaseio.com/homesetup\n"
       read -r -p 'Please type a password to encrypt you data: ' ANS
-      [ -z "$ANS" ] || [ "$ANS" = "" ] && printf "%s\n" "${RED}Invalid password: ${ANS}${NC}" && sleep 1 && continue
+      [ -z "$ANS" ] || [ "$ANS" = "" ] && echo -e "${RED}Invalid password: ${ANS}${NC}" && sleep 1 && continue
       setupContent="${setupContent}PASSPHRASE=${ANS}\n"
       read -r -p "Please type a UUID to use or press enter to generate a new one: " ANS
       if [ -n "$ANS" ] && [[ "$ANS" =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]]; then
         u_uuid="$ANS"
       elif [ -n "$ANS" ]; then
-        printf "%s\n" "${RED}Invalid UUID: ${ANS}${NC}" && sleep 1 && continue
+        echo -e "${RED}Invalid UUID: ${ANS}${NC}" && sleep 1 && continue
       else
         echo "=> UUID automatically generated: $u_uuid"
       fi
@@ -281,21 +281,21 @@ cmd_firebase() {
       echo "-------------------------------"
       echo -e "$setupContent" >>"$FIREBASE_FILE"
     done
-    printf "%s\n" "${GREEN}Configuration successfully saved!${NC}"
+    echo -e "${GREEN}Configuration successfully saved!${NC}"
     ;;
   ul | upload)
     load_fb_settings
     upload_dotfiles "$fb_alias"
     ;;
   dl | download)
-    printf "%s\n" "${RED}"
+    echo -e "${RED}"
     read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
-    printf "%s\n" "${NC}"
+    echo -e "${NC}"
     test -z "$ANS" || test "$ANS" = "n" || test "$ANS" = "N" && quit 1
     load_fb_settings
     download_dotfiles "$fb_alias"
     parse_and_save_dotfiles
-    printf "%s\n" "${YELLOW}? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+    echo -e "${YELLOW}? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
     ;;
   *)
     quit 2 "Invalid firebase task: \"$task\" !"

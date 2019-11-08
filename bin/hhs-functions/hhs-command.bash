@@ -40,7 +40,7 @@ function __hhs_command() {
       ;;
     -a | --add)
       shift
-      cmdName=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+      cmdName=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
       shift
       cmdExpr="$*"
       if [ -z "$cmdName" ] || [ -z "$cmdExpr" ]; then
@@ -55,7 +55,7 @@ function __hhs_command() {
     -r | --remove)
       shift
       # Command ID can be the index or the alias
-      cmdId=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+      cmdId=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
       local re='^[1-9]+$'
       if [[ $cmdId =~ $re ]]; then
         cmdExpr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
@@ -79,8 +79,8 @@ function __hhs_command() {
         (
           IFS=$'\n'
           for next in ${allCmds[*]}; do
-            cmdName="( $index ) $(echo -n "$next" | awk -F ':' '{ print $1 }')"
-            cmdExpr=$(echo -n "$next" | awk -F ': ' '{ print $2 }')
+            cmdName="( $index ) $(echo -en "$next" | awk -F ':' '{ print $1 }')"
+            cmdExpr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
             printf "${HIGHLIGHT_COLOR}${cmdName}"
             printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
             echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
@@ -88,7 +88,7 @@ function __hhs_command() {
           done
           IFS="$HHS_RESET_IFS"
         )
-        printf '%s\n' "${NC}"
+        echo -e "${NC}"
       else
         echo "${YELLOW}No commands available yet !${NC}"
       fi
@@ -119,7 +119,7 @@ function __hhs_command() {
       [ -n "$cmdExpr" ] && echo -e "#> $cmdExpr" && eval "$cmdExpr"
       ;;
     *)
-      printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
+      echo -e "${RED}Invalid arguments: \"$1\"${NC}"
       return 1
       ;;
     esac

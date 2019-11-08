@@ -30,10 +30,10 @@ quit() {
   unset -f quit usage version
   ret=$1
   shift
-  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-  [ "$#" -gt 0 ] && printf "%s" "$*"
+  [ "$ret" -gt 1 ] && echo -en "${RED}"
+  [ "$#" -gt 0 ] && echo -en "$*"
   # Unset all declared functions
-  printf "%s\n" "${NC}"
+  echo -e "${NC}"
   exit "$ret"
 }
 
@@ -66,9 +66,9 @@ BRANCH=${BRANCH:-'current'}
 
 echo 'GIT Projects found: '
 echo ''
-printf "%s\n" "${GREEN}${ALL}${NC}"
+echo -e "${GREEN}${ALL}${NC}"
 echo ''
-printf "%s\n" "Repository: ${CYAN}$REPO${NC}, Branch: ${CYAN}$BRANCH${NC}"
+echo -e "Repository: ${CYAN}$REPO${NC}, Branch: ${CYAN}$BRANCH${NC}"
 echo ''
 
 read -r -n 1 -p "Reset all changes and pull all of the above repositories (y/[n])? " ANS
@@ -77,15 +77,15 @@ read -r -n 1 -p "Reset all changes and pull all of the above repositories (y/[n]
 for gdir in $ALL; do
   echo ''
   pdir=$(dirname "$gdir")
-  printf "%s\n" "${GREEN}Pulling project: \"$pdir\" ...${NC}"
+  echo -e "${GREEN}Pulling project: \"$pdir\" ...${NC}"
   cd "$pdir" || continue
   [ "$BRANCH" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
   [ "$BRANCH" = "current" ] || gitbranch="$BRANCH"
-  printf "%s\n" "${YELLOW}Resetting all of your changes...${NC}"
+  echo -e "${YELLOW}Resetting all of your changes...${NC}"
   git fetch
   git reset --hard "$gitbranch"
   test $? -ne 0 && quit 2 "Unable to checkout the code. Aborting!"
-  printf "%s\n" "${GREEN}Pulling the new code ($REPO/$gitbranch) ...${NC}"
+  echo -e "${GREEN}Pulling the new code ($REPO/$gitbranch) ...${NC}"
   echo ''
   git pull "$REPO" "$gitbranch"
   test $? -ne 0 && quit 2 "Unable to pull the code. Aborting!"

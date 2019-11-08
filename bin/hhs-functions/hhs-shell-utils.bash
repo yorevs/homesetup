@@ -51,7 +51,7 @@ function __hhs_envs() {
         if [[ ${name} =~ ${filter} ]]; then
           echo -en "${HIGHLIGHT_COLOR}${name}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-          echo -n " ${GREEN}=> ${NC}${value:0:$columns} "
+          echo -en " ${GREEN}=> ${NC}${value:0:$columns} "
           [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
         fi
       done

@@ -48,10 +48,10 @@ quit() {
   unset -f quit usage version cleanup_recipes list_recipes install_recipe uninstall_recipe
   ret=$1
   shift
-  [ "$ret" -gt 1 ] && printf "%s" "${RED}"
-  [ "$#" -gt 0 ] && printf "%s" "$*"
+  [ "$ret" -gt 1 ] && echo -en "${RED}"
+  [ "$#" -gt 0 ] && echo -en "$*"
   # Unset all declared functions
-  printf "%s\n" "${NC}"
+  echo -e "${NC}"
   exit "$ret"
 }
 
@@ -91,7 +91,7 @@ function list_recipes() {
       if test -z "$1"; then
         printf '%3s - %s' "${index}" "${BLUE}${app} "
         printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
-        printf "%s\n" "${GREEN} => ${WHITE}$(about) ${NC}"
+        echo -e "${GREEN} => ${WHITE}$(about) ${NC}"
       fi
       cleanup_recipes
       [ "$1" = "$app" ] && return 0
@@ -99,7 +99,7 @@ function list_recipes() {
       index=$((index + 1))
       printf '%3s - %s' "${index}" "${ORANGE}${app} "
       printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
-      printf "%s\n" "${GREEN} => ${RED}[Recipe not found] ${NC}"
+      echo -e "${GREEN} => ${RED}[Recipe not found] ${NC}"
     fi
   done
 
@@ -116,9 +116,9 @@ install_recipe() {
     if command -v "$1" >/dev/null; then
       quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
     fi
-    printf "%s\n" "${YELLOW}Installing \"$1\", please wait...${NC}"
+    echo -e "${YELLOW}Installing \"$1\", please wait...${NC}"
     install
-    test $? -eq 0 && printf "%s\n" "${GREEN}Installation successful.${NC}" || quit 2 "Failed to install app \"$1\" !"
+    test $? -eq 0 && echo -e "${GREEN}Installation successful.${NC}" || quit 2 "Failed to install app \"$1\" !"
   else
     quit 1 "Unable to find recipe for \"$1\" !"
   fi
@@ -134,9 +134,9 @@ uninstall_recipe() {
     if ! command -v "$1" >/dev/null; then
       quit 1 "${YELLOW}\"$1\" is not installed on the system!${NC}"
     fi
-    printf "%s\n" "${YELLOW}Uninstalling $1, please wait...${NC}"
+    echo -e "${YELLOW}Uninstalling $1, please wait...${NC}"
     uninstall
-    test $? -eq 0 && printf "%s\n" "${GREEN}Uninstallation successful.${NC}" || quit 2 "Failed to uninstall app \"$1\" !"
+    test $? -eq 0 && echo -e "${GREEN}Uninstallation successful.${NC}" || quit 2 "Failed to uninstall app \"$1\" !"
   else
     quit 2 "Unable to find recipe for \"$1\" !"
   fi
@@ -160,7 +160,7 @@ l | list)
   shift
   [ -n "$1" ] && [ "$1" = "-a" ] && all="all " && LIST_ALL=1
   echo ''
-  printf "%s\n" "${YELLOW}Listing ${all}available recipes ...${NC}"
+  echo -e "${YELLOW}Listing ${all}available recipes ...${NC}"
   echo ''
   list_recipes
   echo ''

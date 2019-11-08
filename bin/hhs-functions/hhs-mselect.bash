@@ -74,11 +74,11 @@ function __hhs_mselect() {
     [1-9]) # When a number is typed, try to scroll to index
       show-cursor
       index="$ANS"
-      echo -n "$ANS"
+      echo -en "$ANS"
       while [ "${#index}" -lt "${#len}" ]; do
         read -rs -n 1 ANS2
         [ -z "$ANS2" ] && break
-        echo -n "$ANS2"
+        echo -en "$ANS2"
         index="${index}${ANS2}"
       done
       hide-cursor

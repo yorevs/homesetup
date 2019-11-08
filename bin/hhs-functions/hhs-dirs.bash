@@ -27,8 +27,8 @@ function __hhs_save-dir() {
     return 1
   else
 
-    [ -n "$2" ] || dirAlias=$(echo -n "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-    [ -n "$2" ] && dirAlias=$(echo -n "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    [ -n "$2" ] || dirAlias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    [ -n "$2" ] && dirAlias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
     if [ "$1" = "-e" ]; then
       vi "$HHS_SAVED_DIRS"
@@ -47,7 +47,7 @@ function __hhs_save-dir() {
       echo "$dirAlias=$dir" >>"$HHS_SAVED_DIRS"
       # shellcheck disable=SC2046
       IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$HHS_SAVED_DIRS"
-      printf "%s\n" "${allDirs[@]}" >"$HHS_SAVED_DIRS"
+      echo -e "${allDirs[@]}" >"$HHS_SAVED_DIRS"
       sort "$HHS_SAVED_DIRS" -o "$HHS_SAVED_DIRS"
       echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HIGHLIGHT_COLOR}$dirAlias ${NC}"
     fi
@@ -90,11 +90,11 @@ function __hhs_load-dir() {
       (
         IFS=$'\n'
         for next in ${allDirs[*]}; do
-          dirAlias=$(echo -n "$next" | awk -F '=' '{ print $1 }')
-          dir=$(echo -n "$next" | awk -F '=' '{ print $2 }')
+          dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
+          dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
           printf "${HIGHLIGHT_COLOR}${dirAlias}"
           printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-          printf '%s\n' "${YELLOW} is saved as ${WHITE}'${dir}'"
+          echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
         done
         IFS="$HHS_RESET_IFS"
       )
@@ -113,7 +113,7 @@ function __hhs_load-dir() {
         # shellcheck disable=SC2181
         if [ "$?" -eq 0 ]; then
           selIndex=$(grep . "$mselectFile")
-          dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+          dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
           # selIndex is zero-based
           dir=$(awk "NR==$((selIndex + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
         fi
@@ -121,11 +121,11 @@ function __hhs_load-dir() {
       )
       ;;
     [a-zA-Z0-9_]*)
-      dirAlias=$(echo -n "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+      dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
       dir=$(grep "^${dirAlias}=" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
       ;;
     *)
-      printf '%s\n' "${RED}Invalid arguments: \"$1\"${NC}"
+      echo -e "${RED}Invalid arguments: \"$1\"${NC}"
       return 1
       ;;
     esac
