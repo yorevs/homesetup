@@ -275,7 +275,7 @@ cmd_firebase() {
     upload_dotfiles "$fb_alias"
     ;;
   dl | download)
-    echo -e "${RED}"
+    echo -e "${ORANGE}"
     read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
     echo -e "${NC}"
     if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
