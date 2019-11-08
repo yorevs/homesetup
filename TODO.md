@@ -4,3 +4,4 @@
 - [ ] Merge the scripts dotfiles.bash and hspm.bash into hhs.bash
 - [ ] Save aliasdef to firebase
 - [ ] Add paths -c -> cleanup paths
+- [ ] Check INSTALL_DIR and HHS_HOME

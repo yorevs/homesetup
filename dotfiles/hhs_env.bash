@@ -74,7 +74,7 @@ export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
 export HHS_HOME="$HOME/HomeSetup"
 export HHS_DIR="$HOME/.hhs"
 export HHS_VERSION=$(grep . "$HHS_HOME/.VERSION")
-export HHS_WELCOME="${ORANGE}${HHS_MY_OS} ${GREEN}¯\_(ツ)_/¯ Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${HHS_VERSION}${NC}"
+export HHS_WELCOME="${ORANGE}${HHS_MY_OS} ${GREEN} Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${HHS_VERSION}${NC}"
 export HHS_RESET_IFS="$IFS"
 
 # Customizeable
