@@ -63,26 +63,28 @@ unset file
 # -----------------------------------------------------------------------------------
 # Load other stuff
 
-AUTO_CPL_D="$HHS_DIR/bin"
+# Bash completions
+if [ "bash" = "$HHS_MY_SHELL" ]; then
 
-# Enable tab completion for `git` by marking it as an alias for `git`
-if command -v git &>/dev/null; then
-  if [ "bash" = "$HHS_MY_SHELL" ]; then
-    #[ -s "$AUTO_CPL_D/git-completion.bash" ] &&
-    \. "$AUTO_CPL_D/git-completion.bash" # This loads git bash complete completetion
+  AUTO_CPL_D="$HHS_DIR/bin"
+  
+  # Enable tab completion for `git`
+  if command -v git &>/dev/null; then
+      [ -f "$AUTO_CPL_D/git-completion.bash" ] && \. "$AUTO_CPL_D/git-completion.bash"
   fi
-fi
 
-# Enable tab completion for `docker` by marking it as an alias for `git`
-if command -v docker &>/dev/null; then
-  if [ "bash" = "$HHS_MY_SHELL" ]; then
-    #[ -s "$AUTO_CPL_D/docker-compose-completion.bash" ] &&
-    \. "$AUTO_CPL_D/docker-compose-completion.bash" # This loads docker compose bash completetion
-    #[ -s "$AUTO_CPL_D/docker-machine-completion.bash" ] &&
-    \. "$AUTO_CPL_D/docker-machine-completion.bash" # This loads docker machine bash completetion
-    #[ -s "$AUTO_CPL_D/docker-completion.bash" ] &&
-    \. "$AUTO_CPL_D/docker-completion.bash" # This loads docker bash completetion
+  # Enable tab completion for `docker`
+  if command -v docker &>/dev/null; then
+      [ -f "$AUTO_CPL_D/docker-compose-completion.bash" ] && \. "$AUTO_CPL_D/docker-compose-completion.bash"
+      [ -f "$AUTO_CPL_D/docker-machine-completion.bash" ] && \. "$AUTO_CPL_D/docker-machine-completion.bash"
+      [ -f "$AUTO_CPL_D/docker-completion.bash" ] && \. "$AUTO_CPL_D/docker-completion.bash"
   fi
+
+  # Enable tab completion for `gradle`
+  if command -v gradle &>/dev/null; then
+      [ -f "$AUTO_CPL_D/gradle-completion.bash" ] && \. "$AUTO_CPL_D/gradle-completion.bash"
+  fi
+
 fi
 
 # Enable tab completion for `docker`
