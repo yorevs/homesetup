@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC1090,SC2015
+# shellcheck disable=SC1117,SC1090,SC2015,SC2034
 
 #  Script: hspm.bash
 # Purpose: Manage your development tools using installation/uninstallation recipes.
@@ -12,9 +12,6 @@
 # Current script version.
 VERSION=0.9.0
 
-# This script name.
-APP_NAME="${0##*/}"
-
 # Help message to be displayed by the script.
 USAGE="
 Usage: $APP_NAME <install/uninstall/list> [recipe]
@@ -26,8 +23,11 @@ Usage: $APP_NAME <install/uninstall/list> [recipe]
                                   if option -a is used, displays even apps without recipes.
 "
 
-# Import bash stuff
-[ -f "$HOME/.bash_functions" ] && \. "$HOME/.bash_functions"
+# Functions to be unset after quit
+UNSETS=( cleanup_recipes list_recipes install_recipe uninstall_recipe )
+
+# shellcheck disable=SC1090
+[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/hhs-recipes}
 
@@ -40,39 +40,12 @@ cleanup_recipes() {
   unset -f about depends install uninstall
 }
 
-# Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code.
-# @param $2 [Opt] : The exit message to be displayed.
-quit() {
-
-  cleanup_recipes
-  unset -f quit usage version cleanup_recipes list_recipes install_recipe uninstall_recipe
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}"
-  [ "$#" -gt 0 ] && echo -en "$*"
-  # Unset all declared functions
-  echo -e "${NC}"
-  exit "$ret"
-}
-
-# Usage message.
-usage() {
-  quit 1 "$USAGE"
-}
-
-# Version message.
-version() {
-  quit 1 "$VERSION"
-}
-
-# Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
 [ "$#" -lt 1 ] && usage 1
 [ "$#" -eq 1 ] && [ "$1" != "list" ] && usage 1
 
-[ -z "$HHS_DEV_TOOLS" ] || [ ${#HHS_DEV_TOOLS[*]} -le 0 ] && quit 1 "HHS_DEV_TOOLS variable is undefined!"
+if [ -z "$HHS_DEV_TOOLS" ] || [ ${#HHS_DEV_TOOLS[*]} -le 0 ]; then
+  quit 1 "HHS_DEV_TOOLS variable is undefined!"
+fi
 
 # shellcheck disable=SC2206
 ALL_RECIPES=()

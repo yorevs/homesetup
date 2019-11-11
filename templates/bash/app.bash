@@ -6,50 +6,12 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 
-# Current script version.
-VERSION=0.9.0
+# shellcheck disable=SC1090
+[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
-# This script name.
-APP_NAME="${0##*/}"
-
-# Help message to be displayed by the script.
-USAGE="
-Usage: $APP_NAME [optionals] <mandatories>
-"
-
-# Import pre-defined Bash Colors
-# shellcheck source=/dev/null
-[ -f ~/.bash_colors ] && \. ~/.bash_colors
-
-# Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
-# @param $2 [Opt] : The exit message to be displayed.
-quit() {
-
-  unset -f quit usage version main
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}"
-  [ "$#" -gt 0 ] && echo -en "$*"
-  # Unset all declared functions
-  echo -e "${NC}"
-  exit "$ret"
-}
-
-# Usage message.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
-usage() {
-  quit "$1" "$USAGE"
-}
-
-# Version message.
-version() {
-  quit 0 "$VERSION"
-}
-
-# Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+# Functions to be unset after quit
+# shellcheck disable=SC2034
+UNSETS=( main )
 
 main() {
   usage 1

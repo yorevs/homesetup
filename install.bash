@@ -34,21 +34,24 @@ Usage: $APP_NAME [OPTIONS] <args>
   STAR_ICN="\xef\x80\x85"
   NOTE_ICN="\xef\x84\x98"
 
+  # Functions to be unset after quit
+  UNSETS=( quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles )
+
   # Purpose: Quit the program and exhibits an exit message if specified.
-  # @param $1 [Req] : The exit return code.
+  # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
   # @param $2 [Opt] : The exit message to be displayed.
   quit() {
 
     # Unset all declared functions
-    unset -f \
-      quit usage check_inst_method install_dotfiles \
-      clone_repository activate_dotfiles
-
-    test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
-    test -n "$2" -a "$2" != "" && echo -e "${2}"
-    test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
-    echo ''
-    exit "$1"
+    unset -f "${UNSETS[*]}"
+    
+    ret=$1
+    shift
+    [ "$ret" -gt 1 ] && echo -en "${RED}"
+    [ "$#" -gt 0 ] && echo -en "$*"
+    # Unset all declared functions
+    echo -e "${NC}"
+    exit "$ret"
   }
 
   # Usage message.

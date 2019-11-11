@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
+# shellcheck disable=SC1117,SC2034
 
 #  Script: hostname-change.bash
 # Purpose: Change the hostname permanently
@@ -10,47 +10,13 @@
 # Current script version.
 VERSION=1.0.0
 
-# This script name.
-APP_NAME="${0##*/}"
-
 # Help message to be displayed by the script.
 USAGE="
 Usage: $APP_NAME <new_hostname>
 "
 
-# Import pre-defined Bash Colors
-# shellcheck source=/dev/null
-[ -f ~/.bash_colors ] && \. ~/.bash_colors
-
-# Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
-# @param $2 [Opt] : The exit message to be displayed.
-quit() {
-
-  unset -f quit usage version
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}"
-  [ "$#" -gt 0 ] && echo -en "$*"
-  # Unset all declared functions
-  echo -e "${NC}"
-  exit "$ret"
-}
-
-# Usage message.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
-usage() {
-  quit "$1" "$USAGE"
-}
-
-# Version message.
-version() {
-  quit 0 "$VERSION"
-}
-
-# Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] || [ -z "$1" ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+# shellcheck disable=SC1090
+[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Check current hostname
 HOSTN=$(hostname)

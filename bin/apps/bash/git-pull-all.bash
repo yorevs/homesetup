@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC1090
+# shellcheck disable=SC1117,SC2034
 
 #  Script: git-pull-all.bash
 # Purpose: Pull all projects within the specified path to the given repository/branch
@@ -18,39 +18,8 @@ USAGE="
 Usage: $APP_NAME <search_path> [repository=[origin]] [branch=[HEAD]]
 "
 
-# Import pre-defined Bash Colors
-# shellcheck source=/dev/null
-[ -f ~/.bash_colors ] && \. ~/.bash_colors
-
-# Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
-# @param $2 [Opt] : The exit message to be displayed.
-quit() {
-
-  unset -f quit usage version
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}"
-  [ "$#" -gt 0 ] && echo -en "$*"
-  # Unset all declared functions
-  echo -e "${NC}"
-  exit "$ret"
-}
-
-# Usage message.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
-usage() {
-  quit "$1" "$USAGE"
-}
-
-# Version message.
-version() {
-  quit 0 "$VERSION"
-}
-
-# Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+# shellcheck disable=SC1090
+[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Find all git repositories
 SPATH="$1"

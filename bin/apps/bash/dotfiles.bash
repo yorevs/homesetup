@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC1090
+# shellcheck disable=SC1117,SC1090,SC2034
 
 #  Script: dotfiles.bash
 # Purpose: Manage your HomeSetup dotfiles and more
@@ -12,9 +12,6 @@
 # Current script version.
 VERSION=0.9.0
 
-# This script name.
-APP_NAME="${0##*/}"
-
 # Help message to be displayed by the script.
 USAGE="
 Usage: $APP_NAME <command> [<args>]
@@ -24,52 +21,12 @@ Usage: $APP_NAME <command> [<args>]
         H  | help       : Provides a help about the command.
 "
 
-# Import pre-defined .bash_colors
-[ -f ~/.bash_colors ] && \. ~/.bash_colors
-[ -f ~/.bash_aliases ] && \. ~/.bash_aliases
-[ -f ~/.bash_functions ] && \. ~/.bash_functions
+# Functions to be unset after quit
+UNSETS=( exec_command cmd_help cmd_firebase load_fb_settings download_dotfiles \
+    parse_and_save_dotfiles build_dotfiles_payload trim upload_dotfiles )
 
-# Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
-# @param $2 [Opt] : The exit message to be displayed.
-quit() {
-
-  unset -f quit usage version exec_command cmd_help cmd_firebase load_fb_settings download_dotfiles \
-    parse_and_save_dotfiles build_dotfiles_payload trim upload_dotfiles
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}"
-  [ "$#" -gt 0 ] && echo -en "$*"
-  # Unset all declared functions
-  echo -e "${NC}"
-  exit "$ret"
-}
-
-# Usage message.
-usage() {
-  quit 1 "$USAGE"
-}
-
-# Version message.
-version() {
-  quit 1 "$VERSION"
-}
-
-# Trim whitespaces
-trim() {
-
-  local var="$*"
-  # remove leading whitespace characters
-  var="${var#"${var%%[![:space:]]*}"}"
-
-  # remove trailing whitespace characters
-  var="${var%"${var##*[![:space:]]}"}"
-  echo -en "$var"
-}
-
-# Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+# shellcheck disable=SC1090
+[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Firebase configuration file.
 FIREBASE_FILE="$HHS_DIR/.firebase"

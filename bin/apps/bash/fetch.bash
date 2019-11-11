@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
+# shellcheck disable=SC1117,SC2034
 
 #  Script: fetch.bash
 # Purpose: Script to fetch REST APIs data.
@@ -11,9 +11,6 @@
 
 # Current script version.
 VERSION=0.9.0
-
-# This script name.
-APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
@@ -29,37 +26,17 @@ Usage: $APP_NAME <method> [options] <url>
         --silent                    : Omits all informational messages.
 "
 
-# Purpose: Quit the program and exhibits an exit message if specified.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
-# @param $2 [Opt] : The exit message to be displayed.
-quit() {
+# Functions to be unset after quit
+UNSETS=( format_json do_fetch )
 
-  unset -f quit usage version format_json do_fetch
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}"
-  [ "$#" -gt 0 ] && echo -en "$*"
-  # Unset all declared functions
-  echo -e "${NC}"
-  exit "$ret"
-}
-
-# Usage message.
-usage() {
-  quit 1 "$USAGE"
-}
-
-# Version message.
-version() {
-  quit 1 "$VERSION"
-}
-
-# Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+# shellcheck disable=SC1090
+[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Request timeout in seconds
 REQ_TIMEOUT=5
+
+# Return code
+RET=0
 
 shopt -s nocasematch
 case "$1" in
@@ -116,29 +93,38 @@ format_json() {
 
   # Piped input
   read -r response
-  [ -n "${FORMAT}" ] && echo -e "$response" | json_pp -f json -t json -json_opt pretty indent escape_slash
+  [ -n "${FORMAT}" ] && echo -e "$response" | json_pp
   [ -z "${FORMAT}" ] && echo -e "$response"
 }
 
 # Do the request
+# shellcheck disable=SC2086
 do_fetch() {
 
+  curl_opts=( -s --fail -m "$REQ_TIMEOUT" )
+
   if [ -z "$HEADERS" ] && [ -z "${BODY}" ]; then
-    curl -m $REQ_TIMEOUT -X "${METHOD}" "${URL}" 2>/dev/null | format_json
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   elif [ -z "$HEADERS" ] && [ -n "${BODY}" ]; then
-    curl -m $REQ_TIMEOUT -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null | format_json
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [ -n "$HEADERS" ] && [ -n "${BODY}" ]; then
-    curl -m $REQ_TIMEOUT -X "${METHOD}" -d "${BODY}" "${URL}" 2>/dev/null | format_json
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [ -n "$HEADERS" ] && [ -z "${BODY}" ]; then
-    curl -m $REQ_TIMEOUT -X "${METHOD}" "${URL}" 2>/dev/null | format_json
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+  fi
+  RET=$?
+  if [ $RET -eq 0 ] && [ -n "${body}" ]; then
+    echo "${body}" | format_json
   fi
 
-  return $?
+  return $RET
 }
 
 [ -z "${SILENT}" ] && echo -e "Fetching: ${METHOD} $URL ..."
 
-do_fetch
-ret=$?
-
-quit $ret
+if do_fetch; then
+  quit 0
+else
+  [ -z "${SILENT}" ] && msg="Failed to process request: (Ret=$RET)"
+  quit $RET "$msg"
+fi
