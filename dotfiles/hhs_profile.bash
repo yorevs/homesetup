@@ -69,11 +69,13 @@ if [ "bash" = "$HHS_MY_SHELL" ]; then
   AUTO_CPL_D="$HHS_DIR/bin"
   
   # Enable tab completion for `git`
+  # Thanks to: https://github.com/git/git/tree/master/contrib/completion
   if command -v git &>/dev/null; then
       [ -f "$AUTO_CPL_D/git-completion.bash" ] && \. "$AUTO_CPL_D/git-completion.bash"
   fi
 
   # Enable tab completion for `docker`
+  # Thanks to: Built in docker scripts
   if command -v docker &>/dev/null; then
       [ -f "$AUTO_CPL_D/docker-compose-completion.bash" ] && \. "$AUTO_CPL_D/docker-compose-completion.bash"
       [ -f "$AUTO_CPL_D/docker-machine-completion.bash" ] && \. "$AUTO_CPL_D/docker-machine-completion.bash"
@@ -81,13 +83,12 @@ if [ "bash" = "$HHS_MY_SHELL" ]; then
   fi
 
   # Enable tab completion for `gradle`
+  # Thanks to: https://github.com/gradle/gradle-completion
   if command -v gradle &>/dev/null; then
       [ -f "$AUTO_CPL_D/gradle-completion.bash" ] && \. "$AUTO_CPL_D/gradle-completion.bash"
   fi
 
 fi
-
-# Enable tab completion for `docker`
 
 # Add custom paths to the system `$PATH`
 if [ -f "$HOME/.path" ]; then
@@ -96,6 +97,3 @@ fi
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
 paths -a "$HHS_DIR/bin"
-
-# Remove all `$PATH` duplicates
-export PATH=$(echo -en "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
