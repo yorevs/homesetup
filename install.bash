@@ -67,7 +67,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     HHS_HOME=${HHS_HOME:-$INSTALL_DIR}
 
     # Enable install script to use colors
-    [ -f 'dotfiles/hhs_colors.bash' ] && \. 'dotfiles/hhs_colors.bash'
+    [ -f 'dotfiles//bash/hhs_colors.bash' ] && \. 'dotfiles//bash/hhs_colors.bash'
     [ -f "$HHS_HOME/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME/.VERSION") installation ${NC}"
 
     # Check if the user passed the help or version parameters.
@@ -188,11 +188,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e ''
     echo -e '### Installation Settings ###'
     echo -e "${BLUE}"
-    echo -e "    Home Setup: $HHS_HOME"
-    echo -e "       Scripts: $BIN_DIR"
-    echo -e "         Fonts: $FONTS_DIR"
     echo -e "  Install Type: $METHOD"
     echo -e "       Options: ${OPT:-prompt}"
+    echo -e "         Shell: ${SHELL##*/}"
+    echo -e "     HomeSetup: $HHS_HOME"
+    echo -e "       Scripts: $BIN_DIR"
+    echo -e "         Fonts: $FONTS_DIR"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
 
@@ -218,7 +219,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       OPT='all'
     fi
 
-    command pushd "$HHS_HOME/dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
+    DOTFILES_DIR="$HHS_HOME/dotfiles/bash"
+    command pushd "$DOTFILES_DIR" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
     echo -e "\n${WHITE}Copying dotfiles into place ...${NC}"
 
     # If `all' option is used, copy all files
@@ -230,7 +232,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         # Backup existing dofile into $HOME/.hhs
         [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile")"
+        echo -en "$(ln -sfv "$DOTFILES_DIR/${next}.bash" "$dotfile")"
         echo -en "${NC}"
         [ -f "$dotfile" ] && echo -e " ... [   ${GREEN}OK${NC}   ]"
         [ -f "$dotfile" ] || echo -e " ... [ ${GREEN}FAILED${NC} ]"
@@ -248,13 +250,12 @@ Usage: $APP_NAME [OPTIONS] <args>
         # Backup existing dofile into $HOME/.hhs
         [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "$HHS_HOME/dotfiles/${next}.bash" "$dotfile")"
+        echo -en "$(ln -sfv "$DOTFILES_DIR/${next}.bash" "$dotfile")"
         echo -en "${NC}"
         [ -f "$dotfile" ] && echo -e " ... [   ${GREEN}OK${NC}   ]"
         [ -f "$dotfile" ] || echo -e " ... [ ${GREEN}FAILED${NC} ]"
       done
     fi
-
 
     # Link bin apps into place
     echo -e "\n${WHITE}Linking apps into place ...${NC}"
@@ -295,8 +296,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     sleep 1
     command git clone "$REPO_URL" "$HHS_HOME"
 
-    if [ -f "$HHS_HOME/dotfiles/hhs_colors.bash" ]; then
-      \. "$HHS_HOME/dotfiles/hhs_colors.bash"
+    if [ -f "$DOTFILES_DIR/hhs_colors.bash" ]; then
+      \. "$DOTFILES_DIR/hhs_colors.bash"
     else
       quit 2 "Unable to properly clone the repository!"
     fi
