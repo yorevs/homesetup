@@ -49,7 +49,7 @@ function __hhs_envs() {
         name=$(echo "$v" | cut -d '=' -f1)
         value=$(echo "$v" | cut -d '=' -f2-)
         if [[ ${name} =~ ${filter} ]]; then
-          echo -en "${HIGHLIGHT_COLOR}${name}${NC} "
+          echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
           echo -en " ${GREEN}=> ${NC}${value:0:$columns} "
           [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
@@ -60,6 +60,41 @@ function __hhs_envs() {
     )
     echo ' '
   fi
+
+  return 0
+}
+
+# @function: Select a shell from the existing shell list
+function __hhs_select-shell() {
+
+  local selIndex selShell mselectFile results=()
+
+  clear
+  echo "${YELLOW}@@ Please select your new default shell:"
+  echo "-------------------------------------------------------------"
+  echo -en "${NC}"
+  IFS=$'\n' read -d '' -r -a results <<<"$(grep '/.*' '/etc/shells')"
+  mselectFile=$(mktemp)
+  __hhs_mselect "$mselectFile" "${results[*]}"
+  # shellcheck disable=SC2181
+  if [ "$?" -eq 0 ]; then
+    selIndex=$(grep . "$mselectFile")
+    selShell=${results[$selIndex]}
+    if [ -n "$selShell" ] && [ -f "$selShell" ]; then
+      echo "debug entrei 1 => $selShell"
+      chsh -s "$selShell"
+      if [ $? -eq 0 ]; then
+        clear
+        export SHELL="$selShell"
+        echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
+        echo "${ORANGE}Next time you open a terminal window you will use the new shell"
+      fi
+    else
+      echo "debug entrei 2 => $selShell"
+    fi
+  fi
+  IFS="$HHS_RESET_IFS"
+  echo -e "${NC}"
 
   return 0
 }

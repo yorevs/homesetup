@@ -55,7 +55,7 @@ function __hhs_aliases() {
             if [[ $next =~ $re ]]; then
               name=$(echo -en "$next" | cut -d'=' -f1 | cut -d ' ' -f2)
               expr=$(echo -en "$next" | cut -d'=' -f2-)
-              printf "${HIGHLIGHT_COLOR}${name//alias /}"
+              printf "${HHS_HIGHLIGHT_COLOR}${name//alias /}"
               printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
               echo -en "${YELLOW} is aliased to ${WHITE}${expr:0:$columns}"
             else
@@ -74,7 +74,7 @@ function __hhs_aliases() {
       # Add/Set one alias
       ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
       echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
-      echo -e "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
+      echo -e "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HHS_HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
       # shellcheck disable=SC1090
       \. "$aliasFile"
     elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then

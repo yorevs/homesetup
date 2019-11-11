@@ -41,7 +41,7 @@ function __hhs_paths() {
           [ -f "$HHS_PATHS_FILE" ] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")"      # Custom paths
           [ -d "/private/etc/paths" ] && private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
           [ -d "/etc/paths.d" ] && path_dir="$(grep ^"$path"$ /etc/paths.d/*)"          # General system path dir
-          echo -en "${HIGHLIGHT_COLOR}${path}"
+          echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
           printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
           [ "${#path}" -ge "$columns" ] && echo -en "${NC}" || echo -en "${NC}"
           if [ -d "$path" ]; then

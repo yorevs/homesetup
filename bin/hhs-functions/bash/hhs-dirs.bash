@@ -49,7 +49,7 @@ function __hhs_save-dir() {
       IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$HHS_SAVED_DIRS"
       echo -e "${allDirs[@]}" >"$HHS_SAVED_DIRS"
       sort "$HHS_SAVED_DIRS" -o "$HHS_SAVED_DIRS"
-      echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HIGHLIGHT_COLOR}$dirAlias ${NC}"
+      echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dirAlias ${NC}"
     fi
   fi
 
@@ -92,7 +92,7 @@ function __hhs_load-dir() {
         for next in ${allDirs[*]}; do
           dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
           dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
-          printf "${HIGHLIGHT_COLOR}${dirAlias}"
+          printf "${HHS_HIGHLIGHT_COLOR}${dirAlias}"
           printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
           echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
         done

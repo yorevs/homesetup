@@ -18,11 +18,11 @@ function __hhs_sysinfo() {
   else
     username="$(whoami)"
     echo -e "\n${ORANGE}System information ------------------------------------------------"
-    echo -e "\n${GREEN}User:${HIGHLIGHT_COLOR}"
+    echo -e "\n${GREEN}User:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  Username..... : $username"
     echo -e "  UID.......... : $(id -u "$username")"
     echo -e "  GID.......... : $(id -g "$username")"
-    echo -e "\n${GREEN}System:${HIGHLIGHT_COLOR}"
+    echo -e "\n${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  OS........... : ${HHS_MY_OS}"
     echo -e "  Kernel........: v$(uname -pmr)"
     echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
@@ -30,13 +30,13 @@ function __hhs_sysinfo() {
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
     echo -e "\n${GREEN}Storage:"
     printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
-    echo -e "${HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
-    echo -e "\n${GREEN}Network:${HIGHLIGHT_COLOR}"
+    echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
+    echo -e "\n${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
     echo -e "  Gateway...... : $(route get default | grep gateway | cut -b 14-)"
     __hhs_has "pcregrep" && echo -e "$(ipl | awk '{ printf("  %s\n", $0) }')"
     __hhs_has "dig" && echo -e "  Real-IP...... : $(ip)"
-    echo -e "\n${GREEN}Logged Users:${HIGHLIGHT_COLOR}"
+    echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
     (
       IFS=$'\n'
       for next in $(who); do
@@ -103,7 +103,7 @@ function __hhs_process_list() {
         IFS=$'\n'
         for next in $allPids; do
           pid=$(echo "$next" | awk '{ print $2 }')
-          echo -en "${HIGHLIGHT_COLOR}$next" | tr ' ' '\t'
+          echo -en "${HHS_HIGHLIGHT_COLOR}$next" | tr ' ' '\t'
           if [ -n "$pid" ] && [ "$2" = "kill" ]; then
             kill -9 "$pid"
             echo -e "${RED}\t\t\t\t=> Killed with signal -9"
@@ -136,7 +136,7 @@ function __hhs_partitions() {
       IFS=$'\n'
       echo "${WHITE}"
       printf '%-25s\t%-4s\t%-4s\t%-4s\t%-4s\t\n' 'Mounted-ON' 'Size' 'Used' 'Avail' 'Capacity'
-      echo -e "----------------------------------------------------------------${HIGHLIGHT_COLOR}"
+      echo -e "----------------------------------------------------------------${HHS_HIGHLIGHT_COLOR}"
       for next in $allParts; do
         strText=${next:16}
         mounted="$(echo "$strText" | awk '{ print $8 }')"
@@ -153,37 +153,6 @@ function __hhs_partitions() {
       echo "${NC}"
     )
   fi
-
-  return 0
-}
-
-function __hhs_select-shell() {
-
-  local selIndex selShell mselectFile results=()
-
-  clear
-  echo "${YELLOW}@@ Please select your new default shell:"
-  echo "-------------------------------------------------------------"
-  echo -en "${NC}"
-  IFS=$'\n' read -d '' -r -a results <<<"$(grep '/.*' '/etc/shells')"
-  mselectFile=$(mktemp)
-  __hhs_mselect "$mselectFile" "${results[*]}"
-  # shellcheck disable=SC2181
-  if [ "$?" -eq 0 ]; then
-    selIndex=$(grep . "$mselectFile")
-    selShell=${results[$selIndex]}
-    if [ -n "$selShell" ] && [ -f "$selShell" ]; then
-      chsh -s "$selShell"
-      export SHELL="$selShell"
-      if [ $? -eq 0 ]; then
-        clear
-        echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
-        echo "${ORANGE}Next time you open a terminal window you will use the new shell"
-      fi
-    fi
-  fi
-  IFS="$HHS_RESET_IFS"
-  echo -e "${NC}"
 
   return 0
 }

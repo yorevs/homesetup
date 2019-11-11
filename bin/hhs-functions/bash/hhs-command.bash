@@ -50,7 +50,7 @@ function __hhs_command() {
       ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
       echo "Command $cmdName: $cmdExpr" >>"$HHS_CMD_FILE"
       sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
-      echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${HIGHLIGHT_COLOR}$cmdExpr ${NC}"
+      echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${HHS_HIGHLIGHT_COLOR}$cmdExpr ${NC}"
       ;;
     -r | --remove)
       shift
@@ -81,7 +81,7 @@ function __hhs_command() {
           for next in ${allCmds[*]}; do
             cmdName="( $index ) $(echo -en "$next" | awk -F ':' '{ print $1 }')"
             cmdExpr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
-            printf "${HIGHLIGHT_COLOR}${cmdName}"
+            printf "${HHS_HIGHLIGHT_COLOR}${cmdName}"
             printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
             echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
             index=$((index + 1))

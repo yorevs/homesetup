@@ -36,7 +36,7 @@ fi
 # Setting grep color: Default is RED
 export GREP_COLOR=${GREP_COLOR:-'1;31'}
 # Color used to highlight text: Default is BLUE
-export HIGHLIGHT_COLOR=${HIGHLIGHT_COLOR:-$BLUE}
+export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-$BLUE}
 
 if tput setaf 1 &>/dev/null; then
   # Solarized colors, taken from http://git.io/solarized-colors.

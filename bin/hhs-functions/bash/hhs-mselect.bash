@@ -20,7 +20,6 @@ function __hhs_mselect() {
     echo '  - If only one option is available, mselect will select it and return.'
     echo '  - A temporary file is suggested to used with this function: [mktemp].'
     echo '  - The outfile must not exist or be empty.'
-
     return 1
   fi
 
@@ -45,7 +44,7 @@ function __hhs_mselect() {
   while :; do
     columns="$(($(tput cols) - 7))"
     hide-cursor
-    echo "${WHITE}"
+    echo ''
 
     for i in $(seq "$showFrom" "$showTo"); do
       optStr="${allOptions[i]:0:$columns}"
@@ -55,7 +54,7 @@ function __hhs_mselect() {
       if [ "$i" -ne $selIndex ]; then
         printf " %.${#len}d  %0.4s %s" "$((i + 1))" ' ' "$optStr"
       else
-        printf "${HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s" "$((i + 1))" '>' "$optStr"
+        printf "${HHS_HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s" "$((i + 1))" '>' "$optStr"
       fi
       [ "${#optStr}" -ge "$columns" ] && echo -e "\033[4D\033[K...${NC}" || echo -e "${NC}"
     done
