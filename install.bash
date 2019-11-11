@@ -145,6 +145,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       [ -d "$BIN_DIR" ] && rm -f "${BIN_DIR:?}/*.*"
     fi
 
+    # Define fonts directory
+    FONTS_DIR="$HOME/Library/Fonts"
+
     # Create all user custom files.
     [ -f "$HOME/.path" ] || touch "$HOME/.path"
     [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
@@ -187,6 +190,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}"
     echo -e "    Home Setup: $HHS_HOME"
     echo -e "       Scripts: $BIN_DIR"
+    echo -e "         Fonts: $FONTS_DIR"
     echo -e "  Install Type: $METHOD"
     echo -e "       Options: ${OPT:-prompt}"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
@@ -214,7 +218,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OPT='all'
     fi
 
-    pushd "$HHS_HOME/dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
+    command pushd "$HHS_HOME/dotfiles" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
     echo -e "\n${WHITE}Copying dotfiles into place ...${NC}"
 
     # If `all' option is used, copy all files
@@ -251,30 +255,33 @@ Usage: $APP_NAME [OPTIONS] <args>
       done
     fi
 
-    echo -e "\n${WHITE}Copying scripts into place ...${NC}"
 
     # Link bin apps into place
+    echo -e "\n${WHITE}Linking apps into place ...${NC}"
     command find "$HHS_HOME/bin/apps" -type f \( -iname "**.bash" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; \
       &>/dev/null
     [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
 
-    # Link auto-completes into place
-    command find "$HHS_HOME/bin/auto-completions" -type f \( -iname "**.bash" \) \
+    # Link bash auto-completes into place
+    echo -e "\n${WHITE}Linking bash auto-completes into place ...${NC}"
+    command find "$HHS_HOME/bin/bash/auto-completions" -type f \( -iname "**.bash" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; \
       &>/dev/null
-    [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into $BIN_DIR directory"
+    [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
 
-    # Install HomeSetup fonts
-    [ -d "$HOME/Library/Fonts" ] && command cp "$HHS_HOME/misc/fonts"/*.otf "$HOME/Library/Fonts"
+    # Copy HomeSetup fonts into place
+    echo -e "\n${WHITE}Copying HomeSetup fonts into place ...${NC}"
+    [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory"
+    command cp "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR"
 
-    popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
+    command popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
 
-    # Link git hook
+    # Copy HomeSetup git hooks into place
     echo -e "\n${WHITE}Copying git hooks into place ...${NC}"
-    command cp templates/git/hooks/prepare-commit-msg .git/hooks/
+    command cp -fv templates/git/hooks/* .git/hooks/
   }
 
   # Clone the repository and install dotfiles.
