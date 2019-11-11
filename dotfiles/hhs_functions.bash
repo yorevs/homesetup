@@ -22,7 +22,7 @@ STAR_ICN="\xef\x80\x85"
 
 # Load all function files prefixed with 'hhs-`
 # shellcheck disable=SC2044
-for file in $(find "${HHS_HOME}/bin/hhs-functions" -type f -name "hhs-*.bash" | sort); do
+for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
   \. "$file"
 done
 
