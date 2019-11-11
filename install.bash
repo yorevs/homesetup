@@ -203,7 +203,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${NC}"
       if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
         [ -n "$ANS" ] && echo ''
-        echo -e "${WHITE}Backing up existing dotfiles ...${NC}"
+        echo -en "${WHITE}Backing up existing dotfiles ..."
         # Moving old hhs files into the proper directory
         [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
         [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
@@ -211,6 +211,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
         # Removing the old $HOME/bin folder
         [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "${HOME:?}/bin"
+        echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
       else
         [ -n "$ANS" ] && echo ''
         quit 1 "Installation cancelled!"
@@ -221,7 +222,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     DOTFILES_DIR="$HHS_HOME/dotfiles/bash"
     command pushd "$DOTFILES_DIR" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
-    echo -e "\n${WHITE}Copying dotfiles into place ...${NC}"
+    echo -e "\n${WHITE}Installing dotfiles ${NC}"
 
     # If `all' option is used, copy all files
     if [ "$OPT" = 'all' ]; then
@@ -234,8 +235,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "$DOTFILES_DIR/${next}.bash" "$dotfile")"
         echo -en "${NC}"
-        [ -f "$dotfile" ] && echo -e " ... [   ${GREEN}OK${NC}   ]"
-        [ -f "$dotfile" ] || echo -e " ... [ ${GREEN}FAILED${NC} ]"
+        [ -f "$dotfile" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        [ -f "$dotfile" ] || echo -e "${WHITE} ... [ ${GREEN}FAILED${NC} ]"
       done
     # If `all' option is NOT used, prompt for confirmation
     else
@@ -252,37 +253,39 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "$DOTFILES_DIR/${next}.bash" "$dotfile")"
         echo -en "${NC}"
-        [ -f "$dotfile" ] && echo -e " ... [   ${GREEN}OK${NC}   ]"
-        [ -f "$dotfile" ] || echo -e " ... [ ${GREEN}FAILED${NC} ]"
+        [ -f "$dotfile" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        [ -f "$dotfile" ] || echo -e "${WHITE} ... [ ${GREEN}FAILED${NC} ]"
       done
     fi
 
     # Link bin apps into place
-    echo -e "\n${WHITE}Linking apps into place ...${NC}"
+    echo -en "\n${WHITE}Linking apps into place ${BLUE}"
     command find "$HHS_HOME/bin/apps" -type f \( -iname "**.bash" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
-      -exec command chmod 755 {} \; \
-      &>/dev/null
+      -exec command chmod 755 {} \; &>/dev/null
     [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
+    echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link bash auto-completes into place
-    echo -e "\n${WHITE}Linking bash auto-completes into place ...${NC}"
-    command find "$HHS_HOME/bin/bash/auto-completions" -type f \( -iname "**.bash" \) \
+    echo -en "\n${WHITE}Linking bash auto-completes into place ${BLUE}"
+    command find "$HHS_HOME/bin/auto-completions/bash" -type f \( -iname "**.bash" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
-      -exec command chmod 755 {} \; \
-      &>/dev/null
+      -exec command chmod 755 {} \; &>/dev/null
     [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
+    echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Copy HomeSetup fonts into place
-    echo -e "\n${WHITE}Copying HomeSetup fonts into place ...${NC}"
+    echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
     [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory"
-    command cp "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR"
+    command cp -fv "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR" &>/dev/null
+    [ -f "$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     command popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
 
     # Copy HomeSetup git hooks into place
-    echo -e "\n${WHITE}Copying git hooks into place ...${NC}"
-    command cp -fv templates/git/hooks/* .git/hooks/
+    echo -en "\n${WHITE}Copying git hooks into place ${BLUE}"
+    command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &>/dev/null
+    [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
   }
 
   # Clone the repository and install dotfiles.

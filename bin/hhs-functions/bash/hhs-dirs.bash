@@ -56,7 +56,7 @@ function __hhs_save-dir() {
   return 0
 }
 
-# shellcheck disable=SC2059
+# shellcheck disable=SC2059,SC2181,SC2046
 # @function: Pushd into a saved directory issued by save.
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load-dir() {
@@ -75,7 +75,6 @@ function __hhs_load-dir() {
     return 1
   fi
 
-  # shellcheck disable=SC2046
   IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$HHS_SAVED_DIRS"
 
   if [ ${#allDirs[@]} -ne 0 ]; then
@@ -87,17 +86,15 @@ function __hhs_load-dir() {
       echo ' '
       echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
       echo ' '
-      (
-        IFS=$'\n'
-        for next in ${allDirs[*]}; do
-          dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
-          dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
-          printf "${HHS_HIGHLIGHT_COLOR}${dirAlias}"
-          printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-          echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
-        done
-        IFS="$HHS_RESET_IFS"
-      )
+      IFS=$'\n'
+      for next in ${allDirs[*]}; do
+        dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
+        dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
+        printf "${HHS_HIGHLIGHT_COLOR}${dirAlias}"
+        printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+        echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
+      done
+      IFS="$HHS_RESET_IFS"
       echo "${NC}"
       return 0
       ;;
@@ -105,20 +102,16 @@ function __hhs_load-dir() {
       clear
       echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
       echo -en "${WHITE}"
-      (
-        IFS=$'\n'
-        # shellcheck disable=SC2030
-        mselectFile=$(mktemp)
-        __hhs_mselect "$mselectFile" "${allDirs[*]}"
-        # shellcheck disable=SC2181
-        if [ "$?" -eq 0 ]; then
-          selIndex=$(grep . "$mselectFile")
-          dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-          # selIndex is zero-based
-          dir=$(awk "NR==$((selIndex + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
-        fi
-        IFS="$HHS_RESET_IFS"
-      )
+      IFS=$'\n'
+      mselectFile=$(mktemp)
+      __hhs_mselect "$mselectFile" "${allDirs[*]}"
+      if [ "$?" -eq 0 ]; then
+        selIndex=$(grep . "$mselectFile")
+        dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        # selIndex is zero-based, so we need to increment this number
+        dir=$(awk "NR==$((selIndex + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
+      fi
+      IFS="$HHS_RESET_IFS"
       ;;
     [a-zA-Z0-9_]*)
       dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
@@ -142,7 +135,6 @@ function __hhs_load-dir() {
     echo "${ORANGE}No directories were saved yet \"$HHS_SAVED_DIRS\" !${NC}"
   fi
 
-  # shellcheck disable=SC2031
   [ -f "$mselectFile" ] && command rm -f "$mselectFile"
 
   return 0

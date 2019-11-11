@@ -81,20 +81,19 @@ function __hhs_select-shell() {
     selIndex=$(grep . "$mselectFile")
     selShell=${results[$selIndex]}
     if [ -n "$selShell" ] && [ -f "$selShell" ]; then
-      echo "debug entrei 1 => $selShell"
-      chsh -s "$selShell"
+      command chsh -s "$selShell"
       if [ $? -eq 0 ]; then
         clear
         export SHELL="$selShell"
         echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
         echo "${ORANGE}Next time you open a terminal window you will use the new shell"
       fi
-    else
-      echo "debug entrei 2 => $selShell"
     fi
   fi
   IFS="$HHS_RESET_IFS"
   echo -e "${NC}"
+  
+  [ -f "$mselectFile" ] && command rm -f "$mselectFile"
 
   return 0
 }

@@ -44,7 +44,7 @@ function __hhs_command() {
       shift
       cmdExpr="$*"
       if [ -z "$cmdName" ] || [ -z "$cmdExpr" ]; then
-        printf "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}"
+        echo -e "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}"
         return 1
       fi
       ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
@@ -63,7 +63,7 @@ function __hhs_command() {
       elif [ -n "$cmdId" ]; then
         ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
       else
-        printf "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}"
+        echo -e "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}"
         return 1
       fi
       echo "${YELLOW}Command removed: ${WHITE}\"$cmdId\" ${NC}"
@@ -76,18 +76,16 @@ function __hhs_command() {
         echo ' '
         echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
         echo ' '
-        (
-          IFS=$'\n'
-          for next in ${allCmds[*]}; do
-            cmdName="( $index ) $(echo -en "$next" | awk -F ':' '{ print $1 }')"
-            cmdExpr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
-            printf "${HHS_HIGHLIGHT_COLOR}${cmdName}"
-            printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-            echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
-            index=$((index + 1))
-          done
-          IFS="$HHS_RESET_IFS"
-        )
+        IFS=$'\n'
+        for next in ${allCmds[*]}; do
+          cmdName="( $index ) $(echo -en "$next" | awk -F ':' '{ print $1 }')"
+          cmdExpr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
+          echo -e "${HHS_HIGHLIGHT_COLOR}${cmdName}"
+          printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
+          echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
+          index=$((index + 1))
+        done
+        IFS="$HHS_RESET_IFS"
         echo -e "${NC}"
       else
         echo "${YELLOW}No commands available yet !${NC}"
@@ -103,7 +101,8 @@ function __hhs_command() {
         __hhs_mselect "$mselectFile" "${allCmds[*]}"
         # shellcheck disable=SC2181
         if [ "$?" -eq 0 ]; then
-          selIndex=$(grep . "$mselectFile") # selIndex is zero-based
+          selIndex=$(grep . "$mselectFile")
+          # selIndex is zero-based, so we need to increment this number
           cmdExpr=$(awk "NR==$((selIndex + 1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
           [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
           [ -n "$cmdExpr" ] && echo "#> $cmdExpr" && eval "$cmdExpr"
