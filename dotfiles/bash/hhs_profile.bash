@@ -97,3 +97,5 @@ fi
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
 paths -a "$HHS_DIR/bin"
+
+__hhs_auto-update-check
