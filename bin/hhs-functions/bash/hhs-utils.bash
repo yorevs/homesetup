@@ -13,14 +13,13 @@
 ..() {
   [ -z "$1" ] && cd ..
   if [ -n "$1" ]; then
-    old_pwd=$(pwd)
+    last_pwd=$(pwd)
     for x in $(seq 1 "$1"); do
-      pushd "$x" || return 1
-      cd ..
+      cd .. || return 1
     done
+    pwd
   fi
-
-  export OLDPWD="$old_pwd"
+  export OLDPWD="$last_pwd"
 
   return 1
 }
@@ -43,7 +42,11 @@ mkcd() {
     # Create the java package like dirs using dot notation: E.g java.lang.util => java/lang/util
     dir="${1//.//}"
     mkdir -p "${dir}" || return 1
-    pushd "${dir}" >/dev/null || return 1
+    last_pwd=$(pwd)
+    for d in ${dir//\// }; do
+      cd "$d" || return 1
+    done
+    export OLDPWD=$last_pwd
     echo "${GREEN}Directory created: ${dir} ${NC}"
   fi
 
