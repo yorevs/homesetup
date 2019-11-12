@@ -20,13 +20,14 @@ function __hhs_paths() {
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo 'Options: '
-    echo '                     : Lists all path entries.'
-    echo '           -a <path> : Add to the current <path> .'
-    echo '           -r <path> : Remove from the current <path> .'
-    echo '           -e        : Edit current HHS_PATHS_FILE .'
+    echo '                     : Lists all PATH entries.'
+    echo '           -a <path> : Add to the current <path> to PATH.'
+    echo '           -r <path> : Remove from the current <path> from PATH.'
+    echo '           -e        : Edit current HHS_PATHS_FILE.'
+    echo '           -c        : Attempt to clears non-existing paths. System paths are not affected'
     return 1
   else
-    if [ -z "$1" ]; then
+    if [ -z "$1" ] || [ "-c" = "$1" ]; then
       [ -f "$HHS_PATHS_FILE" ] || touch "$HHS_PATHS_FILE"
       pad=$(printf '%0.1s' "."{1..70})
       pad_len=70
@@ -34,39 +35,48 @@ function __hhs_paths() {
       echo ' '
       echo "${YELLOW}Listing all PATH entries:"
       echo ' '
-      (
-        IFS=$'\n'
-        for path in $(echo -e "${PATH//:/\\n}"); do
-          path="${path:0:$columns}"
-          [ -f "$HHS_PATHS_FILE" ] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")"      # Custom paths
-          [ -d "/private/etc/paths" ] && private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
-          [ -d "/etc/paths.d" ] && path_dir="$(grep ^"$path"$ /etc/paths.d/*)"          # General system path dir
-          echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
-          printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
-          [ "${#path}" -ge "$columns" ] && echo -en "${NC}" || echo -en "${NC}"
-          if [ -d "$path" ]; then
-            echo -en "${GREEN} ${CHECK_ICN} => "
-          else
+      IFS=$'\n'
+      for path in $(echo -e "${PATH//:/\\n}"); do
+        path="${path:0:$columns}"
+        [ -f "$HHS_PATHS_FILE" ] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")"      # Custom paths
+        [ -d "/private/etc/paths" ] && private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
+        [ -d "/etc/paths.d" ] && path_dir="$(grep ^"$path"$ /etc/paths.d/*)"          # General system path dir
+        echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
+        printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+        [ "${#path}" -ge "$columns" ] && echo -en "${NC}" || echo -en "${NC}"
+        if [ -d "$path" ]; then
+          echo -en "${GREEN} ${CHECK_ICN} => "
+        else
+          if [ "-c" = "$1" ]; then
+            ised -e "s#(^$path$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+            export PATH=${PATH//$path:/}
             echo -en "${RED} ${CROSS_ICN} => "
+          else
+            echo -en "${ORANGE} ${CROSS_ICN} => "
           fi
-          [ -n "$custom" ] && echo "custom"
-          [ -n "$path_dir" ] && echo "paths.d"
-          [ -n "$private" ] && echo "private"
-          [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && echo "exported"
-        done
-        IFS="$HHS_RESET_IFS"
-      )
+        fi
+        [ -n "$custom" ] && echo "custom"
+        [ -n "$path_dir" ] && echo "paths.d"
+        [ -n "$private" ] && echo "private"
+        [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && echo "exported"
+      done
+      IFS="$HHS_RESET_IFS"
       echo -e "${NC}"
     elif [ "-e" = "$1" ]; then
       vi "$HHS_PATHS_FILE"
       return 0
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
-      [ -d "$2" ] && echo "$2" >>"$HHS_PATHS_FILE"
-      export PATH="$2:$PATH"
+      if [ -d "$2" ]; then
+        echo "$2" >>"$HHS_PATHS_FILE"
+        export PATH="$2:$PATH"
+      else
+        echo "${RED}Path \"$2\" does not exist${NC}"
+        return 1
+      fi
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
-      export PATH=${PATH//$2:/}
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+      export PATH=${PATH//$2:/}
     fi
   fi
 
