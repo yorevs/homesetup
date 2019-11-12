@@ -24,12 +24,21 @@
   return 1
 }
 
+# @function: TODO Comment it
+# @param $1 [Req] :
++() {
+  [ -z "$1" ] && return 1
+  [ -f "$1" ] || touch "$1"
+  [ -f "$1" ] && open "$1"
+
+  return $?
+}
+
 # shellcheck disable=SC2012
 # @function: List all file names sorted by name
 # @param $1 [Opt] : The column to sort; 9 (filename) by default
 lss() {
-  col="$1"
-  [ -z "$1" ] && col=9 # by default, sort by the filename
+  col="${1:-9}"
   command ls -la | sort -k "$col"
 
   return $?
@@ -39,7 +48,6 @@ lss() {
 # @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path
 mkcd() {
   if [ -n "$1" ] && [ ! -d "$1" ]; then
-    # Create the java package like dirs using dot notation: E.g java.lang.util => java/lang/util
     dir="${1//.//}"
     mkdir -p "${dir}" || return 1
     last_pwd=$(pwd)
@@ -47,7 +55,12 @@ mkcd() {
       cd "$d" || return 1
     done
     export OLDPWD=$last_pwd
-    echo "${GREEN}Directory created: ${dir} ${NC}"
+    echo "${GREEN}${dir}${NC}"
+  else
+    echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
+    echo ''
+    echo 'E.g:. mkcd dir1/dir2/dir3 (dirtree)'
+    echo 'E.g:. mkcd dir1.dir2.dir3 (package)'
   fi
 
   return 0
@@ -74,8 +87,8 @@ rand() {
 
 # @function: List all directories recursively (Nth level depth) as a tree
 # @param $1 [Req] : The max level depth to walk into
-lt() {
-  if __hhs_has "tree"; then
+if __hhs_has "tree"; then
+  lt() {
     if [ -n "$1" ] && [ -n "$2" ]; then
       tree "$1" -L "$2"
     else
@@ -83,10 +96,8 @@ lt() {
     fi
 
     return $?
-  fi
-
-  return 1
-}
+  }
+fi
 
 # @function: Convert unicode to hexadecimal
 # @param $1..N [Req] : The unicodes to convert
