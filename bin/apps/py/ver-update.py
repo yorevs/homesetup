@@ -1,8 +1,17 @@
 #!/usr/bin/env python
 
-import sys, re, getpass
-from subprocess import check_output
-from os import path, environ
+"""
+   @script: ver-update.py
+  @purpose: Provides a way to increment a version number
+  @created: Nov 12, 2019
+   @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+   @mailto: yorevs@hotmail.com
+     @site: https://github.com/yorevs/homesetup
+  @license: Please refer to <http://unlicense.org/>
+"""
+
+import sys
+from os import environ
 
 VERSION = [0,0,0]
 VERSION_FILE = environ['HHS_HOME'] + '/.VERSION'

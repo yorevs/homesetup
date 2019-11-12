@@ -1,86 +1,126 @@
 {
-	"elem0": null,
-	"elem1": "value1",
-	"elem2": {
-		"elem2_1": "value2_1",
-		"elem2_2": "value2_2",
-		"elem2_3": {
-			"elem2_3_1": "value2_3_1",
-			"elem2_3_2": "value2_3_2"
-		}
-	},
-	"elem3": [{
-		"name1": "value_name1"
-	}, {
-		"name2": "value_name2"
-	}, {
-		"name3": [{
-			"inner_name1": "inner_value1"
-		}, {
-			"inner_name1": "inner_value2"
-		}]
-	}],
-	"elem4": [{
-		"elem4_1": [{
-			"elem4_1_1": [{
-				"inner_nested_name1": "inner_nested_value1_1",
-				"inner_nested_name2": "inner_nested_value1_2"
-			}, {
-				"inner_nested_name1": "inner_nested_value2_1",
-				"inner_nested_name2": "inner_nested_value2_2"
-			}]
-		}, {
-			"elem4_1_2": [{
-				"inner_nested_name1": "inner_nested_value3_1",
-				"inner_nested_name3": "inner_nested_value3_2"
-			}, {
-				"inner_nested_name1": "inner_nested_value4_1",
-				"inner_nested_name3": "inner_nested_value4_2"
-			}]
-		}]
-	}, {
-		"elem4_2": [{
-			"elem4_2_1": [{
-				"inner_nested_name1": "inner_nested_value1_1"
-			}, {
-				"inner_nested_name1": "inner_nested_value2_1"
-			}]
-		}, {
-			"elem4_2_2": [{
-				"inner_nested_name1": "inner_nested_value3_1"
-			}, {
-				"inner_nested_name1": "inner_nested_value4_1"
-			}]
-		}]
-	}],
-	"elem5": [{
-		"radio": "Gaga",
-		"band": "FM"
-	}, {
-		"radio": "Gugo",
-		"band": "AM"
-	}],
-	"elem6": {
-		"elem6_1": [{
-			"elem6_1_1": "value6_1_1_A",
-			"elem6_1_2": "value6_1_2_A",
-			"elem6_1_3": [{
-				"elem6_1_3_1" : "value6_1_3_1_A",
-				"elem6_1_3_2" : "value6_1_3_2_A"
-			}, {
-				"elem6_1_3_1" : "value6_1_3_1_C",
-				"elem6_1_3_2" : "value6_1_3_2_C"
-			}]
-		}, {
-			"elem6_1_1": "value6_1_1_B",
-			"elem6_1_2": "value6_1_2_B",
-			"elem6_1_3": [{
-				"elem6_1_3_1" : "value6_1_3_1_B",
-				"elem6_1_3_2" : "value6_1_3_2_B"
-			}, {
-				"elem6_1_3_1" : "value6_1_3_1_D",
-				"elem6_1_3_2" : "value6_1_3_2_D"
-			}]
-		}]
-	}
+  "elem0": null,
+  "elem1": "value1",
+  "elem2": {
+    "elem2_1": "value2_1",
+    "elem2_2": "value2_2",
+    "elem2_3": {
+      "elem2_3_1": "value2_3_1",
+      "elem2_3_2": "value2_3_2"
+    }
+  },
+  "elem3": [
+    {
+      "name1": "value_name1"
+    },
+    {
+      "name2": "value_name2"
+    },
+    {
+      "name3": [
+        {
+          "inner_name1": "inner_value1"
+        },
+        {
+          "inner_name1": "inner_value2"
+        }
+      ]
+    }
+  ],
+  "elem4": [
+    {
+      "elem4_1": [
+        {
+          "elem4_1_1": [
+            {
+              "inner_nested_name1": "inner_nested_value1_1",
+              "inner_nested_name2": "inner_nested_value1_2"
+            },
+            {
+              "inner_nested_name1": "inner_nested_value2_1",
+              "inner_nested_name2": "inner_nested_value2_2"
+            }
+          ]
+        },
+        {
+          "elem4_1_2": [
+            {
+              "inner_nested_name1": "inner_nested_value3_1",
+              "inner_nested_name3": "inner_nested_value3_2"
+            },
+            {
+              "inner_nested_name1": "inner_nested_value4_1",
+              "inner_nested_name3": "inner_nested_value4_2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "elem4_2": [
+        {
+          "elem4_2_1": [
+            {
+              "inner_nested_name1": "inner_nested_value1_1"
+            },
+            {
+              "inner_nested_name1": "inner_nested_value2_1"
+            }
+          ]
+        },
+        {
+          "elem4_2_2": [
+            {
+              "inner_nested_name1": "inner_nested_value3_1"
+            },
+            {
+              "inner_nested_name1": "inner_nested_value4_1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "elem5": [
+    {
+      "radio": "Gaga",
+      "band": "FM"
+    },
+    {
+      "radio": "Gugo",
+      "band": "AM"
+    }
+  ],
+  "elem6": {
+    "elem6_1": [
+      {
+        "elem6_1_1": "value6_1_1_A",
+        "elem6_1_2": "value6_1_2_A",
+        "elem6_1_3": [
+          {
+            "elem6_1_3_1": "value6_1_3_1_A",
+            "elem6_1_3_2": "value6_1_3_2_A"
+          },
+          {
+            "elem6_1_3_1": "value6_1_3_1_C",
+            "elem6_1_3_2": "value6_1_3_2_C"
+          }
+        ]
+      },
+      {
+        "elem6_1_1": "value6_1_1_B",
+        "elem6_1_2": "value6_1_2_B",
+        "elem6_1_3": [
+          {
+            "elem6_1_3_1": "value6_1_3_1_B",
+            "elem6_1_3_2": "value6_1_3_2_B"
+          },
+          {
+            "elem6_1_3_1": "value6_1_3_1_D",
+            "elem6_1_3_2": "value6_1_3_2_D"
+          }
+        ]
+      }
+    ]
+  }
 }
