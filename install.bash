@@ -336,6 +336,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
+    date -v+7d "+%s%S" > "${HHS_DIR}/.last_update"
     quit 0
   }
 
