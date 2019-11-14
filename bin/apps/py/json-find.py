@@ -16,15 +16,17 @@ import json
 
 from jsonutils.JsonUtils import JsonUtils
 
-PROC_NAME       = os.path.basename(__file__)
+APP_NAME    = os.path.basename(__file__)
+
 # Version tuple: (major,minor,build)
-VERSION         = (0, 9, 0)
+APP_VERSION = (0, 9, 0)
+
 # Usage message
-USAGE           = """
+USAGE       = """
 Find a json path from a json string
 
 Usage: python {} -f <filename> -a <alias_to_find>
-""".format(PROC_NAME)
+""".format(APP_NAME)
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
 def usage(exitCode=0):
@@ -33,7 +35,7 @@ def usage(exitCode=0):
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME,VERSION[0],VERSION[1],VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME,APP_VERSION[0],APP_VERSION[1],APP_VERSION[2]))
     sys.exit(0)
     
 # @purpose: Parse the command line arguments and execute the program accordingly.
@@ -42,7 +44,6 @@ def main(argv):
     try:
         if len(sys.argv) == 1 or sys.argv[1] in [ '-h', '--help' ]:
             usage()
-
         f_json = None
         json_obj = None
         alias = None
