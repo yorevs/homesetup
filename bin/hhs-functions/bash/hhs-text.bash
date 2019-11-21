@@ -15,7 +15,7 @@ function __hhs_highlight() {
 
   local search="$*"
   local hl_color="${HHS_HIGHLIGHT_COLOR}"
-  local gflags="-FEi"
+  local gflags="-Ei"
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options]"
@@ -23,7 +23,7 @@ function __hhs_highlight() {
     hl_color=${HHS_HIGHLIGHT_COLOR//\e[/}
     hl_color=${HHS_HIGHLIGHT_COLOR/m/}
     while read -r stream; do
-      echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "($search|\$)"
+      echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "$search"
     done
   fi
 

@@ -26,7 +26,7 @@ function __hhs_search-file() {
     local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
     inames=$(python -c "$expr")
     echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-    eval "find -L $1 -type f \( $inames \) | __hhs_highlight \"(${2//\*/.*}|\$)\""
+    eval "find -L $1 -type f \( $inames \) | __hhs_highlight ${2//\*/.*}"
     return $?
   fi
 }
@@ -49,7 +49,7 @@ function __hhs_search-dir() {
     local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
     inames=$(python -c "$expr")
     echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-    eval "find -L $1 -type d \( $inames \) | __hhs_highlight \"(${2//\*/.*}|\$)\""
+    eval "find -L $1 -type d \( $inames \) | __hhs_highlight ${2//\*/.*}"
     return $?
   fi
 }
@@ -108,21 +108,25 @@ function __hhs_search-string() {
 
     local expr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
     local search_str="$2"
+    local baseCmd fullCmd
 
     inames=$(python -c "$expr")
+    baseCmd="find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
     echo "${YELLOW}Searching for \"${strType}\" matching: \"$search_str\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
 
     if [ -n "$replace" ]; then
       if [ "$strType" = 'string' ]; then
-        echo "${RED}Can't replace non-Regex expressions in search!${NC}"
+        echo "${RED}Can't search and replace non-Regex expressions!${NC}"
         return 1
       fi
-      [ "Linux" = "${HHS_MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight \"($repl_str|\$)\""
-      [ "Darwin" = "${HHS_MY_OS}" ] && eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight \"($repl_str|\$)\""
+      [ "Linux" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight $repl_str"
+      [ "Darwin" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight $repl_str"
     else
-      eval "find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {} + | __hhs_highlight \"($search_str|\$)\""
+      fullCmd="${baseCmd} + | __hhs_highlight $search_str"
     fi
+    eval "${fullCmd}"
+    return $?
   fi
 
-  return 0
+  return 1
 }
