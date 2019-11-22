@@ -14,7 +14,6 @@
 function __hhs_search-file() {
 
   local inames
-  local gflags="-E"
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
     echo ''
@@ -26,7 +25,7 @@ function __hhs_search-file() {
     local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
     inames=$(python -c "$expr")
     echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-    eval "find -L $1 -type f \( $inames \) | __hhs_highlight ${2//\*/.*}"
+    eval "find -L $1 -type f \( $inames \) | __hhs_highlight \"(${2//\*/.*}|$)\""
     return $?
   fi
 }
@@ -37,7 +36,6 @@ function __hhs_search-file() {
 function __hhs_search-dir() {
 
   local inames
-  local gflags="-E"
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
     echo ''
@@ -49,7 +47,7 @@ function __hhs_search-dir() {
     local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
     inames=$(python -c "$expr")
     echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-    eval "find -L $1 -type d \( $inames \) | __hhs_highlight ${2//\*/.*}"
+    eval "find -L $1 -type d \( $inames \) | __hhs_highlight (${2//\*/.*}|$)"
     return $?
   fi
 }

@@ -23,7 +23,7 @@ function __hhs_highlight() {
     hl_color=${HHS_HIGHLIGHT_COLOR//\e[/}
     hl_color=${HHS_HIGHLIGHT_COLOR/m/}
     while read -r stream; do
-      echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "$search"
+      echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "${search}"
     done
   fi
 
