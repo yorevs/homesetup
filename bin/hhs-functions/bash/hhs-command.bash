@@ -29,9 +29,8 @@ function __hhs_command() {
     echo "             -l : List all stored commands."
     return 1
   else
-
-    # shellcheck disable=SC2046
-    IFS=$'\n' read -d '' -r -a allCmds IFS="$HHS_RESET_IFS" <"$HHS_CMD_FILE"
+    
+    IFS=$'\n' read -d '' -r -a allCmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
 
     case "$1" in
     -e | --edit)
@@ -48,7 +47,8 @@ function __hhs_command() {
         return 1
       fi
       ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
-      echo "Command $cmdName: $cmdExpr" >>"$HHS_CMD_FILE"
+      allCmds+=("Command $cmdName: $cmdExpr")
+      printf "%s\n" "${allCmds[@]}" > "$HHS_CMD_FILE"
       sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
       echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${HHS_HIGHLIGHT_COLOR}$cmdExpr ${NC}"
       ;;
@@ -59,8 +59,11 @@ function __hhs_command() {
       local re='^[1-9]+$'
       if [[ $cmdId =~ $re ]]; then
         cmdExpr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
-        ised -e "s#(^$cmdExpr)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+        [ -z "${cmdExpr}" ] && echo "${RED}Command index not found: \"${cmdId}\"" && return 1
+        ised -e "/^${cmdExpr}$/d" "$HHS_CMD_FILE"
       elif [ -n "$cmdId" ]; then
+        cmdExpr=$(grep "${cmdId}" "$HHS_CMD_FILE")
+        [ -z "${cmdExpr}" ] && echo "${RED}Command not found: \"${cmdId}\"" && return 1
         ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
       else
         echo -e "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}"
@@ -70,19 +73,19 @@ function __hhs_command() {
       ;;
     -l | --list)
       if [ ${#allCmds[@]} -ne 0 ]; then
-
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
         echo ' '
         echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
-        echo ' '
+        echo " "
         IFS=$'\n'
         for next in ${allCmds[*]}; do
-          cmdName="( $index ) $(echo -en "$next" | awk -F ':' '{ print $1 }')"
+          printf "${WHITE}(%03d) " $((index))
+          cmdName="$(echo -en "$next" | awk -F ':' '{ print $1 }')"
           cmdExpr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
-          echo -e "${HHS_HIGHLIGHT_COLOR}${cmdName}"
+          echo -n "${HHS_HIGHLIGHT_COLOR}${cmdName}"
           printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-          echo "${YELLOW}is stored as: ${WHITE}'${cmdExpr}'"
+          echo "${YELLOW} is stored as: ${WHITE}'${cmdExpr}'"
           index=$((index + 1))
         done
         IFS="$HHS_RESET_IFS"

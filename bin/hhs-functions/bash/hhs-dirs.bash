@@ -38,16 +38,18 @@ function __hhs_save-dir() {
     else
       dir="$1"
       # If the path is not absolute, append the current directory to it.
-      [ -d "$dir" ] && [[ ! "$dir" =~ ^/ ]] && dir="$(pwd)/$dir"
-      test -z "$dir" -o "$dir" = "." && dir=${dir//./$(pwd)}
-      test -n "$dir" -a "$dir" = ".." && dir=${dir//../$(pwd)}
-      test -n "$dir" -a "$dir" = "-" && dir=${dir//-/$OLDPWD}
-      test -n "$dir" -a ! -d "$dir" && echo "${RED}Directory \"$dir\" is not a valid!${NC}" && return 1
+      if [ -z "$dir" ] || [ "$dir" = "." ]; then dir=${dir//./$(pwd)}; fi
+      if [ -d "$dir" ] && [[ ! "$dir" =~ ^/ ]]; then dir="$(pwd)/$dir"; fi
+      if [ -n "$dir" ] && [ "$dir" = ".." ]; then dir=${dir//../$(pwd)}; fi
+      if [ -n "$dir" ] && [ "$dir" = "-" ]; then dir=${dir//-/$OLDPWD}; fi
+      if [ -n "$dir" ] && [ ! -d "$dir" ]; then
+        echo "${RED}Directory \"$dir\" is not a valid!${NC}"
+        return 1
+      fi
       ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
-      echo "$dirAlias=$dir" >>"$HHS_SAVED_DIRS"
-      # shellcheck disable=SC2046
-      IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$HHS_SAVED_DIRS"
-      echo -e "${allDirs[@]}" >"$HHS_SAVED_DIRS"
+      IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
+      allDirs+=("$dirAlias=$dir")
+      printf "%s\n" "${allDirs[@]}" > "$HHS_SAVED_DIRS"
       sort "$HHS_SAVED_DIRS" -o "$HHS_SAVED_DIRS"
       echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dirAlias ${NC}"
     fi

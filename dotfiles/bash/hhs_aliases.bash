@@ -300,6 +300,7 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   alias __hhs_docker_ps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
   alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
   alias __hhs_docker_ls='docker container ls'
+  alias __hhs_docker_up=''
 fi
 
 # Load all functions that were previously aliased in here

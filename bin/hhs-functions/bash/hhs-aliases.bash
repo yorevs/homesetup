@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090
 
 #  Script: hhs-aliases.bash
 # Created: Oct 5, 2019
@@ -46,8 +47,7 @@ function __hhs_aliases() {
         echo "${YELLOW}Available custom aliases:"
         echo ' '
         (
-          local name
-          local expr
+          local name expr
           local columns="$(($(tput cols) - pad_len - 18))"
           IFS=$'\n'
           for next in $allAliases; do
@@ -55,7 +55,7 @@ function __hhs_aliases() {
             if [[ $next =~ $re ]]; then
               name=$(echo -en "$next" | cut -d'=' -f1 | cut -d ' ' -f2)
               expr=$(echo -en "$next" | cut -d'=' -f2-)
-              printf "${HHS_HIGHLIGHT_COLOR}${name//alias /}"
+              printf "%s" "${HHS_HIGHLIGHT_COLOR}${name//alias /}"
               printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
               echo -en "${YELLOW} is aliased to ${WHITE}${expr:0:$columns}"
             else
@@ -75,13 +75,13 @@ function __hhs_aliases() {
       ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
       echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
       echo -e "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HHS_HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
-      # shellcheck disable=SC1090
       \. "$aliasFile"
     elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then
       # Remove one alias
-      unalias "$aliasName" &>/dev/null
       ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
-      echo -e "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
+      unalias "$aliasName" &>/dev/null
+      # shellcheck disable=SC2181
+      [[ $? -eq 0 ]] && echo -e "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
     fi
   fi
 
