@@ -104,13 +104,13 @@ function __hhs_search-string() {
       shift
     done
 
-    local expr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+    local namesExpr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
     local search_str="$2"
-    local baseCmd fullCmd
+    local baseCmd fullCmd dir="$1"
 
-    inames=$(python -c "$expr")
-    baseCmd="find -L $1 -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
-    echo "${YELLOW}Searching for \"${strType}\" matching: \"$search_str\" in \"$1\" , filenames = [$3] $extra_str ${NC}"
+    inames=$(python -c "$namesExpr")
+    baseCmd="find -L ${dir} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
+    echo "${YELLOW}Searching for \"${strType}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
 
     if [ -n "$replace" ]; then
       if [ "$strType" = 'string' ]; then
