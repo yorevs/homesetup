@@ -117,7 +117,7 @@ alias ts='date "+%s%S"'
 __hhs_has "wget" || alias wget='curl -O'
 
 # Reload the bash session
-alias reload='cls; \. ~/.bashrc && echo -e "${HHS_WELCOME}"'
+alias reload='cls; source ~/.bashrc && echo -e "${HHS_WELCOME}"'
 
 # Swaps between PS1 & PS2 prompts
 alias ps1='export PS1=$PS1_STYLE'
@@ -230,8 +230,7 @@ esac
 [ -d "${TEMP}" ] && alias temp='cd ${TEMP}'
 
 # -----------------------------------------------------------------------------------
-# Handy Terminal Shortcuts
-# TODO adapt for zsh
+# Handy Terminal Shortcuts => TODO adapt for zsh
 
 alias show-cursor='tput cnorm'      # Show the cursor using tput
 alias hide-cursor='tput civis'      # Hide the cursor using tput
@@ -311,5 +310,5 @@ fi
 # Load all functions that were previously aliased in here
 # shellcheck disable=SC2044
 for file in $(find "$HHS_HOME/bin/ext-tools/bash" -type f -name "*.bash" | sort); do
-  \. "$file"
+  source "$file"
 done

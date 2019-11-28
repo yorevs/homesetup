@@ -12,7 +12,7 @@
 # @param $1 [Req] : The app to check.
 function __hhs_toolcheck() {
 
-  local pad pad_len tool_name check
+  local pad pad_len tool_name check is_alias
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
     echo "Usage: ${FUNCNAME[0]} <app_name>"
@@ -21,14 +21,21 @@ function __hhs_toolcheck() {
     pad_len=40
     tool_name="$1"
     check=$(command -v "${tool_name}")
+    is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
     echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
     echo -en "Checking: ${YELLOW}${tool_name}${NC} "
     printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
     if __hhs_has "${tool_name}"; then
-      echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
+      if [ -z "$is_alias" ] && [[ $check =~ ^(\/.*) ]]; then
+        echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
+      elif [ -n "$is_alias" ]; then
+        echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
+      else
+        echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
+      fi
       return 0
     else
-      echo -e "${RED} ${CROSS_ICN} NOT INSTALLED${NC}"
+      echo -e "${RED} ${CROSS_ICN} NOT FOUND${NC}"
     fi
   fi
 

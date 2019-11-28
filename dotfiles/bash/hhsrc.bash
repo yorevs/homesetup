@@ -21,16 +21,16 @@
 #   ~/.path       : To customize your paths
 
 # If not running interactively, don't do anything.
-[ -z "$PS1" ] && return
+[ -z "$PS1" ] && [ -z "$PS2" ] && return
 
 # Source global definitions
-if [[ "bash.*" =~ $HHS_MY_SHELL ]]; then
+if [ "bash" = "$HHS_MY_SHELL" ]; then
   if [ -s /etc/bashrc ]; then
-    \. /etc/bashrc
+    source /etc/bashrc
   fi
   # Source the main profile
   if [ -s "$HOME/.bash_profile" ]; then
-    \. "$HOME/.bash_profile"
+    source "$HOME/.bash_profile"
   fi
 else
   echo ''

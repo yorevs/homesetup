@@ -14,11 +14,16 @@
 CROSS_ICN="\xef\x81\x97"
 CHECK_ICN="\xef\x81\x98"
 STAR_ICN="\xef\x80\x85"
+ALIAS_ICN="\xef\x87\xba \xef\x81\xa1"
+FUNC_ICN="\xef\x84\xae"
+
+[ -f "$HOME/.bash_env" ] && source "$HOME/.bash_env"
+[ -f "$HOME/.bash_colors" ] && source "$HOME/.bash_colors"
 
 # Load all function files prefixed with 'hhs-`
 # shellcheck disable=SC2044
 for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
-  \. "$file"
+  source "$file"
 done
 
 # To check for all functions provided by HHS issue the following command:

@@ -26,11 +26,10 @@
 
 # @function: Create and/or open a file using the default editor
 # @param $1 [Req] : The file path
-+() {
+edit() {
   [ -z "$1" ] && return 1
   [ -f "$1" ] || touch "$1" >/dev/null 2>&1
   [ -f "$1" ] && open "$1" && return 0
-
   return 1
 }
 
@@ -91,8 +90,10 @@ if __hhs_has "tree"; then
   lt() {
     if [ -n "$1" ] && [ -n "$2" ]; then
       tree "$1" -L "$2"
-    else
+    elif [ -n "$1" ]; then
       tree "$1"
+    else
+      tree '.'
     fi
 
     return $?

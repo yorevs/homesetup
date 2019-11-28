@@ -18,13 +18,13 @@ export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
 
 # Load the shell dotfiles, and then:
-#   \. -> ~/.path can be used to extend `$PATH`
-#   \. -> ~/.prompt can be used to extend/override .bash_prompt
-#   \. -> ~/.aliases can be used to extend/override .bash_aliases
-#   \. -> ~/.profile can be used to extend/override .bash_profile
-#   \. -> ~/.env can be used to extend/override .bash_env
-#   \. -> ~/.colors can be used to extend/override .bash_colors
-#   \. -> ~/.functions can be used to extend/override .bash_functions
+#   source -> ~/.path can be used to extend `$PATH`
+#   source -> ~/.prompt can be used to extend/override .bash_prompt
+#   source -> ~/.aliases can be used to extend/override .bash_aliases
+#   source -> ~/.profile can be used to extend/override .bash_profile
+#   source -> ~/.env can be used to extend/override .bash_env
+#   source -> ~/.colors can be used to extend/override .bash_colors
+#   source -> ~/.functions can be used to extend/override .bash_functions
 
 # Removes all aliases before setting them
 unalias -a
@@ -32,7 +32,7 @@ unalias -a
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
 for file in ~/.{profile,bash_colors,colors,bash_env,env,bash_prompt,prompt,bash_aliases,bash_aliasdef,aliases,bash_functions,functions}; do
-  [ -f "$file" ] && \. "$file"
+  [ -f "$file" ] && source "$file"
 done
 
 unset file
@@ -40,20 +40,25 @@ unset file
 # -----------------------------------------------------------------------------------
 # Set default shell options
 
-# If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
-#shopt -u nocaseglob
+case $HHS_MY_SHELL in
 
-# If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-#shopt -s extglob
-
-# If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-#shopt -s cdspell
-
-# Make bash check its window size after a process completes
-#shopt -s checkwinsize
-
-# If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
-#shopt -u nocasematch
+  bash)
+    # If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
+    shopt -u nocaseglob
+    # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
+    shopt -s extglob
+    # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
+    shopt -s cdspell
+    # Make bash check its window size after a process completes
+    shopt -s checkwinsize
+    # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
+    shopt -u nocasematch
+    export HHS_TERM_OPTS='nocaseglob extglob cdspell checkwinsize nocasematch'
+  ;;
+  *)
+    export HHS_TERM_OPTS=''
+  ;;
+esac
 
 # This turns off the case-sensitive completion.
 [ -f ~/.inputrc ] || echo "set completion-ignore-case On" >~/.inputrc
@@ -61,34 +66,56 @@ unset file
 [ "Linux" = "${HHS_MY_OS}" ] && sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
 
 # -----------------------------------------------------------------------------------
-# Load other stuff
+# Completions
 
-# Bash completions
-if [ "bash" = "$HHS_MY_SHELL" ]; then
+AUTO_CPL_TYPES=()
 
-  AUTO_CPL_D="$HHS_DIR/bin"
-  
-  # Enable tab completion for `git`
-  # Thanks to: https://github.com/git/git/tree/master/contrib/completion
-  if command -v git &>/dev/null; then
-      [ -f "$AUTO_CPL_D/git-completion.bash" ] && \. "$AUTO_CPL_D/git-completion.bash"
-  fi
+case $HHS_MY_SHELL in
 
-  # Enable tab completion for `docker`
-  # Thanks to: Built in docker scripts
-  if command -v docker &>/dev/null; then
-      [ -f "$AUTO_CPL_D/docker-compose-completion.bash" ] && \. "$AUTO_CPL_D/docker-compose-completion.bash"
-      [ -f "$AUTO_CPL_D/docker-machine-completion.bash" ] && \. "$AUTO_CPL_D/docker-machine-completion.bash"
-      [ -f "$AUTO_CPL_D/docker-completion.bash" ] && \. "$AUTO_CPL_D/docker-completion.bash"
-  fi
+  bash)
+    AUTO_CPL_D="$HHS_DIR/bin"
+    
+    # Enable tab completion for `git`
+    # Thanks to: https://github.com/git/git/tree/master/contrib/completion
+    if command -v git &>/dev/null; then
+      if [ -f "$AUTO_CPL_D/git-completion.bash" ]; then
+        source "$AUTO_CPL_D/git-completion.bash"
+        AUTO_CPL_TYPES+=('Git')
+      fi
+    fi
 
-  # Enable tab completion for `gradle`
-  # Thanks to: https://github.com/gradle/gradle-completion
-  if command -v gradle &>/dev/null; then
-      [ -f "$AUTO_CPL_D/gradle-completion.bash" ] && \. "$AUTO_CPL_D/gradle-completion.bash"
-  fi
+    # Enable tab completion for `docker`
+    # Thanks to: Built in docker scripts
+    if command -v docker &>/dev/null; then
+      if [ -f "$AUTO_CPL_D/docker-compose-completion.bash" ]; then
+        source "$AUTO_CPL_D/docker-compose-completion.bash"
+        AUTO_CPL_TYPES+=('Docker-Compose')
+      fi
+      if [ -f "$AUTO_CPL_D/docker-machine-completion.bash" ]; then
+        source "$AUTO_CPL_D/docker-machine-completion.bash"
+        AUTO_CPL_TYPES+=('Docker-Machine')
+      fi
+      if [ -f "$AUTO_CPL_D/docker-completion.bash" ]; then
+        source "$AUTO_CPL_D/docker-completion.bash"
+        AUTO_CPL_TYPES+=('Docker')
+      fi
+    fi
 
-fi
+    # Enable tab completion for `gradle`
+    # Thanks to: https://github.com/gradle/gradle-completion
+    if command -v gradle &>/dev/null; then
+        if [ -f "$AUTO_CPL_D/gradle-completion.bash" ]; then
+          source "$AUTO_CPL_D/gradle-completion.bash"
+          AUTO_CPL_TYPES+=('Gradle')
+        fi
+    fi
+  ;;
+
+esac
+
+export HHS_AUTO_COMPLETIONS="${AUTO_CPL_TYPES[*]}"
+
+unset AUTO_CPL_TYPES
 
 # Add custom paths to the system `$PATH`
 if [ -f "$HOME/.path" ]; then
@@ -98,4 +125,5 @@ fi
 # Add `$HHS_DIR/bin` to the system `$PATH`
 paths -a "$HHS_DIR/bin"
 
+# Check for updates
 __hhs_auto-update-check
