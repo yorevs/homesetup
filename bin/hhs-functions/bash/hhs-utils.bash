@@ -24,14 +24,14 @@
   return 1
 }
 
-# @function: TODO Comment it
-# @param $1 [Req] :
+# @function: Create and/or open a file using the default editor
+# @param $1 [Req] : The file path
 +() {
   [ -z "$1" ] && return 1
-  [ -f "$1" ] || touch "$1"
-  [ -f "$1" ] && open "$1"
+  [ -f "$1" ] || touch "$1" >/dev/null 2>&1
+  [ -f "$1" ] && open "$1" && return 0
 
-  return $?
+  return 1
 }
 
 # shellcheck disable=SC2012

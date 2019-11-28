@@ -15,11 +15,6 @@ CROSS_ICN="\xef\x81\x97"
 CHECK_ICN="\xef\x81\x98"
 STAR_ICN="\xef\x80\x85"
 
-# Dependencies
-[ -f "$HOME/.bash_env" ] && \. "$HOME/.bash_env"
-[ -f "$HOME/.bash_colors" ] && \. "$HOME/.bash_colors"
-[ -f "$HOME/.bash_aliases" ] && \. "$HOME/.bash_aliases"
-
 # Load all function files prefixed with 'hhs-`
 # shellcheck disable=SC2044
 for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do

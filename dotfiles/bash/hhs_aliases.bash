@@ -20,6 +20,22 @@ __hhs_has() {
   type "$1" >/dev/null 2>&1
 }
 
+# @function: Check if an alias exists and create it if it does not
+# @param $1 [Req] : The alias to set/check.
+__hhs_alias() {
+  local allArgs=$*
+  local aliasExpr=${allArgs##*=}
+  local aliasName=${allArgs//=*}
+  if ! alias "$aliasName" >/dev/null 2>&1; then 
+    eval "alias $aliasName='$aliasExpr'";
+    return $?
+  else
+    echo "Alias: $aliasName already exists" 2>&1
+  fi
+
+  return 1
+}
+
 # -----------------------------------------------------------------------------------
 # Navigational
 alias ...='cd ../..'
@@ -143,17 +159,6 @@ if __hhs_has "python"; then
 fi
 
 # -----------------------------------------------------------------------------------
-# Perl aliases
-
-if __hhs_has "perl"; then
-
-  # Clean escape (\EscXX) codes from text
-  alias cse="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
-  # Copy to clipboard pbcopy required
-  __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
-fi
-
-# -----------------------------------------------------------------------------------
 # IP related
 
 # External IP
@@ -236,7 +241,18 @@ alias enable-line-wrap='tput smam'  # Enable line wrapping
 alias disable-line-wrap='tput rmam' # Disable line wrapping
 
 # -----------------------------------------------------------------------------------
-# Git Stuff
+# Perl dependent aliases
+
+if __hhs_has "perl"; then
+
+  # Clean escape (\EscXX) codes from text
+  alias __hhs_clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
+  # Copy to clipboard pbcopy required
+  __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
+fi
+
+# -----------------------------------------------------------------------------------
+# Git dependent aliases
 
 if __hhs_has "git"; then
 
@@ -258,7 +274,7 @@ if __hhs_has "git"; then
 fi
 
 # -----------------------------------------------------------------------------------
-# Gradle Stuff
+# Gradle dependent aliases
 
 if __hhs_has "gradle"; then
 
@@ -273,12 +289,15 @@ if __hhs_has "gradle"; then
 fi
 
 # -----------------------------------------------------------------------------------
-# Docker stuff
+# Docker dependent aliases
 # inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
 
 if __hhs_has "docker" && docker info &>/dev/null; then
 
-  alias __hhs_docker_images='docker images'
+  __hhs_alias dk='docker'
+  __hhs_alias dkc='docker-compose'
+  
+  alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'
   alias __hhs_docker_service='docker service'
   alias __hhs_docker_logs='docker logs'
   alias __hhs_docker_remove='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
