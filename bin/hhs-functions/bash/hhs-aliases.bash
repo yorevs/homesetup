@@ -47,8 +47,8 @@ function __hhs_aliases() {
         echo "${YELLOW}Available custom aliases:"
         echo ' '
         (
-          local name expr
-          local columns="$(($(tput cols) - pad_len - 18))"
+          local name expr offset=18
+          local columns="$(($(tput cols) - pad_len - offset))"
           IFS=$'\n'
           for next in $allAliases; do
             local re='^alias .+=.+'

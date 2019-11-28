@@ -114,21 +114,6 @@ alias chsh='__hhs_select-shell'
 __hhs_has "jq" && alias json_pp='jq'
 
 # -----------------------------------------------------------------------------------
-# OS based aliases
-
-# Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
-
-# -- LINUX --
-if [ "Linux" = "$HHS_MY_OS" ]; then
-  alias ised="sed -i'' -r"
-  __hhs_has "base64" && alias decode='base64 -d'
-# -- DARWIN --
-elif [ "Darwin" = "$HHS_MY_OS" ]; then
-  alias ised="sed -i '' -E"
-  __hhs_has "base64" && alias decode='base64 -D'
-fi
-
-# -----------------------------------------------------------------------------------
 # Tool aliases
 
 # Jenv: Set JAVA_HOME using jenv
@@ -187,67 +172,68 @@ fi
 __hhs_has "ifconfig" && alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
 # -----------------------------------------------------------------------------------
-# Mac Stuff
+# OS Specific aliases
+# Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
+case $HHS_MY_OS in
 
-if [ "Darwin" = "$HHS_MY_OS" ]; then
+  Linux) # -- LINUX --
+    alias ised="sed -i'' -r"
+    __hhs_has "base64" && alias decode='base64 -d'
+  ;;
 
-  # Delete all .DS_store files
-  alias ds-cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+  Darwin) # -- MACOS --
 
-  # Flush Directory Service cache
-  __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+    alias ised="sed -i '' -E"
+    __hhs_has "base64" && alias decode='base64 -D'
 
-  # Clean up LaunchServices to remove duplicates in the “Open With” menu
-  __hhs_has "lsregister" && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+    # Delete all .DS_store files
+    alias ds-cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 
-  if __hhs_has "defaults"; then
+    # Flush Directory Service cache
+    __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
-    # Show/hide hidden files in Finder
-    alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-    alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-    # Hide/show all desktop icons
-    alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-    alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-  fi
+    # Clean up LaunchServices to remove duplicates in the “Open With” menu
+    __hhs_has "lsregister" && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
-  # Canonical hex dump; some systems have this symlinked
-  __hhs_has "hd" || alias hd='hexdump -C'
+    if __hhs_has "defaults"; then
 
-  # macOS has no `md5sum`, so use `md5` as a fallback
-  __hhs_has "md5sum" || alias md5sum='md5'
+      # Show/hide hidden files in Finder
+      alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+      alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+      # Hide/show all desktop icons
+      alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+      alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+    fi
 
-  # macOS has no `sha1sum`, so use `shasum` as a fallback
-  __hhs_has "sha1" || alias sha1='shasum'
-  __hhs_has "sha1sum" || alias sha1sum='sha1'
-fi
+    # Canonical hex dump; some systems have this symlinked
+    __hhs_has "hd" || alias hd='hexdump -C'
+
+    # macOS has no `md5sum`, so use `md5` as a fallback
+    __hhs_has "md5sum" || alias md5sum='md5'
+
+    # macOS has no `sha1sum`, so use `shasum` as a fallback
+    __hhs_has "sha1" || alias sha1='shasum'
+    __hhs_has "sha1sum" || alias sha1sum='sha1'
+  ;;
+esac
 
 # -----------------------------------------------------------------------------------
 # Directory Shortcuts
 
-alias desk='cd ${DESKTOP}'
-alias hhs='cd ${HHS_HOME}'
-alias temp='cd ${TEMP}'
+[ -d "${DESKTOP}" ] && alias desk='cd ${DESKTOP}'
+[ -d "${HHS_HOME}" ] && alias hhs='cd ${HHS_HOME}'
+[ -d "${TEMP}" ] && alias temp='cd ${TEMP}'
 
 # -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts
+# TODO adapt for zsh
 
-# Show the cursor using tput
-alias show-cursor='tput cnorm'
-
-# Hide the cursor using tput
-alias hide-cursor='tput civis'
-
-# Save current cursor position
-alias save-cursor-pos='tput sc'
-
-# Restore saved cursor position
-alias restore-cursor-pos='tput rc'
-
-# Enable line wrapping
-alias enable-line-wrap='tput smam'
-
-# Disable line wrapping
-alias disable-line-wrap='tput rmam'
+alias show-cursor='tput cnorm'      # Show the cursor using tput
+alias hide-cursor='tput civis'      # Hide the cursor using tput
+alias save-cursor-pos='tput sc'     # Save current cursor position
+alias restore-cursor-pos='tput rc'  # Restore saved cursor position
+alias enable-line-wrap='tput smam'  # Enable line wrapping
+alias disable-line-wrap='tput rmam' # Disable line wrapping
 
 # -----------------------------------------------------------------------------------
 # Git Stuff
