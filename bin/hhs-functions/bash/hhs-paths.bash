@@ -14,7 +14,9 @@ function __hhs_paths() {
 
   local pad pad_len path_dir custom private
 
-  HHS_PATHS_FILE=${HHS_PATHS_FILE:-$HOME/.path}
+  HHS_PATHS_FILE=${HHS_PATHS_FILE:-$HOME/.path} # Custom paths
+  PATHS_D="/etc/paths.d"                        # Private system paths
+  PVT_PATHS_D="/private/etc/paths"              # General system path dir
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -38,14 +40,14 @@ function __hhs_paths() {
       IFS=$'\n'
       for path in $(echo -e "${PATH//:/\\n}"); do
         path="${path:0:$columns}"
-        [ -f "$HHS_PATHS_FILE" ] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")"      # Custom paths
-        [ -d "/private/etc/paths" ] && private="$(grep ^"$path"$ /private/etc/paths)" # Private system paths
-        [ -d "/etc/paths.d" ] && path_dir="$(grep ^"$path"$ /etc/paths.d/*)"          # General system path dir
+        [ -f "$HHS_PATHS_FILE" ] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")"
+        [ -d "$PVT_PATHS_D" ] && private="$(grep ^"$path"$ $PVT_PATHS_D)"
+        [ -d "$PATHS_D" ] && path_dir="$(grep ^"$path"$ $PATHS_D/*)"
         echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
         printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
         [ "${#path}" -ge "$columns" ] && echo -en "${NC}" || echo -en "${NC}"
         if [ -d "$path" ]; then
-          echo -en "${GREEN} ${CHECK_ICN} => "
+          echo -en "${GREEN} ${CHECK_ICN} => ${WHITE}"
         else
           if [ "-c" = "$1" ]; then
             ised -e "s#(^$path$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
@@ -55,10 +57,13 @@ function __hhs_paths() {
             echo -en "${ORANGE} ${CROSS_ICN} => "
           fi
         fi
-        [ -n "$custom" ] && echo "custom"
-        [ -n "$path_dir" ] && echo "paths.d"
-        [ -n "$private" ] && echo "private"
-        [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ] && echo "exported"
+        [ -n "$custom" ] && echo -n "at $HHS_PATHS_FILE"
+        [ -n "$path_dir" ] && echo -n "at $PATHS_D"
+        [ -n "$private" ] && echo -n "at $PVT_PATHS_D"
+        if [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ]; then
+          echo -n "Shell exported"
+        fi
+        echo -e "${NC}"
       done
       IFS="$HHS_RESET_IFS"
       echo -e "${NC}"

@@ -13,12 +13,7 @@
 
 # General
 __hhs_alias has='__hhs_has'
-__hhs_alias encrypt='__hhs_encrypt'
-__hhs_alias decrypt='__hhs_decrypt'
 __hhs_alias hl='__hhs_highlight'
-__hhs_alias sf='__hhs_search-file'
-__hhs_alias sd='__hhs_search-dir'
-__hhs_alias ss='__hhs_search-string'
 __hhs_alias hist='__hhs_history'
 __hhs_alias del-tree='__hhs_del-tree'
 __hhs_alias jp='__hhs_json-print'
@@ -44,6 +39,19 @@ __hhs_alias sysinfo='__hhs_sysinfo'
 __hhs_alias parts='__hhs_partitions'
 __hhs_alias hhu='__hhs_update'
 __hhs_alias cse='__hhs_clean_escapes'
+
+# Python based shortcuts
+if __hhs_has "python"; then
+  __hhs_alias sf='__hhs_search-file'
+  __hhs_alias sd='__hhs_search-dir'
+  __hhs_alias ss='__hhs_search-string'
+fi
+
+# GPG shorctus
+if __hhs_has "gpg"; then
+  __hhs_alias encrypt='__hhs_encrypt_file'
+  __hhs_alias decrypt='__hhs_decrypt_file'
+fi
 
 # Git shortcuts
 if __hhs_has "git"; then

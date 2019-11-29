@@ -68,7 +68,12 @@ mkcd() {
 # @function: Kills ALL processes specified by $1
 # @param $1 [Req] : The process name to kill
 pk() {
-  [ -n "$1" ] && __hhs_process_list "$1" kill
+  if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+    shift
+    __hhs_process_list -f "$1" kill
+  elif [ -n "$1" ]; then
+    __hhs_process_list "$1" kill
+  fi
 
   return $?
 }

@@ -132,7 +132,7 @@ cp              | **cp -iv** 'For safety, by default this command will input for
 mv              | **mv -iv** 'For safety, by default this command will input for confirmation'
 cls             | clear
 pk              | 'Kills all processes matching <ProcName>'
-db-cleanup      | 'Recursively delete Dropbox conflicted files from the current directory'
+cleanup-db      | 'Recursively delete Dropbox conflicted files from the current directory'
 vi              | vim
 tl              | 'Tail a log using colors specified in .tailor file.'
 df              | df -H
@@ -179,13 +179,13 @@ ips             | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **
 
 ALIAS           | Equivalent
 --------------- | ---------------
-ds-cleanup      | 'Delete all **.DS_store** files'
+cleanup-ds      | 'Delete all **.DS_store** files'
 flush           | 'Flush Directory Service cache'
-ls-cleanup      | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
+cleanup-reg      | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
 show-files      | '**Show** hidden files in Finder' **defaults required**
 hide-files      | '**Hide** hidden files in Finder' **defaults required**
-showdeskicons   | 'Show all desktop icons'
-hidedeskicons   | 'Hide all desktop icons'
+show-deskicons   | 'Show all desktop icons'
+hide-deskicons   | 'Hide all desktop icons'
 hd              | 'Canonical hex dump; some systems have this symlinked'
 md5sum          | 'macOS has no **md5sum**, so use **md5** as a fallback'
 sha1            | 'macOS has no **sha1sum**, so use **shasum** as a fallback'

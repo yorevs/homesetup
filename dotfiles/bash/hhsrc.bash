@@ -15,26 +15,28 @@
 #   ~/.colors     : To customize your colors
 #   ~/.env        : To customize your environment variables
 #   ~/.aliases    : To customize your aliases
+#   ~/.aliasdef   : To customize your aliase definitions
 #   ~/.prompt     : To customize your prompt
 #   ~/.functions  : To customize your functions
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-# If not running interactively, don't do anything.
+# If not running interactively, don't load anything.
 [ -z "$PS1" ] && [ -z "$PS2" ] && return
 
-# Source global definitions
-if [ "bash" = "$HHS_MY_SHELL" ]; then
-  if [ -s /etc/bashrc ]; then
-    source /etc/bashrc
-  fi
-  # Source the main profile
-  if [ -s "$HOME/.bash_profile" ]; then
-    source "$HOME/.bash_profile"
-  fi
-else
-  echo ''
-  echo "Sorry ! HomeSetup is only compatible with bash for now."
-  echo "You can change your default shell by typing: #> chsh -s /bin/bash"
-  echo ''
-fi
+# Load the profile according to the SHELL defined
+case "$HHS_MY_SHELL" in
+  bash)
+    # Source the main profile
+    [ -s /etc/bashrc ] && source /etc/bashrc
+    # Source the user profile
+    [ -s "$HOME/.bash_profile" ] && source "$HOME/.bash_profile"
+  ;;
+  *)
+    echo ''
+    echo 'Sorry ! HomeSetup is only compatible with bash for now.'
+    echo 'You can change your default shell by typing: '
+    echo '#> sudo chsh -s /bin/bash'
+    echo ''
+  ;;
+esac

@@ -17,12 +17,19 @@ STAR_ICN="\xef\x80\x85"
 ALIAS_ICN="\xef\x87\xba \xef\x81\xa1"
 FUNC_ICN="\xef\x84\xae"
 
+# Load bash environment variables to use in here
 [ -f "$HOME/.bash_env" ] && source "$HOME/.bash_env"
+
+# Load bash colors to use in here
 [ -f "$HOME/.bash_colors" ] && source "$HOME/.bash_colors"
 
 # Load all function files prefixed with 'hhs-`
-# shellcheck disable=SC2044
 for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
+  source "$file"
+done
+
+# Load all functions that were previously aliased
+for file in $(find "$HHS_HOME/bin/ext-tools/bash" -type f -name "*.bash" | sort); do
   source "$file"
 done
 

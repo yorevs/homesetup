@@ -23,8 +23,8 @@ function __hhs_sysinfo() {
     echo -e "  UID.......... : $(id -u "$username")"
     echo -e "  GID.......... : $(id -g "$username")"
     echo -e "\n${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
-    echo -e "  OS........... : ${HHS_MY_OS}"
-    echo -e "  Kernel........: v$(uname -pmr)"
+    echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
+    echo -e "  Software......: $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
     echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
     echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
@@ -68,15 +68,16 @@ function __hhs_sysinfo() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_process_list() {
 
-  local allPids pid
+  local allPids uid pid ppid cmd force pad
   local gflags='-E'
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-    echo "Usage: ${FUNCNAME[0]} [-i,-w] <process_name> [kill]"
+    echo "Usage: ${FUNCNAME[0]} [-i,-w,-f] <process_name> [kill]"
     echo ''
     echo 'Options: '
     echo '    -i : Make case insensitive search'
     echo '    -w : Match full words only'
+    echo '    -f : Do not ask questions when killing processes'
     return 1
   else
     while [ -n "$1" ]; do
@@ -87,32 +88,51 @@ function __hhs_process_list() {
       -i | --ignore-case)
         gflags="${gflags}i"
         ;;
+      -f | --force)
+        force=1
+        ;;
       *)
         [[ ! "$1" =~ ^-[wi] ]] && break
         ;;
       esac
       shift
     done
-    # shellcheck disable=SC2009,SC2086
+    # shellcheck disable=SC2009
     allPids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
     if [ -n "$allPids" ]; then
-      echo -e "${WHITE}\nUID\tPID\tPPID\tCOMMAND"
-      echo '--------------------------------------------------------------------------------'
-      echo -e "${RED}"
-      (
-        IFS=$'\n'
-        for next in $allPids; do
-          pid=$(echo "$next" | awk '{ print $2 }')
-          echo -en "${HHS_HIGHLIGHT_COLOR}$next" | tr ' ' '\t'
-          if [ -n "$pid" ] && [ "$2" = "kill" ]; then
-            kill -9 "$pid"
-            echo -e "${RED}\t\t\t\t=> Killed with signal -9"
-          else
-            ps -p "$pid" &>/dev/null && echo -e "${GREEN}**" || echo -e "${RED}**"
+      pad="$(printf '%0.1s' " "{1..40})"
+      divider="$(printf '%0.1s' "-"{1..92})"
+      printf "\n${WHITE}%4s\t%5s\t%5s\t%-40s\n" "UID" "PID" "PPID" "COMMAND"
+      printf "%-154s\n\n" "$divider"
+      IFS=$'\n'
+      for next in $allPids; do
+        uid=$(echo "$next" | awk '{ print $1 }')
+        pid=$(echo "$next" | awk '{ print $2 }')
+        ppid=$(echo "$next" | awk '{ print $3 }')
+        cmd=$(echo "$next" | awk '{ print $4 }')
+        [ "${#cmd}" -ge 37 ] && cmd="${cmd:0:37}..."
+        printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "$pid" "$ppid" "${cmd}"
+        printf '%*.*s' 0 $((40 - ${#cmd})) "$pad"
+        if [ -n "$pid" ] && [ "$2" = "kill" ]; then
+          save-cursor-pos
+          if [ -z "${force}" ]; then
+            read -r -n 1 -p "${ORANGE} Kill this process y/[n]? " ANS
           fi
-        done
-        IFS="$HHS_RESET_IFS"
-      )
+          if [ -n "${force}" ] || [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+            restore-cursor-pos
+            kill -9 "$pid" && echo -en "${RED}=> Killed with SIGKILL(-9)\033[K"
+          fi
+          [ -n "$ANS" ] && echo -e "${NC}"
+        else
+          # Check for ghost processes
+          if ps -p "$pid" &>/dev/null; then
+            echo -e "${GREEN} ${CHECK_ICN}"
+          else
+            echo -e "${RED} ${CROSS_ICN}"
+          fi
+        fi
+      done
+      IFS="$HHS_RESET_IFS"
     else
       echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
     fi

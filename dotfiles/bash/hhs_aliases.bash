@@ -93,8 +93,8 @@ alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
 __hhs_has "vim" && alias vi='vim'
 
 # Interpret escape sequences
-alias more='more -R'
-alias less='less -R'
+alias more='more -r'
+alias less='less -r'
 
 # Make mount command output pretty and human readable format
 alias mount='mount | column -t'
@@ -104,9 +104,6 @@ alias cpu='top -o cpu'
 
 # Top shortcut ordered by Memory
 alias mem='top -o rsize'
-
-# Base64 encode shortcuts
-__hhs_has "base64" && alias encode="base64"
 
 # Date and time shortcuts
 alias week='date +%V'
@@ -136,7 +133,7 @@ __hhs_has "jq" && alias json_pp='jq'
 __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Dropbox: Recursively delete Dropbox conflicted files from the current directory
-[ -d "$DROPBOX" ] && alias db-cleanup="find . -name *\ \(*conflicted* -exec rm -v {} \;"
+[ -d "$DROPBOX" ] && alias cleanup-db="find . -name *\ \(*conflicted* -exec rm -v {} \;"
 
 # -----------------------------------------------------------------------------------
 # Python aliases
@@ -155,7 +152,6 @@ if __hhs_has "python"; then
 
   # Generate a UUID
   alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
-
 fi
 
 # -----------------------------------------------------------------------------------
@@ -176,6 +172,9 @@ fi
 # All IPs of all interfaces
 __hhs_has "ifconfig" && alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
+# Base64 encode shortcuts
+__hhs_has "base64" && alias encode="base64"
+
 # -----------------------------------------------------------------------------------
 # OS Specific aliases
 # Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
@@ -192,23 +191,20 @@ case $HHS_MY_OS in
     __hhs_has "base64" && alias decode='base64 -D'
 
     # Delete all .DS_store files
-    alias ds-cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+    alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
     # Flush Directory Service cache
     __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
     # Clean up LaunchServices to remove duplicates in the “Open With” menu
-    __hhs_has "lsregister" && alias ls-cleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+    alias cleanup-reg="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
-    if __hhs_has "defaults"; then
-
-      # Show/hide hidden files in Finder
-      alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-      alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-      # Hide/show all desktop icons
-      alias showdeskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-      alias hidedeskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-    fi
+    # Show/hide hidden files in Finder
+    alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+    # Hide/show all desktop icons
+    alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+    alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
     # Canonical hex dump; some systems have this symlinked
     __hhs_has "hd" || alias hd='hexdump -C'
@@ -308,9 +304,3 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   alias __hhs_docker_up='docker-compose up --force-recreate --build --remove-orphans --detach'
   alias __hhs_docker_down='docker-compose stop'
 fi
-
-# Load all functions that were previously aliased in here
-# shellcheck disable=SC2044
-for file in $(find "$HHS_HOME/bin/ext-tools/bash" -type f -name "*.bash" | sort); do
-  source "$file"
-done

@@ -74,6 +74,7 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details.
+# Use utoh <4digit-hex> to find out the octal and hex values of the icon.
 HIST_ICN="${HIST_ICN:-\357\207\232}"
 USER_ICN="${USER_ICN:-\357\200\207}"
 ROOT_ICN="${ROOT_ICN:-\357\224\205}"
@@ -120,10 +121,7 @@ PS1_STYLE+="${GIT_STYLE}"  # Git repository details
 PS1_STYLE+="${PROMPT}"     # Prompt symbol
 
 # PS2 Style: No icons, simple prompt.
-PS2_STYLE=":\[${YELLOW}\]\W \[${WHITE}\]\$> "
-
-unset PS1
-unset PS2
+PS2_STYLE='\[\h: \W \u\$ '
 
 export PS1=${CUSTOM_PS:-$PS1_STYLE}
 export PS2=${CUSTOM_PS:-$PS2_STYLE}
