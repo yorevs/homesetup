@@ -29,7 +29,8 @@
 edit() {
   [ -z "$1" ] && return 1
   [ -f "$1" ] || touch "$1" >/dev/null 2>&1
-  [ -f "$1" ] && open "$1" && return 0
+  [ -f "$1" ] && open "$1" >/dev/null 2>&1 && return 0
+  [ -f "$1" ] && vi "$1" && return 0
   return 1
 }
 
