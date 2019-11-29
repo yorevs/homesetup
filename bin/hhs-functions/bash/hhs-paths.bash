@@ -76,7 +76,7 @@ function __hhs_paths() {
         echo "$2" >>"$HHS_PATHS_FILE"
         export PATH="$2:$PATH"
       else
-        echo "${RED}Path \"$2\" does not exist${NC}"
+        echo "${RED}Can't add a path \"$2\" that does not exist${NC}"
         return 1
       fi
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
