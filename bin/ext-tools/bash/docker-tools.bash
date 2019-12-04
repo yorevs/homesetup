@@ -13,9 +13,22 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   # @function: TODO Comment it
   __hhs_docker_exec() {
     if [ -n "$2" ]; then
-      docker exec -it "$1" "$2"
+      # shellcheck disable=SC2048,SC2086
+      docker exec -it $*
     else
       docker exec -it "$1" /bin/sh
+    fi
+
+    return $?
+  }
+
+    # @function: TODO Comment it
+  __hhs_docker_compose_exec() {
+    if [ -n "$2" ]; then
+      # shellcheck disable=SC2048,SC2086
+      docker-compose exec $*
+    else
+      docker-compose exec "$1" /bin/sh
     fi
 
     return $?

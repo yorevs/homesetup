@@ -97,6 +97,7 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   __hhs_alias dke='__hhs_docker_exec'
   __hhs_alias dku='__hhs_docker_up'
   __hhs_alias dkd='__hhs_docker_down'
+  __hhs_alias dkce='__hhs_docker_compose_exec'
   __hhs_alias dkrm='__hhs_docker_remove'
   __hhs_alias dkps='__hhs_docker_ps'
   __hhs_alias dktl='__hhs_docker_tail_logs'
