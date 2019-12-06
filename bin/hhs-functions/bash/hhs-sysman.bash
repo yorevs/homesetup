@@ -122,7 +122,7 @@ function __hhs_process_list() {
             restore-cursor-pos
             kill -9 "$pid" && echo -en "${RED}=> Killed with SIGKILL(-9)\033[K"
           fi
-          [ -n "$ANS" ] && echo -e "${NC}"
+          if [ -n "$ANS" ] || [ -n "${force}" ]; then echo -e "${NC}"; fi
         else
           # Check for ghost processes
           if ps -p "$pid" &>/dev/null; then

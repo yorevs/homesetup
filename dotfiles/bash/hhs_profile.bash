@@ -109,6 +109,10 @@ case $HHS_MY_SHELL in
           AUTO_CPL_TYPES+=('Gradle')
         fi
     fi
+    
+    # Enable tab completion for `HomeSetup`
+    source "$AUTO_CPL_D/hhs-completion.bash"
+    AUTO_CPL_TYPES+=('HomeSetup')
   ;;
 
 esac

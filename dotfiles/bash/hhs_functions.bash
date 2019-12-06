@@ -39,7 +39,7 @@ __hhs() {
   local pad pad_len=30
 
   pad=$(printf '%0.1s' "."{1..30})
-  all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.bash" | awk "NR != 1 {print \$1 \$2}")
+  all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.bash" | sed -e 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
 
   shopt -s nocasematch
   if [ "$1" = "help" ] && [ -n "$2" ]; then
@@ -54,8 +54,8 @@ __hhs() {
   else
     echo -e "\n${ORANGE}HomeSetup available functions -------------------------------------\n"
     for fn in $all_fn; do
-      filename=$(basename "$fn" | awk -F ":function" '{print $1}')
-      fnname=$(awk -F ":function" '{print $2}' <<<"$fn")
+      filename=$(basename "$fn" | awk -F ':function' '{print $1}')
+      fnname=$(awk -F ':function' '{print $2}' <<< "$fn")
       echo -en "${WHITE}${BLUE}${filename}"
       printf '%*.*s' 0 $((pad_len - ${#filename})) "$pad"
       echo -e "${WHITE} => ${GREEN}${fnname//\(\)/}"
