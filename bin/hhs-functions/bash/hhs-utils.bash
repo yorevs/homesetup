@@ -11,10 +11,11 @@
 # @function: Change back the shell working directory by N directories
 # @param $1 [Opt] : The amount of directories to jump back
 ..() {
+  last_pwd=$(pwd)
   [ -z "$1" ] && cd ..
   if [ -n "$1" ]; then
-    last_pwd=$(pwd)
     for x in $(seq 1 "$1"); do
+      last_pwd=$(pwd)
       cd .. || return 1
     done
     pwd
