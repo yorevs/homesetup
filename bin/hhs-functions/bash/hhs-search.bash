@@ -49,7 +49,7 @@ if __hhs_has "python"; then
       local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
       echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-      eval "find -L $1 -type d \( $inames \) | __hhs_highlight (${2//\*/.*}|$)"
+      eval "find -L $1 -type d \( $inames \) | __hhs_highlight \"(${2//\*/.*}|$)\""
       return $?
     fi
   }
