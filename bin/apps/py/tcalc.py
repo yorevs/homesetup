@@ -11,11 +11,16 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
-import sys, os, re, math
+import math
+import os
+import re
+import sys
 
 PROC_NAME       = os.path.basename(__file__)
+
 # Version tuple: (major,minor,build)
 VERSION         = (0, 9, 0)
+
 # Usage message
 USAGE           = """
 Calculate time based operations
@@ -23,32 +28,37 @@ Calculate time based operations
 Usage: python {} [-d|--decimal] <HH1:MM1[:SS1]> <+|-> <HH2:MM2[:SS2]>
 """.format(PROC_NAME)
 
+
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
-def usage(exitCode=0):
+def usage(exit_code=0):
     print(USAGE)
-    sys.exit(exitCode)
+    sys.exit(exit_code)
+
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME,VERSION[0],VERSION[1],VERSION[2]))
+    print('{} v{}.{}.{}'.format(PROC_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
+
 
 DECIMAL=False
 TOTAL_SECONDS = 0
 OP = '+'
 
-if len(sys.argv) == 1 or sys.argv[1] in [ '-h', '--help' ]:
+if len(sys.argv) == 1 or sys.argv[1] in ['-h', '--help']:
     usage()
 
-if sys.argv[1] in [ '-d', '--decimal' ]:
+if sys.argv[1] in ['-d', '--decimal']:
     DECIMAL=True
     args = sys.argv[2:]
 else:
     args = sys.argv[1:]
 
-def decimal(timeRaw=0):
-    timeDec = round(((timeRaw / 60.0) * 100.0) if DECIMAL else timeRaw)
-    return ( int(timeDec) )
+
+def decimal(time_raw=0):
+    time_dec = round(((time_raw / 60.0) * 100.0) if DECIMAL else time_raw)
+    return int(time_dec)
+
 
 for tm in args:
     if re.match(r"[+-]", tm):

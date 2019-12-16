@@ -62,6 +62,7 @@ def check_arguments(args, args_num=0):
         print("Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
         usage(1)
 
+
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
     try:
