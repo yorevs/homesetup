@@ -74,44 +74,44 @@ alias lld='ls -lhd .??*/'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+alias grep='\grep --color=auto'
+alias fgrep='\fgrep --color=auto'
+alias egrep='\egrep --color=auto'
 
 # For safety, by default those commands will input for confirmation
-alias rm='rm -iv'
-alias cp='cp -iv'
-alias mv='mv -iv'
+alias rm='\rm -iv'
+alias cp='\cp -iv'
+alias mv='\mv -iv'
 
 # Nice command replacements
-alias cls='clear'
-alias df='df -H'
-alias du='du -hcd 1'
-alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
+alias cls='\clear'
+alias df='\df -H'
+alias du='\du -hcd 1'
+alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
 
 # Use vim instead of vi
 __hhs_has "vim" && alias vi='vim'
 
 # Interpret escape sequences
-alias more='more -r'
-alias less='less -r'
+alias more='\more -r'
+alias less='\less -r'
 
 # Make mount command output pretty and human readable format
-alias mount='mount | column -t'
+alias mount='\mount | column -t'
 
 # Top shortcut ordered by cpu
-alias cpu='top -o cpu'
+alias cpu='\top -o cpu'
 
 # Top shortcut ordered by Memory
-alias mem='top -o rsize'
+alias mem='\top -o rsize'
 
 # Date and time shortcuts
-alias week='date +%V'
-alias now='date +"(Week:%V) %Y-%m-%d %T %Z"'
-alias ts='date "+%s%S"'
+alias week='\date +%V'
+alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
+alias ts='\date "+%s%S"'
 
 # macOS has no `wget, so using curl instead`
-__hhs_has "wget" || alias wget='curl -O'
+__hhs_has "wget" || alias wget='\curl -O'
 
 # Reload the bash session
 alias reload='cls; source ~/.bashrc && echo -e "${HHS_WELCOME}"'
@@ -140,7 +140,7 @@ __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/vers
 
 if __hhs_has "python"; then
 
-  # linux has no `json_pp`, so using python instead
+  # Linux has no `json_pp`, so using python instead
   __hhs_has "json_pp" || alias json_pp='python -m json.tool'
 
   # Evaluate mathematical expression
@@ -157,8 +157,15 @@ fi
 # -----------------------------------------------------------------------------------
 # IP related
 
-# External IP
-__hhs_has "dig" && alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
+# Get your external public IP
+if __hhs_has "dig"; then
+
+  # Perform a DNS lookup against myip.opendns.com
+  alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
+else
+  # Try using curl as an alternative, however, in most cases it may be inaccurate
+  alias ip='a=$(curl ifconfig.me 2> /dev/null); echo ${a//\"}'
+fi
 
 # Local networking (requires pcregrep)
 if __hhs_has "pcregrep"; then
@@ -170,7 +177,10 @@ if __hhs_has "pcregrep"; then
 fi
 
 # All IPs of all interfaces
-__hhs_has "ifconfig" && alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+if __hhs_has "ifconfig"; then
+  
+  alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+fi
 
 # Base64 encode shortcuts
 __hhs_has "base64" && alias encode="base64"
@@ -226,7 +236,7 @@ esac
 [ -d "${TEMP}" ] && alias temp='cd ${TEMP}'
 
 # -----------------------------------------------------------------------------------
-# Handy Terminal Shortcuts => TODO adapt for zsh
+# Handy Terminal Shortcuts => TODO: adapt for zsh
 
 alias show-cursor='tput cnorm'      # Show the cursor using tput
 alias hide-cursor='tput civis'      # Hide the cursor using tput
@@ -262,7 +272,7 @@ if __hhs_has "git"; then
   alias __hhs_git_add='git add'
   alias __hhs_git_commit='git commit -m'
   alias __hhs_git_amend='git commit --amend --no-edit'
-  alias __hhs_git_pull_rebase='git pull --rebase'
+  alias __hhs_git_pull_rebase='git pull --rebase --autostash --all --verbose --no-recurse-submodules'
   alias __hhs_git_push='git push origin HEAD'
   alias __hhs_git_show='git diff-tree --no-commit-id --name-status -r'
   alias __hhs_git_difftool='git difftool -t opendiff'
@@ -279,8 +289,8 @@ if __hhs_has "gradle"; then
   alias __hhs_gradle_init='gw init'
   alias __hhs_gradle_quiet='gw -q'
   alias __hhs_gradle_wrapper='gw wrapper --gradle-version'
-  alias __hhs_gradle_tasks='gradle -q :tasks --all'
-  alias __hhs_gradle_projects='gradle -q projects'
+  alias __hhs_gradle_tasks='gw -q :tasks --all'
+  alias __hhs_gradle_projects='gw -q projects'
 fi
 
 # -----------------------------------------------------------------------------------
@@ -289,9 +299,6 @@ fi
 
 if __hhs_has "docker" && docker info &>/dev/null; then
 
-  __hhs_alias dk='docker'
-  __hhs_alias dkc='docker-compose'
-  
   alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'
   alias __hhs_docker_service='docker service'
   alias __hhs_docker_logs='docker logs'
