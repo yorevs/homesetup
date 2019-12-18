@@ -1,45 +1,49 @@
-__hhs_comp-load-dir() {
+# shellcheck disable=SC2206,SC2207
 
-  if [ "${#COMP_WORDS[@]}" != "2" ]; then
+__hhs_comp() {
+  
+  local all=($*) suggestions=()
+
+  if [ "${#COMP_WORDS[@]}" != "2" ] || [ "${#all[@]}" == "0" ]; then
     return
   fi
 
-  local allDirs=()
-  IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$HHS_SAVED_DIRS"
-  local suggestions=($(compgen -W "$(grep . "$HHS_SAVED_DIRS" | awk -F'=' '{print $1}')" -- "${COMP_WORDS[1]}"))
-
-  if [ "${#suggestions[@]}" == "1" ]; then
-    local number="${suggestions[0]/%\ */}"
-    COMPREPLY=("$number")
+  if [ "${#all[@]}" == "1" ]; then
+    local reply="${all[0]/%\ */}"
+    COMPREPLY=("$reply")
+    suggestions+=($reply)
   else
-    for i in "${!suggestions[@]}"; do
-      suggestions[$i]="$(echo "${suggestions[$i]}")"
+    for i in "${!all[@]}"; do
+      suggestions[$i]="$(${all[$i]})"
     done
-    COMPREPLY=("${suggestions[@]}")
+    COMPREPLY=("${all[@]}")
   fi
+
+  compgen -W "${suggestions[@]}" -- "${COMP_WORDS[1]}"
+}
+
+__hhs_comp-load-dir() {
+
+  local suggestions=($(grep . "$HHS_SAVED_DIRS" | awk -F'=' '{print $1}'))
+  
+  __hhs_comp "${suggestions[@]}"
 }
 
 __hhs_comp-aliases() {
 
-  if [ "${#COMP_WORDS[@]}" != "2" ]; then
-    return
-  fi
-
   local aliasFile="$HOME/.aliases"
-  local allDirs=()
-  IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$aliasFile"
-  local suggestions=($(compgen -W "$(grep -v '^#' "$aliasFile" | awk -F'=' '{print $1}')" -- "${COMP_WORDS[1]}"))
+  local suggestions=($(grep -v '^#' "$aliasFile" | awk -F'=' '{print $1}'))
 
-  if [ "${#suggestions[@]}" == "1" ]; then
-    local number="${suggestions[0]/%\ */}"
-    COMPREPLY=("$number")
-  else
-    for i in "${!suggestions[@]}"; do
-      suggestions[$i]="$(echo "${suggestions[$i]}")"
-    done
-    COMPREPLY=("${suggestions[@]}")
-  fi
+  __hhs_comp "${suggestions[@]}"
+}
+
+__hhs_comp-cmd() {
+
+  local suggestions=($(sed -E 's/^Command ([A-Z0-9_]*):(.*)?/\1/' "$HHS_CMD_FILE"))
+
+  __hhs_comp "${suggestions[@]}"
 }
 
 complete -F __hhs_comp-load-dir load
 complete -F __hhs_comp-aliases aa
+complete -F __hhs_comp-cmd cmd
