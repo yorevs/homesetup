@@ -60,18 +60,29 @@ case $HHS_MY_SHELL in
   ;;
 esac
 
-# This turns off the case-sensitive completion.
-[ -f ~/.inputrc ] || echo "set completion-ignore-case On" >~/.inputrc
+# Input-rc Options:
+# - completion-ignore-case: Turns off the case-sensitive completion
+# - colored-stats: Displays possible completions using different colors to indicate their type
 
-case $HHS_MY_OS in
-
-  Darwin) 
-    sed -i '' -E "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
-  ;;
-  Linux) 
-    sed -i'' -r "s#(^set completion-ignore-case .*)*#set completion-ignore-case On#g" ~/.inputrc
-  ;;
-esac
+if ! [ -f ~/.inputrc ]; then
+  echo "set completion-ignore-case on" >~/.inputrc
+  echo "set colored-stats on" >>~/.inputrc
+else
+  case $HHS_MY_OS in
+    Darwin)
+      sed -i '' -E \
+        -e "s/(^set colored-stats) .*/\1 on/g" \
+        -e "s/(^set completion-ignore-case) .*/\1 on/g" \
+        ~/.inputrc
+    ;;
+    Linux)
+      sed -i'' -r \
+        -e "s/(^set colored-stats) .*/\1 on/g" \
+        -e "s/(^set completion-ignore-case) .*/\1 on/g" \
+        ~/.inputrc
+    ;;
+  esac
+fi
 
 # -----------------------------------------------------------------------------------
 # Completions
