@@ -153,12 +153,12 @@ function __hhs_go-dir() {
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
     return 1
   elif [ -d "$1" ]; then
-    pushd "$1" &>/dev/null || return 1
+    pushd "$1" &>/dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   else
     local searchPath name selIndex
     [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
     [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
-    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<<"$(find -L "$searchPath" -type d -iname "*""$name" 2>/dev/null)"
+    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<<"$(find -L "${searchPath%/}" -maxdepth "${HHS_MAX_DEPTH}" -type d -iname "*""$name" 2>/dev/null)"
     len=${#results[@]}
     # If no directory is found under the specified name
     if [ "$len" -eq 0 ]; then
