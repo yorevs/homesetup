@@ -145,7 +145,7 @@ __hhs_comp-godir() {
   return 0
 }
 
-complete -o default -F __hhs_comp-godir go
+complete -o default -F __hhs_comp-godir godir
 complete -F __hhs_comp-load-dir load
 complete -F __hhs_comp-aliases aa
 complete -F __hhs_comp-cmd cmd
