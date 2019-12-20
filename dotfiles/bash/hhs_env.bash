@@ -83,6 +83,7 @@ export HHS_SAVED_DIRS="${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}"
 export HHS_CMD_FILE="${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}"
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-$HHS_DIR/.punches}"
 export HHS_PATHS_FILE="${HHS_PATHS_FILE:-$HOME/.path}"
+export HHS_MAX_DEPTH="${HHS_MAX_DEPTH:-4}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 HHS_DEFAULT_DEV_TOOLS=(

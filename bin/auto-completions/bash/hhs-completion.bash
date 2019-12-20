@@ -65,7 +65,7 @@ __hhs_comp-godir() {
     return 1
   fi
 
-  suggestions=($(find -L "${dir%/}" -maxdepth 3 -type d -iname "${base}" 2>/dev/null | sed -E 's#\./(.*)/*#\1/#'))
+  suggestions=($(find -L "${dir%/}" -maxdepth "${HHS_MAX_DEPTH}" -type d -iname "${base}" 2>/dev/null | sed -E 's#\./(.*)/*#\1/#'))
   [ ${#suggestions[@]} -lt 2 ] && return 0
   COMPREPLY=("${suggestions[@]}")
 

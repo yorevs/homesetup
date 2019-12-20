@@ -152,6 +152,8 @@ function __hhs_go-dir() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
     return 1
+  elif [ -d "$1" ]; then
+    pushd "$1" &>/dev/null || return 1
   else
     local searchPath name selIndex
     [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
