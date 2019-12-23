@@ -11,7 +11,10 @@
     @license: Please refer to <http://unlicense.org/>
 """
 
-import sys, os, getopt
+import sys
+import os
+import getopt
+from subprocess import check_output
 
 PROC_NAME = os.path.basename(__file__)
 
@@ -31,13 +34,15 @@ Usage: {} [opts]
         -l, --list <filter>                : List all passwords matching the key filter
 """.format(VERSION, PROC_NAME)
 
-ARGS_MAP = {
+OPER_MAP = {
     'add': None,
     'del': None,
     'upd': None,
     'list': None
 }
 
+
+PWD_MAP = {}
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
 def usage(exit_code=0):
@@ -51,9 +56,58 @@ def version():
     sys.exit(0)
 
 
+def add_to_vault(key, password, desc):
+    print("Key: {}".format(key))
+    print("Password: {}".format(password))
+    print("Description: {}".format(desc))
+
+
+def decrypt_vault():
+    output = check_output(['decrypt', '/tmp/vault.txt', '12345']).strip()
+    print(output)
+
+
+def encrypt_vault():
+    output = check_output(['encrypt', '/tmp/vault.txt', '12345']).strip()
+    print(output)
+
+
+def list_from_vault():
+    try:
+        decrypt_vault()
+        with open("/tmp/vault.txt") as f_vault:
+            for line in f_vault:
+                (index, key, password, desc) = line.split('|')
+                entry = {
+                    'index': index,
+                    'key': key,
+                    'password': password,
+                    'desc': desc
+                }
+                PWD_MAP[index] = entry
+                print("{}".format(entry))
+    finally:
+        encrypt_vault()
+
+
+# @purpose: Execute operation
+def exec_oper(op):
+    if "add" == op:
+        add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
+    elif "del" == op:
+        print ("DEL => {}".format(OPER_MAP[op]))
+    elif "upd" == op:
+        print ("UPD => {}".format(OPER_MAP[op]))
+    else:
+        list_from_vault()
+
 # @purpose: Execute the app business logic
 def app_exec():
-    print(ARGS_MAP)
+
+    for op in OPER_MAP:
+        if not OPER_MAP[op] is None:
+            exec_oper(op)
+            break
 
 
 # @purpose: Execute the app business logic
@@ -72,7 +126,7 @@ def main(argv):
 
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
-        opts, args = getopt.getopt(argv, 'vhadul', ['add=', 'del', 'update', 'list'])
+        opts, args = getopt.getopt(argv, 'vhadul', ['add=', 'del', 'update=', 'list'])
 
         # Parse the command line arguments passed
         for opt, arg in opts:
@@ -82,15 +136,15 @@ def main(argv):
                 usage()
             elif opt in ('-a', '--add'):
                 check_arguments(args, 3)
-                ARGS_MAP['add'] = args
+                OPER_MAP['add'] = args
             elif opt in ('-d', '--del'):
                 check_arguments(args, 1)
-                ARGS_MAP['del'] = args
+                OPER_MAP['del'] = args
             elif opt in ('-u', '--upd'):
                 check_arguments(args, 3)
-                ARGS_MAP['upd'] = args
+                OPER_MAP['upd'] = args
             elif opt in ('-l', '--list'):
-                ARGS_MAP['list'] = args
+                OPER_MAP['list'] = args
             else:
                 assert False, '### Unhandled option: {}'.format(opt)
             break
@@ -100,12 +154,12 @@ def main(argv):
 
     # Catch getopt exceptions
     except getopt.GetoptError as optErr:
-        print('{}'.format(optErr.msg))
+        print('Invalid option: => {}'.format(optErr.msg))
         usage(2)
 
     # Catch ValueErrors
     except ValueError as valErr:
-        print('{}'.format(valErr))
+        print('Failed to execute vault => "{}"'.format(valErr))
         usage(2)
 
     # Caught app exceptions

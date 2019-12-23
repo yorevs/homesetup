@@ -145,6 +145,22 @@ __hhs_comp-godir() {
   return 0
 }
 
+__hhs_comp-hist() {
+
+  local suggestions=()
+
+  [ "${#COMP_WORDS[@]}" != "2" ] && return 0
+
+  # Let the user know about the search
+  echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
+  IFS=$'\n'
+  suggestions=($(hist "${COMP_WORDS[1]}" | cut -c30-))
+  IFS=$"${HHS_RESET_IFS}"
+  # Erase the searching text after search is done
+  echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
+  COMPREPLY=("${suggestions[@]}")
+}
+
 complete -o default -F __hhs_comp-godir godir
 complete -F __hhs_comp-load-dir load
 complete -F __hhs_comp-aliases aa
@@ -152,3 +168,4 @@ complete -F __hhs_comp-cmd cmd
 complete -F __hhs_comp-punch punch
 complete -F __hhs_comp-paths paths
 complete -F __hhs_comp-envs envs
+complete -F __hhs_comp-hist hist
