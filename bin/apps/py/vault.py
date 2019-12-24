@@ -14,6 +14,8 @@
 import sys
 import os
 import getopt
+import base64
+
 from subprocess import check_output
 
 PROC_NAME = os.path.basename(__file__)
@@ -41,8 +43,12 @@ OPER_MAP = {
     'list': None
 }
 
-
 PWD_MAP = {}
+
+VAULT_FILE = "/Users/hugo/.hhs/vault.dat"
+
+VAULT_GPG_FILE = "{}.gpg".format(VAULT_FILE)
+
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
 def usage(exit_code=0):
@@ -56,54 +62,89 @@ def version():
     sys.exit(0)
 
 
-def add_to_vault(key, password, desc):
-    print("Key: {}".format(key))
-    print("Password: {}".format(password))
-    print("Description: {}".format(desc))
+class VaultEntry(object):
+    def __init__(self, key, password, desc):
+        self.key = key
+        self.password = password
+        self.desc = desc
+
+    def __str__(self):
+        return "{}|{}|{}".format(self.key, self.password, self.desc)
+
+    def to_string(self):
+        return """
+        Key: {}
+        Password: {}
+        Description: {}
+        """.format(self.key, self.password, self.desc)
+
+
+def assert_vault_exists():
+    if not os.path.exists(VAULT_FILE):
+        with open(VAULT_FILE, 'w'):
+            pass
+
+
+def write_to_vault():
+    with open(VAULT_FILE, 'w') as f_vault:
+        for entry in PWD_MAP:
+            f_vault.write("{}\n".format(str(PWD_MAP[entry])))
 
 
 def decrypt_vault():
-    output = check_output(['decrypt', '/tmp/vault.txt', '12345']).strip()
-    print(output)
+    output = check_output(['gpg', '--yes', '--batch', '--passphrase={}'.format('12345'), VAULT_FILE]).strip()
+    with open(VAULT_FILE, 'rw') as f_vault:
+        f_vault.write(str(base64.b64decode(f_vault.read())))
 
 
 def encrypt_vault():
-    output = check_output(['encrypt', '/tmp/vault.txt', '12345']).strip()
-    print(output)
+    output = check_output(['gpg', '--yes', '--batch', '--passphrase={}'.format('12345'), '-c', VAULT_FILE]).strip()
+    with open(VAULT_FILE, 'rw') as f_vault:
+        f_vault.write(str(base64.b64encode(f_vault.read())))
+
+
+def read_from_vault():
+    with open(VAULT_FILE) as f_vault:
+        for line in f_vault:
+            if not line.strip():
+                continue
+            (key, password, desc) = line.split('|')
+            entry = VaultEntry(key, password, desc)
+            PWD_MAP[key] = entry
 
 
 def list_from_vault():
-    try:
-        decrypt_vault()
-        with open("/tmp/vault.txt") as f_vault:
-            for line in f_vault:
-                (index, key, password, desc) = line.split('|')
-                entry = {
-                    'index': index,
-                    'key': key,
-                    'password': password,
-                    'desc': desc
-                }
-                PWD_MAP[index] = entry
-                print("{}".format(entry))
-    finally:
-        encrypt_vault()
+    for entry in PWD_MAP:
+        print("{} -> {}".format(entry, PWD_MAP[entry].to_string()))
+
+
+def add_to_vault(key, password, desc):
+    entry = VaultEntry(key, password, desc)
+    PWD_MAP[key] = entry
+    write_to_vault()
 
 
 # @purpose: Execute operation
 def exec_oper(op):
-    if "add" == op:
-        add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
-    elif "del" == op:
-        print ("DEL => {}".format(OPER_MAP[op]))
-    elif "upd" == op:
-        print ("UPD => {}".format(OPER_MAP[op]))
-    else:
-        list_from_vault()
+    try:
+        assert_vault_exists()
+        # decrypt_vault()
+        read_from_vault()
+        if "add" == op:
+            add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
+        elif "del" == op:
+            print ("DEL => {}".format(OPER_MAP[op]))
+        elif "upd" == op:
+            print ("UPD => {}".format(OPER_MAP[op]))
+        else:
+            list_from_vault()
+    finally:
+        # encrypt_vault()
+        pass
+
 
 # @purpose: Execute the app business logic
 def app_exec():
-
     for op in OPER_MAP:
         if not OPER_MAP[op] is None:
             exec_oper(op)
@@ -119,7 +160,7 @@ def check_arguments(args, args_num=0):
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
-    try:
+    # try:
 
         if len(sys.argv) == 1 or sys.argv[1] in ['-h', '--help']:
             usage()
@@ -152,20 +193,20 @@ def main(argv):
         # Execute the app code
         app_exec()
 
-    # Catch getopt exceptions
-    except getopt.GetoptError as optErr:
-        print('Invalid option: => {}'.format(optErr.msg))
-        usage(2)
+    # # Catch getopt exceptions
+    # except getopt.GetoptError as err:
+    #     print('Invalid option: => {}'.format(err.msg))
+    #     usage(2)
+    #
+    # # Catch ValueErrors
+    # except ValueError as err:
+    #     print('Failed to execute vault => "{}"'.format(err))
+    #     usage(2)
 
-    # Catch ValueErrors
-    except ValueError as valErr:
-        print('Failed to execute vault => "{}"'.format(valErr))
-        usage(2)
-
-    # Caught app exceptions
-    except Exception as err:
-        print('### A unexpected exception was thrown executing the app => \n\t{}'.format(err))
-        sys.exit(2)
+    # # Caught app exceptions
+    # except Exception as err:
+    #     print('### A unexpected exception was thrown executing the app => \n\t{}'.format(err))
+    #     sys.exit(2)
 
 
 if __name__ == "__main__":
