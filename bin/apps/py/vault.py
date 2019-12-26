@@ -32,9 +32,9 @@ HomeSetup vault v{}
 Usage: {} [opts]
 
     Options:
-        -a,  --add <key> <password> <desc> : Add a password to the vault
+        -a,  --add <key> <desc> [password] : Add a password to the vault
         -d,  --del <key>                   : Remove a password from the vault
-        -u,  --upd <key> <password> <desc> : Update a password from the vault
+        -u,  --upd <key> <desc> [password] : Update a password from the vault
         -l, --list <filter>                : List all passwords matching the key filter
 """.format(VERSION, APP_NAME)
 
@@ -43,8 +43,6 @@ OPER_MAP = {
 }
 
 HHS_DIR = "/Users/hugo/.hhs"
-
-VAULT = {}
 
 VAULT_FILE = "{}/.vault".format(HHS_DIR)
 
@@ -63,8 +61,18 @@ def version():
     sys.exit(0)
 
 
+# @purpose: Represents the vault
+class Vault(object):
+    requires_encryption = False
+    data = {}
+
+    def __init__(self):
+        pass
+
+
 # @purpose: Represents a vault entity
 class VaultEntry(object):
+
     def __init__(self, key, password, desc):
         self.key = key
         self.password = password
@@ -109,71 +117,65 @@ def decode_vault():
 # @purpose: Encrypt the vault file
 def encrypt_vault(passphrase):
     if os.path.exists(VAULT_FILE):
-        try:
-            cmd_args = [
-                'gpg', '--quiet', '--yes' ,'--batch', '--symmetric',
-                '--passphrase={}'.format(passphrase),
-                '--output', VAULT_GPG_FILE, VAULT_FILE
-            ]
-            subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
-            encode_vault()
-            os.remove(VAULT_GPG_FILE)
-        except subprocess.CalledProcessError, err:
-            print('### Authorization failed or invalid passphrase')
-            sys.exit(2)
+        cmd_args = [
+            'gpg', '--quiet', '--yes', '--batch', '--symmetric',
+            '--passphrase={}'.format(passphrase),
+            '--output', VAULT_GPG_FILE, VAULT_FILE
+        ]
+        subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
+        encode_vault()
+        VaultEntry.requires_encryption = False
 
 
 # @purpose: Decrypt the vault file
 def decrypt_vault(passphrase):
     if decode_vault():
-        try:
-            cmd_args = [
-                'gpg', '--quiet', '--yes' ,'--batch',
-                '--passphrase={}'.format(passphrase),
-                '--output', VAULT_FILE, VAULT_GPG_FILE
-            ]
-            subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
-            os.remove(VAULT_GPG_FILE)
-        except subprocess.CalledProcessError, err:
-            print('### Authorization failed or invalid passphrase')
-            sys.exit(2)
+        cmd_args = [
+            'gpg', '--quiet', '--yes', '--batch',
+            '--passphrase={}'.format(passphrase),
+            '--output', VAULT_FILE, VAULT_GPG_FILE
+        ]
+        subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
+        VaultEntry.requires_encryption = True
 
 
 # @purpose: Save all vault entries
 def save_vault():
     with open(VAULT_FILE, 'w') as f_vault:
-        for entry in VAULT:
-            f_vault.write("{}\n".format(str(VAULT[entry])))
+        for entry in Vault.data:
+            f_vault.write("{}\n".format(str(Vault.data[entry])))
 
 
 # @purpose: Read all existing vault entries
 def read_vault():
     if os.path.exists(VAULT_FILE):
-        with open(VAULT_FILE, 'r') as f_vault:
-            for line in f_vault:
-                if not line.strip():
-                    continue
-                (key, password, desc) = line.split('|')
-                entry = VaultEntry(key, password, desc)
-                VAULT[key] = entry
+        try:
+            with open(VAULT_FILE, 'r') as f_vault:
+                for line in f_vault:
+                    if not line.strip():
+                        continue
+                    (key, password, desc) = line.split('|')
+                    entry = VaultEntry(key, password, desc)
+                    Vault.data[key] = entry
+        except ValueError:
+            print ("### Your Vault file '{}' is not valid".format(VAULT_FILE))
 
 
 # @purpose: List all vault entries
 def list_from_vault():
-    if len(VAULT) > 0:
+    if len(Vault.data) > 0:
         print ('\n=== Listing all vault entries ===\n')
-        for entry in VAULT:
-            print("[{}]: {}".format(entry, VAULT[entry].to_string()))
+        for entry in Vault.data:
+            print("[{}]: {}".format(entry, Vault.data[entry].to_string()))
     else:
         print ("\n=== Vault is empty ===\n")
 
 
 # @purpose: Add a vault entry
-def add_to_vault(key, password, desc):
-    if key not in VAULT.keys():
+def add_to_vault(key, desc, password):
+    if key not in Vault.data.keys():
         entry = VaultEntry(key, password, desc)
-        VAULT[key] = entry
-        save_vault()
+        Vault.data[key] = entry
         print ("""\nAdded: {}
         """.format(entry.to_string()))
     else:
@@ -182,43 +184,46 @@ def add_to_vault(key, password, desc):
 
 # @purpose: Retrieve a vault entry
 def get_from_vault(key):
-    if key in VAULT.keys():
-        entry = VAULT[key]
+    if key in Vault.data.keys():
+        entry = Vault.data[key]
         print ("\n[{}]: {}".format(entry.key, entry.to_string(True)))
     else:
         print ("### No entry specified by '{}' was found in vault".format(key))
 
 
-# @purpose: Remove a vault entry
-def del_from_vault(key):
-    if key in VAULT.keys():
-        entry = VAULT[key]
-        del VAULT[key]
-        save_vault()
-        print ("""\nRemoved: {}""".format(entry.to_string()))
-    else:
-        print ("### No entry specified by '{}' was found in vault".format(key))
-
-
 # @purpose: Update a vault entry
-def update_vault(key, password, desc):
-    if key in VAULT.keys():
+def update_vault(key, desc, password):
+    if key in Vault.data.keys():
         entry = VaultEntry(key, password, desc)
-        VAULT[key] = entry
-        save_vault()
+        Vault.data[key] = entry
         print ("""\nUpdated: {}
         """.format(entry.to_string()))
     else:
         print ("### No entry specified by '{}' was found in vault".format(key))
 
 
+# @purpose: Remove a vault entry
+def del_from_vault(key):
+    if key in Vault.data.keys():
+        entry = Vault.data[key]
+        del Vault.data[key]
+        print ("""\nRemoved: {}""".format(entry.to_string()))
+    else:
+        print ("### No entry specified by '{}' was found in vault".format(key))
+
+
+# @purpose: Retrieve the vault passphrase
 def get_pass_phrase():
+    if not os.path.exists(VAULT_FILE) or os.stat(VAULT_FILE).st_size == 0:
+        prompt = "Vault file is empty. The following password will be assigned to your Vault file: "
+    else:
+        prompt = "Type your passphrase: "
     pass_phrase = os.environ.get('HHS_VAULT_PASSPHRASE')
     if pass_phrase is not None:
         pass_phrase = base64.b64decode(pass_phrase)
     else:
-        while pass_phrase is None:
-            pass_phrase = getpass.getpass('Type your passphrase: ').strip()
+        while not pass_phrase:
+            pass_phrase = getpass.getpass(prompt).strip()
 
     return pass_phrase
 
@@ -230,9 +235,9 @@ def set_pass_phrase(pass_phrase):
 
 # @purpose: Execute the specified operation
 def exec_operation(op):
-    pw = get_pass_phrase()
+    passphrase = get_pass_phrase()
     try:
-        decrypt_vault(pw)
+        decrypt_vault(passphrase)
         read_vault()
         if "add" == op:
             add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
@@ -245,11 +250,15 @@ def exec_operation(op):
         elif "list" == op:
             list_from_vault()
         else:
-            assert False, '### Unhandled operation: {}'.format(op)
-        encrypt_vault(pw)
-        set_pass_phrase(pw)
+            print('### Unhandled operation: {}'.format(op))
+        save_vault()
+        encrypt_vault(passphrase)
+    except subprocess.CalledProcessError:
+        print('### Authorization failed or invalid passphrase')
+        quit(2)
     finally:
-        pass
+        if os.path.exists(VAULT_GPG_FILE):
+            os.remove(VAULT_GPG_FILE)
 
 
 # @purpose: Execute the app business logic
@@ -276,7 +285,7 @@ def main(argv):
 
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
-        opts, args = getopt.getopt(argv, 'vhagdul', ['add=', 'get=', 'del=', 'update=', 'list'])
+        opts, args = getopt.getopt(argv, 'vhagdul', ['add', 'get', 'del', 'update', 'list'])
 
         # Parse the command line arguments passed
         for opt, arg in opts:
@@ -309,12 +318,18 @@ def main(argv):
     except getopt.GetoptError as err:
         print('Invalid option: => {}'.format(err.msg))
         usage(2)
+        quit(2)
+
+    # Catch keyboard interrupts
+    except KeyboardInterrupt:
+        print ('')
+        quit(2)
 
     # Caught app exceptions
-    except Exception as err:
-        print('### A unexpected exception was thrown executing the app ')
+    except Exception:
+        print('### A unexpected exception was thrown executing the app')
         traceback.print_exc()
-        sys.exit(2)
+        quit(2)
 
 
 if __name__ == "__main__":
