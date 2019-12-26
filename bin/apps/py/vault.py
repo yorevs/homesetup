@@ -62,6 +62,7 @@ def version():
     sys.exit(0)
 
 
+# @purpose: TODO: Comment it
 class VaultEntry(object):
     def __init__(self, key, password, desc):
         self.key = key
@@ -79,31 +80,36 @@ class VaultEntry(object):
         """.format(self.key, self.password, self.desc)
 
 
+# @purpose: TODO: Comment it
 def assert_vault_exists():
     if not os.path.exists(VAULT_FILE):
         with open(VAULT_FILE, 'w'):
             pass
 
 
-def write_to_vault():
-    with open(VAULT_FILE, 'w') as f_vault:
-        for entry in PWD_MAP:
-            f_vault.write("{}\n".format(str(PWD_MAP[entry])))
-
-
+# @purpose: TODO: Comment it
 def decrypt_vault():
     output = check_output(['gpg', '--yes', '--batch', '--passphrase={}'.format('12345'), VAULT_FILE]).strip()
     with open(VAULT_FILE, 'rw') as f_vault:
         f_vault.write(str(base64.b64decode(f_vault.read())))
 
 
+# @purpose: TODO: Comment it
 def encrypt_vault():
     output = check_output(['gpg', '--yes', '--batch', '--passphrase={}'.format('12345'), '-c', VAULT_FILE]).strip()
     with open(VAULT_FILE, 'rw') as f_vault:
         f_vault.write(str(base64.b64encode(f_vault.read())))
 
 
-def read_from_vault():
+# @purpose: TODO: Comment it
+def save_vault():
+    with open(VAULT_FILE, 'w') as f_vault:
+        for entry in PWD_MAP:
+            f_vault.write("{}\n".format(str(PWD_MAP[entry])))
+
+
+# @purpose: TODO: Comment it
+def read_vault():
     with open(VAULT_FILE) as f_vault:
         for line in f_vault:
             if not line.strip():
@@ -113,29 +119,53 @@ def read_from_vault():
             PWD_MAP[key] = entry
 
 
+# @purpose: TODO: Comment it
 def list_from_vault():
     for entry in PWD_MAP:
         print("{} -> {}".format(entry, PWD_MAP[entry].to_string()))
 
 
+# @purpose: TODO: Comment it
 def add_to_vault(key, password, desc):
-    entry = VaultEntry(key, password, desc)
-    PWD_MAP[key] = entry
-    write_to_vault()
+    if not key in PWD_MAP.keys():
+        entry = VaultEntry(key, password, desc)
+        PWD_MAP[key] = entry
+        save_vault()
+    else:
+        print ("### Password specified by '{}' already exist in vault".format(key))
 
 
-# @purpose: Execute operation
-def exec_oper(op):
+# @purpose: TODO: Comment it
+def del_from_vault(key):
+    if key in PWD_MAP.keys():
+        del PWD_MAP[key]
+        save_vault()
+    else:
+        print ("### Password specified by '{}' does not exist in vault".format(key))
+
+
+# @purpose: TODO: Comment it
+def update_vault(key, password, desc):
+    if key in PWD_MAP.keys():
+        entry = VaultEntry(key, password, desc)
+        PWD_MAP[key] = entry
+        save_vault()
+    else:
+        print ("### Password specified by '{}' does not exist in vault".format(key))
+
+
+# @purpose: Execute the specified operation
+def exec_operation(op):
     try:
         assert_vault_exists()
         # decrypt_vault()
-        read_from_vault()
+        read_vault()
         if "add" == op:
             add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
         elif "del" == op:
-            print ("DEL => {}".format(OPER_MAP[op]))
+            del_from_vault(OPER_MAP[op][0])
         elif "upd" == op:
-            print ("UPD => {}".format(OPER_MAP[op]))
+            update_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
         else:
             list_from_vault()
     finally:
@@ -147,7 +177,7 @@ def exec_oper(op):
 def app_exec():
     for op in OPER_MAP:
         if not OPER_MAP[op] is None:
-            exec_oper(op)
+            exec_operation(op)
             break
 
 
