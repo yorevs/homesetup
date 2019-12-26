@@ -42,7 +42,9 @@ OPER_MAP = {
     'add': None, 'get': None, 'del': None, 'upd': None, 'list': None
 }
 
-HHS_DIR = "/Users/hugo/.hhs"
+USERNAME = getpass.getuser()
+
+HHS_DIR = "/Users/{}/.hhs".format(USERNAME)
 
 VAULT_FILE = "{}/.vault".format(HHS_DIR)
 
@@ -215,22 +217,17 @@ def del_from_vault(key):
 # @purpose: Retrieve the vault passphrase
 def get_pass_phrase():
     if not os.path.exists(VAULT_FILE) or os.stat(VAULT_FILE).st_size == 0:
-        prompt = "Vault file is empty. The following password will be assigned to your Vault file: "
+        print ("@@@ Your Vault '{}' file is empty !\n".format(VAULT_FILE))
+        prompt = "The following password will be assigned to {} Vault's file: ".format(USERNAME)
     else:
         prompt = "Type your passphrase: "
     pass_phrase = os.environ.get('HHS_VAULT_PASSPHRASE')
     if pass_phrase is not None:
-        pass_phrase = base64.b64decode(pass_phrase)
+        return "{}:{}".format(USERNAME, base64.b64decode(pass_phrase))
     else:
         while not pass_phrase:
             pass_phrase = getpass.getpass(prompt).strip()
-
-    return pass_phrase
-
-
-def set_pass_phrase(pass_phrase):
-    pass_phrase = str(pass_phrase.strip())
-    os.putenv('HHS_VAULT_PASSPHRASE', base64.b64encode(pass_phrase))
+        return "{}:{}".format(USERNAME, pass_phrase)
 
 
 # @purpose: Execute the specified operation
@@ -327,7 +324,7 @@ def main(argv):
 
     # Caught app exceptions
     except Exception:
-        print('### A unexpected exception was thrown executing the app')
+        print('### A unexpected exception was thrown executing the app =>')
         traceback.print_exc()
         quit(2)
 
