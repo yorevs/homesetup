@@ -15,9 +15,10 @@ import sys
 import os
 import re
 import getopt
+import getpass
+import traceback
 import base64
-
-from subprocess import check_output
+import subprocess
 
 APP_NAME = os.path.basename(__file__)
 
@@ -76,11 +77,11 @@ class VaultEntry(object):
         return """
         Key: {}
         Password: {}
-        Description: {}"""\
+        Description: {}""" \
             .format(
-                self.key,
-                self.password if show_password else re.sub('.*', '*' * len(self.password), self.password),
-                self.desc)
+            self.key,
+            self.password if show_password else re.sub('.*', '*' * 6, self.password),
+            self.desc)
 
 
 # @purpose: Encode the vault file into base64
@@ -108,22 +109,34 @@ def decode_vault():
 # @purpose: Encrypt the vault file
 def encrypt_vault(passphrase):
     if os.path.exists(VAULT_FILE):
-        check_output([
-            'gpg', '--quiet', '--yes', '--batch', '--symmetric',
-            '--passphrase={}'.format(passphrase), '--output', VAULT_GPG_FILE, VAULT_FILE
-        ]).strip()
-        encode_vault()
-        os.remove(VAULT_GPG_FILE)
+        try:
+            cmd_args = [
+                'gpg', '--quiet', '--yes' ,'--batch', '--symmetric',
+                '--passphrase={}'.format(passphrase),
+                '--output', VAULT_GPG_FILE, VAULT_FILE
+            ]
+            subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
+            encode_vault()
+            os.remove(VAULT_GPG_FILE)
+        except subprocess.CalledProcessError, err:
+            print('### Authorization failed or invalid passphrase')
+            sys.exit(2)
 
 
 # @purpose: Decrypt the vault file
 def decrypt_vault(passphrase):
     if decode_vault():
-        check_output([
-            'gpg', '--quiet', '--yes', '--batch',
-            '--passphrase={}'.format(passphrase), '--output', VAULT_FILE, VAULT_GPG_FILE
-        ]).strip()
-        os.remove(VAULT_GPG_FILE)
+        try:
+            cmd_args = [
+                'gpg', '--quiet', '--yes' ,'--batch',
+                '--passphrase={}'.format(passphrase),
+                '--output', VAULT_FILE, VAULT_GPG_FILE
+            ]
+            subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
+            os.remove(VAULT_GPG_FILE)
+        except subprocess.CalledProcessError, err:
+            print('### Authorization failed or invalid passphrase')
+            sys.exit(2)
 
 
 # @purpose: Save all vault entries
@@ -199,17 +212,25 @@ def update_vault(key, password, desc):
         print ("### No entry specified by '{}' was found in vault".format(key))
 
 
-def get_passphrase():
-    pw = os.environ.get('HHS_VAULT_PASSPHRASE')
-    if pw is None:
-        pw = raw_input('Type your passphrase: ')
+def get_pass_phrase():
+    pass_phrase = os.environ.get('HHS_VAULT_PASSPHRASE')
+    if pass_phrase is not None:
+        pass_phrase = base64.b64decode(pass_phrase)
+    else:
+        while pass_phrase is None:
+            pass_phrase = getpass.getpass('Type your passphrase: ').strip()
 
-    return pw
+    return pass_phrase
+
+
+def set_pass_phrase(pass_phrase):
+    pass_phrase = str(pass_phrase.strip())
+    os.putenv('HHS_VAULT_PASSPHRASE', base64.b64encode(pass_phrase))
 
 
 # @purpose: Execute the specified operation
 def exec_operation(op):
-    pw = get_passphrase()
+    pw = get_pass_phrase()
     try:
         decrypt_vault(pw)
         read_vault()
@@ -221,10 +242,14 @@ def exec_operation(op):
             del_from_vault(OPER_MAP[op][0])
         elif "upd" == op:
             update_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
-        else:
+        elif "list" == op:
             list_from_vault()
-    finally:
+        else:
+            assert False, '### Unhandled operation: {}'.format(op)
         encrypt_vault(pw)
+        set_pass_phrase(pw)
+    finally:
+        pass
 
 
 # @purpose: Execute the app business logic
@@ -238,7 +263,7 @@ def app_exec():
 # @purpose: Execute the app business logic
 def check_arguments(args, args_num=0):
     if len(args) < args_num:
-        print("Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
+        print("### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
         usage(1)
 
 
@@ -285,18 +310,13 @@ def main(argv):
         print('Invalid option: => {}'.format(err.msg))
         usage(2)
 
-    # Catch ValueErrors
-    except ValueError as err:
-        print('Failed to execute vault => "{}"'.format(err))
-        usage(2)
-
     # Caught app exceptions
     except Exception as err:
-        print('### A unexpected exception was thrown executing the app => \n\t{}'.format(err))
+        print('### A unexpected exception was thrown executing the app ')
+        traceback.print_exc()
         sys.exit(2)
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
     sys.exit(0)
-
