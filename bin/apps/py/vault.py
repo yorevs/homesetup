@@ -16,10 +16,10 @@ import os
 import re
 import getopt
 import getpass
-import traceback
 import base64
 import subprocess
 
+# Application name, read from it's own file path
 APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
@@ -84,7 +84,7 @@ class Vault(object):
         with open(VAULT_GPG_FILE, 'r') as vault_file:
             with open(VAULT_FILE, 'w') as enc_vault_file:
                 enc_vault_file.write(str(base64.b64encode(vault_file.read())))
-                print ("[DEBUG] Vault is encoded !")
+                log("DEBUG", "Vault is encoded !")
 
     # @purpose: Decode the vault file from base64
     @staticmethod
@@ -92,7 +92,7 @@ class Vault(object):
         with open(VAULT_FILE, 'r') as vault_file:
             with open(VAULT_GPG_FILE, 'w') as dec_vault_file:
                 dec_vault_file.write(str(base64.b64decode(vault_file.read())))
-                print ("[DEBUG] Vault is decoded !")
+                log("DEBUG", "Vault is decoded !")
 
     # @purpose: Retrieve the vault passphrase
     def get_passphrase(self):
@@ -119,7 +119,7 @@ class Vault(object):
             self.read()
         else:
             raise TypeError("### Unable to read from Vault file '{}' ".format(VAULT_FILE))
-        print ("[DEBUG] Vault is open !")
+        log("DEBUG", "Vault is open !")
 
     # @purpose: Close the Vault file and cleanup temporary files
     def close(self):
@@ -129,7 +129,7 @@ class Vault(object):
             self.encrypt()
         if os.path.exists(VAULT_GPG_FILE):
             os.remove(VAULT_GPG_FILE)
-        print ("[DEBUG] Vault is closed !")
+        log("DEBUG", "Vault is closed !")
 
     # @purpose: Encrypt and then, encode the vault file
     def encrypt(self):
@@ -141,7 +141,7 @@ class Vault(object):
         subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
         Vault.encode()
         self.is_open = False
-        print ("[DEBUG] Vault is encrypted !")
+        log("DEBUG", "Vault is encrypted !")
 
     # @purpose: Decode and then, decrypt the vault file
     def decrypt(self):
@@ -153,14 +153,14 @@ class Vault(object):
         ]
         subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
         self.is_open = True
-        print ("[DEBUG] Vault is decrypted !")
+        log("DEBUG", "Vault is decrypted !")
 
     # @purpose: Save all vault entries
     def save(self):
         with open(VAULT_FILE, 'w') as f_vault:
             for entry in self.data:
                 f_vault.write(str(self.data[entry]))
-            print ("[DEBUG] Vault is saved !")
+            log("DEBUG", "Vault is saved !")
 
     # @purpose: Read all existing vault entries
     def read(self):
@@ -179,8 +179,14 @@ class Vault(object):
     # @purpose: List all vault entries
     def list(self, filter_expr=None):
         if len(self.data) > 0:
-            print ('\n=== Listing all vault entries ===\n')
-            for entry_key in self.data:
+            if filter_expr:
+                data = list(filter(lambda x: filter_expr in x, self.data))
+                prompt = "\n=== Listing vault entries filtered by '%{}%' ===\n".format(filter_expr)
+            else:
+                data = self.data
+                prompt = "\n=== Listing all vault entries ===\n"
+            print (prompt)
+            for entry_key in data:
                 print(self.data[entry_key].to_string())
         else:
             print ("\n=== Vault is empty ===\n")
@@ -252,25 +258,26 @@ class VaultEntry(object):
 # @purpose: Execute the specified operation
 def exec_operation(op):
     vault = Vault()
+    options = OPER_MAP[op]
     try:
         vault.open()
         if "add" == op:
-            vault.add(OPER_MAP[op][0], OPER_MAP[op][1], None if len(OPER_MAP[op]) < 3 else OPER_MAP[op][2])
+            vault.add(options[0], options[1], None if len(options) < 3 else options[2])
         elif "get" == op:
-            vault.get(OPER_MAP[op][0])
+            vault.get(options[0])
         elif "del" == op:
-            vault.remove(OPER_MAP[op][0])
+            vault.remove(options[0])
         elif "upd" == op:
-            vault.update(OPER_MAP[op][0], OPER_MAP[op][1], None if len(OPER_MAP[op]) < 3 else OPER_MAP[op][2])
+            vault.update(options[0], options[1], None if len(options) < 3 else options[2])
         elif "list" == op:
-            vault.list()
+            vault.list(None if len(options) < 1 else options[0])
         else:
             print('### Unhandled operation: {}'.format(op))
     except subprocess.CalledProcessError:
         print('### Authorization failed or invalid passphrase')
         quit(2)
-    except TypeError:
-        print ("### Invalid Vault file '{}'. Trying to recover ...".format(VAULT_FILE))
+    except TypeError as err:
+        print ("### {}. Trying to recover ...".format(err.message, VAULT_FILE))
         vault.open = True
     finally:
         vault.close()
@@ -289,6 +296,10 @@ def check_arguments(args, args_num=0):
     if len(args) < args_num:
         print("### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
         usage(1)
+
+
+def log(level, message):
+    print ("[{}] {}".format(level, message))
 
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
@@ -338,12 +349,6 @@ def main(argv):
     # Catch keyboard interrupts
     except KeyboardInterrupt:
         print ('')
-        quit(2)
-
-    # Caught app exceptions
-    except Exception:
-        print('### A unexpected exception was thrown executing the app =>')
-        traceback.print_exc()
         quit(2)
 
 
