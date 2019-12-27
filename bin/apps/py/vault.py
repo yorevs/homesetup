@@ -18,6 +18,7 @@ import getopt
 import getpass
 import base64
 import subprocess
+import datetime
 
 # Application name, read from it's own file path
 APP_NAME = os.path.basename(__file__)
@@ -46,6 +47,10 @@ ENTRY_FORMAT = """[{}]:
          Key: {}
     Password: {}
         Hint: {}
+    Modified: {}
+"""
+
+LINE_FORMAT = """{}|{}|{}|{}
 """
 
 USERNAME = getpass.getuser()
@@ -100,7 +105,7 @@ class Vault(object):
             self.is_open = True
             self.is_modified = True
             print ("@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
-            prompt = "The following password will be assigned to '{}' Vault's file: ".format(USERNAME)
+            prompt = "The following password will be assigned to it: "
         else:
             prompt = "Type your Vault passphrase: "
         passphrase = os.environ.get('HHS_VAULT_PASSPHRASE')
@@ -170,8 +175,8 @@ class Vault(object):
                     for line in f_vault:
                         if not line.strip():
                             continue
-                        (key, password, hint) = line.strip().split('|')
-                        entry = VaultEntry(key, password, hint)
+                        (key, password, hint, modified) = line.strip().split('|')
+                        entry = VaultEntry(key, password, hint, modified)
                         self.data[key] = entry
             except ValueError:
                 raise TypeError("### Vault file '{}' is invalid".format(VAULT_FILE))
@@ -186,10 +191,13 @@ class Vault(object):
                 data = self.data
                 prompt = "\n=== Listing all vault entries ===\n"
             print (prompt)
-            for entry_key in data:
-                print(self.data[entry_key].to_string())
+            if len(data) > 0:
+                for entry_key in data:
+                    print(self.data[entry_key].to_string())
+            else:
+                print ("\nxXx No results to display xXx\n")
         else:
-            print ("\n=== Vault is empty ===\n")
+            print ("\nxXx Vault is empty xXx\n")
 
     # @purpose: Add a vault entry
     def add(self, key, hint, password):
@@ -241,18 +249,18 @@ class Vault(object):
 # @purpose: Represents a vault entity
 class VaultEntry(object):
 
-    def __init__(self, key, password, hint):
+    def __init__(self, key, password, hint, modified=None):
         self.key = key
         self.password = password
         self.hint = hint
+        self.modified = modified if modified is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def __str__(self):
-        return "{}|{}|{}\n".format(self.key, self.password, self.hint)
+        return LINE_FORMAT.format(self.key, self.password, self.hint, self.modified)
 
-    # @purpose: TODO: Comment it
     def to_string(self, show_password=False):
         password = self.password if show_password else re.sub('.*', '*' * 6, self.password)
-        return ENTRY_FORMAT.format(self.key, self.key, password, self.hint)
+        return ENTRY_FORMAT.format(self.key, self.key, password, self.hint, self.modified)
 
 
 # @purpose: Execute the specified operation
@@ -276,9 +284,9 @@ def exec_operation(op):
     except subprocess.CalledProcessError:
         print('### Authorization failed or invalid passphrase')
         quit(2)
-    except TypeError as err:
-        print ("### {}. Trying to recover ...".format(err.message, VAULT_FILE))
-        vault.open = True
+    # except TypeError as err:
+    #     print ("### {}. Trying to recover ...".format(err.message, VAULT_FILE))
+    #     vault.open = True
     finally:
         vault.close()
 
@@ -299,8 +307,8 @@ def check_arguments(args, args_num=0):
 
 
 def log(level, message):
-    print ("[{}] {}".format(level, message))
-
+    # print ("[{}] {}".format(level, message))
+    pass
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
