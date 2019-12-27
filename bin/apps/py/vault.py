@@ -39,8 +39,12 @@ Usage: {} [opts]
         -l, --list [filter]                : List all passwords or matching the given filter
 """.format(VERSION, APP_NAME)
 
-OPER_MAP = {
-    'add': None, 'get': None, 'del': None, 'upd': None, 'list': None
+OPTIONS_MAP = {
+    'add': None,
+    'get': None,
+    'del': None,
+    'upd': None,
+    'list': None
 }
 
 ENTRY_FORMAT = """[{}]:
@@ -53,11 +57,11 @@ ENTRY_FORMAT = """[{}]:
 LINE_FORMAT = """{}|{}|{}|{}
 """
 
-USERNAME = getpass.getuser()
+VAULT_USER = os.environ.get("HHS_VAULT_USER", getpass.getuser())
 
-VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", "/Users/{}/.hhs".format(USERNAME))
+VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", "/Users/{}/.hhs".format(VAULT_USER))
 
-VAULT_FILE = "{}/hhs-vault".format(VAULT_LOCATION)
+VAULT_FILE = os.environ.get("HHS_VAULT_FILE", "{}/.vault".format(VAULT_LOCATION))
 
 VAULT_GPG_FILE = "{}.gpg".format(VAULT_FILE)
 
@@ -104,17 +108,17 @@ class Vault(object):
         if not os.path.exists(VAULT_FILE) or os.stat(VAULT_FILE).st_size == 0:
             self.is_open = True
             self.is_modified = True
-            print ("@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
+            log ("@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
             prompt = "The following password will be assigned to it: "
         else:
             prompt = "Type your Vault passphrase: "
         passphrase = os.environ.get('HHS_VAULT_PASSPHRASE')
         if passphrase:
-            return "{}:{}".format(USERNAME, base64.b64decode(passphrase))
+            return "{}:{}".format(VAULT_USER, base64.b64decode(passphrase))
         else:
             while not passphrase:
                 passphrase = getpass.getpass(prompt).strip()
-            return "{}:{}".format(USERNAME, passphrase)
+            return "{}:{}".format(VAULT_USER, passphrase)
 
     # @purpose: Open and read the Vault file
     def open(self):
@@ -176,26 +180,32 @@ class Vault(object):
                         if not line.strip():
                             continue
                         (key, password, hint, modified) = line.strip().split('|')
-                        entry = VaultEntry(key, password, hint, modified)
+                        entry = Vault.Entry(key, password, hint, modified)
                         self.data[key] = entry
             except ValueError:
                 raise TypeError("### Vault file '{}' is invalid".format(VAULT_FILE))
 
+    # @purpose: Filter and sort vault data and return the proper header for listing them
+    def fetch_data(self, filter_expr):
+        if filter_expr:
+            data = list(filter(lambda x: filter_expr in x, self.data))
+            header = """\n=== Listing vault entries containing '{}' ===\n""".format(filter_expr)
+        else:
+            data = list(self.data)
+            header = "\n=== Listing all vault entries ===\n"
+        data.sort()
+        return (data, header)
+
     # @purpose: List all vault entries
     def list(self, filter_expr=None):
         if len(self.data) > 0:
-            if filter_expr:
-                data = list(filter(lambda x: filter_expr in x, self.data))
-                prompt = "\n=== Listing vault entries filtered by '%{}%' ===\n".format(filter_expr)
-            else:
-                data = self.data
-                prompt = "\n=== Listing all vault entries ===\n"
-            print (prompt)
+            (data, header) = self.fetch_data(filter_expr)
             if len(data) > 0:
+                print (header)
                 for entry_key in data:
                     print(self.data[entry_key].to_string())
             else:
-                print ("\nxXx No results to display xXx\n")
+                print ("\nxXx No results to display containing '{}' xXx\n".format(filter_expr))
         else:
             print ("\nxXx Vault is empty xXx\n")
 
@@ -206,7 +216,7 @@ class Vault(object):
                 passphrase = getpass.getpass("Type a password for '{}': ".format(key)).strip()
             else:
                 passphrase = password
-            entry = VaultEntry(key, passphrase, hint)
+            entry = Vault.Entry(key, passphrase, hint)
             self.data[key] = entry
             self.is_modified = True
             print ("\nAdded => {}".format(entry.to_string()))
@@ -228,7 +238,7 @@ class Vault(object):
                 passphrase = getpass.getpass("Type a password for '{}': ".format(key)).strip()
             else:
                 passphrase = password
-            entry = VaultEntry(key, passphrase, hint)
+            entry = Vault.Entry(key, passphrase, hint)
             self.data[key] = entry
             self.is_modified = True
             print ("\nUpdated => {}".format(entry.to_string()))
@@ -245,48 +255,55 @@ class Vault(object):
         else:
             print ("### No entry specified by '{}' was found in vault".format(key))
 
+    # @purpose: Handle interruptions to shutdown gracefully
     def signal_handler(self, sig, frame):
         log("DEBUG", 'Signal handled {} frame {}'.format(sig, frame))
         self.close()
         quit(1)
 
+    # @purpose: Represents a vault entity
+    class Entry(object):
 
-# @purpose: Represents a vault entity
-class VaultEntry(object):
+        def __init__(self, key, password, hint, modified=None):
+            self.key = key
+            self.password = password
+            self.hint = hint
+            self.modified = modified if modified is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    def __init__(self, key, password, hint, modified=None):
-        self.key = key
-        self.password = password
-        self.hint = hint
-        self.modified = modified if modified is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        def __str__(self):
+            return LINE_FORMAT.format(self.key, self.password, self.hint, self.modified)
 
-    def __str__(self):
-        return LINE_FORMAT.format(self.key, self.password, self.hint, self.modified)
+        def to_string(self, show_password=False):
+            password = self.password if show_password else re.sub('.*', '*' * 6, self.password)
+            return ENTRY_FORMAT.format(self.key, self.key, password, self.hint, self.modified)
 
-    def to_string(self, show_password=False):
-        password = self.password if show_password else re.sub('.*', '*' * 6, self.password)
-        return ENTRY_FORMAT.format(self.key, self.key, password, self.hint, self.modified)
+
+# @purpose: Get an argument from the list or None if index is out of range
+def get_argument(options, index, fallback=None):
+    argument = fallback if len(options) < index + 1 else options[index]
+    return argument
 
 
 # @purpose: Execute the specified operation
 def exec_operation(op):
     vault = Vault()
     signal.signal(signal.SIGINT, vault.signal_handler)
-    options = OPER_MAP[op]
+    options = list(OPTIONS_MAP[op])
     try:
         vault.open()
         if "add" == op:
-            vault.add(options[0], options[1], None if len(options) < 3 else options[2])
+            vault.add(options[0], options[1], get_argument(options, 2))
         elif "get" == op:
             vault.get(options[0])
         elif "del" == op:
             vault.remove(options[0])
         elif "upd" == op:
-            vault.update(options[0], options[1], None if len(options) < 3 else options[2])
+            vault.update(options[0], options[1], get_argument(options, 2))
         elif "list" == op:
-            vault.list(None if len(options) < 1 else options[0])
+            vault.list(get_argument(options, 0))
         else:
             print('### Unhandled operation: {}'.format(op))
+            usage(1)
     except subprocess.CalledProcessError:
         print('### Authorization failed or invalid passphrase')
         quit(2)
@@ -296,8 +313,8 @@ def exec_operation(op):
 
 # @purpose: Execute the app business logic
 def app_exec():
-    for op in OPER_MAP:
-        if not OPER_MAP[op] is None:
+    for op in OPTIONS_MAP:
+        if not OPTIONS_MAP[op] is None:
             exec_operation(op)
             break
 
@@ -309,10 +326,17 @@ def check_arguments(args, args_num=0):
         usage(1)
 
 
-def log(level, message):
-    # print ("[{}] {}".format(level, message))
-    pass
-
+# @purpose: Log the specified message using the log level
+def log(message, level=None):
+    lv = level.upper()
+    if "DEBUG" == lv:
+        print ("[DEBUG] {}".format(message))
+    elif "WARN" == lv:
+        print ("@@@ {}".format(message))
+    elif "ERROR" == lv:
+        print ("### {}".format(message))
+    else:
+        pass
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
@@ -333,18 +357,18 @@ def main(argv):
                 usage()
             elif opt in ('-a', '--add'):
                 check_arguments(args, 2)
-                OPER_MAP['add'] = args
+                OPTIONS_MAP['add'] = args
             elif opt in ('-g', '--get'):
                 check_arguments(args, 1)
-                OPER_MAP['get'] = args
+                OPTIONS_MAP['get'] = args
             elif opt in ('-d', '--del'):
                 check_arguments(args, 1)
-                OPER_MAP['del'] = args
+                OPTIONS_MAP['del'] = args
             elif opt in ('-u', '--upd'):
                 check_arguments(args, 2)
-                OPER_MAP['upd'] = args
+                OPTIONS_MAP['upd'] = args
             elif opt in ('-l', '--list'):
-                OPER_MAP['list'] = args
+                OPTIONS_MAP['list'] = args
             else:
                 assert False, '### Unhandled option: {}'.format(opt)
             break
