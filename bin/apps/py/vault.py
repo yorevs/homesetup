@@ -19,6 +19,8 @@ import getpass
 import base64
 import subprocess
 import datetime
+import logging as log
+import traceback
 
 # Application name, read from it's own file path
 APP_NAME = os.path.basename(__file__)
@@ -59,11 +61,26 @@ LINE_FORMAT = """{}|{}|{}|{}
 
 VAULT_USER = os.environ.get("HHS_VAULT_USER", getpass.getuser())
 
-VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", "/Users/{}/.hhs".format(VAULT_USER))
+HHS_DIR = os.environ.get("HHS_DIR", "/Users/{}/.hhs".format(VAULT_USER))
 
-VAULT_FILE = os.environ.get("HHS_VAULT_FILE", "{}/.vault".format(VAULT_LOCATION))
+LOG_FILE = "{}/vault.log".format(HHS_DIR)
+
+VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", HHS_DIR)
+
+VAULT_FILE = "{}/{}".format(VAULT_LOCATION, os.environ.get("HHS_VAULT_FILE", ".vault"))
 
 VAULT_GPG_FILE = "{}.gpg".format(VAULT_FILE)
+
+WELCOME = """
+
+HomeSetup Vault v{}
+
+Settings ==============================
+
+        VAULT_USER: {}
+    VAULT_LOCATION: {}
+        VAULT_FILE: {}
+""".format(VERSION, VAULT_USER, VAULT_LOCATION, VAULT_FILE)
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
@@ -93,7 +110,7 @@ class Vault(object):
         with open(VAULT_GPG_FILE, 'r') as vault_file:
             with open(VAULT_FILE, 'w') as enc_vault_file:
                 enc_vault_file.write(str(base64.b64encode(vault_file.read())))
-                log("DEBUG", "Vault is encoded !")
+                log.debug("Vault is encoded !")
 
     # @purpose: Decode the vault file from base64
     @staticmethod
@@ -101,14 +118,14 @@ class Vault(object):
         with open(VAULT_FILE, 'r') as vault_file:
             with open(VAULT_GPG_FILE, 'w') as dec_vault_file:
                 dec_vault_file.write(str(base64.b64decode(vault_file.read())))
-                log("DEBUG", "Vault is decoded !")
+                log.debug("Vault is decoded !")
 
     # @purpose: Retrieve the vault passphrase
     def get_passphrase(self):
         if not os.path.exists(VAULT_FILE) or os.stat(VAULT_FILE).st_size == 0:
             self.is_open = True
             self.is_modified = True
-            log ("@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
+            print ("@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
             prompt = "The following password will be assigned to it: "
         else:
             prompt = "Type your Vault passphrase: "
@@ -127,8 +144,9 @@ class Vault(object):
         if self.is_open:
             self.read()
         else:
-            raise TypeError("### Unable to read from Vault file '{}' ".format(VAULT_FILE))
-        log("DEBUG", "Vault is open !")
+            log.error("Attempt to open from Vault failed")
+            raise TypeError("### Unable to open from Vault file '{}' ".format(VAULT_FILE))
+        log.debug("Vault is open !")
 
     # @purpose: Close the Vault file and cleanup temporary files
     def close(self):
@@ -138,7 +156,7 @@ class Vault(object):
             self.encrypt()
         if os.path.exists(VAULT_GPG_FILE):
             os.remove(VAULT_GPG_FILE)
-        log("DEBUG", "Vault is closed !")
+        log.debug("Vault is closed !")
 
     # @purpose: Encrypt and then, encode the vault file
     def encrypt(self):
@@ -150,7 +168,7 @@ class Vault(object):
         subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
         Vault.encode()
         self.is_open = False
-        log("DEBUG", "Vault is encrypted !")
+        log.debug("Vault is encrypted !")
 
     # @purpose: Decode and then, decrypt the vault file
     def decrypt(self):
@@ -162,14 +180,14 @@ class Vault(object):
         ]
         subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
         self.is_open = True
-        log("DEBUG", "Vault is decrypted !")
+        log.debug("Vault is decrypted !")
 
     # @purpose: Save all vault entries
     def save(self):
         with open(VAULT_FILE, 'w') as f_vault:
             for entry in self.data:
                 f_vault.write(str(self.data[entry]))
-            log("DEBUG", "Vault is saved !")
+            log.debug("Vault is saved !")
 
     # @purpose: Read all existing vault entries
     def read(self):
@@ -182,7 +200,9 @@ class Vault(object):
                         (key, password, hint, modified) = line.strip().split('|')
                         entry = Vault.Entry(key, password, hint, modified)
                         self.data[key] = entry
+                    log.debug("Vault has been read. Returned entries={}".format(len(self.data)))
             except ValueError:
+                log.error("Attempt to read from Vault failed")
                 raise TypeError("### Vault file '{}' is invalid".format(VAULT_FILE))
 
     # @purpose: Filter and sort vault data and return the proper header for listing them
@@ -194,7 +214,9 @@ class Vault(object):
             data = list(self.data)
             header = "\n=== Listing all vault entries ===\n"
         data.sort()
-        return (data, header)
+        log.debug("Vault data fecthed. Returned entries={} filtered={}".format(len(self.data), len(data)))
+
+        return data, header
 
     # @purpose: List all vault entries
     def list(self, filter_expr=None):
@@ -221,6 +243,7 @@ class Vault(object):
             self.is_modified = True
             print ("\nAdded => {}".format(entry.to_string()))
         else:
+            log.error("Attempt to add to Vault failed for key={}".format(key))
             print ("### Entry specified by '{}' already exists in vault".format(key))
 
     # @purpose: Retrieve a vault entry
@@ -229,6 +252,7 @@ class Vault(object):
             entry = self.data[key]
             print ("\n{}".format(entry.to_string(True)))
         else:
+            log.error("Attempt to get from Vault failed for key={}".format(key))
             print ("### No entry specified by '{}' was found in vault".format(key))
 
     # @purpose: Update a vault entry
@@ -243,6 +267,7 @@ class Vault(object):
             self.is_modified = True
             print ("\nUpdated => {}".format(entry.to_string()))
         else:
+            log.error("Attempt to update Vault failed for key={}".format(key))
             print ("### No entry specified by '{}' was found in vault".format(key))
 
     # @purpose: Remove a vault entry
@@ -253,11 +278,12 @@ class Vault(object):
             self.is_modified = True
             print ("\nRemoved => {}".format(entry.to_string()))
         else:
+            log.error("Attempt to remove to Vault failed for key={}".format(key))
             print ("### No entry specified by '{}' was found in vault".format(key))
 
     # @purpose: Handle interruptions to shutdown gracefully
     def signal_handler(self, sig, frame):
-        log("DEBUG", 'Signal handled {} frame {}'.format(sig, frame))
+        log.warn('Signal handled {} frame {}'.format(sig, frame))
         self.close()
         quit(1)
 
@@ -305,7 +331,8 @@ def exec_operation(op):
             print('### Unhandled operation: {}'.format(op))
             usage(1)
     except subprocess.CalledProcessError:
-        print('### Authorization failed or invalid passphrase')
+        log.error("Attempt to unlock Vault failed for user '{}'".format(VAULT_USER))
+        print("### Authorization failed or invalid passphrase for user '{}'".format(VAULT_USER))
         quit(2)
     finally:
         vault.close()
@@ -326,17 +353,16 @@ def check_arguments(args, args_num=0):
         usage(1)
 
 
-# @purpose: Log the specified message using the log level
-def log(message, level=None):
-    lv = level.upper()
-    if "DEBUG" == lv:
-        print ("[DEBUG] {}".format(message))
-    elif "WARN" == lv:
-        print ("@@@ {}".format(message))
-    elif "ERROR" == lv:
-        print ("### {}".format(message))
-    else:
-        pass
+# @purpose: Initialize the logger
+def log_init():
+    log.basicConfig(
+        filename=LOG_FILE,
+        format='%(asctime)s [%(threadName)-12.12s] %(levelname)-5.5s %(message)s ',
+        level=log.DEBUG,
+        filemode='w')
+    # log.getLogger().addHandler(log.StreamHandler())
+    log.info(WELCOME)
+
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
@@ -373,6 +399,7 @@ def main(argv):
                 assert False, '### Unhandled option: {}'.format(opt)
             break
 
+        log_init()
         # Execute the app code
         app_exec()
 
@@ -386,6 +413,14 @@ def main(argv):
     except KeyboardInterrupt:
         print ('')
         quit(2)
+
+    # Catch other exceptions
+    except Exception:
+        traceback.format_exc()
+        log.error("Exception in user code:")
+        log.error('-' * 60)
+        log.error(traceback.format_exc())
+        log.error('-' * 60)
 
 
 if __name__ == "__main__":
