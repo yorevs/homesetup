@@ -32,10 +32,10 @@ HomeSetup vault v{}
 Usage: {} [opts]
 
     Options:
-        -a,  --add <key> <desc> [password] : Add a password to the vault
+        -a,  --add <key> <hint> [password] : Add a password to the vault
         -d,  --del <key>                   : Remove a password from the vault
-        -u,  --upd <key> <desc> [password] : Update a password from the vault
-        -l, --list <filter>                : List all passwords matching the key filter
+        -u,  --upd <key> <hint> [password] : Update a password from the vault
+        -l, --list [filter]                : List all passwords or matching the given filter
 """.format(VERSION, APP_NAME)
 
 OPER_MAP = {
@@ -75,23 +75,23 @@ class Vault(object):
 # @purpose: Represents a vault entity
 class VaultEntry(object):
 
-    def __init__(self, key, password, desc):
+    def __init__(self, key, password, hint):
         self.key = key
         self.password = password
-        self.desc = desc
+        self.hint = hint
 
     def __str__(self):
-        return "{}|{}|{}".format(self.key, self.password, self.desc)
+        return "{}|{}|{}".format(self.key, self.password, self.hint)
 
     def to_string(self, show_password=False):
         return """
-        Key: {}
+             Key: {}
         Password: {}
-        Description: {}""" \
+            Hint: {}""" \
             .format(
             self.key,
             self.password if show_password else re.sub('.*', '*' * 6, self.password),
-            self.desc)
+            self.hint)
 
 
 # @purpose: Encode the vault file into base64
@@ -156,15 +156,15 @@ def read_vault():
                 for line in f_vault:
                     if not line.strip():
                         continue
-                    (key, password, desc) = line.split('|')
-                    entry = VaultEntry(key, password, desc)
+                    (key, password, hint) = line.split('|')
+                    entry = VaultEntry(key, password, hint)
                     Vault.data[key] = entry
         except ValueError:
             print ("### Your Vault file '{}' is not valid".format(VAULT_FILE))
 
 
 # @purpose: List all vault entries
-def list_from_vault():
+def list_from_vault(filter_expr=None):
     if len(Vault.data) > 0:
         print ('\n=== Listing all vault entries ===\n')
         for entry in Vault.data:
@@ -174,9 +174,13 @@ def list_from_vault():
 
 
 # @purpose: Add a vault entry
-def add_to_vault(key, desc, password):
+def add_to_vault(key, hint, password):
     if key not in Vault.data.keys():
-        entry = VaultEntry(key, password, desc)
+        if not password:
+            pass_phrase = getpass.getpass("Type a password for '{}': ".format(key)).strip()
+        else:
+            pass_phrase = password
+        entry = VaultEntry(key, pass_phrase, hint)
         Vault.data[key] = entry
         print ("""\nAdded: {}
         """.format(entry.to_string()))
@@ -194,9 +198,13 @@ def get_from_vault(key):
 
 
 # @purpose: Update a vault entry
-def update_vault(key, desc, password):
+def update_vault(key, hint, password):
     if key in Vault.data.keys():
-        entry = VaultEntry(key, password, desc)
+        if not password:
+            pass_phrase = getpass.getpass("Type a password for '{}': ".format(key)).strip()
+        else:
+            pass_phrase = password
+        entry = VaultEntry(key, pass_phrase, hint)
         Vault.data[key] = entry
         print ("""\nUpdated: {}
         """.format(entry.to_string()))
@@ -232,30 +240,32 @@ def get_pass_phrase():
 
 # @purpose: Execute the specified operation
 def exec_operation(op):
-    passphrase = get_pass_phrase()
+    pass_phrase = get_pass_phrase()
     try:
-        decrypt_vault(passphrase)
+        decrypt_vault(pass_phrase)
         read_vault()
         if "add" == op:
-            add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
+            add_to_vault(OPER_MAP[op][0], OPER_MAP[op][1], None if len(OPER_MAP[op]) < 3 else OPER_MAP[op][2])
         elif "get" == op:
             get_from_vault(OPER_MAP[op][0])
         elif "del" == op:
             del_from_vault(OPER_MAP[op][0])
         elif "upd" == op:
-            update_vault(OPER_MAP[op][0], OPER_MAP[op][1], OPER_MAP[op][2])
+            update_vault(OPER_MAP[op][0], OPER_MAP[op][1], None if len(OPER_MAP[op]) < 3 else OPER_MAP[op][2])
         elif "list" == op:
             list_from_vault()
         else:
             print('### Unhandled operation: {}'.format(op))
         save_vault()
-        encrypt_vault(passphrase)
+        encrypt_vault(pass_phrase)
     except subprocess.CalledProcessError:
         print('### Authorization failed or invalid passphrase')
         quit(2)
     finally:
         if os.path.exists(VAULT_GPG_FILE):
             os.remove(VAULT_GPG_FILE)
+        if Vault.requires_encryption:
+            encrypt_vault(pass_phrase)
 
 
 # @purpose: Execute the app business logic
@@ -291,7 +301,7 @@ def main(argv):
             elif opt in ('-h', '--help'):
                 usage()
             elif opt in ('-a', '--add'):
-                check_arguments(args, 3)
+                check_arguments(args, 2)
                 OPER_MAP['add'] = args
             elif opt in ('-g', '--get'):
                 check_arguments(args, 1)
@@ -300,7 +310,7 @@ def main(argv):
                 check_arguments(args, 1)
                 OPER_MAP['del'] = args
             elif opt in ('-u', '--upd'):
-                check_arguments(args, 3)
+                check_arguments(args, 2)
                 OPER_MAP['upd'] = args
             elif opt in ('-l', '--list'):
                 OPER_MAP['list'] = args
