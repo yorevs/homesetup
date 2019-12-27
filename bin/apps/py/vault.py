@@ -10,7 +10,7 @@
         @site: https://github.com/yorevs/homesetup
     @license: Please refer to <http://unlicense.org/>
 """
-
+import signal
 import sys
 import os
 import re
@@ -245,6 +245,11 @@ class Vault(object):
         else:
             print ("### No entry specified by '{}' was found in vault".format(key))
 
+    def signal_handler(self, sig, frame):
+        log("DEBUG", 'Signal handled {} frame {}'.format(sig, frame))
+        self.close()
+        quit(1)
+
 
 # @purpose: Represents a vault entity
 class VaultEntry(object):
@@ -266,6 +271,7 @@ class VaultEntry(object):
 # @purpose: Execute the specified operation
 def exec_operation(op):
     vault = Vault()
+    signal.signal(signal.SIGINT, vault.signal_handler)
     options = OPER_MAP[op]
     try:
         vault.open()
@@ -284,9 +290,6 @@ def exec_operation(op):
     except subprocess.CalledProcessError:
         print('### Authorization failed or invalid passphrase')
         quit(2)
-    # except TypeError as err:
-    #     print ("### {}. Trying to recover ...".format(err.message, VAULT_FILE))
-    #     vault.open = True
     finally:
         vault.close()
 
@@ -309,6 +312,7 @@ def check_arguments(args, args_num=0):
 def log(level, message):
     # print ("[{}] {}".format(level, message))
     pass
+
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
