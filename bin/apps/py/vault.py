@@ -55,9 +55,9 @@ LINE_FORMAT = """{}|{}|{}|{}
 
 USERNAME = getpass.getuser()
 
-HHS_DIR = "/Users/{}/.hhs".format(USERNAME)
+VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", "/Users/{}/.hhs".format(USERNAME))
 
-VAULT_FILE = "{}/.vault".format(HHS_DIR)
+VAULT_FILE = "{}/hhs-vault".format(VAULT_LOCATION)
 
 VAULT_GPG_FILE = "{}.gpg".format(VAULT_FILE)
 
