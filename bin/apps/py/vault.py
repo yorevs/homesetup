@@ -95,6 +95,17 @@ def version():
     sys.exit(0)
 
 
+# @purpose: Terminal colors
+class Colors:
+    NC = '\x1b[0m'
+    BLUE = '\x1b[0;34m'
+    CYAN = '\x1b[0;36m'
+    GREEN = '\x1b[0;32m'
+    ORANGE = '\x1b[0;33m'
+    RED = '\x1b[0;31m'
+    YELLOW = '\x1b[0;33m'
+
+
 # @purpose: Represents the vault
 class Vault(object):
 
@@ -125,7 +136,7 @@ class Vault(object):
         if not os.path.exists(VAULT_FILE) or os.stat(VAULT_FILE).st_size == 0:
             self.is_open = True
             self.is_modified = True
-            print ("@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
+            cprint (Colors.ORANGE, "@@@ Your Vault '{}' file is empty !".format(VAULT_FILE))
             prompt = "The following password will be assigned to it: "
         else:
             prompt = "Type your Vault passphrase: "
@@ -223,13 +234,13 @@ class Vault(object):
         if len(self.data) > 0:
             (data, header) = self.fetch_data(filter_expr)
             if len(data) > 0:
-                print (header)
+                cprint (Colors.ORANGE, header)
                 for entry_key in data:
-                    print(self.data[entry_key].to_string())
+                    cprint(Colors.GREEN, self.data[entry_key].to_string())
             else:
-                print ("\nxXx No results to display containing '{}' xXx\n".format(filter_expr))
+                cprint (Colors.YELLOW, "\nxXx No results to display containing '{}' xXx\n".format(filter_expr))
         else:
-            print ("\nxXx Vault is empty xXx\n")
+            cprint (Colors.YELLOW, "\nxXx Vault is empty xXx\n")
 
     # @purpose: Add a vault entry
     def add(self, key, hint, password):
@@ -241,16 +252,16 @@ class Vault(object):
             entry = Vault.Entry(key, passphrase, hint)
             self.data[key] = entry
             self.is_modified = True
-            print ("\nAdded => {}".format(entry.to_string()))
+            cprint (Colors.GREEN, "\nAdded => {}".format(entry.to_string()))
         else:
             log.error("Attempt to add to Vault failed for key={}".format(key))
-            print ("### Entry specified by '{}' already exists in vault".format(key))
+            cprint (Colors.RED, "### Entry specified by '{}' already exists in vault".format(key))
 
     # @purpose: Retrieve a vault entry
     def get(self, key):
         if key in self.data.keys():
             entry = self.data[key]
-            print ("\n{}".format(entry.to_string(True)))
+            cprint (Colors.GREEN, "\n{}".format(entry.to_string(True)))
         else:
             log.error("Attempt to get from Vault failed for key={}".format(key))
             print ("### No entry specified by '{}' was found in vault".format(key))
@@ -265,10 +276,10 @@ class Vault(object):
             entry = Vault.Entry(key, passphrase, hint)
             self.data[key] = entry
             self.is_modified = True
-            print ("\nUpdated => {}".format(entry.to_string()))
+            cprint (Colors.GREEN, "\nUpdated => {}".format(entry.to_string()))
         else:
             log.error("Attempt to update Vault failed for key={}".format(key))
-            print ("### No entry specified by '{}' was found in vault".format(key))
+            cprint (Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
 
     # @purpose: Remove a vault entry
     def remove(self, key):
@@ -276,10 +287,10 @@ class Vault(object):
             entry = self.data[key]
             del self.data[key]
             self.is_modified = True
-            print ("\nRemoved => {}".format(entry.to_string()))
+            cprint (Colors.GREEN, "\nRemoved => {}".format(entry.to_string()))
         else:
             log.error("Attempt to remove to Vault failed for key={}".format(key))
-            print ("### No entry specified by '{}' was found in vault".format(key))
+            cprint (Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
 
     # @purpose: Handle interruptions to shutdown gracefully
     def signal_handler(self, sig, frame):
@@ -328,11 +339,11 @@ def exec_operation(op):
         elif "list" == op:
             vault.list(get_argument(options, 0))
         else:
-            print('### Unhandled operation: {}'.format(op))
+            cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
             usage(1)
     except subprocess.CalledProcessError:
         log.error("Attempt to unlock Vault failed for user '{}'".format(VAULT_USER))
-        print("### Authorization failed or invalid passphrase for user '{}'".format(VAULT_USER))
+        cprint(Colors.RED, "### Authorization failed or invalid passphrase for user '{}'".format(VAULT_USER))
         quit(2)
     finally:
         vault.close()
@@ -349,7 +360,7 @@ def app_exec():
 # @purpose: Execute the app business logic
 def check_arguments(args, args_num=0):
     if len(args) < args_num:
-        print("### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
+        cprint(Colors.RED, "### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
         usage(1)
 
 
@@ -363,6 +374,9 @@ def log_init():
     # log.getLogger().addHandler(log.StreamHandler())
     log.info(WELCOME)
 
+
+def cprint(color, message):
+    print("{}{}{}".format(color, message, Colors.NC))
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
@@ -405,7 +419,7 @@ def main(argv):
 
     # Catch getopt exceptions
     except getopt.GetoptError as err:
-        print('Invalid option: => {}'.format(err.msg))
+        cprint(Colors.RED, 'Invalid option: => {}'.format(err.msg))
         usage(2)
         quit(2)
 
