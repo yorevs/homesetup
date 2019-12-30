@@ -50,7 +50,7 @@ OPTIONS_MAP = {
 }
 
 ENTRY_FORMAT = """[{}]:
-         Key: {}
+       Entry: {}
     Password: {}
         Hint: {}
     Modified: {}
@@ -312,7 +312,8 @@ class Vault(object):
 
         def to_string(self, show_password=False):
             password = self.password if show_password else re.sub('.*', '*' * 6, self.password)
-            return ENTRY_FORMAT.format(self.key, self.key, password, self.hint, self.modified)
+            hint = self.hint if show_password else re.sub('.*', '*' * 8, self.hint)
+            return ENTRY_FORMAT.format(self.key, self.key, password, hint, self.modified)
 
 
 # @purpose: Get an argument from the list or None if index is out of range
