@@ -155,14 +155,13 @@ class Vault(object):
         else:
             confirm_flag = False
         passphrase = os.environ.get('HHS_VAULT_PASSPHRASE')
-        confirm = None
         if passphrase:
             return "{}:{}".format(VAULT_USER, base64.b64decode(passphrase))
         else:
             while not passphrase:
                 passphrase = getpass.getpass("Passphrase:").strip()
-                if confirm_flag:
-                    while not confirm:
+                if passphrase and confirm_flag:
+                    while 'confirm' not in locals():
                         confirm = getpass.getpass("Confirm:").strip()
                     if confirm != passphrase:
                         cprint(Colors.RED, "### Passphrase and confirmation mismatch")
@@ -172,8 +171,6 @@ class Vault(object):
                         log.debug("Vault passphrase created for user={}".format(VAULT_USER))
                         self.is_open = True
                         self.is_modified = True
-                else:
-                    confirm = passphrase
             return "{}:{}".format(VAULT_USER, passphrase)
 
     # @purpose: Open and read the Vault file
@@ -276,11 +273,9 @@ class Vault(object):
     # @purpose: Add a vault entry
     def add(self, key, hint, password):
         if key not in self.data.keys():
-            if not password:
-                passphrase = getpass.getpass("Type a password for '{}': ".format(key)).strip()
-            else:
-                passphrase = password
-            entry = Vault.Entry(key, passphrase, hint)
+            while not password:
+                password = getpass.getpass("Type the password for '{}': ".format(key)).strip()
+            entry = Vault.Entry(key, password, hint)
             self.data[key] = entry
             self.is_modified = True
             cprint(Colors.GREEN, "\nAdded => {}".format(entry.to_string()))
@@ -403,8 +398,6 @@ def cprint(color, message):
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
     vault = Vault()
-    signal.signal(signal.SIGINT, vault.exit_handler)
-    atexit.register(vault.exit_handler)
 
     try:
 
@@ -440,6 +433,8 @@ def main(argv):
             break
 
         log_init()
+        signal.signal(signal.SIGINT, vault.exit_handler)
+        atexit.register(vault.exit_handler)
         app_exec(vault)
 
     # Catch getopt exceptions
