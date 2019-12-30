@@ -111,6 +111,7 @@ class Vault(object):
         self.is_open = False
         self.is_modified = False
         self.passphrase = None
+        self.is_new = False
 
     def __str__(self):
         vault_str = ""
@@ -149,8 +150,8 @@ class Vault(object):
     # @purpose: Retrieve the vault passphrase
     def get_passphrase(self):
         if not os.path.exists(VAULT_FILE) or os.stat(VAULT_FILE).st_size == 0:
-            cprint(Colors.ORANGE, "@@@ Your Vault '{}' file is empty.".format(VAULT_FILE))
-            cprint(Colors.ORANGE, "@@@ The following password will be assigned to it.")
+            cprint(Colors.ORANGE, "### Your Vault '{}' file is empty.".format(VAULT_FILE))
+            cprint(Colors.ORANGE, ">>> Enter the new passphrase for this Vault")
             confirm_flag = True
         else:
             confirm_flag = False
@@ -159,10 +160,11 @@ class Vault(object):
             return "{}:{}".format(VAULT_USER, base64.b64decode(passphrase))
         else:
             while not passphrase:
-                passphrase = getpass.getpass("Passphrase:").strip()
+                passphrase = getpass.getpass("Enter passphrase:").strip()
+                confirm = None
                 if passphrase and confirm_flag:
-                    while 'confirm' not in locals():
-                        confirm = getpass.getpass("Confirm:").strip()
+                    while not confirm:
+                        confirm = getpass.getpass("Repeat passphrase:").strip()
                     if confirm != passphrase:
                         cprint(Colors.RED, "### Passphrase and confirmation mismatch")
                         quit(2)
@@ -171,6 +173,7 @@ class Vault(object):
                         log.debug("Vault passphrase created for user={}".format(VAULT_USER))
                         self.is_open = True
                         self.is_modified = True
+                        self.is_new = True
             return "{}:{}".format(VAULT_USER, passphrase)
 
     # @purpose: Open and read the Vault file
@@ -211,7 +214,7 @@ class Vault(object):
     def decrypt(self):
         Vault.decode()
         cmd_args = [
-            'gpg', '--quiet', '--yes', '--batch',
+            'gpg', '--quiet', '--yes', '--batch', '--digest-algo', 'SHA512',
             '--passphrase={}'.format(self.passphrase),
             '--output', VAULT_FILE, VAULT_GPG_FILE
         ]
@@ -263,7 +266,7 @@ class Vault(object):
             if len(data) > 0:
                 cprint(Colors.ORANGE, header)
                 for entry_key in data:
-                    cprint(Colors.GREEN, self.data[entry_key].to_string())
+                    cprint(Colors.CYAN, self.data[entry_key].to_string())
             else:
                 cprint(Colors.YELLOW, "\nxXx No results to display containing '{}' xXx\n".format(filter_expr))
         else:
@@ -278,7 +281,7 @@ class Vault(object):
             entry = Vault.Entry(key, password, hint)
             self.data[key] = entry
             self.is_modified = True
-            cprint(Colors.GREEN, "\nAdded => {}".format(entry.to_string()))
+            cprint(Colors.GREEN, "\nEntry added =>\n{}".format(entry.to_string()))
         else:
             log.error("Attempt to add to Vault failed for key={}".format(key))
             cprint(Colors.RED, "### Entry specified by '{}' already exists in vault".format(key))
@@ -304,7 +307,7 @@ class Vault(object):
             entry = Vault.Entry(key, passphrase, hint)
             self.data[key] = entry
             self.is_modified = True
-            cprint(Colors.GREEN, "\nUpdated => {}".format(entry.to_string()))
+            cprint(Colors.GREEN, "\nEntry updated =>\n{}".format(entry.to_string()))
         else:
             log.error("Attempt to update Vault failed for key={}".format(key))
             cprint(Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
@@ -316,7 +319,7 @@ class Vault(object):
             entry = self.data[key]
             del self.data[key]
             self.is_modified = True
-            cprint(Colors.GREEN, "\nRemoved => {}".format(entry.to_string()))
+            cprint(Colors.GREEN, "\nEntry removed =>\n{}".format(entry.to_string()))
         else:
             log.error("Attempt to remove to Vault failed for key={}".format(key))
             cprint(Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
@@ -350,19 +353,20 @@ def get_argument(options, index, fallback=None):
 def exec_operation(op, vault):
     options = list(OPTIONS_MAP[op])
     vault.open()
-    if "add" == op:
-        vault.add(options[0], options[1], get_argument(options, 2))
-    elif "get" == op:
-        vault.get(options[0])
-    elif "del" == op:
-        vault.remove(options[0])
-    elif "upd" == op:
-        vault.update(options[0], options[1], get_argument(options, 2))
-    elif "list" == op:
-        vault.list(get_argument(options, 0))
-    else:
-        cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
-        usage(1)
+    if not vault.is_new:
+        if "add" == op:
+            vault.add(options[0], options[1], get_argument(options, 2))
+        elif "get" == op:
+            vault.get(options[0])
+        elif "del" == op:
+            vault.remove(options[0])
+        elif "upd" == op:
+            vault.update(options[0], options[1], get_argument(options, 2))
+        elif "list" == op:
+            vault.list(get_argument(options, 0))
+        else:
+            cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
+            usage(1)
 
 
 # @purpose: Execute the app business logic
