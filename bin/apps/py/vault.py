@@ -60,6 +60,8 @@ HHS_DIR = os.environ.get("HHS_DIR", "/Users/{}/.hhs".format(VAULT_USER))
 
 LOG_FILE = "{}/vault.log".format(HHS_DIR)
 
+MAX_LOG_FILE_SIZE = 1 * 1024 * 1024
+
 VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", HHS_DIR)
 
 VAULT_FILE = "{}/{}".format(VAULT_LOCATION, os.environ.get("HHS_VAULT_FILE", ".vault"))
@@ -266,7 +268,7 @@ class Vault(object):
             if len(data) > 0:
                 cprint(Colors.ORANGE, header)
                 for entry_key in data:
-                    cprint(Colors.CYAN, self.data[entry_key].to_string())
+                    print(self.data[entry_key].to_string())
             else:
                 cprint(Colors.YELLOW, "\nxXx No results to display containing '{}' xXx\n".format(filter_expr))
         else:
@@ -294,7 +296,7 @@ class Vault(object):
             cprint(Colors.GREEN, "\n{}".format(entry.to_string(True)))
         else:
             log.error("Attempt to get from Vault failed for key={}".format(key))
-            cprint (Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
+            cprint(Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
         log.debug("Vault get issued. User={}".format(getpass.getuser()))
 
     # @purpose: Update a vault entry
@@ -386,11 +388,13 @@ def check_arguments(args, args_num=0):
 
 # @purpose: Initialize the logger
 def log_init():
+    f_size = os.path.getsize(LOG_FILE)
+    f_mode = "a" if f_size < MAX_LOG_FILE_SIZE else "w"
     log.basicConfig(
         filename=LOG_FILE,
-        format='%(asctime)s [%(threadName)-10.10s] %(levelname)-5.5s %(message)s ',
+        format='%(asctime)s [%(threadName)-10.10s] %(levelname)-5.5s ::%(funcName)s(@line-%(lineno)d) %(message)s ',
         level=log.DEBUG,
-        filemode='a')
+        filemode=f_mode)
     log.info(WELCOME)
 
 
