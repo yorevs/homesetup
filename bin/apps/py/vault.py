@@ -296,7 +296,7 @@ class Vault(object):
             cprint(Colors.GREEN, "\n{}".format(entry.to_string(True)))
         else:
             log.error("Attempt to get from Vault failed for key={}".format(key))
-            print ("### No entry specified by '{}' was found in vault".format(key))
+            cprint (Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
         log.debug("Vault get issued. User={}".format(getpass.getuser()))
 
     # @purpose: Update a vault entry
