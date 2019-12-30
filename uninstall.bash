@@ -92,7 +92,7 @@ uninstall_dotfiles() {
 
   # shellcheck disable=SC2164
   cd "$HOME"
-  command rm -rfv "$HHS_HOME"
+  [ -d "$HHS_HOME" ] && command rm -rfv "$HHS_HOME"
   [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -f "$HHS_DIR/bin"
   echo ''
 
@@ -103,7 +103,7 @@ uninstall_dotfiles() {
       [ -f "${next}" ] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
     done
     echo ''
-    command rm -rfv "$HHS_DIR"
+    [ -d "$HHS_DIR" ] && command rm -rfv "$HHS_DIR"
   fi
   echo ''
 

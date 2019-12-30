@@ -281,7 +281,7 @@ class Vault(object):
             entry = Vault.Entry(key, password, hint)
             self.data[key] = entry
             self.is_modified = True
-            cprint(Colors.GREEN, "\nEntry added =>\n{}".format(entry.to_string()))
+            cprint(Colors.GREEN, "\n=== Entry added ===\n\n{}".format(entry.to_string()))
         else:
             log.error("Attempt to add to Vault failed for key={}".format(key))
             cprint(Colors.RED, "### Entry specified by '{}' already exists in vault".format(key))
@@ -307,7 +307,7 @@ class Vault(object):
             entry = Vault.Entry(key, passphrase, hint)
             self.data[key] = entry
             self.is_modified = True
-            cprint(Colors.GREEN, "\nEntry updated =>\n{}".format(entry.to_string()))
+            cprint(Colors.GREEN, "\n=== Entry updated ===\n\n{}".format(entry.to_string()))
         else:
             log.error("Attempt to update Vault failed for key={}".format(key))
             cprint(Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
@@ -319,7 +319,7 @@ class Vault(object):
             entry = self.data[key]
             del self.data[key]
             self.is_modified = True
-            cprint(Colors.GREEN, "\nEntry removed =>\n{}".format(entry.to_string()))
+            cprint(Colors.GREEN, "\n=== Entry removed ===\n\n{}".format(entry.to_string()))
         else:
             log.error("Attempt to remove to Vault failed for key={}".format(key))
             cprint(Colors.RED, "### No entry specified by '{}' was found in vault".format(key))
