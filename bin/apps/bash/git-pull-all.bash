@@ -57,7 +57,7 @@ for gdir in $ALL; do
   echo -e "${GREEN}Pulling the new code ($REPO/$gitbranch) ...${NC}"
   echo ''
   git pull "$REPO" "$gitbranch"
-  test $? -ne 0 && quit 2 "Unable to pull the code. Aborting!"
+  test $? -ne 0 && echo -e "${RED}Unable to pull the code. Skipping!${NC}"
   cd - >/dev/null || continue
 done
 
