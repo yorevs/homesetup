@@ -262,13 +262,20 @@ toolcheck.bash          | Check if the a tool is installed on the system.
 
 **Please check: [bin](./bin) for all scripts**
 
-### 7. HomeSetup Terminal
+### 7. HomeSetup Terminal setup
+
+#### 7.1 Terminal.app
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
 * [x] Install the terminal font from '$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
 * [x] Import the HomeSetup.terminal from "$HHS_HOME/misc/HomeSetup.terminal" to your Terminal App.
 * [x] Set HomeSetup as the default profile.
+
+#### 7.2 iTerm2.app
+
+TODO: https://www.iterm2.com/features.html
+
 
 Done! Now you have your terminal just like mine.
 
