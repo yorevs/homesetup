@@ -7,7 +7,6 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
-# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # Current script version.
 VERSION=${VERSION:-0.9.0}
@@ -17,7 +16,7 @@ APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE=${USAGE:-"
-Usage: $APP_NAME [optionals] <mandatories>
+Usage: ${APP_NAME} <arguments> [options]
 "}
 
 # Import pre-defined HomeSetup bash files

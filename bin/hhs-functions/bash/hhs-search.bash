@@ -26,8 +26,8 @@ if __hhs_has "python"; then
     else
       local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
-      echo "Searching for files or linked files matching: \"$2\" in \"$1\""
-      eval "find -L $1 -type f \( $inames \) | __hhs_highlight \"(${2//\*/.*}|$)\""
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAX_DEPTH}) for files matching: \"$2\" in \"$1\" ${NC}"
+      eval "find -L $1 -maxdepth ${HHS_MAX_DEPTH} -type f \( $inames \) 2> /dev/null | __hhs_highlight \"(${2//\*/.*}|$)\""
       return $?
     fi
   }
@@ -37,19 +37,19 @@ if __hhs_has "python"; then
   # @param $2 [Req] : The GLOB expressions of the directory search.
   function __hhs_search-dir() {
 
-    local inames
+    local inames dir="${1}" filter="${2}"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
       echo ''
-      echo "Usage: ${FUNCNAME[0]} <search_path> <comma_separated_dirs>"
-      echo '  ** Dirs listed like: "dir1,dir2,dir2"'
+      echo "Usage: ${FUNCNAME[0]} <search_path> <search_dirs...>"
+      echo '  ** Dirs: Comma separated directories E.g:. "dir1, dir2, dir2"'
       echo ''
       return 1
     else
-      local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      local expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
-      echo "Searching for folders or linked folders matching: [$2] in \"$1\""
-      eval "find -L $1 -type d \( $inames \) | __hhs_highlight \"(${2//\*/.*}|$)\""
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAX_DEPTH}) for folders matching: [${filter}] in \"${dir}\" ${NC}"
+      eval "find -L ${dir} -maxdepth ${HHS_MAX_DEPTH} -type d \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
       return $?
     fi
   }
@@ -106,23 +106,23 @@ if __hhs_has "python"; then
         shift
       done
 
-      local namesExpr="e=\"$3\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      local search_str="$2"
-      local baseCmd fullCmd dir="$1"
+      local namesExpr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      local search_str="${2}"
+      local baseCmd fullCmd dir="${1}"
 
       inames=$(python -c "$namesExpr")
-      baseCmd="find -L ${dir} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
-      echo "${YELLOW}Searching for \"${strType}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
+      baseCmd="find -L ${dir} -maxdepth ${HHS_MAX_DEPTH} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAX_DEPTH}) for \"${strType}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
 
       if [ -n "$replace" ]; then
         if [ "$strType" = 'string' ]; then
           echo "${RED}Can't search and replace non-Regex expressions!${NC}"
           return 1
         fi
-        [ "Linux" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight $repl_str"
-        [ "Darwin" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" | __hhs_highlight $repl_str"
+        [ "Linux" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
+        [ "Darwin" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
       else
-        fullCmd="${baseCmd} + | __hhs_highlight $search_str"
+        fullCmd="${baseCmd} + 2> /dev/null | __hhs_highlight $search_str"
       fi
       eval "${fullCmd}"
       return $?

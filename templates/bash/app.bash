@@ -11,7 +11,7 @@
 
 # Functions to be unset after quit
 # shellcheck disable=SC2034
-UNSETS=( main )
+UNSETS=( 'main' 'quit' 'usage' 'version' 'trim' )
 
 main() {
   usage 1

@@ -1,0 +1,27 @@
+<app.bash>: app <arg_name> [options]
+    # TODO: App. SYNOPSIS.
+
+    # TODO: App. DESCRIPTION.
+
+    Options:
+      -O1         : TODO: Description about the option1
+      -O2 <ARG>   : TODO: Description about the option2
+
+    Arguments:
+      ARG   : TODO: Description about the argument
+    
+    Exit Status:
+      Returns success (0) when TODO: success description or 
+      failure (<exit_code>) when TODO: failure description.
+  
+  Notes: TODO: App. NOTES.
+
+-------------------------------------------------------------------------------
+# Uses [options] to indicate where the options go
+# - arg_name for a required, singular arg
+# - [arg_name] for an optional, singular arg
+# - arg_name... for a required arg of which there can be many (this is rare)
+# - [arg_name...] for an arg for which any number can be supplied
+# - {arg_name} for a set of required items; choose one 
+# - {arg1_name|arg2_name} for mutually exclusive items; choose one 
+# @@ arg_name should be a descriptive, short name, in lower, snake case

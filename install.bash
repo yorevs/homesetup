@@ -263,7 +263,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link bin apps into place
     echo -en "\n${WHITE}Linking apps into place ${BLUE}"
-    command find "$HHS_HOME/bin/apps" -type f \( -iname "**.bash" -o -iname "**.py" \) \
+    command find "$HHS_HOME/bin/apps" -maxdepth 2 -type f \( -iname "**.bash" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &>/dev/null
     [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
@@ -271,7 +271,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link bash auto-completes into place
     echo -en "\n${WHITE}Linking bash auto-completes into place ${BLUE}"
-    command find "$HHS_HOME/bin/auto-completions/bash" -type f \( -iname "**.bash" \) \
+    command find "$HHS_HOME/bin/auto-completions/bash" -maxdepth 2 -type f \( -iname "**.bash" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &>/dev/null
     [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"

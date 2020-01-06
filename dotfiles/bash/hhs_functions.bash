@@ -24,12 +24,12 @@ FUNC_ICN="\xef\x84\xae"
 [ -f "$HOME/.bash_colors" ] && source "$HOME/.bash_colors"
 
 # Load all function files prefixed with 'hhs-`
-for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
+for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -maxdepth "${HHS_MAX_DEPTH}" -type f -name "hhs-*.bash" | sort); do
   source "$file"
 done
 
 # Load all functions that were previously aliased
-for file in $(find "$HHS_HOME/bin/ext-tools/bash" -type f -name "*.bash" | sort); do
+for file in $(find "$HHS_HOME/bin/ext-tools/bash" -maxdepth "${HHS_MAX_DEPTH}" -type f -name "*.bash" | sort); do
   source "$file"
 done
 
