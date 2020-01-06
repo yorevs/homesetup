@@ -19,6 +19,9 @@ USAGE=${USAGE:-"
 Usage: ${APP_NAME} <arguments> [options]
 "}
 
+# Default identifiers to be unset
+UNSETS=('quit' 'usage' 'version' 'trim')
+
 # Import pre-defined HomeSetup bash files
 [ -f ~/.bash_colors ] && \. ~/.bash_colors
 [ -f ~/.bash_aliases ] && \. ~/.bash_aliases
@@ -29,20 +32,23 @@ Usage: ${APP_NAME} <arguments> [options]
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
 
-  unset -f quit usage version trim "${UNSETS[*]}"
-  ret=$1
-  shift
-  [ "$ret" -gt 1 ] && echo -en "${RED}" 1>&2
-  [ "$#" -gt 0 ] && echo -en "$*" 1>&2
   # Unset all declared functions
-  echo -e "${NC}" 1>&2
-  exit "$ret"
+  unset -f quit usage version trim "${UNSETS[*]}"
+  ret=${1}; shift
+  [[ $ret -ne 0 ]] && echo -en "${RED}"
+  echo -e "${*} ${NC}" 1>&2
+  [[ ${#} -gt 0 ]] && echo ''
+  # shellcheck disable=SC2086
+  exit ${ret}
 }
 
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-  quit "$1" "$USAGE"
+  ret=${1}; shift
+  echo -en "${USAGE}"
+  [[ ${#} -gt 0 ]] && echo ''
+  quit "${ret}" "$@"
 }
 
 # Version message.

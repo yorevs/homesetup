@@ -11,26 +11,37 @@
 
 # Functions to be unset after quit
 # shellcheck disable=SC2034
-UNSETS=( 'main' 'quit' 'usage' 'version' 'trim' )
+UNSETS+=('main')
+
+STUFF='is not set'
+STUFF_VAL=
 
 main() {
-  usage 1
+  echo "
+  ARG_NUM: ${#}
+  ARGUMENTS: ${*}
+  STUFF: ${STUFF}
+  STUFF_VAL= ${STUFF_VAL}
+  "
 }
 
 # Loop through the command line options.
 # Short opts: -<C>, Long opts: --<Word>
-while test -n "$1"; do
+POSITIONAL=("$@")
+while [[ $# -gt 0 ]]; do
   case "$1" in
   -s | --stuff)
-    shift
-    # Do stuff
-    ;;
+    shift # past argument
+    STUFF="is set to ${1}"
+    shift # past value
+    STUFF_VAL=${1}
+  ;;
 
   *)
-    quit 2 "Invalid option: \"$1\""
-    ;;
+    quit 1 "Invalid option: \"$1\""
+  ;;
   esac
-  shift
+  shift # move to next argument
 done
 
-main
+main "${POSITIONAL[@]}"

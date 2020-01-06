@@ -232,7 +232,6 @@ esac
 # Directory Shortcuts
 
 [ -d "${DESKTOP}" ] && alias desk='cd ${DESKTOP}'
-[ -d "${HHS_HOME}" ] && alias hhs='cd ${HHS_HOME}'
 [ -d "${TEMP}" ] && alias temp='cd ${TEMP}'
 
 # -----------------------------------------------------------------------------------

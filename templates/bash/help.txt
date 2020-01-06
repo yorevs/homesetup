@@ -1,20 +1,21 @@
-<app.bash>: app <arg_name> [options]
+Usage: ${APP_NAME} <arg_name> [options]
     # TODO: App. SYNOPSIS.
 
     # TODO: App. DESCRIPTION.
 
     Options:
-      -O1         : TODO: Description about the option1
-      -O2 <ARG>   : TODO: Description about the option2
+      -A | --Along            : TODO: Description about the option -A
+      -B | --Blong  <ARG_1>   : TODO: Description about the option -B
 
     Arguments:
-      ARG   : TODO: Description about the argument
+      ARG_1   : TODO: Description about the argument
     
     Exit Status:
-      Returns success (0) when TODO: success description or 
-      failure (<exit_code>) when TODO: failure description.
+      (0) Success 
+      (1) Failure due to missing/wrong client input or similar issues
+      (2) Failure due to program execution failures
   
-  Notes: TODO: App. NOTES.
+  Notes: TODO: Program NOTES
 
 -------------------------------------------------------------------------------
 # Uses [options] to indicate where the options go

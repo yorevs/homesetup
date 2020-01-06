@@ -14,16 +14,40 @@ VERSION=0.9.0
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $APP_NAME <command> [<args>]
+Usage: ${APP_NAME} <command> [options]
+
+    Manage your HomeSetup dotfiles and more
 
     Commands:
-        FB | firebase   : Execute Firebase tasks; type: '$APP_NAME help FB' for details.
-        H  | help       : Provides a help about the command.
+      FB | firebase   : Execute Firebase related tasks
+      H  | help       : Provides help about the command
+    
+    Exit Status:
+      (0) Success 
+      (1) Failure due to missing/wrong client input or similar issues
+      (2) Failure due to program execution failures
+"
+
+USAGE_FB="
+Usage: $APP_NAME firebase <fb_task> [args]
+
+    Execute firebase related tasks
+    
+    Tasks:
+      s  |    setup               : Setup your Firebase account to use with your HomeSetup installation
+      ul |   upload <db_alias>    : Upload your custom .dotfiles to your Firebase \"Realtime Database\"
+      dl | download <db_alias>    : Download your custom .dotfiles from your Firebase \"Realtime Database\"
+"
+
+USAGE_H="
+Usage: $APP_NAME help <command>
+
+    Displays a help to the specified command
 "
 
 # Functions to be unset after quit
-UNSETS=( exec_command cmd_help cmd_firebase load_fb_settings download_dotfiles \
-    parse_and_save_dotfiles build_dotfiles_payload trim upload_dotfiles )
+UNSETS=(exec_command cmd_help cmd_firebase load_fb_settings download_dotfiles
+  parse_and_save_dotfiles build_dotfiles_payload trim upload_dotfiles)
 
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
@@ -35,7 +59,7 @@ FIREBASE_FILE="$HHS_DIR/.firebase"
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
 # Firebase response regex.
-FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*(,*"aliasdef":".*")*)+\}$'
+FB_RE_RESP='^\ \{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*(,*"aliasdef":".*")*)+\}$'
 
 # File to store the saved commands.
 HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
@@ -46,7 +70,7 @@ HHS_SAVED_DIRS=${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}
 # Loads Firebase settings from file.
 load_fb_settings() {
 
-  [ -f "$FIREBASE_FILE" ] || quit 2 "Your need to setup your Firebase credentials first."
+  [ -f "$FIREBASE_FILE" ] || quit 1 "Your need to setup your Firebase credentials first."
   [ -f "$FIREBASE_FILE" ] && \. "$FIREBASE_FILE"
   [ -z "$PROJECT_ID" ] || [ -z "$FIREBASE_URL" ] || [ -z "$PASSPHRASE" ] || [ -z "$UUID" ] && quit 2 "Invalid settings file!"
 
@@ -158,26 +182,19 @@ cmd_help() {
   case "$1" in
   # Do stuff related to firebase
   FB | firebase)
-    echo ''
-    echo 'Execute firebase synchronization tasks.'
-    echo "Usage: $APP_NAME firebase <task> [args]"
-    echo ''
-    echo '  Tasks:'
-    echo '      s |    setup               : Setup your Firebase account to use with your HomeSetup installation.'
-    echo '     ul |   upload <db_alias>    : Upload your custom .dotfiles to your Firebase \"Realtime Database\".'
-    echo '     dl | download <db_alias>    : Download your custom .dotfiles from your Firebase \"Realtime Database\".'
+    echo "${USAGE_FB}"
+    quit 0
     ;;
   H | help)
-    echo 'Provides a help to the given command.'
-    echo "Usage: $APP_NAME help <command>"
+    echo "${USAGE_H}"
+    quit 0
     ;;
 
   *)
-    quit 2 "Command \"$1\" does not exist!"
+    usage 1 "Firebase command \"$1\" does not exist!"
     ;;
   esac
   shopt -u nocasematch
-  quit 1
 }
 
 # Execute a Firebase command
@@ -185,11 +202,11 @@ cmd_firebase() {
 
   local body fb_alias u_uuid u_name setupContent=""
 
-  test -z "$1" && cmd_help 'FB'
+  [ -z "$1" ] && cmd_help 'FB'
   task="$1"
   shift
   args=("$@")
-  test -z "${args[*]}" -a "$task" != 'setup' && quit 2 "Invalid firebase task or invalid number of arguments: \"$task\" !"
+  [ -z "${args[*]}" ] && [ "$task" != 'setup' ] && cmd_help "Invalid firebase task or missing argument(s): \"$task\" !"
   fb_alias="$(trim "${args[0]}" | tr '[:upper:]' '[:lower:]')"
   fb_alias="${fb_alias//[[:space:]]/_}"
   u_name=$(whoami)
@@ -243,7 +260,7 @@ cmd_firebase() {
     fi
     ;;
   *)
-    quit 2 "Invalid firebase task: \"$task\" !"
+    usage 1 "Invalid firebase task: \"$task\" !"
     ;;
   esac
   shopt -u nocasematch
@@ -290,7 +307,7 @@ H | help)
   shift
   ;;
 *)
-  quit 1 "Invalid option: \"$1\""
+  usage 1 "Invalid option: \"$1\""
   ;;
 esac
 shopt -u nocasematch
