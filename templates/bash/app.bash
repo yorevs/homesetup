@@ -13,35 +13,32 @@
 # shellcheck disable=SC2034
 UNSETS+=('main')
 
-STUFF='is not set'
-STUFF_VAL=
+# Program version
+VERSION=0.9.1
 
 main() {
   echo "
   ARG_NUM: ${#}
   ARGUMENTS: ${*}
-  STUFF: ${STUFF}
-  STUFF_VAL= ${STUFF_VAL}
   "
 }
 
 # Loop through the command line options.
 # Short opts: -<C>, Long opts: --<Word>
-POSITIONAL=("$@")
 while [[ $# -gt 0 ]]; do
   case "$1" in
-  -s | --stuff)
-    shift # past argument
-    STUFF="is set to ${1}"
-    shift # past value
-    STUFF_VAL=${1}
-  ;;
+  -h | --help)
+    usage
+    ;;
+  -v | --version)
+    version
+    ;;
 
   *)
     quit 1 "Invalid option: \"$1\""
-  ;;
+    ;;
   esac
-  shift # move to next argument
+  shift
 done
 
-main "${POSITIONAL[@]}"
+main "${@}"

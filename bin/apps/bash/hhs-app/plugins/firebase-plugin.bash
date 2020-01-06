@@ -13,14 +13,18 @@ USAGE="
   Usage: ap usage here
 "
 
-function usage() {
-  echo ">> usage"
+function help() {
+  echo ">> help ${0##*/}"
 }
 
-function version() {
-  echo ">> version"
+function getver() {
+  echo ">> getver ${0##*/}"
+}
+
+function cleanup() {
+  echo ">> cleanup ${0##*/}"
 }
 
 function execute() {
-  echo ">> execute"
+  echo ">> execute ${0##*/} Arguments: ${*}"
 }

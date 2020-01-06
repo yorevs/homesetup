@@ -8,11 +8,17 @@
 # License: Please refer to <http://unlicense.org/>
 
 # Functions to be unset after quit
-UNSETS+=('main' 'load_plugins' 'validate_plugin')
+UNSETS+=('main' 'parse_args' 'register_plugins' 'validate_plugin')
 
+# shellcheck disable=SC2034
+# Program version
+VERSION=0.9.1
+
+# shellcheck disable=SC2034
 # Usage message
 USAGE="
-Usage: ${APP_NAME} <arg_name> [options]
+Usage: ${APP_NAME} <command> <command_args>
+
     HomeSetup application manager
 
     # TODO: App. DESCRIPTION.
@@ -35,26 +41,38 @@ Usage: ${APP_NAME} <arg_name> [options]
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
-# Load plugin list
-PLUGIN_LIST=()
-
 # List of required functions a plugin must have
-PLUGIN_FNCS=('usage' 'version' 'execute')
+PLUGINS_FNCS=('help' 'getver' 'cleanup' 'execute')
 
 # List of valid plugins
+PLUGINS_LIST=()
+
+# List plugin commands
 PLUGINS=()
 
 # TODO: Comment it
+has_plugin() {
+
+  if [ -n "${1}" ] && [ "${#PLUGINS[@]}" -gt 0 ] && [[ ${PLUGINS[*]} =~ ${1} ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+# TODO: Comment it
 validate_plugin() {
-  local i=0 j=0 fncs=("$@")
-  while [ "$i" -lt "${#PLUGIN_FNCS[@]}" ]; do
-    if [ "${fncs[j]}" = "${PLUGIN_FNCS[i]}" ]; then
+
+  local i=0 j=0 f_fncs=("$@")
+
+  while [ "$i" -lt "${#PLUGINS_FNCS[@]}" ]; do
+    if [ "${f_fncs[j]}" = "${PLUGINS_FNCS[i]}" ]; then
       i=$((i + 1))
       j=0
-      [ $i = ${#PLUGIN_FNCS[@]} ] && return 0
+      [ $i = ${#PLUGINS_FNCS[@]} ] && return 0
     else
       j=$((j + 1))
-      [ $j = ${#fncs[@]} ] && return 1
+      [ $j = ${#f_fncs[@]} ] && return 1
     fi
   done
 
@@ -62,13 +80,9 @@ validate_plugin() {
 }
 
 # TODO: Comment it
-load_plugins() {
-  while IFS='' read -r line; do 
-    PLUGIN_LIST+=("$line"); 
-  done < <(find "${HHS_HOME}"/bin/apps/bash/hhs-app/plugins -maxdepth 1 -name "*-plugin.bash")
-  # Open a new subshell, so, the function names won't hit
-  IFS=$'\n'
-  for plugin in "${PLUGIN_LIST[@]}"; do
+register_plugins() {
+
+  while IFS='' read -r plugin; do
     local plg_fns=()
     while IFS= read -r fnc; do
       f_name="${fnc##function }"
@@ -76,17 +90,74 @@ load_plugins() {
       plg_fns+=("${f_name}")
     done < <(grep '^function .*()' <"${plugin}")
     if ! validate_plugin "${plg_fns[@]}"; then
-      echo "${RED}### Invalid plugin: ${plugin} ${NC}"
+      INVALID+=("$(basename "${plugin}")")
     else
-      PLUGINS+=("$(basename "${plugin%-*}")")
+      plg_name=$(basename "${plugin%-*}")
+      PLUGINS+=("${plg_name}")
+      PLUGINS_LIST+=("${plugin}")
     fi
-  done
-  IFS=$"$HHS_RESET_IFS"
+  done < <(find "${HHS_HOME}"/bin/apps/bash/hhs-app/plugins -maxdepth 1 -name "*-plugin.bash")
 }
 
+# TODO: Comment it
+parse_args() {
+
+  # If no argument is passed, just enter HomeSetup directory
+  if [[ $# -eq 0 ]]; then
+    usage 0
+  fi
+
+  # Loop through the command line options.
+  # Short opts: -<C>, Long opts: --<Word>
+  UNUSED_ARGS=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+      usage 0
+      ;;
+    -v | --version)
+      version
+      ;;
+
+    *)
+      UNUSED_ARGS+=("$1")
+      ;;
+    esac
+    shift
+  done
+}
+
+# shellcheck disable=SC1090
+# TODO: Comment it
+invoke_command() {
+
+  has_plugin "${1}" || quit 1 "Plugin not found: ${1}"
+  (
+    for idx in "${!PLUGINS[@]}"; do
+      if [[ "${PLUGINS[idx]}" = "${1}" ]]; then
+          [ -s "${PLUGINS_LIST[i]}" ] && \. "${PLUGINS_LIST[i]}"
+          shift
+          plg_fnc="${1:-execute}"
+          shift
+          ${plg_fnc} "${@}"
+          ret=$?
+          cleanup
+          exit $ret
+      fi
+    done
+    exit 1
+  )
+  [[ ${?} -eq 0 ]] || quit 1 "Failed to execute command: ${1}"
+}
+
+# TODO: Comment it
 main() {
-  load_plugins
-  echo "Plug-ins loaded: ${GREEN}${PLUGINS[*]} ${NC}"
+
+  parse_args "${@}"
+  register_plugins
+  [[ ${#INVALID[@]} -gt 0 ]] && echo "[DEBUG] Invalid plugins registred: [${RED}${INVALID[*]}${NC}]"
+  [[ ${#PLUGINS[@]} -gt 0 ]] && echo "[DEBUG] Plug-ins registered: [${GREEN}${PLUGINS[*]}${NC}]"
+  invoke_command "${@}"
 }
 
 main "${@}"
