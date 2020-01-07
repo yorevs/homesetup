@@ -302,7 +302,6 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   alias __hhs_docker_service='docker service'
   alias __hhs_docker_logs='docker logs'
   alias __hhs_docker_remove='docker container rm'
-  alias __hhs_docker_remove_volumes='for next in $(docker volume ls -qf dangling=true); do echo "Removing Docker volume: $next"; docker volume rm $next; done'
   alias __hhs_docker_remove_image='docker rmi'
   alias __hhs_docker_ps='docker ps --format "{{.ID}} - {{.Names}} - {{.Status}} - {{.Image}}"'
   alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'

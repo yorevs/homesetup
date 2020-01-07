@@ -26,8 +26,8 @@ if __hhs_has "python"; then
     else
       local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
-      echo "${YELLOW}Searching (maxdepth=${HHS_MAX_DEPTH}) for files matching: \"$2\" in \"$1\" ${NC}"
-      eval "find -L $1 -maxdepth ${HHS_MAX_DEPTH} -type f \( $inames \) 2> /dev/null | __hhs_highlight \"(${2//\*/.*}|$)\""
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for files matching: \"$2\" in \"$1\" ${NC}"
+      eval "find -L $1 -maxdepth ${HHS_MAXDEPTH} -type f \( $inames \) 2> /dev/null | __hhs_highlight \"(${2//\*/.*}|$)\""
       return $?
     fi
   }
@@ -48,8 +48,8 @@ if __hhs_has "python"; then
     else
       local expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
-      echo "${YELLOW}Searching (maxdepth=${HHS_MAX_DEPTH}) for folders matching: [${filter}] in \"${dir}\" ${NC}"
-      eval "find -L ${dir} -maxdepth ${HHS_MAX_DEPTH} -type d \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for folders matching: [${filter}] in \"${dir}\" ${NC}"
+      eval "find -L ${dir} -maxdepth ${HHS_MAXDEPTH} -type d \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
       return $?
     fi
   }
@@ -111,8 +111,8 @@ if __hhs_has "python"; then
       local baseCmd fullCmd dir="${1}"
 
       inames=$(python -c "$namesExpr")
-      baseCmd="find -L ${dir} -maxdepth ${HHS_MAX_DEPTH} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
-      echo "${YELLOW}Searching (maxdepth=${HHS_MAX_DEPTH}) for \"${strType}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
+      baseCmd="find -L ${dir} -maxdepth ${HHS_MAXDEPTH} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for \"${strType}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
 
       if [ -n "$replace" ]; then
         if [ "$strType" = 'string' ]; then

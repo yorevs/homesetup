@@ -134,7 +134,7 @@ __hhs_comp-godir() {
   # Let the user know about the search
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   IFS=$'\n'
-  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -maxdepth "${HHS_MAX_DEPTH}" -type d -iname "${base}" 2>/dev/null | sed -E 's#\./(.*)/*#\1/#')"
+  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -maxdepth "${HHS_MAXDEPTH}" -type d -iname "${base}" 2>/dev/null | sed -E 's#\./(.*)/*#\1/#')"
   IFS=$"${HHS_RESET_IFS}"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"

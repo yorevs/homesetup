@@ -158,7 +158,7 @@ function __hhs_go-dir() {
     local searchPath name selIndex
     [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
     [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
-    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<< "$(find -L "${searchPath%/}" -maxdepth "${HHS_MAX_DEPTH}" -type d -iname "*""$name" 2> /dev/null)"
+    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<< "$(find -L "${searchPath%/}" -maxdepth "${HHS_MAXDEPTH}" -type d -iname "*""$name" 2> /dev/null)"
     len=${#results[@]}
     # If no directory is found under the specified name
     if [ "$len" -eq 0 ]; then

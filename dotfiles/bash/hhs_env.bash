@@ -78,12 +78,12 @@ export HHS_WELCOME="${ORANGE}${HHS_MY_OS} ${GREEN} Welcome to HomeSetup\xef\x87\
 export HHS_RESET_IFS="$IFS"
 
 # Customizeable
-export HHS_MSELECT_MAX_ROWS=${HHS_MSELECT_MAX_ROWS:-10}
+export HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:-15}
+export HHS_MAXDEPTH="${HHS_MAXDEPTH:-6}"
 export HHS_SAVED_DIRS="${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}"
 export HHS_CMD_FILE="${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}"
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-$HHS_DIR/.punches}"
 export HHS_PATHS_FILE="${HHS_PATHS_FILE:-$HOME/.path}"
-export HHS_MAX_DEPTH="${HHS_MAX_DEPTH:-6}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 HHS_DEFAULT_DEV_TOOLS=(
