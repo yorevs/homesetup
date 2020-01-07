@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Jq is a lightweight and flexible command-line JSON processor."
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Linter tool for identifying and reporting on patterns in JavaScript."
 }

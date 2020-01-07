@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
 # shellcheck disable=SC1090
-
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 function about() {

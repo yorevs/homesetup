@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Autoformat shell script source code"
 }

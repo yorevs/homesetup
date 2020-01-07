@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Perl is a highly capable, feature-rich programming language with over 30 years of development"
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Gives Mac terminal users many commonly used tools, utilities, and compilers"
 }

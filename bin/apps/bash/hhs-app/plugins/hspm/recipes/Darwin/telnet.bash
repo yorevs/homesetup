@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Provide a bidirectional interactive text-oriented communication facility using a virtual terminal"
 }

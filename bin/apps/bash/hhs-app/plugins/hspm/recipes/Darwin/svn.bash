@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Subversion is an open source version control system"
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "An interactive process viewer for Unix"
 }

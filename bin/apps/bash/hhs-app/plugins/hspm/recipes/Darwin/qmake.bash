@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Qt | Cross-platform software development for embedded & desktop"
 }

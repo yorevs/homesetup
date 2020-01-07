@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Maven is a software project management and comprehension tool"
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Our mission is to drive processes described in build files as targets and extension points dependent upon each other"
 }

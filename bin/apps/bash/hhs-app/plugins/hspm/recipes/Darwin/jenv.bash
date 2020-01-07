@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Is a command line tool to help you forget how to set the JAVA_HOME environment variable"
 }

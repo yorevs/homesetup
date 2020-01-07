@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Searches files for character patterns, but it uses the PCRE regular expression library"
 }

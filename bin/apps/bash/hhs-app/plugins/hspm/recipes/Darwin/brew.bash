@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "The missing package manager for macOS"
 }

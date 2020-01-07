@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "FIGlet is a program for making large letters out of ordinary text"
 }

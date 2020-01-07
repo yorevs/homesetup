@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function about() {
   echo "Generate documentation from source code"
 }
