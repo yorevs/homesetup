@@ -33,7 +33,8 @@ function __hhs_save-dir() {
     if [ "$1" = "-e" ]; then
       vi "$HHS_SAVED_DIRS"
     elif [ -z "$2" ] || [ "$1" = "-r" ]; then
-      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
+      # Remove the previously saved directory aliased
+      ised -E -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
       echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
     else
       dir="$1"
@@ -46,7 +47,8 @@ function __hhs_save-dir() {
         echo "${RED}Directory \"$dir\" is not a valid!${NC}"
         return 1
       fi
-      ised -e "s#(^$dir_alias=.*)*##" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
+      # Remove the old saved directory aliased
+      ised -E -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
       IFS=$'\n' read -d '' -r -a all_dirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
       all_dirs+=("$dir_alias=$dir")
       printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS"

@@ -50,7 +50,7 @@ function __hhs_paths() {
           echo -en "${GREEN} ${CHECK_ICN} => ${WHITE}"
         else
           if [ "-c" = "$1" ]; then
-            ised -e "s#(^$path$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+            ised -E -e "s#(^$path$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
             export PATH=${PATH//$path:/}
             echo -en "${RED} ${CROSS_ICN} => "
           else
@@ -71,7 +71,7 @@ function __hhs_paths() {
       vi "$HHS_PATHS_FILE"
       return 0
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
-      ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+      ised -E -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
       if [ -d "$2" ]; then
         echo "$2" >>"$HHS_PATHS_FILE"
         export PATH="$2:$PATH"
@@ -80,7 +80,7 @@ function __hhs_paths() {
         return 1
       fi
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
-      ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+      ised -E -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
       export PATH=${PATH//$2:/}
     fi
   fi
