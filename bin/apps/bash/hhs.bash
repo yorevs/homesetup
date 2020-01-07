@@ -39,7 +39,7 @@ Usage: ${APP_NAME} <plugin_name> {task} <command> [args...]
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # HomeSetup hhs plugin directory
-HHS_PLUGIN_DIR="${HHS_HOME}/bin/apps/bash/hhs/plugins/"
+HHS_PLUGIN_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/"
 
 # List of required functions a plugin must have
 PLUGINS_FNCS=('help' 'version' 'cleanup' 'execute')
@@ -153,7 +153,7 @@ invoke_command() {
       if [[ "${PLUGINS[idx]}" = "${1}" ]]; then
         [ -s "${PLUGINS_LIST[idx]}" ] && \. "${PLUGINS_LIST[idx]}"
         shift
-        plg_cmd="${1:-execute}"
+        plg_cmd="${1}"
         has_command "${plg_cmd}" || quit 1 "Command not available: ${plg_cmd}"
         shift
         ${plg_cmd} "${@}"

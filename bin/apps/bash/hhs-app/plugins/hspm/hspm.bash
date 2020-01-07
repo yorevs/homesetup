@@ -36,7 +36,7 @@ UNSETS=('help' 'version' 'cleanup' 'execute' 'cleanup_recipes' 'list_recipes' 'i
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # hspm recipes directory
-RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/apps/bash/hhs/plugins/hspm/recipes}
+RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/apps/bash/hhs-app/plugins/hspm/recipes}
 
 # Flag to enlist even the missing recipes
 LIST_ALL=

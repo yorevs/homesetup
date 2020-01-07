@@ -40,7 +40,11 @@ Usage: {} <args> [opts]
       -d  |  --del <name>                   : Remove a password entry from the vault.
       -u  |  --upd <name> <hint> [password] : Update a password entry from the vault.
       -l  | --list [filter]                 : List all password entries or matching the given filter.
-""".format(VERSION, APP_NAME)
+
+    Arguments:
+      password  : If not provided, a hidden input will be used to get the information.
+      filter    : Filter the vault entries by name.
+""".format(APP_NAME, ' '.join(map(str, VERSION)))
 
 OPTIONS_MAP = {}
 
