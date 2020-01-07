@@ -13,7 +13,7 @@
 # @param $2 [Opt] : The alias to access the directory saved.
 function __hhs_save-dir() {
 
-  local dir dirAlias allDirs=()
+  local dir dir_alias all_dirs=()
 
   HHS_SAVED_DIRS=${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}
   touch "$HHS_SAVED_DIRS"
@@ -27,14 +27,14 @@ function __hhs_save-dir() {
     return 1
   else
 
-    [ -n "$2" ] || dirAlias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-    [ -n "$2" ] && dirAlias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    [ -n "$2" ] || dir_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    [ -n "$2" ] && dir_alias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
     if [ "$1" = "-e" ]; then
       vi "$HHS_SAVED_DIRS"
     elif [ -z "$2" ] || [ "$1" = "-r" ]; then
-      ised -e "s#(^$dirAlias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
-      echo "${YELLOW}Directory removed: ${WHITE}\"$dirAlias\" ${NC}"
+      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
+      echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
     else
       dir="$1"
       # If the path is not absolute, append the current directory to it.
@@ -46,12 +46,12 @@ function __hhs_save-dir() {
         echo "${RED}Directory \"$dir\" is not a valid!${NC}"
         return 1
       fi
-      ised -e "s#(^$dirAlias=.*)*##" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
-      IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
-      allDirs+=("$dirAlias=$dir")
-      printf "%s\n" "${allDirs[@]}" > "$HHS_SAVED_DIRS"
+      ised -e "s#(^$dir_alias=.*)*##" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
+      IFS=$'\n' read -d '' -r -a all_dirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
+      all_dirs+=("$dir_alias=$dir")
+      printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS"
       sort "$HHS_SAVED_DIRS" -o "$HHS_SAVED_DIRS"
-      echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dirAlias ${NC}"
+      echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
     fi
   fi
 
@@ -63,7 +63,7 @@ function __hhs_save-dir() {
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load-dir() {
 
-  local dirAlias allDirs=() dir pad pad_len mselectFile
+  local dir_alias all_dirs=() dir pad pad_len mselect_file sel_index
 
   HHS_SAVED_DIRS=${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}
   touch "$HHS_SAVED_DIRS"
@@ -77,23 +77,23 @@ function __hhs_load-dir() {
     return 1
   fi
 
-  IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
+  IFS=$'\n' read -d '' -r -a all_dirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
 
-  if [ ${#allDirs[@]} -ne 0 ]; then
+  if [ ${#all_dirs[@]} -ne 0 ]; then
 
     case "$1" in
       -l)
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
         echo ' '
-        echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
+        echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
         echo ' '
         IFS=$'\n'
-        for next in ${allDirs[*]}; do
-          dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
+        for next in ${all_dirs[*]}; do
+          dir_alias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
           dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
-          printf "${HHS_HIGHLIGHT_COLOR}${dirAlias}"
-          printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+          printf "${HHS_HIGHLIGHT_COLOR}${dir_alias}"
+          printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
           echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
         done
         IFS="$HHS_RESET_IFS"
@@ -102,22 +102,22 @@ function __hhs_load-dir() {
         ;;
       '')
         clear
-        echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
+        echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
         echo -en "${WHITE}"
         IFS=$'\n'
-        mselectFile=$(mktemp)
-        __hhs_mselect "$mselectFile" "${allDirs[*]}"
+        mselect_file=$(mktemp)
+        __hhs_mselect "$mselect_file" "${all_dirs[*]}"
         if [ "$?" -eq 0 ]; then
-          selIndex=$(grep . "$mselectFile")
-          dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-          # selIndex is zero-based, so we need to increment this number
-          dir=$(awk "NR==$((selIndex + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
+          sel_index=$(grep . "$mselect_file")
+          dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+          # sel_index is zero-based, so we need to increment this number
+          dir=$(awk "NR==$((sel_index + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
         fi
         IFS="$HHS_RESET_IFS"
         ;;
       [a-zA-Z0-9_]*)
-        dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        dir=$(grep "^${dirAlias}=" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
+        dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        dir=$(grep "^${dir_alias}=" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
         ;;
       *)
         echo -e "${RED}Invalid arguments: \"$1\"${NC}"
@@ -126,7 +126,7 @@ function __hhs_load-dir() {
     esac
 
     if [ -z "$dir" ] || [ ! -d "$dir" ]; then
-      echo "${RED}Directory aliased by \"$dirAlias\" was not found${NC}"
+      echo "${RED}Directory aliased by \"$dir_alias\" was not found !${NC}"
       return 1
     elif [ -n "$dir" ] && [ -d "$dir" ]; then
       pushd "$dir" &> /dev/null || return 1
@@ -137,7 +137,7 @@ function __hhs_load-dir() {
     echo "${ORANGE}No directories were saved yet \"$HHS_SAVED_DIRS\" !${NC}"
   fi
 
-  [ -f "$mselectFile" ] && command rm -f "$mselectFile"
+  [ -f "$mselect_file" ] && command rm -f "$mselect_file"
 
   return 0
 }
@@ -147,7 +147,7 @@ function __hhs_load-dir() {
 # @param $1 [Req] : The directory name to go.
 function __hhs_go-dir() {
 
-  local dir len mselectFile results=()
+  local dir len mselect_file results=()
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
@@ -155,7 +155,7 @@ function __hhs_go-dir() {
   elif [ -d "$1" ]; then
     pushd "$1" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   else
-    local searchPath name selIndex
+    local searchPath name sel_index
     [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
     [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
     IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<< "$(find -L "${searchPath%/}" -maxdepth "${HHS_MAXDEPTH}" -type d -iname "*""$name" 2> /dev/null)"
@@ -175,19 +175,19 @@ function __hhs_go-dir() {
       echo "-------------------------------------------------------------"
       echo -en "${NC}"
       IFS=$'\n'
-      mselectFile=$(mktemp)
-      __hhs_mselect "$mselectFile" "${results[*]//$searchPath\//}"
+      mselect_file=$(mktemp)
+      __hhs_mselect "$mselect_file" "${results[*]//$searchPath\//}"
       # shellcheck disable=SC2181
       if [ "$?" -eq 0 ]; then
-        selIndex=$(grep . "$mselectFile")
-        dir=${results[$selIndex]}
+        sel_index=$(grep . "$mselect_file")
+        dir=${results[$sel_index]}
       fi
       IFS="$HHS_RESET_IFS"
     fi
     [ -n "$dir" ] && [ -d "$dir" ] && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   fi
 
-  [ -f "$mselectFile" ] && command rm -f "$mselectFile"
+  [ -f "$mselect_file" ] && command rm -f "$mselect_file"
 
   return 0
 }

@@ -35,9 +35,6 @@ UNSETS=('help' 'version' 'cleanup' 'execute' 'cleanup_recipes' 'list_recipes' 'i
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
-# hspm recipes directory
-RECIPES_DIR=${RECIPES_DIR:-$HHS_HOME/bin/apps/bash/hhs-app/plugins/hspm/recipes}
-
 # Flag to enlist even the missing recipes
 LIST_ALL=
 
@@ -59,7 +56,7 @@ list_recipes() {
   local index=0 recipe pad_len=20
   local pad=$(printf '%0.1s' "."{1..60})
   for app in ${DEV_TOOLS[*]}; do
-    recipe="$RECIPES_DIR/$(uname -s)/${app}.bash"
+    recipe="$HHS_RECIPES_DIR/$(uname -s)/${app}.bash"
     if [ -n "$recipe" ] && [ -f "$recipe" ]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
@@ -88,17 +85,17 @@ install_recipe() {
 
   local recipe
 
-  recipe="$RECIPES_DIR/$(uname -s)/$1.bash"
+  [ -b "$1" ] && recipe="${HHS_RECIPES_DIR}/$(uname -s)/$1.bash"
 
   if [ -f "$recipe" ]; then
     echo ''
     \. "$recipe"
     if command -v "$1" > /dev/null; then
-      quit 1 "${YELLOW}\"$1\" is already installed on the system!${NC}"
+      quit 1 "${YELLOW}\"$1\" is already installed on the system !${NC}"
     fi
-    echo -e "${YELLOW}Installing \"$1\", please wait...${NC}"
+    echo -e "${YELLOW}Installing \"$1\", please wait ... ${NC}"
     if install; then
-      echo -e "${GREEN}Installation successful.${NC}"
+      echo -e "${GREEN}Installation successful !${NC}"
     else
       quit 2 "Failed to install app \"$1\" !"
     fi
@@ -111,16 +108,16 @@ install_recipe() {
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
-  recipe="$RECIPES_DIR/$(uname -s)/$1.bash"
+  recipe="$HHS_RECIPES_DIR/$(uname -s)/$1.bash"
   if [ -f "$recipe" ]; then
     echo ''
     \. "$recipe"
     if ! command -v "$1" > /dev/null; then
-      quit 2 "${YELLOW}\"$1\" is not installed on the system!${NC}"
+      quit 2 "${YELLOW}\"$1\" is not installed on the system !${NC}"
     fi
-    echo -e "${YELLOW}Uninstalling $1, please wait...${NC}"
+    echo -e "${YELLOW}Uninstalling $1, please wait ... ${NC}"
     if uninstall; then
-      echo -e "${GREEN}Uninstallation successful.${NC}"
+      echo -e "${GREEN}Uninstallation successful !${NC}"
     else
       quit 2 "Failed to uninstall app \"$1\" !"
     fi
@@ -144,7 +141,7 @@ function cleanup() {
 
 function execute() {
   if [ ${#DEV_TOOLS[*]} -le 0 ]; then
-    quit 1 "$$HHS_DEV_TOOLS variable is undefined or have no tools defined !"
+    quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
   fi
 
   cmd="$1"
@@ -159,7 +156,7 @@ function execute() {
       if list_recipes "$1"; then
         install_recipe "$1"
       else
-        quit 1 "Recipe for app \"$1\" was not found!"
+        quit 1 "Unable to find recipe for \"$1\" !"
       fi
       ;;
     # Uninstall the app
@@ -168,7 +165,7 @@ function execute() {
       if list_recipes "$1"; then
         uninstall_recipe "$1"
       else
-        quit 1 "Recipe for app \"$1\" was not found !"
+        quit 1 "Unable to find recipe for \"$1\" !"
       fi
       ;;
     # List available apps
@@ -176,7 +173,7 @@ function execute() {
       if [ "$1" = "-a" ] || [ "$1" = "--all" ]; then
         LIST_ALL=1
       fi
-      echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ...${NC}\n"
+      echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
       list_recipes
       echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
       ;;

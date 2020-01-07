@@ -64,9 +64,7 @@ LOG_FILE = "{}/vault.log".format(HHS_DIR)
 
 MAX_LOG_FILE_SIZE = 1 * 1024 * 1024
 
-VAULT_LOCATION = os.environ.get("HHS_VAULT_LOCATION", HHS_DIR)
-
-VAULT_FILE = "{}/{}".format(VAULT_LOCATION, os.environ.get("HHS_VAULT_FILE", ".vault"))
+VAULT_FILE = os.environ.get("HHS_VAULT_FILE", "{}/{}".format(HHS_DIR, '.vault'))
 
 VAULT_GPG_FILE = "{}.gpg".format(VAULT_FILE)
 
@@ -77,9 +75,8 @@ HomeSetup Vault v{}
 Settings ==============================
 
         VAULT_USER: {}
-    VAULT_LOCATION: {}
         VAULT_FILE: {}
-""".format(VERSION, VAULT_USER, VAULT_LOCATION, VAULT_FILE)
+""".format(VERSION, VAULT_USER, VAULT_FILE)
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )

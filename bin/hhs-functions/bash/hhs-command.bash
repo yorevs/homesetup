@@ -14,7 +14,7 @@ function __hhs_command() {
 
   HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
-  local cmdName cmdId cmdExpr pad pad_len mselectFile allCmds=() index=1
+  local cmd_name cmdId cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_index
 
   touch "$HHS_CMD_FILE"
 
@@ -30,7 +30,7 @@ function __hhs_command() {
     return 1
   else
     
-    IFS=$'\n' read -d '' -r -a allCmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
+    IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
 
     case "$1" in
     -e | --edit)
@@ -39,18 +39,18 @@ function __hhs_command() {
       ;;
     -a | --add)
       shift
-      cmdName=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+      cmd_name=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
       shift
-      cmdExpr="$*"
-      if [ -z "$cmdName" ] || [ -z "$cmdExpr" ]; then
-        echo -e "${RED}Invalid arguments: \"$cmdName\"\t\"$cmdExpr\"${NC}"
+      cmd_expr="$*"
+      if [ -z "$cmd_name" ] || [ -z "$cmd_expr" ]; then
+        echo -e "${RED}Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
         return 1
       fi
-      ised -e "s#(^Command $cmdName: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
-      allCmds+=("Command $cmdName: $cmdExpr")
-      printf "%s\n" "${allCmds[@]}" > "$HHS_CMD_FILE"
+      ised -e "s#(^Command $cmd_name: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+      all_cmds+=("Command $cmd_name: $cmd_expr")
+      printf "%s\n" "${all_cmds[@]}" > "$HHS_CMD_FILE"
       sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
-      echo "${GREEN}Command stored: ${WHITE}\"$cmdName\" as ${HHS_HIGHLIGHT_COLOR}$cmdExpr ${NC}"
+      echo "${GREEN}Command stored: ${WHITE}\"$cmd_name\" as ${HHS_HIGHLIGHT_COLOR}$cmd_expr ${NC}"
       ;;
     -r | --remove)
       shift
@@ -58,34 +58,34 @@ function __hhs_command() {
       cmdId=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
       local re='^[1-9]+$'
       if [[ $cmdId =~ $re ]]; then
-        cmdExpr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
-        [ -z "${cmdExpr}" ] && echo "${RED}Command index not found: \"${cmdId}\"" && return 1
-        ised -e "/^${cmdExpr}$/d" "$HHS_CMD_FILE"
+        cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
+        [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmdId}\"" && return 1
+        ised -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
       elif [ -n "$cmdId" ]; then
-        cmdExpr=$(grep "${cmdId}" "$HHS_CMD_FILE")
-        [ -z "${cmdExpr}" ] && echo "${RED}Command not found: \"${cmdId}\"" && return 1
+        cmd_expr=$(grep "${cmdId}" "$HHS_CMD_FILE")
+        [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmdId}\"" && return 1
         ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
       else
-        echo -e "${RED}Invalid arguments: \"$cmdId\"\t\"$cmdExpr\"${NC}"
+        echo -e "${RED}Invalid arguments: \"$cmdId\"\t\"$cmd_expr\"${NC}"
         return 1
       fi
       echo "${YELLOW}Command removed: ${WHITE}\"$cmdId\" ${NC}"
       ;;
     -l | --list)
-      if [ ${#allCmds[@]} -ne 0 ]; then
+      if [ ${#all_cmds[@]} -ne 0 ]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
         echo ' '
-        echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
+        echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
         echo " "
         IFS=$'\n'
-        for next in ${allCmds[*]}; do
+        for next in ${all_cmds[*]}; do
           printf "${WHITE}(%03d) " $((index))
-          cmdName="$(echo -en "$next" | awk -F ':' '{ print $1 }')"
-          cmdExpr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
-          echo -n "${HHS_HIGHLIGHT_COLOR}${cmdName}"
-          printf '%*.*s' 0 $((pad_len - ${#cmdName})) "$pad"
-          echo "${YELLOW} is stored as: ${WHITE}'${cmdExpr}'"
+          cmd_name="$(echo -en "$next" | awk -F ':' '{ print $1 }')"
+          cmd_expr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
+          echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}"
+          printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "$pad"
+          echo "${YELLOW} is stored as: ${WHITE}'${cmd_expr}'"
           index=$((index + 1))
         done
         IFS="$HHS_RESET_IFS"
@@ -95,20 +95,20 @@ function __hhs_command() {
       fi
       ;;
     '')
-      if [ ${#allCmds[@]} -ne 0 ]; then
+      if [ ${#all_cmds[@]} -ne 0 ]; then
         clear
-        echo "${YELLOW}Available commands (${#allCmds[@]}) stored:"
+        echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
         echo -en "${WHITE}"
         IFS=$'\n'
-        mselectFile=$(mktemp)
-        __hhs_mselect "$mselectFile" "${allCmds[*]}"
+        mselect_file=$(mktemp)
+        __hhs_mselect "$mselect_file" "${all_cmds[*]}"
         # shellcheck disable=SC2181
         if [ "$?" -eq 0 ]; then
-          selIndex=$(grep . "$mselectFile")
-          # selIndex is zero-based, so we need to increment this number
-          cmdExpr=$(awk "NR==$((selIndex + 1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-          [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-          [ -n "$cmdExpr" ] && echo "#> $cmdExpr" && eval "$cmdExpr"
+          sel_index=$(grep . "$mselect_file")
+          # sel_index is zero-based, so we need to increment this number
+          cmd_expr=$(awk "NR==$((sel_index + 1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+          [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+          [ -n "$cmd_expr" ] && echo "#> $cmd_expr" && eval "$cmd_expr"
         fi
         IFS="$HHS_RESET_IFS"
       else
@@ -116,9 +116,10 @@ function __hhs_command() {
       fi
       ;;
     [A-Z0-9_]*)
-      cmdExpr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-      [ -z "$cmdExpr" ] && cmdExpr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-      [ -n "$cmdExpr" ] && echo -e "#> $cmdExpr" && eval "$cmdExpr"
+      cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+      [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+      [ -n "$cmd_expr" ] && echo -e "#> $cmd_expr" && eval "$cmd_expr"
+      [ -z "$cmd_expr" ] && echo "${RED}Command aliased by \"$1\" was not found !${NC}"
       ;;
     *)
       echo -e "${RED}Invalid arguments: \"$1\"${NC}"
@@ -127,7 +128,7 @@ function __hhs_command() {
     esac
   fi
 
-  [ -f "$mselectFile" ] && command rm -f "$mselectFile"
+  [ -f "$mselect_file" ] && command rm -f "$mselect_file"
 
   return 0
 }

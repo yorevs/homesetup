@@ -76,6 +76,8 @@ export HHS_DIR="$HOME/.hhs"
 export HHS_VERSION=$(grep . "$HHS_HOME/.VERSION")
 export HHS_WELCOME="${ORANGE}${HHS_MY_OS} ${GREEN} Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${HHS_VERSION}${NC}"
 export HHS_RESET_IFS="$IFS"
+export HHS_PLUGINS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
+export HHS_RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
 
 # Customizeable
 export HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:-15}
@@ -84,6 +86,8 @@ export HHS_SAVED_DIRS="${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}"
 export HHS_CMD_FILE="${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}"
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-$HHS_DIR/.punches}"
 export HHS_PATHS_FILE="${HHS_PATHS_FILE:-$HOME/.path}"
+export HHS_VAULT_USER="${HHS_VAULT_USER:-$USER}"
+export HHS_VAULT_FILE="${HHS_VAULT_FILE:-$HOME/.hhs/.vault}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 HHS_DEFAULT_DEV_TOOLS=(
@@ -96,4 +100,4 @@ HHS_DEFAULT_DEV_TOOLS=(
   perl ifconfig
 )
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(echo "${HHS_DEFAULT_DEV_TOOLS[*]}" | tr ' ' '\n' | sort | tr '\n' ' ')}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(echo "${HHS_DEFAULT_DEV_TOOLS[*]}" | tr ' ' '\n' | uniq | sort | tr '\n' ' ')}

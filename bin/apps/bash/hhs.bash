@@ -38,9 +38,6 @@ Usage: ${APP_NAME} <plugin_name> {task} <command> [args...]
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
-# HomeSetup hhs plugin directory
-HHS_PLUGIN_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/"
-
 # List of required functions a plugin must have
 PLUGINS_FNCS=('help' 'version' 'cleanup' 'execute')
 
@@ -110,7 +107,7 @@ register_plugins() {
       PLUGINS+=("${plg_name}")
       PLUGINS_LIST+=("${plugin}")
     fi
-  done < <(find "${HHS_PLUGIN_DIR}" -maxdepth 2 -type f -iname "*.bash")
+  done < <(find "${HHS_PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
   IFS=$"$HHS_RESET_IFS"
 }
 
