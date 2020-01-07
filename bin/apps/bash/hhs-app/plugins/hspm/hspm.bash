@@ -140,6 +140,7 @@ function cleanup() {
 }
 
 function execute() {
+  [ -z "$1" ] && usage 1
   if [ ${#DEV_TOOLS[*]} -le 0 ]; then
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
   fi

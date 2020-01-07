@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2142,SC1090
+# shellcheck disable=SC1117,SC2142,SC1090,SC2016
 
 #  Script: bash_aliases.bash
 # Purpose: This file is used to configure some useful shell aliases
@@ -23,14 +23,14 @@ __hhs_has() {
 # @function: Check if an alias exists and create it if it does not
 # @param $1 [Req] : The alias to set/check.
 __hhs_alias() {
-  local allArgs=$*
-  local aliasExpr=${allArgs##*=}
-  local aliasName=${allArgs//=*}
-  if ! alias "$aliasName" >/dev/null 2>&1; then 
-    eval "alias $aliasName='$aliasExpr'";
-    return $?
-  else
-    echo "Alias: $aliasName already exists" 2>&1
+  local all_args="${*}"
+  local alias_expr="${all_args#*=}"
+  local alias_name="${all_args//=*}"
+  if ! alias "$alias_name" >/dev/null 2>&1; then 
+    eval "alias $alias_name='$alias_expr'";
+    ret=$?
+    [[ $ret -eq 0 ]] || echo "${RED}Failed to alias: \"$alias_name\" !${NC}" 2>&1
+    return $ret
   fi
 
   return 1
@@ -113,9 +113,6 @@ alias ts='\date "+%s%S"'
 # macOS has no `wget, so using curl instead`
 __hhs_has "wget" || alias wget='\curl -O'
 
-# Reload the bash session
-alias reload='cls; source ~/.bashrc && echo -e "${HHS_WELCOME}"'
-
 # Swaps between PS1 & PS2 prompts
 alias ps1='export PS1=$PS1_STYLE'
 alias ps2='export PS1=$PS2_STYLE'
@@ -157,33 +154,34 @@ fi
 # -----------------------------------------------------------------------------------
 # IP related
 
+# All IPs of all interfaces
+if __hhs_has "ifconfig"; then
+  
+  __hhs_alias ips='ifconfig -a | grep -o "inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)" | awk "{ sub(/inet6? (addr:)? ?/, \"\"); print }"'
+  
+  # Local networking (requires pcregrep)
+  if __hhs_has "pcregrep"; then
+
+    # Show active network interfaces
+    __hhs_alias ifa='ifconfig | pcregrep -M -o "^[^\t:]+:([^\n]|\n\t)*status: active"'
+    # Local IP of active interfaces
+    __hhs_alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
+  fi
+fi
+
 # Get your external public IP
 if __hhs_has "dig"; then
 
   # Perform a DNS lookup against myip.opendns.com
-  alias ip='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
+  __hhs_alias myIp='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
 else
+
   # Try using curl as an alternative, however, in most cases it may be inaccurate
-  alias ip='a=$(curl ifconfig.me 2> /dev/null); echo ${a//\"}'
-fi
-
-# Local networking (requires pcregrep)
-if __hhs_has "pcregrep"; then
-
-  # Show active network interfaces
-  alias ifa="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
-  # Local IP of active interfaces
-  alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
-fi
-
-# All IPs of all interfaces
-if __hhs_has "ifconfig"; then
-  
-  alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+  __hhs_alias myIp='a=$(curl ifconfig.me 2> /dev/null); echo ${a//\"}'
 fi
 
 # Base64 encode shortcuts
-__hhs_has "base64" && alias encode="base64"
+__hhs_has "base64" && __hhs_alias encode="base64"
 
 # -----------------------------------------------------------------------------------
 # OS Specific aliases
@@ -191,14 +189,14 @@ __hhs_has "base64" && alias encode="base64"
 case $HHS_MY_OS in
 
   Linux) # -- LINUX --
-    alias ised="sed -i'' -r"
-    __hhs_has "base64" && alias decode='base64 -d'
+    __hhs_alias ised="sed -i'' -r"
+    __hhs_has "base64" && __hhs_alias decode='base64 -d'
   ;;
 
   Darwin) # -- MACOS --
 
-    alias ised="sed -i '' -E"
-    __hhs_has "base64" && alias decode='base64 -D'
+    __hhs_alias ised="sed -i '' -E"
+    __hhs_has "base64" && __hhs_alias decode='base64 -D'
 
     # Delete all .DS_store files
     alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
@@ -229,12 +227,6 @@ case $HHS_MY_OS in
 esac
 
 # -----------------------------------------------------------------------------------
-# Directory Shortcuts
-
-[ -d "${DESKTOP}" ] && alias desk='cd ${DESKTOP}'
-[ -d "${TEMP}" ] && alias temp='cd ${TEMP}'
-
-# -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts => TODO: adapt for zsh
 
 alias show-cursor='tput cnorm'      # Show the cursor using tput
@@ -243,6 +235,20 @@ alias save-cursor-pos='tput sc'     # Save current cursor position
 alias restore-cursor-pos='tput rc'  # Restore saved cursor position
 alias enable-line-wrap='tput smam'  # Enable line wrapping
 alias disable-line-wrap='tput rmam' # Disable line wrapping
+
+# -----------------------------------------------------------------------------------
+# HomeSetup aliases
+
+# Reload the bash session
+__hhs_alias reload='cls; source ~/.bashrc && echo -e "${HHS_WELCOME}"'
+__hhs_alias vault='hhs vault execute'
+__hhs_alias hspm='hhs hspm execute'
+__hhs_alias dotfiles='hhs firebase execute'
+
+# Directory Shortcuts
+[ -d "${DESKTOP}" ] && __hhs_alias desk='cd ${DESKTOP}'
+[ -d "${TEMP}" ] && __hhs_alias temp='cd ${TEMP}'
+[ -d "${DOWNLOADS}" ] && __hhs_alias dl='cd ${DOWNLOADS}'
 
 # -----------------------------------------------------------------------------------
 # Perl dependent aliases
