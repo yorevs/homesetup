@@ -77,59 +77,59 @@ function __hhs_load-dir() {
     return 1
   fi
 
-  IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" <"$HHS_SAVED_DIRS"
+  IFS=$'\n' read -d '' -r -a allDirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
 
   if [ ${#allDirs[@]} -ne 0 ]; then
 
     case "$1" in
-    -l)
-      pad=$(printf '%0.1s' "."{1..60})
-      pad_len=40
-      echo ' '
-      echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
-      echo ' '
-      IFS=$'\n'
-      for next in ${allDirs[*]}; do
-        dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
-        dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
-        printf "${HHS_HIGHLIGHT_COLOR}${dirAlias}"
-        printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
-        echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
-      done
-      IFS="$HHS_RESET_IFS"
-      echo "${NC}"
-      return 0
-      ;;
-    '')
-      clear
-      echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
-      echo -en "${WHITE}"
-      IFS=$'\n'
-      mselectFile=$(mktemp)
-      __hhs_mselect "$mselectFile" "${allDirs[*]}"
-      if [ "$?" -eq 0 ]; then
-        selIndex=$(grep . "$mselectFile")
+      -l)
+        pad=$(printf '%0.1s' "."{1..60})
+        pad_len=40
+        echo ' '
+        echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
+        echo ' '
+        IFS=$'\n'
+        for next in ${allDirs[*]}; do
+          dirAlias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
+          dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
+          printf "${HHS_HIGHLIGHT_COLOR}${dirAlias}"
+          printf '%*.*s' 0 $((pad_len - ${#dirAlias})) "$pad"
+          echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
+        done
+        IFS="$HHS_RESET_IFS"
+        echo "${NC}"
+        return 0
+        ;;
+      '')
+        clear
+        echo "${YELLOW}Available directories (${#allDirs[@]}) saved:"
+        echo -en "${WHITE}"
+        IFS=$'\n'
+        mselectFile=$(mktemp)
+        __hhs_mselect "$mselectFile" "${allDirs[*]}"
+        if [ "$?" -eq 0 ]; then
+          selIndex=$(grep . "$mselectFile")
+          dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+          # selIndex is zero-based, so we need to increment this number
+          dir=$(awk "NR==$((selIndex + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
+        fi
+        IFS="$HHS_RESET_IFS"
+        ;;
+      [a-zA-Z0-9_]*)
         dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        # selIndex is zero-based, so we need to increment this number
-        dir=$(awk "NR==$((selIndex + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
-      fi
-      IFS="$HHS_RESET_IFS"
-      ;;
-    [a-zA-Z0-9_]*)
-      dirAlias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-      dir=$(grep "^${dirAlias}=" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
-      ;;
-    *)
-      echo -e "${RED}Invalid arguments: \"$1\"${NC}"
-      return 1
-      ;;
+        dir=$(grep "^${dirAlias}=" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
+        ;;
+      *)
+        echo -e "${RED}Invalid arguments: \"$1\"${NC}"
+        return 1
+        ;;
     esac
 
-    if [ -n "$dir" ] && [ ! -d "$dir" ]; then
-      echo "${RED}Directory ($dirAlias): \"$dir\" was not found${NC}"
+    if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+      echo "${RED}Directory aliased by \"$dirAlias\" was not found${NC}"
       return 1
     elif [ -n "$dir" ] && [ -d "$dir" ]; then
-      pushd "$dir" &>/dev/null || return 1
+      pushd "$dir" &> /dev/null || return 1
       echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
     fi
 
@@ -153,12 +153,12 @@ function __hhs_go-dir() {
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
     return 1
   elif [ -d "$1" ]; then
-    pushd "$1" &>/dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
+    pushd "$1" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   else
     local searchPath name selIndex
     [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
     [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
-    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<<"$(find -L "${searchPath%/}" -maxdepth "${HHS_MAX_DEPTH}" -type d -iname "*""$name" 2>/dev/null)"
+    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<< "$(find -L "${searchPath%/}" -maxdepth "${HHS_MAX_DEPTH}" -type d -iname "*""$name" 2> /dev/null)"
     len=${#results[@]}
     # If no directory is found under the specified name
     if [ "$len" -eq 0 ]; then
@@ -184,7 +184,7 @@ function __hhs_go-dir() {
       fi
       IFS="$HHS_RESET_IFS"
     fi
-    [ -n "$dir" ] && [ -d "$dir" ] && pushd "$dir" &>/dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
+    [ -n "$dir" ] && [ -d "$dir" ] && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   fi
 
   [ -f "$mselectFile" ] && command rm -f "$mselectFile"

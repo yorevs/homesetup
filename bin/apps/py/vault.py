@@ -31,20 +31,20 @@ VERSION = (1, 0, 0)
 
 # Usage message
 USAGE = """
-HomeSetup vault v{}
-
 Usage: {} <args> [opts]
 
+    HomeSetup vault v{}
+
     Options:
-        -a,  --add <name> <hint> [password] : Add a password entry to the vault
-        -d,  --del <name>                   : Remove a password entry from the vault
-        -u,  --upd <name> <hint> [password] : Update a password entry from the vault
-        -l, --list [filter]                 : List all password entries or matching the given filter
+      -a  |  --add <name> <hint> [password] : Add a password entry to the vault.
+      -d  |  --del <name>                   : Remove a password entry from the vault.
+      -u  |  --upd <name> <hint> [password] : Update a password entry from the vault.
+      -l  | --list [filter]                 : List all password entries or matching the given filter.
 """.format(VERSION, APP_NAME)
 
 OPTIONS_MAP = {}
 
-ENTRY_FORMAT = """[{}]:
+ENTRY_FORMAT = """[{}{}{}]:
         Name: {}
     Password: {}
         Hint: {}
@@ -341,7 +341,7 @@ class Vault(object):
 
         def to_string(self, show_password=False):
             password = self.password if show_password else re.sub('.*', '*' * 6, self.password)
-            return ENTRY_FORMAT.format(self.key, self.key, password, self.hint, self.modified)
+            return ENTRY_FORMAT.format(Colors.GREEN, self.key, Colors.NC, self.key, password, self.hint, self.modified)
 
 
 # @purpose: Get an argument from the list or None if index is out of range
@@ -408,12 +408,12 @@ def main(argv):
 
     try:
 
-        if len(sys.argv) == 1 or sys.argv[1] in ['-h', '--help']:
-            usage()
-
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
         opts, args = getopt.getopt(argv, 'vhagdul', ['add', 'get', 'del', 'upd', 'list'])
+
+        if len(opts) == 0:
+            usage()
 
         # Parse the command line arguments passed
         for opt, arg in opts:

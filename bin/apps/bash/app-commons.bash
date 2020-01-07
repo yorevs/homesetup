@@ -34,7 +34,8 @@ quit() {
 
   # Unset all declared functions
   unset -f quit usage version trim "${UNSETS[*]}"
-  ret=${1:-0}; shift
+  ret=${1:-0}
+  shift
   [[ $ret -ne 0 ]] && echo -en "${RED}"
   echo -e "${*} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
@@ -45,7 +46,8 @@ quit() {
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-  ret=${1:-0}; shift
+  ret=${1:-0}
+  shift
   echo -en "${USAGE}"
   [[ ${#} -gt 0 ]] && echo ''
   quit "${ret}" "$@"

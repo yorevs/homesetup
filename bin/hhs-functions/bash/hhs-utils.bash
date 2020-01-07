@@ -8,6 +8,18 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: Invoke the hhs application manager
+# @param $* [Opt] : All parameters are passed to hhs.bash
+hhs() {
+  if [ -z "$1" ]; then
+    cd "$HHS_HOME" || return 1
+  else
+    hhs.bash "${@}" || return 1
+  fi
+
+  return 0
+}
+
 # @function: Change back the shell working directory by N directories
 # @param $1 [Opt] : The amount of directories to jump back
 ..() {
@@ -29,8 +41,8 @@
 # @param $1 [Req] : The file path
 edit() {
   [ -z "$1" ] && return 1
-  [ -f "$1" ] || touch "$1" >/dev/null 2>&1
-  [ -f "$1" ] && open "$1" >/dev/null 2>&1 && return 0
+  [ -f "$1" ] || touch "$1" > /dev/null 2>&1
+  [ -f "$1" ] && open "$1" > /dev/null 2>&1 && return 0
   [ -f "$1" ] && vi "$1" && return 0
   return 1
 }
@@ -123,7 +135,7 @@ if __hhs_has "python"; then
         NR == 1 {printf "  Hex => "; print $2" "$3" "$4}
         NR == 2 {printf "  Oct => "; print $2" "$3" "$4}
         NR == 1 {printf "  Icn => "; print "\\x"$2"\\x"$3"\\x"$4}
-      ' <<<"${converted}")
+      ' <<< "${converted}")
         echo -e "${result}"
         echo ''
       done

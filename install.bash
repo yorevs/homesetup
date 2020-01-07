@@ -35,7 +35,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
 
   # Functions to be unset after quit
-  UNSETS=( quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles )
+  UNSETS=(quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles)
 
   # Purpose: Quit the program and exhibits an exit message if specified.
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
@@ -44,7 +44,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
-    
+
     ret=$1
     shift
     [ "$ret" -gt 1 ] && echo -en "${RED}"
@@ -81,21 +81,21 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Short opts: -w, Long opts: --Word
     while test -n "$1"; do
       case "$1" in
-      -a | --all)
-        OPT="all"
-        ;;
-      -q | --quiet)
-        OPT="all"
-        ANS="Y"
-        QUIET=1
-        ;;
-      -d | --dir)
-        shift
-        INSTALL_DIR="${1:-$(pwd)}"
-        ;;
-      *)
-        quit 2 "Invalid option: \"$1\""
-        ;;
+        -a | --all)
+          OPT="all"
+          ;;
+        -q | --quiet)
+          OPT="all"
+          ANS="Y"
+          QUIET=1
+          ;;
+        -d | --dir)
+          shift
+          INSTALL_DIR="${1:-$(pwd)}"
+          ;;
+        *)
+          quit 2 "Invalid option: \"$1\""
+          ;;
       esac
       shift
     done
@@ -119,8 +119,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       [ -d "$HHS_HOME" ] || quit 2 "Unable to create directory $HHS_HOME"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      touch "$HHS_HOME/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
-      command rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
+      touch "$HHS_HOME/tmpfile" &> /dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
+      command rm -f "${HHS_HOME:?}/tmpfile" &> /dev/null
     fi
 
     # Create/Define the $HOME/.hhs directory
@@ -131,8 +131,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       [ -d "$HHS_DIR" ] || quit 2 "Unable to create directory $HHS_DIR"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      touch "$HHS_DIR/tmpfile" &>/dev/null || quit 2 "Unable to access the HomeSetup directory: ${HHS_DIR}"
-      command rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
+      touch "$HHS_DIR/tmpfile" &> /dev/null || quit 2 "Unable to access the HomeSetup directory: ${HHS_DIR}"
+      command rm -f "${HHS_DIR:?}/tmpfile" &> /dev/null
     fi
 
     # Create/Define the $HHS_DIR/bin directory
@@ -170,18 +170,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     case "$METHOD" in
-    remote)
-      clone_repository
-      install_dotfiles
-      activate_dotfiles
-      ;;
-    local | repair)
-      install_dotfiles
-      activate_dotfiles
-      ;;
-    *)
-      quit 2 "Installation method is not valid: ${METHOD}"
-      ;;
+      remote)
+        clone_repository
+        install_dotfiles
+        activate_dotfiles
+        ;;
+      local | repair)
+        install_dotfiles
+        activate_dotfiles
+        ;;
+      *)
+        quit 2 "Installation method is not valid: ${METHOD}"
+        ;;
     esac
   }
 
@@ -224,7 +224,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     DOTFILES_DIR="$HHS_HOME/dotfiles/bash"
-    command pushd "$DOTFILES_DIR" &>/dev/null || quit 1 "Unable to enter dotfiles directory!"
+    command pushd "$DOTFILES_DIR" &> /dev/null || quit 1 "Unable to enter dotfiles directory!"
     echo -e "\n${WHITE}Installing dotfiles ${NC}"
 
     # If `all' option is used, copy all files
@@ -261,33 +261,39 @@ Usage: $APP_NAME [OPTIONS] <args>
       done
     fi
 
-    # Link bin apps into place
+    # Remove old apps
+    echo -en "\n${WHITE}Removing old apps ${BLUE}"
+    command find "$BIN_DIR" -maxdepth 1 -type l -delete -print &> /dev/null
+    [ -L "$BIN_DIR/hhs.bash" ] && quit 2 "Unable to remove old app links from $BIN_DIR directory"
+    echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+
+    # Link apps into place
     echo -en "\n${WHITE}Linking apps into place ${BLUE}"
     command find "$HHS_HOME/bin/apps" -maxdepth 2 -type f \( -iname "**.bash" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
-      -exec command chmod 755 {} \; &>/dev/null
-    [ -L "$BIN_DIR/dotfiles.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
+      -exec command chmod 755 {} \; &> /dev/null
+    [ -L "$BIN_DIR/hhs.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link bash auto-completes into place
     echo -en "\n${WHITE}Linking bash auto-completes into place ${BLUE}"
     command find "$HHS_HOME/bin/auto-completions/bash" -maxdepth 2 -type f \( -iname "**.bash" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
-      -exec command chmod 755 {} \; &>/dev/null
+      -exec command chmod 755 {} \; &> /dev/null
     [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
     [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory"
-    command cp -fv "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR" &>/dev/null
+    command cp -fv "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR" &> /dev/null
     [ -f "$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
-    command popd &>/dev/null || quit 1 "Unable to leave dotfiles directory!"
+    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory!"
 
     # Copy HomeSetup git hooks into place
     echo -en "\n${WHITE}Copying git hooks into place ${BLUE}"
-    command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &>/dev/null
+    command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &> /dev/null
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
   }
 
@@ -317,7 +323,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}"
     sleep 2
 
-    if command -v figlet >/dev/null; then
+    if command -v figlet > /dev/null; then
       figlet -f colossal -ck "Welcome"
     else
       echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'

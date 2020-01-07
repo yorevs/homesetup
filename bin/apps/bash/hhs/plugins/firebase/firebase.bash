@@ -1,6 +1,6 @@
-#  Script: firbase-plugin.bash
+#  Script: firebase.bash
 # Purpose: Manage your HomeSetup Firebase files
-# Created: Jan 06, 2018
+# Created: Jan 06, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs#homesetup
@@ -21,9 +21,9 @@ Usage: ${APP_NAME} ${PLUGIN_NAME} {command} <arguments>
     Manage your HomeSetup firebase integration
     
     Commands:
-      -s  |    setup             : Setup your Firebase account to use with HomeSetup
-      -u  |   upload <db_alias>  : Upload dotfiles to your Firebase Realtime Database
-      -d  | download <db_alias>  : Download dotfiles from your Firebase Realtime Database
+      -s  |    --setup             : Setup your Firebase account to use with HomeSetup
+      -u  |   --upload <db_alias>  : Upload dotfiles to your Firebase Realtime Database
+      -d  | --download <db_alias>  : Download dotfiles from your Firebase Realtime Database
 "
 
 UNSETS=('help' 'version' 'cleanup' 'execute' 'load_settings' 'download' 'parse_and_save' 'build_payload' 'upload')
@@ -113,7 +113,7 @@ download() {
   local fb_alias="$1"
 
   [ -f "$RESPONSE_FILE" ] && rm -f "$RESPONSE_FILE"
-  fetch.bash GET --silent "$FIREBASE_URL/dotfiles/$UUID/${fb_alias}.json" >"$RESPONSE_FILE"
+  fetch.bash GET --silent "$FIREBASE_URL/dotfiles/$UUID/${fb_alias}.json" > "$RESPONSE_FILE"
   ret=$?
 
   if [ $ret -eq 0 ] && [ -f "$RESPONSE_FILE" ] && [[ "$(grep . "$RESPONSE_FILE")" =~ ${RESPONSE_RE// /} ]]; then
@@ -132,7 +132,7 @@ upload() {
   local fb_alias="$1"
 
   body=$(build_payload)
-  fetch.bash PATCH --silent --body "$body" "$FIREBASE_URL/dotfiles/$UUID.json" &>/dev/null
+  fetch.bash PATCH --silent --body "$body" "$FIREBASE_URL/dotfiles/$UUID.json" &> /dev/null
   ret=$?
   [ $ret -eq 0 ] && echo "${GREEN}Dotfiles \"${fb_alias}\" sucessfully uploaded!${NC}"
   [ $ret -eq 0 ] || quit 2 "Failed to upload Dotfiles as ${fb_alias}"
@@ -157,14 +157,14 @@ parse_and_save() {
   f_aliasdef=$(json-find.py -a aliasdef -f "$RESPONSE_FILE" | base64 "${b64flag}")
 
   # Write all files into place
-  [ -n "$f_aliases" ] && echo "$f_aliases" >"$HOME/.aliases"
-  [ -n "$f_colors" ] && echo "$f_colors" >"$HOME/.colors"
-  [ -n "$f_env" ] && echo "$f_env" >"$HOME/.env"
-  [ -n "$f_functions" ] && echo "$f_functions" >"$HOME/.functions"
-  [ -n "$f_profile" ] && echo "$f_profile" >"$HOME/.profile"
-  [ -n "$f_cmdFile" ] && echo "$f_cmdFile" >"$HHS_CMD_FILE"
-  [ -n "$f_savedDirs" ] && echo "$f_savedDirs" >"$HHS_SAVED_DIRS"
-  [ -n "$f_aliasdef" ] && echo "$f_aliasdef" >"$HOME/.bash_aliasdef"
+  [ -n "$f_aliases" ] && echo "$f_aliases" > "$HOME/.aliases"
+  [ -n "$f_colors" ] && echo "$f_colors" > "$HOME/.colors"
+  [ -n "$f_env" ] && echo "$f_env" > "$HOME/.env"
+  [ -n "$f_functions" ] && echo "$f_functions" > "$HOME/.functions"
+  [ -n "$f_profile" ] && echo "$f_profile" > "$HOME/.profile"
+  [ -n "$f_cmdFile" ] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
+  [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$HHS_SAVED_DIRS"
+  [ -n "$f_aliasdef" ] && echo "$f_aliasdef" > "$HOME/.bash_aliasdef"
 }
 
 setup_firebase() {
@@ -191,7 +191,7 @@ setup_firebase() {
     fi
     fb_config="${fb_config//\%UUID\%/$u_uuid}"
     # Save user's Firebase data
-    echo -e "$fb_config" >"$FIREBASE_FILE"
+    echo -e "$fb_config" > "$FIREBASE_FILE"
   done
   echo -e "${GREEN}Configuration successfully saved!${NC}"
 }
@@ -211,39 +211,39 @@ function cleanup() {
 
 function execute() {
   [ -z "$1" ] && usage 1
-  task="$1"
+  cmd="$1"
   shift
   args=("$@")
-  
+
   shopt -s nocasematch
-  case "$task" in
-  -s | setup)
-    setup_firebase
-    ;;
-  -u | upload)
-    [[ "${#args[@]}" -eq 0 ]] && usage 1 "Invalid number of arguments for task: \"$task\" !"
-    fb_alias="$(trim "${args[0]}" | tr '[:upper:]' '[:lower:]')"
-    fb_alias="${fb_alias//[[:space:]]/_}"
-    load_settings
-    upload "$fb_alias"
-    ;;
-  -d | download)
-    [[ "${#args[@]}" -eq 0 ]] && usage 1 "Invalid number of arguments for task: \"$task\" !"
-    fb_alias="$(trim "${args[0]}" | tr '[:upper:]' '[:lower:]')"
-    fb_alias="${fb_alias//[[:space:]]/_}"
-    echo -e "${ORANGE}"
-    read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
-    echo -e "${NC}"
-    if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+  case "$cmd" in
+    -s | --setup)
+      setup_firebase
+      ;;
+    -u | --upload)
+      [[ "${#args[@]}" -eq 0 ]] && usage 1 "Invalid number of arguments for command: \"$cmd\" !"
+      fb_alias="$(trim "${args[0]}" | tr '[:upper:]' '[:lower:]')"
+      fb_alias="${fb_alias//[[:space:]]/_}"
       load_settings
-      download "$fb_alias"
-      parse_and_save
-      echo -e "${YELLOW}? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
-    fi
-    ;;
-  *)
-    usage 1 "Invalid firebase task: \"$task\" !"
-    ;;
+      upload "$fb_alias"
+      ;;
+    -d | --download)
+      [[ "${#args[@]}" -eq 0 ]] && usage 1 "Invalid number of arguments for command: \"$cmd\" !"
+      fb_alias="$(trim "${args[0]}" | tr '[:upper:]' '[:lower:]')"
+      fb_alias="${fb_alias//[[:space:]]/_}"
+      echo -e "${ORANGE}"
+      read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
+      echo -e "${NC}"
+      if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+        load_settings
+        download "$fb_alias"
+        parse_and_save
+        echo -e "${YELLOW}? To activate the new dotfiles type: #> ${GREEN}source ~/.bashrc${NC}"
+      fi
+      ;;
+    *)
+      usage 1 "Invalid ${PLUGIN_NAME} command: \"$cmd\" !"
+      ;;
   esac
   shopt -u nocasematch
 }

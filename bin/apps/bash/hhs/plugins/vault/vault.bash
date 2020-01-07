@@ -1,4 +1,4 @@
-#  Script: hspm-plugin.bash
+#  Script: vault.bash
 # Purpose: TODO: Comment it
 # Created: Jan 06, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -17,17 +17,20 @@ USAGE="
 "
 
 function help() {
-  echo ">> help ${PLUGIN_NAME}"
+  python "$(command -v vault.py)" -h
+  exit $?
 }
 
 function version() {
-  echo ">> version ${PLUGIN_NAME}"
+  python "$(command -v vault.py)" -v
+  exit $?
 }
 
 function cleanup() {
-  echo ">> cleanup ${PLUGIN_NAME}"
+  exit 0
 }
 
 function execute() {
-  echo ">> execute ${PLUGIN_NAME} Arguments: ${*}"
+  python "$(command -v vault.py)" "${@}"
+  exit $?
 }
