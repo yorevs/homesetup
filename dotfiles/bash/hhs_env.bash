@@ -97,7 +97,7 @@ HHS_DEFAULT_DEV_TOOLS=(
   svn docker nvm node vue eslint gpg
   md5 shasum htop dialog telnet figlet
   base64 git go python python3 jq jenv
-  perl ifconfig
+  perl ifconfig groovy
 )
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(echo "${HHS_DEFAULT_DEV_TOOLS[*]}" | tr ' ' '\n' | uniq | sort | tr '\n' ' ')}
