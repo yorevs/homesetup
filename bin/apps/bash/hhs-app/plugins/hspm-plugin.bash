@@ -6,25 +6,28 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
+# shellcheck disable=SC2034
 # Current script version.
 VERSION=0.9.0
 
+# shellcheck disable=SC2034
+# Usage message
 USAGE="
-  Usage: ap usage here
+  Usage: ${PLUGIN_NAME} usage here
 "
 
 function help() {
-  echo ">> help ${0##*/}"
+  echo ">> help ${PLUGIN_NAME}"
 }
 
-function getver() {
-  echo ">> getver ${0##*/}"
+function version() {
+  echo ">> version ${PLUGIN_NAME}"
 }
 
 function cleanup() {
-  echo ">> cleanup ${0##*/}"
+  echo ">> cleanup ${PLUGIN_NAME}"
 }
 
 function execute() {
-  echo ">> execute ${0##*/}"
+  echo ">> execute ${PLUGIN_NAME} Arguments: ${*}"
 }

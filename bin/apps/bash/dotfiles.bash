@@ -59,7 +59,7 @@ FIREBASE_FILE="$HHS_DIR/.firebase"
 DOTFILES_FILE="$HHS_DIR/dotfiles.json"
 
 # Firebase response regex.
-FB_RE_RESP='^\ \{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*(,*"aliasdef":".*")*)+\}$'
+FB_RE_RESP='^\{(("aliases":".*")*(,*"commands":".*")*(,*"colors":".*")*(,*"env":".*")*(,*"functions":".*")*(,*"path":".*")*(,*"profile":".*")*(,*"savedDirs":".*")*(,*"aliasdef":".*")*)+\}$'
 
 # File to store the saved commands.
 HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}

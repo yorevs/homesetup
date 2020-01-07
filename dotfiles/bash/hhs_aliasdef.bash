@@ -7,10 +7,8 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
-
 # -----------------------------------------------------------------------------------
 # Function aliases shortcuts
-
 # General
 __hhs_alias has='__hhs_has'
 __hhs_alias hl='__hhs_highlight'
@@ -39,20 +37,17 @@ __hhs_alias sysinfo='__hhs_sysinfo'
 __hhs_alias parts='__hhs_partitions'
 __hhs_alias hhu='__hhs_update'
 __hhs_alias cse='__hhs_clean_escapes'
-
 # Python based shortcuts
 if __hhs_has "python"; then
   __hhs_alias sf='__hhs_search-file'
   __hhs_alias sd='__hhs_search-dir'
   __hhs_alias ss='__hhs_search-string'
 fi
-
 # GPG shorctus
 if __hhs_has "gpg"; then
   __hhs_alias encrypt='__hhs_encrypt_file'
   __hhs_alias decrypt='__hhs_decrypt_file'
 fi
-
 # Git shortcuts
 if __hhs_has "git"; then
   __hhs_alias git-='__hhs_git-'
@@ -75,7 +70,6 @@ if __hhs_has "git"; then
   __hhs_alias gdshow='__hhs_git_diff_show'
   __hhs_alias gdt='__hhs_git_difftool'
 fi
-
 # Gradle shortcuts
 if __hhs_has "gradle"; then
   __hhs_alias gw='__hhs_gradlew'
@@ -88,7 +82,6 @@ if __hhs_has "gradle"; then
   __hhs_alias gwt='__hhs_gradle_tasks'
   __hhs_alias gwp='__hhs_gradle_projects'
 fi
-
 # Docker shortcuts
 if __hhs_has "docker" && docker info &>/dev/null; then
   __hhs_alias dk='docker'

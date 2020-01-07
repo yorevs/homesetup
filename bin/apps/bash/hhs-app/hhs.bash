@@ -41,8 +41,11 @@ Usage: ${APP_NAME} <command> <command_args>
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
+# HomeSetup hhs plugin directory
+HHS_PLUGIN_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
+
 # List of required functions a plugin must have
-PLUGINS_FNCS=('help' 'getver' 'cleanup' 'execute')
+PLUGINS_FNCS=('help' 'version' 'cleanup' 'execute')
 
 # List of valid plugins
 PLUGINS_LIST=()
@@ -54,6 +57,16 @@ PLUGINS=()
 has_plugin() {
 
   if [ -n "${1}" ] && [ "${#PLUGINS[@]}" -gt 0 ] && [[ ${PLUGINS[*]} =~ ${1} ]]; then
+    return 0
+  fi
+
+  return 1
+}
+
+# TODO: Comment it
+has_command() {
+
+  if [ -n "${1}" ] && [ "${#PLUGINS_FNCS[@]}" -gt 0 ] && [[ ${PLUGINS_FNCS[*]} =~ ${1} ]]; then
     return 0
   fi
 
@@ -96,7 +109,7 @@ register_plugins() {
       PLUGINS+=("${plg_name}")
       PLUGINS_LIST+=("${plugin}")
     fi
-  done < <(find "${HHS_HOME}"/bin/apps/bash/hhs-app/plugins -maxdepth 1 -name "*-plugin.bash")
+  done < <(find "${HHS_PLUGIN_DIR}" -maxdepth 1 -name "*-plugin.bash")
 }
 
 # TODO: Comment it
@@ -137,17 +150,20 @@ invoke_command() {
       if [[ "${PLUGINS[idx]}" = "${1}" ]]; then
           [ -s "${PLUGINS_LIST[i]}" ] && \. "${PLUGINS_LIST[i]}"
           shift
-          plg_fnc="${1:-execute}"
+          plg_cmd="${1:-execute}"
+          has_command "${plg_cmd}" || quit 1 "Command not available: ${plg_cmd}"
           shift
-          ${plg_fnc} "${@}"
+          ${plg_cmd} "${@}"
           ret=$?
           cleanup
+          unset "${PLUGINS_FNCS[@]}"
           exit $ret
       fi
     done
     exit 1
   )
-  [[ ${?} -eq 0 ]] || quit 1 "Failed to execute command: ${1}"
+  
+  quit ${?}
 }
 
 # TODO: Comment it
@@ -155,8 +171,7 @@ main() {
 
   parse_args "${@}"
   register_plugins
-  [[ ${#INVALID[@]} -gt 0 ]] && echo "[DEBUG] Invalid plugins registred: [${RED}${INVALID[*]}${NC}]"
-  [[ ${#PLUGINS[@]} -gt 0 ]] && echo "[DEBUG] Plug-ins registered: [${GREEN}${PLUGINS[*]}${NC}]"
+  [[ ${#INVALID[@]} -gt 0 ]] && quit 0 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
   invoke_command "${@}"
 }
 
