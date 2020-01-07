@@ -44,7 +44,7 @@ function __hhs_save-dir() {
       if [ -n "$dir" ] && [ "$dir" = ".." ]; then dir=${dir//../$(pwd)}; fi
       if [ -n "$dir" ] && [ "$dir" = "-" ]; then dir=${dir//-/$OLDPWD}; fi
       if [ -n "$dir" ] && [ ! -d "$dir" ]; then
-        echo "${RED}Directory \"$dir\" is not a valid!${NC}"
+        echo "${RED}Can't save the directory \"${dir}\" that does not exist !${NC}"
         return 1
       fi
       # Remove the old saved directory aliased
@@ -53,7 +53,7 @@ function __hhs_save-dir() {
       all_dirs+=("$dir_alias=$dir")
       printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS"
       sort "$HHS_SAVED_DIRS" -o "$HHS_SAVED_DIRS"
-      echo "${GREEN}Directory saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
+      echo "${GREEN}Directory was saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
     fi
   fi
 
@@ -96,7 +96,7 @@ function __hhs_load-dir() {
           dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
           printf "${HHS_HIGHLIGHT_COLOR}${dir_alias}"
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
-          echo -e "${YELLOW} is saved as ${WHITE}'${dir}'"
+          echo -e "${YELLOW} was saved as ${WHITE}'${dir}'"
         done
         IFS="$HHS_RESET_IFS"
         echo "${NC}"
@@ -104,7 +104,7 @@ function __hhs_load-dir() {
         ;;
       '')
         clear
-        echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
+        echo "${YELLOW}Available saved directories (${#all_dirs[@]}):"
         echo -en "${WHITE}"
         IFS=$'\n'
         mselect_file=$(mktemp)
@@ -136,7 +136,7 @@ function __hhs_load-dir() {
     fi
 
   else
-    echo "${ORANGE}No directories were saved yet \"$HHS_SAVED_DIRS\" !${NC}"
+    echo "${ORANGE}No saved directories available yet \"$HHS_SAVED_DIRS\" !${NC}"
   fi
 
   [ -f "$mselect_file" ] && command rm -f "$mselect_file"
@@ -164,7 +164,7 @@ function __hhs_go-dir() {
     len=${#results[@]}
     # If no directory is found under the specified name
     if [ "$len" -eq 0 ]; then
-      echo "${YELLOW}No matches for directory with name \"$name\" was found !${NC}"
+      echo "${YELLOW}No matches for directory with name \"$name\" found !${NC}"
       return 1
     # If there was only one directory found, CD into it
     elif [ "$len" -eq 1 ]; then
