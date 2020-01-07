@@ -6,13 +6,15 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
+VAULT_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault"
+
 function help() {
-  python "$(command -v vault.py)" -h
+  python "${VAULT_DIR}/vault.py" -h
   exit $?
 }
 
 function version() {
-  python "$(command -v vault.py)" -v
+  python "${VAULT_DIR}/vault.py" -v
   exit $?
 }
 
@@ -21,6 +23,6 @@ function cleanup() {
 }
 
 function execute() {
-  python "$(command -v vault.py)" "${@}"
+  python "${VAULT_DIR}/vault.py" "${@}"
   exit $?
 }
