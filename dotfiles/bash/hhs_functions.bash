@@ -39,7 +39,7 @@ __hhs() {
   local pad pad_len=30
 
   pad=$(printf '%0.1s' "."{1..30})
-  all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.bash" | sed -e 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
+  all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.bash" | esed 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
 
   shopt -s nocasematch
   if [ "$1" = "help" ] && [ -n "$2" ]; then

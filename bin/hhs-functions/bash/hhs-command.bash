@@ -14,7 +14,7 @@ function __hhs_command() {
 
   HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
-  local cmd_name cmdId cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_index
+  local cmd_name cmd_alias cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_index
 
   touch "$HHS_CMD_FILE"
 
@@ -44,7 +44,7 @@ function __hhs_command() {
         echo -e "${RED}Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
         return 1
       fi
-      ised -E -e "s#(^Command $cmd_name: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+      ised -e "s#(^Command $cmd_name: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
       IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
       all_cmds+=("Command $cmd_name: $cmd_expr")
       printf "%s\n" "${all_cmds[@]}" > "$HHS_CMD_FILE"
@@ -54,21 +54,22 @@ function __hhs_command() {
     -r | --remove)
       shift
       # Command ID can be the index or the alias
-      cmdId=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+      cmd_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
       local re='^[1-9]+$'
-      if [[ $cmdId =~ $re ]]; then
+      if [[ $cmd_alias =~ $re ]]; then
         cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
-        [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmdId}\"" && return 1
-        ised E -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
-      elif [ -n "$cmdId" ]; then
-        cmd_expr=$(grep "${cmdId}" "$HHS_CMD_FILE")
-        [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmdId}\"" && return 1
-        ised E -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+        [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmd_alias}\"" && return 1
+        ised -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
+        echo "${YELLOW}Command ${WHITE}($cmd_alias)${NC} removed !"
+      elif [ -n "$cmd_alias" ]; then
+        cmd_expr=$(grep "${cmd_alias}" "$HHS_CMD_FILE")
+        [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmd_alias}\"" && return 1
+        ised -e "s#(^Command $cmd_alias: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
+        echo "${YELLOW}Command removed: ${WHITE}\"$cmd_alias\" ${NC}"
       else
-        echo -e "${RED}Invalid arguments: \"$cmdId\"\t\"$cmd_expr\"${NC}"
+        echo -e "${RED}Invalid arguments: \"$cmd_alias\"\t\"$cmd_expr\"${NC}"
         return 1
       fi
-      echo "${YELLOW}Command removed: ${WHITE}\"$cmdId\" ${NC}"
       ;;
     -l | --list)
       IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"

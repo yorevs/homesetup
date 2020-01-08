@@ -34,7 +34,7 @@ function __hhs_tailor() {
     echo "Usage: ${FUNCNAME[0]} <log_filename>"
     return 1
   else
-    tail -n 20 -F "$1" | sed -E \
+    tail -n 20 -F "$1" | esed \
       -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
       -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \
       -e "s/(${LOG_LEVEL_WARN_RE})/${LOG_LEVEL_WARN_STYLE}\1${NC}/g" \

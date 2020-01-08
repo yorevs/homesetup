@@ -34,8 +34,10 @@ function __hhs_save-dir() {
       vi "$HHS_SAVED_DIRS"
     elif [ -z "$2" ] || [ "$1" = "-r" ]; then
       # Remove the previously saved directory aliased
-      ised -E -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
-      echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
+      if grep -q "$dir_alias" "$HHS_SAVED_DIRS"; then
+        echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
+      fi
+      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
     else
       dir="$1"
       # If the path is not absolute, append the current directory to it.
@@ -48,7 +50,7 @@ function __hhs_save-dir() {
         return 1
       fi
       # Remove the old saved directory aliased
-      ised -E -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
+      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS"
       IFS=$'\n' read -d '' -r -a all_dirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS"
       all_dirs+=("$dir_alias=$dir")
       printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS"

@@ -88,7 +88,7 @@ function __hhs_punch() {
               fi
             # Do the punch to the current day
             elif [[ "$line" =~ $re ]]; then
-              ised -e "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$HHS_PUNCH_FILE"
+              ised "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$HHS_PUNCH_FILE"
               success='1'
               break
             fi

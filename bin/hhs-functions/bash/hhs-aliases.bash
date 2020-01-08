@@ -72,13 +72,13 @@ function __hhs_aliases() {
       fi
     elif [ -n "$alias_name" ] && [ -n "$alias_expr" ]; then
       # Add/Set one alias
-      ised -E -e "s#(^alias $alias_name=.*)*##g" -e '/^\s*$/d' "$alias_file"
+      ised -e "s#(^alias $alias_name=.*)*##g" -e '/^\s*$/d' "$alias_file"
       echo "alias $alias_name='$alias_expr'" >>"$alias_file"
       echo -e "${GREEN}Alias set: ${WHITE}\"$alias_name\" is ${HHS_HIGHLIGHT_COLOR}'$alias_expr' ${NC}"
       \. "$alias_file"
     elif [ -n "$alias_name" ] && [ -z "$alias_expr" ]; then
       # Remove one alias
-      ised -E -e "s#(^alias $alias_name=.*)*##g" -e '/^\s*$/d' "$alias_file"
+      ised -e "s#(^alias $alias_name=.*)*##g" -e '/^\s*$/d' "$alias_file"
       unalias "$alias_name" &>/dev/null
       # shellcheck disable=SC2181
       [[ $? -eq 0 ]] && echo -e "${YELLOW}Alias removed: ${WHITE}\"$alias_name\" ${NC}"

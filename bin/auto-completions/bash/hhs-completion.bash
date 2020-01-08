@@ -39,7 +39,7 @@ __hhs_comp-aliases() {
 
 __hhs_comp-cmd() {
 
-  local suggestions=($(sed -E 's/^Command ([A-Z0-9_]*):(.*)?/\1/' "$HHS_CMD_FILE"))
+  local suggestions=($(esed 's/^Command ([A-Z0-9_]*):(.*)?/\1/' "$HHS_CMD_FILE"))
 
   __hhs_complete "${suggestions[@]}"
 
@@ -130,7 +130,7 @@ __hhs_comp-godir() {
   # Let the user know about the search
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   IFS=$'\n'
-  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -maxdepth "${HHS_MAXDEPTH}" -type d -iname "${base}" 2>/dev/null | sed -E 's#\./(.*)/*#\1/#')"
+  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -maxdepth "${HHS_MAXDEPTH}" -type d -iname "${base}" 2>/dev/null | esed 's#\./(.*)/*#\1/#')"
   IFS=$"${HHS_RESET_IFS}"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"

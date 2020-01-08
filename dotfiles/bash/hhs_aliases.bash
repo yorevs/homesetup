@@ -20,17 +20,24 @@ __hhs_has() {
   type "$1" >/dev/null 2>&1
 }
 
-# @function: Check if an alias exists and create it if it does not
-# @param $1 [Req] : The alias to set/check.
+# @function: Check if an alias exists and create it if it does not. Do not support the use of single quotes in the expression
+# @param $1 [Req] : The alias to set/check. Use the format __hhs_alias <alias_name='<alias_expr>'
 __hhs_alias() {
-  local all_args="${*}"
-  local alias_expr="${all_args#*=}"
-  local alias_name="${all_args//=*}"
+
+  local all_args alias_expr alias_name
+  
+  all_args="${*}"
+  alias_expr="${all_args#*=}"
+  alias_name="${all_args//=*}"
+  
   if ! alias "$alias_name" >/dev/null 2>&1; then 
-    eval "alias $alias_name='$alias_expr'";
+    # shellcheck disable=SC2139
+    alias "${alias_name}"="${alias_expr}"
     ret=$?
-    [[ $ret -eq 0 ]] || echo "${RED}Failed to alias: \"$alias_name\" !${NC}" 2>&1
+    [[ $ret -eq 0 ]] || echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
     return $ret
+  else
+    echo -e "${YELLOW}Skipped: alias $alias_name='${alias_expr}' because it already exists !${NC}"
   fi
 
   return 1
@@ -181,7 +188,7 @@ else
 fi
 
 # Base64 encode shortcuts
-__hhs_has "base64" && __hhs_alias encode="base64"
+__hhs_has "base64" && alias encode="base64"
 
 # -----------------------------------------------------------------------------------
 # OS Specific aliases
@@ -190,19 +197,21 @@ case $HHS_MY_OS in
 
   Linux) # -- LINUX --
     __hhs_alias ised="sed -i'' -r"
+    __hhs_alias esed="sed -r"
     __hhs_has "base64" && __hhs_alias decode='base64 -d'
   ;;
 
   Darwin) # -- MACOS --
 
     __hhs_alias ised="sed -i '' -E"
+    __hhs_alias esed="sed -E"
     __hhs_has "base64" && __hhs_alias decode='base64 -D'
 
     # Delete all .DS_store files
     alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
     # Flush Directory Service cache
-    __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+    __hhs_has "dscacheutil" && __hhs_alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
     # Clean up LaunchServices to remove duplicates in the “Open With” menu
     alias cleanup-reg="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
