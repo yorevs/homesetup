@@ -38,6 +38,9 @@ Usage: ${APP_NAME} <plugin_name> {task} <command> [args...]
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
+# List of local functions that can be executed
+LOCAL_FUNCTIONS=('list')
+
 # List of required functions a plugin must have
 PLUGINS_FNCS=('help' 'version' 'cleanup' 'execute')
 
@@ -46,6 +49,17 @@ PLUGINS_LIST=()
 
 # List plugin commands
 PLUGINS=()
+
+# Purpose: Checks whether a plugin is registered or not.
+# @param $1 [Req] : The plugin name.
+has_function() {
+  
+  if [ -n "${1}" ] && [[ ${LOCAL_FUNCTIONS[*]} =~ ${1} ]]; then
+    return 0
+  fi
+
+  return 1
+}
 
 # Purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
@@ -142,7 +156,8 @@ parse_args() {
 # shellcheck disable=SC1090
 # Purpose: Invoke the plugin command
 invoke_command() {
-
+  
+  has_function "${1}" && ${1} "${@}"
   has_plugin "${1}" || quit 1 "Plugin not found: ${1}"
   # Open a new subshell, so that we can configure the running environment
   (
@@ -164,6 +179,15 @@ invoke_command() {
   )
 
   quit ${?}
+}
+
+# ------------------------------------------
+# Local functions
+
+# Purpose: List all __hhs functions
+function list() {
+  
+  quit 0 "TODO: Functions are not yet implemented"
 }
 
 # Purpose: Program entry point
