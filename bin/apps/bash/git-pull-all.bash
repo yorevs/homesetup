@@ -31,7 +31,7 @@ REPO=${REPO:-'origin'}
 BRANCH="$2"
 BRANCH=${BRANCH:-'current'}
 
-[ -z "$ALL" ] quit 1 "${YELLOW}No GIT repositories found at \"${SPATH}\" ${NC}"
+[ -z "$ALL" ] && quit 1 "${YELLOW}No GIT repositories found at \"${SPATH}\" ${NC}"
 
 echo 'GIT Projects found: '
 echo ''
