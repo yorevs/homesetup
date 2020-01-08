@@ -56,7 +56,7 @@ list_recipes() {
   local index=0 recipe pad_len=20
   local pad=$(printf '%0.1s' "."{1..60})
   for app in ${DEV_TOOLS[*]}; do
-    recipe="$HHS_RECIPES_DIR/$(uname -s)/${app}.bash"
+    recipe="$HHS_RECIPES_DIR/$(uname -s)/${app}.recipe"
     if [ -n "$recipe" ] && [ -f "$recipe" ]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
@@ -85,7 +85,7 @@ install_recipe() {
 
   local recipe
 
-  [ -b "$1" ] && recipe="${HHS_RECIPES_DIR}/$(uname -s)/$1.bash"
+  [ -b "$1" ] && recipe="${HHS_RECIPES_DIR}/$(uname -s)/$1.recipe"
 
   if [ -f "$recipe" ]; then
     echo ''
@@ -108,7 +108,7 @@ install_recipe() {
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
-  recipe="$HHS_RECIPES_DIR/$(uname -s)/$1.bash"
+  recipe="$HHS_RECIPES_DIR/$(uname -s)/$1.recipe"
   if [ -f "$recipe" ]; then
     echo ''
     \. "$recipe"
@@ -153,7 +153,7 @@ function execute() {
   case "$cmd" in
     # Install the app
     -i | --install)
-      [ "$#" -le 1 ] && usage 1
+      [ "$#" -le 0 ] && usage 1
       if list_recipes "$1"; then
         install_recipe "$1"
       else
@@ -162,7 +162,7 @@ function execute() {
       ;;
     # Uninstall the app
     -u | --uninstall)
-      [ "$#" -le 1 ] && usage 1
+      [ "$#" -le 0 ] && usage 1
       if list_recipes "$1"; then
         uninstall_recipe "$1"
       else

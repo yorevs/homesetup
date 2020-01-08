@@ -81,7 +81,7 @@ export HHS_RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
 
 # Customizeable
 export HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:-15}
-export HHS_MAXDEPTH="${HHS_MAXDEPTH:-6}"
+export HHS_MAXDEPTH="${HHS_MAXDEPTH:-10}"
 export HHS_SAVED_DIRS="${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}"
 export HHS_CMD_FILE="${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}"
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-$HHS_DIR/.punches}"
