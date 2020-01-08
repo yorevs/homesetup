@@ -16,14 +16,19 @@ PLUGIN_NAME="firebase"
 # shellcheck disable=SC2034
 # Usage message
 USAGE="
-Usage: ${APP_NAME} ${PLUGIN_NAME} {command} <arguments>
+Usage: ${APP_NAME} ${PLUGIN_NAME} <option> [arguments]
 
-    Manage your HomeSetup firebase integration
+    Manage your HomeSetup firebase integration.
     
-    Commands:
-      -s  |    --setup             : Setup your Firebase account to use with HomeSetup
-      -u  |   --upload <db_alias>  : Upload dotfiles to your Firebase Realtime Database
-      -d  | --download <db_alias>  : Download dotfiles from your Firebase Realtime Database
+    Options:
+      -v  |  --version              : Display current program version.
+      -h  |     --help              : Display this help message.
+      -s  |    --setup              : Setup your Firebase account to use with HomeSetup.
+      -u  |   --upload <db_alias>   : Upload dotfiles to your Firebase Realtime Database.
+      -d  | --download <db_alias>   : Download dotfiles from your Firebase Realtime Database.
+      
+    Arguments:
+      db_alias  : Alias to be used to identify the firebase object to fetch data from.
 "
 
 UNSETS=('help' 'version' 'cleanup' 'execute' 'load_settings' 'download' 'parse_and_save' 'build_payload' 'upload')
@@ -217,6 +222,9 @@ function execute() {
 
   shopt -s nocasematch
   case "$cmd" in
+    -h | --help)
+      usage 0
+      ;;
     -s | --setup)
       setup_firebase
       ;;

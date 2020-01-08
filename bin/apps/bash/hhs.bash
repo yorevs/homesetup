@@ -8,7 +8,10 @@
 # License: Please refer to <http://unlicense.org/>
 
 # Functions to be unset after quit
-UNSETS+=('main' 'has_plugin' 'has_command' 'validate_plugin' 'register_plugins' 'parse_args' 'invoke_command')
+UNSETS+=(
+  'main' 'has_function' 'has_plugin' 'has_command' 'validate_plugin' 
+  'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
+)
 
 # shellcheck disable=SC2034
 # Program version
@@ -17,10 +20,14 @@ VERSION=0.9.1
 # shellcheck disable=SC2034
 # Usage message
 USAGE="
-Usage: ${APP_NAME} <plugin_name> {task} <command> [args...]
+Usage: ${APP_NAME} [option] <plugin_name> {task} <command> [args...]
 
-    HomeSetup application
-
+    HomeSetup application manager.
+    
+    Options:
+      -v  |  --version              : Display current program version.
+      -h  |     --help              : Display this help message.
+    
     Tasks:
       help            : Display a help about the plugin.
       version         : Display current plugin version.
@@ -30,16 +37,16 @@ Usage: ${APP_NAME} <plugin_name> {task} <command> [args...]
       args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
     
     Exit Status:
-      (0) Success 
-      (1) Failure due to missing/wrong client input or similar issues
-      (2) Failure due to program/plugin execution failures
+      (0) Success.
+      (1) Failure due to missing/wrong client input or similar issues.
+      (2) Failure due to program/plugin execution failures.
 "
 
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # List of local functions that can be executed
-LOCAL_FUNCTIONS=('list')
+LOCAL_FUNCTIONS=()
 
 # List of required functions a plugin must have
 PLUGINS_FNCS=('help' 'version' 'cleanup' 'execute')
@@ -135,7 +142,6 @@ parse_args() {
 
   # Loop through the command line options.
   # Short opts: -<C>, Long opts: --<Word>
-  UNUSED_ARGS=()
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
       -h | --help)
@@ -146,7 +152,7 @@ parse_args() {
         ;;
 
       *)
-        UNUSED_ARGS+=("${1}")
+        break
         ;;
     esac
     shift
@@ -157,8 +163,7 @@ parse_args() {
 # Purpose: Invoke the plugin command
 invoke_command() {
   
-  has_function "${1}" && ${1} "${@}"
-  has_plugin "${1}" || quit 1 "Plugin not found: ${1}"
+  has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\". Type '#> hhs list' to find out options."
   # Open a new subshell, so that we can configure the running environment
   (
     for idx in "${!PLUGINS[@]}"; do
@@ -181,19 +186,48 @@ invoke_command() {
   quit ${?}
 }
 
+# Purpose: Read all iinternal functions and make them available to use
+register_functions() {
+  
+  while IFS='' read -r fnc; do
+    f_name="${fnc##function }"
+    f_name="${f_name%\(\) \{}"
+    LOCAL_FUNCTIONS+=("${f_name}")
+  done < <(grep '^function .*()' < "$0")
+  # Register the functions to be unset when program quits
+  UNSETS+=("${LOCAL_FUNCTIONS[@]}")
+}
+
 # ------------------------------------------
 # Local functions
+
+# Functions MUST start with 'function' qualifier and 
+# MUST quit <exit)coode> with the proper exit code
+
+# Purpose: Provide a help for __hhs functions
+function help() {
+  
+  quit 0 "TODO: HELP => Functions are not yet implemented"
+}
 
 # Purpose: List all __hhs functions
 function list() {
   
-  quit 0 "TODO: Functions are not yet implemented"
+  quit 0 "TODO: LIST => Functions are not yet implemented"
 }
 
+# ------------------------------------------
 # Purpose: Program entry point
 main() {
-
+  
   parse_args "${@}"
+  register_functions
+  
+  if has_function "${1}"; then
+    ${1} "${@}"
+    quit 1 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
+  fi
+  
   register_plugins
   [[ ${#INVALID[@]} -gt 0 ]] && quit 0 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
   invoke_command "${@}"

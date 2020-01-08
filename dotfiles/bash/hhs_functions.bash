@@ -36,15 +36,15 @@ done
 # To check for all functions provided by HHS issue the following command:
 __hhs() {
 
-  local pad pad_len=30
+  local pad pad_len=30 all_hhs_fn
 
   pad=$(printf '%0.1s' "."{1..30})
-  all_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.bash" | esed 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
+  all_hhs_fn=$(ss "${HHS_HOME}" "function __hhs_" "hhs-*.bash" | esed 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
 
   shopt -s nocasematch
   if [ "$1" = "help" ] && [ -n "$2" ]; then
     # If the function exists, invoke it's help
-    if [[ ${all_fn} == *"$2"* ]]; then
+    if [[ ${all_hhs_fn} == *"$2"* ]]; then
       eval "${2} -h"
     else
       echo "Usage: ${FUNCNAME[0]} [help __hhs_<function-name>]"
@@ -53,7 +53,7 @@ __hhs() {
     fi
   else
     echo -e "\n${ORANGE}HomeSetup available functions -------------------------------------\n"
-    for fn in $all_fn; do
+    for fn in $all_hhs_fn; do
       filename=$(basename "$fn" | awk -F ':function' '{print $1}')
       fnname=$(awk -F ':function' '{print $2}' <<< "$fn")
       echo -en "${WHITE}${BLUE}${filename}"

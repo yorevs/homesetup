@@ -29,18 +29,22 @@ VERSION = (1, 0, 0)
 
 # Usage message
 USAGE = """
-Usage: {} <args> [opts]
+Usage: {} <option> [arguments]
 
     HomeSetup vault v{}
 
     Options:
+      -v  |  --version                      : Display current program version.
+      -h  |  --help                         : Display this help message.
       -a  |  --add <name> <hint> [password] : Add a password entry to the vault.
       -d  |  --del <name>                   : Remove a password entry from the vault.
       -u  |  --upd <name> <hint> [password] : Update a password entry from the vault.
-      -l  | --list [filter]                 : List all password entries or matching the given filter.
+      -l  |  --list [filter]                : List all password entries or matching the given filter.
 
     Arguments:
-      password  : If not provided, a hidden input will be used to get the information.
+      name      : The name of the vault entry. That will identify the entry (key).
+      hint      : Any hint related to that vault entry.
+      password  : The password of the vault entry. If not provided, further input will be required.
       filter    : Filter the vault entries by name.
 """.format(APP_NAME, ' '.join(map(str, VERSION)))
 
@@ -409,7 +413,7 @@ def main(argv):
 
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
-        opts, args = getopt.getopt(argv, 'vhagdul', ['add', 'get', 'del', 'upd', 'list'])
+        opts, args = getopt.getopt(argv, 'vhagdul', ['version', 'help', 'add', 'get', 'del', 'upd', 'list'])
 
         if len(opts) == 0:
             usage()

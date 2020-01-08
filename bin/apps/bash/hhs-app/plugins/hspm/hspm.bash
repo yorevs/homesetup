@@ -16,11 +16,13 @@ PLUGIN_NAME="hspm"
 # shellcheck disable=SC2034
 # Usage message
 USAGE="
-Usage: $PLUGIN_NAME {command}
+Usage: $PLUGIN_NAME <option> [arguments]
 
     Manage your development tools using installation/uninstallation recipes.
 
-    Commands:
+    Options:
+      -v  |   --version                 : Display current program version.
+      -h  |      --help                 : Display this help message.
       -i  |   --install   <recipe>      : Install the app using the tool recipe.
       -u  | --uninstall   <recipe>      : Uninstall the app using the tool recipe.
       -l  |      --list   [{-a|--all}]  : List all available tool recipes based on HomeSetup development tools.
