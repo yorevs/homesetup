@@ -36,8 +36,6 @@ __hhs_alias() {
     ret=$?
     [[ $ret -eq 0 ]] || echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
     return $ret
-  else
-    echo -e "${YELLOW}Skipped: alias $alias_name='${alias_expr}' because it already exists !${NC}"
   fi
 
   return 1
