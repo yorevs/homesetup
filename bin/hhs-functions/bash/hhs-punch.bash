@@ -50,7 +50,7 @@ function __hhs_punch() {
     fi
     # Edit punches
     if [ "-e" = "$opt" ]; then
-      vi "$HHS_PUNCH_FILE"
+      edit "$HHS_PUNCH_FILE"
     # Reset punches (backup as week-N.punch)
     elif [ "-r" = "$opt" ]; then
       mv -f "$HHS_PUNCH_FILE" "$(dirname "$HHS_PUNCH_FILE")/week-$weekStamp.punch"

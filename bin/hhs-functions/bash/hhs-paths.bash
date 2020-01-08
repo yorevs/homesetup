@@ -22,12 +22,12 @@ function __hhs_paths() {
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo 'Options: '
-    echo '                     : Lists all PATH entries.'
-    echo '           -a <path> : Add to the current <path> to PATH.'
-    echo '           -r <path> : Remove from the current <path> from PATH.'
-    echo '           -e        : Edit current HHS_PATHS_FILE.'
-    echo '           -c        : Attempt to clears non-existing paths. System paths are not affected'
-    echo '           -q        : Quiet mode on'
+    echo '            : Lists all PATH entries.'
+    echo '  -a <path> : Add to the current <path> to PATH.'
+    echo '  -r <path> : Remove from the current <path> from PATH.'
+    echo '  -e        : Edit current HHS_PATHS_FILE.'
+    echo '  -c        : Attempt to clears non-existing paths. System paths are not affected'
+    echo '  -q        : Quiet mode on'
     return 1
   else
     [ "-q" = "$1" ] && quiet=1 && shift
@@ -70,7 +70,7 @@ function __hhs_paths() {
       IFS="$HHS_RESET_IFS"
       echo -e "${NC}"
     elif [ "-e" = "$1" ]; then
-      vi "$HHS_PATHS_FILE"
+      edit "$HHS_PATHS_FILE"
       return 0
     elif [ "-a" = "$1" ] && [ -n "$2" ]; then
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"

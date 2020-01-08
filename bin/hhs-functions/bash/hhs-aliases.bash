@@ -30,16 +30,23 @@ function __hhs_aliases() {
   else
     alias_file="$HOME/.aliases"
     touch "$alias_file"
-    test "$1" = '-e' -o "$1" = "--edit" && vi "$alias_file" && return 0
-    test "$1" = '-s' -o "$1" = "--sort" && is_sorted=1 && shift
+    
+    if [ "$1" = '-e' ] || [ "$1" = "--edit" ]; then
+      edit "$alias_file"
+      return 0
+    fi
+    if [ "$1" = '-s' ] || [ "$1" = "--sort" ]; then
+      is_sorted=1
+      shift
+    fi
 
     alias_name="$1"
     shift
     alias_expr="$*"
 
     if [ -z "$alias_name" ] && [ -z "$alias_expr" ]; then
-      # List all aliases
-      test "$is_sorted" = "0" && all_aliases=$(grep . "$alias_file") || all_aliases=$(grep . "$alias_file" | sort)
+      # List all aliases; if sorted, skips comments
+      [ "$is_sorted" = "0" ] && all_aliases=$(grep . "$alias_file") || all_aliases=$(grep -v ^\# "$alias_file" | sort)
       if [ -n "$all_aliases" ]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40

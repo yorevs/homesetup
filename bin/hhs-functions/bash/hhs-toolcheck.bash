@@ -12,30 +12,34 @@
 # @param $1 [Req] : The app to check.
 function __hhs_toolcheck() {
 
-  local pad pad_len tool_name check is_alias
+  local pad pad_len tool_name check is_alias quiet
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-    echo "Usage: ${FUNCNAME[0]} <app_name>"
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
+    echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
+    echo ''
+    echo 'Options: '
+    echo '  -q        : Quiet mode on'
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
+    if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then shift; quiet=1; fi
     tool_name="$1"
     check=$(command -v "${tool_name}")
     is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
-    echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
-    echo -en "Checking: ${YELLOW}${tool_name}${NC} "
-    printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
+    [ -z "$quiet" ] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
+    [ -z "$quiet" ] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
+    [ -z "$quiet" ] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
     if __hhs_has "${tool_name}"; then
       if [ -z "$is_alias" ] && [[ $check =~ ^(\/.*) ]]; then
-        echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
+        [ -z "$quiet" ] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
       elif [ -n "$is_alias" ]; then
-        echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
+        [ -z "$quiet" ] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
       else
-        echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
+        [ -z "$quiet" ] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
       fi
       return 0
     else
-      echo -e "${RED} ${CROSS_ICN} NOT FOUND${NC}"
+      [ -z "$quiet" ] && echo -e "${RED} ${CROSS_ICN} NOT FOUND${NC}"
     fi
   fi
 
@@ -54,24 +58,21 @@ function __hhs_version() {
   else
     # First attempt: app --version
     APP=$1
-    __hhs_toolcheck "${APP}"
-    if test $? -ne 0; then
+    if ! __hhs_toolcheck -q "${APP}"; then
       echo -e "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}"
       return 2
     fi
-    version=$(${APP} --version 2>&1)
-    if test $? -ne 0; then
-      # Second attempt: app -v
-      version=$(${APP} -v 2>&1)
-      if test $? -ne 0; then
-        # Third attempt: app -version
-        version=$(${APP} -version 2>&1)
-        if test $? -ne 0; then
-          # Last attempt: app -V
-          version=$(${APP} -V 2>&1)
-          if test $? -ne 0; then
-            echo -e "${RED}Unable to find \"${APP}\" version using common methods: (--version, -version, -v and -V) ${NC}"
-            return 1
+    
+    if ! version=$(${APP} --version 2>&1); then
+      if ! version=$(${APP} -v 2>&1); then
+        if ! version=$(${APP} -version 2>&1); then
+          if ! version=$(${APP} -V 2>&1); then
+            if ! version=$(${APP} -Version 2>&1); then
+              if ! version=$(${APP} --Version 2>&1); then
+                echo -e "${RED}Unable to find \"${APP}\" version using: (--version, --Version, -version, -Version, -v, -V) ${NC}"
+                return 1
+              fi
+            fi
           fi
         fi
       fi

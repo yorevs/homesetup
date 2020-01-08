@@ -31,7 +31,7 @@ function __hhs_save-dir() {
     [ -n "$2" ] && dir_alias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
     if [ "$1" = "-e" ]; then
-      vi "$HHS_SAVED_DIRS"
+      edit "$HHS_SAVED_DIRS"
     elif [ -z "$2" ] || [ "$1" = "-r" ]; then
       # Remove the previously saved directory aliased
       if grep -q "$dir_alias" "$HHS_SAVED_DIRS"; then

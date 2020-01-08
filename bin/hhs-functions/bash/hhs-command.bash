@@ -32,7 +32,7 @@ function __hhs_command() {
     
     case "$1" in
     -e | --edit)
-      vi "$HHS_CMD_FILE"
+      edit "$HHS_CMD_FILE"
       return 0
       ;;
     -a | --add)

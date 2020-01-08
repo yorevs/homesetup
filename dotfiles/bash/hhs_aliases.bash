@@ -94,7 +94,7 @@ alias df='\df -H'
 alias du='\du -hcd 1'
 alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
 
-# Use vim instead of vi
+# Use vim instead of edit
 __hhs_has "vim" && alias vi='vim'
 
 # Interpret escape sequences
