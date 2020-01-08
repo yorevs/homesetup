@@ -30,8 +30,6 @@ function __hhs_command() {
     return 1
   else
     
-    IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
-
     case "$1" in
     -e | --edit)
       vi "$HHS_CMD_FILE"
@@ -46,7 +44,8 @@ function __hhs_command() {
         echo -e "${RED}Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
         return 1
       fi
-      ised -e "s#(^Command $cmd_name: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+      ised -E -e "s#(^Command $cmd_name: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+      IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
       all_cmds+=("Command $cmd_name: $cmd_expr")
       printf "%s\n" "${all_cmds[@]}" > "$HHS_CMD_FILE"
       sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
@@ -60,11 +59,11 @@ function __hhs_command() {
       if [[ $cmdId =~ $re ]]; then
         cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
         [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmdId}\"" && return 1
-        ised -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
+        ised E -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
       elif [ -n "$cmdId" ]; then
         cmd_expr=$(grep "${cmdId}" "$HHS_CMD_FILE")
         [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmdId}\"" && return 1
-        ised -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
+        ised E -e "s#(^Command $cmdId: .*)*##" -e '/^\s*$/d' "$HHS_CMD_FILE"
       else
         echo -e "${RED}Invalid arguments: \"$cmdId\"\t\"$cmd_expr\"${NC}"
         return 1
@@ -72,6 +71,7 @@ function __hhs_command() {
       echo "${YELLOW}Command removed: ${WHITE}\"$cmdId\" ${NC}"
       ;;
     -l | --list)
+      IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
       if [ ${#all_cmds[@]} -ne 0 ]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
@@ -95,6 +95,7 @@ function __hhs_command() {
       fi
       ;;
     '')
+      IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
       if [ ${#all_cmds[@]} -ne 0 ]; then
         clear
         echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"

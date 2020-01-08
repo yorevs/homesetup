@@ -91,25 +91,21 @@ __hhs_comp-envs() {
 
 __hhs_comp-paths() {
 
-  local suggestions=()
+  local dir puch_weeks suggestions=()
 
-  if [ "${#COMP_WORDS[@]}" == "2" ]; then
+  if [[ ${#COMP_WORDS[@]} -le 2 ]]; then
     COMPREPLY=($(compgen -W "-a -r -e -c" -- "${COMP_WORDS[1]}"))
     return 0
-  elif [ "${COMP_WORDS[1]}" != "-r" ]; then
+  elif [[ ${#COMP_WORDS[@]} -gt 3 ]]; then
     return 0
-  elif [ "${#COMP_WORDS[@]}" != "3" ]; then
+  elif [ "${COMP_WORDS[1]}" == "-r" ]; then
+    IFS=$'\n' read -d '' -r -a suggestions <<<"$(grep . "${HHS_PATHS_FILE}")"
+    suggestions=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[2]}"))
+    COMPREPLY=("${suggestions[@]}")
     return 0
   fi
-
-  local dir puch_weeks suggestions=()
-  IFS=$'\n'
-  read -d '' -r -a suggestions <<<"$(grep . "${HHS_PATHS_FILE}")"
-  IFS=$"${HHS_RESET_IFS}"
-  suggestions=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[2]}"))
-  COMPREPLY=("${suggestions[@]}")
-
-  return 0
+  
+  return 1
 }
 
 __hhs_comp-godir() {
@@ -162,10 +158,10 @@ __hhs_comp-hist() {
 }
 
 complete -o default -F __hhs_comp-godir godir
+complete -o default -F __hhs_comp-paths paths
 complete -F __hhs_comp-load-dir load
 complete -F __hhs_comp-aliases aa
 complete -F __hhs_comp-cmd cmd
 complete -F __hhs_comp-punch punch
-complete -F __hhs_comp-paths paths
 complete -F __hhs_comp-envs envs
 complete -F __hhs_comp-hist hist

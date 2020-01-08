@@ -12,7 +12,7 @@
 # shellcheck disable=SC2155
 function __hhs_paths() {
 
-  local pad pad_len path_dir custom private
+  local pad pad_len path_dir custom private quiet
 
   HHS_PATHS_FILE=${HHS_PATHS_FILE:-$HOME/.path} # Custom paths
   PATHS_D="/etc/paths.d"                        # Private system paths
@@ -27,8 +27,10 @@ function __hhs_paths() {
     echo '           -r <path> : Remove from the current <path> from PATH.'
     echo '           -e        : Edit current HHS_PATHS_FILE.'
     echo '           -c        : Attempt to clears non-existing paths. System paths are not affected'
+    echo '           -q        : Quiet mode on'
     return 1
   else
+    [ "-q" = "$1" ] && quiet=1 && shift
     if [ -z "$1" ] || [ "-c" = "$1" ]; then
       [ -f "$HHS_PATHS_FILE" ] || touch "$HHS_PATHS_FILE"
       pad=$(printf '%0.1s' "."{1..70})
@@ -58,10 +60,10 @@ function __hhs_paths() {
           fi
         fi
         [ -n "$custom" ] && echo -n "at $HHS_PATHS_FILE"
-        [ -n "$path_dir" ] && echo -n "at $PATHS_D"
-        [ -n "$private" ] && echo -n "at $PVT_PATHS_D"
+        [ -n "$path_dir" ] && echo -n "from $PATHS_D"
+        [ -n "$private" ] && echo -n "from $PVT_PATHS_D"
         if [ -z "$custom" ] && [ -z "$path_dir" ] && [ -z "$private" ]; then
-          echo -n "Shell exported"
+          echo -n "Shell export"
         fi
         echo -e "${NC}"
       done
@@ -75,11 +77,15 @@ function __hhs_paths() {
       if [ -d "$2" ]; then
         echo "$2" >>"$HHS_PATHS_FILE"
         export PATH="$2:$PATH"
+        [ -z $quiet ] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
       else
         echo "${RED}Can't add a path \"$2\" that does not exist${NC}"
         return 1
       fi
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then
+      if grep -q "$2" "$HHS_PATHS_FILE" && [ -z $quiet ]; then
+        echo "${YELLOW}Path was removed: ${WHITE}\"$2\" ${NC}"
+      fi
       ised -E -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
       export PATH=${PATH//$2:/}
     fi

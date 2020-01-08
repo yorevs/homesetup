@@ -146,7 +146,7 @@ if [ -f "$HOME/.path" ]; then
 fi
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
-paths -a "$HHS_DIR/bin"
+paths -q -a "$HHS_DIR/bin"
 
 # Check for updates
 __hhs_auto-update-check

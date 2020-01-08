@@ -14,7 +14,7 @@
 # @param $2 [Opt] : The alias expression.
 function __hhs_aliases() {
 
-  local aliasFile aliasName aliasExpr pad pad_len allAliases isSorted=0
+  local alias_file alias_name alias_expr pad pad_len all_aliases is_sorted=0
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"
@@ -28,19 +28,19 @@ function __hhs_aliases() {
     echo ''
     return 1
   else
-    aliasFile="$HOME/.aliases"
-    touch "$aliasFile"
-    test "$1" = '-e' -o "$1" = "--edit" && vi "$aliasFile" && return 0
-    test "$1" = '-s' -o "$1" = "--sort" && isSorted=1 && shift
+    alias_file="$HOME/.aliases"
+    touch "$alias_file"
+    test "$1" = '-e' -o "$1" = "--edit" && vi "$alias_file" && return 0
+    test "$1" = '-s' -o "$1" = "--sort" && is_sorted=1 && shift
 
-    aliasName="$1"
+    alias_name="$1"
     shift
-    aliasExpr="$*"
+    alias_expr="$*"
 
-    if [ -z "$aliasName" ] && [ -z "$aliasExpr" ]; then
+    if [ -z "$alias_name" ] && [ -z "$alias_expr" ]; then
       # List all aliases
-      test "$isSorted" = "0" && allAliases=$(grep . "$aliasFile") || allAliases=$(grep . "$aliasFile" | sort)
-      if [ -n "$allAliases" ]; then
+      test "$is_sorted" = "0" && all_aliases=$(grep . "$alias_file") || all_aliases=$(grep . "$alias_file" | sort)
+      if [ -n "$all_aliases" ]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
         echo ' '
@@ -50,7 +50,7 @@ function __hhs_aliases() {
           local name expr offset=18
           local columns="$(($(tput cols) - pad_len - offset))"
           IFS=$'\n'
-          for next in $allAliases; do
+          for next in $all_aliases; do
             local re='^alias .+=.+'
             if [[ $next =~ $re ]]; then
               name=$(echo -en "$next" | cut -d'=' -f1 | cut -d ' ' -f2)
@@ -68,20 +68,20 @@ function __hhs_aliases() {
         )
         echo -e "${NC}"
       else
-        echo -e "${ORANGE}No aliases were found in \"$aliasFile\" !${NC}"
+        echo -e "${ORANGE}No aliases were found in \"$alias_file\" !${NC}"
       fi
-    elif [ -n "$aliasName" ] && [ -n "$aliasExpr" ]; then
+    elif [ -n "$alias_name" ] && [ -n "$alias_expr" ]; then
       # Add/Set one alias
-      ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
-      echo "alias $aliasName='$aliasExpr'" >>"$aliasFile"
-      echo -e "${GREEN}Alias set: ${WHITE}\"$aliasName\" is ${HHS_HIGHLIGHT_COLOR}'$aliasExpr' ${NC}"
-      \. "$aliasFile"
-    elif [ -n "$aliasName" ] && [ -z "$aliasExpr" ]; then
+      ised -E -e "s#(^alias $alias_name=.*)*##g" -e '/^\s*$/d' "$alias_file"
+      echo "alias $alias_name='$alias_expr'" >>"$alias_file"
+      echo -e "${GREEN}Alias set: ${WHITE}\"$alias_name\" is ${HHS_HIGHLIGHT_COLOR}'$alias_expr' ${NC}"
+      \. "$alias_file"
+    elif [ -n "$alias_name" ] && [ -z "$alias_expr" ]; then
       # Remove one alias
-      ised -e "s#(^alias $aliasName=.*)*##g" -e '/^\s*$/d' "$aliasFile"
-      unalias "$aliasName" &>/dev/null
+      ised -E -e "s#(^alias $alias_name=.*)*##g" -e '/^\s*$/d' "$alias_file"
+      unalias "$alias_name" &>/dev/null
       # shellcheck disable=SC2181
-      [[ $? -eq 0 ]] && echo -e "${YELLOW}Alias removed: ${WHITE}\"$aliasName\" ${NC}"
+      [[ $? -eq 0 ]] && echo -e "${YELLOW}Alias removed: ${WHITE}\"$alias_name\" ${NC}"
     fi
   fi
 
