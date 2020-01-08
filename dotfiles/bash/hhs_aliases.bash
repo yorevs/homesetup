@@ -156,35 +156,6 @@ if __hhs_has "python"; then
   alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
 fi
 
-# -----------------------------------------------------------------------------------
-# IP related
-
-# All IPs of all interfaces
-if __hhs_has "ifconfig"; then
-  
-  __hhs_alias ips='ifconfig -a | grep -o "inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)" | awk "{ sub(/inet6? (addr:)? ?/, \"\"); print }"'
-  
-  # Local networking (requires pcregrep)
-  if __hhs_has "pcregrep"; then
-
-    # Show active network interfaces
-    __hhs_alias ifa='ifconfig | pcregrep -M -o "^[^\t:]+:([^\n]|\n\t)*status: active"'
-    # Local IP of active interfaces
-    __hhs_alias ipl='for iface in $(ifa | grep -o "^en[0-9]\|^eth[0-9]"); do echo "Local($iface) IP : $(ipconfig getifaddr $iface)"; done'
-  fi
-fi
-
-# Get your external public IP
-if __hhs_has "dig"; then
-
-  # Perform a DNS lookup against myip.opendns.com
-  __hhs_alias myIp='a=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com);echo ${a//\"}'
-else
-
-  # Try using curl as an alternative, however, in most cases it may be inaccurate
-  __hhs_alias myIp='a=$(curl ifconfig.me 2> /dev/null); echo ${a//\"}'
-fi
-
 # Base64 encode shortcuts
 __hhs_has "base64" && alias encode="base64"
 

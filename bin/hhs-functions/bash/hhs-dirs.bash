@@ -195,3 +195,25 @@ function __hhs_go-dir() {
 
   return 0
 }
+
+# @function: Create all folders using a dot notation path and immediatelly change into it
+# @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path
+function __hhs_mkcd() {
+  if [ -n "$1" ] && [ ! -d "$1" ]; then
+    dir="${1//.//}"
+    mkdir -p "${dir}" || return 1
+    last_pwd=$(pwd)
+    for d in ${dir//\// }; do
+      cd "$d" || return 1
+    done
+    export OLDPWD=$last_pwd
+    echo "${GREEN}${dir}${NC}"
+  else
+    echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
+    echo ''
+    echo "E.g:. ${FUNCNAME[0]} dir1/dir2/dir3 (dirtree)"
+    echo "E.g:. ${FUNCNAME[0]} dir1.dir2.dir3 (FQDN)"
+  fi
+
+  return 0
+}

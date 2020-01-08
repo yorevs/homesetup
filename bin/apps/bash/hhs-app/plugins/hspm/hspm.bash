@@ -87,7 +87,7 @@ install_recipe() {
 
   local recipe
 
-  [ -b "$1" ] && recipe="${HHS_RECIPES_DIR}/$(uname -s)/$1.recipe"
+  recipe="${HHS_RECIPES_DIR}/$(uname -s)/$1.recipe"
 
   if [ -f "$recipe" ]; then
     echo ''
@@ -102,7 +102,7 @@ install_recipe() {
       quit 2 "Failed to install app \"$1\" !"
     fi
   else
-    quit 1 "Unable to find recipe for \"$1\" !"
+    quit 1 "Unable to find recipe \"$recipe\" !"
   fi
 }
 
@@ -124,7 +124,7 @@ uninstall_recipe() {
       quit 2 "Failed to uninstall app \"$1\" !"
     fi
   else
-    quit 2 "Unable to find recipe for \"$1\" !"
+    quit 2 "Unable to find recipe \"$recipe\" !"
   fi
 }
 

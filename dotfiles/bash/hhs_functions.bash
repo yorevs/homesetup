@@ -34,7 +34,7 @@ for file in $(find "$HHS_HOME/bin/ext-tools/bash" -maxdepth "${HHS_MAXDEPTH}" -t
 done
 
 # To check for all functions provided by HHS issue the following command:
-__hhs() {
+function __hhs() {
 
   local pad pad_len=30 all_hhs_fn
 
@@ -64,6 +64,18 @@ __hhs() {
   fi
   echo "${NR}"
   shopt -u nocasematch
+
+  return 0
+}
+
+# @function: Invoke the hhs application manager
+# @param $* [Opt] : All parameters are passed to hhs.bash
+function hhs() {
+  if [ -z "$1" ]; then
+    cd "$HHS_HOME" || return 1
+  else
+    hhs.bash "${@}" || return 1
+  fi
 
   return 0
 }

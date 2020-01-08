@@ -47,3 +47,25 @@ function __hhs_json-print() {
 
   return 0
 }
+
+# @function: Create and/or open a file using the default editor
+# @param $1 [Req] : The file path
+function __hhs_edit() {
+  if [ -n "$1" ]; then
+    [ -f "$1" ] || touch "$1" > /dev/null 2>&1
+    if [ -n "${HHS_DEFAULT_EDITOR}" ] && ${HHS_DEFAULT_EDITOR} "$1"; then
+      echo ''
+    elif [ -f "$1" ] && open "$1" > /dev/null 2>&1; then
+      echo ''
+    elif [ -f "$1" ] && vi "$1"; then
+      echo ''
+    else
+      echo -e "${RED}Unable to find a editor thats fits the file \"$1\""
+      return 1
+    fi
+    
+    return 0
+  fi
+  
+  return 1
+}

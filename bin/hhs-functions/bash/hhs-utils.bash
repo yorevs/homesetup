@@ -8,23 +8,12 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Invoke the hhs application manager
-# @param $* [Opt] : All parameters are passed to hhs.bash
-hhs() {
-  if [ -z "$1" ]; then
-    cd "$HHS_HOME" || return 1
-  else
-    hhs.bash "${@}" || return 1
-  fi
-
-  return 0
-}
-
 # @function: Change back the shell working directory by N directories
 # @param $1 [Opt] : The amount of directories to jump back
-..() {
+function ..() {
+
   last_pwd=$(pwd)
-  [ -z "$1" ] && cd ..
+  [ -z "$1" ] && cd .. && return 0
   if [ -n "$1" ]; then
     for x in $(seq 1 "$1"); do
       last_pwd=$(pwd)
@@ -37,68 +26,53 @@ hhs() {
   return 1
 }
 
-# @function: Create and/or open a file using the default editor
-# @param $1 [Req] : The file path
-edit() {
-  if [ -n "$1" ]; then
-    [ -f "$1" ] || touch "$1" > /dev/null 2>&1
-    if [ -n "${HHS_DEFAULT_EDITOR}" ] && ${HHS_DEFAULT_EDITOR} "$1"; then
-      echo ''
-    elif [ -f "$1" ] && open "$1" > /dev/null 2>&1; then
-      echo ''
-    elif [ -f "$1" ] && vi "$1"; then
-      echo ''
-    else
-      echo -e "${RED}Unable to find a editor thats fits the file \"$1\""
-      return 1
-    fi
-    
-    return 0
-  fi
-  
-  return 1
-}
-
 # shellcheck disable=SC2012
 # @function: List all file names sorted by name
 # @param $1 [Opt] : The column to sort; 9 (filename) by default
-lss() {
+function lss() {
+
   col="${1:-9}"
   command ls -la | sort -k "$col"
 
   return $?
 }
 
-# @function: Create all folders using a dot notation path and immediatelly change into it
-# @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path
-mkcd() {
-  if [ -n "$1" ] && [ ! -d "$1" ]; then
-    dir="${1//.//}"
-    mkdir -p "${dir}" || return 1
-    last_pwd=$(pwd)
-    for d in ${dir//\// }; do
-      cd "$d" || return 1
-    done
-    export OLDPWD=$last_pwd
-    echo "${GREEN}${dir}${NC}"
-  else
-    echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
-    echo ''
-    echo 'E.g:. mkcd dir1/dir2/dir3 (dirtree)'
-    echo 'E.g:. mkcd dir1.dir2.dir3 (package)'
-  fi
-
-  return 0
-}
-
 # @function: Kills ALL processes specified by $1
 # @param $1 [Req] : The process name to kill
-pk() {
+function pk() {
+
+  local force_flag=
+
   if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
     shift
-    __hhs_process_list -f "$1" kill
-  elif [ -n "$1" ]; then
-    __hhs_process_list "$1" kill
+    force_flag='-f'
+  fi
+
+  for npid in "${@}"; do
+    __hhs_process_list "-q" "$force_flag" "$npid" kill
+    echo -e "\033[3A" # Move up 3 times to beautify the output
+  done
+
+  echo -e '\n'
+
+  return $?
+}
+
+# @function: List all directories recursively (Nth level depth) as a tree
+# @param $1 [Req] : The max level depth to walk into
+
+function lt() {
+
+  if __hhs_has "tree"; then
+    if [ -n "$1" ] && [ -n "$2" ]; then
+      tree "$1" -L "$2"
+    elif [ -n "$1" ]; then
+      tree "$1"
+    else
+      tree '.'
+    fi
+  else
+    ls -Rl
   fi
 
   return $?
@@ -107,7 +81,8 @@ pk() {
 # @function: Generate a random number int the range <min> <max>
 # @param $1 [Req] : The minimum range of the number
 # @param $2 [Req] : The maximum range of the number
-rand() {
+function rand() {
+
   if [ -n "$1" ] && [ -n "$2" ]; then
     echo "$((RANDOM % ($2 - $1 + 1) + $1))"
   else
@@ -115,26 +90,11 @@ rand() {
   fi
 }
 
-# @function: List all directories recursively (Nth level depth) as a tree
-# @param $1 [Req] : The max level depth to walk into
-if __hhs_has "tree"; then
-  lt() {
-    if [ -n "$1" ] && [ -n "$2" ]; then
-      tree "$1" -L "$2"
-    elif [ -n "$1" ]; then
-      tree "$1"
-    else
-      tree '.'
-    fi
-
-    return $?
-  }
-fi
-
 # @function: Convert unicode to hexadecimal
 # @param $1..N [Req] : The unicodes to convert
 if __hhs_has "python"; then
-  utoh() {
+
+  function utoh() {
 
     local result converted uni
 

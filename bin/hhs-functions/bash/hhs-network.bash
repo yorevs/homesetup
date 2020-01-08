@@ -8,6 +8,119 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# The followng functions require dig to work
+if __hhs_has "dig"; then
+
+  # @function: Find external IP by performinf a DNS lookup against o-o.myaddr.l.google.com
+  function __hhs_my_ip() {
+
+    local ext_ip
+
+    ext_ip=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com 2> /dev/null)
+
+    [ -n "$ext_ip" ] && echo "${ext_ip//\"/}" && return 0 || return 1
+  }
+
+  # @function: Resolve domain names associated with the IP.
+  # @param $1 [Req] : The IP address to resolve.
+  function __hhs_ip-resolve() {
+
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+      echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
+      return 1
+    else
+      dig +short -x "$1"
+    fi
+
+    return $?
+  }
+
+else
+
+  # @function: Find external IP using curl as an alternative, however, in most cases it may be inaccurate
+  function __hhs_my_ip() {
+
+    local ext_ip
+
+    ext_ip=$(curl ifconfig.me 2> /dev/null)
+
+    [ -n "$ext_ip" ] && echo "${ext_ip//\"/}" && return 0 || return 1
+  }
+
+fi
+
+# The followng functions require ifconfig to work
+if __hhs_has "ifconfig"; then
+  
+  # @function: Get a list of all machine IPs
+  function __hhs_all_ips() {
+    
+    local all_ips
+    
+    all_ips=$(ifconfig -a | grep -o "inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)" | awk "{ sub(/inet6? (addr:)? ?/, \"\"); print }")
+    
+    [ -n "$all_ips" ] && echo "${all_ips}" && return 0 || return 1
+  }
+  
+  # @function: Get local IP of active interfaces
+  function __hhs_local_ip() {
+
+    local local_ips
+
+    if __hhs_has "pcregrep"; then
+      local_ips="$(ifa | grep -o "^en[0-9]\|^eth[0-9]")"
+      for iface in ${local_ips}; do
+        echo "IP-Local(${iface}) : $(ipconfig getifaddr "${iface}")"
+      done
+      [ -z "$local_ips" ] && echo "IP-Local(---) : ${YELLOW}Unable to get${HHS_HIGHLIGHT_COLOR}" && return 1
+    else
+      echo "IP-Local(---) : ${YELLOW}pcregrep is required to use ${FUNCNAME[0]} ${HHS_HIGHLIGHT_COLOR}"
+      return 1
+    fi
+
+    [ -n "$local_ips" ] && return 0 || return 1
+  }
+  
+  # @function: Get a list of active network interfaces
+  function __hhs_active_ifaces() {
+    
+    local ifaces
+    
+    if __hhs_has "pcregrep"; then
+      ifaces=$(ifconfig | pcregrep -M -o "^[^\t:]+:([^\n]|\n\t)*status: active")
+    else
+      echo "${YELLOW}pcregrep is required to use ${FUNCNAME[0]} ${HHS_HIGHLIGHT_COLOR}"
+      return 1
+    fi
+    
+    [ -n "$ifaces" ] && echo "${ifaces}" && return 0 || return 1
+  }
+
+  # @function: Get IP of active VPN
+  function __hhs_vpn_ip() {
+
+    local vpn_ip
+
+    vpn_ip=$(ifconfig | grep -A1 '.*tun[0-9]' | grep 'inet ' | cut -d ' ' -f2)
+
+    [ -n "$vpn_ip" ] && echo "${vpn_ip}" && return 0 || return 1
+  }
+
+fi
+
+# @function: Get IP or hostname of the default gateway
+function __hhs_gateway_ip() {
+
+  gw_ip=$(route get default 2> /dev/null)
+
+  if [ -n "${gw_ip}" ]; then
+    echo "${gw_ip}" | grep 'gateway' | cut -b 14-
+    return 0
+  fi
+
+  return 1
+}
+
 # @function: Check information about the specified IP.
 # @param $1 [Req] : The IP to get information about.
 function __hhs_ip-info() {
@@ -18,22 +131,8 @@ function __hhs_ip-info() {
     echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
     return 1
   else
-    ipinfo=$(curl -m 5 --basic "ip-api.com/json/$1" 2>/dev/null | tr ' ' '_')
+    ipinfo=$(curl -m 5 --basic "ip-api.com/json/$1" 2> /dev/null | tr ' ' '_')
     [ -n "$ipinfo" ] && __hhs_json-print "$ipinfo"
-  fi
-
-  return 0
-}
-
-# @function: Resolve domain names associated with the IP.
-# @param $1 [Req] : The IP address to resolve.
-function __hhs_ip-resolve() {
-
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
-    echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
-    return 1
-  else
-    dig +short -x "$1"
   fi
 
   return 0
