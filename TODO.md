@@ -3,5 +3,5 @@
 - [ ] Add a deployer system
 - [ ] Check INSTALL_DIR and HHS_HOME
 - [ ] Improve command helps
-- [ ] Add authentication to FB requests and encode the firebase config
+- [ ] Add authentication to FB requests and encode the firebase config and add .vault to firebase
 - [ ] Update README.MD
