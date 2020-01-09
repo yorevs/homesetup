@@ -32,7 +32,7 @@ if __hhs_has "git"; then
       return 1
     else
       for x in $(find "$1" -maxdepth 2 -type d -iname ".git"); do
-        cd "${x//\/\.git}" || continue
+        cd "${x//\/\.git/}" || continue
         pwd
         echo -en "${CYAN}"
         git status | head -n 1 || continue
@@ -52,7 +52,7 @@ if __hhs_has "git"; then
       return 1
     else
       for x in $(find "$1" -maxdepth 2 -type d -iname "*.git"); do
-        cd "${x//\/\.git}" || continue
+        cd "${x//\/\.git/}" || continue
         pwd
         echo -en "${CYAN}"
         git status || continue
@@ -101,6 +101,32 @@ if __hhs_has "git"; then
       return 1
     else
       git diff-tree --no-commit-id --name-only -r "${1}"
+    fi
+
+    return $?
+  }
+
+  # @function: Select and checkout local branch
+  # @param $1 [Opt] : Fetch all branches instead of only local branches (default).
+  function __hhs_git_select_branch() {
+
+    local all_flag sel_index sel_branch mselect_file all_branches=()
+
+    if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+      echo "Usage: ${FUNCNAME[0]}"
+      return 1
+    else
+      [ "$1" = "-a" ] && all_flag=1
+      while read -r branch; do
+        b_name="${branch}"
+        all_branches+=("${b_name//\*?/}")
+      done < <(git branch "${all_flag//1/-a}" | grep -v '\->')
+      mselect_file=$(mktemp)
+      if __hhs_mselect "$mselect_file" "${all_branches[*]}"; then
+        sel_index=$(grep . "$mselect_file")
+        sel_branch="${all_branches["$sel_index"]}"
+        git checkout "${sel_branch##*/}"
+      fi
     fi
 
     return $?

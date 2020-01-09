@@ -20,8 +20,10 @@ Usage: $APP_NAME <new_hostname>
 
 # Check current hostname
 HOSTN=$(hostname)
+NEW_HOSTN="${1}"
+
 echo "Current hostname is: \"$HOSTN\""
-read -r -p "Enter new hostname (ENTER to cancel): " NEW_HOSTN
+[ -z "$NEW_HOSTN" ] && read -r -p "Enter new hostname (ENTER to cancel): " NEW_HOSTN
 
 if [ -n "$NEW_HOSTN" ] && [ "$HOSTN" != "$NEW_HOSTN" ]; then
 

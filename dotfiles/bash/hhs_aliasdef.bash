@@ -65,6 +65,7 @@ if __hhs_has "git"; then
   __hhs_alias gd='__hhs_git_diff'
   __hhs_alias gp='__hhs_git_pull'
   __hhs_alias gl='__hhs_git_log'
+  __hhs_alias gbs='__hhs_git_select_branch'
   __hhs_alias gco='__hhs_git_checkout'
   __hhs_alias gta='__hhs_git_add'
   __hhs_alias gcm='__hhs_git_commit'

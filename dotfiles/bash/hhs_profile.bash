@@ -145,6 +145,15 @@ if [ -f "$HOME/.path" ]; then
   export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 fi
 
+# term_reset() {
+#   show-cursor
+#   enable-line-wrap
+#   echo -e "${NC}"
+#   trap SIGINT
+# }
+
+# trap term_reset SIGINT
+
 # Add `$HHS_DIR/bin` to the system `$PATH`
 paths -q -a "$HHS_DIR/bin"
 

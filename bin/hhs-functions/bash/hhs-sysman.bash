@@ -46,7 +46,7 @@ function __hhs_sysinfo() {
       echo -e "  ${next}"
     done
 
-    if __hhs_has "docker"; then
+    if __hhs_has "docker" && __hhs_has "__hhs_docker_ps"; then
       containers=$(__hhs_docker_ps -a)
       if [ -n "${containers}" ] && [[ $(__hhs_docker_count) -gt 1 ]]; then
         echo -e "\n${GREEN}Active Docker Containers: ${BLUE}"
