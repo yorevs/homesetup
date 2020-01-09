@@ -52,6 +52,7 @@ function __hhs_mselect() {
     if [ -n "$re_render" ]; then
       echo ''
       for idx in $(seq "$show_from" "$show_to"); do
+        [[ $idx -ge $len ]] && break # When the number of items is lower than the maxrows, skip the other lines
         option_line="${all_options[idx]:0:$columns}"
         # Erase current line before repaint
         echo -ne "\033[2K\r"
