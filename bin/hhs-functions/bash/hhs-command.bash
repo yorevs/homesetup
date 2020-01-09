@@ -78,8 +78,7 @@ function __hhs_command() {
         pad_len=40
         echo ' '
         echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
-        echo " "
-        IFS=$'\n'
+        echo ' '
         for next in ${all_cmds[*]}; do
           printf "${WHITE}(%03d) " $((index))
           cmd_name="$(echo -en "$next" | awk -F ':' '{ print $1 }')"
@@ -89,7 +88,6 @@ function __hhs_command() {
           echo "${YELLOW} is stored as: ${WHITE}'${cmd_expr}'"
           index=$((index + 1))
         done
-        IFS="$HHS_RESET_IFS"
         echo -e "${NC}"
       else
         echo "${YELLOW}No commands available yet !${NC}"
@@ -103,9 +101,7 @@ function __hhs_command() {
         echo -en "${WHITE}"
         IFS=$'\n'
         mselect_file=$(mktemp)
-        __hhs_mselect "$mselect_file" "${all_cmds[*]}"
-        # shellcheck disable=SC2181
-        if [ "$?" -eq 0 ]; then
+        if __hhs_mselect "$mselect_file" "${all_cmds[*]}"; then
           sel_index=$(grep . "$mselect_file")
           # sel_index is zero-based, so we need to increment this number
           cmd_expr=$(awk "NR==$((sel_index + 1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')

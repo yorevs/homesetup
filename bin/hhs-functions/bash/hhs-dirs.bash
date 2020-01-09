@@ -76,8 +76,8 @@ function __hhs_load-dir() {
     echo "Usage: ${FUNCNAME[0]} [-l] | [dir_alias]"
     echo ''
     echo 'Options: '
-    echo "    [dir_alias] : Change to the directory saved from the alias provided."
-    echo "             -l : List all saved dirs."
+    echo '    [dir_alias] : Change to the directory saved from the alias provided.'
+    echo '             -l : List all saved dirs.'
     return 1
   fi
 
@@ -92,7 +92,6 @@ function __hhs_load-dir() {
         echo ' '
         echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
         echo ' '
-        IFS=$'\n'
         for next in ${all_dirs[*]}; do
           dir_alias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
           dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
@@ -100,7 +99,6 @@ function __hhs_load-dir() {
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
           echo -e "${YELLOW} was saved as ${WHITE}'${dir}'"
         done
-        IFS="$HHS_RESET_IFS"
         echo "${NC}"
         return 0
         ;;
@@ -108,16 +106,15 @@ function __hhs_load-dir() {
         clear
         echo "${YELLOW}Available saved directories (${#all_dirs[@]}):"
         echo -en "${WHITE}"
-        IFS=$'\n'
         mselect_file=$(mktemp)
-        __hhs_mselect "$mselect_file" "${all_dirs[*]}"
-        if [ "$?" -eq 0 ]; then
+        if __hhs_mselect "$mselect_file" "${all_dirs[*]}"; then
           sel_index=$(grep . "$mselect_file")
           dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
           # sel_index is zero-based, so we need to increment this number
           dir=$(awk "NR==$((sel_index + 1))" "$HHS_SAVED_DIRS" | awk -F '=' '{ print $2 }')
+        else
+          return 0
         fi
-        IFS="$HHS_RESET_IFS"
         ;;
       [a-zA-Z0-9_]*)
         dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
@@ -142,6 +139,7 @@ function __hhs_load-dir() {
   fi
 
   [ -f "$mselect_file" ] && command rm -f "$mselect_file"
+  echo ''
 
   return 0
 }
@@ -180,9 +178,7 @@ function __hhs_go-dir() {
       echo -en "${NC}"
       IFS=$'\n'
       mselect_file=$(mktemp)
-      __hhs_mselect "$mselect_file" "${results[*]//$searchPath\//}"
-      # shellcheck disable=SC2181
-      if [ "$?" -eq 0 ]; then
+      if __hhs_mselect "$mselect_file" "${results[*]//$searchPath\//}"; then
         sel_index=$(grep . "$mselect_file")
         dir=${results[$sel_index]}
       fi
@@ -192,6 +188,7 @@ function __hhs_go-dir() {
   fi
 
   [ -f "$mselect_file" ] && command rm -f "$mselect_file"
+  echo ''
 
   return 0
 }

@@ -115,6 +115,9 @@ if __hhs_has "git"; then
     if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]}"
       return 1
+    elif [ ! -d .git ]; then
+      echo "Not a git repository !"
+      return 1
     else
       [ "$1" = "-a" ] && all_flag=1
       while read -r branch; do
