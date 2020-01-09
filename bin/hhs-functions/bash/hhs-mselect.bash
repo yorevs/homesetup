@@ -50,6 +50,8 @@ function __hhs_mselect() {
 
     # Menu Renderization {
     if [ -n "$re_render" ]; then
+      # Erase current line and restore the cursor to the home position
+      restore-cursor-pos
       echo ''
       for idx in $(seq "$show_from" "$show_to"); do
         [[ $idx -ge $len ]] && break # When the number of items is lower than the maxrows, skip the other lines
@@ -71,13 +73,13 @@ function __hhs_mselect() {
     # Navigation input {
     read -rs -n 1 KEY_PRESS
     case "$KEY_PRESS" in
-      'q' | 'Q') # Exit
+      'q' | 'Q') # Quit requested
         show-cursor
         enable-line-wrap
         echo -e "\n${NC}"
         return 1
         ;;
-      [1-9]) # When a number is typed, try to scroll to index
+      [1-9]) # A number was typed
         show-cursor
         typed_index="$KEY_PRESS"
         echo -en "$KEY_PRESS"
@@ -95,42 +97,44 @@ function __hhs_mselect() {
           [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
           show_from=$((show_to - diff_index))
           sel_index=$((typed_index - 1))
+          re_render=1
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
         read -rsn2 KEY_PRESS
         case "$KEY_PRESS" in
-          [A) # Move the cursor upwards
+          [A) # Cursor up
             if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
               show_from=$((show_from - 1))
               show_to=$((show_to - 1))
-              re_render=1
             elif [[ $sel_index -eq 0 ]]; then
               continue
             fi
-            [ $((sel_index - 1)) -ge 0 ] && sel_index=$((sel_index - 1))
+            if [[ $((sel_index - 1)) -ge 0 ]]; then
+              sel_index=$((sel_index - 1)) # Decrement the selected index
+              re_render=1 # TODO Full render only if sel_index < show_from; otherwise render only current line and the previous
+            fi
             ;;
-          [B) # Move the cursor downwards
+          [B) # Cursor down
             if [[ $sel_index -eq $show_to ]] && [[ $((show_to + 1)) -lt $len ]]; then
               show_from=$((show_from + 1))
               show_to=$((show_to + 1))
-              re_render=1
             elif [[ $((sel_index + 1)) -ge $len ]]; then
               continue
             fi
-            [[ $((sel_index + 1)) -lt $len ]] && sel_index=$((sel_index + 1))
+            if [[ $((sel_index + 1)) -lt $len ]]; then
+              sel_index=$((sel_index + 1)) # Increment the selected index
+              re_render=1 # TODO Full render only if sel_index > show_to; otherwise render only current line and the next
+            fi
             ;;
         esac
         ;;
-      '') # Select current item and exit
+      '') # Keep the selected index and exit
         echo '' && break
         ;;
     esac
     # } Navigation input
 
-    # Erase current line and restore the cursor to the home position
-    restore-cursor-pos
-    re_render=1
   done
 
   show-cursor
