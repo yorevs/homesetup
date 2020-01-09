@@ -87,7 +87,7 @@ if __hhs_has "git"; then
       echo "Usage: ${FUNCNAME[0]} <commit_id> <filename>"
       return 1
     else
-      git show "${1}" -- "${2}"
+      git show "${1}":"${2}"
     fi
 
     return $?
@@ -110,29 +110,39 @@ if __hhs_has "git"; then
   # @param $1 [Opt] : Fetch all branches instead of only local branches (default).
   function __hhs_git_select_branch() {
 
-    local all_flag sel_index sel_branch mselect_file all_branches=()
+    local all_branches=() ret_val=0 all_flag='-a' all_str='or remote' sel_index sel_branch mselect_file 
 
     if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
-      echo "Usage: ${FUNCNAME[0]}"
+      echo "Usage: ${FUNCNAME[0]} [-l||--local]"
       return 1
-    elif [ ! -d .git ]; then
+    elif [ ! -d "$(pwd)/.git" ]; then
       echo "Not a git repository !"
       return 1
     else
-      [ "$1" = "-a" ] && all_flag=1
+      [ "$1" = "-l" ] || [ "$1" = "--local" ] && unset all_flag && all_str='\b'
+      clear
+      [ -n "$all_flag" ] && echo -en "${YELLOW}=> Updating branches ...${NC}" && git fetch
+      printf "%0.s\b" {1..24} && echo -e "\c"
+      echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
       while read -r branch; do
         b_name="${branch}"
         all_branches+=("${b_name//\*?/}")
-      done < <(git branch "${all_flag//1/-a}" | grep -v '\->')
+      done < <(git branch ${all_flag} | grep -v '\->')
       mselect_file=$(mktemp)
       if __hhs_mselect "$mselect_file" "${all_branches[*]}"; then
+        echo -en "${YELLOW}=> Stashing changes prior to change ...${NC}"
+        git stash apply 
         sel_index=$(grep . "$mselect_file")
         sel_branch="${all_branches["$sel_index"]}"
         git checkout "${sel_branch##*/}"
+        ret_val=$?
+        echo -en "${YELLOW}=> Retrieving changes from stash ...${NC}"
+        git stash pop
       fi
     fi
+    echo ''
 
-    return $?
+    return $ret_val
   }
 
 fi

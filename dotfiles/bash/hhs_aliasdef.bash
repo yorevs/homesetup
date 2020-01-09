@@ -77,8 +77,8 @@ if __hhs_has "git"; then
   __hhs_alias gdfs='__hhs_git_file_diff_show'
   __hhs_alias gprb='__hhs_git_pull_rebase'
   __hhs_alias gtps='__hhs_git_push'
-  __hhs_alias gdfsc='__hhs_git_file_show_contents'
   __hhs_alias gshow='__hhs_git_show'
+  __hhs_alias gshowf='__hhs_git_file_show_contents'
 fi
 # Gradle shortcuts
 if __hhs_has "gradle"; then
