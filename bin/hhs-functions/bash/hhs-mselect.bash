@@ -30,7 +30,8 @@ function __hhs_mselect() {
 
   HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:=15}
 
-  local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 len show_to diff_index typed_index columns option_line 
+  local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 
+  local index_len len show_to diff_index typed_index columns option_line
 
   show_to="$((HHS_MSELECT_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
@@ -46,10 +47,10 @@ function __hhs_mselect() {
 
   while :; do
     columns="$(($(tput cols) - 7))"
-    hide-cursor
 
     # Menu Renderization {
     if [ -n "$re_render" ]; then
+      hide-cursor
       # Erase current line and restore the cursor to the home position
       restore-cursor-pos
       echo -e "${NC}"
@@ -60,7 +61,7 @@ function __hhs_mselect() {
         # Erase current line before repaint
         echo -ne "\033[2K\r"
         [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='>' # Highlight the selected line
-        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" "$selector" "$option_line" # Print the option line
+        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" "$selector" "$option_line"       # Print the option line
         # Check if the text fits the screen and print it, otherwise print '...'
         [[ ${#option_line} -ge $columns ]] && echo -e "\033[4D\033[K..."
         echo -e "${NC}"
@@ -68,31 +69,29 @@ function __hhs_mselect() {
       echo ''
       echo -n "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: "
       re_render=
+      show-cursor
     fi
     # } Menu Renderization
-
+    
     # Navigation input {
     read -rs -n 1 KEY_PRESS
     case "$KEY_PRESS" in
       'q' | 'Q') # Quit requested
-        show-cursor
         enable-line-wrap
         echo -e "\n${NC}"
         return 1
         ;;
       [1-9]) # A number was typed
-        show-cursor
         typed_index="$KEY_PRESS"
-        echo -en "$KEY_PRESS"
-        while [[ $typed_index -lt $len ]]; do
-          read -rs -n 1 ANS2
-          [ -z "$ANS2" ] && break
-          echo -en "$ANS2"
-          typed_index="${typed_index}${ANS2}"
+        echo -en "$KEY_PRESS" && index_len=1
+        while [[ ${#typed_index} -lt ${#len} ]]; do
+          read -rs -n 1 NUM_PRESS
+          [ -z "$NUM_PRESS" ] && break
+          [[ ! "$NUM_PRESS" =~ ^[0-9]*$ ]] && typed_index= && break
+          typed_index="${typed_index}${NUM_PRESS}"
+          echo -en "$NUM_PRESS" && index_len=$((index_len + 1))
         done
-        hide-cursor
-        # Erase the index typed
-        echo -ne "\033[$((${#typed_index} + 1))D\033[K"
+        echo -ne "\033[${index_len}D\033[K"
         if [[ "$typed_index" =~ ^[0-9]*$ ]] && [[ $typed_index -ge 1 ]] && [[ $typed_index -le $len ]]; then
           show_to=$((typed_index - 1))
           [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
@@ -113,7 +112,7 @@ function __hhs_mselect() {
             fi
             if [[ $((sel_index - 1)) -ge 0 ]]; then
               sel_index=$((sel_index - 1)) # Decrement the selected index
-              re_render=1 # TODO Full render only if sel_index < show_from; otherwise render only current line and the previous
+              re_render=1
             fi
             ;;
           [B) # Cursor down
@@ -125,7 +124,7 @@ function __hhs_mselect() {
             fi
             if [[ $((sel_index + 1)) -lt $len ]]; then
               sel_index=$((sel_index + 1)) # Increment the selected index
-              re_render=1 # TODO Full render only if sel_index > show_to; otherwise render only current line and the next
+              re_render=1
             fi
             ;;
         esac
