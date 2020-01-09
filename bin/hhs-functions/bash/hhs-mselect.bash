@@ -92,12 +92,11 @@ function __hhs_mselect() {
           echo -en "$NUM_PRESS" && index_len=$((index_len + 1))
         done
         echo -ne "\033[${index_len}D\033[K"
-        if [[ "$typed_index" =~ ^[0-9]*$ ]] && [[ $typed_index -ge 1 ]] && [[ $typed_index -le $len ]]; then
+        if [[ $typed_index -ge 1 ]] && [[ $typed_index -le $len ]]; then
           show_to=$((typed_index - 1))
           [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
           show_from=$((show_to - diff_index))
-          sel_index=$((typed_index - 1))
-          re_render=1
+          sel_index=$((typed_index - 1)) && re_render=1
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
@@ -111,8 +110,7 @@ function __hhs_mselect() {
               continue
             fi
             if [[ $((sel_index - 1)) -ge 0 ]]; then
-              sel_index=$((sel_index - 1)) # Decrement the selected index
-              re_render=1
+              sel_index=$((sel_index - 1)) && re_render=1
             fi
             ;;
           [B) # Cursor down
@@ -123,8 +121,7 @@ function __hhs_mselect() {
               continue
             fi
             if [[ $((sel_index + 1)) -lt $len ]]; then
-              sel_index=$((sel_index + 1)) # Increment the selected index
-              re_render=1
+              sel_index=$((sel_index + 1)) && re_render=1
             fi
             ;;
         esac
