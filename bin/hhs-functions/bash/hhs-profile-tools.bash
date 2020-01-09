@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1090
 
-#  Script: hhs-dev-tools.bash
+#  Script: hhs-profile-tools.bash
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -13,7 +13,7 @@
 function activate-nvm() {
 
   echo -en "Activating NVM app .... "
-  # NVM Setup
+  # NVM setup
   export NVM_DIR="$HOME/.nvm"
   if [ -s "$NVM_DIR/nvm.sh" ]; then
     \. "$NVM_DIR/nvm.sh"
@@ -32,7 +32,7 @@ function activate-nvm() {
 function activate-rvm() {
 
   echo -en "Activating RVM app .... "
-  # RVM Setup
+  # RVM setup
   export RVM_DIR="$HOME/.rvm"
   if [ -s "$HOME/.rvm/scripts/rvm" ]; then
     \. "$HOME/.rvm/scripts/rvm"
@@ -49,9 +49,21 @@ function activate-rvm() {
 function activate-jenv() {
 
   echo -en "Activating JENV app ... "
-  # JENV Setup
+  # JENV setup
   eval "$(jenv init -)" &>/dev/null \
     && echo "${GREEN}[  OK  ]${NC}" \
     || echo -e "${RED}[ FAIL ] => JENV is not installed!${NC}"
+  return $?
+}
+
+# @function: TODO: Comment it
+function activate-docker() {
+
+  echo -en "Activating Docker app ... "
+  DK_LOC='/Applications/Docker.app'
+  # Docker daemon setup
+  open "${DK_LOC}" &>/dev/null \
+    && echo "${GREEN}[  OK  ]${NC}" \
+    || echo -e "${RED}[ FAIL ] => Docker.app wa not found: ${DK_LOC} at !${NC}"
   return $?
 }
