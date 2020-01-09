@@ -9,6 +9,14 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 if __hhs_has "docker" && docker info &> /dev/null; then
+  
+  # @function: TODO Comment it
+  function __hhs_docker_count() {
+    count=$(docker container ls | wc -l | awk '{print $1}')
+    echo "${count:-0}"
+    
+    return 0
+  }
 
   # @function: TODO Comment it
   # @param $1 [Req] : TODO Comment it

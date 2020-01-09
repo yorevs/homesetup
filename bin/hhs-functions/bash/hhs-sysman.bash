@@ -47,16 +47,16 @@ function __hhs_sysinfo() {
     done
 
     if __hhs_has "docker"; then
-      containers=$(__hhs_docker_ps)
-      if [ -n "${containers}" ]; then
-        echo -e "\n${GREEN}Docker Containers: ${BLUE}"
+      containers=$(__hhs_docker_ps -a)
+      if [ -n "${containers}" ] && [[ $(__hhs_docker_count) -gt 1 ]]; then
+        echo -e "\n${GREEN}Active Docker Containers: ${BLUE}"
         for next in ${containers}; do
-          echo -e "${GREEN}  ${next} ${NC}"
+          echo "$next" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
         done
       fi
     fi
 
-    echo ''
+    echo "${NC}"
     IFS=$HHS_RESET_IFS
   fi
 

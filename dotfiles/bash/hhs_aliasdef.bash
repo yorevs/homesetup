@@ -95,6 +95,7 @@ fi
 if __hhs_has "docker" && docker info &>/dev/null; then
   __hhs_alias dk='docker'
   __hhs_alias dkc='docker-compose'
+  __hhs_alias dkr='docker run'
   __hhs_alias dki='__hhs_docker_images'
   __hhs_alias dks='__hhs_docker_service'
   __hhs_alias dkl='__hhs_docker_logs'
