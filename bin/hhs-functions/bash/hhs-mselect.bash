@@ -14,7 +14,7 @@
 function __hhs_mselect() {
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    echo "Usage: ${FUNCNAME[0]} <output_file> <option1 option2 ...>"
+    echo "Usage: ${FUNCNAME[0]} <output_file> <option1 ...>"
     echo ''
     echo 'Notes: '
     echo '  - If only one option is available, mselect will select it and return.'
@@ -30,7 +30,7 @@ function __hhs_mselect() {
 
   HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:=15}
 
-  local len all_options=() sel_index=0 show_from=0 show_to diff_index index='' outfile="$1" columns opt_str
+  local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 len show_to diff_index typed_index columns option_line 
 
   show_to="$((HHS_MSELECT_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
@@ -39,7 +39,7 @@ function __hhs_mselect() {
   all_options=(${@})
   len=${#all_options[*]}
 
-  # When only one option is provided, select the index 0 and return
+  # When only one option is provided, select the typed_index 0 and return
   [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0
   save-cursor-pos
   disable-line-wrap
@@ -47,30 +47,28 @@ function __hhs_mselect() {
   while :; do
     columns="$(($(tput cols) - 7))"
     hide-cursor
-    echo ''
 
-    for i in $(seq "$show_from" "$show_to"); do
-      opt_str="${all_options[i]:0:$columns}"
-      # Erase current line before repaint
-      echo -ne "\033[2K\r"
-      [ "$i" -ge "$len" ] && break
-      if [ "$i" -ne $sel_index ]; then
-        # Print the unselected line
-        printf " %.${#len}d  %0.4s %s" "$((i + 1))" ' ' "$opt_str"
-      else
-        # Print the selected line
-        printf "${HHS_HIGHLIGHT_COLOR} %.${#len}d  %0.4s %s" "$((i + 1))" '>' "$opt_str"
-      fi
-      if [ "${#opt_str}" -ge "$columns" ]; then
-        echo -e "\033[4D\033[K...${NC}"
-      else
+    # Menu Renderization {
+    if [ -n "$re_render" ]; then
+      echo ''
+      for idx in $(seq "$show_from" "$show_to"); do
+        option_line="${all_options[idx]:0:$columns}"
+        # Erase current line before repaint
+        echo -ne "\033[2K\r"
+        [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" # Highlight the selected line
+        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" '>' "$option_line" # Print the option line
+        # Check if the text fits the screen and print it, otherwise print '...'
+        [[ ${#option_line} -ge $columns ]] && echo -e "\033[4D\033[K..."
         echo -e "${NC}"
-      fi
-    done
+      done
+      echo ''
+      echo -n "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: "
+      re_render=
+    fi
+    # } Menu Renderization
 
-    echo "${YELLOW}"
-    read -rs -n 1 -p "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: " KEY_PRESS
-
+    # Navigation input {
+    read -rs -n 1 KEY_PRESS
     case "$KEY_PRESS" in
       'q' | 'Q') # Exit
         show-cursor
@@ -80,40 +78,46 @@ function __hhs_mselect() {
         ;;
       [1-9]) # When a number is typed, try to scroll to index
         show-cursor
-        index="$KEY_PRESS"
+        typed_index="$KEY_PRESS"
         echo -en "$KEY_PRESS"
-        while [ "${#index}" -lt "${#len}" ]; do
+        while [[ $typed_index -lt $len ]]; do
           read -rs -n 1 ANS2
           [ -z "$ANS2" ] && break
           echo -en "$ANS2"
-          index="${index}${ANS2}"
+          typed_index="${typed_index}${ANS2}"
         done
         hide-cursor
         # Erase the index typed
-        echo -ne "\033[$((${#index} + 1))D\033[K"
-        if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
-          show_to=$((index - 1))
+        echo -ne "\033[$((${#typed_index} + 1))D\033[K"
+        if [[ "$typed_index" =~ ^[0-9]*$ ]] && [[ $typed_index -ge 1 ]] && [[ $typed_index -le $len ]]; then
+          show_to=$((typed_index - 1))
           [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
           show_from=$((show_to - diff_index))
-          sel_index=$((index - 1))
+          sel_index=$((typed_index - 1))
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
         read -rsn2 KEY_PRESS
         case "$KEY_PRESS" in
           [A) # Move the cursor upwards
-            if [ "$sel_index" -eq "$show_from" ] && [ "$show_from" -gt 0 ]; then
+            if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
               show_from=$((show_from - 1))
               show_to=$((show_to - 1))
+              re_render=1
+            elif [[ $sel_index -eq 0 ]]; then
+              continue
             fi
             [ $((sel_index - 1)) -ge 0 ] && sel_index=$((sel_index - 1))
             ;;
           [B) # Move the cursor downwards
-            if [ "$sel_index" -eq "$show_to" ] && [ "$((show_to + 1))" -lt "$len" ]; then
+            if [[ $sel_index -eq $show_to ]] && [[ $((show_to + 1)) -lt $len ]]; then
               show_from=$((show_from + 1))
               show_to=$((show_to + 1))
+              re_render=1
+            elif [[ $((sel_index + 1)) -ge $len ]]; then
+              continue
             fi
-            [ $((sel_index + 1)) -lt "$len" ] && sel_index=$((sel_index + 1))
+            [[ $((sel_index + 1)) -lt $len ]] && sel_index=$((sel_index + 1))
             ;;
         esac
         ;;
@@ -121,9 +125,11 @@ function __hhs_mselect() {
         echo '' && break
         ;;
     esac
+    # } Navigation input
 
     # Erase current line and restore the cursor to the home position
     restore-cursor-pos
+    re_render=1
   done
 
   show-cursor
