@@ -125,8 +125,8 @@ if __hhs_has "git"; then
       printf "%0.s\b" {1..24} && echo -e "\c"
       echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
       while read -r branch; do
-        b_name="${branch}"
-        all_branches+=("${b_name//\*?/}")
+        b_name="${branch//\*/}" # Removing current branch indicator
+        all_branches+=("${b_name//  / }") # Removing extra spaces
       done < <(git branch ${all_flag} | grep -v '\->')
       mselect_file=$(mktemp)
       if __hhs_mselect "$mselect_file" "${all_branches[*]}"; then
