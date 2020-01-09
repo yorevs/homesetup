@@ -52,14 +52,15 @@ function __hhs_mselect() {
     if [ -n "$re_render" ]; then
       # Erase current line and restore the cursor to the home position
       restore-cursor-pos
-      echo ''
+      echo -e "${NC}"
       for idx in $(seq "$show_from" "$show_to"); do
+        local selector=' '
         [[ $idx -ge $len ]] && break # When the number of items is lower than the maxrows, skip the other lines
         option_line="${all_options[idx]:0:$columns}"
         # Erase current line before repaint
         echo -ne "\033[2K\r"
-        [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" # Highlight the selected line
-        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" '>' "$option_line" # Print the option line
+        [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='>' # Highlight the selected line
+        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" "$selector" "$option_line" # Print the option line
         # Check if the text fits the screen and print it, otherwise print '...'
         [[ ${#option_line} -ge $columns ]] && echo -e "\033[4D\033[K..."
         echo -e "${NC}"
