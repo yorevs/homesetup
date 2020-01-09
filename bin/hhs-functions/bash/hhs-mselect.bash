@@ -23,7 +23,10 @@ function __hhs_mselect() {
     return 1
   fi
 
-  test -d "$1" -o -s "$1" && echo -e "${RED}\"$1\" is a directory or an existing non-empty file!${NC}" && return 1
+  if [ -d "$1" ] || [ -s "$1" ]; then
+    echo -e "${RED}\"$1\" is a directory or an existing non-empty file!${NC}"
+    return 1
+  fi
 
   HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:=15}
 
@@ -37,7 +40,7 @@ function __hhs_mselect() {
   len=${#all_options[*]}
 
   # When only one option is provided, select the index 0 and return
-  [ "$len" -eq 1 ] && echo "0" >"$outfile" && return 0
+  [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0
   save-cursor-pos
   disable-line-wrap
 
@@ -60,7 +63,7 @@ function __hhs_mselect() {
       fi
       if [ "${#opt_str}" -ge "$columns" ]; then
         echo -e "\033[4D\033[K...${NC}"
-      else 
+      else
         echo -e "${NC}"
       fi
     done
@@ -69,54 +72,54 @@ function __hhs_mselect() {
     read -rs -n 1 -p "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: " KEY_PRESS
 
     case "$KEY_PRESS" in
-    'q'|'Q') # Exit
-      show-cursor
-      enable-line-wrap
-      echo -e "\n${NC}"
-      return 1
-      ;;
-    [1-9]) # When a number is typed, try to scroll to index
-      show-cursor
-      index="$KEY_PRESS"
-      echo -en "$KEY_PRESS"
-      while [ "${#index}" -lt "${#len}" ]; do
-        read -rs -n 1 ANS2
-        [ -z "$ANS2" ] && break
-        echo -en "$ANS2"
-        index="${index}${ANS2}"
-      done
-      hide-cursor
-      # Erase the index typed
-      echo -ne "\033[$((${#index} + 1))D\033[K"
-      if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
-        show_to=$((index - 1))
-        [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
-        show_from=$((show_to - diff_index))
-        sel_index=$((index - 1))
-      fi
-      ;;
-    $'\033') # Handle escape '\e[nX' codes
-      read -rsn2 KEY_PRESS
-      case "$KEY_PRESS" in
-      [A) # Move the cursor upwards
-        if [ "$sel_index" -eq "$show_from" ] && [ "$show_from" -gt 0 ]; then
-          show_from=$((show_from - 1))
-          show_to=$((show_to - 1))
-        fi
-        [ $((sel_index - 1)) -ge 0 ] && sel_index=$((sel_index - 1))
+      'q' | 'Q') # Exit
+        show-cursor
+        enable-line-wrap
+        echo -e "\n${NC}"
+        return 1
         ;;
-      [B) # Move the cursor downwards
-        if [ "$sel_index" -eq "$show_to" ] && [ "$((show_to + 1))" -lt "$len" ]; then
-          show_from=$((show_from + 1))
-          show_to=$((show_to + 1))
+      [1-9]) # When a number is typed, try to scroll to index
+        show-cursor
+        index="$KEY_PRESS"
+        echo -en "$KEY_PRESS"
+        while [ "${#index}" -lt "${#len}" ]; do
+          read -rs -n 1 ANS2
+          [ -z "$ANS2" ] && break
+          echo -en "$ANS2"
+          index="${index}${ANS2}"
+        done
+        hide-cursor
+        # Erase the index typed
+        echo -ne "\033[$((${#index} + 1))D\033[K"
+        if [[ "$index" =~ ^[0-9]*$ ]] && [ "$index" -ge 1 ] && [ "$index" -le "$len" ]; then
+          show_to=$((index - 1))
+          [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
+          show_from=$((show_to - diff_index))
+          sel_index=$((index - 1))
         fi
-        [ $((sel_index + 1)) -lt "$len" ] && sel_index=$((sel_index + 1))
         ;;
-      esac
-      ;;
-    '') # Select current item and exit
-      echo '' && break
-      ;;
+      $'\033') # Handle escape '\e[nX' codes
+        read -rsn2 KEY_PRESS
+        case "$KEY_PRESS" in
+          [A) # Move the cursor upwards
+            if [ "$sel_index" -eq "$show_from" ] && [ "$show_from" -gt 0 ]; then
+              show_from=$((show_from - 1))
+              show_to=$((show_to - 1))
+            fi
+            [ $((sel_index - 1)) -ge 0 ] && sel_index=$((sel_index - 1))
+            ;;
+          [B) # Move the cursor downwards
+            if [ "$sel_index" -eq "$show_to" ] && [ "$((show_to + 1))" -lt "$len" ]; then
+              show_from=$((show_from + 1))
+              show_to=$((show_to + 1))
+            fi
+            [ $((sel_index + 1)) -lt "$len" ] && sel_index=$((sel_index + 1))
+            ;;
+        esac
+        ;;
+      '') # Select current item and exit
+        echo '' && break
+        ;;
     esac
 
     # Erase current line and restore the cursor to the home position
@@ -126,7 +129,7 @@ function __hhs_mselect() {
   show-cursor
   enable-line-wrap
   echo -e "${NC}"
-  echo "$sel_index" >"$outfile"
+  echo "$sel_index" > "$outfile"
 
   return 0
 }
