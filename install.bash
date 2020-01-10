@@ -28,6 +28,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Define the user HOME
   HOME=${HOME:-~}
+  
+  # Dotfiles source location
+  DOTFILES_DIR="$HHS_HOME/dotfiles/bash"
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -102,7 +105,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Dotfiles used by HomeSetup
     ALL_DOTFILES=(
-      "hhs_aliasdef"
       "hhs_aliases"
       "hhs_colors"
       "hhs_env"
@@ -152,6 +154,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     FONTS_DIR="$HOME/Library/Fonts"
 
     # Create all user custom files.
+    [ -f "$HOME/.aliasdef" ] || cp "$DOTFILES_DIR/hhs_aliasdef.bash" "$HOME/.aliasdef"
     [ -f "$HOME/.path" ] || touch "$HOME/.path"
     [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
     [ -f "$HOME/.colors" ] || touch "$HOME/.colors"
@@ -223,7 +226,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       OPT='all'
     fi
 
-    DOTFILES_DIR="$HHS_HOME/dotfiles/bash"
     command pushd "$DOTFILES_DIR" &> /dev/null || quit 1 "Unable to enter dotfiles directory!"
     echo -e "\n${WHITE}Installing dotfiles ${NC}"
 
@@ -295,6 +297,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying git hooks into place ${BLUE}"
     command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &> /dev/null
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+    
+    # Compatibility
+    # Remove old .bash_aliasdef
+    [ -f ~/.bash_aliasdef ] && \rm -f ~/.bash_aliasdef
   }
 
   # Clone the repository and install dotfiles.

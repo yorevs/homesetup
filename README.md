@@ -91,7 +91,7 @@ To override or add customised stuff, you need to create a custom file as follows
 ~/.functions        : To customize your functions
 ~/.profile          : To customize your profile
 ~/.path             : To customize your paths
-~/.bash_aliasdef    : To customize your alias definitions
+~/.aliasdef    : To customize your alias definitions
 ```
 
 ### 4. Aliases

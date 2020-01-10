@@ -48,7 +48,6 @@ check_installation() {
 
   # Dotfiles used by HomeSetup
   ALL_DOTFILES=(
-    "bash_aliasdef"
     "bash_aliases"
     "bash_colors"
     "bash_env"

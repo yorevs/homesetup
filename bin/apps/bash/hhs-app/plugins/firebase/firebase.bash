@@ -91,7 +91,7 @@ build_payload() {
   [ -f "$HOME"/.profile ] && f_profile=$(grep . "$HOME"/.profile | base64)
   [ -f "$HHS_CMD_FILE" ] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
   [ -f "$HHS_SAVED_DIRS" ] && f_savedDirs=$(grep . "$HHS_SAVED_DIRS" | base64)
-  [ -f "$HOME"/.bash_aliasdef ] && f_aliasdef=$(grep . "$HOME"/.bash_aliasdef | base64)
+  [ -f "$HOME"/.aliasdef ] && f_aliasdef=$(grep . "$HOME"/.aliasdef | base64)
 
   # Generate the request payload using the files above
   payload="{ \"$fb_alias\" : { "
@@ -169,7 +169,7 @@ parse_and_save() {
   [ -n "$f_profile" ] && echo "$f_profile" > "$HOME/.profile"
   [ -n "$f_cmdFile" ] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
   [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$HHS_SAVED_DIRS"
-  [ -n "$f_aliasdef" ] && echo "$f_aliasdef" > "$HOME/.bash_aliasdef"
+  [ -n "$f_aliasdef" ] && echo "$f_aliasdef" > "$HOME/.aliasdef"
 }
 
 setup_firebase() {

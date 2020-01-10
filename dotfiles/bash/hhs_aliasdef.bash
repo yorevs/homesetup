@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=
+
 #  Script: bash_aliasdef.bash
 # Purpose: This file is used to customize your prompt alias shortcuts
 # Created: Aug 26, 2008
