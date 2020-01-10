@@ -150,7 +150,8 @@ if __hhs_has "git"; then
         fi
         sel_index=$(grep . "$mselect_file")
         sel_branch="${all_branches["$sel_index"]}"
-        b_name="${sel_branch## /}"
+        b_name="${sel_branch// /}"
+        b_name="${b_name##*\/}"
         if git checkout "$b_name"; then
           ret_val=$?
           if [ -n "$stash_flag" ]; then
