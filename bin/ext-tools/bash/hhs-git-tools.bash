@@ -110,7 +110,8 @@ if __hhs_has "git"; then
   # @param $1 [Opt] : Fetch all branches instead of only local branches (default).
   function __hhs_git_select_branch() {
 
-    local all_branches=() ret_val=0 all_flag='-a' all_str='or remote' sel_index sel_branch mselect_file 
+    local all_branches=() ret_val=0 all_flag='-a' all_str='or remote'
+    local sel_index sel_branch mselect_file stash_flag b_name
 
     if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} [-l||--local]"
@@ -121,23 +122,49 @@ if __hhs_has "git"; then
     else
       [ "$1" = "-l" ] || [ "$1" = "--local" ] && unset all_flag && all_str='\b'
       clear
-      [ -n "$all_flag" ] && echo -en "${YELLOW}=> Updating branches ...${NC}" && git fetch
-      echo -e "\033[1J\r"
+      if [ -n "$all_flag" ]; then
+        echo -en "${YELLOW}=> Updating branches ${NC}"
+        if ! git fetch; then
+          echo -e "${RED}### Unable fetch from remote ${NC}"
+          return 1
+        fi
+        echo -e " ... [   ${GREEN}OK${NC}   ]"
+        sleep 1
+        echo -e "\033[1J\033[H"
+      fi
       echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
       while read -r branch; do
-        b_name="${branch//\*/}" # Removing current branch indicator
-        all_branches+=("${b_name//  / }") # Removing extra spaces
+        b_name=${branch//\* /}
+        all_branches+=("${b_name}")
       done < <(git branch ${all_flag} | grep -v '\->')
       mselect_file=$(mktemp)
       if __hhs_mselect "$mselect_file" "${all_branches[*]}"; then
-        echo -en "${YELLOW}=> Stashing changes prior to change ...${NC}"
-        git stash apply 1> /dev/null
+        if ! git diff-index --quiet HEAD --; then
+          echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
+          if ! git stash &> /dev/null; then
+            echo -e "${RED}### Unable to stash your changes ${NC}"
+            return 1
+          fi
+          stash_flag=1
+          echo -e " ... [   ${GREEN}OK${NC}   ]\n"
+        fi
         sel_index=$(grep . "$mselect_file")
         sel_branch="${all_branches["$sel_index"]}"
-        git checkout "${sel_branch##*/}"
-        ret_val=$?
-        echo -en "${YELLOW}=> Retrieving changes from stash ...${NC}"
-        git stash pop 1> /dev/null
+        b_name="${sel_branch## /}"
+        if git checkout "$b_name"; then
+          ret_val=$?
+          if [ -n "$stash_flag" ]; then
+            echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
+            if ! git stash pop &> /dev/null; then
+              echo -e "${RED}### Unable to retrieve stash changes ${NC}"
+              return 1
+            fi
+            echo -e " ... [   ${GREEN}OK${NC}   ]"
+          fi
+        else
+          echo -e "${RED}### Unable to checkout branch \"${sel_branch}\" ${NC}"
+          return
+        fi
       fi
     fi
     echo ''
