@@ -30,7 +30,7 @@ __hhs_alias() {
   alias_expr="${all_args#*=}"
   alias_name="${all_args//=*}"
   
-  if ! alias "$alias_name" >/dev/null 2>&1; then 
+  if ! type "$alias_name" >/dev/null 2>&1; then
     # shellcheck disable=SC2139
     alias "${alias_name}"="${alias_expr}"
     ret=$?

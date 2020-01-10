@@ -122,7 +122,7 @@ if __hhs_has "git"; then
       [ "$1" = "-l" ] || [ "$1" = "--local" ] && unset all_flag && all_str='\b'
       clear
       [ -n "$all_flag" ] && echo -en "${YELLOW}=> Updating branches ...${NC}" && git fetch
-      printf "%0.s\b" {1..24} && echo -e "\c"
+      echo -e "\033[1J\r"
       echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
       while read -r branch; do
         b_name="${branch//\*/}" # Removing current branch indicator
@@ -131,13 +131,13 @@ if __hhs_has "git"; then
       mselect_file=$(mktemp)
       if __hhs_mselect "$mselect_file" "${all_branches[*]}"; then
         echo -en "${YELLOW}=> Stashing changes prior to change ...${NC}"
-        git stash apply 
+        git stash apply 1> /dev/null
         sel_index=$(grep . "$mselect_file")
         sel_branch="${all_branches["$sel_index"]}"
         git checkout "${sel_branch##*/}"
         ret_val=$?
         echo -en "${YELLOW}=> Retrieving changes from stash ...${NC}"
-        git stash pop
+        git stash pop 1> /dev/null
       fi
     fi
     echo ''

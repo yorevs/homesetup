@@ -176,6 +176,8 @@ class Vault(object):
                     else:
                         cprint(Colors.GREEN, "Passphrase successfully stored")
                         log.debug("Vault passphrase created for user={}".format(VAULT_USER))
+                        with open(VAULT_FILE, 'a'):
+                            os.utime(VAULT_FILE, None)
                         self.is_open = True
                         self.is_modified = True
                         self.is_new = True
@@ -390,6 +392,8 @@ def check_arguments(args, args_num=0):
 
 # @purpose: Initialize the logger
 def log_init():
+    with open(LOG_FILE, 'a'):
+        os.utime(LOG_FILE, None)
     f_size = os.path.getsize(LOG_FILE)
     f_mode = "a" if f_size < MAX_LOG_FILE_SIZE else "w"
     log.basicConfig(

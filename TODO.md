@@ -12,8 +12,4 @@
 
 ## BUGFIX
 
-- [ ] ip-utils.bash 172.17.252.228 is returning taht it's public, but it's private
-- [ ] when exists an application or cuntion __hhs_alias is overriding it
-- [ ] vault is complaining about some file that does not exist
-- [ ] add prefix when using __hhs_alias automatically when a collision occur
-- [ ] gba is not erasing branch fetch info (actually is erasing just the line)
+- [ ] ip-utils.bash 172.17.252.228 is returning that it's public, but it's private
