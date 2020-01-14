@@ -159,3 +159,6 @@ paths -q -a "$HHS_DIR/bin"
 
 # Check for updates
 __hhs_auto-update-check
+
+# Erase what is before the MOTD message and print HHS MOTD
+cls && echo -e "${HHS_MOTD}"

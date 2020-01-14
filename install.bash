@@ -18,9 +18,8 @@
   USAGE="
 Usage: $APP_NAME [OPTIONS] <args>
 
-  -a | --all           : Install all scripts into the user HomeSetup directory without prompting.
-  -q | --quiet         : Do not prompt for questions, use all defaults.
-  -d | --dir <hss_dir> : Specify where to install the HomeSetup files.
+  -a | --all                : Install all scripts into the user HomeSetup directory without prompting.
+  -q | --quiet              : Do not prompt for questions, use all defaults.
 "
 
   # HomeSetup GitHub repository URL.
@@ -197,7 +196,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  Install Type: $METHOD"
     echo -e "       Options: ${OPT:-prompt}"
     echo -e "         Shell: ${SHELL##*/}"
-    echo -e "     HomeSetup: $HHS_HOME"
+    echo -e " HomeSetup Dir: $HHS_HOME"
     echo -e "       Scripts: $BIN_DIR"
     echo -e "         Fonts: $FONTS_DIR"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
@@ -298,9 +297,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &> /dev/null
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     
-    # Compatibility
-    # Remove old .bash_aliasdef
+    # HHS Compatibility {
+    
+    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     [ -f ~/.bash_aliasdef ] && \rm -f ~/.bash_aliasdef
+    
+    # } HHS Compatibility
   }
 
   # Clone the repository and install dotfiles.

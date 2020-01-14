@@ -21,39 +21,46 @@ export HHS_MY_SHELL="${SHELL//\/bin\//}"
 # Home Sweet Homes
 
 # Java
-if command -v java >/dev/null; then
+if command -v java > /dev/null; then
   export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
   export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
 fi
 
 # Python
-if command -v python >/dev/null; then
+if command -v python > /dev/null; then
   export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
 fi
 
 # Qt
-if command -v qmake >/dev/null || [ -d /usr/local/opt/qt/bin ]; then
+if command -v qmake > /dev/null || [ -d /usr/local/opt/qt/bin ]; then
   export QT_HOME="/usr/local/opt/qt/bin"
 fi
 
-# XCode
-if command -v xcode-select >/dev/null; then
-  export XCODE_HOME="$(xcode-select -p)"
-  export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+if [ "Darwin" = "$HHS_MY_OS" ]; then
+  # Hide the annoying warning about zsh
+  export BASH_SILENCE_DEPRECATION_WARNING=1
+  # XCode
+  if command -v xcode-select > /dev/null; then
+    export XCODE_HOME="$(xcode-select -p)"
+    export MACOS_SDK="$XCODE_HOME/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+  fi
 fi
 
 # ----------------------------------------------------------------------------
-# Other environment variables
+# Commonly used folders
 export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-$HOME/.Trash}"
 
-command -v git >/dev/null && export GIT_REPOS="${GIT_REPOS:-$HOME/GIT-Repository}"
-command -v svn >/dev/null && export SVN_REPOS="${SVN_REPOS:-$HOME/SVN-Repository}"
+command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-$HOME/GIT-Repository}"
+command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-$HOME/SVN-Repository}"
 
 [ -d "$HOME/Workspace" ] && export WORKSPACE="${WORKSPACE:-$HOME/Workspace}"
 [ -d "$HOME/Desktop" ] && export DESKTOP="${DESKTOP:-$HOME/Desktop}"
 [ -d "$HOME/Downloads" ] && export DOWNLOADS="${DOWNLOADS:-$HOME/Downloads}"
 [ -d "$HOME/Dropbox" ] && export DROPBOX="${DROPBOX:-$HOME/Dropbox}"
+
+# ----------------------------------------------------------------------------
+# Bash History
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
 export HISTSIZE=${HISTSIZE:-1000}
@@ -64,18 +71,15 @@ export HISTTIMEFORMAT=${HISTTIMEFORMAT:-"[%F %T] "}
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
 
-# Hide the annoying warning about zsh
-[ "Darwin" = "$HHS_MY_OS" ] && export BASH_SILENCE_DEPRECATION_WARNING=1
-
 # ----------------------------------------------------------------------------
 # HomeSetup variables
 
 # Fixed
-export HHS_HOME="$HOME/HomeSetup"
-export HHS_DIR="$HOME/.hhs"
-export HHS_VERSION=$(grep . "$HHS_HOME/.VERSION")
-export HHS_WELCOME="${ORANGE}${HHS_MY_OS} ${GREEN} Welcome to HomeSetup\xef\x87\xb9 ${BLUE}v${HHS_VERSION}${NC}"
-export HHS_RESET_IFS="$IFS"
+export HHS_HOME="${HOME}/HomeSetup"
+export HHS_DIR="${HOME}/.hhs"
+export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
+export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
+export HHS_RESET_IFS="${IFS}"
 export HHS_PLUGINS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
 export HHS_RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
 

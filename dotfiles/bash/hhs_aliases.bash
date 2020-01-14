@@ -89,7 +89,7 @@ alias cp='\cp -iv'
 alias mv='\mv -iv'
 
 # Nice command replacements
-alias cls='\clear'
+alias cls='echo -en "\033[1J\033[H"'
 alias df='\df -H'
 alias du='\du -hcd 1'
 alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
@@ -218,7 +218,7 @@ alias disable-line-wrap='tput rmam' # Disable line wrapping
 # HomeSetup aliases
 
 # Reload the bash session
-__hhs_alias reload='cls; source ~/.bashrc && echo -e "${HHS_WELCOME}"'
+__hhs_alias reload='cls; source ~/.bashrc'
 __hhs_alias vault='hhs vault execute'
 __hhs_alias hspm='hhs hspm execute'
 __hhs_alias dotfiles='hhs firebase execute'
