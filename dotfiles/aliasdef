@@ -8,8 +8,7 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
 # -----------------------------------------------------------------------------------
-# Function aliases shortcuts
-# General
+# General shortcuts
 __hhs_alias hl='__hhs_highlight'
 __hhs_alias tc='__hhs_toolcheck'
 __hhs_alias tl='__hhs_tailor'
@@ -50,7 +49,7 @@ if __hhs_has "python"; then
   __hhs_alias sd='__hhs_search-dir'
   __hhs_alias ss='__hhs_search-string'
 fi
-# GPG shorctus
+# GPG shortcuts
 if __hhs_has "gpg"; then
   __hhs_alias encrypt='__hhs_encrypt_file'
   __hhs_alias decrypt='__hhs_decrypt_file'

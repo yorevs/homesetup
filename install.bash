@@ -33,6 +33,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   
   # Dotfiles source location
   DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
+  
+  ALL_DOTFILES=()
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -72,7 +74,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
 
     # Enable install script to use colors
-    [ -f "${DOTFILES_DIR}/hhs_colors.bash" ] && \. "${DOTFILES_DIR}/hhs_colors.bash"
+    [ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [ -f "${HHS_HOME}/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
 
     # Check if the user passed the help or version parameters.
@@ -98,8 +100,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       shift
     done
 
-    # Dotfiles used by HomeSetup
-    ALL_DOTFILES=()
+    # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
     done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
@@ -117,6 +118,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create/Define the $HOME/.hhs directory
     HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
+    
     if [ ! -d "$HHS_DIR" ]; then
       echo -en "\nCreating '.hhs' directory: "
       echo -en "$(mkdir -p "$HHS_DIR")"
@@ -129,6 +131,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create/Define the $HHS_DIR/bin directory
     BIN_DIR="$HHS_DIR/bin"
+    
     # Create or directory ~/bin if it does not exist
     if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
       echo -en "\nCreating 'bin' directory: "
@@ -136,7 +139,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       [ ! -L "$BIN_DIR" ] && [ ! -d "$BIN_DIR" ] && quit 2 "Unable to create directory $HHS_DIR"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      # Cleaning up old hhs in links
+      # Cleaning up old dotfiles links
       [ -d "$BIN_DIR" ] && rm -f "${BIN_DIR:?}/*.*"
     fi
 
@@ -144,7 +147,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     FONTS_DIR="$HOME/Library/Fonts"
 
     # Create all user custom files.
-    [ -f "$HOME/.aliasdef" ] || cp "$DOTFILES_DIR/hhs_aliasdef.bash" "$HOME/.aliasdef"
+    [ -f "$HOME/.aliasdef" ] || cp "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
     [ -f "$HOME/.path" ] || touch "$HOME/.path"
     [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
     [ -f "$HOME/.colors" ] || touch "$HOME/.colors"
@@ -221,56 +224,54 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [ "$OPT" = 'all' ]; then
       # Copy all dotfiles
       for next in ${ALL_DOTFILES[*]}; do
-        dotfile="$HOME/.${next}"
-        dotfile="${dotfile//hhs/bash}"
+        dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dofile into $HOME/.hhs
-        [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
+        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "$DOTFILES_DIR/${next}.bash" "$dotfile")"
+        echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
-        [ -f "$dotfile" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-        [ -f "$dotfile" ] || echo -e "${WHITE} ... [ ${GREEN}FAILED${NC} ]"
+        [ -f "${dotfile}" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        [ -f "${dotfile}" ] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
       done
     # If `all' option is NOT used, prompt for confirmation
     else
       # Copy all dotfiles
       for next in ${ALL_DOTFILES[*]}; do
-        dotfile="$HOME/.${next}"
-        dotfile="${dotfile//hhs/bash}"
+        dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         echo ''
-        [ -z ${QUIET} ] && read -r -n 1 -sp "Link $dotfile (y/[n])? " ANS
+        [ -z ${QUIET} ] && read -r -n 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && continue
         echo ''
-        # Backup existing dofile into $HOME/.hhs
-        [ -f "$dotfile" ] && mv "$dotfile" "$HHS_DIR/$(basename "${dotfile}".orig)"
+        # Backup existing dofile into $DOTFILES_DIR
+        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "$DOTFILES_DIR/${next}.bash" "$dotfile")"
+        echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
-        [ -f "$dotfile" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-        [ -f "$dotfile" ] || echo -e "${WHITE} ... [ ${GREEN}FAILED${NC} ]"
+        [ -f "${dotfile}" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        [ -f "${dotfile}" ] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
       done
     fi
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
     command find "$BIN_DIR" -maxdepth 1 -type l -delete -print &> /dev/null
-    [ -L "$BIN_DIR/hhs.bash" ] && quit 2 "Unable to remove old app links from $BIN_DIR directory"
+    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] && quit 2 "Unable to remove old app links from $BIN_DIR directory"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link apps into place
     echo -en "\n${WHITE}Linking apps into place ${BLUE}"
-    command find "$HHS_HOME/bin/apps" -maxdepth 2 -type f \( -iname "**.bash" -o -iname "**.py" \) \
+    command find "$HHS_HOME/bin/apps" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &> /dev/null
-    [ -L "$BIN_DIR/hhs.bash" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
+    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
-    # Link bash auto-completes into place
-    echo -en "\n${WHITE}Linking bash auto-completes into place ${BLUE}"
-    command find "$HHS_HOME/bin/auto-completions/bash" -maxdepth 2 -type f \( -iname "**.bash" \) \
+    # Link auto-completes into place
+    echo -en "\n${WHITE}Linking auto-completes into place ${BLUE}"
+    command find "$HHS_HOME/bin/auto-completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &> /dev/null
-    [ -L "$BIN_DIR/git-completion.bash" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
+    [ -L "$BIN_DIR/git-completion.${SHELL_TYPE}" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Copy HomeSetup fonts into place
@@ -305,18 +306,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     sleep 1
     command git clone "$REPO_URL" "$HHS_HOME"
 
-    if [ -f "$DOTFILES_DIR/hhs_colors.bash" ]; then
-      \. "$DOTFILES_DIR/hhs_colors.bash"
+    if [ -f "$DOTFILES_DIR/${SHELL}_colors.${SHELL_TYPE}" ]; then
+      \. "$DOTFILES_DIR/${SHELL}_colors.${SHELL_TYPE}"
     else
       quit 2 "Unable to properly clone the repository!"
     fi
   }
 
-  # Reload the bash and apply the dotfiles.
+  # Reload the terminal and apply installed files.
   activate_dotfiles() {
 
     echo ''
-    echo -e "${GREEN}Done installing HomeSetup files. Reloading bash ...${NC}"
+    echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
     echo -e "${BLUE}"
     sleep 2
 
@@ -332,7 +333,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") installed!"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.bashrc"
+    echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.${SHELL_TYPE}rc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
     echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
     echo -e "${YELLOW}${STAR_ICN} To customize your aliases definitions change the file: ${GREEN}$HOME/.aliasdef"
