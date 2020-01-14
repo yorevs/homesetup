@@ -28,8 +28,11 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Define the user HOME
   HOME=${HOME:-~}
   
+  # Shell type
+  SHELL_TYPE="${SHELL##*/}"
+  
   # Dotfiles source location
-  DOTFILES_DIR="$HHS_HOME/dotfiles/bash"
+  DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -65,15 +68,12 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check which installation method should be used.
   check_inst_method() {
 
-    # Check for previous custom installation dir
-    [ -z "$INSTALL_DIR" ] && INSTALL_DIR="$HOME/HomeSetup"
-
     # Define the HomeSetup directory.
-    HHS_HOME=${HHS_HOME:-$INSTALL_DIR}
+    HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
 
     # Enable install script to use colors
-    [ -f 'dotfiles//bash/hhs_colors.bash' ] && \. 'dotfiles//bash/hhs_colors.bash'
-    [ -f "$HHS_HOME/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "$HHS_HOME/.VERSION") installation ${NC}"
+    [ -f "${DOTFILES_DIR}/hhs_colors.bash" ] && \. "${DOTFILES_DIR}/hhs_colors.bash"
+    [ -f "${HHS_HOME}/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
 
     # Check if the user passed the help or version parameters.
     [ "$1" = '-h' ] || [ "$1" = '--help' ] && quit 0 "$USAGE"
@@ -91,10 +91,6 @@ Usage: $APP_NAME [OPTIONS] <args>
           ANS="Y"
           QUIET=1
           ;;
-        -d | --dir)
-          shift
-          INSTALL_DIR="${1:-$(pwd)}"
-          ;;
         *)
           quit 2 "Invalid option: \"$1\""
           ;;
@@ -103,15 +99,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     done
 
     # Dotfiles used by HomeSetup
-    ALL_DOTFILES=(
-      "hhs_aliases"
-      "hhs_colors"
-      "hhs_env"
-      "hhs_functions"
-      "hhs_profile"
-      "hhs_prompt"
-      "hhsrc"
-    )
+    ALL_DOTFILES=()
+    while IFS='' read -r dotfile; do
+      ALL_DOTFILES+=("${dotfile}")
+    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
     # Create HomeSetup directory
     if [ ! -d "$HHS_HOME" ]; then
@@ -194,12 +185,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e '### Installation Settings ###'
     echo -e "${BLUE}"
     echo -e "  Install Type: $METHOD"
-    echo -e "       Options: ${OPT:-prompt}"
-    echo -e "         Shell: ${SHELL##*/}"
-    echo -e " HomeSetup Dir: $HHS_HOME"
-    echo -e "       Scripts: $BIN_DIR"
-    echo -e "         Fonts: $FONTS_DIR"
-    echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
+    echo -e "         Shell: ${SHELL_TYPE}"
+    echo -e "   Install Dir: ${HHS_HOME}"
+    echo -e "         Fonts: ${FONTS_DIR}"
+    echo -e "      Dotfiles: ${ALL_DOTFILES[*]//hhs/${SHELL_TYPE}}"
     echo -e "${NC}"
 
     if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
