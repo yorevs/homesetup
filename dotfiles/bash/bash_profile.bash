@@ -31,8 +31,14 @@ unalias -a
 
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
-for file in ~/.{profile,bash_colors,colors,bash_env,env,bash_prompt,prompt,bash_aliases,aliasdef,aliases,bash_functions,functions}; do
-  [ -f "$file" ] && source "$file"
+DOTFILES=(
+  profile bash_colors colors bash_env env bash_prompt prompt 
+  bash_aliases aliasdef aliases bash_functions functions bash_completions
+)
+
+# Load all HomeSetup dotfiles
+for file in ${DOTFILES[*]}; do
+  [ -f "${HOME}/.${file}" ] && \. "${HOME}/.${file}"
 done
 
 unset file
@@ -54,10 +60,10 @@ case $HHS_MY_SHELL in
     # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
     shopt -u nocasematch
     export HHS_TERM_OPTS='nocaseglob extglob cdspell checkwinsize nocasematch'
-  ;;
+    ;;
   *)
     export HHS_TERM_OPTS=''
-  ;;
+    ;;
 esac
 
 # Input-rc Options:
@@ -65,8 +71,8 @@ esac
 # - colored-stats: Displays possible completions using different colors to indicate their type
 
 if ! [ -f ~/.inputrc ]; then
-  echo "set completion-ignore-case on" >~/.inputrc
-  echo "set colored-stats on" >>~/.inputrc
+  echo "set completion-ignore-case on" > ~/.inputrc
+  echo "set colored-stats on" >> ~/.inputrc
 else
   case $HHS_MY_OS in
     Darwin)
@@ -74,85 +80,18 @@ else
         -e "s/(^set colored-stats) .*/\1 on/g" \
         -e "s/(^set completion-ignore-case) .*/\1 on/g" \
         ~/.inputrc
-    ;;
+      ;;
     Linux)
       sed -i'' -r \
         -e "s/(^set colored-stats) .*/\1 on/g" \
         -e "s/(^set completion-ignore-case) .*/\1 on/g" \
         ~/.inputrc
-    ;;
+      ;;
   esac
 fi
 
-# -----------------------------------------------------------------------------------
-# Completions
-
-AUTO_CPL_TYPES=()
-
-case $HHS_MY_SHELL in
-
-  bash)
-    AUTO_CPL_D="$HHS_DIR/bin"
-    
-    # Enable tab completion for `git`
-    # Thanks to: https://github.com/git/git/tree/master/contrib/completion
-    if command -v git &>/dev/null; then
-      if [ -f "$AUTO_CPL_D/git-completion.bash" ]; then
-        source "$AUTO_CPL_D/git-completion.bash"
-        AUTO_CPL_TYPES+=('Git')
-      fi
-    fi
-
-    # Enable tab completion for `docker`
-    # Thanks to: Built in docker scripts
-    if command -v docker &>/dev/null; then
-      if [ -f "$AUTO_CPL_D/docker-compose-completion.bash" ]; then
-        source "$AUTO_CPL_D/docker-compose-completion.bash"
-        AUTO_CPL_TYPES+=('Docker-Compose')
-      fi
-      if [ -f "$AUTO_CPL_D/docker-machine-completion.bash" ]; then
-        source "$AUTO_CPL_D/docker-machine-completion.bash"
-        AUTO_CPL_TYPES+=('Docker-Machine')
-      fi
-      if [ -f "$AUTO_CPL_D/docker-completion.bash" ]; then
-        source "$AUTO_CPL_D/docker-completion.bash"
-        AUTO_CPL_TYPES+=('Docker')
-      fi
-    fi
-
-    # Enable tab completion for `gradle`
-    # Thanks to: https://github.com/gradle/gradle-completion
-    if command -v gradle &>/dev/null; then
-        if [ -f "$AUTO_CPL_D/gradle-completion.bash" ]; then
-          source "$AUTO_CPL_D/gradle-completion.bash"
-          AUTO_CPL_TYPES+=('Gradle')
-        fi
-    fi
-    
-    # Enable tab completion for `HomeSetup`
-    source "$AUTO_CPL_D/hhs-completion.bash"
-    AUTO_CPL_TYPES+=('HomeSetup')
-  ;;
-
-esac
-
-export HHS_AUTO_COMPLETIONS="${AUTO_CPL_TYPES[*]}"
-
-unset AUTO_CPL_TYPES
-
 # Add custom paths to the system `$PATH`
-if [ -f "$HOME/.path" ]; then
-  export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
-fi
-
-# term_reset() {
-#   show-cursor
-#   enable-line-wrap
-#   echo -e "${NC}"
-#   trap SIGINT
-# }
-
-# trap term_reset SIGINT
+[ -f "$HOME/.path" ] && export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
 paths -q -a "$HHS_DIR/bin"
