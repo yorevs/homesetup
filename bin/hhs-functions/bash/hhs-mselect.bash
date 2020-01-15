@@ -13,18 +13,18 @@
 # @param $2 [Req] : The array of options.
 function __hhs_mselect() {
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    echo "Usage: ${FUNCNAME[0]} <output_file> <option1 ...>"
+  if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ${FUNCNAME[0]} <output_file> <options...>"
     echo ''
-    echo 'Notes: '
-    echo '  - If only one option is available, mselect will select it and return.'
-    echo '  - A temporary file is suggested to used with this function: [mktemp].'
-    echo '  - The outfile must not exist or be empty.'
+    echo '  Notes: '
+    echo '    - If only one option is available, mselect will select it and return'
+    echo '    - A temporary file is suggested to used with this command: #> mktemp'
+    echo '    - The outfile must not exist or it be an empty file'
     return 1
   fi
 
   if [ -d "$1" ] || [ -s "$1" ]; then
-    echo -e "${RED}\"$1\" is a directory or an existing non-empty file!${NC}"
+    echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
     return 1
   fi
 

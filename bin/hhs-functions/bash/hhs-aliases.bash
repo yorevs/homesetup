@@ -19,12 +19,14 @@ function __hhs_aliases() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"
     echo ''
-    echo 'Options: '
-    echo '           -e | --edit    : Edit the aliases file.'
-    echo '           -s | --sort    : Sort results ASC.'
-    echo '      List all aliases    : When both [alias] and [alias_expr] are NOT provided.'
-    echo '      Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
-    echo '      Remove the alias    : When [alias] is provided but [alias_expr] is not provided.'
+    echo '    Options: '
+    echo '      -e | --edit    : Edit the aliases file.'
+    echo '      -s | --sort    : Sort results ASC.'
+    echo ''
+    echo '  Notes: '
+    echo '    List all aliases    : When both [alias] and [alias_expr] are NOT provided.'
+    echo '    Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
+    echo '    Remove the alias    : When [alias] is provided but [alias_expr] is not provided.'
     echo ''
     return 1
   else
@@ -33,7 +35,7 @@ function __hhs_aliases() {
     
     if [ "$1" = '-e' ] || [ "$1" = "--edit" ]; then
       edit "$alias_file"
-      return 0
+      return $?
     fi
     if [ "$1" = '-s' ] || [ "$1" = "--sort" ]; then
       is_sorted=1

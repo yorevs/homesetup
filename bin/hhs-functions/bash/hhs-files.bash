@@ -14,8 +14,11 @@ function __hhs_del-tree() {
 
   local all dest
 
-  if [ -z "$1" ] || [ "$1" = "/" ] || [ ! -d "$1" ]; then
-    echo "Usage: del-tree <search_path> <glob_exp>"
+  if [[ $# -le 1 ]] || [ ! -d "$1" ]; then
+    echo "Usage: del-tree <search_path> <glob_expr>"
+    return 1
+  elif [ "$1" = '/' ] || [ "$(pwd)" = '/' ] && [ "$1" = '.' ]; then
+    echo "### Can't deltree a protected folder"
     return 1
   else
     # Find all files and folders matching the <glob_exp>

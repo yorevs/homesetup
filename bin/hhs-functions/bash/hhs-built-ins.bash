@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: hhs-utils.bash
+#  Script: hhs-built-ins.bash
 # Created: Oct 6, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -37,30 +37,8 @@ function lss() {
   return $?
 }
 
-# @function: Kills ALL processes specified by $1
-# @param $1 [Req] : The process name to kill
-function pk() {
-
-  local force_flag=
-
-  if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
-    shift
-    force_flag='-f'
-  fi
-
-  for npid in "${@}"; do
-    __hhs_process_list "-q" "$force_flag" "$npid" kill
-    echo -e "\033[3A" # Move up 3 times to beautify the output
-  done
-
-  echo -e '\n'
-
-  return $?
-}
-
 # @function: List all directories recursively (Nth level depth) as a tree
 # @param $1 [Req] : The max level depth to walk into
-
 function lt() {
 
   if __hhs_has "tree"; then
@@ -73,6 +51,30 @@ function lt() {
     fi
   else
     ls -Rl
+  fi
+
+  return $?
+}
+
+# @function: Kills ALL processes specified by $1
+# @param $1 [Req] : The process name to kill
+function pk() {
+
+  local force_flag=
+
+  if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+    shift
+    force_flag='-f'
+  fi
+
+  if [[ $# -gt 0 ]]; then
+    for nproc in "${@}"; do
+      __hhs_process_list "-q" "$force_flag" "$nproc" kill
+      echo -e "\033[3A" # Move up 3 times to beautify the output
+    done
+    echo -e '\n'
+  else
+    echo "Usage: ${FUNCNAME[0]} <process_name...>"
   fi
 
   return $?
@@ -98,9 +100,9 @@ if __hhs_has "python"; then
 
     local result converted uni
 
-    if [ -n "$1" ]; then
+    if [[ $# -gt 0 ]]; then
       for x in "$@"; do
-        uni="${x:0:4}"
+        uni="${x:0:4}" # More digits will be ignored
         echo -e "\n[Uni-$uni]: "
         converted=$(print-uni.py "$uni" | hexdump -Cb)
         result=$(awk '
@@ -112,8 +114,9 @@ if __hhs_has "python"; then
         echo ''
       done
     else
-      echo "Usage: ${FUNCNAME[0]} <unicode-1> [unicode-2 ... unicode-N]"
-      echo "       unicode is a four hex digit"
+      echo "Usage: ${FUNCNAME[0]} <unicode...>"
+      echo ''
+      echo '  Notes: unicode is a four digits hexadecimal'
     fi
 
     return $?

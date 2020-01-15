@@ -21,12 +21,15 @@ function __hhs_command() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options [cmd_alias] <cmd_expression>] | [cmd_index]"
     echo ''
-    echo 'Options: '
-    echo "    [cmd_index] : Execute the command specified by the command index."
-    echo "             -e : Edit the commands file."
-    echo "             -a : Store a command."
-    echo "             -r : Remove a command."
-    echo "             -l : List all stored commands."
+    echo '    Options: '
+    echo '      [cmd_index]   : Execute the command specified by the command index.'
+    echo '      -e | --edit   : Edit the commands file.'
+    echo '      -a | --add    : Store a command.'
+    echo '      -r | --remove : Remove a command.'
+    echo '      -l | --list   : List all stored commands.'
+    echo ''
+    echo '  Notes: '
+    echo '    MSelect command : When no arguments are provided.'
     return 1
   else
     

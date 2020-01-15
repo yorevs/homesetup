@@ -17,15 +17,13 @@ if __hhs_has "gpg"; then
   function __hhs_encrypt_file() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
-      echo "Usage: ${FUNCNAME[0]} <file_name> <passphrase>"
+      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else
-      gpg --yes --batch --passphrase="$2" -c "$1" &>/dev/null
-      if test $? -eq 0; then
+      if gpg --yes --batch --passphrase="$2" -c "$1" &>/dev/null; then
         echo -e "${GREEN}File \"$1\" has been encrypted!${NC}"
-        encode -i "$1.gpg" -o "$1"
-        rm -f "$1.gpg"
-        return 0
+        encode -i "$1.gpg" -o "$1" && rm -f "$1.gpg"
+        return $?
       fi
     fi
 
@@ -41,15 +39,13 @@ if __hhs_has "gpg"; then
   function __hhs_decrypt_file() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 2 ]; then
-      echo "Usage: ${FUNCNAME[0]} <file_name> <passphrase>"
+      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else
       decode -i "$1" -o "$1.gpg"
-      gpg --yes --batch --passphrase="$2" "$1.gpg" &>/dev/null
-      if test $? -eq 0; then
-        echo -e "${GREEN}File \"$1\" has been decrypted!${NC}"
-        rm -f "$1.gpg"
-        return 0
+      if gpg --yes --batch --passphrase="$2" "$1.gpg" &>/dev/null; then
+        echo -e "${GREEN}File \"$1\" has been decrypted!${NC}" && rm -f "$1.gpg"
+        return $?
       fi
     fi
 

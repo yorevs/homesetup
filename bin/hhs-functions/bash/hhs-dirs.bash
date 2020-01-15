@@ -78,6 +78,9 @@ function __hhs_load-dir() {
     echo 'Options: '
     echo '    [dir_alias] : Change to the directory saved from the alias provided.'
     echo '             -l : List all saved dirs.'
+    echo ''
+    echo '  Notes: '
+    echo '    MSelect directory : When no arguments are provided.'
     return 1
   fi
 
