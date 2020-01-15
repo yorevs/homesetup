@@ -52,7 +52,7 @@ UUID_RE='^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12
 HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
 # File to store the saved directories.
-HHS_SAVED_DIRS=${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}
+HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
 
 # Firebase configuration format
 FB_CONFIG_FMT="
@@ -90,7 +90,7 @@ build_payload() {
   [ -f "$HOME"/.path ] && f_path=$(grep . "$HOME"/.path | base64)
   [ -f "$HOME"/.profile ] && f_profile=$(grep . "$HOME"/.profile | base64)
   [ -f "$HHS_CMD_FILE" ] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
-  [ -f "$HHS_SAVED_DIRS" ] && f_savedDirs=$(grep . "$HHS_SAVED_DIRS" | base64)
+  [ -f "$HHS_SAVED_DIRS_FILE" ] && f_savedDirs=$(grep . "$HHS_SAVED_DIRS_FILE" | base64)
   [ -f "$HOME"/.aliasdef ] && f_aliasdef=$(grep . "$HOME"/.aliasdef | base64)
 
   # Generate the request payload using the files above
@@ -168,7 +168,7 @@ parse_and_save() {
   [ -n "$f_functions" ] && echo "$f_functions" > "$HOME/.functions"
   [ -n "$f_profile" ] && echo "$f_profile" > "$HOME/.profile"
   [ -n "$f_cmdFile" ] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
-  [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$HHS_SAVED_DIRS"
+  [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$HHS_SAVED_DIRS_FILE"
   [ -n "$f_aliasdef" ] && echo "$f_aliasdef" > "$HOME/.aliasdef"
 }
 

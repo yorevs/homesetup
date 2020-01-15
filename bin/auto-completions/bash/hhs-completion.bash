@@ -21,7 +21,7 @@ __hhs_complete() {
 
 __hhs_comp-load-dir() {
 
-  local suggestions=($(grep . "$HHS_SAVED_DIRS" | awk -F'=' '{print $1}'))
+  local suggestions=($(grep . "$HHS_SAVED_DIRS_FILE" | awk -F'=' '{print $1}'))
 
   __hhs_complete "${suggestions[@]}"
 

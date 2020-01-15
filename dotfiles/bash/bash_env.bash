@@ -14,6 +14,7 @@
 export LC_ALL=en_US
 export LANG=en_US.UTF-8
 
+# Current OS and Terminal
 export HHS_MY_OS="$(uname -s)"
 export HHS_MY_SHELL="${SHELL//\/bin\//}"
 
@@ -77,22 +78,21 @@ export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
 # Fixed
 export HHS_HOME="${HOME}/HomeSetup"
 export HHS_DIR="${HOME}/.hhs"
+export HHS_PLUGINS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
 export HHS_RESET_IFS="${IFS}"
-export HHS_PLUGINS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
-export HHS_RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
+export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
+export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
+export HHS_PATHS_FILE="${HOME}/.path"
 
 # Customizeable
 export HHS_DEFAULT_EDITOR=
 export HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:-15}
 export HHS_MAXDEPTH="${HHS_MAXDEPTH:-10}"
-export HHS_SAVED_DIRS="${HHS_SAVED_DIRS:-$HHS_DIR/.saved_dirs}"
-export HHS_CMD_FILE="${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}"
-export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-$HHS_DIR/.punches}"
-export HHS_PATHS_FILE="${HHS_PATHS_FILE:-$HOME/.path}"
-export HHS_VAULT_FILE="${HHS_VAULT_FILE:-$HOME/.hhs/.vault}"
-export HHS_VAULT_USER="${HHS_VAULT_USER:-$USER}"
+export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
+export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
+export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 HHS_DEFAULT_DEV_TOOLS=(

@@ -46,6 +46,9 @@ ALL_RECIPES=()
 # shellcheck disable=2206
 DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 
+# Directiry containing all hspm recipes
+RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
+
 # Unset all declared functions from the recipes
 cleanup_recipes() {
 
@@ -58,7 +61,7 @@ list_recipes() {
   local index=0 recipe pad_len=20
   local pad=$(printf '%0.1s' "."{1..60})
   for app in ${DEV_TOOLS[*]}; do
-    recipe="$HHS_RECIPES_DIR/$(uname -s)/${app}.recipe"
+    recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
     if [ -n "$recipe" ] && [ -f "$recipe" ]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
@@ -87,7 +90,7 @@ install_recipe() {
 
   local recipe
 
-  recipe="${HHS_RECIPES_DIR}/$(uname -s)/$1.recipe"
+  recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
 
   if [ -f "$recipe" ]; then
     echo ''
@@ -110,7 +113,7 @@ install_recipe() {
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
-  recipe="$HHS_RECIPES_DIR/$(uname -s)/$1.recipe"
+  recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
   if [ -f "$recipe" ]; then
     echo ''
     \. "$recipe"
