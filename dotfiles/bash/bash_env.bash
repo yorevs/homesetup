@@ -89,7 +89,6 @@ export HHS_PATHS_FILE="${HOME}/.path"
 # Customizeable
 export HHS_DEFAULT_EDITOR=
 export HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:-15}
-export HHS_MAXDEPTH="${HHS_MAXDEPTH:-10}"
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"

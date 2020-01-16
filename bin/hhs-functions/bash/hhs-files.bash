@@ -22,7 +22,7 @@ function __hhs_del-tree() {
     return 1
   else
     # Find all files and folders matching the <glob_exp>
-    all=$(find -L . -maxdepth "${HHS_MAXDEPTH}" "$1" -name "*$2" 2>/dev/null)
+    all=$(find -L . "$1" -name "*$2" 2>/dev/null)
     # Move all to trash
     if [ -n "$all" ]; then
       read -r -n 1 -sp "${RED}### Do you want to move all files and folders matching: \"$2\" in \"$1\" recursively to Trash (y/[n]) ? " ANS
