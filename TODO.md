@@ -3,7 +3,6 @@
 ## TODO
 
 - [ ] Add a deployer system
-- [ ] Improve command helps
 - [ ] Add authentication to FB requests and encode the firebase config and add .vault to firebase
 - [ ] Update README.MD
 - [ ] install.bash might install required tools (ask for it)

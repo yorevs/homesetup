@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #shellcheck disable=SC2181
 
-#  Script: hhs-paths.bash
+#  Script: update.bash
+# Purpose: Update manager for HomeSetup
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -11,7 +12,7 @@
 
 # shellcheck disable=SC2086,SC2120
 # @function: Check the current HomeSetup installation and look for updates.
-function __hhs_update() {
+__hhs_update() {
 
   local repo_ver is_different
   local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
@@ -62,7 +63,7 @@ function __hhs_update() {
 
 # shellcheck disable=SC2086,SC2119
 # @function: Check the last_update timestamp and check for updates if required
-function __hhs_auto-update-check() {
+__hhs_auto-update-check() {
 
   local today nextCheck
 
@@ -76,7 +77,7 @@ function __hhs_auto-update-check() {
 }
 
 # @function: Stamp the next update timestamp
-function __hhs_stamp-next-update() {
+__hhs_stamp-next-update() {
   if [ ! -f "${HHS_DIR}/.last_update" ]; then
     # Stamp the next update check for today
     nextCheck=$(date "+%s%S")
@@ -88,4 +89,20 @@ function __hhs_stamp-next-update() {
   echo $nextCheck
 
   return 0
+}
+
+function help() {
+  echo "TODO"
+}
+
+function version() {
+  echo "TODO"
+}
+
+function cleanup() {
+  echo "TODO"
+}
+
+function execute() {
+  echo "TODO"
 }
