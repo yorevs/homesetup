@@ -9,7 +9,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: TODO: Comment it
+# @function: Lazy load healper function to initialize NVM for the terminal
 function __hhs_activate-nvm() {
 
   echo -en "Activating NVM app ...... "
@@ -28,7 +28,7 @@ function __hhs_activate-nvm() {
   fi
 }
 
-# @function: TODO: Comment it
+# @function: Lazy load healper function to initialize RVM for the terminal
 function __hhs_activate-rvm() {
 
   echo -en "Activating RVM app ...... "
@@ -45,7 +45,7 @@ function __hhs_activate-rvm() {
   fi
 }
 
-# @function: TODO: Comment it
+# @function: Lazy load healper function to initialize Jenv for the terminal
 function __hhs_activate-jenv() {
 
   echo -en "Activating JENV app ..... "
@@ -56,7 +56,7 @@ function __hhs_activate-jenv() {
   return $?
 }
 
-# @function: TODO: Comment it
+# @function: Lazy load healper function to initialize Docker-Daemon for the terminal
 function __hhs_activate-docker() {
 
   echo -en "Activating Docker app ... "
@@ -64,6 +64,6 @@ function __hhs_activate-docker() {
   # Docker daemon setup
   open "${DK_LOC}" &>/dev/null \
     && echo "${GREEN}[  OK  ]${NC}" \
-    || echo -e "${RED}[ FAIL ] => Docker.app wa not found: ${DK_LOC} at !${NC}"
+    || echo -e "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at !${NC}"
   return $?
 }

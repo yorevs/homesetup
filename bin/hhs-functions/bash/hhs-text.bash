@@ -13,14 +13,16 @@
 # @param $1 [Pip] : The piped input stream.
 function __hhs_highlight() {
 
-  local search="${1}" file="${2:-/dev/stdin}" hl_color="${HHS_HIGHLIGHT_COLOR}" gflags="-Ei"
+  local search file hl_color="${HHS_HIGHLIGHT_COLOR}" gflags="-Ei"
 
-  if [[ $# -le 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <text_to_highlight> [filename]"
     echo ''
     echo '  Notes: '
     echo '    filename: If not provided, stdin will be used instead'
   else
+    search="${1:-.*}" 
+    file="${2:-/dev/stdin}"
     hl_color=${HHS_HIGHLIGHT_COLOR//\e[/}
     hl_color=${HHS_HIGHLIGHT_COLOR/m/}
     while read -r stream; do

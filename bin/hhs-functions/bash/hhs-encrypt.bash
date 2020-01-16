@@ -20,10 +20,11 @@ if __hhs_has "gpg"; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else
-      if gpg --yes --batch --passphrase="$2" -c "$1" &>/dev/null; then
-        echo -e "${GREEN}File \"$1\" has been encrypted!${NC}"
-        encode -i "$1.gpg" -o "$1" && rm -f "$1.gpg"
-        return $?
+      if gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null; then
+        if encode -i "$1.gpg" -o "$1" && rm -f "$1.gpg"; then
+          echo -e "${GREEN}File \"$1\" has been encrypted!${NC}"
+          return $?
+        fi
       fi
     fi
 
@@ -42,10 +43,11 @@ if __hhs_has "gpg"; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else
-      decode -i "$1" -o "$1.gpg"
-      if gpg --yes --batch --passphrase="$2" "$1.gpg" &>/dev/null; then
-        echo -e "${GREEN}File \"$1\" has been decrypted!${NC}" && rm -f "$1.gpg"
-        return $?
+      if decode -i "$1" -o "$1.gpg"; then
+        if gpg --yes --batch --passphrase="$2" "$1.gpg" &> /dev/null; then
+          echo -e "${GREEN}File \"$1\" has been decrypted!${NC}" && rm -f "$1.gpg"
+          return $?
+        fi
       fi
     fi
 

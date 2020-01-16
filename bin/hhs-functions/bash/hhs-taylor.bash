@@ -13,7 +13,7 @@
 # @param $1 [Req] : The log file name.
 function __hhs_tailor() {
 
-  local file="${1:-/dev/stdin}"
+  local file
 
   if [ -n "$1" ] && [ ! -f "$1" ]; then
     echo "Usage: ${FUNCNAME[0]} [filename]"
@@ -41,6 +41,7 @@ function __hhs_tailor() {
     " > "$HHS_DIR/.tailor"
 
     [ -f "$HHS_DIR/.tailor" ] && \. "$HHS_DIR/.tailor"
+    file="${1:-/dev/stdin}"
 
     if [ "${file}" = '/dev/stdin' ]; then
       while read -r stream; do
