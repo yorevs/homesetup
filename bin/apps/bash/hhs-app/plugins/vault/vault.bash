@@ -19,7 +19,7 @@ function version() {
 }
 
 function cleanup() {
-  exit 0
+  echo -n ''
 }
 
 function execute() {

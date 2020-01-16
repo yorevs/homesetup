@@ -222,6 +222,7 @@ __hhs_alias reload='cls; source ~/.bashrc'
 __hhs_alias vault='hhs vault execute'
 __hhs_alias hspm='hhs hspm execute'
 __hhs_alias dotfiles='hhs firebase execute'
+__hhs_alias hhu='hhs updater execute --update'
 
 # Directory Shortcuts
 [ -d "${DESKTOP}" ] && __hhs_alias desk='cd ${DESKTOP}'

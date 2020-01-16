@@ -9,7 +9,7 @@
 
 # Functions to be unset after quit
 UNSETS+=(
-  'main' 'has_function' 'has_plugin' 'has_command' 'validate_plugin' 
+  'main' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
   'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
 )
 
@@ -22,7 +22,7 @@ VERSION=0.9.1
 USAGE="
 Usage: ${APP_NAME} [option] <plugin_name> {task} <command> [args...]
 
-    HomeSetup application manager.
+    HomeSetup Application Manager.
     
     Options:
       -v  |  --version              : Display current program version.
@@ -49,7 +49,7 @@ Usage: ${APP_NAME} [option] <plugin_name> {task} <command> [args...]
 LOCAL_FUNCTIONS=()
 
 # List of required functions a plugin must have
-PLUGINS_FNCS=('help' 'version' 'cleanup' 'execute')
+PLUGINS_FNCS=('help' 'version' 'execute')
 
 # List of valid plugins
 PLUGINS_LIST=()
@@ -60,7 +60,7 @@ PLUGINS=()
 # Purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
 has_function() {
-  
+
   if [ -n "${1}" ] && [[ ${LOCAL_FUNCTIONS[*]} =~ ${1} ]]; then
     return 0
   fi
@@ -162,33 +162,38 @@ parse_args() {
 # shellcheck disable=SC1090
 # Purpose: Invoke the plugin command
 invoke_command() {
-  
-  has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\". Type '#> hhs list' to find out options."
+
+  has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
   # Open a new subshell, so that we can configure the running environment
   (
     for idx in "${!PLUGINS[@]}"; do
       if [[ "${PLUGINS[idx]}" = "${1}" ]]; then
-        [ -s "${PLUGINS_LIST[idx]}" ] && \. "${PLUGINS_LIST[idx]}"
+        [ -s "${PLUGINS_LIST[idx]}" ] || exit 1
+        \. "${PLUGINS_LIST[idx]}"
         shift
         plg_cmd="${1}"
         has_command "${plg_cmd}" || quit 1 "Command not available: ${plg_cmd}"
         shift
         ${plg_cmd} "${@}"
-        ret=$?
+        ret=${?}
         cleanup
         unset "${PLUGINS_FNCS[@]}"
         exit $ret
+      else
+        [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && exit 255
       fi
     done
-    exit 1
+    exit 0
   )
-
-  quit ${?}
+  ret=${?}
+  [[ ${ret} -eq 255 ]] && quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
+  
+  return ${ret}
 }
 
 # Purpose: Read all iinternal functions and make them available to use
 register_functions() {
-  
+
   while IFS='' read -r fnc; do
     f_name="${fnc##function }"
     f_name="${f_name%\(\) \{}"
@@ -201,36 +206,41 @@ register_functions() {
 # ------------------------------------------
 # Local functions
 
-# Functions MUST start with 'function' qualifier and 
+# Functions MUST start with 'function' keyword and
 # MUST quit <exit)coode> with the proper exit code
 
 # Purpose: Provide a help for __hhs functions
 function help() {
-  
-  quit 0 "TODO: HELP => Functions are not yet implemented"
+
+  usage 0
 }
 
 # Purpose: List all __hhs functions
 function list() {
-  
-  quit 0 "TODO: LIST => Functions are not yet implemented"
+
+  register_plugins
+  echo ' '
+  echo "${YELLOW}Available HomeSetup Application Manager plugins (${#PLUGINS[@]}):"
+  echo ' '
+  for idx in "${!PLUGINS[@]}"; do
+    echo -e "${WHITE}$((idx + 1)). Registered plug-in => ${BLUE}\"${PLUGINS[$idx]}\"${NC}"
+  done
+  quit 0
 }
 
 # ------------------------------------------
 # Purpose: Program entry point
 main() {
-  
   parse_args "${@}"
   register_functions
-  
   if has_function "${1}"; then
     ${1} "${@}"
-    quit 1 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
+    quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
-  
   register_plugins
-  [[ ${#INVALID[@]} -gt 0 ]] && quit 0 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
-  invoke_command "${@}"
+  [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
+
+  invoke_command "${@}" || quit 2 "Failed to execute (${?}) plugin: \"${1}\" !"
 }
 
 main "${@}"

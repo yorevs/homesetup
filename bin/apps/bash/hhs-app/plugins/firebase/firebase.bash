@@ -207,11 +207,11 @@ function help() {
 
 function version() {
   echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
+  exit 0
 }
 
 function cleanup() {
   unset "${UNSETS[@]}"
-  exit $?
 }
 
 function execute() {
@@ -254,4 +254,6 @@ function execute() {
       ;;
   esac
   shopt -u nocasematch
+  
+  exit 0
 }

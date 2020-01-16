@@ -292,6 +292,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     [ -f ~/.bash_aliasdef ] && \rm -f ~/.bash_aliasdef
     
+    # hhu was remodeled, so, remove any alias in aliasdef of it
+    sed -i '' -E -e 's#((__hhs_alias|alias) hhu=.*)##g' -e '/^\s*$/d' ~/.aliasdef
+    
     # } HHS Compatibility
   }
 

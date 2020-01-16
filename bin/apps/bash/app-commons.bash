@@ -31,26 +31,25 @@ UNSETS=('quit' 'usage' 'version' 'trim')
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-
   # Unset all declared functions
   unset -f quit usage version trim "${UNSETS[*]}"
-  ret=${1:-0}
+  exit_code=${1:-0}
   shift
-  [[ $ret -ne 0 ]] && echo -en "${RED}"
+  [[ $exit_code -ne 0 ]] && echo -en "${RED}"
   echo -e "${*} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
   # shellcheck disable=SC2086
-  exit ${ret}
+  exit ${exit_code}
 }
 
 # Usage message.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
-  ret=${1:-0}
+  exit_code=${1:-0}
   shift
   echo -en "${USAGE}"
   [[ ${#} -gt 0 ]] && echo ''
-  quit "${ret}" "$@"
+  quit "${exit_code}" "$@"
 }
 
 # Version message.
