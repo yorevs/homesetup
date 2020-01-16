@@ -9,8 +9,8 @@
 
 # Functions to be unset after quit
 UNSETS+=(
-  'main' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
-  'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
+  'main' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
+  'register_plugins' 'register_local_functions' 'parse_args' 'invoke_command' 'register_hhs_functions'
 )
 
 # shellcheck disable=SC2034
@@ -20,7 +20,7 @@ VERSION=0.9.1
 # shellcheck disable=SC2034
 # Usage message
 USAGE="
-Usage: ${APP_NAME} [option] <plugin_name> {task} <command> [args...]
+Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
     HomeSetup Application Manager.
     
@@ -40,6 +40,9 @@ Usage: ${APP_NAME} [option] <plugin_name> {task} <command> [args...]
       (0) Success.
       (1) Failure due to missing/wrong client input or similar issues.
       (2) Failure due to program/plugin execution failures.
+  
+  Notes: 
+    - To discover which plugins and functions are available type: hhs list
 "
 
 # shellcheck disable=SC1090
@@ -47,6 +50,9 @@ Usage: ${APP_NAME} [option] <plugin_name> {task} <command> [args...]
 
 # List of local functions that can be executed
 LOCAL_FUNCTIONS=()
+
+# List of HomeSetup functions available
+HHS_FUNCTIONS=()
 
 # List of required functions a plugin must have
 PLUGINS_FNCS=('help' 'version' 'execute')
@@ -187,12 +193,12 @@ invoke_command() {
   )
   ret=${?}
   [[ ${ret} -eq 255 ]] && quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
-  
+
   return ${ret}
 }
 
 # Purpose: Read all iinternal functions and make them available to use
-register_functions() {
+register_local_functions() {
 
   while IFS='' read -r fnc; do
     f_name="${fnc##function }"
@@ -201,6 +207,23 @@ register_functions() {
   done < <(grep '^function .*()' < "$0")
   # Register the functions to be unset when program quits
   UNSETS+=("${LOCAL_FUNCTIONS[@]}")
+}
+
+register_hhs_functions() {
+
+  local all_hhs_fn
+
+  all_hhs_fn=$(grep -nR "^function __hhs_" "${HHS_HOME}" | sed -E 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
+
+  for fn in ${all_hhs_fn}; do
+    filename=$(basename "$fn" | awk -F ':function' '{print $1}')
+    filename=$(printf '%-30.30s' "${filename}")
+    fn_name=$(awk -F ':function' '{print $2}' <<< "$fn")
+    HHS_FUNCTIONS+=("${filename// /.} => ${fn_name}")
+  done
+  echo "${NR}"
+
+  return 0
 }
 
 # ------------------------------------------
@@ -218,26 +241,49 @@ function help() {
 # Purpose: List all __hhs functions
 function list() {
 
-  register_plugins
   echo ' '
-  echo "${YELLOW}Available HomeSetup Application Manager plugins (${#PLUGINS[@]}):"
+  echo "${YELLOW}HomeSetup Application Manager"
+  echo ' '
+  echo " ${YELLOW}---- Plugins"
   echo ' '
   for idx in "${!PLUGINS[@]}"; do
-    echo -e "${WHITE}$((idx + 1)). Registered plug-in => ${BLUE}\"${PLUGINS[$idx]}\"${NC}"
+    printf "${WHITE}%.2d. " "$((idx + 1))"
+    echo -e "Registered plug-in => ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
   done
+
+  echo ' '
+  echo " ${YELLOW}---- Functions"
+  echo ' '
+  for idx in "${!LOCAL_FUNCTIONS[@]}"; do
+    printf "${WHITE}%.2d. " "$((idx + 1))"
+    echo -e "Registered built-in function => ${HHS_HIGHLIGHT_COLOR}\"${LOCAL_FUNCTIONS[$idx]}\"${NC}"
+  done
+
   quit 0
+}
+
+function functions() {
+  
+  register_hhs_functions
+  
+  echo "${YELLOW}Available HomeSetup Functions"
+  echo ' '
+  for idx in "${!HHS_FUNCTIONS[@]}"; do
+    printf "${WHITE}%.2d. " "$((idx + 1))"
+    echo -e "Registered __hhs_<function> => ${HHS_HIGHLIGHT_COLOR}\"${HHS_FUNCTIONS[$idx]}\"${NC}"
+  done
 }
 
 # ------------------------------------------
 # Purpose: Program entry point
 main() {
   parse_args "${@}"
-  register_functions
+  register_local_functions
+  register_plugins
   if has_function "${1}"; then
     ${1} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
-  register_plugins
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
   invoke_command "${@}" || quit 2 "Failed to execute (${?}) plugin: \"${1}\" !"
