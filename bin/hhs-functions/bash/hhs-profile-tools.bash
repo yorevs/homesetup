@@ -10,9 +10,9 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: TODO: Comment it
-function activate-nvm() {
+function __hhs_activate-nvm() {
 
-  echo -en "Activating NVM app .... "
+  echo -en "Activating NVM app ...... "
   # NVM setup
   export NVM_DIR="$HOME/.nvm"
   if [ -s "$NVM_DIR/nvm.sh" ]; then
@@ -29,9 +29,9 @@ function activate-nvm() {
 }
 
 # @function: TODO: Comment it
-function activate-rvm() {
+function __hhs_activate-rvm() {
 
-  echo -en "Activating RVM app .... "
+  echo -en "Activating RVM app ...... "
   # RVM setup
   export RVM_DIR="$HOME/.rvm"
   if [ -s "$HOME/.rvm/scripts/rvm" ]; then
@@ -46,9 +46,9 @@ function activate-rvm() {
 }
 
 # @function: TODO: Comment it
-function activate-jenv() {
+function __hhs_activate-jenv() {
 
-  echo -en "Activating JENV app ... "
+  echo -en "Activating JENV app ..... "
   # JENV setup
   eval "$(jenv init -)" &>/dev/null \
     && echo "${GREEN}[  OK  ]${NC}" \
@@ -57,7 +57,7 @@ function activate-jenv() {
 }
 
 # @function: TODO: Comment it
-function activate-docker() {
+function __hhs_activate-docker() {
 
   echo -en "Activating Docker app ... "
   DK_LOC='/Applications/Docker.app'

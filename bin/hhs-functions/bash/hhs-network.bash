@@ -28,9 +28,8 @@ if __hhs_has "dig"; then
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
       echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
       return 1
-    else
-      dig +short -x "$1"
     fi
+    dig +short -x "$1"
 
     return $?
   }
@@ -44,24 +43,28 @@ else
 
     ext_ip=$(curl ifconfig.me 2> /dev/null)
 
-    [ -n "$ext_ip" ] && echo "${ext_ip//\"/}" && return 0 || return 1
+    [ -n "$ext_ip" ] && echo "${ext_ip//\"/}" && return 0
+
+    return 1
   }
 
 fi
 
 # The followng functions require ifconfig to work
 if __hhs_has "ifconfig"; then
-  
+
   # @function: Get a list of all machine IPs
   function __hhs_all_ips() {
-    
+
     local all_ips
-    
+
     all_ips=$(ifconfig -a | grep -o "inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)" | awk "{ sub(/inet6? (addr:)? ?/, \"\"); print }")
-    
-    [ -n "$all_ips" ] && echo "${all_ips}" && return 0 || return 1
+
+    [ -n "$all_ips" ] && echo "${all_ips}" && return 0
+
+    return 1
   }
-  
+
   # @function: Get local IP of active interfaces
   function __hhs_local_ip() {
 
@@ -78,22 +81,26 @@ if __hhs_has "ifconfig"; then
       return 1
     fi
 
-    [ -n "$local_ips" ] && return 0 || return 1
+    [ -n "$local_ips" ] && return 0
+
+    return 1
   }
-  
+
   # @function: Get a list of active network interfaces
   function __hhs_active_ifaces() {
-    
+
     local ifaces
-    
+
     if __hhs_has "pcregrep"; then
       ifaces=$(ifconfig | pcregrep -M -o "^[^\t:]+:([^\n]|\n\t)*status: active")
     else
       echo "${YELLOW}pcregrep is required to use ${FUNCNAME[0]} ${HHS_HIGHLIGHT_COLOR}"
       return 1
     fi
-    
-    [ -n "$ifaces" ] && echo "${ifaces}" && return 0 || return 1
+
+    [ -n "$ifaces" ] && echo "${ifaces}" && return 0
+
+    return 1
   }
 
   # @function: Get IP of active VPN
@@ -103,7 +110,9 @@ if __hhs_has "ifconfig"; then
 
     vpn_ip=$(ifconfig | grep -A1 '.*tun[0-9]' | grep 'inet ' | cut -d ' ' -f2)
 
-    [ -n "$vpn_ip" ] && echo "${vpn_ip}" && return 0 || return 1
+    [ -n "$vpn_ip" ] && echo "${vpn_ip}" && return 0
+
+    return 1
   }
 
 fi
@@ -115,7 +124,7 @@ function __hhs_gateway_ip() {
 
   if [ -n "${gw_ip}" ]; then
     echo "${gw_ip}" | grep 'gateway' | cut -b 14-
-    return 0
+    return $?
   fi
 
   return 1
@@ -127,22 +136,22 @@ function __hhs_ip-info() {
 
   local ipinfo
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+  if [ "$#" -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
     return 1
   else
     ipinfo=$(curl -m 5 --basic "ip-api.com/json/$1" 2> /dev/null | tr ' ' '_')
-    [ -n "$ipinfo" ] && __hhs_json-print "$ipinfo"
+    [ -n "$ipinfo" ] && __hhs_json-print "$ipinfo" && return 0
   fi
 
-  return 0
+  return 1
 }
 
 # @function: Lookup DNS entries to determine the IP address.
 # @param $1 [Req] : The domain name to lookup.
 function __hhs_ip-lookup() {
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+  if [ "$#" -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <domain_name>"
     return 1
   else
@@ -157,19 +166,35 @@ function __hhs_ip-lookup() {
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
 function __hhs_port-check() {
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+  local state port re='(((([0-9]{1,3})\.){3}[0-9]{1,3})|\*)'
+
+  if [ "$#" -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <port_number> [port_state]"
-    echo 'States: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]'
+    echo ''
+    echo '  Notes: '
+    echo '    States: One of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]'
     return 1
   elif [ -n "$1" ] && [ -n "$2" ]; then
-    echo "Checking port \"$1\" state: \"$2\""
-    echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
-    netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$2"
+    port=${1:0:5}
+    state=$(echo "$2" | tr '[:lower:]' '[:upper:]')
+    if [[ "$state" =~ ^(CLOSE_WAIT|ESTABLISHED|FIN_WAIT_2|TIME_WAIT|LISTEN)$ ]]; then
+      echo -e "\n${YELLOW}Checking for ports \"$port\" with current state of \"$state\" ${NC}\n"
+      echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
+      netstat -an | grep -E "${re}(\.${port})" | hl "$state"
+      echo ''
+      return $?
+    else
+      echo -e "${RED}## Invalid state \"$state\". Use one of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
+    fi
   elif [ -n "$1" ] && [ -z "$2" ]; then
-    echo "Checking port \"$1\" state: \"ALL\""
+    port=${1:0:5}
+    echo -e "\n${YELLOW}Checking for \"ALL\" ports ($port) with any state ${NC}\n"
     echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        (state) "
-    netstat -an | grep -E '((([0-9]{1,3}\.){4})|(\*\.))'"$1" | grep -i "$1"
+    netstat -an | grep -E "${re}(\.${port})" | hl "$port"
+    echo ''
+    return $?
   fi
+  echo ''
 
   return 0
 }

@@ -69,7 +69,7 @@ function pk() {
 
   if [[ $# -gt 0 ]]; then
     for nproc in "${@}"; do
-      __hhs_process_list "-q" "$force_flag" "$nproc" kill
+      __hhs_process_list -q $force_flag "${nproc}" kill
       echo -e "\033[3A" # Move up 3 times to beautify the output
     done
     echo -e '\n'

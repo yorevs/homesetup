@@ -15,16 +15,16 @@ if __hhs_has "python"; then
   # @param $2 [Req] : The GLOB expressions of the file search.
   function __hhs_search-file() {
 
-    local inames
+    local inames expr
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+      echo "Usage: ${FUNCNAME[0]} <search_path> <file_globs...>"
       echo ''
-      echo "Usage: ${FUNCNAME[0]} <search_path> <comma_separated_globs>"
-      echo '  ** Globs listed like: "*.txt,*.md,*.rtf"'
-      echo ''
+      echo '  Notes: '
+      echo '    ** <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
-      local expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      expr="e=\"$2\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for files matching: \"$2\" in \"$1\" ${NC}"
       eval "find -L $1 -maxdepth ${HHS_MAXDEPTH} -type f \( $inames \) 2> /dev/null | __hhs_highlight \"(${2//\*/.*}|$)\""
@@ -37,16 +37,16 @@ if __hhs_has "python"; then
   # @param $2 [Req] : The GLOB expressions of the directory search.
   function __hhs_search-dir() {
 
-    local inames dir="${1}" filter="${2}"
+    local inames expr dir="${1}" filter="${2}"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+      echo "Usage: ${FUNCNAME[0]} <search_path> <dir_names...>"
       echo ''
-      echo "Usage: ${FUNCNAME[0]} <search_path> <search_dirs...>"
-      echo '  ** Dirs: Comma separated directories E.g:. "dir1, dir2, dir2"'
-      echo ''
+      echo '  Notes: '
+      echo '  ** <dir_names...>: Comma separated directories. E.g:. "dir1,dir2,dir2"'
       return 1
     else
-      local expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for folders matching: [${filter}] in \"${dir}\" ${NC}"
       eval "find -L ${dir} -maxdepth ${HHS_MAXDEPTH} -type d \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
@@ -63,68 +63,67 @@ if __hhs_has "python"; then
   # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
   function __hhs_search-string() {
 
-    local gflags extra_str replace inames
-    local strType='regex'
-    local gflags="-HnEI"
+    local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
+    local names_expr search_str="${2}" base_cmd full_cmd dir="${1}"
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
       echo ''
-      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <comma_separated_globs>"
+      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <file_globs>"
       echo ''
-      echo 'Options: '
-      echo '    -i | --ignore-case              : Makes the search case INSENSITIVE.'
-      echo '    -w | --words                    : Makes the search to use the STRING words instead of a REGEX.'
-      echo '    -r | --replace <replacement>    : Makes the search to REPLACE all occurrences by the replacement string.'
-      echo '    -b | --binary                   : Includes BINARY files in the search.'
+      echo '    Options: '
+      echo '      -i | --ignore-case            : Makes the search case INSENSITIVE.'
+      echo '      -w | --words                  : Makes the search to use the STRING words instead of a REGEX.'
+      echo '      -r | --replace <replacement>  : Makes the search to REPLACE all occurrences by the replacement string.'
+      echo '      -b | --binary                 : Includes BINARY files in the search.'
       echo ''
+      echo '  Notes: '
+      echo '    ** <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
       while [ -n "$1" ]; do
         case "$1" in
-        -w | --words)
-          gflags="${gflags//E/Fw}"
-          strType='string'
-          ;;
-        -i | --ignore-case)
-          gflags="${gflags}i"
-          strType="${strType}-ignore-case"
-          ;;
-        -b | --binary)
-          gflags="${gflags//I/}"
-          strType="${strType}+binary"
-          ;;
-        -r | --replace)
-          replace=1
-          shift
-          repl_str="$1"
-          extra_str=", replacement: \"$repl_str\""
-          ;;
-        *)
-          [[ ! "$1" =~ ^-[wir] ]] && break
-          ;;
+          -w | --words)
+            gflags="${gflags//E/Fw}"
+            filter_type='string'
+            ;;
+          -i | --ignore-case)
+            gflags="${gflags}i"
+            filter_type="${filter_type}-ignore-case"
+            ;;
+          -b | --binary)
+            gflags="${gflags//I/}"
+            filter_type="${filter_type}+binary"
+            ;;
+          -r | --replace)
+            replace=1
+            shift
+            repl_str="$1"
+            extra_str=", replacement: \"$repl_str\""
+            ;;
+          *)
+            [[ ! "$1" =~ ^-[wir] ]] && break
+            ;;
         esac
         shift
       done
 
-      local namesExpr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      local search_str="${2}"
-      local baseCmd fullCmd dir="${1}"
-
-      inames=$(python -c "$namesExpr")
-      baseCmd="find -L ${dir} -maxdepth ${HHS_MAXDEPTH} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
-      echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for \"${strType}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
+      names_expr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      inames=$(python -c "$names_expr")
+      base_cmd="find -L ${dir} -maxdepth ${HHS_MAXDEPTH} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
+      
+      echo "${YELLOW}Searching (maxdepth=${HHS_MAXDEPTH}) for \"${filter_type}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
 
       if [ -n "$replace" ]; then
-        if [ "$strType" = 'string' ]; then
+        if [ "$filter_type" = 'string' ]; then
           echo "${RED}Can't search and replace non-Regex expressions!${NC}"
           return 1
         fi
-        [ "Linux" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
-        [ "Darwin" = "${HHS_MY_OS}" ] && fullCmd="${baseCmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
+        [ "Linux" = "${HHS_MY_OS}" ] && full_cmd="${base_cmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
+        [ "Darwin" = "${HHS_MY_OS}" ] && full_cmd="${base_cmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
       else
-        fullCmd="${baseCmd} + 2> /dev/null | __hhs_highlight $search_str"
+        full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight $search_str"
       fi
-      eval "${fullCmd}"
+      eval "${full_cmd}"
       return $?
     fi
 

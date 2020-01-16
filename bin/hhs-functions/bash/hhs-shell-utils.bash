@@ -21,7 +21,7 @@ function __hhs_history() {
     history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "$*"
   fi
 
-  return 0
+  return $?
 }
 
 # @function: Prints all environment variables on a separate line using filters.
@@ -69,31 +69,35 @@ function __hhs_select-shell() {
 
   local selIndex selShell mselectFile results=()
 
-  clear
-  echo "${YELLOW}@@ Please select your new default shell:"
-  echo "-------------------------------------------------------------"
-  echo -en "${NC}"
-  IFS=$'\n' read -d '' -r -a results <<<"$(grep '/.*' '/etc/shells')"
-  mselectFile=$(mktemp)
-  __hhs_mselect "$mselectFile" "${results[*]}"
-  # shellcheck disable=SC2181
-  if [ "$?" -eq 0 ]; then
-    selIndex=$(grep . "$mselectFile")
-    selShell=${results[$selIndex]}
-    if [ -n "$selShell" ] && [ -f "$selShell" ]; then
-      command chsh -s "$selShell"
-      if [ $? -eq 0 ]; then
-        clear
-        export SHELL="$selShell"
-        echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
-        echo "${ORANGE}Next time you open a terminal window you will use the new shell"
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ${FUNCNAME[0]} "
+  else
+    clear
+    echo "${YELLOW}@@ Please select your new default shell:"
+    echo "-------------------------------------------------------------"
+    echo -en "${NC}"
+    IFS=$'\n' read -d '' -r -a results <<< "$(grep '/.*' '/etc/shells')"
+    mselectFile=$(mktemp)
+    __hhs_mselect "$mselectFile" "${results[*]}"
+    # shellcheck disable=SC2181
+    if [ "$?" -eq 0 ]; then
+      selIndex=$(grep . "$mselectFile")
+      selShell=${results[$selIndex]}
+      if [ -n "$selShell" ] && [ -f "$selShell" ]; then
+        command chsh -s "$selShell"
+        if [ $? -eq 0 ]; then
+          clear
+          export SHELL="$selShell"
+          echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
+          echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
+        fi
       fi
     fi
+    IFS="$HHS_RESET_IFS"
+    echo -e "${NC}"
+
+    [ -f "$mselectFile" ] && command rm -f "$mselectFile"
   fi
-  IFS="$HHS_RESET_IFS"
-  echo -e "${NC}"
-  
-  [ -f "$mselectFile" ] && command rm -f "$mselectFile"
 
   return 0
 }

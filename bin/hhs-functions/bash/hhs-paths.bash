@@ -21,13 +21,15 @@ function __hhs_paths() {
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
-    echo 'Options: '
-    echo '            : Lists all PATH entries.'
-    echo '  -a <path> : Add to the current <path> to PATH.'
-    echo '  -r <path> : Remove from the current <path> from PATH.'
-    echo '  -e        : Edit current HHS_PATHS_FILE.'
-    echo '  -c        : Attempt to clears non-existing paths. System paths are not affected'
-    echo '  -q        : Quiet mode on'
+    echo '    Options: '
+    echo '      -a <path> : Add to the current <path> to PATH.'
+    echo '      -r <path> : Remove from the current <path> from PATH.'
+    echo '      -e        : Edit current HHS_PATHS_FILE.'
+    echo '      -c        : Attempt to clears non-existing paths. System paths are not affected'
+    echo '      -q        : Quiet mode on'
+    echo ''
+    echo '  Notes: '
+    echo '    When no arguments are provided it will list all PATH entries'
     return 1
   else
     [ "-q" = "$1" ] && quiet=1 && shift

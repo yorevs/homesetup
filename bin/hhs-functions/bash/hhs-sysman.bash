@@ -70,14 +70,17 @@ function __hhs_process_list() {
 
   local all_pids uid pid ppid cmd force quiet pad gflags='-E'
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
-    echo "Usage: ${FUNCNAME[0]} [-i,-w,-f] <process_name> [kill]"
+  if [ "$#" -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
     echo ''
-    echo 'Options: '
-    echo '    -i : Make case insensitive search'
-    echo '    -w : Match full words only'
-    echo '    -f : Do not ask questions when killing processes'
-    echo '    -q : Be less verbose as possible'
+    echo '    Options: '
+    echo '        -i : Make case insensitive search'
+    echo '        -w : Match full words only'
+    echo '        -f : Do not ask questions when killing processes'
+    echo '        -q : Be less verbose as possible'
+    echo ''
+    echo '  Notes: '
+    echo '    kill : If specified, it will kill the process it finds'
     return 1
   else
     while [ -n "$1" ]; do
@@ -95,13 +98,13 @@ function __hhs_process_list() {
           quiet=1
           ;;
         *)
-          [[ ! "$1" =~ ^-[wi] ]] && break
+          [[ ! "$1" =~ ^-[wifq] ]] && break
           ;;
       esac
       shift
     done
     # shellcheck disable=SC2009
-    all_pids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
+    [ -n "$1" ] && all_pids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
     if [ -n "$all_pids" ]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"

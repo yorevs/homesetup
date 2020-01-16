@@ -13,7 +13,17 @@
 # @param $1 [Req] : The log file name.
 function __hhs_tailor() {
 
-  echo -e "
+  local file="${1:-/dev/stdin}"
+
+  if [ -n "$1" ] && [ ! -f "$1" ]; then
+    echo "Usage: ${FUNCNAME[0]} [filename]"
+    echo ''
+    echo '  Notes: '
+    echo '    filename: If not provided, stdin will be used instead'
+    return 1
+  else
+
+    [ -f "$HHS_DIR/.tailor" ] || echo -e "
     THREAD_NAME_RE=\" *[-a-zA-Z0-9_ ]+ *\"
     THREAD_NAME_STYLE=\"${VIOLET}\"
     FQDN_RE=\"(([a-zA-Z\.][a-zA-Z0-9]*[\.\$])+[a-zA-Z0-9]+)\"
@@ -28,20 +38,33 @@ function __hhs_tailor() {
     DATE_FMT_STYLE=\"${DIM}\"
     URI_FMT_RE=\"((https?|ftp|file):\/)?\/[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*\.*[-A-Za-z0-9\+&@#/%=~_|]\"
     URI_FMT_STYLE=\"${ORANGE}\"
-    " >"$HHS_DIR/.tailor" && \. "$HHS_DIR/.tailor"
+    " > "$HHS_DIR/.tailor"
 
-  if [ -z "$1" ] || [ ! -f "$1" ]; then
-    echo "Usage: ${FUNCNAME[0]} <log_filename>"
-    return 1
-  else
-    tail -n 20 -F "$1" | esed \
-      -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
-      -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \
-      -e "s/(${LOG_LEVEL_WARN_RE})/${LOG_LEVEL_WARN_STYLE}\1${NC}/g" \
-      -e "s/(${LOG_LEVEL_ERR_RE})/${LOG_LEVEL_ERR_STYLE}\1${NC}/g" \
-      -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/g" \
-      -e "s/ (${FQDN_RE}) / ${FQDN_STYLE}\1${NC} /g" \
-      -e "s/(${URI_FMT_RE})/${URI_FMT_STYLE}\1${NC}/g"
-    return $?
+    [ -f "$HHS_DIR/.tailor" ] && \. "$HHS_DIR/.tailor"
+
+    if [ "${file}" = '/dev/stdin' ]; then
+      while read -r stream; do
+        echo "${stream}" | esed \
+          -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
+          -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \
+          -e "s/(${LOG_LEVEL_WARN_RE})/${LOG_LEVEL_WARN_STYLE}\1${NC}/g" \
+          -e "s/(${LOG_LEVEL_ERR_RE})/${LOG_LEVEL_ERR_STYLE}\1${NC}/g" \
+          -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/g" \
+          -e "s/ (${FQDN_RE}) / ${FQDN_STYLE}\1${NC} /g" \
+          -e "s/(${URI_FMT_RE})/${URI_FMT_STYLE}\1${NC}/g"
+      done < "${file}"
+    else
+      tail -n 25 -F "${file}" | esed \
+        -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
+        -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \
+        -e "s/(${LOG_LEVEL_WARN_RE})/${LOG_LEVEL_WARN_STYLE}\1${NC}/g" \
+        -e "s/(${LOG_LEVEL_ERR_RE})/${LOG_LEVEL_ERR_STYLE}\1${NC}/g" \
+        -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/g" \
+        -e "s/ (${FQDN_RE}) / ${FQDN_STYLE}\1${NC} /g" \
+        -e "s/(${URI_FMT_RE})/${URI_FMT_STYLE}\1${NC}/g"
+    fi
+
   fi
+
+  return $?
 }

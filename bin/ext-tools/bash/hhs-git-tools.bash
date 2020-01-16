@@ -68,7 +68,7 @@ if __hhs_has "git"; then
   # @param $1 [Req] : The first commit ID.
   # @param $2 [Req] : The second commit ID.
   # @param $3 [Req] : The filename to be compared.
-  function __hhs_git_file_diff_show() {
+  function __hhs_git_show_file_diff() {
     if [[ $# -ne 3 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} <first_commit_id> <second_commit_id> <filename>"
       return 1
@@ -82,7 +82,7 @@ if __hhs_has "git"; then
   # @function: Display the contents of a file from specific commit ID.
   # @param $1 [Req] : The commit ID.
   # @param $2 [Req] : The filename to show contents from .
-  function __hhs_git_file_show_contents() {
+  function __hhs_git_show_file_contents() {
     if [[ $# -ne 2 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} <commit_id> <filename>"
       return 1
@@ -114,7 +114,10 @@ if __hhs_has "git"; then
     local sel_index sel_branch mselect_file stash_flag b_name
 
     if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
-      echo "Usage: ${FUNCNAME[0]} [-l||--local]"
+      echo "Usage: ${FUNCNAME[0]} [options]"
+      echo ''
+      echo '    Options:'
+      echo '      -l | --local : List only local branches. Do not fetch remote branches.'
       return 1
     elif [ ! -d "$(pwd)/.git" ]; then
       echo "Not a git repository !"

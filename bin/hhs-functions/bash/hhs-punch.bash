@@ -18,12 +18,15 @@ function __hhs_punch() {
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
-    echo 'Options: '
-    echo "              : !!PUNCH THE CLOCK!! (When no option is provided)."
-    echo "    -l        : List all registered punches."
-    echo "    -e        : Edit current punch file."
-    echo "    -r        : Reset punches for the current week."
-    echo "    -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch."
+    echo ''
+    echo '    Options: '
+    echo '      -l        : List all registered punches.'
+    echo '      -e        : Edit current punch file.'
+    echo '      -r        : Reset punches for the current week.'
+    echo '      -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch.'
+    echo ''
+    echo '  Notes: '
+    echo '    When no arguments are provided it will !!PUNCH THE CLOCK!!.'
     return 1
   else
     opt="$1"
@@ -81,12 +84,16 @@ function __hhs_punch() {
                 subTotal="$(tcalc.py ${lineTotals[5]} - ${lineTotals[4]} + ${lineTotals[3]} - ${lineTotals[2]} + ${lineTotals[1]} - ${lineTotals[0]})" # Up to 3 pairs of timestamps.
                 printf '%*.*s' 0 $((pad_len - ${#lineTotals[@]} * 6)) "$pad"
                 # If the sub total is gerater or equal to 8 hours, color it green, red otherwise.
-                [[ "$subTotal" =~ ^([12][0-9]|0[89]):..:.. ]] && echo -e " : Total = ${GREEN}${subTotal}${NC}" || echo -e " : Total = ${RED}${subTotal}${NC}"
+                if [[ "$subTotal" =~ ^([12][0-9]|0[89]):..:.. ]]; then
+                  echo -e " : Total = ${GREEN}${subTotal}${NC}"
+                else
+                  echo -e " : Total = ${RED}${subTotal}${NC}"
+                fi
                 totals+=("$subTotal")
               else
-                echo "${RED}**:**${NC}"
+                echo -e "${RED}**:**${NC}"
               fi
-            # Do the punch to the current day
+            # Do the punch of the current day
             elif [[ "$line" =~ $re ]]; then
               ised "s#($dateStamp) => (.*)#\1 => \2$timeStamp #g" "$HHS_PUNCH_FILE"
               success='1'

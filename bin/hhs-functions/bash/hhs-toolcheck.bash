@@ -14,11 +14,11 @@ function __hhs_toolcheck() {
 
   local pad pad_len tool_name check is_alias quiet
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
+  if [ "$#" -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
     echo ''
-    echo 'Options: '
-    echo '  -q        : Quiet mode on'
+    echo '    Options: '
+    echo '      -q  : Quiet mode on'
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
@@ -52,7 +52,7 @@ function __hhs_version() {
 
   local version
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
+  if [ "$#" -ne 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <app_name>"
     return 1
   else
