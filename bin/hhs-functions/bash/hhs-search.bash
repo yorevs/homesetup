@@ -30,6 +30,7 @@ if __hhs_has "python"; then
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching for files matching: \"$filter\" in \"$dir\" ${NC}"
       eval "find -L $dir -type f \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      
       return $?
     fi
   }
@@ -54,6 +55,7 @@ if __hhs_has "python"; then
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching for folders matching: [${filter}] in \"${dir}\" ${NC}"
       eval "find -L ${dir} -type d \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      
       return $?
     fi
   }
@@ -101,6 +103,7 @@ if __hhs_has "python"; then
           -r | --replace)
             replace=1
             shift
+            [ -z "$1" ] && echo "${RED}Missing replacement string !${NC}" && return 1
             repl_str="$1"
             extra_str=", replacement: \"$repl_str\""
             ;;
