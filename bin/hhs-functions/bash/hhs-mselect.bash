@@ -28,12 +28,12 @@ function __hhs_mselect() {
     return 1
   fi
 
-  HHS_MSELECT_MAXROWS=${HHS_MSELECT_MAXROWS:=15}
+  HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
   local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 
   local index_len len show_to diff_index typed_index columns option_line
 
-  show_to="$((HHS_MSELECT_MAXROWS - 1))"
+  show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
   # shellcheck disable=SC2206
