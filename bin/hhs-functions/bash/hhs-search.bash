@@ -70,7 +70,7 @@ if __hhs_has "python"; then
     local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
     local names_expr search_str base_cmd full_cmd dir
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 3 ]; then
+    if [ "$#" -lt 3 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
       echo ''
       echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <file_globs>"
       echo ''
@@ -113,13 +113,12 @@ if __hhs_has "python"; then
       
       dir="${1}"
       search_str="${2}"
-
       names_expr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$names_expr")
       base_cmd="find -L ${dir} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
       
       echo "${YELLOW}Searching for \"${filter_type}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
-
+      
       if [ -n "$replace" ]; then
         if [ "$filter_type" = 'string' ]; then
           echo "${RED}Can't search and replace non-Regex expressions!${NC}"
@@ -128,7 +127,7 @@ if __hhs_has "python"; then
         [ "Linux" = "${HHS_MY_OS}" ] && full_cmd="${base_cmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
         [ "Darwin" = "${HHS_MY_OS}" ] && full_cmd="${base_cmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
       else
-        full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight $search_str"
+        full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight \"$search_str\""
       fi
       eval "${full_cmd}"
       return $?
