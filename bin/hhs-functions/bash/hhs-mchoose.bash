@@ -29,7 +29,7 @@ function __hhs_mchoose() {
 
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
-  local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 
+  local all_options=() sel_options=() outfile="$1" cur_index=0 show_from=0 re_render=1 
   local index_len len show_to diff_index typed_index columns option_line
   
   show_to="$((HHS_MENU_MAXROWS - 1))"
@@ -59,7 +59,7 @@ function __hhs_mchoose() {
         option_line="${all_options[idx]:0:$columns}"
         # Erase current line before repaint
         echo -ne "\033[2K\r"
-        [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='x' # Highlight the selected line
+        [[ $idx -eq $cur_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='x' # Highlight the selected line
         printf " %.${#len}d  %0.4s %s" "$((idx + 1))" "[$selector]" "$option_line"       # Print the option line
         # Check if the text fits the screen and print it, otherwise print '...'
         [[ ${#option_line} -ge $columns ]] && echo -e "\033[4D\033[K..."
@@ -97,32 +97,32 @@ function __hhs_mchoose() {
           show_to=$((typed_index - 1))
           [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
           show_from=$((show_to - diff_index))
-          sel_index=$((typed_index - 1)) && re_render=1
+          cur_index=$((typed_index - 1)) && re_render=1
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
         read -rsn2 KEY_PRESS
         case "$KEY_PRESS" in
           [A) # Cursor up
-            if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
+            if [[ $cur_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
               show_from=$((show_from - 1))
               show_to=$((show_to - 1))
-            elif [[ $sel_index -eq 0 ]]; then
+            elif [[ $cur_index -eq 0 ]]; then
               continue
             fi
-            if [[ $((sel_index - 1)) -ge 0 ]]; then
-              sel_index=$((sel_index - 1)) && re_render=1
+            if [[ $((cur_index - 1)) -ge 0 ]]; then
+              cur_index=$((cur_index - 1)) && re_render=1
             fi
             ;;
           [B) # Cursor down
-            if [[ $sel_index -eq $show_to ]] && [[ $((show_to + 1)) -lt $len ]]; then
+            if [[ $cur_index -eq $show_to ]] && [[ $((show_to + 1)) -lt $len ]]; then
               show_from=$((show_from + 1))
               show_to=$((show_to + 1))
-            elif [[ $((sel_index + 1)) -ge $len ]]; then
+            elif [[ $((cur_index + 1)) -ge $len ]]; then
               continue
             fi
-            if [[ $((sel_index + 1)) -lt $len ]]; then
-              sel_index=$((sel_index + 1)) && re_render=1
+            if [[ $((cur_index + 1)) -lt $len ]]; then
+              cur_index=$((cur_index + 1)) && re_render=1
             fi
             ;;
         esac
@@ -138,7 +138,7 @@ function __hhs_mchoose() {
   show-cursor
   enable-line-wrap
   echo -e "${NC}"
-  echo "$sel_index" > "$outfile"
+  echo "$cur_index" > "$outfile"
 
   return 0
 }
