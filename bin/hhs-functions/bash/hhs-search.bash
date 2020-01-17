@@ -29,7 +29,7 @@ if __hhs_has "python"; then
       expr="e=\"$filter\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching for files matching: \"$filter\" in \"$dir\" ${NC}"
-      eval "find -L $dir -type f \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      eval "find -L $dir -type f \( ${inames} \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
       
       return $?
     fi
@@ -54,7 +54,7 @@ if __hhs_has "python"; then
       expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching for folders matching: [${filter}] in \"${dir}\" ${NC}"
-      eval "find -L ${dir} -type d \( $inames \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      eval "find -L ${dir} -type d \( ${inames} \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
       
       return $?
     fi
@@ -105,7 +105,7 @@ if __hhs_has "python"; then
             shift
             [ -z "$1" ] && echo "${RED}Missing replacement string !${NC}" && return 1
             repl_str="$1"
-            extra_str=", replacement: \"$repl_str\""
+            extra_str=", replacement: \"${repl_str}\""
             ;;
           *)
             [[ ! "$1" =~ ^-[wibr] ]] && [[ ! "$1" =~ ^--(words|ignore-case|binary|replace) ]] && break
@@ -117,20 +117,21 @@ if __hhs_has "python"; then
       dir="${1}"
       search_str="${2}"
       names_expr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      inames=$(python -c "$names_expr")
-      base_cmd="find -L ${dir} -type f \( $inames \) -exec grep $gflags \"$search_str\" {}"
+      inames=$(python -c "${names_expr}")
+      base_cmd="find -L ${dir} -type f \( ${inames} \) -exec grep $gflags \"${search_str}\" {}"
       
-      echo "${YELLOW}Searching for \"${filter_type}\" matching: \"$search_str\" in \"${dir}\" , filenames = [$3] ${extra_str} ${NC}"
+      echo "${YELLOW}Searching for \"${filter_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${3}] ${extra_str} ${NC}"
       
       if [ -n "$replace" ]; then
         if [ "$filter_type" = 'string' ]; then
           echo "${RED}Can't search and replace non-Regex expressions!${NC}"
           return 1
         fi
-        [ "Linux" = "${HHS_MY_OS}" ] && full_cmd="${base_cmd} \; -exec sed -i \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
-        [ "Darwin" = "${HHS_MY_OS}" ] && full_cmd="${base_cmd} \; -exec sed -i '' \"s/$search_str/$repl_str/g\" {} + | sed \"s/$search_str/$repl_str/g\" 2> /dev/null | __hhs_highlight $repl_str"
+        [ "${HHS_MY_OS}" == "Darwin" ] && ised="sed -i '' -E"
+        [ "${HHS_MY_OS}" == "Linux" ] && ised="sed -i'' -r"
+        full_cmd="${base_cmd} \; -exec $ised \"s/${search_str}/${repl_str}/g\" {} + | sed \"s/${search_str}/${repl_str}/g\"  | __hhs_highlight \"${repl_str}\""
       else
-        full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight \"$search_str\""
+        full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight \"${search_str}\""
       fi
       eval "${full_cmd}"
       return $?

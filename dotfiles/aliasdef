@@ -107,7 +107,7 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   __hhs_alias dkps='__hhs_docker_ps'
   __hhs_alias dktl='__hhs_docker_tail_logs'
   __hhs_alias dkls='__hhs_docker_ls'
-  __hhs_alias dkrmv='__hhs_docker_remove_volumes'
+  __hhs_alias dkrmv='__hhs_docker_remove_dangling_volumes'
   __hhs_alias dkrmi='__hhs_docker_remove_image'
   __hhs_alias dkinfo='__hhs_docker_info'
   __hhs_alias dktop='__hhs_docker_top'
