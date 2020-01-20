@@ -71,7 +71,8 @@ function __hhs_punch() {
         printf '%0.1s' "-"{1..79}
         echo "${NC}"
       fi
-      
+
+      IFS=$'\n'
       for idx in "${!lines[@]}"; do
         line="$(echo "${lines[idx]}" | awk 'BEGIN { OFS=" "}; {$1=$1; print $0}')"
         # List punches
@@ -103,6 +104,7 @@ function __hhs_punch() {
           break
         fi
       done
+      IFS=$"$HHS_RESET_IFS"
 
       # Display totals of the week when listing - Footer
       # shellcheck disable=SC2086
