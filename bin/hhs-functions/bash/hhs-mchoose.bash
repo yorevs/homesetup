@@ -10,12 +10,14 @@
 
 # @function: Select an option from a list using a navigable menu.
 # @param $1 [Req] : The response file.
-# @param $2 [Req] : The array of options.
+# @param $2 [Req] : The array of items.
 function __hhs_mchoose() {
 
   if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    echo "Usage: ${FUNCNAME[0]} <output_file> <options...>"
+    echo "Usage: ${FUNCNAME[0]} [options] <output_file> <items...>"
     echo ''
+    echo '    Options: '
+    echo '      -c  : All options are initially checked instead of unchecked.'
     echo '  Notes: '
     echo '    - A temporary file is suggested to used with this command: #> mktemp'
     echo '    - The outfile must not exist or it be an empty file'
@@ -30,7 +32,9 @@ function __hhs_mchoose() {
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
   local all_options=() sel_options=() outfile="$1" cur_index=0 show_from=0 re_render=1
-  local index_len len show_to diff_index typed_index columns option_line
+  local index_len len show_to diff_index typed_index columns option_line init_value=0
+  
+  [ '-c' = "${1}" ] && shift && init_value=1
 
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
@@ -39,13 +43,11 @@ function __hhs_mchoose() {
   all_options=(${@})
   len=${#all_options[*]}
 
-  # Uncheck all selected options
+  # Initialize all options
   for idx in "${!all_options[@]}"; do
-    sel_options[idx]=0
+    sel_options[idx]=$init_value
   done
 
-  # When only one option is provided, select the typed_index 0 and return
-  [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0
   save-cursor-pos
   disable-line-wrap
 

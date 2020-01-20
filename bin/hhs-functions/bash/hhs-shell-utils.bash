@@ -42,22 +42,20 @@ function __hhs_envs() {
     echo ' '
     echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
     echo ' '
-    (
-      IFS=$'\n'
-      shopt -s nocasematch
-      for v in $(env | sort); do
-        name=$(echo "$v" | cut -d '=' -f1)
-        value=$(echo "$v" | cut -d '=' -f2-)
-        if [[ ${name} =~ ${filter} ]]; then
-          echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
-          printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-          echo -en " ${GREEN}=> ${NC}${value:0:$columns} "
-          [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
-        fi
-      done
-      shopt -u nocasematch
-      IFS="$HHS_RESET_IFS"
-    )
+    IFS=$'\n'
+    shopt -s nocasematch
+    for v in $(env | sort); do
+      name=$(echo "$v" | cut -d '=' -f1)
+      value=$(echo "$v" | cut -d '=' -f2-)
+      if [[ ${name} =~ ${filter} ]]; then
+        echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
+        printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+        echo -en " ${GREEN}=> ${NC}${value:0:$columns} "
+        [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
+      fi
+    done
+    shopt -u nocasematch
+    IFS="$HHS_RESET_IFS"
     echo ' '
   fi
 

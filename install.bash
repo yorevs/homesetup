@@ -27,14 +27,18 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Define the user HOME
   HOME=${HOME:-~}
-  
+
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
-  
+
   # Dotfiles source location
   DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
-  
+
+  # .dotfiles we will handle
   ALL_DOTFILES=()
+
+  # HomeSetup required tools
+  HHS_REQUIRED_TOOLS=(brew python pcregrep ifconfig gpg tree figlet)
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -42,7 +46,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
 
   # Functions to be unset after quit
-  UNSETS=(quit usage check_inst_method install_dotfiles clone_repository activate_dotfiles)
+  UNSETS=(quit usage has check_inst_method install_dotfiles clone_repository check_installed activate_dotfiles)
 
   # Purpose: Quit the program and exhibits an exit message if specified.
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
@@ -64,6 +68,12 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Usage message.
   usage() {
     quit 2 "$USAGE"
+  }
+
+  # @function: Check if a command exists.
+  # @param $1 [Req] : The command to check.
+  has() {
+    type "$1" > /dev/null 2>&1
   }
 
   # shellcheck disable=SC1091
@@ -118,7 +128,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create/Define the $HOME/.hhs directory
     HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
-    
+
     if [ ! -d "$HHS_DIR" ]; then
       echo -en "\nCreating '.hhs' directory: "
       echo -en "$(mkdir -p "$HHS_DIR")"
@@ -131,7 +141,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create/Define the $HHS_DIR/bin directory
     BIN_DIR="$HHS_DIR/bin"
-    
+
     # Create or directory ~/bin if it does not exist
     if ! [ -L "$BIN_DIR" ] && ! [ -d "$BIN_DIR" ]; then
       echo -en "\nCreating 'bin' directory: "
@@ -169,10 +179,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       remote)
         clone_repository
         install_dotfiles
+        check_installed
         activate_dotfiles
         ;;
       local | repair)
         install_dotfiles
+        check_installed
         activate_dotfiles
         ;;
       *)
@@ -185,7 +197,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_dotfiles() {
 
     echo -e ''
-    echo -e '### Installation Settings ###'
+    echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
     echo -e "  Install Type: $METHOD"
     echo -e "         Shell: ${SHELL_TYPE}"
@@ -286,15 +298,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying git hooks into place ${BLUE}"
     command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &> /dev/null
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-    
+
     # HHS Compatibility {
-    
+
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     [ -f ~/.bash_aliasdef ] && \rm -f ~/.bash_aliasdef
-    
+
     # hhu was remodeled, so, remove any alias in aliasdef of it
     sed -i '' -E -e 's#((__hhs_alias|alias) hhu=.*)##g' -e '/^\s*$/d' ~/.aliasdef
-    
+
     # } HHS Compatibility
   }
 
@@ -316,14 +328,39 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
+  # Check installed tools
+  check_installed() {
+  
+    echo ''
+    echo -e "Checking required tools "
+    echo ''
+    
+    pad=$(printf '%0.1s' "."{1..60})
+    pad_len=10
+
+    for tool_name in "${HHS_REQUIRED_TOOLS[@]}"; do
+      echo -en "Checking: ${YELLOW}${tool_name}${NC} ..."
+      printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
+      if has "$tool_name"; then
+        echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
+      else
+        echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
+      fi
+    done
+    
+    sleep 2
+  }
+
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
 
     echo ''
     echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
     echo -e "${BLUE}"
-    sleep 2
 
+    sleep 1 && reset
+
+    echo -e "${BLUE}"
     if command -v figlet > /dev/null; then
       figlet -f colossal -ck "Welcome"
     else
@@ -334,6 +371,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
       echo ''
     fi
+
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") installed!"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.${SHELL_TYPE}rc"
@@ -343,6 +381,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
+
     date -v+7d "+%s%S" > "${HHS_DIR}/.last_update"
     quit 0
   }

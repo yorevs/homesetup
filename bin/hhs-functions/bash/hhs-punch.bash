@@ -39,6 +39,7 @@ function __hhs_punch() {
     if [ ! -f "$HHS_PUNCH_FILE" ]; then
       echo "$date_stamp => " > "$HHS_PUNCH_FILE"
     fi
+    
     # shellcheck disable=SC2207
     if [ "-w" = "$opt" ]; then
       shift
@@ -46,14 +47,15 @@ function __hhs_punch() {
       week_stamp=$(printf "%02d" "${week_stamp}")
       WEEK_PUNCH_FILE="$(dirname "$HHS_PUNCH_FILE")/week-${week_stamp}.punch"
       if [ -f "$WEEK_PUNCH_FILE" ]; then
-        lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE"))
+        IFS=$'\n' lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE"))
       else
         echo "${YELLOW}Week $week_stamp punch file ($WEEK_PUNCH_FILE) not found!"
         return 1
       fi
     else
-      lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$HHS_PUNCH_FILE"))
+      IFS=$'\n' lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$HHS_PUNCH_FILE"))
     fi
+
     # Edit punches
     if [ "-e" = "$opt" ]; then
       edit "$HHS_PUNCH_FILE"
@@ -72,7 +74,6 @@ function __hhs_punch() {
         echo "${NC}"
       fi
 
-      IFS=$'\n'
       for idx in "${!lines[@]}"; do
         line="$(echo "${lines[idx]}" | awk 'BEGIN { OFS=" "}; {$1=$1; print $0}')"
         # List punches
@@ -104,7 +105,6 @@ function __hhs_punch() {
           break
         fi
       done
-      IFS=$"$HHS_RESET_IFS"
 
       # Display totals of the week when listing - Footer
       # shellcheck disable=SC2086

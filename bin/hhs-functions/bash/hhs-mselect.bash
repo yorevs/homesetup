@@ -10,11 +10,11 @@
 
 # @function: Select an option from a list using a navigable menu.
 # @param $1 [Req] : The response file.
-# @param $2 [Req] : The array of options.
+# @param $2 [Req] : The array of items.
 function __hhs_mselect() {
 
   if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    echo "Usage: ${FUNCNAME[0]} <output_file> <options...>"
+    echo "Usage: ${FUNCNAME[0]} <output_file> <items...>"
     echo ''
     echo '  Notes: '
     echo '    - If only one option is available, mselect will select it and return'
@@ -67,7 +67,7 @@ function __hhs_mselect() {
         echo -e "${NC}"
       done
       echo ''
-      echo -n "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: \033[0K"
+      echo -en "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: \033[0K"
       re_render=
       show-cursor
     fi
