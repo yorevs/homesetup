@@ -67,7 +67,7 @@ function __hhs_mselect() {
         echo -e "${NC}"
       done
       echo ''
-      echo -n "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: "
+      echo -n "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: \033[0K"
       re_render=
       show-cursor
     fi
