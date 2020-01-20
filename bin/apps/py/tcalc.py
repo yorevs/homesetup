@@ -56,8 +56,7 @@ else:
 
 
 def decimal(time_raw=0):
-    time_dec = round(((time_raw / 60.0) * 100.0) if DECIMAL else time_raw)
-    return int(time_dec)
+    return int(round(((time_raw / 60.00) * 100.00) if DECIMAL else time_raw))
 
 
 for tm in args:
@@ -66,9 +65,9 @@ for tm in args:
     elif re.match(r"^([0-9]{1,2}:?)+", tm):
         parts = [int(math.floor(float(s))) for s in tm.split(':')]
         f_hours = parts[0] if len(parts) > 0 else 0
-        f_mins = parts[1] if len(parts) > 1 else 0
+        f_minutes = parts[1] if len(parts) > 1 else 0
         f_secs = parts[2] if len(parts) > 2 else 0
-        tm_amount = ((f_hours * 60 + f_mins) * 60 + f_secs )
+        tm_amount = ((f_hours * 60 + f_minutes) * 60 + f_secs)
         if OP == '+':
             TOTAL_SECONDS += tm_amount
         elif OP == '-':

@@ -56,6 +56,35 @@ function lt() {
   return $?
 }
 
+# @function: Change the shell working directory. Replace the build-in 'cd' with a more flexible one.
+function cd() {
+  
+  local flags path
+  
+  if [[ '-L' = "${1}" ]] || [[ '-P' = "${1}" ]]; then
+    flags="${1}" && shift
+  fi
+  
+  if [ -z "${1}" ]; then
+    path="${HOME}"
+  elif [ '..' = "${1}" ]; then
+    path='..'
+  elif [ '.' = "${1}" ]; then
+    path=$(command pwd)
+  elif [ '-' = "${1}" ]; then
+    path="${OLDPWD}"
+  elif [ -d "${1}" ]; then
+    path="${1}"
+  elif [ -e "${1}" ]; then
+    path="$(dirname "${1}")"
+  fi
+  
+  # shellcheck disable=SC2086
+  command cd ${flags} "${path}"
+  
+  return $?
+}
+
 # @function: Kills ALL processes specified by $1
 # @param $1 [Req] : The process name to kill
 function pk() {
