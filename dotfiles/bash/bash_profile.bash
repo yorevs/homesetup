@@ -69,13 +69,14 @@ esac
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
 # - colored-stats: Displays possible completions using different colors to indicate their type
-# - <tab> Will cicle forward though complete options
-# - <shift>+<tab> Will cicle backward though complete options
+# - <shift>+<tab> Will cicle forward though complete options
 
 if ! [ -f ~/.inputrc ]; then
   {
     echo "set completion-ignore-case on"
     echo "set colored-stats on"
+    echo "TAB: complete"
+    echo "\"\e[Z\": menu-complete"
   } > ~/.inputrc
 else
   case $HHS_MY_OS in
@@ -83,12 +84,16 @@ else
       sed -i '' -E \
         -e 's/(^set colored-stats) .*/\1 on/g' \
         -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+        -e 's/(^TAB:) .*/\1 complete/g' \
+        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
         ~/.inputrc
       ;;
     Linux)
       sed -i'' -r \
         -e 's/(^set colored-stats) .*/\1 on/g' \
         -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+        -e 's/(^TAB:) .*/\1 complete/g' \
+        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
         ~/.inputrc
       ;;
   esac
