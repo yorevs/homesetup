@@ -307,6 +307,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     # hhu was remodeled, so, remove any alias in aliasdef of it
     sed -i '' -E -e 's#((__hhs_alias|alias) hhu=.*)##g' -e '/^\s*$/d' ~/.aliasdef
 
+    # HHS is using the menu-complete instead of the normal complete. #aa6cb39
+    {
+      echo "TAB: menu-complete"
+      echo "\"\e[Z\": \"\e-1\C-i\""
+    } >> ~/.inputrc
+
     # } HHS Compatibility
   }
 
@@ -330,11 +336,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Check installed tools
   check_installed() {
-  
+
     echo ''
     echo -e "Checking required tools "
     echo ''
-    
+
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=10
 
@@ -347,7 +353,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
       fi
     done
-    
+
     sleep 2
   }
 
