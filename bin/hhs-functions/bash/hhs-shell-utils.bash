@@ -65,7 +65,7 @@ function __hhs_envs() {
 # @function: Select a shell from the existing shell list
 function __hhs_select-shell() {
 
-  local selIndex selShell mselectFile results=()
+  local sel_index sel_shell mselect_file avail_shells=()
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} "
@@ -74,27 +74,29 @@ function __hhs_select-shell() {
     echo "${YELLOW}@@ Please select your new default shell:"
     echo "-------------------------------------------------------------"
     echo -en "${NC}"
-    IFS=$'\n' read -d '' -r -a results <<< "$(grep '/.*' '/etc/shells')"
-    mselectFile=$(mktemp)
-    __hhs_mselect "$mselectFile" "${results[*]}"
-    # shellcheck disable=SC2181
-    if [ "$?" -eq 0 ]; then
-      selIndex=$(grep . "$mselectFile")
-      selShell=${results[$selIndex]}
-      if [ -n "$selShell" ] && [ -f "$selShell" ]; then
-        command chsh -s "$selShell"
-        if [ $? -eq 0 ]; then
+    IFS=$'\n' read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
+    # Add the brew bash/zsh as options
+    [ -f '/usr/local/bin/bash' ] && avail_shells+=('/usr/local/bin/bash')
+    [ -f '/usr/local/bin/zsh' ] && avail_shells+=('/usr/local/bin/zsh')
+    mselect_file=$(mktemp)
+    if __hhs_mselect "$mselect_file" "${avail_shells[*]}"; then
+      sel_index=$(grep . "$mselect_file")
+      sel_shell=${avail_shells[$sel_index]}
+      if [ -n "${sel_shell}" ] && [ -f "${sel_shell}" ]; then
+        if command chsh -s "${sel_shell}"; then
           clear
-          export SHELL="$selShell"
+          export SHELL="${sel_shell}"
           echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
           echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
+        else
+          echo "${RED}Unable to change shell to ${sel_shell} ${NC}"
         fi
       fi
     fi
     IFS="$HHS_RESET_IFS"
     echo -e "${NC}"
 
-    [ -f "$mselectFile" ] && command rm -f "$mselectFile"
+    [ -f "$mselect_file" ] && command rm -f "$mselect_file"
   fi
 
   return 0
