@@ -32,7 +32,7 @@ unalias -a
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
-  profile bash_colors colors bash_env env bash_prompt prompt 
+  profile bash_colors colors bash_env env bash_prompt prompt
   bash_aliases aliasdef aliases bash_functions functions bash_completions
 )
 
@@ -69,22 +69,32 @@ esac
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
 # - colored-stats: Displays possible completions using different colors to indicate their type
+# - <tab> Will cicle forward though complete options
+# - <shift>+<tab> Will cicle backward though complete options
 
 if ! [ -f ~/.inputrc ]; then
-  echo "set completion-ignore-case on" > ~/.inputrc
-  echo "set colored-stats on" >> ~/.inputrc
+  {
+    echo "set completion-ignore-case on"
+    echo "set colored-stats on"
+    echo "TAB: menu-complete"
+    echo "\"\e[Z\": \"\e-1\C-i\""
+  } > ~/.inputrc
 else
   case $HHS_MY_OS in
     Darwin)
       sed -i '' -E \
-        -e "s/(^set colored-stats) .*/\1 on/g" \
-        -e "s/(^set completion-ignore-case) .*/\1 on/g" \
+        -e 's/(^set colored-stats) .*/\1 on/g' \
+        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+        -e 's/(^TAB:) .*/\1 menu-complete/g' \
+        -e 's/(^"\e\[Z": .*)/\1 "\e-1\C-i"/g' \
         ~/.inputrc
       ;;
     Linux)
       sed -i'' -r \
-        -e "s/(^set colored-stats) .*/\1 on/g" \
-        -e "s/(^set completion-ignore-case) .*/\1 on/g" \
+        -e 's/(^set colored-stats) .*/\1 on/g' \
+        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+        -e 's/(^TAB:) .*/\1 menu-complete/g' \
+        -e 's/(^"\e\[Z": .*)/\1 "\e-1\C-i"/g' \
         ~/.inputrc
       ;;
   esac
