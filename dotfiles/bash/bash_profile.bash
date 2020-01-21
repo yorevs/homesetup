@@ -76,8 +76,6 @@ if ! [ -f ~/.inputrc ]; then
   {
     echo "set completion-ignore-case on"
     echo "set colored-stats on"
-    echo "TAB: menu-complete"
-    echo "\"\e[Z\": \"\e-1\C-i\""
   } > ~/.inputrc
 else
   case $HHS_MY_OS in
@@ -85,16 +83,12 @@ else
       sed -i '' -E \
         -e 's/(^set colored-stats) .*/\1 on/g' \
         -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-        -e 's/(^TAB:) .*/\1 menu-complete/g' \
-        -e 's/(^"\e\[Z": .*)/\1 "\e-1\C-i"/g' \
         ~/.inputrc
       ;;
     Linux)
       sed -i'' -r \
         -e 's/(^set colored-stats) .*/\1 on/g' \
         -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-        -e 's/(^TAB:) .*/\1 menu-complete/g' \
-        -e 's/(^"\e\[Z": .*)/\1 "\e-1\C-i"/g' \
         ~/.inputrc
       ;;
   esac
