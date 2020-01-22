@@ -89,7 +89,7 @@ alias cp='\cp -iv'
 alias mv='\mv -iv'
 
 # Nice command replacements
-alias cls='echo -en "\033[1J\033[H"'
+alias cls='echo -en "\033[2J\033[H"'
 alias df='\df -H'
 alias du='\du -hcd 1'
 alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'

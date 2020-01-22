@@ -41,8 +41,6 @@ export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-$BLUE}
 if tput setaf 1 &>/dev/null; then
   # Solarized colors, taken from http://git.io/solarized-colors.
   NC=$(tput sgr0) # NC colors
-  BOLD=$(tput bold)
-  DIM=$(tput dim)
   BLACK=$(tput setaf 0)
   BLUE=$(tput setaf 33)
   CYAN=$(tput setaf 37)
@@ -55,8 +53,6 @@ if tput setaf 1 &>/dev/null; then
   YELLOW=$(tput setaf 136)
 else
   export NC='\e[0m'
-  export BOLD='\e[1m'
-  export DIM='\e[4m'
   export BLACK='\e[1;30m'
   export BLUE='\e[1;34m'
   export CYAN='\e[1;36m'

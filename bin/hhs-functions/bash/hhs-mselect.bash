@@ -16,10 +16,13 @@ function __hhs_mselect() {
   if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <items...>"
     echo ''
+    echo '    Arguments: '
+    echo '      output_file : The output file where the result will be stored.'
+    echo ''
     echo '  Notes: '
-    echo '    - If only one option is available, mselect will select it and return'
-    echo '    - A temporary file is suggested to used with this command: #> mktemp'
-    echo '    - The outfile must not exist or it be an empty file'
+    echo '    - If only one option is available, mselect will select it and return.'
+    echo '    - A temporary file is suggested to used with this command: #> mktemp.'
+    echo '    - The outfile must not exist or it be an empty file.'
     return 1
   fi
 
@@ -30,7 +33,7 @@ function __hhs_mselect() {
 
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
-  local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 
+  local all_options=() outfile="$1" sel_index=0 show_from=0 re_render=1 selector
   local index_len len show_to diff_index typed_index columns option_line
 
   show_to="$((HHS_MENU_MAXROWS - 1))"
@@ -51,11 +54,11 @@ function __hhs_mselect() {
     # Menu Renderization {
     if [ -n "$re_render" ]; then
       hide-cursor
-      # Erase current line and restore the cursor to the home position
+      # Restore the cursor to the home position
       restore-cursor-pos
       echo -e "${NC}"
       for idx in $(seq "$show_from" "$show_to"); do
-        local selector=' '
+        selector=' '
         [[ $idx -ge $len ]] && break # When the number of items is lower than the maxrows, skip the other lines
         option_line="${all_options[idx]:0:$columns}"
         # Erase current line before repaint

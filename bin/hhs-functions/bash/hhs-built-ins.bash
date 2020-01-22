@@ -79,10 +79,15 @@ function cd() {
     path="$(dirname "${1}")"
   fi
   
+  if [ ! -d "${path}" ]; then
+    echo -e "${RED}Directory \"${1}\" was not found ! ${NC}"
+    return 1
+  fi
+  
   # shellcheck disable=SC2086
   command cd ${flags} "${path}"
   
-  return $?
+  return 0
 }
 
 # @function: Kills ALL processes specified by $1

@@ -18,9 +18,13 @@ function __hhs_mchoose() {
     echo ''
     echo '    Options: '
     echo '      -c  : All options are initially checked instead of unchecked.'
+    echo ''
+    echo '    Arguments: '
+    echo '      output_file : The output file where the result will be stored.'
+    echo ''
     echo '  Notes: '
-    echo '    - A temporary file is suggested to used with this command: #> mktemp'
-    echo '    - The outfile must not exist or it be an empty file'
+    echo '    - A temporary file is suggested to used with this command: #> mktemp.'
+    echo '    - The outfile must not exist or it be an empty file.'
     return 1
   fi
 
@@ -31,8 +35,8 @@ function __hhs_mchoose() {
 
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
-  local all_options=() sel_options=() outfile="$1" cur_index=0 show_from=0 re_render=1
-  local index_len len show_to diff_index typed_index columns option_line init_value=0
+  local all_options=() sel_options=() outfile="$1" cur_index=0 show_from=0 re_render=1 selector
+  local index_len len show_to diff_index typed_index columns option_line init_value=0 mark
   
   [ '-c' = "${1}" ] && shift && init_value=1
 
@@ -57,11 +61,12 @@ function __hhs_mchoose() {
     if [ -n "$re_render" ]; then
       columns="$(($(tput cols) - 7))"
       hide-cursor
-      # Erase current line and restore the cursor to the home position
+      # Restore the cursor to the home position
       restore-cursor-pos
       echo -e "${NC}"
       for idx in $(seq "$show_from" "$show_to"); do
-        local selector=' ' mark=' '
+        selector=' ' 
+        mark=' '
         [[ $idx -ge $len ]] && break # When the number of items is lower than the maxrows, skip the other lines
         option_line="${all_options[idx]:0:$columns}"
         # Erase current line before repaint

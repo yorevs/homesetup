@@ -7,6 +7,7 @@
 - [ ] Update README.MD
 - [ ] install.bash might install required tools (ask for it) using #> hhs tools --install/--check
 - [ ] Test python scripts with 2.7 and 3.0 versions
+- [ ] Update all hhs-functions file headers.
 
 ## BUGFIX
 
