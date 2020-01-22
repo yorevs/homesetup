@@ -63,7 +63,7 @@ function __hhs_envs() {
 }
 
 # @function: Select a shell from the existing shell list
-function __hhs_select-shell() {
+function __hhs_shell_select() {
 
   local sel_index sel_shell mselect_file avail_shells=()
 

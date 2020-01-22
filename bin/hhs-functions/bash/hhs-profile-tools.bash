@@ -10,7 +10,7 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: Lazy load healper function to initialize NVM for the terminal
-function __hhs_activate-nvm() {
+function __hhs_activate_nvm() {
 
   echo -en "Activating NVM app ...... "
   # NVM setup
@@ -29,7 +29,7 @@ function __hhs_activate-nvm() {
 }
 
 # @function: Lazy load healper function to initialize RVM for the terminal
-function __hhs_activate-rvm() {
+function __hhs_activate_rvm() {
 
   echo -en "Activating RVM app ...... "
   # RVM setup
@@ -46,7 +46,7 @@ function __hhs_activate-rvm() {
 }
 
 # @function: Lazy load healper function to initialize Jenv for the terminal
-function __hhs_activate-jenv() {
+function __hhs_activate_jenv() {
 
   echo -en "Activating JENV app ..... "
   # JENV setup
@@ -57,7 +57,7 @@ function __hhs_activate-jenv() {
 }
 
 # @function: Lazy load healper function to initialize Docker-Daemon for the terminal
-function __hhs_activate-docker() {
+function __hhs_activate_docker() {
 
   echo -en "Activating Docker app ... "
   DK_LOC='/Applications/Docker.app'

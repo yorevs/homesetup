@@ -11,7 +11,7 @@
 if __hhs_has "git"; then
 
   # @function: Checkout the previous branch in history (skips branch-to-same-branch changes ).
-  function __hhs_git-() {
+  function __hhs_git_branch_previous() {
 
     local cur_branch prev_branch
 

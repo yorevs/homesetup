@@ -35,7 +35,7 @@ function __hhs_highlight() {
 
 # @function: Pretty print (format) JSON string.
 # @param $1 [Req] : The unformatted JSON string.
-function __hhs_json-print() {
+function __hhs_json_print() {
 
   if [ $# -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <json_string>"

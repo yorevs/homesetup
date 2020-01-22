@@ -10,7 +10,7 @@
 
 # @function: Move files recursively to the Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
-function __hhs_del-tree() {
+function __hhs_del_tree() {
 
   local all dest
 

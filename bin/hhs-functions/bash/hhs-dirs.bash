@@ -11,7 +11,7 @@
 # @function: Save the one directory to be loaded by load.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
-function __hhs_save-dir() {
+function __hhs_save_dir() {
 
   local dir dir_alias all_dirs=()
 
@@ -65,7 +65,7 @@ function __hhs_save-dir() {
 # shellcheck disable=SC2059,SC2181,SC2046
 # @function: Pushd into a saved directory issued by save.
 # @param $1 [Opt] : The alias to access the directory saved.
-function __hhs_load-dir() {
+function __hhs_load_dir() {
 
   local dir_alias all_dirs=() dir pad pad_len mselect_file sel_index
 
@@ -150,7 +150,7 @@ function __hhs_load-dir() {
 # @function: Pushd from the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
-function __hhs_go-dir() {
+function __hhs_go_dir() {
 
   local dir len mselect_file results=()
 

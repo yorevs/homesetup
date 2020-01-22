@@ -67,7 +67,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 
   # @function: Fetch the logs of a container
   # @param $1 [Req] : The running container ID
-  function __hhs_docker_tail_logs() {
+  function __hhs_docker_logs() {
     if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
       return 1
@@ -78,7 +78,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   }
 
   # @function: Remove all docker volumes not referenced by any containers (dangling)
-  function __hhs_docker_remove_dangling_volumes() {
+  function __hhs_docker_remove_volumes() {
     if [ -n "$1" ] && [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]}"
     elif [ -z "$1" ]; then
@@ -106,7 +106,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
         if docker stop "${container}" &> /dev/null; then
           if docker rm "${container}" &> /dev/null; then
             echo -e "[   ${GREEN}OK${NC}   ]"
-            if ! __hhs_docker_remove_dangling_volumes "$@"; then
+            if ! __hhs_docker_remove_volumes "$@"; then
               return 1
             fi
           else

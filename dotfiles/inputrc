@@ -1,0 +1,4 @@
+set completion-ignore-case on
+set colored-stats on
+TAB: complete
+"\e[Z": menu-complete

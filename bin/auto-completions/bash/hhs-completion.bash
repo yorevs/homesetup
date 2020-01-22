@@ -19,7 +19,7 @@ __hhs_complete() {
   return 0
 }
 
-__hhs_comp-load-dir() {
+__hhs_comp_load_dir() {
 
   local suggestions=($(grep . "$HHS_SAVED_DIRS_FILE" | awk -F'=' '{print $1}'))
 
@@ -28,7 +28,7 @@ __hhs_comp-load-dir() {
   return $?
 }
 
-__hhs_comp-aliases() {
+__hhs_comp_aliases() {
 
   local suggestions=($(grep -v '^#' "$HOME/.aliases" | cut -d ' ' -f2- | awk -F'=' '{print $1}'))
 
@@ -37,7 +37,7 @@ __hhs_comp-aliases() {
   return $?
 }
 
-__hhs_comp-cmd() {
+__hhs_comp_cmd() {
 
   local suggestions=($(esed 's/^Command ([A-Z0-9_]*):(.*)?/\1/' "$HHS_CMD_FILE"))
 
@@ -46,7 +46,7 @@ __hhs_comp-cmd() {
   return $?
 }
 
-__hhs_comp-punch() {
+__hhs_comp_punch() {
 
   if [ "${#COMP_WORDS[@]}" == "2" ]; then
     COMPREPLY=($(compgen -W "-w -e -l" -- "${COMP_WORDS[1]}"))
@@ -75,7 +75,7 @@ __hhs_comp-punch() {
   return $?
 }
 
-__hhs_comp-envs() {
+__hhs_comp_envs() {
 
   local suggestions=() filter
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
@@ -89,7 +89,7 @@ __hhs_comp-envs() {
   return $?
 }
 
-__hhs_comp-paths() {
+__hhs_comp_paths() {
 
   local dir puch_weeks suggestions=()
 
@@ -108,7 +108,7 @@ __hhs_comp-paths() {
   return 1
 }
 
-__hhs_comp-godir() {
+__hhs_comp_godir() {
 
   local dir base suggestions=()
 
@@ -141,7 +141,7 @@ __hhs_comp-godir() {
   return 0
 }
 
-__hhs_comp-hist() {
+__hhs_comp_hist() {
 
   local suggestions=()
 
@@ -157,11 +157,11 @@ __hhs_comp-hist() {
   COMPREPLY=("${suggestions[@]}")
 }
 
-complete -o default -F __hhs_comp-godir godir
-complete -o default -F __hhs_comp-paths paths
-complete -F __hhs_comp-load-dir load
-complete -F __hhs_comp-aliases aa
-complete -F __hhs_comp-cmd cmd
-complete -F __hhs_comp-punch punch
-complete -F __hhs_comp-envs envs
-complete -F __hhs_comp-hist hist
+complete -o default -F __hhs_comp_godir godir
+complete -o default -F __hhs_comp_paths paths
+complete -F __hhs_comp_load_dir load
+complete -F __hhs_comp_aliases aa
+complete -F __hhs_comp_cmd cmd
+complete -F __hhs_comp_punch punch
+complete -F __hhs_comp_envs envs
+complete -F __hhs_comp_hist hist

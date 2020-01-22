@@ -300,18 +300,24 @@ Usage: $APP_NAME [OPTIONS] <args>
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # HHS Compatibility {
+    echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
 
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
-    [ -f ~/.bash_aliasdef ] && \rm -f ~/.bash_aliasdef
+    [ -f ~/.bash_aliasdef ] && command rm -f ~/.bash_aliasdef
 
-    # hhu was remodeled, so, remove any alias in aliasdef of it
-    sed -i '' -E -e 's#((__hhs_alias|alias) hhu=.*)##g' -e '/^\s*$/d' ~/.aliasdef
+    # .aliasdef Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.aliasdef" ] && [ ! -f "$HHS_DIR/aliasdef.bak" ]; then
+      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef.bak"
+      command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
+      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef.bak ${NC}"
+    fi
 
-    # HHS is using the menu-complete instead of the normal complete. #aa6cb39
-    {
-      echo "TAB: complete"
-      echo "\"\e[Z\": menu-complete"
-    } >> ~/.inputrc
+    # .inputrc Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc.bak" ]; then
+      command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
+      command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
+      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc.bak ${NC}"
+    fi
 
     # } HHS Compatibility
   }
@@ -323,7 +329,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: ${HHS_HOME}!"
 
     echo ''
-    echo -e 'Cloning HomeSetup from repository ...'
+    echo -e "${WHITE}Cloning HomeSetup from repository ..."
     sleep 1
     command git clone "$REPO_URL" "$HHS_HOME"
 
@@ -338,14 +344,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_installed() {
 
     echo ''
-    echo -e "Checking required tools "
+    echo -e "${WHITE}Checking required tools "
     echo ''
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=10
 
     for tool_name in "${HHS_REQUIRED_TOOLS[@]}"; do
-      echo -en "Checking: ${YELLOW}${tool_name}${NC} ..."
+      echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
       if has "$tool_name"; then
         echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"

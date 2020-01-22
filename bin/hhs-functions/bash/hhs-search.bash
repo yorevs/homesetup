@@ -13,7 +13,7 @@ if __hhs_has "python"; then
   # @function: Search for files and links to files recursively.
   # @param $1 [Req] : The base search path.
   # @param $2 [Req] : The GLOB expressions of the file search.
-  function __hhs_search-file() {
+  function __hhs_search_file() {
 
     local inames expr filter dir
 
@@ -38,7 +38,7 @@ if __hhs_has "python"; then
   # @function: Search for directories and links to directories recursively.
   # @param $1 [Req] : The base search path.
   # @param $2 [Req] : The GLOB expressions of the directory search.
-  function __hhs_search-dir() {
+  function __hhs_search_dir() {
 
     local inames expr dir filter
 
@@ -67,7 +67,7 @@ if __hhs_has "python"; then
   # @param $4 [Req] : The GLOB expression of the file search.
   # @param $5 [Opt] : Whether to replace the findings.
   # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
-  function __hhs_search-string() {
+  function __hhs_search_string() {
 
     local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
     local names_expr search_str base_cmd full_cmd dir
