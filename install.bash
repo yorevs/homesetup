@@ -46,7 +46,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
 
   # Functions to be unset after quit
-  UNSETS=(quit usage has check_inst_method install_dotfiles clone_repository check_installed activate_dotfiles)
+  UNSETS=(
+    quit usage has check_inst_method install_dotfiles clone_repository check_installed 
+    activate_dotfiles compatibility_check
+  )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
@@ -158,6 +161,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create all user custom files.
     [ -f "$HOME/.aliasdef" ] || cp "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
+    [ -f "$HOME/.inputrc" ] || cp "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
     [ -f "$HOME/.path" ] || touch "$HOME/.path"
     [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
     [ -f "$HOME/.colors" ] || touch "$HOME/.colors"
@@ -193,6 +197,43 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
 
+  # Check for backward HHS compatibility
+  compatibility_check() {
+    echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
+    
+    # Moving old hhs files into the proper directory
+    [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
+    [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
+    [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
+    [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
+
+    # Removing the old $HOME/bin folder
+    if [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ]; then
+      command rm -f "${HOME:?}/bin"
+      echo -e "\n${ORANGE}Your old $HOME/bin link had to be removed. ${NC}"
+    fi
+
+    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
+    if [ -L "${HOME}/.bash_aliasdef" ]; then
+      command rm -f "${HOME}/.bash_aliasdef"
+      echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
+    fi
+
+    # .aliasdef Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.aliasdef" ] && [ ! -f "$HHS_DIR/aliasdef.bak" ]; then
+      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef.bak"
+      command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
+      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef.bak ${NC}"
+    fi
+
+    # .inputrc Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc.bak" ]; then
+      command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
+      command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
+      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc.bak ${NC}"
+    fi
+  }
+
   # Install all dotfiles.
   install_dotfiles() {
 
@@ -210,18 +251,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${ORANGE}"
       [ -z ${QUIET} ] && read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
       echo -e "${NC}"
-      if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
-        [ -n "$ANS" ] && echo ''
-        echo -en "${WHITE}Backing up existing dotfiles ..."
-        # Moving old hhs files into the proper directory
-        [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
-        [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
-        [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
-        [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
-        # Removing the old $HOME/bin folder
-        [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "${HOME:?}/bin"
-        echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-      else
+      if [ ! "$ANS" = "y" ] && [ ! "$ANS" = "Y" ]; then
         [ -n "$ANS" ] && echo ''
         quit 1 "Installation cancelled!"
       fi
@@ -299,27 +329,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &> /dev/null
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
-    # HHS Compatibility {
-    echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
-
-    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
-    [ -f ~/.bash_aliasdef ] && command rm -f ~/.bash_aliasdef
-
-    # .aliasdef Needs to be updated, so, we need to replace it
-    if [ -f "$HOME/.aliasdef" ] && [ ! -f "$HHS_DIR/aliasdef.bak" ]; then
-      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef.bak"
-      command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
-      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef.bak ${NC}"
-    fi
-
-    # .inputrc Needs to be updated, so, we need to replace it
-    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc.bak" ]; then
-      command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
-      command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
-      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc.bak ${NC}"
-    fi
-
-    # } HHS Compatibility
+    compatibility_check
   }
 
   # Clone the repository and install dotfiles.
