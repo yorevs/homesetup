@@ -31,7 +31,9 @@ Usage: ${APP_NAME} ${PLUGIN_NAME} <option> [arguments]
       db_alias  : Alias to be used to identify the firebase object to fetch data from.
 "
 
-UNSETS=('help' 'version' 'cleanup' 'execute' 'load_settings' 'download' 'parse_and_save' 'build_payload' 'upload')
+UNSETS=(
+  help version cleanup execute load_settings download parse_and_save build_payload upload
+)
 
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"

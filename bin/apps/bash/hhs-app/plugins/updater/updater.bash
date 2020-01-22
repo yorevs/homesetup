@@ -32,7 +32,9 @@ Usage: ${APP_NAME} ${PLUGIN_NAME} <option>
       -s  |  --stamp-next : Stamp the next auto-update check for 7 days ahead.
 "
 
-UNSETS=('help' 'version' 'cleanup' 'execute' 'update_hhs' 'stamp_next_update' 'stamp_next_update')
+UNSETS=(
+  help version cleanup execute update_hhs stamp_next_update stamp_next_update
+)
 
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"

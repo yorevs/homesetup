@@ -32,7 +32,9 @@ Usage: $PLUGIN_NAME <option> [arguments]
       all       : If this option is used, displays even tools without recipes.
 "
 
-UNSETS=('help' 'version' 'cleanup' 'execute' 'cleanup_recipes' 'list_recipes' 'install_recipe' 'uninstall_recipe')
+UNSETS=(
+  help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
+)
 
 # shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
@@ -93,19 +95,19 @@ install_recipe() {
   recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
 
   if [ -f "$recipe" ]; then
-    echo ''
     \. "$recipe"
     if command -v "$1" > /dev/null; then
-      quit 1 "${YELLOW}\"$1\" is already installed on the system !${NC}"
+      echo -e "${YELLOW}\"$1\" is already installed on the system !${NC}"
+      return 1
     fi
-    echo -e "${YELLOW}Installing \"$1\", please wait ... ${NC}"
+    echo -e "${YELLOW}Installing \"$1\", please wait ... "
     if install; then
       echo -e "${GREEN}Installation successful !${NC}"
     else
-      quit 2 "Failed to install app \"$1\" !"
+      echo -e "${RED}Failed to install app \"$1\" !${NC}"
     fi
   else
-    quit 1 "Unable to find recipe \"$recipe\" !"
+    echo -e "${RED}Unable to find recipe \"$recipe\" !${NC}"
   fi
 }
 
@@ -115,19 +117,19 @@ uninstall_recipe() {
 
   recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
   if [ -f "$recipe" ]; then
-    echo ''
     \. "$recipe"
     if ! command -v "$1" > /dev/null; then
-      quit 2 "${YELLOW}\"$1\" is not installed on the system !${NC}"
+      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}"
+      return 1
     fi
-    echo -e "${YELLOW}Uninstalling $1, please wait ... ${NC}"
+    echo -e "${YELLOW}Uninstalling $1, please wait ... "
     if uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
     else
-      quit 2 "Failed to uninstall app \"$1\" !"
+      echo -e "${RED}Failed to uninstall app \"$1\" !${NC}"
     fi
   else
-    quit 2 "Unable to find recipe \"$recipe\" !"
+    echo -e "${RED}Unable to find recipe \"$recipe\" !${NC}"
   fi
 }
 
@@ -159,20 +161,28 @@ function execute() {
     # Install the app
     -i | --install)
       [ "$#" -le 0 ] && usage 1
-      if list_recipes "$1"; then
-        install_recipe "$1"
-      else
-        quit 1 "Unable to find recipe for \"$1\" !"
-      fi
+      for next_recipe in "${@}"; do
+        echo ''
+        if list_recipes "$next_recipe"; then
+          install_recipe "$next_recipe"
+        else
+          echo -e "${RED}Unable to find recipe for \"$next_recipe\" installation ! ${NC}"
+        fi
+      done
+      echo ''
       ;;
     # Uninstall the app
     -u | --uninstall)
       [ "$#" -le 0 ] && usage 1
-      if list_recipes "$1"; then
-        uninstall_recipe "$1"
-      else
-        quit 1 "Unable to find recipe for \"$1\" !"
-      fi
+      for next_recipe in "${@}"; do
+        echo ''
+        if list_recipes "$next_recipe"; then
+          uninstall_recipe "$next_recipe"
+        else
+          echo -e "${RED}Unable to find recipe for \"$next_recipe\" uninstallation ! ${NC}"
+        fi
+      done
+      echo ''
       ;;
     # List available apps
     -l | --list)
@@ -188,6 +198,6 @@ function execute() {
       ;;
   esac
   shopt -u nocasematch
-  
+
   exit 0
 }

@@ -5,7 +5,7 @@
 - [ ] Add a deployer system
 - [ ] Add authentication to FB requests and encode the firebase config and add .vault to firebase
 - [ ] Update README.MD
-- [ ] install.bash might install required tools (ask for it)
+- [ ] install.bash might install required tools (ask for it) using #> hhs tools --install/--check
 - [ ] Test python scripts with 2.7 and 3.0 versions
 
 ## BUGFIX
