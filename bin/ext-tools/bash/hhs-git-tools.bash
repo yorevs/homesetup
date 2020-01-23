@@ -176,4 +176,88 @@ if __hhs_has "git"; then
     return $ret_val
   }
 
+  # @function: Pull all projects within the specified path to the given repository/branch.
+  # @param $1 [Opt] :
+  # @param $2 [Opt] :
+  function __hhs_git_pull_all() {
+
+    local git_repos_path all_repos repository branch repo_dir stash_flag
+
+    if [[ "${#1}" -eq 0 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+      echo "Usage: ${FUNCNAME[0]} <repos_search_path> [repository=[origin]] [branch=[HEAD]]"
+      echo ''
+      echo '    Arguments:'
+      echo '      repos_search_path   : Where to find out git repositories to pull'
+      echo '      repository          : The remote repository to pull from'
+      echo '      branch              : The remote branch to pull from'
+      return 1
+    fi
+
+    # Find all git repositories
+    git_repos_path="${1}"
+    [ ! -d "${git_repos_path}" ] && echo "${RED}Repository path \"${git_repos_path}\" was not found ! ${NC}" && return 1
+    all_repos=$(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git")
+    [ -z "${all_repos}" ] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
+    shift
+    repository="${1:-origin}"
+    branch="${2:-current}"
+
+    echo '--- GIT Repositories found ---'
+    echo ''
+    echo -e "${GREEN}${all_repos}${NC}"
+    echo ''
+    echo -e "Repository: ${CYAN}${repository}${NC}/${CYAN}${branch}${NC}"
+    echo ''
+
+    read -rsn1 -p "${YELLOW}Stash all changes and pull all of the above repositories (y/[n])? " ANS
+    [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && echo -e "\n${RED}Operation aborted by the user ! ${NC}" && return 1
+    echo ''
+
+    IFS=$'\n'
+    for git_dir in ${all_repos}; do
+    
+      stash_flag=0
+      repo_dir=$(dirname "${git_dir}")
+      pushd "${repo_dir}" &> /dev/null || echo "${RED} Unable to enter directory: \"${repo_dir}\" ! ${NC}"
+
+      if git rev-parse --abbrev-ref 'master@{u}' &> /dev/null; then
+        echo ''
+        echo -e "${GREEN}Pulling project: \"${repo_dir}\" ...${NC}"
+        [ "${branch}" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
+        [ "${branch}" = "current" ] || gitbranch="${branch}"
+        git fetch || echo -e "${RED}Unable to fetch repository updates. Skipping ...${NC}"
+        if ! git diff-index --quiet HEAD --; then
+          echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
+          if ! git stash &> /dev/null; then
+            echo -e "${RED}### Unable to stash your changes. Skipping ...${NC}"
+          else
+            stash_flag=1
+            echo -e " ... [   ${GREEN}OK${NC}   ]\n"
+          fi
+        fi
+        echo -e "${GREEN}Pulling the new code (${CYAN}${repository}/${gitbranch}${NC}) ... "
+        echo ''
+        git pull "${repository}" "${gitbranch}" || echo -e "${RED}Unable to pull the code. Skipping ...${NC}"
+        if [[ ${stash_flag} -ne 0 ]]; then
+          echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
+          if ! git stash pop &> /dev/null; then
+            echo -e "${RED}### Unable to retrieve stash changes ${NC}"
+          else
+            echo -e " ... [   ${GREEN}OK${NC}   ]"
+          fi
+        fi
+      else
+        echo ''
+        echo -e "${ORANGE}>>> The repository \"${repo_dir}\" is not being TRACKED on remote !${NC}"
+      fi
+
+      popd &> /dev/null || echo "${RED} Unable to leave directory: \"${repo_dir}\" ! ${NC}"
+    done
+    IFS="$HHS_RESET_IFS"
+
+    echo ''
+    echo "${GREEN}Done ! ${NC}"
+    echo ''
+  }
+
 fi

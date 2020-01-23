@@ -255,7 +255,6 @@ hspm.bash               | Manage your development tools using installation/unins
 fetch.bash              | Script to fetch REST APIs data.
 git-completion.bash     | bash/zsh completion support for core Git.
 git-diff-cmd.bash       | Enable opendiff to be used with git instead of normal diff.
-git-pull-all.bash       | Pull all projects within the specified path to the given repository/branch.
 hostname-change.bash    | Change the hostname permanently.
 ip-utils.bash           | Validate an IP and check details about it.
 toolcheck.bash          | Check if the a tool is installed on the system.
