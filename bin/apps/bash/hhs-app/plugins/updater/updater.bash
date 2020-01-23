@@ -46,9 +46,10 @@ update_hhs() {
   if [ -n "$HHS_VERSION" ]; then
     clear
     repo_ver="$(curl -s --fail -m 3 $VERSION_URL)"
-    if [ -n "$repo_ver" ]; then
-      is_different=$(test -n "$repo_ver" -a "$HHS_VERSION" != "$repo_ver" && echo 1)
-      if [ -n "$is_different" ]; then
+    re="[0-9]+\.[0-9]+\.[0-9]+"
+    
+    if [[ $repo_ver =~ $re ]]; then
+      if [[ ${repo_ver//./} -gt ${HHS_VERSION//./} ]]; then
         echo ''
         echo -e "${ORANGE}Your version of HomeSetup is not up-to-date: ${NC}"
         echo -e "=> Repository: ${GREEN}${repo_ver}${NC} , Yours: ${RED}${HHS_VERSION}${NC}"
@@ -73,7 +74,7 @@ update_hhs() {
           echo ''
         fi
       else
-        echo -e "${GREEN}You version is up to date v${repo_ver} !"
+        echo -e "${GREEN}You version is up to date v${HHS_VERSION} !"
       fi
       stamp_next_update &> /dev/null
     else
