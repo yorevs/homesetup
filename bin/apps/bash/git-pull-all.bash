@@ -44,21 +44,39 @@ read -r -n 1 -p "Reset all changes and pull all of the above repositories (y/[n]
 [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && quit 2 "$ANS \nOperation aborted by the user!"
 
 for gdir in $ALL; do
-  echo ''
   pdir=$(dirname "$gdir")
-  echo -e "${GREEN}Pulling project: \"$pdir\" ...${NC}"
   cd "$pdir" || continue
-  [ "$BRANCH" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
-  [ "$BRANCH" = "current" ] || gitbranch="$BRANCH"
-  echo -e "${YELLOW}Resetting all of your changes...${NC}"
-  git fetch
-  git reset --hard "$gitbranch"
-  test $? -ne 0 && quit 2 "Unable to checkout the code. Aborting!"
-  echo -e "${GREEN}Pulling the new code ($REPO/$gitbranch) ...${NC}"
-  echo ''
-  git pull "$REPO" "$gitbranch"
-  test $? -ne 0 && echo -e "${RED}Unable to pull the code. Skipping!${NC}"
-  cd - >/dev/null || continue
+  if git rev-parse --abbrev-ref master@{u} &> /dev/null; then
+    echo ''
+    echo -e "${GREEN}Pulling project: \"$pdir\" ...${NC}"
+    [ "$BRANCH" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
+    [ "$BRANCH" = "current" ] || gitbranch="$BRANCH"
+    git fetch || echo -e "${RED}Unable to fetch repository updates. Skipping ...${NC}"
+    if ! git diff-index --quiet HEAD --; then
+      echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
+      if ! git stash &> /dev/null; then
+        echo -e "${RED}### Unable to stash your changes. Skipping ...${NC}"
+      else
+        stash_flag=1
+        echo -e " ... [   ${GREEN}OK${NC}   ]\n"
+      fi
+    fi
+    echo -e "${GREEN}Pulling the new code (${CYAN}$REPO/$gitbranch${NC}) ... "
+    echo ''
+    git pull "$REPO" "$gitbranch" || echo -e "${RED}Unable to pull the code. Skipping ...${NC}"
+    if [ -n "${stash_flag}" ]; then
+      echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
+      if ! git stash pop &> /dev/null; then
+        echo -e "${RED}### Unable to retrieve stash changes ${NC}"
+      else
+        echo -e " ... [   ${GREEN}OK${NC}   ]"
+      fi
+    fi
+  else
+    echo ''
+    echo -e "${ORANGE}>>> The repository \"$pdir\" is not being TRACKED on remote !${NC}"
+  fi
+  cd - > /dev/null || continue
 done
 
 echo ''
