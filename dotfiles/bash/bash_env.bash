@@ -78,7 +78,6 @@ export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
 # Fixed
 export HHS_HOME="${HOME}/HomeSetup"
 export HHS_DIR="${HOME}/.hhs"
-export HHS_PLUGINS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
 export HHS_RESET_IFS="${IFS}"

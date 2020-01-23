@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2181
+#shellcheck disable=SC2181,SC2034,SC1090
 
 #  Script: updater.bash
 # Purpose: Update manager for HomeSetup
@@ -10,14 +10,12 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# shellcheck disable=SC2034
 # Current script version.
 VERSION=0.9.0
 
 # Current plugin name
 PLUGIN_NAME="updater"
 
-# shellcheck disable=SC2034
 # Usage message
 USAGE="
 Usage: ${APP_NAME} ${PLUGIN_NAME} <option>
@@ -36,7 +34,6 @@ UNSETS=(
   help version cleanup execute update_hhs stamp_next_update stamp_next_update
 )
 
-# shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # shellcheck disable=SC2086,SC2120
@@ -66,7 +63,6 @@ update_hhs() {
             echo -e "${GREEN}Successfully updated HomeSetup !"
             sleep 1
             clear
-            # shellcheck disable=SC1090
             source ~/.bashrc
             echo -e "${HHS_MOTD}"
           else

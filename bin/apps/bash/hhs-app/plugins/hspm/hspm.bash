@@ -1,3 +1,5 @@
+# shellcheck disable=SC2034,SC1090
+
 #  Script: hspm.bash
 # Purpose: Manage your development tools using installation/uninstallation recipes.
 # Created: Jan 06, 2020
@@ -6,14 +8,12 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
-# shellcheck disable=SC2034
 # Current script version.
 VERSION=0.9.0
 
 # Current plugin name
 PLUGIN_NAME="hspm"
 
-# shellcheck disable=SC2034
 # Usage message
 USAGE="
 Usage: $PLUGIN_NAME <option> [arguments]
@@ -36,7 +36,6 @@ UNSETS=(
   help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
 )
 
-# shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Flag to enlist even the missing recipes
@@ -49,7 +48,7 @@ ALL_RECIPES=()
 DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 
 # Directiry containing all hspm recipes
-RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
+RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
 # Unset all declared functions from the recipes
 cleanup_recipes() {
@@ -57,11 +56,12 @@ cleanup_recipes() {
   unset -f 'about' 'depends' 'install' 'uninstall'
 }
 
-# shellcheck disable=2155,SC2059,SC2183,SC1090
+# shellcheck disable=2155,SC2059,SC2183
 list_recipes() {
 
   local index=0 recipe pad_len=20
   local pad=$(printf '%0.1s' "."{1..60})
+  
   for app in ${DEV_TOOLS[*]}; do
     recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
     if [ -n "$recipe" ] && [ -f "$recipe" ]; then
@@ -86,7 +86,6 @@ list_recipes() {
   [ -n "$1" ] && return 1 || return 0
 }
 
-# shellcheck disable=SC1090
 # Install the specified app using the installation recipe
 install_recipe() {
 
@@ -111,7 +110,6 @@ install_recipe() {
   fi
 }
 
-# shellcheck disable=SC1090
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
@@ -134,6 +132,7 @@ uninstall_recipe() {
 }
 
 function help() {
+
   usage 0
 }
 
@@ -147,6 +146,7 @@ function cleanup() {
 }
 
 function execute() {
+
   [ -z "$1" ] && usage 1
   if [ ${#DEV_TOOLS[*]} -le 0 ]; then
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"

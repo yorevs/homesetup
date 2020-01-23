@@ -1,3 +1,5 @@
+# shellcheck disable=SC2034,SC1090
+
 #  Script: firebase.bash
 # Purpose: Manage your HomeSetup Firebase files
 # Created: Jan 06, 2020
@@ -6,14 +8,12 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
-# shellcheck disable=SC2034
 # Current script version.
 VERSION=0.9.0
 
 # Current plugin name
 PLUGIN_NAME="firebase"
 
-# shellcheck disable=SC2034
 # Usage message
 USAGE="
 Usage: ${APP_NAME} ${PLUGIN_NAME} <option> [arguments]
@@ -35,7 +35,6 @@ UNSETS=(
   help version cleanup execute load_settings download parse_and_save build_payload upload
 )
 
-# shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Firebase configuration file.
@@ -67,7 +66,6 @@ PASSPHRASE=%PWD%
 UUID=%UUID%
 "
 
-# shellcheck disable=SC1090
 # Load firebase settings.
 load_settings() {
 
