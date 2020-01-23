@@ -86,7 +86,7 @@ function __hhs_mchoose() {
     # } Menu Renderization
 
     # Navigation input {
-    read -rsn 1 KEY_PRESS
+    IFS= read -rsn 1 KEY_PRESS
     case "$KEY_PRESS" in
       'q' | 'Q') # Quit requested
         enable-line-wrap
@@ -105,7 +105,7 @@ function __hhs_mchoose() {
         typed_index="$KEY_PRESS"
         echo -en "$KEY_PRESS" && index_len=1
         while [[ ${#typed_index} -lt ${#len} ]]; do
-          read -rs -n 1 NUM_PRESS
+          IFS= read -rsn1 NUM_PRESS
           [ -z "$NUM_PRESS" ] && break
           [[ ! "$NUM_PRESS" =~ ^[0-9]*$ ]] && typed_index= && break
           typed_index="${typed_index}${NUM_PRESS}"
@@ -120,7 +120,7 @@ function __hhs_mchoose() {
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        read -rsn2 KEY_PRESS
+        IFS= read -rsn2 KEY_PRESS
         case "$KEY_PRESS" in
           [A) # Cursor up
             if [[ $cur_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then

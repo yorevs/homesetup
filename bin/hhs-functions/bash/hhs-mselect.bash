@@ -77,7 +77,7 @@ function __hhs_mselect() {
     # } Menu Renderization
     
     # Navigation input {
-    read -rs -n 1 KEY_PRESS
+    IFS= read -rs -n 1 KEY_PRESS
     case "$KEY_PRESS" in
       'q' | 'Q') # Quit requested
         enable-line-wrap
@@ -103,7 +103,7 @@ function __hhs_mselect() {
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        read -rsn2 KEY_PRESS
+        IFS= read -rsn2 KEY_PRESS
         case "$KEY_PRESS" in
           [A) # Cursor up
             if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2206,SC2207
 
 #  Script: minput.bash
 # Created: Jan 16, 2020
@@ -29,7 +30,9 @@ function __hhs_cursor_position() {
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
-
+  
+  echo '' > /tmp/minput.log # Reset logs
+  
   if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
     echo ''
@@ -62,9 +65,9 @@ function __hhs_minput() {
     return 1
   fi
 
-  local input_pad len re_render=1 all_fields=() form_values=() outfile="$1" cur_row cur_col
-  local f_label f_mode f_type f_max_min_len f_perm f_value minlen maxlen tab_index cur_index
-  local exit_row exit_col err_msg cur_field=()
+  local input_pad len re_render=1 all_fields=() outfile="$1" cur_field=() field_parts=()
+  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col
+  local minlen maxlen cur_index tab_index cur_row cur_col exit_row exit_col err_msg
 
   if [ -d "$1" ] || [ -s "$1" ]; then
     echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
@@ -72,7 +75,6 @@ function __hhs_minput() {
   fi
 
   shift
-  # shellcheck disable=SC2206
   all_fields=(${@})
   input_pad=$(printf '%0.1s' "_"{1..100})
   len=${#all_fields[*]}
@@ -84,105 +86,124 @@ function __hhs_minput() {
 
     # Menu Renderization {
     if [ -n "$re_render" ]; then
-      cur_index=0
+      echo "[DEBUG] Render started" >> /tmp/minput.log
       hide-cursor
       # Restore the cursor to the home position
       restore-cursor-pos
       echo -e "${NC}"
-      for field in "${all_fields[@]}"; do
+      for cur_index in ${!all_fields[*]}; do
+        field="${all_fields[$cur_index]}"
         # TODO: Validate field syntax => Label:Mode:Type:Max/Min:Perm:Value
         IFS=':'
-        # shellcheck disable=SC2206
         field_parts=(${field})
-        IFS="$HHS_RESET_IFS"
         f_label="${field_parts[0]}"
         f_mode="${field_parts[1]}"
-        f_type="${field_parts[2]}"
-        f_max_min_len="${field_parts[3]}" f_perm="${field_parts[4]}"
-        f_value="${field_parts[5]}"
         f_mode=${f_mode:-input}
+        f_type="${field_parts[2]}"
         f_type=${f_type:-any}
+        f_max_min_len="${field_parts[3]}"
+        f_perm="${field_parts[4]}"
+        f_perm=${f_perm:-rw}
         f_max_min_len="${f_max_min_len:-0/30}"
         minlen=${f_max_min_len%/*}
         maxlen=${f_max_min_len##*/}
-        f_perm=${f_perm:-rw}
-        printf "${WHITE}%10s: " "${f_label}" # Label
-        f_row="$(__hhs_cursor_position row)" # Get current cursor row
-        f_col="$(__hhs_cursor_position col)" # Get current cursor column
-        f_col="$((f_col + ${#f_value}))"     # Increment the row by the length of the current value
-        # shellcheck disable=SC2207
-        field_parts+=("${f_row}")
-        field_parts+=("${f_col}")
-        [ "password" = "${f_mode}" ] || printf "${CYAN}%s" "${f_value}"                            # Value
-        [ "password" = "${f_mode}" ] && printf "${CYAN}%s" "$(sed -E 's/./\*/g' <<< "${f_value}")" # Hidden value
-        printf "${NC}%*.*s" 0 $((maxlen - ${#f_value})) "${input_pad}"                             # Input space
-        printf "${NC} (%s/%s)\n" "${#f_value}" "${maxlen}"                                         # Typed/Remaining characters
+        f_value="${field_parts[5]}"
+        printf "${WHITE}%10s: " "${f_label}"                                                            # Label
+        f_row="$(__hhs_cursor_position row)"                                                            # Get current cursor row
+        f_col="$(__hhs_cursor_position col)"                                                            # Get current cursor column
+        f_col="$((f_col + ${#f_value}))"                                                                # Increment the row by the length of the current value
+        [ "rw" = "${f_perm}" ] && VAL_COLOR="${CYAN}"                                                   # Read & Write
+        [ "r" = "${f_perm}" ] && VAL_COLOR="${NC}"                                                      # Read Only
+        [ "input" = "${f_mode}" ] && printf "${VAL_COLOR}%s" "${f_value}"                               # Value
+        [ "password" = "${f_mode}" ] && printf "${VAL_COLOR}%s" "$(sed -E 's/./\*/g' <<< "${f_value}")" # Hidden value
+        printf "${NC}%*.*s" 0 $((maxlen - ${#f_value})) "${input_pad}"                                  # Input space
+        printf "${NC} (%${#maxlen}d/%${#maxlen}d)\n" "${#f_value}" "${maxlen}"                          # Typed/Remaining characters
         [ -n "${err_msg}" ] && echo -e "${RED}### ${err_msg}${NC}" && sleep 1
         echo ''
         {
-          printf "TAB-I: %-3s L: %-20s V: %-20s M: %8s \tT: %5s \tMin: %2s \tMax: %2s \tP: %2s \Pos: (%s,%s) \n" "${tab_index}" "${f_label}" "${f_value}" "${f_mode}" "${f_type}" "${minlen}" "${maxlen}" "${f_perm}" "${f_row}" "${f_col}"
+          printf "[DEBUG] IDX: %-3s \tTAB-IDX: %-3s \tL: %-20s V: \"%-20s\" \tLen: %s \tM: %8s \tT: %5s \tMin: %2s \tMax: %2s \tP: %2s \Pos: (%s,%s) \n" "${cur_index}" "${tab_index}" "${f_label}" "${f_value}" "${#f_value}" "${f_mode}" "${f_type}" "${minlen}" "${maxlen}" "${f_perm}" "${f_row}" "${f_col}"
         } >> /tmp/minput.log
+        # Keep the selected field on hand
         if [[ $tab_index -eq $cur_index ]]; then
-          cur_row=${f_row}
-          cur_col=${f_col}
-          cur_field=("${field_parts[@]}")
+          cur_field=(${field_parts[@]})
+          cur_row="${f_row}"
+          cur_col="${f_col}"
         fi
-        cur_index=$((cur_index + 1))
       done
       echo ''
       echo -en "${YELLOW}[Enter] Submit [↑↓] Navigate [Esc] Quit \033[0K"
       echo -en "${NC}"
+      # Save the exit cursor position
       exit_row="$(__hhs_cursor_position row)"
       exit_col="$(__hhs_cursor_position col)"
       re_render=
       # Position the cursor on the current tab index
       tput cup "${cur_row}" "${cur_col}"
       show-cursor
+      echo "[DEBUG] Render finished" >> /tmp/minput.log
     fi
+    IFS="$HHS_RESET_IFS"
     # } Menu Renderization
-
+    
     # Navigation input {
-    read -rs -n 1 KEY_PRESS
+    IFS= read -rsn1 KEY_PRESS
     case "$KEY_PRESS" in
       $' ' | [a-zA-Z0-9])
-        [ -z "$KEY_PRESS" ] && KEY_PRESS=' '
-        # Append value to the current field
-        cur_field[5]+="${KEY_PRESS}"
-        [ "password" = "${cur_field[1]}" ] && printf "${CYAN}%s" "$(sed -E 's/./\*/g' <<< "${KEY_PRESS}")"
-        [ "password" = "${cur_field[1]}" ] || printf "${CYAN}%s" "${KEY_PRESS}"
-        # TODO: update all_fields with the updated value
+        maxlen=${cur_field[3]##*/}
+        if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -lt maxlen ]]; then
+          # Append value to the current field
+          cur_field[5]="${cur_field[5]}${KEY_PRESS}"
+          all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
+          re_render=1
+          echo -e "[DEBUG] +CUR_FIELDS: \"${all_fields[$tab_index]}\"" >> /tmp/minput.log
+        fi
+        ;;
+      $'\177') # Backspace
+        if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -ge 1 ]]; then
+          # Delete the previous character
+          cur_field[5]="${cur_field[5]::${#cur_field[5]}-1}"
+          all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
+          re_render=1
+          echo -e "[DEBUG] -CUR_FIELDS: \"${all_fields[$tab_index]}\"" >> /tmp/minput.log
+        fi
+        ;;
+      $'\011') # TAB => same as Down arrow
+        if [[ $((tab_index + 1)) -lt $len ]]; then
+          tab_index=$((tab_index + 1)) && re_render=1
+          echo "[DEBUG] TAB pressed" >> /tmp/minput.log
+        fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        read -rsn2 -t 1 KEY_PRESS
+        IFS= read -rsn2 -t 1 KEY_PRESS
         case "$KEY_PRESS" in
           [A) # Cursor up
             if [[ $((tab_index - 1)) -ge 0 ]]; then
               tab_index=$((tab_index - 1)) && re_render=1
+              echo "[DEBUG] CURSOR UP" >> /tmp/minput.log
             fi
             ;;
           [B) # Cursor down
             if [[ $((tab_index + 1)) -lt $len ]]; then
               tab_index=$((tab_index + 1)) && re_render=1
+              echo "[DEBUG] CURSOR DOWN" >> /tmp/minput.log
             fi
             ;;
-          *)
+          *) # Escape pressed
             if [[ ${#KEY_PRESS} -eq 1 ]]; then
-              enable-line-wrap
-              # Restore exit position
-              tput cup "${exit_row}" "${exit_col}"
-              echo -e "\n${NC}"
-              return 1
-              echo '' && break
+              echo "[WARN] ESC typed. Exit issued" >> /tmp/minput.log
+              break
             fi
             ;;
         esac
         ;;
       $'')
-        # TODO validate and submit form
-        echo "ENTER typed. Submit form" >> /tmp/minput.log
+        # TODO validate and write form values to outfile
+        echo "[INFO] ENTER typed. Submit issued" >> /tmp/minput.log
+        break
         ;;
       *)
-        echo "Unknown thing typed" >> /tmp/minput.log
+        echo "[WARN] Unknown character typed: $KEY_PRESS" >> /tmp/minput.log
+        continue
         ;;
     esac
     # } Navigation input
@@ -193,7 +214,6 @@ function __hhs_minput() {
   show-cursor
   enable-line-wrap
   echo -e "\n${NC}"
-  echo "${form_values[*]}" > "$outfile"
 
   return 0
 }
