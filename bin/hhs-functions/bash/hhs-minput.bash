@@ -30,8 +30,14 @@ function __hhs_cursor_position() {
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
-  
+
   echo '' > /tmp/minput.log # Reset logs
+  
+  BLACK_BG='\033[40m'
+  BLUE_BG='\033[44m'
+  SEL_COLOR='\033[1;36m'
+  UNSEL_COLOR='\033[0;97m'
+  RO_COLOR='\033[0;97m'
   
   if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
@@ -66,7 +72,7 @@ function __hhs_minput() {
   fi
 
   local input_pad len re_render=1 all_fields=() outfile="$1" cur_field=() field_parts=()
-  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col
+  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col label_size=10 value_size=30
   local minlen maxlen cur_index tab_index cur_row cur_col exit_row exit_col err_msg
 
   if [ -d "$1" ] || [ -s "$1" ]; then
@@ -76,7 +82,7 @@ function __hhs_minput() {
 
   shift
   all_fields=(${@})
-  input_pad=$(printf '%0.1s' "_"{1..100})
+  input_pad=$(printf '%0.1s' " "{1..100})
   len=${#all_fields[*]}
   save-cursor-pos
   disable-line-wrap
@@ -108,16 +114,15 @@ function __hhs_minput() {
         minlen=${f_max_min_len%/*}
         maxlen=${f_max_min_len##*/}
         f_value="${field_parts[5]}"
-        printf "${WHITE}%10s: " "${f_label}"                                                            # Label
-        f_row="$(__hhs_cursor_position row)"                                                            # Get current cursor row
-        f_col="$(__hhs_cursor_position col)"                                                            # Get current cursor column
-        f_col="$((f_col + ${#f_value}))"                                                                # Increment the row by the length of the current value
-        [ "rw" = "${f_perm}" ] && VAL_COLOR="${CYAN}"                                                   # Read & Write
-        [ "r" = "${f_perm}" ] && VAL_COLOR="${NC}"                                                      # Read Only
-        [ "input" = "${f_mode}" ] && printf "${VAL_COLOR}%s" "${f_value}"                               # Value
-        [ "password" = "${f_mode}" ] && printf "${VAL_COLOR}%s" "$(sed -E 's/./\*/g' <<< "${f_value}")" # Hidden value
-        printf "${NC}%*.*s" 0 $((maxlen - ${#f_value})) "${input_pad}"                                  # Input space
-        printf "${NC} (%${#maxlen}d/%${#maxlen}d)\n" "${#f_value}" "${maxlen}"                          # Typed/Remaining characters
+        [[ $tab_index -ne $cur_index ]] || printf "${BLUE_BG}%${label_size}s: " "${f_label}"
+        [[ $tab_index -eq $cur_index ]] || printf "${BLACK_BG}%${label_size}s: " "${f_label}"
+        f_row="$(__hhs_cursor_position row)"
+        f_col="$(__hhs_cursor_position col)"
+        f_col="$((f_col + ${#f_value}))"
+        [ "input" = "${f_mode}" ] && printf "%-${value_size}s" "${f_value}"
+        [ "password" = "${f_mode}" ] && printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
+        # printf " %*.*s " 0 $((maxlen - value_size)) "${input_pad}"
+        printf "(%${#maxlen}d/%${#maxlen}d)\n" "${#f_value}" "${maxlen}"
         [ -n "${err_msg}" ] && echo -e "${RED}### ${err_msg}${NC}" && sleep 1
         echo ''
         {
@@ -130,7 +135,7 @@ function __hhs_minput() {
           cur_col="${f_col}"
         fi
       done
-      echo ''
+      echo -e "${BLACK_BG}"
       echo -en "${YELLOW}[Enter] Submit [↑↓] Navigate [Esc] Quit \033[0K"
       echo -en "${NC}"
       # Save the exit cursor position
@@ -144,7 +149,7 @@ function __hhs_minput() {
     fi
     IFS="$HHS_RESET_IFS"
     # } Menu Renderization
-    
+
     # Navigation input {
     IFS= read -rsn1 KEY_PRESS
     case "$KEY_PRESS" in
@@ -197,7 +202,7 @@ function __hhs_minput() {
         esac
         ;;
       $'')
-        # TODO validate and write form values to outfile
+        # TODO validate and write form values to outfile or show error and continue
         echo "[INFO] ENTER typed. Submit issued" >> /tmp/minput.log
         break
         ;;

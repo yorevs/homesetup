@@ -52,15 +52,15 @@ if tput setaf 1 &>/dev/null; then
   WHITE=$(tput setaf 15)
   YELLOW=$(tput setaf 136)
 else
-  export NC='\e[0m'
-  export BLACK='\e[1;30m'
-  export BLUE='\e[1;34m'
-  export CYAN='\e[1;36m'
-  export GREEN='\e[1;32m'
-  export ORANGE='\e[1;33m'
-  export PURPLE='\e[1;35m'
-  export RED='\e[1;31m'
-  export VIOLET='\e[1;35m'
-  export WHITE='\e[1;37m'
-  export YELLOW='\e[1;33m'
+  export NC='\e[0m' # NC colors
+  export BLACK='\e[0;30m'
+  export BLUE='\e[0;34m'
+  export CYAN='\e[0;36m'
+  export GREEN='\e[0;32m'
+  export ORANGE='\e[0;33m'
+  export PURPLE='\e[0;35m'
+  export RED='\e[0;31m'
+  export VIOLET='\e[0;35m'
+  export WHITE='\e[0;37m'
+  export YELLOW='\e[0;33m'
 fi
