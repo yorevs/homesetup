@@ -94,6 +94,7 @@ function __hhs_minput() {
         IFS=':'
         # shellcheck disable=SC2206
         field_parts=(${field})
+        IFS="$HHS_RESET_IFS"
         f_label="${field_parts[0]}"
         f_mode="${field_parts[1]}"
         f_type="${field_parts[2]}"
@@ -109,7 +110,6 @@ function __hhs_minput() {
         f_row="$(__hhs_cursor_position row)" # Get current cursor row
         f_col="$(__hhs_cursor_position col)" # Get current cursor column
         f_col="$((f_col + ${#f_value}))"     # Increment the row by the length of the current value
-        [[ $tab_index -eq $cur_index ]] && cur_row=${f_row} && cur_col=${f_col}
         # shellcheck disable=SC2207
         field_parts+=("${f_row}")
         field_parts+=("${f_col}")
@@ -119,12 +119,15 @@ function __hhs_minput() {
         printf "${NC} (%s/%s)\n" "${#f_value}" "${maxlen}"                                         # Typed/Remaining characters
         [ -n "${err_msg}" ] && echo -e "${RED}### ${err_msg}${NC}" && sleep 1
         echo ''
-        IFS="$HHS_RESET_IFS"
         {
           printf "TAB-I: %-3s L: %-20s V: %-20s M: %8s \tT: %5s \tMin: %2s \tMax: %2s \tP: %2s \Pos: (%s,%s) \n" "${tab_index}" "${f_label}" "${f_value}" "${f_mode}" "${f_type}" "${minlen}" "${maxlen}" "${f_perm}" "${f_row}" "${f_col}"
         } >> /tmp/minput.log
+        if [[ $tab_index -eq $cur_index ]]; then
+          cur_row=${f_row}
+          cur_col=${f_col}
+          cur_field=("${field_parts[@]}")
+        fi
         cur_index=$((cur_index + 1))
-        cur_field=(field_parts)
       done
       echo ''
       echo -en "${YELLOW}[Enter] Submit [↑↓] Navigate [Esc] Quit \033[0K"
@@ -141,6 +144,14 @@ function __hhs_minput() {
     # Navigation input {
     read -rs -n 1 KEY_PRESS
     case "$KEY_PRESS" in
+      $' ' | [a-zA-Z0-9])
+        [ -z "$KEY_PRESS" ] && KEY_PRESS=' '
+        # Append value to the current field
+        cur_field[5]+="${KEY_PRESS}"
+        [ "password" = "${cur_field[1]}" ] && printf "${CYAN}%s" "$(sed -E 's/./\*/g' <<< "${KEY_PRESS}")"
+        [ "password" = "${cur_field[1]}" ] || printf "${CYAN}%s" "${KEY_PRESS}"
+        # TODO: update all_fields with the updated value
+        ;;
       $'\033') # Handle escape '\e[nX' codes
         read -rsn2 -t 1 KEY_PRESS
         case "$KEY_PRESS" in
@@ -148,17 +159,14 @@ function __hhs_minput() {
             if [[ $((tab_index - 1)) -ge 0 ]]; then
               tab_index=$((tab_index - 1)) && re_render=1
             fi
-            echo "Cursor UP" >> /tmp/minput.log
             ;;
           [B) # Cursor down
             if [[ $((tab_index + 1)) -lt $len ]]; then
               tab_index=$((tab_index + 1)) && re_render=1
             fi
-            echo "Cursor DOWN" >> /tmp/minput.log
             ;;
           *)
             if [[ ${#KEY_PRESS} -eq 1 ]]; then
-              echo "ESCAPE PRESSED" >> /tmp/minput.log
               enable-line-wrap
               # Restore exit position
               tput cup "${exit_row}" "${exit_col}"
@@ -169,11 +177,12 @@ function __hhs_minput() {
             ;;
         esac
         ;;
+      $'')
+        # TODO validate and submit form
+        echo "ENTER typed. Submit form" >> /tmp/minput.log
+        ;;
       *)
-        # Append value to the current field
-        cur_field[5]+="${KEY_PRESS}"
-        [ "password" = "${cur_field[1]}" ] && printf "${CYAN}%s" "$(sed -E 's/./\*/g' <<< "${KEY_PRESS}")"
-        [ "password" = "${cur_field[1]}" ] || printf "${CYAN}%s" "${KEY_PRESS}"
+        echo "Unknown thing typed" >> /tmp/minput.log
         ;;
     esac
     # } Navigation input
