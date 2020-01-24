@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2207
+# shellcheck disable=SC2206,SC2207
 
 #  Script: hhs-minput.bash
 # Created: Jan 16, 2020
@@ -96,7 +96,8 @@ function __hhs_minput() {
   fi
 
   shift
-  read -r -a all_fields <<< "${@}"
+  # TODO: Validate field syntax => "Label:Mode:Type:Max/Min:Perm:Value" ...
+  all_fields=(${@})
   len=${#all_fields[*]}
   save-cursor-pos
   disable-line-wrap
@@ -114,8 +115,8 @@ function __hhs_minput() {
       echo -e "${NC}"
       for cur_index in ${!all_fields[*]}; do
         field="${all_fields[$cur_index]}"
-        # TODO: Validate field syntax => Label:Mode:Type:Max/Min:Perm:Value
-        IFS=':' read -r -a field_parts <<< "${field}"
+        IFS=':'
+        field_parts=(${field})
         f_label="${field_parts[0]}"
         f_mode="${field_parts[1]}"
         f_mode=${f_mode:-input}
@@ -151,15 +152,16 @@ function __hhs_minput() {
         echo -e '\n'
         # Keep the selected field on hand
         if [[ $tab_index -eq $cur_index ]]; then
-          read -r -a cur_field <<< "${field_parts[@]}"
+          cur_field=(${field_parts[@]})
           cur_row="${f_row}"
           cur_col="${f_col}"
         fi
         # Update the field with the default values if required
         all_fields[$cur_index]="${f_label}:${f_mode}:${f_type}:${f_max_min_len}:${f_perm}:${f_value}"
+        IFS="$HHS_RESET_IFS"
       done
       echo -e "${BLACK_BG}"
-      echo -en "${YELLOW}[Enter] Submit  [↑↓] Navigate  [Tab] Next  [Esc] Quit \033[0K"
+      echo -en "${YELLOW}[Enter] Submit  [↑↓] Navigate  [TAB] Next  [Esc] Quit \033[0K"
       echo -en "${NC}"
       # Save the exit cursor position
       exit_row="$(__hhs_minput_curpos row)"
@@ -240,7 +242,7 @@ function __hhs_minput() {
         esac
         ;;
       $'') # Validate & Save the form and exit
-        # TODO validate form
+        # TODO validate form before submitting
         # minlen=${f_max_min_len%/*}
         # maxlen=${f_max_min_len##*/}
         echo "[INFO] ENTER typed. Submit issued" >> /tmp/minput.log

@@ -21,9 +21,9 @@ function ..() {
     done
     pwd
   fi
-  export OLDPWD="$last_pwd"
+  [ -d "$last_pwd" ] && export OLDPWD="$last_pwd"
 
-  return 1
+  return 0
 }
 
 # shellcheck disable=SC2012
@@ -119,11 +119,21 @@ function pk() {
 # @param $2 [Req] : The maximum range of the number
 function rand() {
 
-  if [ -n "$1" ] && [ -n "$2" ]; then
-    echo "$((RANDOM % ($2 - $1 + 1) + $1))"
-  else
+  if [[ $# -ne 2 ]]; then
     echo "Usage: ${FUNCNAME[0]} <min-val> <max-val>"
+    return 1
+  else
+    echo "$((RANDOM % ($2 - $1 + 1) + $1))"
   fi
+  
+  return 0
+}
+
+# @function: Display the decimal ASCII representation of a character
+# @param $1 [Req] : The character to display
+function ascof() {
+  
+  echo -n "${1}" | od -A n -t d1 | head -n 1 | awk '{print $1}' && return $?
 }
 
 # @function: Convert unicode to hexadecimal

@@ -41,21 +41,23 @@ function __hhs_punch() {
     if [ ! -f "${HHS_PUNCH_FILE}" ]; then
       echo "$date_stamp => " > "${HHS_PUNCH_FILE}"
     fi
-
+  
+    IFS=$'\n' 
     if [ "-w" = "$opt" ]; then
       shift
       week_stamp="${1:-${week_stamp}}"
       week_stamp=$(printf "%02d" "${week_stamp}")
       WEEK_PUNCH_FILE="$(dirname "${HHS_PUNCH_FILE}")/week-${week_stamp}.punch"
       if [ -f "$WEEK_PUNCH_FILE" ]; then
-        IFS=$'\n' lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE"))
+        lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "$WEEK_PUNCH_FILE"))
       else
         echo "${YELLOW}Week ${week_stamp} punch file ($WEEK_PUNCH_FILE) not found !"
         return 1
       fi
     else
-      IFS=$'\n' lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "${HHS_PUNCH_FILE}"))
+      lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "${HHS_PUNCH_FILE}"))
     fi
+    IFS="$HHS_RESET_IFS"
 
     # Edit punches
     if [ "-e" = "$opt" ]; then
