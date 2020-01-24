@@ -12,9 +12,9 @@
 # rl; \rm -f /tmp/out.txt; minput /tmp/out.txt "Name:input:alphanumeric:10/30:rw:" "Password:password:any:8/30:rw:" "Age:input:number:1/3::" "Role:::5:r:Admin"
 
 function __hhs_minput_curpos() {
-  
+
   local vertical horizontal oldstty
-  
+
   exec < /dev/tty
   oldstty=$(stty -g)
   stty raw -echo min 0
@@ -33,9 +33,9 @@ function __hhs_minput_curpos() {
 
 # @function: Validate a keypress against an input according to it's type
 function __hhs_minput_validate() {
-  
+
   local val_regex f_type="$1" keypress="$2"
-  
+
   # Append value to the current field if the value matches the input type
   case "${f_type}" in
     'letter') val_regex='^[a-zA-Z ]*$' ;;
@@ -43,10 +43,10 @@ function __hhs_minput_validate() {
     'alphanumeric') val_regex='^[a-zA-Z0-9 ]*$' ;;
     *) val_regex='.*' ;;
   esac
-  
+
   if [[ "${keypress}" =~ ${val_regex} ]]; then
     return 0
-  else 
+  else
     return 1
   fi
 }
@@ -66,30 +66,23 @@ function __hhs_minput() {
     echo ''
     echo '    Arguments: '
     echo '      output_file : The output file where the result will be stored.'
-    echo '        fields    : A list of form fields matching the folowing syntax:'
-    echo '                    <Label:Mode:Type:Max/Min len:Perm:Value>'
-    echo '    Fields: '
-    echo '             *Label : The field label to be displayed.'
-    echo '               Mode : The input mode. One of {input|password}.'
-    echo '               Type : The input type. One of {letter|number|alphanumeric|any}'
-    echo '        Max/Min len : The maximum and minimum amount of characters allowed to be typed.'
-    echo '               Perm : The field permissions. One of {r|rw} where (r == Read Only ; rw == Read & Write).'
-    echo '              Value : This field is optional. The initial value of the field.'
+    echo '        fields    : A list of form fields: Label:Mode:Type:Minlen/Maxlen:Perm:Value'
     echo ''
-    echo '    Defaults: '
-    echo '      Type = any'
-    echo '      Min/Max len = 0/30'
-    echo '      Perm = rw'
-    echo '      Value = <empty>'
+    echo '    Fields: '
+    echo '            <Label> : The field label.'
+    echo '             [Mode] : The input mode. One of {[input]|password}.'
+    echo '             [Type] : The input type. One of {letter|number|alphanumeric|[any]}.'
+    echo '      [Max/Min len] : The maximum and minimum amount of characters allowed to be typed [0/30].'
+    echo '             [Perm] : The field permissions. One of {r|[rw]} where (r : Read Only ; rw : Read & Write).'
+    echo '            [Value] : The initial value of the field.'
     echo ''
     echo '  Notes: '
-    echo '    - Fields marked with * are mandatory'
     echo '    - Optional fields will assume a default value if they are not specified.'
     echo '    - A temporary file is suggested to used with this command: #> mktemp.'
-    echo '    - The outfile must not exist or it be an empty file.'
+    echo '    - The outfile must not exist or be an empty file.'
     echo ''
     echo '  Examples: '
-    echo '    minput /tmp/out.txt "Name:input:alphanumeric:10/30:rw:" "Age:input:number:::" "Password:password:any:8:rw:"'
+    echo '    minput /tmp/out.txt "Name:::5/30:rw:" "Age::number:1/3::" "Password:password::5:rw:" "Role:::::Admin"'
     return 1
   fi
 
@@ -228,7 +221,7 @@ function __hhs_minput() {
             if [[ $((tab_index - 1)) -ge 0 ]]; then
               tab_index=$((tab_index - 1))
             else
-              tab_index=$((len-1))
+              tab_index=$((len - 1))
             fi
             re_render=1
             ;;
