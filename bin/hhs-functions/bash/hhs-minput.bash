@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2206,SC2207
 
 #  Script: hhs-minput.bash
 # Created: Jan 16, 2020
@@ -56,7 +55,7 @@ function __hhs_minput_validate() {
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
 
-  echo '' > /tmp/minput.log # Reset logs
+  echo -e '\n--- Started execution ---\n' > /tmp/minput.log # Reset logs
 
   BLACK_BG='\033[40m'
   BLUE_BG='\033[44m'
@@ -88,7 +87,7 @@ function __hhs_minput() {
 
   local outfile="$1" re_render=1 label_size value_size all_fields=() cur_field=() field_parts=()
   local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col err_msg exit_row exit_col
-  local len minlen offset margin maxlen cur_index tab_index cur_row cur_col val_regex
+  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex
 
   if [ -d "$1" ] || [ -s "$1" ]; then
     echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
@@ -97,8 +96,9 @@ function __hhs_minput() {
 
   shift
   # TODO: Validate field syntax => "Label:Mode:Type:Max/Min:Perm:Value" ...
-  all_fields=(${@})
+  read -r -a all_fields <<< "${@}"
   len=${#all_fields[*]}
+  echo -e "[DEBUG] ALL_FIELDS  LEN = ${#all_fields[@]} \t CONTENTS [ ${all_fields[*]} ]" >> /tmp/minput.log
   save-cursor-pos
   disable-line-wrap
   tab_index=0
@@ -109,14 +109,15 @@ function __hhs_minput() {
 
     # Menu Renderization {
     if [ -n "$re_render" ]; then
+      echo -e '\n--- Render ---' > /tmp/minput.log # Reset logs
       hide-cursor
       # Restore the cursor to the home position
       restore-cursor-pos
       echo -e "${NC}"
-      for cur_index in ${!all_fields[*]}; do
-        field="${all_fields[$cur_index]}"
+      for idx in ${!all_fields[*]}; do
         IFS=':'
-        field_parts=(${field})
+        field="${all_fields[$idx]}"
+        read -r -a field_parts <<< "${field}"
         f_label="${field_parts[0]}"
         f_mode="${field_parts[1]}"
         f_mode=${f_mode:-input}
@@ -128,8 +129,10 @@ function __hhs_minput() {
         f_perm="${field_parts[4]}"
         f_perm=${f_perm:-rw}
         f_value="${field_parts[5]}"
-        [[ $tab_index -ne $cur_index ]] && printf "${BLACK_BG}%${label_size}s: " "${f_label}"
-        if [[ $tab_index -eq $cur_index ]]; then
+        printf "[DEBUG] [%d] Label = %-10s Value = \"%-30s\" Mode = %-8s Type = %-12s Min/Max = %-5s Perm = %-2s \n" \
+          "$idx" "${f_label}" "${f_value}" "${f_mode}" "${f_type}" "${f_max_min_len}" "${f_perm}" >> /tmp/minput.log
+        [[ $tab_index -ne $idx ]] && printf "${BLACK_BG}%${label_size}s: " "${f_label}"
+        if [[ $tab_index -eq $idx ]]; then
           printf "${BLUE_BG}%${label_size}s: " "${f_label}"
           f_row="$(__hhs_minput_curpos row)"
           f_col="$(__hhs_minput_curpos col)"
@@ -142,7 +145,7 @@ function __hhs_minput() {
         printf "  %d/%d" "${#f_value}" "${maxlen}"
         printf "%*.*s${BLACK_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
         # Display any error message if it was previously set. [ENTER] will dismiss the message
-        if [[ $tab_index -eq $cur_index ]] && [ -n "${err_msg}" ]; then
+        if [[ $tab_index -eq $idx ]] && [ -n "${err_msg}" ]; then
           echo -en "${BLACK_BG}${RED}"
           err_msg="  <<< ${err_msg}"
           read -rsp "${err_msg}" -t "$((1 + (${#err_msg} / 25)))"
@@ -151,13 +154,14 @@ function __hhs_minput() {
         fi
         echo -e '\n'
         # Keep the selected field on hand
-        if [[ $tab_index -eq $cur_index ]]; then
+        if [[ $tab_index -eq $idx ]]; then
+          # shellcheck disable=SC2206
           cur_field=(${field_parts[@]})
           cur_row="${f_row}"
           cur_col="${f_col}"
         fi
         # Update the field with the default values if required
-        all_fields[$cur_index]="${f_label}:${f_mode}:${f_type}:${f_max_min_len}:${f_perm}:${f_value}"
+        all_fields[$idx]="${f_label}:${f_mode}:${f_type}:${f_max_min_len}:${f_perm}:${f_value}"
         IFS="$HHS_RESET_IFS"
       done
       echo -e "${BLACK_BG}"
@@ -247,9 +251,9 @@ function __hhs_minput() {
         # maxlen=${f_max_min_len##*/}
         echo "[INFO] ENTER typed. Submit issued" >> /tmp/minput.log
         echo -n '' > "${outfile}"
-        for cur_index in ${!all_fields[*]}; do
-          echo -n "${all_fields[$cur_index]%%:*}" | tr '[:lower:]' '[:upper:]' >> "${outfile}"
-          echo "=${all_fields[$cur_index]##*:}" >> "${outfile}"
+        for idx in ${!all_fields[*]}; do
+          echo -n "${all_fields[$idx]%%:*}" | tr '[:lower:]' '[:upper:]' >> "${outfile}"
+          echo "=${all_fields[$idx]##*:}" >> "${outfile}"
         done
         break
         ;;
