@@ -39,8 +39,7 @@ function __hhs_mselect() {
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
-  # shellcheck disable=SC2206
-  all_options=(${@})
+  read -r -a all_options <<< "${@}"
   len=${#all_options[*]}
 
   # When only one option is provided, select the typed_index 0 and return
@@ -49,10 +48,10 @@ function __hhs_mselect() {
   disable-line-wrap
 
   while :; do
-    columns="$(($(tput cols) - 7))"
 
     # Menu Renderization {
     if [ -n "$re_render" ]; then
+      columns="$(($(tput cols) - 7))"
       hide-cursor
       # Restore the cursor to the home position
       restore-cursor-pos
@@ -63,36 +62,31 @@ function __hhs_mselect() {
         option_line="${all_options[idx]:0:$columns}"
         # Erase current line before repaint
         echo -ne "\033[2K\r"
-        [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='>' # Highlight the selected line
-        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" "$selector" "$option_line"       # Print the option line
+        [[ $idx -eq $sel_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='>'
+        printf " %.${#len}d  %0.4s %s" "$((idx + 1))" "$selector" "$option_line"
         # Check if the text fits the screen and print it, otherwise print '...'
         [[ ${#option_line} -ge $columns ]] && echo -e "\033[4D\033[K..."
         echo -e "${NC}"
       done
       echo ''
-      echo -en "${YELLOW}[Enter] Select [↑↓] Navigate [Q] Quit [1..${len:0:5}] Goto: \033[0K"
-      re_render=
+      echo -en "${YELLOW}[Enter] Select  [↑↓] Navigate  [Esc] Quit  [1..${len:0:5}] Goto: \033[0K"
+      unset re_render
       show-cursor
     fi
     # } Menu Renderization
-    
+
     # Navigation input {
-    IFS= read -rs -n 1 KEY_PRESS
-    case "$KEY_PRESS" in
-      'q' | 'Q') # Quit requested
-        enable-line-wrap
-        echo -e "\n${NC}"
-        return 1
-        ;;
-      [1-9]) # A number was typed
-        typed_index="$KEY_PRESS"
-        echo -en "$KEY_PRESS" && index_len=1
+    IFS= read -rsn 1 keypress
+    case "${keypress}" in
+      [[:digit:]]) # An index was typed
+        typed_index="${keypress}"
+        echo -en "${keypress}" && index_len=1
         while [[ ${#typed_index} -lt ${#len} ]]; do
-          read -rs -n 1 NUM_PRESS
-          [ -z "$NUM_PRESS" ] && break
-          [[ ! "$NUM_PRESS" =~ ^[0-9]*$ ]] && typed_index= && break
-          typed_index="${typed_index}${NUM_PRESS}"
-          echo -en "$NUM_PRESS" && index_len=$((index_len + 1))
+          read -rs -n 1 numpress
+          [ -z "${numpress}" ] && break
+          [[ ! "${numpress}" =~ ^[0-9]*$ ]] && unset typed_index && break
+          typed_index="${typed_index}${numpress}"
+          echo -en "${numpress}" && index_len=$((index_len + 1))
         done
         echo -ne "\033[${index_len}D\033[K"
         if [[ $typed_index -ge 1 ]] && [[ $typed_index -le $len ]]; then
@@ -103,8 +97,8 @@ function __hhs_mselect() {
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 KEY_PRESS
-        case "$KEY_PRESS" in
+        IFS= read -rsn2 -t 1 keypress
+        case "${keypress}" in
           [A) # Cursor up
             if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
               show_from=$((show_from - 1))
@@ -127,9 +121,14 @@ function __hhs_mselect() {
               sel_index=$((sel_index + 1)) && re_render=1
             fi
             ;;
+          *) # Escape pressed
+            enable-line-wrap
+            echo -e "\n${NC}"
+            return 1
+            ;;
         esac
         ;;
-      '') # Keep the selected index and exit
+      $'') # Keep the current index and exit
         echo '' && break
         ;;
     esac

@@ -30,6 +30,7 @@ UNSETS=(check_class check_scope check_valid)
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # The IP to be validated.
+IP_OCTETS=()
 IP_ADDRESS=
 IP_VALID=
 IP_CLASS=
@@ -56,20 +57,16 @@ EXTRA_INFO=0 # Not set
 # Purpose: Find the IP class.
 check_class() {
 
-  octet_1=$(echo "${IP_ADDRESS}" | cut -d '.' -f1)
-
-  if [ "$((octet_1))" -le 127 ]; then
+  if [[ ${IP_OCTETS[0]} -le 127 ]]; then
     IP_CLASS="A"
-  elif [ "$((octet_1))" -gt 127 ] && [ "$((octet_1))" -le 191 ]; then
+  elif [[ ${IP_OCTETS[0]} -gt 127 ]] && [[ ${IP_OCTETS[0]} -le 191 ]]; then
     IP_CLASS="B"
-  elif [ "$((octet_1))" -ge 192 ] && [ "$((octet_1))" -le 223 ]; then
+  elif [[ ${IP_OCTETS[0]} -ge 192 ]] && [[ ${IP_OCTETS[0]} -le 223 ]]; then
     IP_CLASS="C"
-  elif [ "$((octet_1))" -ge 224 ] && [ "$((octet_1))" -le 239 ]; then
+  elif [[ ${IP_OCTETS[0]} -ge 224 ]] && [[ ${IP_OCTETS[0]} -le 239 ]]; then
     IP_CLASS="D"
-  elif [ "$((octet_1))" -ge 240 ] && [ "$((octet_1))" -le 255 ]; then
+  elif [[ ${IP_OCTETS[0]} -ge 240 ]] && [[ ${IP_OCTETS[0]} -le 255 ]]; then
     IP_CLASS="E"
-  else
-    IP_CLASS="Invalid IP"
   fi
 }
 
@@ -95,21 +92,18 @@ check_class() {
 # Purpose: Find the IP scope.
 # @param $1 [Req] : The IP to get the scope from
 check_scope() {
-
-  octet_1=$(echo "${IP_ADDRESS}" | cut -d '.' -f1)
-  octet_2=$(echo "${IP_ADDRESS}" | cut -d '.' -f2)
-
-  if [[ $octet_1 -eq 0 ]]; then
+  
+  if [[ ${IP_OCTETS[0]} -eq 0 ]]; then
     IP_SCOPE="'This' Network"
-  elif [[ $octet_1 -eq 10 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 10 ]]; then
     IP_SCOPE="Private" # Private Use Networks
-  elif [[ $octet_1 -eq 100 ]] && [[ $octet_2 -ge 64 ]] && [[ $octet_2 -le 127 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 100 ]] && [[ ${IP_OCTETS[1]} -ge 64 ]] && [[ ${IP_OCTETS[1]} -le 127 ]]; then
     IP_SCOPE="Private" # Private Networks
-  elif [[ $octet_1 -eq 127 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 127 ]]; then
     IP_SCOPE="Loopback" # Host -> Loopback
-  elif [[ $octet_1 -eq 169 ]] && [[ $octet_2 -eq 254 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 169 ]] && [[ ${IP_OCTETS[1]} -eq 254 ]]; then
     IP_SCOPE="Link Local" # Subnet -> Link Local : Auto-Assigned IP for no DHCP
-  elif [[ $octet_1 -eq 172 ]] && [[ $octet_2 -le 31 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 172 ]] && [[ ${IP_OCTETS[1]} -le 31 ]]; then
     IP_SCOPE="Private" # Private Use Networks
   elif [ "${IP_ADDRESS%\.*}" = "192.0.0" ]; then
     IP_SCOPE="Private" # IETF Protocol Assignments
@@ -117,17 +111,17 @@ check_scope() {
     IP_SCOPE="TEST-NET-1" # Documentation -> TEST-NET-1
   elif [ "${IP_ADDRESS%\.*}" = "192.88.99" ]; then
     IP_SCOPE="Anycast" # Internet -> 6to4 Relay Anycast
-  elif [[ $octet_1 -eq 192 ]] && [[ $octet_2 -eq 168 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 192 ]] && [[ ${IP_OCTETS[1]} -eq 168 ]]; then
     IP_SCOPE="Private" # Private Use Networks
-  elif [[ $octet_1 -eq 198 ]] && [[ $octet_2 -ge 18 ]] && [[ $octet_2 -le 19 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 198 ]] && [[ ${IP_OCTETS[1]} -ge 18 ]] && [[ ${IP_OCTETS[1]} -le 19 ]]; then
     IP_SCOPE="Private" # Private Use Networks
   elif [ "${IP_ADDRESS%\.*}" = "198.51.100" ]; then
     IP_SCOPE="TEST-NET-2" # Documentation -> TEST-NET-2
   elif [ "${IP_ADDRESS%\.*}" = "203.0.113" ]; then
     IP_SCOPE="TEST-NET-3" # Documentation -> TEST-NET-3
-  elif [[ $octet_1 -ge 224 ]] && [[ $octet_1 -le 239 ]]; then
+  elif [[ ${IP_OCTETS[0]} -ge 224 ]] && [[ ${IP_OCTETS[0]} -le 239 ]]; then
     IP_SCOPE="Multicast" # Internet -> Multicast
-  elif [[ $octet_1 -ge 240 ]] && [[ $octet_1 -le 255 ]] && [ "${IP_ADDRESS##*\.}" = "254" ]; then
+  elif [[ ${IP_OCTETS[0]} -ge 240 ]] && [[ ${IP_OCTETS[0]} -le 255 ]] && [ "${IP_ADDRESS##*\.}" = "254" ]; then
     IP_SCOPE="Reserved" # n/a -> Reserved
   elif [ "${IP_ADDRESS}" = "255.255.255.255" ]; then
     IP_SCOPE="Limited Broadcast"
@@ -203,6 +197,7 @@ while [[ ${#} -gt 0 ]]; do
 done
 
 IP_ADDRESS="${1}"
+IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
 
 main "${@}"
 quit ${IP_VALID}
