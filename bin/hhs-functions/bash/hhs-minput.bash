@@ -96,7 +96,7 @@ function __hhs_minput() {
 
   shift
   # TODO: Validate field syntax => "Label:Mode:Type:Max/Min:Perm:Value" ...
-  read -r -a all_fields <<< "${@}"
+  all_fields=("${@}")
   len=${#all_fields[*]}
   echo -e "[DEBUG] ALL_FIELDS  LEN = ${#all_fields[@]} \t CONTENTS [ ${all_fields[*]} ]" >> /tmp/minput.log
   save-cursor-pos

@@ -51,7 +51,7 @@ function __hhs_save_dir() {
       fi
       # Remove the old saved directory aliased
       ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS_FILE"
-      IFS=$'\n' read -d '' -r -a all_dirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS_FILE"
+      IFS=$'\n' read -d '' -r -a all_dirs < "$HHS_SAVED_DIRS_FILE"
       all_dirs+=("$dir_alias=$dir")
       printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS_FILE"
       sort "$HHS_SAVED_DIRS_FILE" -o "$HHS_SAVED_DIRS_FILE"
@@ -84,7 +84,8 @@ function __hhs_load_dir() {
     return 1
   fi
 
-  IFS=$'\n' read -d '' -r -a all_dirs IFS="$HHS_RESET_IFS" < "$HHS_SAVED_DIRS_FILE"
+  IFS=$'\n' read -d '' -r -a all_dirs < "$HHS_SAVED_DIRS_FILE"
+  echo "[DEBUG] LOAD => LEN ${#all_dirs}" >> /tmp/minput.txt
 
   if [ ${#all_dirs[@]} -ne 0 ]; then
 
@@ -95,28 +96,32 @@ function __hhs_load_dir() {
         echo ' '
         echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
         echo ' '
-        for next in ${all_dirs[*]}; do
+        IFS=$'\n'
+        for next in "${all_dirs[@]}"; do
           dir_alias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
           dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
           printf "${HHS_HIGHLIGHT_COLOR}${dir_alias}"
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
           echo -e "${YELLOW} was saved as ${WHITE}'${dir}'"
         done
+        IFS="$HHS_RESET_IFS"
         echo "${NC}"
         return 0
         ;;
-      '')
-        clear
-        echo "${YELLOW}Available saved directories (${#all_dirs[@]}):"
-        echo -en "${WHITE}"
-        mselect_file=$(mktemp)
-        if __hhs_mselect "$mselect_file" "${all_dirs[*]}"; then
-          sel_index=$(grep . "$mselect_file")
-          dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-          # sel_index is zero-based, so we need to increment this number
-          dir=$(awk "NR==$((sel_index + 1))" "$HHS_SAVED_DIRS_FILE" | awk -F '=' '{ print $2 }')
+      $'')
+        if [[ ${#all_dirs[@]} -ne 0 ]]; then
+          clear
+          echo "${YELLOW}Available saved directories (${#all_dirs[@]}):"
+          echo -en "${WHITE}"
+          mselect_file=$(mktemp)
+          if __hhs_mselect "$mselect_file" "${all_dirs[@]}"; then
+            sel_index=$(grep . "$mselect_file")
+            dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+            # sel_index is zero-based, so we need to increment this number
+            dir=$(awk "NR==$((sel_index + 1))" "$HHS_SAVED_DIRS_FILE" | awk -F '=' '{ print $2 }')
+          fi
         else
-          return 0
+          echo "${ORANGE}No dirctories available yet !${NC}"
         fi
         ;;
       [a-zA-Z0-9_]*)
@@ -129,7 +134,7 @@ function __hhs_load_dir() {
         ;;
     esac
 
-    if [ -z "$dir" ] || [ ! -d "$dir" ]; then
+    if [ -n "$dir" ] && [ ! -d "$dir" ]; then
       echo "${RED}Directory aliased by \"$dir_alias\" was not found !${NC}"
       return 1
     elif [ -n "$dir" ] && [ -d "$dir" ]; then
@@ -163,7 +168,7 @@ function __hhs_go_dir() {
     local searchPath name sel_index
     [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
     [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
-    IFS=$'\n' read -d '' -r -a results IFS="$HHS_RESET_IFS" <<< "$(find -L "${searchPath%/}" -type d -iname "*""$name" 2> /dev/null)"
+    IFS=$'\n' read -d '' -r -a results <<< "$(find -L "${searchPath%/}" -type d -iname "*""$name" 2> /dev/null)"
     len=${#results[@]}
     # If no directory is found under the specified name
     if [ "$len" -eq 0 ]; then
@@ -179,13 +184,13 @@ function __hhs_go_dir() {
       echo "Base dir: $searchPath"
       echo "-------------------------------------------------------------"
       echo -en "${NC}"
-      IFS=$'\n'
       mselect_file=$(mktemp)
-      if __hhs_mselect "$mselect_file" "${results[*]//$searchPath\//}"; then
+      if __hhs_mselect "$mselect_file" "${results[@]//$searchPath\//}"; then
         sel_index=$(grep . "$mselect_file")
         dir=${results[$sel_index]}
+      else
+        return 1
       fi
-      IFS="$HHS_RESET_IFS"
     fi
     [ -n "$dir" ] && [ -d "$dir" ] && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   fi

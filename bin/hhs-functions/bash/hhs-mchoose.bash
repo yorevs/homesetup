@@ -43,7 +43,7 @@ function __hhs_mchoose() {
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
-  read -r -a all_options <<< "${@}"
+  all_options=("${@}")
   len=${#all_options[*]}
 
   # Initialize all options

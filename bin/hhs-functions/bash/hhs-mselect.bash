@@ -39,8 +39,9 @@ function __hhs_mselect() {
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
-  read -r -a all_options <<< "${@}"
+  all_options=("${@}")
   len=${#all_options[*]}
+  echo "[DEBUG] MSELECT => IFS = $(ascof "$IFS")  LEN = ${len}  CONTENTS = [ ${all_options[*]} ]" >> /tmp/minput.txt
 
   # When only one option is provided, select the typed_index 0 and return
   [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0

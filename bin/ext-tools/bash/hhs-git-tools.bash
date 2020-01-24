@@ -141,7 +141,7 @@ if __hhs_has "git"; then
         all_branches+=("${b_name}")
       done < <(git branch ${all_flag} | grep -v '\->')
       mselect_file=$(mktemp)
-      if __hhs_mselect "$mselect_file" "${all_branches[*]}"; then
+      if __hhs_mselect "$mselect_file" "${all_branches[@]}"; then
         if ! git diff-index --quiet HEAD --; then
           echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
           if ! git stash &> /dev/null; then

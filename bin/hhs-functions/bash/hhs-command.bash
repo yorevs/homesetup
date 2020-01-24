@@ -32,100 +32,100 @@ function __hhs_command() {
     echo '    MSelect command : When no arguments are provided.'
     return 1
   else
+  
+    IFS=$'\n' read -d '' -r -a all_cmds < "$HHS_CMD_FILE"
+    echo "[DEBUG] CMD => LEN ${#all_cmds}" >> /tmp/minput.txt
     
     case "$1" in
-    -e | --edit)
-      edit "$HHS_CMD_FILE"
-      return 0
-      ;;
-    -a | --add)
-      shift
-      cmd_name=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-      shift
-      cmd_expr="$*"
-      if [ -z "$cmd_name" ] || [ -z "$cmd_expr" ]; then
-        echo -e "${RED}Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
-        return 1
-      fi
-      ised -e "s#(^Command $cmd_name: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
-      IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
-      all_cmds+=("Command $cmd_name: $cmd_expr")
-      printf "%s\n" "${all_cmds[@]}" > "$HHS_CMD_FILE"
-      sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
-      echo "${GREEN}Command stored: ${WHITE}\"$cmd_name\" as ${HHS_HIGHLIGHT_COLOR}$cmd_expr ${NC}"
-      ;;
-    -r | --remove)
-      shift
-      # Command ID can be the index or the alias
-      cmd_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-      local re='^[1-9]+$'
-      if [[ $cmd_alias =~ $re ]]; then
-        cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
-        [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmd_alias}\"" && return 1
-        ised -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
-        echo "${YELLOW}Command ${WHITE}($cmd_alias)${NC} removed !"
-      elif [ -n "$cmd_alias" ]; then
-        cmd_expr=$(grep "${cmd_alias}" "$HHS_CMD_FILE")
-        [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmd_alias}\"" && return 1
-        ised -e "s#(^Command $cmd_alias: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
-        echo "${YELLOW}Command removed: ${WHITE}\"$cmd_alias\" ${NC}"
-      else
-        echo -e "${RED}Invalid arguments: \"$cmd_alias\"\t\"$cmd_expr\"${NC}"
-        return 1
-      fi
-      ;;
-    -l | --list)
-      IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
-      if [ ${#all_cmds[@]} -ne 0 ]; then
-        pad=$(printf '%0.1s' "."{1..60})
-        pad_len=40
-        echo ' '
-        echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
-        echo ' '
-        for next in ${all_cmds[*]}; do
-          printf "${WHITE}(%03d) " $((index))
-          cmd_name="$(echo -en "$next" | awk -F ':' '{ print $1 }')"
-          cmd_expr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
-          echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}"
-          printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "$pad"
-          echo "${YELLOW} is stored as: ${WHITE}'${cmd_expr}'"
-          index=$((index + 1))
-        done
-        echo -e "${NC}"
-      else
-        echo "${YELLOW}No commands available yet !${NC}"
-      fi
-      ;;
-    '')
-      IFS=$'\n' read -d '' -r -a all_cmds IFS="$HHS_RESET_IFS" < "$HHS_CMD_FILE"
-      if [ ${#all_cmds[@]} -ne 0 ]; then
-        clear
-        echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
-        echo -en "${WHITE}"
-        IFS=$'\n'
-        mselect_file=$(mktemp)
-        if __hhs_mselect "$mselect_file" "${all_cmds[*]}"; then
-          sel_index=$(grep . "$mselect_file")
-          # sel_index is zero-based, so we need to increment this number
-          cmd_expr=$(awk "NR==$((sel_index + 1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-          [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-          [ -n "$cmd_expr" ] && echo "#> $cmd_expr" && eval "$cmd_expr"
+      -e | --edit)
+        edit "$HHS_CMD_FILE"
+        return 0
+        ;;
+      -a | --add)
+        shift
+        cmd_name=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        shift
+        cmd_expr="$*"
+        if [ -z "$cmd_name" ] || [ -z "$cmd_expr" ]; then
+          echo -e "${RED}Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
+          return 1
         fi
-        IFS="$HHS_RESET_IFS"
-      else
-        echo "${ORANGE}No commands available yet !${NC}"
-      fi
-      ;;
-    [A-Z0-9_]*)
-      cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-      [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
-      [ -n "$cmd_expr" ] && echo -e "#> $cmd_expr" && eval "$cmd_expr"
-      [ -z "$cmd_expr" ] && echo "${RED}Command aliased by \"$1\" was not found !${NC}"
-      ;;
-    *)
-      echo -e "${RED}Invalid arguments: \"$1\"${NC}"
-      return 1
-      ;;
+        ised -e "s#(^Command $cmd_name: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
+        all_cmds+=("Command $cmd_name: $cmd_expr")
+        printf "%s\n" "${all_cmds[@]}" > "$HHS_CMD_FILE"
+        sort "$HHS_CMD_FILE" -o "$HHS_CMD_FILE"
+        echo "${GREEN}Command stored: ${WHITE}\"$cmd_name\" as ${HHS_HIGHLIGHT_COLOR}$cmd_expr ${NC}"
+        ;;
+      -r | --remove)
+        shift
+        # Command ID can be the index or the alias
+        cmd_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+        local re='^[1-9]+$'
+        if [[ $cmd_alias =~ $re ]]; then
+          cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
+          [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmd_alias}\"" && return 1
+          ised -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
+          echo "${YELLOW}Command ${WHITE}($cmd_alias)${NC} removed !"
+        elif [ -n "$cmd_alias" ]; then
+          cmd_expr=$(grep "${cmd_alias}" "$HHS_CMD_FILE")
+          [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmd_alias}\"" && return 1
+          ised -e "s#(^Command $cmd_alias: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
+          echo "${YELLOW}Command removed: ${WHITE}\"$cmd_alias\" ${NC}"
+        else
+          echo -e "${RED}Invalid arguments: \"$cmd_alias\"\t\"$cmd_expr\"${NC}"
+          return 1
+        fi
+        ;;
+      -l | --list)
+        if [ ${#all_cmds[@]} -ne 0 ]; then
+          pad=$(printf '%0.1s' "."{1..60})
+          pad_len=40
+          echo ' '
+          echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
+          echo ' '
+          IFS=$'\n'
+          for next in ${all_cmds[*]}; do
+            printf "${WHITE}(%03d) " $((index))
+            cmd_name="$(echo -en "$next" | awk -F ':' '{ print $1 }')"
+            cmd_expr=$(echo -en "$next" | awk -F ': ' '{ print $2 }')
+            echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}"
+            printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "$pad"
+            echo "${YELLOW} is stored as: ${WHITE}'${cmd_expr}'"
+            index=$((index + 1))
+          done
+          IFS="$HHS_RESET_IFS"
+          echo -e "${NC}"
+        else
+          echo "${YELLOW}No commands available yet !${NC}"
+        fi
+        ;;
+      $'')
+        if [[ ${#all_cmds[@]} -ne 0 ]]; then
+          clear
+          echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
+          echo -en "${WHITE}"
+          mselect_file=$(mktemp)
+          if __hhs_mselect "$mselect_file" "${all_cmds[@]}"; then
+            sel_index=$(grep . "$mselect_file")
+            # sel_index is zero-based, so we need to increment this number
+            cmd_expr=$(awk "NR==$((sel_index + 1))" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+            [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+            [ -n "$cmd_expr" ] && echo "#> $cmd_expr" && eval "$cmd_expr"
+          fi
+        else
+          echo "${ORANGE}No commands available yet !${NC}"
+        fi
+        ;;
+      [A-Z0-9_]*)
+        cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+        [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
+        [ -n "$cmd_expr" ] && echo -e "#> $cmd_expr" && eval "$cmd_expr"
+        [ -z "$cmd_expr" ] && echo "${RED}Command aliased by \"$1\" was not found !${NC}"
+        ;;
+      *)
+        echo -e "${RED}Invalid arguments: \"$1\"${NC}"
+        return 1
+        ;;
     esac
   fi
 

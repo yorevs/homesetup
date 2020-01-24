@@ -84,7 +84,7 @@ function __hhs_shell_select() {
     [ -f '/usr/local/bin/bash' ] && avail_shells+=('/usr/local/bin/bash')
     [ -f '/usr/local/bin/zsh' ] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
-    if __hhs_mselect "$mselect_file" "${avail_shells[*]}"; then
+    if __hhs_mselect "$mselect_file" "${avail_shells[@]}"; then
       sel_index=$(grep . "$mselect_file")
       sel_shell=${avail_shells[$sel_index]}
       if [ -n "${sel_shell}" ] && [ -f "${sel_shell}" ]; then
