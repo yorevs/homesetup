@@ -15,7 +15,7 @@ UNSETS+=(
 )
 
 # Program version
-VERSION=0.9.1
+VERSION=1.0.0
 
 # Usage message
 USAGE="
@@ -255,8 +255,5 @@ main() {
   invoke_command "${@}" || quit 2 "Failed to execute (${?}) plugin: \"${1}\" !"
 }
 
-# ------------------------------------------
-# Program entry point
-
 main "${@}"
-quit 0 'Done !' # Execution should not reach at this point
+quit 0 'Done !'

@@ -10,7 +10,7 @@
 # License: Please refer to <http://unlicense.org/>
 
 # Current script version.
-VERSION=0.9.0
+VERSION=1.0.0
 
 # Help message to be displayed by the script.
 USAGE="

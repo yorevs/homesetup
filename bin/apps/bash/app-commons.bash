@@ -35,8 +35,8 @@ quit() {
   unset -f quit usage version trim "${UNSETS[*]}"
   exit_code=${1:-0}
   shift
-  [[ $exit_code -ne 0 ]] && echo -en "${RED}"
-  echo -e "${*} ${NC}" 1>&2
+  [[ ${exit_code} -ne 0 ]] && echo -en "${RED}"
+  [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
   # shellcheck disable=SC2086
   exit ${exit_code}
