@@ -10,22 +10,31 @@
 
 # rl; \rm -f /tmp/out.txt; minput /tmp/out.txt "Name:input:alphanumeric:10/30:rw:" "Password:password:any:8/30:rw:" "Age:input:number:1/3::" "Role:::5:r:Admin"
 
+# @function: Retrieve the current cursor position on screen. ## This is a very expensive call
 function __hhs_minput_curpos() {
 
-  local vertical horizontal oldstty
-
-  exec < /dev/tty
-  oldstty=$(stty -g)
-  stty raw -echo min 0
-  echo -en "\033[6n" > /dev/tty
-  IFS=';' read -r -d R -a pos
-  stty "$oldstty"
-  if [[ ${#pos} -gt 0 ]]; then
-    vertical=${pos[0]:2}
-    horizontal=${pos[1]:-1}
-    [ "${1}" = "row" ] && [[ $vertical =~ ^[1-9]+$ ]] && echo "$((vertical - 1))" && return 0
-    [ "${1}" = "col" ] && [[ $horizontal =~ ^[1-9]+$ ]] && echo "$((horizontal - 1))" && return 0
-  fi
+  local row col
+  
+  # Sometimes the cursor position is not comming, so make sure we have data to retrieve
+  while
+    [ -z "$row" ] || [ -z "$col" ]
+    exec < /dev/tty
+    disable-echo
+    echo -en "\033[6n" > /dev/tty
+    IFS=';' read -r -d R -a pos
+    enable-echo
+    if [[ ${#pos} -gt 0 ]]; then
+      row="${pos[0]:2}"
+      col="${pos[1]}"
+      if [[ $row =~ ^[1-9]+$ ]] && [[ $col =~ ^[1-9]+$ ]]; then
+        echo "$((row - 1)),$((col - 1))"
+        return 0
+      else
+        unset row
+        unset col
+      fi
+    fi
+  do :; done
 
   return 1
 }
@@ -55,8 +64,6 @@ function __hhs_minput_validate() {
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
 
-  echo -e '\n--- Started execution ---\n' > /tmp/minput.log # Reset logs
-
   BLACK_BG='\033[40m'
   BLUE_BG='\033[44m'
 
@@ -85,39 +92,41 @@ function __hhs_minput() {
     return 1
   fi
 
-  local outfile="$1" re_render=1 label_size value_size all_fields=() cur_field=() field_parts=()
-  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col err_msg exit_row exit_col
-  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex
+  local outfile="${1}" re_render=1 label_size value_size all_fields=() cur_field=() field_parts=()
+  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout
+  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex exit_pos all_pos=()
 
   if [ -d "$1" ] || [ -s "$1" ]; then
     echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
     return 1
   fi
-
+  
   shift
   # TODO: Validate field syntax => "Label:Mode:Type:Max/Min:Perm:Value" ...
   all_fields=("${@}")
   len=${#all_fields[*]}
-  echo -e "[DEBUG] ALL_FIELDS  LEN = ${#all_fields[@]} \t CONTENTS [ ${all_fields[*]} ]" >> /tmp/minput.log
-  save-cursor-pos
   disable-line-wrap
   tab_index=0
   label_size=10 # TODO find dinamically the greater Label length
   value_size=30 # TODO find dinamically the greater Value maxlen
-
+  clear 
+  
+  echo -e "${YELLOW}Please fill all fields of the form below${NC}"
+  echo ''
+  save-cursor-pos
+  
   while :; do
 
     # Menu Renderization {
     if [ -n "$re_render" ]; then
-      echo -e '\n--- Render ---' > /tmp/minput.log # Reset logs
       hide-cursor
       # Restore the cursor to the home position
       restore-cursor-pos
-      echo -e "${NC}"
+      enable-echo
       for idx in "${!all_fields[@]}"; do
         IFS=':'
         field="${all_fields[$idx]}"
-        read -r -a field_parts <<< "${field}"
+        read -rsa field_parts <<< "${field}"
         f_label="${field_parts[0]}"
         f_mode="${field_parts[1]}"
         f_mode=${f_mode:-input}
@@ -129,13 +138,16 @@ function __hhs_minput() {
         f_perm="${field_parts[4]}"
         f_perm=${f_perm:-rw}
         f_value="${field_parts[5]}"
-        printf "[DEBUG] [%d] Label = %-10s Value = \"%-30s\" Mode = %-8s Type = %-12s Min/Max = %-5s Perm = %-2s \n" "$idx" "${f_label}" "${f_value}" "${f_mode}" "${f_type}" "${f_max_min_len}" "${f_perm}" >> /tmp/minput.log
-        [[ $tab_index -ne $idx ]] && printf "${BLACK_BG}%${label_size}s: " "${f_label}"
-        if [[ $tab_index -eq $idx ]]; then
+        if [[ $tab_index -ne $idx ]]; then
+          printf "${BLACK_BG}%${label_size}s: " "${f_label}"
+        else
           printf "${BLUE_BG}%${label_size}s: " "${f_label}"
-          f_row="$(__hhs_minput_curpos row)"
-          f_col="$(__hhs_minput_curpos col)"
+          # Buffering the cursor all positions to avoid calling __hhs_minput_curpos
+          f_pos="${all_pos[$idx]:-$(__hhs_minput_curpos)}"
+          f_row="${f_pos%,*}"
+          f_col="${f_pos#*,}"
           f_col="$((f_col + ${#f_value}))"
+          all_pos[$idx]="${f_pos}"
         fi
         offset=${#f_value}
         margin=$((12 - (${#maxlen} + ${#offset})))
@@ -143,11 +155,15 @@ function __hhs_minput() {
         [ "password" = "${f_mode}" ] && printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
         printf "  %d/%d" "${#f_value}" "${maxlen}"
         printf "%*.*s${BLACK_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
-        # Display any error message if it was previously set. [ENTER] will dismiss the message
+        # Display any previously set error message
         if [[ $tab_index -eq $idx ]] && [ -n "${err_msg}" ]; then
-          echo -en "${BLACK_BG}${RED}"
           err_msg="  <<< ${err_msg}"
-          read -rsp "${err_msg}" -t "$((1 + (${#err_msg} / 25)))"
+          dismiss_timeout=$((1 + (${#err_msg} / 25)))
+          echo -en "${BLACK_BG}${RED}${err_msg}"
+          disable-echo
+          # Discard any garbage typed by the user while showing the error
+          IFS= read -rsn1000 -t ${dismiss_timeout} err_msg < "/dev/tty" && wait
+          enable-echo
           echo -en "\033[${#err_msg}D\033[0K${NC}"
           unset err_msg
         fi
@@ -166,9 +182,7 @@ function __hhs_minput() {
       echo -e "${BLACK_BG}"
       echo -en "${YELLOW}[Enter] Submit  [↑↓] Navigate  [TAB] Next  [Esc] Quit \033[0K"
       echo -en "${NC}"
-      # Save the exit cursor position
-      exit_row="$(__hhs_minput_curpos row)"
-      exit_col="$(__hhs_minput_curpos col)"
+      exit_pos=${exit_pos:-$(__hhs_minput_curpos)}
       unset re_render
       # Position the cursor on the current tab index
       tput cup "${cur_row}" "${cur_col}"
@@ -193,48 +207,55 @@ function __hhs_minput() {
         re_render=1
         ;;
       [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]])
+        f_mode="${cur_field[1]}"
+        f_type="${cur_field[2]}"
         maxlen=${cur_field[3]##*/}
-        ftype="${cur_field[2]}"
         if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -lt maxlen ]]; then
-          if __hhs_minput_validate "${ftype}" "${keypress}"; then
+          if __hhs_minput_validate "${f_type}" "${keypress}"; then
             cur_field[5]="${cur_field[5]}${keypress}"
             all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
+            enable-echo
+            [ "input" = "${f_mode}" ] && echo -en "${BLUE_BG}${keypress}"
+            [ "password" = "${f_mode}" ] && echo -en "${BLUE_BG}*"
           else
-            err_msg="This field only accept ${ftype}s !"
+            err_msg="This field only accept ${f_type}s !"
+            re_render=1
           fi
         elif [ "r" = "${cur_field[4]}" ]; then
           err_msg="This field is read only !"
+          re_render=1
         fi
-        re_render=1
         ;;
       $'\177') # Backspace
         if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -ge 1 ]]; then
           # Delete the previous character
           cur_field[5]="${cur_field[5]::${#cur_field[5]}-1}"
           all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
+          enable-echo
+          echo -en "${BLUE_BG}\033[1D \b"
         elif [ "r" = "${cur_field[4]}" ]; then
           err_msg="This field is read only !"
+          re_render=1
         fi
-        re_render=1
         ;;
       $'\033') # Handle escape '\e[nX' codes
+        disable-echo
         IFS= read -rsn2 -t 1 keypress
         case "${keypress}" in
           [A) # Cursor up
             if [[ $((tab_index - 1)) -ge 0 ]]; then
               tab_index=$((tab_index - 1))
+              re_render=1
             fi
-            re_render=1
             ;;
           [B) # Cursor down
             if [[ $((tab_index + 1)) -lt $len ]]; then
               tab_index=$((tab_index + 1))
+              re_render=1
             fi
-            re_render=1
             ;;
           *) # Escape pressed
             if [[ "${#keypress}" -eq 1 ]]; then
-              echo "[WARN] ESC typed. Exit issued" >> /tmp/minput.log
               break
             fi
             ;;
@@ -244,7 +265,6 @@ function __hhs_minput() {
         # TODO validate form before submitting
         # minlen=${f_max_min_len%/*}
         # maxlen=${f_max_min_len##*/}
-        echo "[INFO] ENTER typed. Submit issued" >> /tmp/minput.log
         echo -n '' > "${outfile}"
         for idx in ${!all_fields[*]}; do
           echo -n "${all_fields[$idx]%%:*}" | tr '[:lower:]' '[:upper:]' >> "${outfile}"
@@ -252,14 +272,20 @@ function __hhs_minput() {
         done
         break
         ;;
+      *)
+        disable-echo
+        unset keypress
+        ;;
     esac
     # } Navigation input
+    disable-echo
 
   done
   # Restore exit position
-  tput cup "${exit_row}" "${exit_col}"
+  tput cup "${exit_pos%,*}" "${exit_pos#*,}"
   show-cursor
   enable-line-wrap
+  enable-echo
   echo -e "\n${NC}"
 
   return 0

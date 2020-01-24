@@ -17,7 +17,7 @@
 # @function: Check if a command exists.
 # @param $1 [Req] : The command to check.
 __hhs_has() {
-  type "$1" >/dev/null 2>&1
+  type "$1" > /dev/null 2>&1
 }
 
 # @function: Check if an alias exists and create it if it does not. Do not support the use of single quotes in the expression
@@ -25,12 +25,12 @@ __hhs_has() {
 __hhs_alias() {
 
   local all_args alias_expr alias_name
-  
+
   all_args="${*}"
   alias_expr="${all_args#*=}"
-  alias_name="${all_args//=*}"
-  
-  if ! type "$alias_name" >/dev/null 2>&1; then
+  alias_name="${all_args//=*/}"
+
+  if ! type "$alias_name" > /dev/null 2>&1; then
     # shellcheck disable=SC2139
     alias "${alias_name}"="${alias_expr}"
     ret=$?
@@ -89,7 +89,6 @@ alias cp='\cp -iv'
 alias mv='\mv -iv'
 
 # Nice command replacements
-alias cls='echo -en "\033[2J\033[H"'
 alias df='\df -H'
 alias du='\du -hcd 1'
 alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
@@ -165,7 +164,7 @@ case $HHS_MY_OS in
     __hhs_alias ised="sed -i'' -r"
     __hhs_alias esed="sed -r"
     __hhs_has "base64" && __hhs_alias decode='base64 -d'
-  ;;
+    ;;
 
   Darwin) # -- MACOS --
 
@@ -198,18 +197,22 @@ case $HHS_MY_OS in
     # macOS has no `sha1sum`, so use `shasum` as a fallback
     __hhs_has "sha1" || alias sha1='shasum'
     __hhs_has "sha1sum" || alias sha1sum='sha1'
-  ;;
+    ;;
 esac
 
 # -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts => TODO: adapt for zsh
 
-alias show-cursor='tput cnorm'      # Show the cursor using tput
-alias hide-cursor='tput civis'      # Hide the cursor using tput
-alias save-cursor-pos='tput sc'     # Save current cursor position
-alias restore-cursor-pos='tput rc'  # Restore saved cursor position
-alias enable-line-wrap='tput smam'  # Enable line wrapping
-alias disable-line-wrap='tput rmam' # Disable line wrapping
+alias cls='echo -en "\033[2J\033[H${NC}"; show-cursor; enable-line-wrap; enable-echo'
+alias show-cursor='tput cnorm'            # Show the cursor using tput
+alias hide-cursor='tput civis'            # Hide the cursor using tput
+alias save-cursor-pos='tput sc'           # Save current cursor position
+alias restore-cursor-pos='tput rc'        # Restore saved cursor position
+alias enable-line-wrap='tput smam'        # Enable line wrapping
+alias disable-line-wrap='tput rmam'       # Disable line wrapping
+alias enable-echo='stty echo -raw'        # Enable echoing keypress
+alias disable-echo='stty raw -echo min 0' # Disable echoing keypress
+alias reset="cls; reset"
 
 # -----------------------------------------------------------------------------------
 # HomeSetup aliases
@@ -278,7 +281,7 @@ fi
 # Docker dependent aliases
 # inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
 
-if __hhs_has "docker" && docker info &>/dev/null; then
+if __hhs_has "docker" && docker info &> /dev/null; then
 
   alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'
   alias __hhs_docker_service='docker service'
