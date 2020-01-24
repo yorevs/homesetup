@@ -114,7 +114,7 @@ function __hhs_minput() {
       # Restore the cursor to the home position
       restore-cursor-pos
       echo -e "${NC}"
-      for idx in ${!all_fields[*]}; do
+      for idx in "${!all_fields[@]}"; do
         IFS=':'
         field="${all_fields[$idx]}"
         read -r -a field_parts <<< "${field}"
@@ -129,8 +129,7 @@ function __hhs_minput() {
         f_perm="${field_parts[4]}"
         f_perm=${f_perm:-rw}
         f_value="${field_parts[5]}"
-        printf "[DEBUG] [%d] Label = %-10s Value = \"%-30s\" Mode = %-8s Type = %-12s Min/Max = %-5s Perm = %-2s \n" \
-          "$idx" "${f_label}" "${f_value}" "${f_mode}" "${f_type}" "${f_max_min_len}" "${f_perm}" >> /tmp/minput.log
+        printf "[DEBUG] [%d] Label = %-10s Value = \"%-30s\" Mode = %-8s Type = %-12s Min/Max = %-5s Perm = %-2s \n" "$idx" "${f_label}" "${f_value}" "${f_mode}" "${f_type}" "${f_max_min_len}" "${f_perm}" >> /tmp/minput.log
         [[ $tab_index -ne $idx ]] && printf "${BLACK_BG}%${label_size}s: " "${f_label}"
         if [[ $tab_index -eq $idx ]]; then
           printf "${BLUE_BG}%${label_size}s: " "${f_label}"
@@ -224,16 +223,12 @@ function __hhs_minput() {
           [A) # Cursor up
             if [[ $((tab_index - 1)) -ge 0 ]]; then
               tab_index=$((tab_index - 1))
-            else
-              tab_index=$((len - 1))
             fi
             re_render=1
             ;;
           [B) # Cursor down
             if [[ $((tab_index + 1)) -lt $len ]]; then
               tab_index=$((tab_index + 1))
-            else
-              tab_index=0
             fi
             re_render=1
             ;;
