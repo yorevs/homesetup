@@ -50,8 +50,13 @@ function __hhs_envs() {
       if [[ ${name} =~ ${filter} ]]; then
         echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-        echo -en " ${GREEN}=> ${NC}${value:0:$columns} "
-        [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
+        echo -en " ${GREEN}=> ${NC}"
+        echo -n "${value:0:$columns} "
+        if [ "${#value}" -ge "$columns" ]; then
+          "...${NC}"
+        else
+          echo "${NC}"
+        fi
       fi
     done
     shopt -u nocasematch
@@ -100,4 +105,50 @@ function __hhs_shell_select() {
   fi
 
   return 0
+}
+
+# @function: Terminal color pallete test
+function __hhs_color_pallete() {
+  
+  echo ''
+  echo "--- Home Setup color pallete test"
+  echo ''
+  
+  echo -en "${BLACK}  BLACK "
+  echo -en "${RED}    RED "
+  echo -en "${GREEN}  GREEN "
+  echo -en "${ORANGE} ORANGE "
+  echo -en "${BLUE}   BLUE "
+  echo -en "${PURPLE} PURPLE "
+  echo -en "${CYAN}   CYAN "
+  echo -en "${GRAY}   GRAY "
+  echo -en "${WHITE}  WHITE "
+  echo -en "${YELLOW} YELLOW "
+  echo -en "${VIOLET} VIOLET "
+  echo -e "${NC}\n"
+  
+  echo "--- 16 Colors Low"
+  echo ''
+  for c in {30..37}; do
+    echo -en "\033[0;${c}mC16-${c} "
+  done
+  echo -e "${NC}\n"
+  
+  echo "--- 16 Colors High"
+  echo ''
+  for c in {90..97}; do
+    echo -en "\033[0;${c}mC16-${c} "
+  done
+  echo -e "${NC}\n"
+  
+  echo "--- 256 Colors"
+  echo ''
+  for c in {1..256}; do
+    echo -en "\033[38;5;${c}m"
+    printf "C256-%-.3d " "${c}"
+    [ "$(echo "$c % 12" | bc)" -eq 0 ] && echo ''
+  done
+  echo -e "${NC}\n"
+  
+  echo ''
 }

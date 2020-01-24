@@ -25,7 +25,7 @@ function __hhs_tailor() {
 
     [ -f "$HHS_DIR/.tailor" ] || echo -e "
     THREAD_NAME_RE=\" *[-a-zA-Z0-9_ ]+ *\"
-    THREAD_NAME_STYLE=\"${VIOLET}\"
+    THREAD_NAME_STYLE=\"${PURPLE}\"
     FQDN_RE=\"(([a-zA-Z\.][a-zA-Z0-9]*[\.\$])+[a-zA-Z0-9]+)\"
     FQDN_STYLE=\"${CYAN}\"
     LOG_LEVEL_RE=\"INFO|DEBUG|FINE\"

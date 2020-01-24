@@ -73,7 +73,7 @@ function __hhs_minput() {
 
   local outfile="$1" re_render=1 label_size=10 value_size=30 all_fields=() cur_field=() field_parts=()
   local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col
-  local len minlen maxlen cur_index tab_index cur_row cur_col exit_row exit_col err_msg
+  local len minlen offset margin maxlen cur_index tab_index cur_row cur_col exit_row exit_col err_msg
 
   if [ -d "$1" ] || [ -s "$1" ]; then
     echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
@@ -109,7 +109,6 @@ function __hhs_minput() {
         f_perm="${field_parts[4]}"
         f_perm=${f_perm:-rw}
         f_max_min_len="${f_max_min_len:-0/30}"
-        minlen=${f_max_min_len%/*}
         maxlen=${f_max_min_len##*/}
         f_value="${field_parts[5]}"
         [[ $tab_index -ne $cur_index ]] && printf "${BLACK_BG}%${label_size}s: " "${f_label}"
@@ -119,16 +118,19 @@ function __hhs_minput() {
           f_col="$(__hhs_cursor_position col)"
           f_col="$((f_col + ${#f_value}))"
         fi
+        offset=${#f_value}
+        margin=$((10 - (${#maxlen} + ${#offset})))
         [ "input" = "${f_mode}" ] && printf "%-${value_size}s" "${f_value}"
         [ "password" = "${f_mode}" ] && printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
-        printf "(%${#maxlen}d/%${#maxlen}d)" "${#f_value}" "${maxlen}"
+        printf "%d/%d" "${#f_value}" "${maxlen}"
+        printf "%*.*s${BLACK_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
         if [[ $tab_index -eq $cur_index ]] && [ -n "${err_msg}" ]; then
-          printf "${BLACK_BG}${RED}      <<< %s" "${err_msg}"
+          printf "${BLACK_BG}${RED}  <<< %s" "${err_msg}"
           sleep 2
-          echo -en "\033[$((10 + ${#err_msg}))D"
+          echo -en "\033[$((4 + ${#err_msg}))D\033[0K"
           unset err_msg
         fi
-        echo -e "\033[0K\n"
+        echo -e '\n'
         # Keep the selected field on hand
         if [[ $tab_index -eq $cur_index ]]; then
           cur_field=(${field_parts[@]})
@@ -159,6 +161,9 @@ function __hhs_minput() {
           # Append value to the current field
           cur_field[5]="${cur_field[5]}${KEY_PRESS}"
           all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
+          re_render=1
+        elif [ "r" = "${cur_field[4]}" ]; then
+          err_msg="This field is read only !"
           re_render=1
         fi
         ;;
@@ -201,6 +206,7 @@ function __hhs_minput() {
         ;;
       $'')
         # TODO validate and write form values to outfile or show error and continue
+        # minlen=${f_max_min_len%/*}
         echo "[INFO] ENTER typed. Submit issued" >> /tmp/minput.log
         break
         ;;

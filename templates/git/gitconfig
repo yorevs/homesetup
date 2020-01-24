@@ -113,7 +113,7 @@
     header = white bold
     added = green bold
     changed = red bold
-    untracked = magenta bold
+    untracked = PURPLE bold
     updated = green bold
     nobranch = red reverse bold
 
