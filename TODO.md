@@ -7,7 +7,8 @@
 - [ ] Update README.MD
 - [ ] install.bash might install required tools (ask for it) using #> hhs tools --install/--check
 - [ ] Test python scripts against v2.7 and v3.0
-- [ ] Update all hhs-functions file headers.
+- [ ] Make sure uninstall is working as it should
+- [ ] Move hostname-change to a function of hhs-app
 
 ## BUGFIX
 

@@ -3,8 +3,8 @@ from getpass import getuser
 
 """
   @package: deployer
-   @script: VersionUtils.py
-  @purpose: Provides an engine to handle app versions.
+   @script: GitUtils.py
+  @purpose: Provides some git utilities.
   @created: Nov 14, 2019
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@hotmail.com

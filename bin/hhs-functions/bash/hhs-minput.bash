@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2206,SC2207
 
-#  Script: minput.bash
+#  Script: hhs-minput.bash
 # Created: Jan 16, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
