@@ -64,8 +64,8 @@ function __hhs_minput_validate() {
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
 
-  BLACK_BG='\033[40m'
-  BLUE_BG='\033[44m'
+  UNSELECTED_BG='\033[40m'
+  SELECTED_BG='\033[44m'
 
   if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
@@ -142,9 +142,9 @@ function __hhs_minput() {
         f_perm=${f_perm:-rw}
         f_value="${field_parts[5]}"
         if [[ $tab_index -ne $idx ]]; then
-          printf "${BLACK_BG}%${label_size}s: " "${f_label}"
+          printf "${UNSELECTED_BG}%${label_size}s: " "${f_label}"
         else
-          printf "${BLUE_BG}%${label_size}s: " "${f_label}"
+          printf "${SELECTED_BG}%${label_size}s: " "${f_label}"
           # Buffering the cursor all positions to avoid calling __hhs_minput_curpos
           f_pos="${all_pos[$idx]:-$(__hhs_minput_curpos)}"
           f_row="${f_pos%,*}"
@@ -157,17 +157,17 @@ function __hhs_minput() {
         [ "input" = "${f_mode}" ] && printf "%-${value_size}s" "${f_value}"
         [ "password" = "${f_mode}" ] && printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
         printf "  %d/%d" "${#f_value}" "${maxlen}"
-        printf "%*.*s${BLACK_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
+        printf "%*.*s${UNSELECTED_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
         # Display any previously set error message
         if [[ $tab_index -eq $idx ]] && [ -n "${err_msg}" ]; then
           err_msg="  <<< ${err_msg}"
           dismiss_timeout=$((1 + (${#err_msg} / 25)))
-          echo -en "${BLACK_BG}${RED}${err_msg}"
+          echo -en "${UNSELECTED_BG}${RED}${err_msg}"
           disable-echo
           # Discard any garbage typed by the user while showing the error
-          IFS= read -rsn1000 -t ${dismiss_timeout} err_msg < "/dev/tty" && wait
+          IFS= read -rsn1000 -t ${dismiss_timeout} err_msg < "/dev/tty"
           enable-echo
-          echo -en "\033[${#err_msg}D\033[0K${NC}"
+          echo -en "\033[${#err_msg}D\033[0K${NC}" # Remove the message after the timeout
           unset err_msg
         fi
         echo -e '\n'
@@ -182,7 +182,7 @@ function __hhs_minput() {
         all_fields[$idx]="${f_label}:${f_mode}:${f_type}:${f_max_min_len}:${f_perm}:${f_value}"
         IFS="$HHS_RESET_IFS"
       done
-      echo -e "${BLACK_BG}"
+      echo -e "${UNSELECTED_BG}"
       echo -en "${YELLOW}[Enter] Submit  [↑↓] Navigate  [TAB] Next  [Esc] Quit \033[0K"
       echo -en "${NC}"
       exit_pos=${exit_pos:-$(__hhs_minput_curpos)}
@@ -195,6 +195,7 @@ function __hhs_minput() {
     # Navigation input {
     show-cursor
     IFS= read -rsn1 keypress
+    disable-echo
     case "${keypress}" in
       $'\011') # TAB => Validate and move next. First case because the next one also captures it
         minlen=${cur_field[3]%/*}
@@ -216,9 +217,6 @@ function __hhs_minput() {
           if __hhs_minput_validate "${f_type}" "${keypress}"; then
             cur_field[5]="${cur_field[5]}${keypress}"
             all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
-            enable-echo
-            [ "input" = "${f_mode}" ] && echo -en "${BLUE_BG}${keypress}"
-            [ "password" = "${f_mode}" ] && echo -en "${BLUE_BG}*"
           else
             err_msg="This field only accept ${f_type}s !"
           fi
@@ -231,14 +229,11 @@ function __hhs_minput() {
           # Delete the previous character
           cur_field[5]="${cur_field[5]::${#cur_field[5]}-1}"
           all_fields[$tab_index]="${cur_field[0]}:${cur_field[1]}:${cur_field[2]}:${cur_field[3]}:${cur_field[4]}:${cur_field[5]}"
-          enable-echo
-          echo -en "${BLUE_BG}\033[1D \b"
         elif [ "r" = "${cur_field[4]}" ]; then
           err_msg="This field is read only !"
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        disable-echo
         IFS= read -rsn2 -t 1 keypress
         case "${keypress}" in
           [A) # Cursor up
@@ -270,12 +265,10 @@ function __hhs_minput() {
         break
         ;;
       *)
-        disable-echo
         unset keypress
         ;;
     esac
     # } Navigation input
-    disable-echo
     re_render=1
 
   done
