@@ -102,13 +102,16 @@ function __hhs_minput() {
   fi
   
   shift
-  # TODO: Validate field syntax => "Label:Mode:Type:Max/Min:Perm:Value" ...
+  
+  # TODO: Validate field syntax => "Label:Mode:Type:Max/Min:Perm:Value" ...{
   all_fields=("${@}")
+  label_size=10 # TODO find dinamically the greater Label length
+  value_size=30 # TODO find dinamically the greater Value maxlen
+  # }
+  
   len=${#all_fields[*]}
   disable-line-wrap
   tab_index=0
-  label_size=10 # TODO find dinamically the greater Label length
-  value_size=30 # TODO find dinamically the greater Value maxlen
   clear 
   
   echo -e "${YELLOW}Please fill all fields of the form below${NC}"
@@ -193,7 +196,7 @@ function __hhs_minput() {
     show-cursor
     IFS= read -rsn1 keypress
     case "${keypress}" in
-      $'\011') # TAB => same as Down arrow
+      $'\011') # TAB => Validate and move next. First case because the next one also captures it
         minlen=${cur_field[3]%/*}
         if [[ ${minlen} -le ${#cur_field[5]} ]]; then
           if [[ $((tab_index + 1)) -lt $len ]]; then
@@ -204,9 +207,8 @@ function __hhs_minput() {
         else
           err_msg="This field does not match the minimum length of ${minlen}"
         fi
-        re_render=1
         ;;
-      [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]])
+      [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]]) # Capture any input typed
         f_mode="${cur_field[1]}"
         f_type="${cur_field[2]}"
         maxlen=${cur_field[3]##*/}
@@ -219,11 +221,9 @@ function __hhs_minput() {
             [ "password" = "${f_mode}" ] && echo -en "${BLUE_BG}*"
           else
             err_msg="This field only accept ${f_type}s !"
-            re_render=1
           fi
         elif [ "r" = "${cur_field[4]}" ]; then
           err_msg="This field is read only !"
-          re_render=1
         fi
         ;;
       $'\177') # Backspace
@@ -235,7 +235,6 @@ function __hhs_minput() {
           echo -en "${BLUE_BG}\033[1D \b"
         elif [ "r" = "${cur_field[4]}" ]; then
           err_msg="This field is read only !"
-          re_render=1
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
@@ -245,13 +244,11 @@ function __hhs_minput() {
           [A) # Cursor up
             if [[ $((tab_index - 1)) -ge 0 ]]; then
               tab_index=$((tab_index - 1))
-              re_render=1
             fi
             ;;
           [B) # Cursor down
             if [[ $((tab_index + 1)) -lt $len ]]; then
               tab_index=$((tab_index + 1))
-              re_render=1
             fi
             ;;
           *) # Escape pressed
@@ -279,6 +276,7 @@ function __hhs_minput() {
     esac
     # } Navigation input
     disable-echo
+    re_render=1
 
   done
   # Restore exit position
