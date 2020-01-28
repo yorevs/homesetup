@@ -242,12 +242,16 @@ register_hhs_functions() {
 # ------------------------------------------
 # Purpose: Program entry point
 main() {
-
+  
+  local fname
+  
   parse_args "${@}"
   register_local_functions
   register_plugins
   if has_function "${1}"; then
-    ${1} "${@}"
+    fname="${1}"
+    shift
+    ${fname} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
