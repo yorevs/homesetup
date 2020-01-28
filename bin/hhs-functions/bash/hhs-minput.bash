@@ -8,10 +8,8 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# rl; \rm -f /tmp/out.txt; minput /tmp/out.txt "Name:input:alphanumeric:10/30:rw:" "Password:password:any:8/30:rw:" "Age:input:number:1/3::" "Role:::5:r:Admin"
-
 # @function: Retrieve the current cursor position on screen. ## This is a very expensive call
-__hhs_minput_curpos() {
+function __hhs_minput_curpos() {
 
   local row col
 
@@ -37,26 +35,6 @@ __hhs_minput_curpos() {
   do :; done
 
   return 1
-}
-
-# @function: Validate a keypress against an input according to it's type
-__hhs_minput_validate() {
-
-  local val_regex f_type="$1" keypress="$2"
-
-  # Append value to the current field if the value matches the input type
-  case "${f_type}" in
-    'letter') val_regex='^[a-zA-Z ]*$' ;;
-    'number') val_regex='^[0-9]*$' ;;
-    'alphanumeric') val_regex='^[a-zA-Z0-9 ]*$' ;;
-    *) return 0 ;;
-  esac
-
-  if [[ "${keypress}" =~ ${val_regex} ]]; then
-    return 0
-  else
-    return 1
-  fi
 }
 
 # @function: Select an option from a list using a navigable menu.
@@ -98,7 +76,7 @@ function __hhs_minput() {
 
   local outfile="${1}" label_size value_size form_title all_fields=() cur_field=() field_parts=() all_pos=()
   local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout re_render=1
-  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex exit_pos mi_modes mi_types file_contents
+  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes mi_types file_contents
 
   if [ -d "$1" ] || [ -s "$1" ]; then
     echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
@@ -118,22 +96,22 @@ function __hhs_minput() {
     field="${all_fields[${idx}]}"
     IFS='|' read -rsa field_parts <<< "${field}"
     f_label="${field_parts[0]}"
-    [[ ! $f_label =~ ^[a-zA-Z0-9_]+$ ]] && echo "Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters." && return 1
+    [[ ! $f_label =~ ^[a-zA-Z0-9_]+$ ]] && echo "${RED}Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters ${NC}" && return 1
     f_mode="${field_parts[1]}"
     f_mode=${f_mode:-input}
-    [[ ! "${mi_modes[*]}" == *"${f_mode}"* ]] && echo "Invalid mode \"${f_mode}\". Valid modes are: [${mi_modes[*]}]" && return 1
+    [[ ! "${mi_modes[*]}" == *"${f_mode}"* ]] && echo "${RED}Invalid mode \"${f_mode}\". Valid modes are: [${mi_modes[*]}] ${NC}" && return 1
     f_type="${field_parts[2]}"
     f_type=${f_type:-any}
-    [[ ! "${mi_types[*]}" == *"${f_type}"* ]] && echo "Invalid type \"${f_type}\". Valid types are: [${mi_types[*]}]" && return 1
+    [[ ! "${mi_types[*]}" == *"${f_type}"* ]] && echo "${RED}Invalid type \"${f_type}\". Valid types are: [${mi_types[*]}] ${NC}" && return 1
     f_max_min_len="${field_parts[3]}"
     f_max_min_len="${f_max_min_len:-0/30}"
-    [[ ! ${f_max_min_len} =~ ^[0-9](\/[0-9]+$)* ]] && echo "Invalid Min/Max length \"${f_max_min_len}\"" && return 1
+    [[ ! ${f_max_min_len} =~ ^[0-9](\/[0-9]+$)* ]] && echo "${RED}Invalid Min/Max length \"${f_max_min_len}\" ${NC}" && return 1
     minlen=${f_max_min_len%/*}
     maxlen=${f_max_min_len##*/}
     [[ ${minlen} -gt ${maxlen} ]] && echo "Maximum length \"${maxlen}\" must be greater than Minimum length \"${minlen}\"" && return 1
     f_perm="${field_parts[4]}"
     f_perm=${f_perm:-rw}
-    [[ ! "r rw" == *"${f_perm}"* ]] && echo "Invalid permission \"${f_perm}\". Valid permissions are: [r rw]" && return 1
+    [[ ! "r rw" == *"${f_perm}"* ]] && echo "${RED}Invalid permission \"${f_perm}\". Valid permissions are: [r rw] ${NC}" && return 1
     f_value="${field_parts[5]:0:${maxlen}}"
     [[ "r" == "${f_perm}" ]] && [ -z "${f_value}" ] && echo "Read only fields can't have empty values." && return 1
     [[ ${#f_label} -gt ${label_size} ]] && label_size=${#f_label}
@@ -172,10 +150,8 @@ function __hhs_minput() {
           printf "${UNSELECTED_BG}  %${label_size}s: " "${f_label}"
         else
           printf "${SELECTED_BG}  %${label_size}s: " "${f_label}"
-          # Buffering the all cursor positions to avoid calling __hhs_minput_curpos
-          f_pos="${all_pos[${idx}]:-$(__hhs_minput_curpos)}"
-          f_row="${f_pos%,*}"
-          f_col="${f_pos#*,}"
+          f_pos="${all_pos[${idx}]:-$(__hhs_minput_curpos)}" # Buffering the all positions to avoid calling __hhs_minput_curpos
+          f_row="${f_pos%,*}" && f_col="${f_pos#*,}"
           f_col="$((f_col + ${#f_value}))"
           all_pos[${idx}]="${f_pos}"
         fi
@@ -209,12 +185,11 @@ function __hhs_minput() {
       echo -e "${UNSELECTED_BG}"
       echo -en "${YELLOW}[Enter] Submit  [↑↓] Navigate  [Tab] Next  [Esc] Quit\033[0K"
       echo -en "${NC}"
-      exit_pos=${exit_pos:-$(__hhs_minput_curpos)}
       unset re_render
     fi
     # } Menu Renderization
 
-    # Position the cursor on the current tab index
+    # Position the cursor to edit the current field
     tput cup "${cur_row}" "${cur_col}"
 
     # Navigation input {
@@ -242,12 +217,19 @@ function __hhs_minput() {
           err_msg="This field is read only !"
         fi
         ;;
-      [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]]) # Capture any input typed
+      [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]]) # Handle an input
         f_mode="${cur_field[1]}"
         f_type="${cur_field[2]}"
         maxlen=${cur_field[3]##*/}
         if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -lt maxlen ]]; then
-          if __hhs_minput_validate "${f_type}" "${keypress}"; then
+          case "${f_type}" in
+            'letter') val_regex='^[a-zA-Z ]*$' ;;
+            'number') val_regex='^[0-9]*$' ;;
+            'alphanumeric') val_regex='^[a-zA-Z0-9 ]*$' ;;
+            *) val_regex='.*' ;; # FIXME This expression is rejecting á, ç and similar.
+          esac
+          if [[ "${keypress}" =~ ${val_regex} ]]; then
+            # Append value to the current field if the value matches the input type
             cur_field[5]="${cur_field[5]}${keypress}"
             all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
           else
@@ -309,12 +291,8 @@ function __hhs_minput() {
     # } Navigation input
     re_render=1
   done
-  # Restore exit position
-  tput cup "${exit_pos%,*}" "${exit_pos#*,}"
-  show-cursor
-  enable-line-wrap
-  enable-echo
-  echo -e "\n${NC}"
+  cls
+  echo -e "${NC}"
 
   return 0
 }

@@ -41,6 +41,9 @@ __hhs_alias() {
   return 1
 }
 
+# Removes all aliases before setting them
+unalias -a
+
 # -----------------------------------------------------------------------------------
 # Navigational
 alias ...='cd ../..'
@@ -203,7 +206,7 @@ esac
 # -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts => TODO: adapt for zsh
 
-alias cls='echo -en "\033[2J\033[H${NC}"; show-cursor; enable-line-wrap; enable-echo'
+alias cls='show-cursor; enable-line-wrap; enable-echo; echo -en "\033[1J\033[H${NC}"'
 alias show-cursor='tput cnorm'            # Show the cursor using tput
 alias hide-cursor='tput civis'            # Hide the cursor using tput
 alias save-cursor-pos='tput sc'           # Save current cursor position
@@ -212,7 +215,7 @@ alias enable-line-wrap='tput smam'        # Enable line wrapping
 alias disable-line-wrap='tput rmam'       # Disable line wrapping
 alias enable-echo='stty echo -raw'        # Enable echoing keypress
 alias disable-echo='stty raw -echo min 0' # Disable echoing keypress
-alias reset="cls; reset"
+alias reset="cls; \reset"
 
 # -----------------------------------------------------------------------------------
 # HomeSetup aliases

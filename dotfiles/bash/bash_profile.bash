@@ -26,9 +26,6 @@ export USER=${USER:-$(whoami)}
 #   source -> ~/.colors can be used to extend/override .bash_colors
 #   source -> ~/.functions can be used to extend/override .bash_functions
 
-# Removes all aliases before setting them
-unalias -a
-
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(

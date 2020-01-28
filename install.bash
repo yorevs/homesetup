@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Functions to be unset after quit
   UNSETS=(
-    quit usage has check_inst_method install_dotfiles clone_repository check_installed 
+    quit usage has check_inst_method install_dotfiles clone_repository check_installed
     activate_dotfiles compatibility_check
   )
 
@@ -200,7 +200,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check for backward HHS compatibility
   compatibility_check() {
     echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
-    
+
     # Moving old hhs files into the proper directory
     [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
     [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
@@ -394,7 +394,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo ''
     fi
 
-    echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") installed!"
+    echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") has been installed !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.${SHELL_TYPE}rc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
