@@ -256,4 +256,4 @@ main() {
 }
 
 main "${@}"
-quit 0 'Done !'
+quit 0
