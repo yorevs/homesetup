@@ -9,7 +9,7 @@
 - [ ] Test python scripts against v2.7 and v3.0
 - [ ] Make sure uninstall is working as it should
 - [ ] Move hostname-change to a function of hhs-app
-- [ ] Upgrade mselect to accept checkboxes and arrow keys to move cursor left and right
+- [ ] Upgrade minput to accept checkboxes and arrow keys to move cursor left and right
 
 ## BUGFIX
 

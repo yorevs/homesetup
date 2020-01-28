@@ -44,6 +44,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   APPLE_ICN="\xef\x85\xb9"
   STAR_ICN="\xef\x80\x85"
   NOTE_ICN="\xef\x84\x98"
+  HANDPEACE_ICN="\xef\x89\x9b"
 
   # Functions to be unset after quit
   UNSETS=(
@@ -393,7 +394,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
       echo ''
     fi
-
+    echo -e "${HANDPEACE_ICN} Your shell, good as hell... not just dotfiles !"
+    echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") has been installed !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.${SHELL_TYPE}rc"

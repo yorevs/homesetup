@@ -70,7 +70,7 @@ function __hhs_mselect() {
         echo -e "${NC}"
       done
       echo ''
-      echo -en "${YELLOW}[Enter] Select  [↑↓] Navigate  [Esc] Quit  [1..${len:0:5}] Goto: \033[0K"
+      echo -en "${YELLOW}[Enter] Select  [↑↓] Navigate  [Q] Quit  [1..${len:0:5}] Goto: \033[0K"
       unset re_render
       show-cursor
     fi
@@ -79,6 +79,11 @@ function __hhs_mselect() {
     # Navigation input {
     IFS= read -rsn 1 keypress
     case "${keypress}" in
+      'q' | 'Q') # Exit requested
+        enable-line-wrap
+        echo -e "\n${NC}"
+        return 1
+        ;;
       [[:digit:]]) # An index was typed
         typed_index="${keypress}"
         echo -en "${keypress}" && index_len=1
@@ -121,11 +126,6 @@ function __hhs_mselect() {
             if [[ $((sel_index + 1)) -lt $len ]]; then
               sel_index=$((sel_index + 1)) && re_render=1
             fi
-            ;;
-          *) # Escape pressed
-            enable-line-wrap
-            echo -e "\n${NC}"
-            return 1
             ;;
         esac
         ;;

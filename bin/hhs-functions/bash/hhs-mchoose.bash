@@ -78,7 +78,7 @@ function __hhs_mchoose() {
         echo -e "${NC}"
       done
       echo ''
-      echo -ne "${YELLOW}[Enter] Accept  [↑↓] Navigate  [Space] Mark  [Esc] Quit  [1..${len:0:5}] Goto: \033[0K"
+      echo -ne "${YELLOW}[Enter] Accept  [↑↓] Navigate  [Space] Mark  [Q] Quit  [1..${len:0:5}] Goto: \033[0K"
       unset re_render
       show-cursor
     fi
@@ -94,6 +94,11 @@ function __hhs_mchoose() {
           sel_options["$cur_index"]=0
         fi
         re_render=1 && continue
+        ;;
+      'q' | 'Q') # Exit requested
+        enable-line-wrap
+        echo -e "\n${NC}"
+        return 1
         ;;
       [[:digit:]]) # An index was typed
         typed_index="${keypress}"
@@ -137,11 +142,6 @@ function __hhs_mchoose() {
             if [[ $((cur_index + 1)) -lt $len ]]; then
               cur_index=$((cur_index + 1)) && re_render=1
             fi
-            ;;
-          *) # Escape pressed
-            enable-line-wrap
-            echo -e "\n${NC}"
-            return 1
             ;;
         esac
         ;;
