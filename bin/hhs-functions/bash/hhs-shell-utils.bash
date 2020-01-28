@@ -60,7 +60,7 @@ function __hhs_envs() {
       fi
     done
     shopt -u nocasematch
-    IFS="$HHS_RESET_IFS"
+    IFS="$RESET_IFS"
     echo ' '
   fi
 
@@ -98,7 +98,7 @@ function __hhs_shell_select() {
         fi
       fi
     fi
-    IFS="$HHS_RESET_IFS"
+    IFS="$RESET_IFS"
     echo -e "${NC}"
 
     [ -f "$mselect_file" ] && command rm -f "$mselect_file"

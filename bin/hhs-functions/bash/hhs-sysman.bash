@@ -57,7 +57,7 @@ function __hhs_sysinfo() {
     fi
 
     echo "${NC}"
-    IFS=$HHS_RESET_IFS
+    IFS=$RESET_IFS
   fi
 
   return 0
@@ -139,7 +139,7 @@ function __hhs_process_list() {
           fi
         fi
       done
-      IFS="$HHS_RESET_IFS"
+      IFS="$RESET_IFS"
     else
       echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
     fi

@@ -206,7 +206,6 @@ esac
 # -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts => TODO: adapt for zsh
 
-alias cls='show-cursor; enable-line-wrap; enable-echo; echo -en "\033[1J\033[H${NC}"'
 alias show-cursor='tput cnorm'            # Show the cursor using tput
 alias hide-cursor='tput civis'            # Hide the cursor using tput
 alias save-cursor-pos='tput sc'           # Save current cursor position
@@ -215,6 +214,12 @@ alias enable-line-wrap='tput smam'        # Enable line wrapping
 alias disable-line-wrap='tput rmam'       # Disable line wrapping
 alias enable-echo='stty echo -raw'        # Enable echoing keypress
 alias disable-echo='stty raw -echo min 0' # Disable echoing keypress
+alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
+
+# This alias is going to clear and reset all cursor attributes and IFS
+alias cls='reset-cursor-attrs; echo -en "\033[1J\033[H${NC}"; export IFS="${RESET_IFS}"'
+
+# Clear the screen and reset the terminal
 alias reset="cls; \reset"
 
 # -----------------------------------------------------------------------------------

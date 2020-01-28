@@ -139,7 +139,7 @@ register_plugins() {
       PLUGINS_LIST+=("${plugin}")
     fi
   done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
-  IFS=$"$HHS_RESET_IFS"
+  IFS=$"$RESET_IFS"
 }
 
 # Purpose: Parse command line arguments

@@ -73,7 +73,7 @@ function __hhs_aliases() {
             [ "${#expr}" -ge "$columns" ] && echo "..."
             echo -e "${NC}"
           done
-          IFS="$HHS_RESET_IFS"
+          IFS="$RESET_IFS"
         )
         echo -e "${NC}"
       else

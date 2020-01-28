@@ -69,7 +69,7 @@ function __hhs_paths() {
         fi
         echo -e "${NC}"
       done
-      IFS="$HHS_RESET_IFS"
+      IFS="$RESET_IFS"
       echo -e "${NC}"
     elif [ "-e" = "$1" ]; then
       edit "$HHS_PATHS_FILE"

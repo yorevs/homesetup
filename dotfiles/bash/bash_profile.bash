@@ -106,4 +106,4 @@ paths -q -a "$HHS_DIR/bin"
 hhs updater execute --check
 
 # Erase what is before the MOTD message and print HHS MOTD
-cls && echo -e "${HHS_MOTD}"
+echo -e "\033[1J\033[H${HHS_MOTD}${NC}"

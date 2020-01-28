@@ -104,7 +104,7 @@ function __hhs_load_dir() {
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
           echo -e "${YELLOW} was saved as ${WHITE}'${dir}'"
         done
-        IFS="$HHS_RESET_IFS"
+        IFS="$RESET_IFS"
         echo "${NC}"
         return 0
         ;;

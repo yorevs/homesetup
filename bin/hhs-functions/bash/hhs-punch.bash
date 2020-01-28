@@ -57,7 +57,7 @@ function __hhs_punch() {
     else
       lines=($(grep -E "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun) )(([0-9]+-?)+) =>.*" "${HHS_PUNCH_FILE}"))
     fi
-    IFS="$HHS_RESET_IFS"
+    IFS="$RESET_IFS"
 
     # Edit punches
     if [ "-e" = "$opt" ]; then

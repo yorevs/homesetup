@@ -93,7 +93,7 @@ function __hhs_command() {
             echo "${YELLOW} is stored as: ${WHITE}'${cmd_expr}'"
             index=$((index + 1))
           done
-          IFS="$HHS_RESET_IFS"
+          IFS="$RESET_IFS"
           echo -e "${NC}"
         else
           echo "${YELLOW}No commands available yet !${NC}"

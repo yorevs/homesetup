@@ -13,6 +13,7 @@
 # System locale (defaults)
 export LC_ALL=en_US
 export LANG=en_US.UTF-8
+export RESET_IFS="$IFS"
 
 # Current OS and Terminal
 export HHS_MY_OS="$(uname -s)"
@@ -80,7 +81,6 @@ export HHS_HOME="${HOME}/HomeSetup"
 export HHS_DIR="${HOME}/.hhs"
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
-export HHS_RESET_IFS="$IFS"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
 export HHS_PATHS_FILE="${HOME}/.path"

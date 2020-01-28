@@ -68,7 +68,7 @@ __hhs_comp_punch() {
     suggestions[$i]=${suggestions[$i]//week-/}
     suggestions[$i]=${suggestions[$i]//\.punch/}
   done
-  IFS=$"${HHS_RESET_IFS}"
+  IFS=$"${RESET_IFS}"
   suggestions=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[2]}"))
   COMPREPLY=("${suggestions[@]}")
 
@@ -131,7 +131,7 @@ __hhs_comp_godir() {
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   IFS=$'\n'
   read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -type d -iname "${base}" 2>/dev/null | esed 's#\./(.*)/*#\1/#')"
-  IFS=$"${HHS_RESET_IFS}"
+  IFS=$"${RESET_IFS}"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   # If there's only one option, avoid to complete it as usual since it's a search
@@ -151,7 +151,7 @@ __hhs_comp_hist() {
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   IFS=$'\n'
   suggestions=($(hist "${COMP_WORDS[1]}" | cut -c30-))
-  IFS=$"${HHS_RESET_IFS}"
+  IFS=$"${RESET_IFS}"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   COMPREPLY=("${suggestions[@]}")

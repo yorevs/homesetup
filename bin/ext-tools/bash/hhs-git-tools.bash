@@ -253,7 +253,7 @@ if __hhs_has "git"; then
 
       popd &> /dev/null || echo "${RED} Unable to leave directory: \"${repo_dir}\" ! ${NC}"
     done
-    IFS="$HHS_RESET_IFS"
+    IFS="$RESET_IFS"
 
     echo ''
     echo "${GREEN}Done ! ${NC}"
