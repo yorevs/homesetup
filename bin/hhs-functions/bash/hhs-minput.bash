@@ -172,7 +172,7 @@ function __hhs_minput() {
           printf "${UNSELECTED_BG}  %${label_size}s: " "${f_label}"
         else
           printf "${SELECTED_BG}  %${label_size}s: " "${f_label}"
-          # Buffering the cursor all positions to avoid calling __hhs_minput_curpos
+          # Buffering the all cursor positions to avoid calling __hhs_minput_curpos
           f_pos="${all_pos[${idx}]:-$(__hhs_minput_curpos)}"
           f_row="${f_pos%,*}"
           f_col="${f_pos#*,}"
