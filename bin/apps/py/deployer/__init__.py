@@ -2,4 +2,4 @@
 #
 # Package: jsonutils
 
-__all__ = ["VersionUtils", "GitUtils", "DeployerApp"]
+__all__ = ["VersionUtils", "GitUtils"]

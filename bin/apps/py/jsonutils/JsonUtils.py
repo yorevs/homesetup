@@ -11,6 +11,8 @@ import re
   @license: Please refer to <http://unlicense.org/>
 """
 
+# @verified versions: Python 2.7 and Python 3.7
+
 class JsonUtils:
 
     # Construction

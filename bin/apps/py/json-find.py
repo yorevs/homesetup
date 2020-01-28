@@ -11,69 +11,71 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
-import sys, os, getopt
+# @verified versions: Python 2.7 and Python 3.7
+
+import sys
+import os
+import getopt
 import json
 
 from jsonutils.JsonUtils import JsonUtils
 
-APP_NAME    = os.path.basename(__file__)
+APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
 APP_VERSION = (0, 9, 0)
 
 # Usage message
-USAGE       = """
+USAGE = """
 Find a json path from a json string
 
 Usage: python {} -f <filename> -a <alias_to_find>
 """.format(APP_NAME)
 
+
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
-def usage(exitCode=0):
+def usage(exit_code=0):
     print(USAGE)
-    sys.exit(exitCode)
+    sys.exit(exit_code)
+
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(APP_NAME,APP_VERSION[0],APP_VERSION[1],APP_VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME, APP_VERSION[0], APP_VERSION[1], APP_VERSION[2]))
     sys.exit(0)
-    
+
+
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
-    retVal = 0
-    try:
-        if len(sys.argv) == 1 or sys.argv[1] in [ '-h', '--help' ]:
-            usage()
-        f_json = None
-        json_obj = None
-        alias = None
-        index=1
-        jutils = JsonUtils()
-        
-        opts, args = getopt.getopt(sys.argv[1:], 'f:a:', ['file','alias'])
-        
-        for opt, args in opts:
-            if opt in ('-f', '--file'):
-                f_json = args
-                with open(f_json) as json_file:
-                    json_obj = json.load(json_file)
-                index+=2
-            elif opt in ('-a', '--alias'):
-                alias = args
-                index+=2
 
-        if f_json is None:
-            json_str = ', '.join(str(x) for x in sys.argv[index:])
-            json_obj = json.loads(json_str)
-            
-        content = jutils.jsonSelect(json_obj, alias)
-        print('{}'.format('' if content is None else content))
-        
-    except Exception as err: # catch *all* exceptions
-        print('### A unexpected exception was thrown executing the app => \n\t{}'.format( err ))
-        retVal = 1
-    finally:
-        sys.exit(retVal)
+    if len(argv) < 1 or argv[1] in ['-h', '--help']:
+        usage()
+
+    f_json = None
+    json_obj = None
+    alias = None
+    index = 1
+    j_utils = JsonUtils()
+
+    opts, args = getopt.getopt(sys.argv[1:], 'f:a:', ['file', 'alias'])
+
+    for opt, args in opts:
+        if opt in ('-f', '--file'):
+            f_json = args
+            with open(f_json) as json_file:
+                json_obj = json.load(json_file)
+            index += 2
+        elif opt in ('-a', '--alias'):
+            alias = args
+            index += 2
+
+    if f_json is None:
+        json_str = ', '.join(str(x) for x in sys.argv[index:])
+        json_obj = json.loads(json_str)
+
+    content = j_utils.jsonSelect(json_obj, alias)
+    print('{}'.format('' if content is None else content))
+
 
 # Program entry point.
 if __name__ == '__main__':

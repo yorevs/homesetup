@@ -1,6 +1,3 @@
-from subprocess import check_output
-from getpass import getuser
-
 """
   @package: deployer
    @script: GitUtils.py
@@ -11,6 +8,9 @@ from getpass import getuser
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+from subprocess import check_output
+from getpass import getuser
 
 
 # @purpose: TODO Comment it

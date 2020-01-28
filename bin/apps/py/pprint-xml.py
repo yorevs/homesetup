@@ -11,20 +11,23 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
-import sys, os
+# @verified versions: Python 2.7 and Python 3.7
+
+import sys
+import os
 import xml.dom.minidom
 
-PROC_NAME       = os.path.basename(__file__)
+APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
-VERSION         = (0, 9, 0)
+VERSION = (0, 9, 0)
 
 # Usage message
-USAGE           = """
+USAGE = """
 Format an XML file or scans a directory and walk though all subdirectories and format all found xml files.
 
 Usage: python {} <filename>/<dirname> ...
-""".format(PROC_NAME)
+""".format(APP_NAME)
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
@@ -35,7 +38,7 @@ def usage(exit_code=0):
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME, VERSION[0], VERSION[1], VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
 
 
@@ -43,15 +46,15 @@ def version():
 def pretty_print(xml_path):
     xml_dom = xml.dom.minidom.parse(xml_path)
     pretty_xml = xml_dom.toprettyxml()
-    
+
     return pretty_xml
 
 
 # @purpose: Save the specified contents to the file.
 def save_xml_file(filename, xml_content):
     try:
-        with open(filename, 'w') as xmlFile:
-            xmlFile.write(xml_content)
+        with open(filename, 'w') as xml_file:
+            xml_file.write(xml_content)
     except Exception as err:
         print('#### Failed to format XML file \"{}\": \n  |-> {}'.format(filename, str(err)))
         pass
@@ -73,18 +76,10 @@ def walk_and_format(paths):
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
-    ret_val = 0
-    try:
-        if len(argv) > 0:
-            walk_and_format(argv)
-        else:
-            usage()
-        ret_val = 0
-    except Exception as err:  # catch *all* exceptions
-        print('### A unexpected exception was thrown executing the app => \n\t{}'.format(err))
-        ret_val = 1
-    finally:
-        sys.exit(ret_val)
+    if len(argv) > 0:
+        walk_and_format(argv)
+    else:
+        usage()
 
 
 # Program entry point.

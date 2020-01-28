@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """@package -
@@ -10,6 +10,8 @@
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+# @verified versions: Python 2.7 and Python 3.7
 
 import os,sys,re
 
@@ -39,7 +41,7 @@ def version():
 
 
 # @purpose: Print the unicode string
-def sysout(string):
+def sys_out(string):
     sys.stdout.write(string.encode('utf-8').decode('unicode-escape'))
 
 
@@ -52,4 +54,4 @@ if str_code == '-v':
 if not re.match(r"^[a-fA-F0-9]{4}$", str_code):
     usage()
 else:
-    sysout('\\u%s' % str_code)
+    sys_out('\\u%s' % str_code)

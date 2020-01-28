@@ -11,6 +11,8 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
+# @verified versions: Python 2.7 and Python 3.7
+
 import math
 import os
 import re
@@ -41,6 +43,11 @@ def version():
     sys.exit(0)
 
 
+# @purpose: Convert a raw time into decimal
+def decimal(time_raw=0):
+    return int(round(((time_raw / 60.00) * 100.00) if DECIMAL else time_raw))
+
+
 DECIMAL=False
 TOTAL_SECONDS = 0
 OP = '+'
@@ -53,10 +60,6 @@ if sys.argv[1] in ['-d', '--decimal']:
     args = sys.argv[2:]
 else:
     args = sys.argv[1:]
-
-
-def decimal(time_raw=0):
-    return int(round(((time_raw / 60.00) * 100.00) if DECIMAL else time_raw))
 
 
 for tm in args:

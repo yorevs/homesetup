@@ -1,11 +1,5 @@
 #!/usr/bin/env python
-
-import sys
-from VersionUtils import Versioner
-from GitUtils import Git
-
-from os import path, environ
-from getopt import getopt
+# -*- coding: utf-8 -*-
 
 """
    @script: DeployerApp.py
@@ -16,6 +10,16 @@ from getopt import getopt
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+# @verified versions: ???
+
+import sys
+
+from VersionUtils import Versioner
+from GitUtils import Git
+
+from os import path, environ
+from getopt import getopt
 
 APP_NAME = path.basename(__file__)
 
@@ -44,7 +48,7 @@ def version():
 
 # @purpose: Quit the app.
 def quit_app(exit_code=0, exit_message=''):
-    print exit_message
+    print(exit_message)
     sys.exit(exit_code)
 
 
@@ -64,13 +68,19 @@ def main(argv):
             elif opt in ('-v', '--version'):
                 version()
 
-        #ver_field = 'build' if len(argv) < 1 else argv[0].strip().lower()
-        #ver_file = environ['HHS_HOME'] + '/.VERSION'
-        #ver = Versioner(ver_field, ver_file)
+        print("--- VersionUtils ---")
+        ver_field = 'build' if len(argv) < 1 else argv[0].strip().lower()
+        # ver_file = environ['HHS_HOME'] + '/.VERSION'
+        ver_file = '../samples/.VERSION'
+        ver = Versioner(ver_field, ver_file)
+        print('Current version: {}\n'.format(ver.current()))
+        ver.update_version()
+        print('After increase build version: {}\n'.format(ver.current()))
 
-        print Git.top_level_dir()
-        print Git.current_branch()
-        print Git.user_name()
+        print("--- GitUtils ---")
+        print("TopLevelDir: {}".format(Git.top_level_dir()))
+        print("CurrentBranch: {}".format(Git.current_branch()))
+        print("GitUserName: {}\n".format(Git.user_name()))
 
     except Exception as err:  # catch *all* exceptions
         quit_app(1, '### A unexpected exception was thrown executing the app => \n\t{}'.format(err))

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
   @package: -
@@ -10,6 +11,8 @@
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+# @verified versions: ???
 
 from time import sleep, time as time
 from datetime import timedelta
