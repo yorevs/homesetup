@@ -93,13 +93,13 @@ export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
-HHS_DEFAULT_DEV_TOOLS=(
-  ssh hexdump vim xcode-select brew tree
-  pcregrep shfmt shellcheck java rvm ruby
-  gcc make qmake doxygen ant mvn gradle
-  svn docker nvm node vue eslint gpg md5 
-  shasum htop dialog telnet figlet base64 
-  git go python jq jenv perl ifconfig groovy
+DEFAULT_DEV_TOOLS=(
+  'ssh' 'hexdump' 'vim' 'xcode-select' 'brew tree'
+  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'ruby'
+  'gcc' 'make' 'qmake' 'doxygen' 'ant' 'mvn' 'gradle'
+  'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 'md5'
+  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'base64 '
+  'git' 'go' 'python' 'jq' 'jenv' 'perl' 'ifconfig' 'groovy'
 )
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(echo "${HHS_DEFAULT_DEV_TOOLS[*]}" | tr ' ' '\n' | uniq | sort | tr '\n' ' ')}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' | uniq | sort | tr '\n' ' ' <<< "${DEFAULT_DEV_TOOLS[@]}")}

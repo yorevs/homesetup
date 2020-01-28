@@ -36,27 +36,26 @@ function __hhs_envs() {
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
-    columns="$(($(tput cols) - pad_len - 9))"
+    columns="$(($(tput cols) - pad_len - 10))"
     filter="$*"
-    [ -z "$filter" ] && filter="^[a-zA-Z0-9_]*.*"
+    [ -z "$filter" ] && filter=".*"
     echo ' '
     echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
     echo ' '
     IFS=$'\n'
     shopt -s nocasematch
     for v in $(env | sort); do
-      name=$(echo "$v" | cut -d '=' -f1)
-      value=$(echo "$v" | cut -d '=' -f2-)
+      name=${v%=*}
+      value=${v##*=}
       if [[ ${name} =~ ${filter} ]]; then
         echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
         echo -en " ${GREEN}=> ${NC}"
-        echo -n "${value:0:$columns} "
-        if [ "${#value}" -ge "$columns" ]; then
-          "...${NC}"
-        else
-          echo "${NC}"
+        echo -n "${value:0:${columns}}"
+        if [[ ${#value} -ge ${columns} ]]; then
+          echo -n "..."
         fi
+        echo "${NC}"
       fi
     done
     shopt -u nocasematch
