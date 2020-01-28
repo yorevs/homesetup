@@ -117,7 +117,7 @@ build_payload() {
   [ -f "$HOME"/.colors ] && f_colors=$(grep . "$HOME"/.colors | base64)
   [ -f "$HOME"/.env ] && f_env=$(grep . "$HOME"/.env | base64)
   [ -f "$HOME"/.functions ] && f_functions=$(grep . "$HOME"/.functions | base64)
-  [ -f "$HOME"/.path ] && f_path=$(grep . "$HOME"/.path | base64)
+  [ -f "$HHS_PATHS_FILE" ] && f_path=$(grep . "$HHS_PATHS_FILE" | base64)
   [ -f "$HOME"/.profile ] && f_profile=$(grep . "$HOME"/.profile | base64)
   [ -f "$HHS_CMD_FILE" ] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
   [ -f "$HHS_SAVED_DIRS_FILE" ] && f_savedDirs=$(grep . "$HHS_SAVED_DIRS_FILE" | base64)
@@ -187,6 +187,7 @@ parse_and_save() {
   f_env=$(json-find.py -a env -f "$RESPONSE_FILE" | base64 "${b64flag}")
   f_functions=$(json-find.py -a functions -f "$RESPONSE_FILE" | base64 "${b64flag}")
   f_profile=$(json-find.py -a profile -f "$RESPONSE_FILE" | base64 "${b64flag}")
+  f_path=$(json-find.py -a path -f "$RESPONSE_FILE" | base64 "${b64flag}")
   f_cmdFile=$(json-find.py -a commands -f "$RESPONSE_FILE" | base64 "${b64flag}")
   f_savedDirs=$(json-find.py -a savedDirs -f "$RESPONSE_FILE" | base64 "${b64flag}")
   f_aliasdef=$(json-find.py -a aliasdef -f "$RESPONSE_FILE" | base64 "${b64flag}")
@@ -196,6 +197,7 @@ parse_and_save() {
   [ -n "$f_colors" ] && echo "$f_colors" > "$HOME/.colors"
   [ -n "$f_env" ] && echo "$f_env" > "$HOME/.env"
   [ -n "$f_functions" ] && echo "$f_functions" > "$HOME/.functions"
+  [ -n "$f_path" ] && echo "$f_path" > "$HHS_PATHS_FILE"
   [ -n "$f_profile" ] && echo "$f_profile" > "$HOME/.profile"
   [ -n "$f_cmdFile" ] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
   [ -n "$f_savedDirs" ] && echo "$f_savedDirs" > "$HHS_SAVED_DIRS_FILE"

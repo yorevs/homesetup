@@ -163,7 +163,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Create all user custom files.
     [ -f "$HOME/.aliasdef" ] || cp "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
     [ -f "$HOME/.inputrc" ] || cp "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
-    [ -f "$HOME/.path" ] || touch "$HOME/.path"
     [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
     [ -f "$HOME/.colors" ] || touch "$HOME/.colors"
     [ -f "$HOME/.env" ] || touch "$HOME/.env"
@@ -232,6 +231,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
       command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc.bak ${NC}"
+    fi
+    
+    # Moving .path file to .hhs
+    if [ -f "${HOME}/.path" ]; then
+      cat "${HOME}/.path"
+      exit 0
+      command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
+      echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
   }
 

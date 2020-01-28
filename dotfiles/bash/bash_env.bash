@@ -83,7 +83,7 @@ export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
-export HHS_PATHS_FILE="${HOME}/.path"
+export HHS_PATHS_FILE="${HHS_DIR}/.path"
 
 # Customizeable
 export HHS_DEFAULT_EDITOR=
@@ -102,4 +102,4 @@ DEFAULT_DEV_TOOLS=(
   'git' 'go' 'python' 'jq' 'jenv' 'perl' 'ifconfig' 'groovy'
 )
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' | uniq | sort | tr '\n' ' ' <<< "${DEFAULT_DEV_TOOLS[@]}")}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<< "${DEFAULT_DEV_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}
