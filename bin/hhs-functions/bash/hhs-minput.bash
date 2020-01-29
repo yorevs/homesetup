@@ -44,9 +44,9 @@ function __hhs_minput() {
 
   UNSELECTED_BG='\033[40m'
   SELECTED_BG='\033[44m'
-  SECURE_ICN='\357\200\243'
-  INSECURE_ICN='\357\201\204'
-  LOCKED_ICN='\357\212\250'
+  LOCKED_ICN='\357\200\243'
+  EDIT_ICN='\357\201\204'
+  PASSWORD_ICN='\357\212\250'
   ERROR_ICN='\357\201\227'
   CHECKBOX_ICN='\357\203\210'
   CHECKBOX_ICN_CHECKED='\357\205\212'
@@ -160,21 +160,23 @@ function __hhs_minput() {
         offset=${#f_value}
         margin=$((10 - (${#maxlen} + ${#offset})))
         if [ "input" = "${f_mode}" ]; then
-          icon="${INSECURE_ICN}"
+          icon="${EDIT_ICN}"
           printf "%-${value_size}s" "${f_value}"
         elif [ "password" = "${f_mode}" ]; then 
-          icon="${SECURE_ICN}"
+          icon="${PASSWORD_ICN}"
           printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
         elif [ "checkbox" = "${f_mode}" ]; then 
-          icon="${INSECURE_ICN}"
+          icon="${EDIT_ICN}"
           if [ -n "${f_value}" ]; then 
             printf "${CHECKBOX_ICN_CHECKED} %-$((value_size-2))s" " "
           else 
+    
             printf "${CHECKBOX_ICN} %-$((value_size-2))s" " "
-          fi
+      fi
         fi
         [ "r" = "${f_perm}" ] && icon="${LOCKED_ICN}"
-        printf " ${icon}  %d/%d" "${#f_value}" "${maxlen}" # Remaining/max characters
+        # Remaining/max characters
+        printf " ${icon}  %d/%d" "${#f_value}" "${maxlen}" 
         printf "%*.*s${UNSELECTED_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
         # Display any previously set error message
         if [[ ${tab_index} -eq ${idx} ]] && [ -n "${err_msg}" ]; then
@@ -185,7 +187,8 @@ function __hhs_minput() {
           # Discard any garbage typed by the user while showing the error
           IFS= read -rsn1000 -t ${dismiss_timeout} err_msg < "/dev/tty"
           enable-echo
-          echo -en "\033[$((${#err_msg} + 4))D\033[0K${NC}" # Remove the message after the timeout
+          # Remove the message after the timeout
+          echo -en "\033[$((${#err_msg} + 4))D\033[0K${NC}" 
           unset err_msg
         fi
         echo -e '\n'
