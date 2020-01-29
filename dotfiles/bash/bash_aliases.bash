@@ -220,8 +220,8 @@ case $HHS_MY_SHELL in
     alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
     ;;
   zsh) # TODO Check how to do it
-    alias show-cursor=''
-    alias hide-cursor=''
+    alias show-cursor='echo -e "\033[?25h"'
+    alias hide-cursor='echo -e "\033[?25l"'
     alias save-cursor-pos=''
     alias restore-cursor-pos=''
     alias enable-line-wrap=''
@@ -233,7 +233,7 @@ case $HHS_MY_SHELL in
 esac
 
 # This alias is going to clear and reset all cursor attributes and IFS
-alias cls='reset-cursor-attrs; echo -en "\033[1J\033[H${NC}"; export IFS="${RESET_IFS}"'
+alias cls='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
 
 # Clear the screen and reset the terminal
 alias reset="cls; \reset"

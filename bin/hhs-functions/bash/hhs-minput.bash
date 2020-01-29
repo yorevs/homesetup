@@ -48,6 +48,8 @@ function __hhs_minput() {
   INSECURE_ICN='\357\201\204'
   LOCKED_ICN='\357\212\250'
   ERROR_ICN='\357\201\227'
+  CHECKBOX_ICN='\357\203\210'
+  CHECKBOX_ICN_CHECKED='\357\205\212'
 
   if [[ $# -lt 2 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
@@ -58,7 +60,7 @@ function __hhs_minput() {
     echo ''
     echo '    Fields: '
     echo "            <Label> : The field label. Consisting only of alphanumeric characters and under‐scores."
-    echo '             [Mode] : The input mode. One of {[input]|password}.'
+    echo '             [Mode] : The input mode. One of {[input]|password|checkbox}.'
     echo '             [Type] : The input type. One of {letter|number|alphanumeric|[any]}.'
     echo '      [Min/Max len] : The minimum and maximum length of characters allowed. Defauls to [0/30].'
     echo '             [Perm] : The field permissions. One of {r|[rw]}. Where \"r\" for Read Only ; \"rw\" for Read & Write.'
@@ -70,7 +72,7 @@ function __hhs_minput() {
     echo '    - The outfile must not exist or be an empty file.'
     echo ''
     echo '  Examples: '
-    echo '    minput /tmp/out.txt "Name|||5/30|rw|" "Age||number|1/3||" "Password|password||5|rw|" "Role|||||Admin"'
+    echo '    minput /tmp/out.txt "Name|||5/30|rw|" "Age||number|1/3||" "Password|password||5|rw|" "Role|||||Admin" "Accept_Conditions|checkbox||||"'
     return 1
   fi
 
@@ -87,7 +89,7 @@ function __hhs_minput() {
   form_title="${form_title:-Please fill all fields of the form below}"
 
   # Validate field syntax => "Label:Mode:Type:Min/Max len:Perm:Value" ...{
-  mi_modes=('input' 'password')
+  mi_modes=('input' 'password' 'checkbox')
   mi_types=('letter' 'number' 'alphanumeric' 'any')
   label_size=10 # Default Label column length
   value_size=30 # Default Value column length
@@ -103,7 +105,7 @@ function __hhs_minput() {
     f_type="${field_parts[2]}"
     f_type=${f_type:-any}
     [[ ! "${mi_types[*]}" == *"${f_type}"* ]] && echo "${RED}Invalid type \"${f_type}\". Valid types are: [${mi_types[*]}] ${NC}" && return 1
-    f_max_min_len="${field_parts[3]}"
+    [[ "${f_mode}" == "checkbox" ]] && f_max_min_len="1" || f_max_min_len="${field_parts[3]}"
     f_max_min_len="${f_max_min_len:-0/30}"
     [[ ! ${f_max_min_len} =~ ^[0-9](\/[0-9]+$)* ]] && echo "${RED}Invalid Min/Max length \"${f_max_min_len}\" ${NC}" && return 1
     minlen=${f_max_min_len%/*}
@@ -157,8 +159,20 @@ function __hhs_minput() {
         fi
         offset=${#f_value}
         margin=$((10 - (${#maxlen} + ${#offset})))
-        [ "input" = "${f_mode}" ] && icon="${INSECURE_ICN}" && printf "%-${value_size}s" "${f_value}"
-        [ "password" = "${f_mode}" ] && icon="${SECURE_ICN}" && printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
+        if [ "input" = "${f_mode}" ]; then
+          icon="${INSECURE_ICN}"
+          printf "%-${value_size}s" "${f_value}"
+        elif [ "password" = "${f_mode}" ]; then 
+          icon="${SECURE_ICN}"
+          printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
+        elif [ "checkbox" = "${f_mode}" ]; then 
+          icon="${INSECURE_ICN}"
+          if [ -n "${f_value}" ]; then 
+            printf "${CHECKBOX_ICN_CHECKED} %-$((value_size-2))s" " "
+          else 
+            printf "${CHECKBOX_ICN} %-$((value_size-2))s" " "
+          fi
+        fi
         [ "r" = "${f_perm}" ] && icon="${LOCKED_ICN}"
         printf " ${icon}  %d/%d" "${#f_value}" "${maxlen}" # Remaining/max characters
         printf "%*.*s${UNSELECTED_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
@@ -188,12 +202,11 @@ function __hhs_minput() {
       unset re_render
     fi
     # } Menu Renderization
-
+    
     # Position the cursor to edit the current field
-    tput cup "${cur_row}" "${cur_col}"
-
+    [[ "checkbox" != "${cur_field[1]}" ]] && tput cup "${cur_row}" "${cur_col}" && show-cursor
+    
     # Navigation input {
-    show-cursor
     IFS= read -rsn1 keypress
     disable-echo
     case "${keypress}" in
@@ -221,7 +234,14 @@ function __hhs_minput() {
         f_mode="${cur_field[1]}"
         f_type="${cur_field[2]}"
         maxlen=${cur_field[3]##*/}
-        if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -lt maxlen ]]; then
+        if [ "rw" = "${cur_field[4]}" ] && [[ "${f_mode}" == "checkbox" ]]; then
+          if [[ "${#cur_field[5]}" -eq 0 ]]; then
+            cur_field[5]=1
+          else 
+            cur_field[5]=''
+          fi
+          all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
+        elif [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -lt maxlen ]]; then
           case "${f_type}" in
             'letter') val_regex='^[a-zA-Z ]*$' ;;
             'number') val_regex='^[0-9]*$' ;;

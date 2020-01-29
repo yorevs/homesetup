@@ -1,5 +1,3 @@
-import re
-
 """
   @package: jsonutils
    @script: JsonUtils.py
@@ -10,6 +8,8 @@ import re
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+import re
 
 # @verified versions: Python 2.7 and Python 3.7
 

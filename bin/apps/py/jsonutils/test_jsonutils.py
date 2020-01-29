@@ -1,8 +1,3 @@
-import unittest
-import json
-
-from JsonUtils import JsonUtils
-
 """
   @package: jsonutils
    @script: test_JsonUtils.py
@@ -13,6 +8,11 @@ from JsonUtils import JsonUtils
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+import unittest
+import json
+
+from JsonUtils import JsonUtils
 
 SAMPLE_FILE_NAME = "../samples/json_utils_sample.json"
 
