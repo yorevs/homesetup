@@ -211,9 +211,7 @@ if __hhs_has "git"; then
       return 1
     fi
 
-    IFS=$'\n'
     for idx in "${!all_repos[@]}"; do
-
       repo_dir=$(dirname "${all_repos[$idx]}")
       if [[ "${sel_indexes[$idx]}" == '1' ]] && [ -d "${repo_dir}" ]; then
         pushd "${repo_dir}" &> /dev/null || echo "${RED} Unable to enter directory: \"${repo_dir}\" ! ${NC}"
@@ -221,41 +219,47 @@ if __hhs_has "git"; then
         if git rev-parse --abbrev-ref "${branch}@{u}" &> /dev/null; then
           stash_flag=0
           echo ''
-          echo -e "${GREEN}Pulling project \"${repo_dir}\" => ${repository}/${branch} ...${NC}"
+          printf '%0.1s' "-"{1..80}
+          echo -e "${WHITE}\nUpdating project ${CYAN}\"${repo_dir}\" => ${PURPLE}${repository}/${branch} ...${NC}"
           [ "${branch}" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
           [ "${branch}" = "current" ] || gitbranch="${branch}"
-          git fetch || echo -e "${RED}Unable to fetch repository updates. Skipping ...${NC}"
-          if ! git diff-index --quiet HEAD --; then
-            echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
-            if ! git stash &> /dev/null; then
-              echo -e "${RED}### Unable to stash your changes. Skipping ...${NC}"
-            else
-              stash_flag=1
-              echo -e " ... [   ${GREEN}OK${NC}   ]\n"
+          if git fetch; then
+            if ! git diff-index --quiet HEAD --; then
+              echo -en "\n${YELLOW}=> Stashing your changes prior to change ... ${NC}"
+              if ! git stash &> /dev/null; then
+                echo -e " [ ${RED}FAILED${NC} ] => ### Unable to stash changes. Skipping ... \n"
+              else
+                stash_flag=1
+                echo -e " [   ${GREEN}OK${NC}   ] \n"
+              fi
             fi
-          fi
-          echo -e "${GREEN}Pulling the new code (${CYAN}${repository}/${gitbranch}${NC}) ... "
-          echo ''
-          git pull "${repository}" "${gitbranch}" || echo -e "${RED}Unable to pull the code. Skipping ...${NC}"
-          if [[ ${stash_flag} -ne 0 ]]; then
-            echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-            if ! git stash pop &> /dev/null; then
-              echo -e "${RED}### Unable to retrieve stash changes ${NC}"
+            echo -e "${WHITE}Pulling new code changes${NC} ... "
+            echo ''
+            if git pull "${repository}" "${gitbranch}"; then
+              if [[ ${stash_flag} -ne 0 ]]; then
+                echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
+                if ! git stash pop &> /dev/null; then
+                  echo -e " [ ${RED}FAILED${NC} ] => ### Unable to retrieve stash changes. Skipping ... \n"
+                else
+                  echo -e " [   ${GREEN}OK${NC}   ] \n"
+                fi
+              fi
             else
-              echo -e " ... [   ${GREEN}OK${NC}   ]"
+              echo -e "${RED}### Unable to pull the code. Skipping ...${NC}"
             fi
+          else
+            echo -e "${RED}### Unable to fetch repository updates. Skipping ...${NC}"
           fi
         else
           echo ''
-          echo -e "${ORANGE}>>> The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
+          echo -e "${ORANGE}@@@ The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
         fi
-        popd &> /dev/null || echo "${RED} Unable to leave directory: \"${repo_dir}\" ! ${NC}"
+        popd &> /dev/null || echo "${RED}### Unable to leave directory: \"${repo_dir}\" ! ${NC}"
       else
         echo ''
         echo -e "${YELLOW}>>> Skipping project \"${repo_dir}\" ${NC}"
       fi
     done
-    IFS="$RESET_IFS"
 
     echo ''
     echo "${GREEN}Done ! ${NC}"
