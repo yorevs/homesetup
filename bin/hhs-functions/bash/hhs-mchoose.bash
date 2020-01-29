@@ -35,11 +35,12 @@ function __hhs_mchoose() {
 
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
-  local all_options=() sel_options=() outfile="$1" cur_index=0 show_from=0 re_render=1 selector
+  local all_options=() sel_options=() outfile cur_index=0 show_from=0 re_render=1 selector
   local index_len len show_to diff_index typed_index columns option_line init_value=0 mark
 
   [ '-c' = "${1}" ] && shift && init_value=1
-
+  
+  outfile="$1"
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
@@ -119,7 +120,7 @@ function __hhs_mchoose() {
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 -t 1 keypress
+        IFS= read -rsn2 keypress
         case "${keypress}" in
           [A) # Cursor up
             if [[ $cur_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
