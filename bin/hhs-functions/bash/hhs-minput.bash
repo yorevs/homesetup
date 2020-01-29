@@ -105,7 +105,7 @@ function __hhs_minput() {
     f_type="${field_parts[2]}"
     f_type=${f_type:-any}
     [[ ! "${mi_types[*]}" == *"${f_type}"* ]] && echo "${RED}Invalid type \"${f_type}\". Valid types are: [${mi_types[*]}] ${NC}" && return 1
-    [[ "${f_mode}" == "checkbox" ]] && f_max_min_len="1" || f_max_min_len="${field_parts[3]}"
+    [[ "${f_mode}" == "checkbox" ]] && f_max_min_len="0/1" || f_max_min_len="${field_parts[3]}"
     f_max_min_len="${f_max_min_len:-0/30}"
     [[ ! ${f_max_min_len} =~ ^[0-9](\/[0-9]+$)* ]] && echo "${RED}Invalid Min/Max length \"${f_max_min_len}\" ${NC}" && return 1
     minlen=${f_max_min_len%/*}
