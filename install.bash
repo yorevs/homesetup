@@ -235,8 +235,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     
     # Moving .path file to .hhs
     if [ -f "${HOME}/.path" ]; then
-      cat "${HOME}/.path"
-      exit 0
       command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
