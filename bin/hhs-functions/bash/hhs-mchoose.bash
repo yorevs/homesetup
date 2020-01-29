@@ -120,7 +120,7 @@ function __hhs_mchoose() {
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 keypress
+        IFS= read -rsn2 -t 1 keypress
         case "${keypress}" in
           [A) # Cursor up
             if [[ $cur_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then

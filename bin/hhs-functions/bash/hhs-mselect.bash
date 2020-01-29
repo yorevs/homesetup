@@ -104,7 +104,7 @@ function __hhs_mselect() {
         fi
         ;;
       $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 keypress
+        IFS= read -rsn2 -t 1 keypress
         case "${keypress}" in
           [A) # Cursor up
             if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
