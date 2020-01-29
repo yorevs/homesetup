@@ -8,6 +8,40 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: Change the shell working directory. Replace the build-in 'cd' with a more flexible one.
+function cd() {
+  
+  local flags path
+  
+  if [[ '-L' = "${1}" ]] || [[ '-P' = "${1}" ]]; then
+    flags="${1}" && shift
+  fi
+  
+  if [ -z "${1}" ]; then
+    path="${HOME}"
+  elif [ '..' = "${1}" ]; then
+    path='..'
+  elif [ '.' = "${1}" ]; then
+    path=$(command pwd)
+  elif [ '-' = "${1}" ]; then
+    path="${OLDPWD}"
+  elif [ -d "${1}" ]; then
+    path="${1}"
+  elif [ -e "${1}" ]; then
+    path="$(dirname "${1}")"
+  fi
+  
+  if [ ! -d "${path}" ]; then
+    echo -e "${RED}Directory \"${1}\" was not found ! ${NC}"
+    return 1
+  fi
+  
+  # shellcheck disable=SC2086
+  command pushd &> /dev/null ${flags} "${path}"
+  
+  return 0
+}
+
 # @function: Save the one directory to be loaded by load.
 # @param $1 [Opt] : The directory path to save.
 # @param $2 [Opt] : The alias to access the directory saved.
