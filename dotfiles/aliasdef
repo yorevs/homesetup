@@ -8,6 +8,11 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
 # -----------------------------------------------------------------------------------
+
+# Built-ins shortcuts
+alias cd='__hhs_change_dir'
+alias dirs='__hhs_dirs'
+
 # General shortcuts
 __hhs_alias hl='__hhs_highlight'
 __hhs_alias tc='__hhs_toolcheck'
@@ -44,17 +49,20 @@ __hhs_alias del-tree='__hhs_del_tree'
 __hhs_alias ip-lookup='__hhs_ip_lookup'
 __hhs_alias ip-resolve='__hhs_ip_resolve'
 __hhs_alias port-check='__hhs_port_check'
+
 # Python based shortcuts
 if __hhs_has "python"; then
   __hhs_alias sf='__hhs_search_file'
   __hhs_alias sd='__hhs_search_dir'
   __hhs_alias ss='__hhs_search_string'
 fi
+
 # GPG shortcuts
 if __hhs_has "gpg"; then
   __hhs_alias encrypt='__hhs_encrypt_file'
   __hhs_alias decrypt='__hhs_decrypt_file'
 fi
+
 # Git shortcuts
 if __hhs_has "git"; then
   __hhs_alias git-='__hhs_git_branch_previous'
@@ -80,6 +88,7 @@ if __hhs_has "git"; then
   __hhs_alias gshow='__hhs_git_show'
   __hhs_alias gshowf='__hhs_git_show_file_contents'
 fi
+
 # Gradle shortcuts
 if __hhs_has "gradle"; then
   __hhs_alias gw='__hhs_gradlew'
@@ -92,6 +101,7 @@ if __hhs_has "gradle"; then
   __hhs_alias gwp='__hhs_gradle_projects'
   __hhs_alias gwtt='__hhs_gradle_test'
 fi
+
 # Docker shortcuts
 if __hhs_has "docker" && docker info &>/dev/null; then
   __hhs_alias dk='docker'

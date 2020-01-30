@@ -42,7 +42,6 @@ function __hhs_mselect() {
   shift
   all_options=("${@}")
   len=${#all_options[*]}
-  echo "[DEBUG] MSELECT => IFS = $(ascof "$IFS")  LEN = ${len}  CONTENTS = [ ${all_options[*]} ]" >> /tmp/minput.txt
 
   # When only one option is provided, select the typed_index 0 and return
   [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0

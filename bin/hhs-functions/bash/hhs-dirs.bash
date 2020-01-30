@@ -9,14 +9,14 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: Change the shell working directory. Replace the build-in 'cd' with a more flexible one.
-function cd() {
-  
+function __hhs_change_dir() {
+
   local flags path
-  
+
   if [[ '-L' = "${1}" ]] || [[ '-P' = "${1}" ]]; then
     flags="${1}" && shift
   fi
-  
+
   if [ -z "${1}" ]; then
     path="${HOME}"
   elif [ '..' = "${1}" ]; then
@@ -30,16 +30,60 @@ function cd() {
   elif [ -e "${1}" ]; then
     path="$(dirname "${1}")"
   fi
-  
-  if [ ! -d "${path}" ]; then
-    echo -e "${RED}Directory \"${1}\" was not found ! ${NC}"
-    return 1
-  fi
-  
+
+  [ ! -d "${path}" ] && echo -e "${RED}Directory \"${path}\" was not found ! ${NC}" && return 1
+
   # shellcheck disable=SC2086
-  command pushd &> /dev/null ${flags} "${path}"
-  
+  command pushd ${flags} "${path}" &> /dev/null
+
   return 0
+}
+
+# @function: Display the list of currently remembered directories. Replace the build-in 'dirs' with a more flexible one.
+function __hhs_dirs() {
+
+  local mselect_file sel_index path results len idx ret_val=0
+
+  if [[ $# -gt 0 ]]; then
+    command dirs "${@}"
+    return $?
+  fi
+
+  IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p | sort | uniq)"
+  len=${#results[@]}
+  
+  if [[ ${len} -eq 1 ]]; then
+    echo "${results[*]}"
+  elif [[ ${len} -gt 1 ]]; then
+    clear
+    echo "${YELLOW}@@ Listing currently remembered directories (${len}) found. Please choose one to go into:"
+    echo "-------------------------------------------------------------"
+    echo -en "${NC}"
+    mselect_file=$(mktemp)
+    echo "$mselect_file"
+    if __hhs_mselect "$mselect_file" "${results[@]}"; then
+      sel_index=$(grep . "$mselect_file")
+      path="${results[$sel_index]//\~/${HOME}}"
+      [ ! -d "${path}" ] && echo -e "${RED}Directory \"${path}\" was not found ! ${NC}" && ret_val=1
+    else
+      ret_val=1
+    fi
+  else
+    echo "${ORANGE}No currently remembered directories available yet \"$HHS_SAVED_DIRS_FILE\" !${NC}"
+  fi
+
+  command cd "${path}"
+  
+  # Remove dirs duplicated entries. Reading again to keep the order
+  IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p)"
+  dirs -c
+  for idx in "${!results[@]}"; do
+    path="${results[$idx]}"
+    # shellcheck disable=SC2199,SC2129,SC2049
+    [[ "${!results[@]}" =~ *"${path}"* ]] && command pushd -n &> /dev/null "${path}"
+  done
+
+  return ${ret_val}
 }
 
 # @function: Save the one directory to be loaded by load.
