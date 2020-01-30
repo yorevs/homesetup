@@ -150,6 +150,30 @@ function __hhs_process_list() {
   return 0
 }
 
+# @function: Kills ALL processes specified by $1
+# @param $1 [Req] : The process name to kill
+function __hhs_process_kill() {
+
+  local force_flag=
+
+  if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+    shift
+    force_flag='-f'
+  fi
+
+  if [[ $# -gt 0 ]]; then
+    for nproc in "${@}"; do
+      __hhs_process_list -q $force_flag "${nproc}" kill
+      echo -e "\033[3A" # Move up 3 times to beautify the output
+    done
+    echo -e '\n'
+  else
+    echo "Usage: ${FUNCNAME[0]} <process_name...>"
+  fi
+
+  return $?
+}
+
 # @function: Exhibit a Human readable summary about all partitions.
 function __hhs_partitions() {
 

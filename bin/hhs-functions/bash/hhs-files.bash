@@ -8,6 +8,16 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: List all file names sorted by name
+# @param $1 [Opt] : The column to sort; 9 (filename) by default
+function __hhs_ls_sorted() {
+
+  col="${1:-9}"
+  command ls -la | sort -k "$col"
+
+  return $?
+}
+
 # @function: Move files recursively to the Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function __hhs_del_tree() {

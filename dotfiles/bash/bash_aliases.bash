@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2142,SC1090,SC2016
+# shellcheck disable=SC1117,SC2142,SC1090
 
 #  Script: bash_aliases.bash
 # Purpose: This file is used to configure some useful shell aliases
@@ -14,15 +14,18 @@
 
 # This is the only function in this file, intentionally
 
+# Removes all aliases before setting them.
+unalias -a
+
 # @function: Check if a command exists.
 # @param $1 [Req] : The command to check.
-__hhs_has() {
+function __hhs_has() {
   type "$1" > /dev/null 2>&1
 }
 
 # @function: Check if an alias exists and create it if it does not. Do not support the use of single quotes in the expression
 # @param $1 [Req] : The alias to set/check. Use the format __hhs_alias <alias_name='<alias_expr>'
-__hhs_alias() {
+function __hhs_alias() {
 
   local all_args alias_expr alias_name
 
@@ -41,9 +44,6 @@ __hhs_alias() {
   return 1
 }
 
-# Removes all aliases before setting them
-unalias -a
-
 # -----------------------------------------------------------------------------------
 # Navigational
 alias ...='cd ../..'
@@ -57,6 +57,8 @@ alias ?='pwd'
 
 # -----------------------------------------------------------------------------------
 # General
+
+# Short for exit terminal
 alias q="exit 0"
 
 # Enable aliases to be sudo’ed
@@ -96,8 +98,8 @@ alias df='\df -H'
 alias du='\du -hcd 1'
 alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
 
-# Use vim instead of edit
-__hhs_has "vim" && alias vi='vim'
+# Use vim instead of vi
+__hhs_has "vim" && alias vi='\vim'
 
 # Interpret escape sequences
 alias more='\more -r'
@@ -125,7 +127,15 @@ alias ps1='export PS1=$PS1_STYLE'
 alias ps2='export PS1=$PS2_STYLE'
 
 # Use jq for format json instead of json_pp if it is installed
-__hhs_has "jq" && alias json_pp='jq'
+__hhs_has "jq" && alias json_pp='\jq'
+
+# HomeSetup
+alias __hhs_vault='hhs vault execute'
+alias __hhs_hspm='hhs hspm execute'
+alias __hhs_dotfiles='hhs firebase execute'
+alias __hhs_hhu='hhs updater execute'
+alias __hhs_reload='cls; source ${HOME}/.bashrc'
+alias __hhs_clear='cls; \reset'
 
 # -----------------------------------------------------------------------------------
 # Tool aliases
@@ -145,18 +155,18 @@ if __hhs_has "python"; then
   __hhs_has "json_pp" || alias json_pp='python -m json.tool'
 
   # Evaluate mathematical expression
-  alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+  __hhs_alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
 
   # URL-encode strings
-  alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-  alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+  __hhs_alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  __hhs_alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
   # Generate a UUID
-  alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+  __hhs_alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
 fi
 
 # Base64 encode shortcuts
-__hhs_has "base64" && alias encode="base64"
+__hhs_has "base64" && __hhs_alias encode="base64"
 
 # -----------------------------------------------------------------------------------
 # OS Specific aliases
@@ -233,25 +243,10 @@ case $HHS_MY_SHELL in
 esac
 
 # This alias is going to clear and reset all cursor attributes and IFS
-alias cls='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
+alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
 
 # Clear the screen and reset the terminal
-alias reset="cls; \reset"
-
-# -----------------------------------------------------------------------------------
-# HomeSetup aliases
-
-# Reload the bash session
-__hhs_alias reload='cls; source ~/.bashrc'
-__hhs_alias vault='hhs vault execute'
-__hhs_alias hspm='hhs hspm execute'
-__hhs_alias dotfiles='hhs firebase execute'
-__hhs_alias hhu='hhs updater execute --update'
-
-# Directory Shortcuts
-[ -d "${DESKTOP}" ] && __hhs_alias desk='cd ${DESKTOP}'
-[ -d "${TEMP}" ] && __hhs_alias temp='cd ${TEMP}'
-[ -d "${DOWNLOADS}" ] && __hhs_alias dl='cd ${DOWNLOADS}'
+alias __hhs_reset="cls; \reset"
 
 # -----------------------------------------------------------------------------------
 # Perl dependent aliases
@@ -318,3 +313,6 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   alias __hhs_docker_up='docker-compose up --force-recreate --build --remove-orphans --detach'
   alias __hhs_docker_down='docker-compose stop'
 fi
+
+# Load alias definitions
+[ -s "${HOME}/.aliasdef" ] && \. "${HOME}/.aliasdef"

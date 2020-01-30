@@ -53,7 +53,7 @@ if tput setaf 1 &> /dev/null; then
   YELLOW=$(tput setaf 136)
   VIOLET=$(tput setaf 125)
 else
-  # Colors from ANSI/VT100, taken from https://misc.flogisoft.com/bash/tip_colors_and_formatting
+  # VT100 ANSI colors, taken from https://misc.flogisoft.com/bash/tip_colors_and_formatting
   export NC='\033[0;0;0m'
   export BLACK='\033[0;30m'
   export RED='\033[0;31m'
