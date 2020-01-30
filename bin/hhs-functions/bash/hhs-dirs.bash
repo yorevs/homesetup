@@ -8,7 +8,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Change the shell working directory. Replace the build-in 'cd' with a more flexible one.
+# @function: Replace the build-in 'cd' with a more flexible one.
 function __hhs_change_dir() {
 
   local flags path
@@ -30,16 +30,20 @@ function __hhs_change_dir() {
   elif [ -e "${1}" ]; then
     path="$(dirname "${1}")"
   fi
+  
+  path="${path//\~/$HOME}"
 
   [ ! -d "${path}" ] && echo -e "${RED}Directory \"${path}\" was not found ! ${NC}" && return 1
 
   # shellcheck disable=SC2086
-  command pushd ${flags} "${path}" &> /dev/null
+  command cd ${flags} "${path}"
+  command pushd -n "${path}" &> /dev/null
 
   return 0
 }
 
-# @function: Display the list of currently remembered directories. Replace the build-in 'dirs' with a more flexible one.
+
+# @function: Replace the build-in 'dirs' with a more flexible one.
 function __hhs_dirs() {
 
   local mselect_file sel_index path results=() uniq_dirs=() len idx ret_val=0
@@ -62,7 +66,7 @@ function __hhs_dirs() {
     mselect_file=$(mktemp)
     if __hhs_mselect "$mselect_file" "${results[@]}"; then
       sel_index=$(grep . "$mselect_file")
-      path="${results[$sel_index]//\~/${HOME}}"
+      path="${results[$sel_index]//\~/$HOME}"
       [ ! -d "${path}" ] && echo -e "${RED}Directory \"${path}\" was not found ! ${NC}" && ret_val=1
     else
       ret_val=1
@@ -70,14 +74,14 @@ function __hhs_dirs() {
   else
     echo "${ORANGE}No currently remembered directories available yet \"$HHS_SAVED_DIRS_FILE\" !${NC}"
   fi
-
-  command cd "${path}"
+  
+  [[ ${ret_val} -eq 0 ]] && command cd "${path}"
   
   # Remove dirs duplicated entries. Reading again to keep the order
   IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p)"
   dirs -c
   for idx in "${!results[@]}"; do
-    path="${results[$idx]}"
+    path="${results[$idx]//\~/$HOME}"
     # shellcheck disable=SC2199,2076
     if [[ ! " ${uniq_dirs[@]} " =~ " ${path} " ]]; then
       uniq_dirs[$idx]="${path}"
