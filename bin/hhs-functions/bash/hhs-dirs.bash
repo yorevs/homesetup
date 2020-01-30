@@ -42,7 +42,7 @@ function __hhs_change_dir() {
 # @function: Display the list of currently remembered directories. Replace the build-in 'dirs' with a more flexible one.
 function __hhs_dirs() {
 
-  local mselect_file sel_index path results len idx ret_val=0
+  local mselect_file sel_index path results=() uniq_dirs=() len idx ret_val=0
 
   if [[ $# -gt 0 ]]; then
     command dirs "${@}"
@@ -60,7 +60,6 @@ function __hhs_dirs() {
     echo "-------------------------------------------------------------"
     echo -en "${NC}"
     mselect_file=$(mktemp)
-    echo "$mselect_file"
     if __hhs_mselect "$mselect_file" "${results[@]}"; then
       sel_index=$(grep . "$mselect_file")
       path="${results[$sel_index]//\~/${HOME}}"
@@ -79,8 +78,11 @@ function __hhs_dirs() {
   dirs -c
   for idx in "${!results[@]}"; do
     path="${results[$idx]}"
-    # shellcheck disable=SC2199,SC2129,SC2049
-    [[ "${!results[@]}" =~ *"${path}"* ]] && command pushd -n &> /dev/null "${path}"
+    # shellcheck disable=SC2199,2076
+    if [[ ! " ${uniq_dirs[@]} " =~ " ${path} " ]]; then
+      uniq_dirs[$idx]="${path}"
+      command pushd -n &> /dev/null "${path}"
+    fi
   done
 
   return ${ret_val}
