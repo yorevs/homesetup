@@ -201,7 +201,7 @@ if __hhs_has "git"; then
     repository="${1:-origin}"
 
     clear
-    echo "${YELLOW}Available GIT Repositories (${#all_repos[@]}):"
+    echo "${YELLOW}Choose the projects to pull from. Available Repositories (${#all_repos[@]}):"
     echo -en "${WHITE}"
 
     mchoose_file=$(mktemp)
