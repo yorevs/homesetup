@@ -81,7 +81,7 @@ function __hhs_minput() {
   local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes mi_types file_contents
 
   if [ -d "$1" ] || [ -s "$1" ]; then
-    echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
+    __hhs_errcho "${FUNCNAME[0]}: \"$1\" is a directory or an existing non-empty file !${NC}"
     return 1
   fi
 
@@ -98,22 +98,22 @@ function __hhs_minput() {
     field="${all_fields[${idx}]}"
     IFS='|' read -rsa field_parts <<< "${field}"
     f_label="${field_parts[0]}"
-    [[ ! $f_label =~ ^[a-zA-Z0-9_]+$ ]] && echo "${RED}Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters ${NC}" && return 1
+    [[ ! $f_label =~ ^[a-zA-Z0-9_]+$ ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters " && return 1
     f_mode="${field_parts[1]}"
     f_mode=${f_mode:-input}
-    [[ ! "${mi_modes[*]}" == *"${f_mode}"* ]] && echo "${RED}Invalid mode \"${f_mode}\". Valid modes are: [${mi_modes[*]}] ${NC}" && return 1
+    [[ ! "${mi_modes[*]}" == *"${f_mode}"* ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid mode \"${f_mode}\". Valid modes are: [${mi_modes[*]}] " && return 1
     f_type="${field_parts[2]}"
     f_type=${f_type:-any}
-    [[ ! "${mi_types[*]}" == *"${f_type}"* ]] && echo "${RED}Invalid type \"${f_type}\". Valid types are: [${mi_types[*]}] ${NC}" && return 1
+    [[ ! "${mi_types[*]}" == *"${f_type}"* ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid type \"${f_type}\". Valid types are: [${mi_types[*]}] " && return 1
     [[ "${f_mode}" == "checkbox" ]] && f_max_min_len="0/1" || f_max_min_len="${field_parts[3]}"
     f_max_min_len="${f_max_min_len:-0/30}"
-    [[ ! ${f_max_min_len} =~ ^[0-9](\/[0-9]+$)* ]] && echo "${RED}Invalid Min/Max length \"${f_max_min_len}\" ${NC}" && return 1
+    [[ ! ${f_max_min_len} =~ ^[0-9](\/[0-9]+$)* ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid Min/Max length \"${f_max_min_len}\" " && return 1
     minlen=${f_max_min_len%/*}
     maxlen=${f_max_min_len##*/}
     [[ ${minlen} -gt ${maxlen} ]] && echo "Maximum length \"${maxlen}\" must be greater than Minimum length \"${minlen}\"" && return 1
     f_perm="${field_parts[4]}"
     f_perm=${f_perm:-rw}
-    [[ ! "r rw" == *"${f_perm}"* ]] && echo "${RED}Invalid permission \"${f_perm}\". Valid permissions are: [r rw] ${NC}" && return 1
+    [[ ! "r rw" == *"${f_perm}"* ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid permission \"${f_perm}\". Valid permissions are: [r rw] " && return 1
     f_value="${field_parts[5]:0:${maxlen}}"
     [[ "r" == "${f_perm}" ]] && [ -z "${f_value}" ] && echo "Read only fields can't have empty values." && return 1
     [[ ${#f_label} -gt ${label_size} ]] && label_size=${#f_label}

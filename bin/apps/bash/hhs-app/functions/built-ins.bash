@@ -81,7 +81,7 @@ function host-name() {
           echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
           quit 0
         else
-          echo "${RED}Failed to change your hostname !${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Failed to change your hostname !"
         fi
       else
         # Change the hostname in /etc/hosts & /etc/hostname
@@ -93,7 +93,7 @@ function host-name() {
             quit 0
           fi
         else
-          echo "${RED}Failed to change your hostname !${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Failed to change your hostname !"
         fi
       fi
     else

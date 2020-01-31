@@ -39,7 +39,7 @@ function __hhs_toolcheck() {
       fi
       return 0
     else
-      [ -z "$quiet" ] && echo -e "${RED} ${CROSS_ICN} NOT FOUND${NC}"
+      [ -z "$quiet" ] && __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN} NOT FOUND${NC}"
     fi
   fi
 
@@ -59,7 +59,7 @@ function __hhs_version() {
     # First attempt: app --version
     APP=$1
     if ! __hhs_toolcheck -q "${APP}"; then
-      echo -e "${RED}Can't check version. \"${APP}\" is not installed on the system! ${NC}"
+      __hhs_errcho "${FUNCNAME[0]}: Can't check version. \"${APP}\" is not installed on the system! ${NC}"
       return 2
     fi
     
@@ -69,7 +69,7 @@ function __hhs_version() {
           if ! version=$(${APP} -V 2>&1); then
             if ! version=$(${APP} -Version 2>&1); then
               if ! version=$(${APP} --Version 2>&1); then
-                echo -e "${RED}Unable to find \"${APP}\" version using: (--version, --Version, -version, -Version, -v, -V) ${NC}"
+                __hhs_errcho "${FUNCNAME[0]}: Unable to find \"${APP}\" version using: (--version, --Version, -version, -Version, -v, -V) ${NC}"
                 return 1
               fi
             fi

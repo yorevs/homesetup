@@ -85,17 +85,17 @@ setup_firebase() {
     echo "### Firebase setup"
     echo "-------------------------------"
     read -r -p 'Please type you Project ID: ' ANS
-    [ -z "$ANS" ] || [ "$ANS" = "" ] && echo -e "${RED}Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
+    [ -z "$ANS" ] || [ "$ANS" = "" ] && __hhs_errcho "${FUNCNAME[0]}: Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
     fb_config="${FB_CONFIG_FMT//\%ID\%/$ANS}"
     fb_config="${fb_config//\%URL\%/https://$ANS.firebaseio.com/homesetup}"
     read -r -p 'Please type a password to encrypt you data: ' PASSWD
-    [ -z "$PASSWD" ] && echo -e "${RED}Blank passwords are not accepted: ${PASSWD}${NC}" && sleep 1 && continue
+    [ -z "$PASSWD" ] && __hhs_errcho "${FUNCNAME[0]}: Blank passwords are not accepted: ${PASSWD}${NC}" && sleep 1 && continue
     fb_config="${fb_config//\%PWD\%/$PASSWD}"
     read -r -p "Please type a UUID to use or press enter to generate a new one: " ANS
     if [ -n "$ANS" ] && [[ "$ANS" =~ $UUID_RE ]]; then
       u_uuid="$ANS"
     elif [ -n "$ANS" ]; then
-      echo -e "${RED}Invalid UUID: ${ANS}${NC}" && sleep 1 && continue
+      __hhs_errcho "${FUNCNAME[0]}: Invalid UUID: ${ANS}${NC}" && sleep 1 && continue
     else
       u_uuid=$(python -c "import uuid as ul; print(str(ul.uuid4()));")
       echo "=> UUID automatically generated: ${u_uuid}"

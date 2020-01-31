@@ -103,10 +103,10 @@ install_recipe() {
     if install; then
       echo -e "${GREEN}Installation successful !${NC}"
     else
-      echo -e "${RED}Failed to install app \"$1\" !${NC}"
+      quit 1 "${PLUGIN_NAME}: Failed to install app \"$1\" !${NC}"
     fi
   else
-    echo -e "${RED}Unable to find recipe \"$recipe\" !${NC}"
+    quit 1 "${PLUGIN_NAME}: Unable to find recipe \"$recipe\" !${NC}"
   fi
 }
 
@@ -124,10 +124,10 @@ uninstall_recipe() {
     if uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
     else
-      echo -e "${RED}Failed to uninstall app \"$1\" !${NC}"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !${NC}"
     fi
   else
-    echo -e "${RED}Unable to find recipe \"$recipe\" !${NC}"
+    quit 1 "${PLUGIN_NAME}: Unable to find recipe \"$recipe\" !${NC}"
   fi
 }
 
@@ -166,7 +166,7 @@ function execute() {
         if list_recipes "$next_recipe"; then
           install_recipe "$next_recipe"
         else
-          echo -e "${RED}Unable to find recipe for \"$next_recipe\" installation ! ${NC}"
+          quit 1 "${PLUGIN_NAME}: Unable to find recipe for \"$next_recipe\" installation ! ${NC}"
         fi
       done
       echo ''
@@ -179,7 +179,7 @@ function execute() {
         if list_recipes "$next_recipe"; then
           uninstall_recipe "$next_recipe"
         else
-          echo -e "${RED}Unable to find recipe for \"$next_recipe\" uninstallation ! ${NC}"
+          quit 1 "${PLUGIN_NAME}: Unable to find recipe for \"$next_recipe\" uninstallation ! ${NC}"
         fi
       done
       echo ''

@@ -7,7 +7,7 @@ function about() {
 
 function depends() {
   if ! command -v nvm >/dev/null; then
-    echo "${RED}nvm is required to install node${NC}"
+    __hhs_errcho "hspm.bash: nvm is required to install node"
     return 1
   fi
 

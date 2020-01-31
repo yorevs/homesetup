@@ -4,10 +4,10 @@ function about() {
 
 function depends() {
   if ! command -v xcode-select >/dev/null; then
-    echo "${RED}XCode is required to install HomeBrew${NC}"
+    __hhs_errcho "hspm.bash: XCode is required to install HomeBrew"
     return 1
   elif ! command -v ruby >/dev/null; then
-    echo "${RED}Ruby is required to install HomeBrew${NC}"
+    __hhs_errcho "hspm.bash: Ruby is required to install HomeBrew"
     return 1
   fi
 

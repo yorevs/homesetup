@@ -128,7 +128,7 @@ if __hhs_has "git"; then
       if [ -n "$all_flag" ]; then
         echo -en "${YELLOW}=> Updating branches ${NC}"
         if ! git fetch; then
-          echo -e "${RED}### Unable fetch from remote ${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: ### Unable fetch from remote ${NC}"
           return 1
         fi
         echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -145,7 +145,7 @@ if __hhs_has "git"; then
         if ! git diff-index --quiet HEAD --; then
           echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
           if ! git stash &> /dev/null; then
-            echo -e "${RED}### Unable to stash your changes ${NC}"
+            __hhs_errcho "${FUNCNAME[0]}: ### Unable to stash your changes ${NC}"
             return 1
           fi
           stash_flag=1
@@ -160,13 +160,13 @@ if __hhs_has "git"; then
           if [ -n "$stash_flag" ]; then
             echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
             if ! git stash pop &> /dev/null; then
-              echo -e "${RED}### Unable to retrieve stash changes ${NC}"
+              __hhs_errcho "${FUNCNAME[0]}: ### Unable to retrieve stash changes ${NC}"
               return 1
             fi
             echo -e " ... [   ${GREEN}OK${NC}   ]"
           fi
         else
-          echo -e "${RED}### Unable to checkout branch \"${sel_branch}\" ${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: ### Unable to checkout branch \"${sel_branch}\" ${NC}"
           return
         fi
       fi
@@ -194,7 +194,7 @@ if __hhs_has "git"; then
 
     # Find all git repositories
     git_repos_path="${1:-.}"
-    [ ! -d "${git_repos_path}" ] && echo "${RED}Repository path \"${git_repos_path}\" was not found ! ${NC}" && return 1
+    [ ! -d "${git_repos_path}" ] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
     IFS=$'\n' read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
@@ -214,7 +214,7 @@ if __hhs_has "git"; then
     for idx in "${!all_repos[@]}"; do
       repo_dir=$(dirname "${all_repos[$idx]}")
       if [[ "${sel_indexes[$idx]}" == '1' ]] && [ -d "${repo_dir}" ]; then
-        pushd "${repo_dir}" &> /dev/null || echo "${RED} Unable to enter directory: \"${repo_dir}\" ! ${NC}"
+        pushd "${repo_dir}" &> /dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
         branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
         if git rev-parse --abbrev-ref "${branch}@{u}" &> /dev/null; then
           stash_flag=0
@@ -245,16 +245,16 @@ if __hhs_has "git"; then
                 fi
               fi
             else
-              echo -e "${RED}### Unable to pull the code. Skipping ...${NC}"
+              __hhs_errcho "${FUNCNAME[0]}: ### Unable to pull the code. Skipping ...${NC}"
             fi
           else
-            echo -e "${RED}### Unable to fetch repository updates. Skipping ...${NC}"
+            __hhs_errcho "${FUNCNAME[0]}: ### Unable to fetch repository updates. Skipping ...${NC}"
           fi
         else
           echo ''
           echo -e "${ORANGE}@@@ The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
         fi
-        popd &> /dev/null || echo "${RED}### Unable to leave directory: \"${repo_dir}\" ! ${NC}"
+        popd &> /dev/null || __hhs_errcho "${FUNCNAME[0]}: ### Unable to leave directory: \"${repo_dir}\" !"
       else
         echo ''
         echo -e "${YELLOW}>>> Skipping project \"${repo_dir}\" ${NC}"

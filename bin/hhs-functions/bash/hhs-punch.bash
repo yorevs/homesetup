@@ -101,7 +101,7 @@ function __hhs_punch() {
             fi
             totals+=("$daily_total")
           else
-            echo -e "${RED} --:-- ${NC}"
+            __hhs_errcho "${FUNCNAME[0]}:  --:-- ${NC}"
           fi
         fi
       done

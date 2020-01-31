@@ -184,7 +184,7 @@ function __hhs_port_check() {
       echo ''
       return $?
     else
-      echo -e "${RED}## Invalid state \"$state\". Use one of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
+      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"$state\". Use one of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
     fi
   elif [ -n "$1" ] && [ -z "$2" ]; then
     port=${1:0:5}

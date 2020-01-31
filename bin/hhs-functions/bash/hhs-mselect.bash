@@ -27,7 +27,7 @@ function __hhs_mselect() {
   fi
 
   if [ -d "$1" ] || [ -s "$1" ]; then
-    echo -e "${RED}\"$1\" is a directory or an existing non-empty file !${NC}"
+    __hhs_errcho "${FUNCNAME[0]}: \"$1\" is a directory or an existing non-empty file !${NC}"
     return 1
   fi
 

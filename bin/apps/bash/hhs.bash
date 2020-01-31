@@ -256,7 +256,7 @@ main() {
   fi
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
-  invoke_command "${@}" || quit 2 "Failed to execute (${?}) plugin: \"${1}\" !"
+  invoke_command "${@}" || quit 2
 }
 
 main "${@}"

@@ -33,7 +33,7 @@ function __hhs_change_dir() {
   
   path="${path//\~/$HOME}"
 
-  [ ! -d "${path}" ] && echo -e "${RED}Directory \"${path}\" was not found ! ${NC}" && return 1
+  [ ! -d "${path}" ] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && return 1
 
   # shellcheck disable=SC2086
   command cd ${flags} "${path}"
@@ -86,7 +86,7 @@ function __hhs_dirs() {
     if __hhs_mselect "$mselect_file" "${results[@]}"; then
       sel_index=$(grep . "$mselect_file")
       path="${results[$sel_index]//\~/$HOME}"
-      [ ! -d "${path}" ] && echo -e "${RED}Directory \"${path}\" was not found ! ${NC}" && ret_val=1
+      [ ! -d "${path}" ] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && ret_val=1
     else
       ret_val=1
     fi
@@ -169,7 +169,7 @@ function __hhs_save_dir() {
       if [ -n "$dir" ] && [ "$dir" = ".." ]; then dir=${dir//../$(pwd)}; fi
       if [ -n "$dir" ] && [ "$dir" = "-" ]; then dir=${dir//-/$OLDPWD}; fi
       if [ -n "$dir" ] && [ ! -d "$dir" ]; then
-        echo "${RED}Can't save the directory \"${dir}\" that does not exist !${NC}"
+        __hhs_errcho "${FUNCNAME[0]}: Can't save the directory \"${dir}\" that does not exist !"
         return 1
       fi
       # Remove the old saved directory aliased
@@ -252,13 +252,13 @@ function __hhs_load_dir() {
         dir=$(grep "^${dir_alias}=" "$HHS_SAVED_DIRS_FILE" | awk -F '=' '{ print $2 }')
         ;;
       *)
-        echo -e "${RED}Invalid arguments: \"$1\"${NC}"
+        __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\"${NC}"
         return 1
         ;;
     esac
 
     if [ -n "$dir" ] && [ ! -d "$dir" ]; then
-      echo "${RED}Directory aliased by \"$dir_alias\" was not found !${NC}"
+      __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"$dir_alias\" was not found !"
       return 1
     elif [ -n "$dir" ] && [ -d "$dir" ]; then
       pushd "$dir" &> /dev/null || return 1

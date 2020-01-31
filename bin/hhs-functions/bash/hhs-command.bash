@@ -47,7 +47,7 @@ function __hhs_command() {
         shift
         cmd_expr="$*"
         if [ -z "$cmd_name" ] || [ -z "$cmd_expr" ]; then
-          echo -e "${RED}Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$cmd_name\"\t\"$cmd_expr\"${NC}"
           return 1
         fi
         ised -e "s#(^Command $cmd_name: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
@@ -63,16 +63,16 @@ function __hhs_command() {
         local re='^[1-9]+$'
         if [[ $cmd_alias =~ $re ]]; then
           cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $0 }')
-          [ -z "${cmd_expr}" ] && echo "${RED}Command index not found: \"${cmd_alias}\"" && return 1
+          [ -z "${cmd_expr}" ] && __hhs_errcho "${FUNCNAME[0]}: Command index not found: \"${cmd_alias}\"" && return 1
           ised -e "/^${cmd_expr}$/d" "$HHS_CMD_FILE"
           echo "${YELLOW}Command ${WHITE}($cmd_alias)${NC} removed !"
         elif [ -n "$cmd_alias" ]; then
           cmd_expr=$(grep "${cmd_alias}" "$HHS_CMD_FILE")
-          [ -z "${cmd_expr}" ] && echo "${RED}Command not found: \"${cmd_alias}\"" && return 1
+          [ -z "${cmd_expr}" ] && __hhs_errcho "${FUNCNAME[0]}: Command not found: \"${cmd_alias}\"" && return 1
           ised -e "s#(^Command $cmd_alias: .*)*##g" -e '/^\s*$/d' "$HHS_CMD_FILE"
           echo "${YELLOW}Command removed: ${WHITE}\"$cmd_alias\" ${NC}"
         else
-          echo -e "${RED}Invalid arguments: \"$cmd_alias\"\t\"$cmd_expr\"${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$cmd_alias\"\t\"$cmd_expr\"${NC}"
           return 1
         fi
         ;;
@@ -120,10 +120,10 @@ function __hhs_command() {
         cmd_expr=$(awk "NR==$1" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
         [ -z "$cmd_expr" ] && cmd_expr=$(grep "Command $1:" "$HHS_CMD_FILE" | awk -F ': ' '{ print $2 }')
         [ -n "$cmd_expr" ] && echo -e "#> $cmd_expr" && eval "$cmd_expr"
-        [ -z "$cmd_expr" ] && echo "${RED}Command aliased by \"$1\" was not found !${NC}"
+        [ -z "$cmd_expr" ] && __hhs_errcho "${FUNCNAME[0]}: Command aliased by \"$1\" was not found !"
         ;;
       *)
-        echo -e "${RED}Invalid arguments: \"$1\"${NC}"
+        __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\"${NC}"
         return 1
         ;;
     esac

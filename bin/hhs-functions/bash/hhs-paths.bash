@@ -81,7 +81,7 @@ function __hhs_paths() {
         export PATH="$2:$PATH"
         [ -z $quiet ] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
       else
-        echo "${RED}Can't add a path \"$2\" that does not exist${NC}"
+        __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" does not exist"
         return 1
       fi
     elif [ "-r" = "$1" ] && [ -n "$2" ]; then

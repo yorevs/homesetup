@@ -18,7 +18,7 @@ PLUGIN_NAME="updater"
 
 # Usage message
 USAGE="
-Usage: ${APP_NAME} ${PLUGIN_NAME} <option>
+Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} <option>
 
     Update manager for HomeSetup.
     
@@ -57,9 +57,9 @@ update_hhs() {
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n]) ?" ANS
         [ -n "$ANS" ] && echo "${ANS}${NC}"
         if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-          pushd "$HHS_HOME" &> /dev/null || return 1
-          git pull || return 1
-          popd &> /dev/null || return 1
+          pushd "$HHS_HOME" &> /dev/null || quit 1
+          git pull || quit 1
+          popd &> /dev/null || quit 1
           if "${HHS_HOME}"/install.bash -q; then
             echo -e "${GREEN}Successfully updated HomeSetup !"
             sleep 1
@@ -67,8 +67,7 @@ update_hhs() {
             source ~/.bashrc
             echo -e "${HHS_MOTD}"
           else
-            echo -e "${RED}Failed to install HomeSetup update !${NC}"
-            return 1
+            quit 1 "${PLUGIN_NAME}: Failed to install HomeSetup update !${NC}"
           fi
         else
           echo ''
@@ -78,16 +77,14 @@ update_hhs() {
       fi
       stamp_next_update &> /dev/null
     else
-      echo "${RED}Unable to fetch repository version !${NC}"
-      return 1
+      quit 1 "${PLUGIN_NAME}: Unable to fetch repository version !"
     fi
   else
-    echo "${RED}HHS_VERSION was not defined !${NC}"
-    return 1
+    quit 1 "${PLUGIN_NAME}: HHS_VERSION was not defined !"
   fi
   echo -e "${NC}"
 
-  return 0
+  quit 0
 }
 
 # @function: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
@@ -127,7 +124,7 @@ function help() {
 
 function version() {
   echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
-  exit 0
+  quit 0
 }
 
 function cleanup() {
@@ -159,5 +156,5 @@ function execute() {
   esac
   shopt -u nocasematch
 
-  exit 0
+  quit 0
 }

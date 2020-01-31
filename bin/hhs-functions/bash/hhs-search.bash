@@ -103,7 +103,7 @@ if __hhs_has "python"; then
           -r | --replace)
             replace=1
             shift
-            [ -z "$1" ] && echo "${RED}Missing replacement string !${NC}" && return 1
+            [ -z "$1" ] && __hhs_errcho "${FUNCNAME[0]}: Missing replacement string !" && return 1
             repl_str="$1"
             extra_str=", replacement: \"${repl_str}\""
             ;;
@@ -124,7 +124,7 @@ if __hhs_has "python"; then
       
       if [ -n "$replace" ]; then
         if [ "$filter_type" = 'string' ]; then
-          echo "${RED}Can't search and replace non-Regex expressions!${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"
           return 1
         fi
         [ "${HHS_MY_OS}" == "Darwin" ] && ised="sed -i '' -E"

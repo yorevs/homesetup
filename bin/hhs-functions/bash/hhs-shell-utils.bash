@@ -93,7 +93,7 @@ function __hhs_shell_select() {
           echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
           echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
         else
-          echo "${RED}Unable to change shell to ${sel_shell} ${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"
         fi
       fi
     fi

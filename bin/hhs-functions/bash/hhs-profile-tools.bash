@@ -23,7 +23,7 @@ function __hhs_activate_nvm() {
     echo "${GREEN}[  OK  ]${NC}"
     return 0
   else
-    echo -e "${RED}[ FAIL ] => NVM is not installed!${NC}"
+    __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => NVM is not installed!${NC}"
     return 1
   fi
 }
@@ -40,7 +40,7 @@ function __hhs_activate_rvm() {
     echo "${GREEN}[  OK  ]${NC}"
     return 0
   else
-    echo -e "${RED}[ FAIL ] => RVM is not installed!${NC}"
+    __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => RVM is not installed!${NC}"
     return 1
   fi
 }
@@ -52,7 +52,7 @@ function __hhs_activate_jenv() {
   # JENV setup
   eval "$(jenv init -)" &>/dev/null \
     && echo "${GREEN}[  OK  ]${NC}" \
-    || echo -e "${RED}[ FAIL ] => JENV is not installed!${NC}"
+    || __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => JENV is not installed!${NC}"
   return $?
 }
 
@@ -64,6 +64,6 @@ function __hhs_activate_docker() {
   # Docker daemon setup
   open "${DK_LOC}" &>/dev/null \
     && echo "${GREEN}[  OK  ]${NC}" \
-    || echo -e "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at !${NC}"
+    || __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => Docker.app was not found: ${DK_LOC} at !${NC}"
   return $?
 }

@@ -36,7 +36,7 @@ quit() {
   unset -f quit usage version trim "${UNSETS[*]}"
   exit_code=${1:-0}
   shift
-  [[ ${exit_code} -ne 0 ]] && echo -en "${RED}"
+  [[ ${exit_code} -ne 0 ]] && [[ ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
   [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
   # shellcheck disable=SC2086

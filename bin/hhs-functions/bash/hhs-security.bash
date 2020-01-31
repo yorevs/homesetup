@@ -28,7 +28,7 @@ if __hhs_has "gpg"; then
       fi
     fi
 
-    echo -e "${RED}Unable to encrypt file: \"$1\" ${NC}"
+    __hhs_errcho "${FUNCNAME[0]}: Unable to encrypt file: \"$1\" ${NC}"
 
     return 1
   }
@@ -51,7 +51,7 @@ if __hhs_has "gpg"; then
       fi
     fi
 
-    echo -e "${RED}Unable to decrypt file: \"$1\" ${NC}"
+    __hhs_errcho "${FUNCNAME[0]}: Unable to decrypt file: \"$1\" ${NC}"
 
     return 1
   }
