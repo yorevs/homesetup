@@ -16,6 +16,8 @@ function __hhs_change_dir() {
   if [[ '-L' = "${1}" ]] || [[ '-P' = "${1}" ]]; then
     flags="${1}" && shift
   fi
+  
+  path="${1:-$(pwd)}"
 
   if [ -z "${1}" ]; then
     path="${HOME}"
@@ -37,7 +39,7 @@ function __hhs_change_dir() {
 
   # shellcheck disable=SC2086
   command cd ${flags} "${path}"
-  command pushd -n "${path}" &> /dev/null
+  command pushd -n "$(pwd)" &> /dev/null
 
   return 0
 }
@@ -47,16 +49,16 @@ function __hhs_change_dir() {
 function __hhs_changeback_ndirs() {
 
   last_pwd=$(pwd)
-  [ -z "$1" ] && cd .. && return 0
-  if [ -n "$1" ]; then
-    # shellcheck disable=SC2034
+  if [ -z "$1" ]; then
+    command cd .. 
+    return 0
+  elif [ -n "$1" ]; then
     for x in $(seq 1 "$1"); do
-      last_pwd=$(pwd)
-      cd .. || return 1
+      command cd ..
     done
     echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+    [ -d "${last_pwd}" ] && export OLDPWD="${last_pwd}"
   fi
-  [ -d "${last_pwd}" ] && export OLDPWD="${last_pwd}"
 
   return 0
 }
@@ -104,7 +106,7 @@ function __hhs_dirs() {
     # shellcheck disable=SC2199,2076
     if [[ ! " ${uniq_dirs[@]} " =~ " ${path} " ]]; then
       uniq_dirs[$idx]="${path}"
-      command pushd -n &> /dev/null "${path}"
+      [ -d "${path}" ] && command pushd -n &> /dev/null "${path}"
     fi
   done
 
@@ -114,7 +116,7 @@ function __hhs_dirs() {
 
 # @function: List all directories recursively (Nth level depth) as a tree
 # @param $1 [Req] : The max level depth to walk into
-function lt() {
+function __hhs_list_tree() {
 
   if __hhs_has "tree"; then
     if [ -n "$1" ] && [ -n "$2" ]; then
@@ -141,7 +143,7 @@ function __hhs_save_dir() {
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "$HHS_SAVED_DIRS_FILE"
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]; then
+  if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} [options] | [dir_to_save] [dir_alias]"
     echo ''
     echo 'Options: '
@@ -155,7 +157,7 @@ function __hhs_save_dir() {
 
     if [ "$1" = "-e" ]; then
       edit "$HHS_SAVED_DIRS_FILE"
-    elif [ -z "$2" ] || [ "$1" = "-r" ]; then
+    elif [ "$1" = "-r" ] && [ -n "$2" ]; then
       # Remove the previously saved directory aliased
       if grep -q "$dir_alias" "$HHS_SAVED_DIRS_FILE"; then
         echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
@@ -164,21 +166,21 @@ function __hhs_save_dir() {
     else
       dir="$1"
       # If the path is not absolute, append the current directory to it.
-      if [ -z "$dir" ] || [ "$dir" = "." ]; then dir=${dir//./$(pwd)}; fi
-      if [ -d "$dir" ] && [[ ! "$dir" =~ ^/ ]]; then dir="$(pwd)/$dir"; fi
-      if [ -n "$dir" ] && [ "$dir" = ".." ]; then dir=${dir//../$(pwd)}; fi
-      if [ -n "$dir" ] && [ "$dir" = "-" ]; then dir=${dir//-/$OLDPWD}; fi
-      if [ -n "$dir" ] && [ ! -d "$dir" ]; then
-        __hhs_errcho "${FUNCNAME[0]}: Can't save the directory \"${dir}\" that does not exist !"
+      if [ -z "${dir}" ] || [ "${dir}" = "." ]; then dir=${dir//./$(pwd)}; fi
+      if [ -d "${dir}" ] && [[ ! "${dir}" =~ ^/ ]]; then dir="$(pwd)/${dir}"; fi
+      if [ -n "${dir}" ] && [ "${dir}" = ".." ]; then dir=${dir//../$(pwd)}; fi
+      if [ -n "${dir}" ] && [ "${dir}" = "-" ]; then dir=${dir//-/$OLDPWD}; fi
+      if [ -n "${dir}" ] && [ ! -d "${dir}" ]; then
+        __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist !"
         return 1
       fi
       # Remove the old saved directory aliased
       ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS_FILE"
       IFS=$'\n' read -d '' -r -a all_dirs < "$HHS_SAVED_DIRS_FILE"
-      all_dirs+=("$dir_alias=$dir")
+      all_dirs+=("$dir_alias=${dir}")
       printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS_FILE"
       sort "$HHS_SAVED_DIRS_FILE" -o "$HHS_SAVED_DIRS_FILE"
-      echo "${GREEN}Directory was saved: ${WHITE}\"$dir\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
+      echo "${GREEN}Directory saved: ${WHITE}\"${dir}\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
     fi
   fi
 
@@ -208,7 +210,6 @@ function __hhs_load_dir() {
   fi
 
   IFS=$'\n' read -d '' -r -a all_dirs < "$HHS_SAVED_DIRS_FILE"
-  echo "[DEBUG] LOAD => LEN ${#all_dirs}" >> /tmp/minput.txt
 
   if [ ${#all_dirs[@]} -ne 0 ]; then
 
@@ -239,9 +240,10 @@ function __hhs_load_dir() {
           mselect_file=$(mktemp)
           if __hhs_mselect "$mselect_file" "${all_dirs[@]}"; then
             sel_index=$(grep . "$mselect_file")
-            dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-            # sel_index is zero-based, so we need to increment this number
-            dir=$(awk "NR==$((sel_index + 1))" "$HHS_SAVED_DIRS_FILE" | awk -F '=' '{ print $2 }')
+            dir_alias="${all_dirs[$sel_index]%=*}"
+            dir="${all_dirs[$sel_index]##*=}"
+          else
+            return 1
           fi
         else
           echo "${ORANGE}No dirctories available yet !${NC}"
@@ -257,11 +259,11 @@ function __hhs_load_dir() {
         ;;
     esac
 
-    if [ -n "$dir" ] && [ ! -d "$dir" ]; then
+    if [ -z "${dir}" ] || [ ! -d "${dir}" ]; then
       __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"$dir_alias\" was not found !"
       return 1
-    elif [ -n "$dir" ] && [ -d "$dir" ]; then
-      pushd "$dir" &> /dev/null || return 1
+    else
+      pushd "${dir}" &> /dev/null || return 1
       echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
     fi
 
@@ -315,7 +317,7 @@ function __hhs_go_dir() {
         return 1
       fi
     fi
-    [ -n "$dir" ] && [ -d "$dir" ] && pushd "$dir" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
+    [ -n "${dir}" ] && [ -d "${dir}" ] && pushd "${dir}" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   fi
 
   [ -f "$mselect_file" ] && command rm -f "$mselect_file"

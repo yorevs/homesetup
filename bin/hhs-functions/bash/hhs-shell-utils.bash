@@ -108,11 +108,11 @@ function __hhs_shell_select() {
 
 # @function: Terminal color pallete test
 function __hhs_color_pallete() {
-  
+
   echo ''
   echo "--- Home Setup color pallete test"
   echo ''
-  
+
   echo -en "${BLACK}  BLACK "
   echo -en "${RED}    RED "
   echo -en "${GREEN}  GREEN "
@@ -125,29 +125,31 @@ function __hhs_color_pallete() {
   echo -en "${YELLOW} YELLOW "
   echo -en "${VIOLET} VIOLET "
   echo -e "${NC}\n"
-  
+
   echo "--- 16 Colors Low"
   echo ''
   for c in {30..37}; do
     echo -en "\033[0;${c}mC16-${c} "
   done
   echo -e "${NC}\n"
-  
+
   echo "--- 16 Colors High"
   echo ''
   for c in {90..97}; do
     echo -en "\033[0;${c}mC16-${c} "
   done
   echo -e "${NC}\n"
-  
-  echo "--- 256 Colors"
-  echo ''
-  for c in {1..256}; do
-    echo -en "\033[38;5;${c}m"
-    printf "C256-%-.3d " "${c}"
-    [ "$(echo "$c % 12" | bc)" -eq 0 ] && echo ''
-  done
-  echo -e "${NC}\n"
-  
+
+  if [[ "${TERM##*-}" == "256color" ]]; then
+    echo "--- 256 Colors"
+    echo ''
+    for c in {1..256}; do
+      echo -en "\033[38;5;${c}m"
+      printf "C256-%-.3d " "${c}"
+      [ "$(echo "$c % 12" | bc)" -eq 0 ] && echo ''
+    done
+    echo -e "${NC}\n"
+  fi
+
   echo ''
 }

@@ -39,7 +39,7 @@ function __hhs_toolcheck() {
       fi
       return 0
     else
-      [ -z "$quiet" ] && __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN} NOT FOUND${NC}"
+      [ -z "$quiet" ] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
     fi
   fi
 

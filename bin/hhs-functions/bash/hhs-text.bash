@@ -12,6 +12,8 @@
 function __hhs_errcho() {
   
   echo -e "${RED}${*}${NC}" 1>&2
+  echo ''
+  
   return $?
 }
 
