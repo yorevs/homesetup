@@ -113,11 +113,15 @@ uninstall_dotfiles() {
   export PS1='\[\h:\W \u \$ '
   export PS2="$PS1"
 
-  echo "HomeSetup successfully removed."
-  echo "* To reload your old dotfiles type: #> \. ~/.bashrc"
+  echo 'HomeSetup has been uninstalled !'
+  echo ''
   echo "* Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
   echo "* Your temporary PS1 => '$PS1'"
   echo ''
+  
+  echo '@@@ HomeSetup needs to close this terminal to finish the removal.'
+  read -rn 1 -p "Press any key to exit the session ..."
+  exit 0
 }
 
 check_installation

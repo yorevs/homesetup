@@ -252,17 +252,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
 
-    sleep 3
-
     if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
       echo -e "${ORANGE}"
-      [ -z ${QUIET} ] && read -rn 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? " ANS
+      [ -z ${QUIET} ] && read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
       echo -e "${NC}"
       if [ ! "$ANS" = "y" ] && [ ! "$ANS" = "Y" ]; then
         [ -n "$ANS" ] && echo ''
         quit 1 "Installation cancelled !"
       fi
     else
+      read -rn 1 -p "Press any key to continue with the installation ..."
       OPT='all'
     fi
 
@@ -379,8 +378,6 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
       fi
     done
-
-    sleep 2
   }
 
   # Reload the terminal and apply installed files.
@@ -389,8 +386,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
     echo -e "${BLUE}"
-
-    sleep 1 && reset
 
     echo -e "${BLUE}"
     if command -v figlet > /dev/null; then
