@@ -254,8 +254,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "   Install Dir: ${HHS_HOME}"
     echo -e "     Fonts Dir: ${FONTS_DIR}"
     echo -e "  Dotfiles Dir: $DOTFILES_DIR"
-    echo -e "      Dotfiles: ${ALL_DOTFILES[*]//hhs/${SHELL_TYPE}}"
+    echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
+    
+    sleep 3
 
     if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
       echo -e "${ORANGE}"
