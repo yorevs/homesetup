@@ -31,9 +31,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
 
-  # Dotfiles source location
-  DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
-
   # .dotfiles we will handle
   ALL_DOTFILES=()
 
@@ -82,6 +79,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Define the HomeSetup directory.
     HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
+    # Dotfiles source location
+    DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
 
     # Enable install script to use colors
     [ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"

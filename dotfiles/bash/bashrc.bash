@@ -25,7 +25,7 @@
 [ -z "$PS1" ] && [ -z "$PS2" ] && return
 
 # Load the profile according to the SHELL defined
-case "$HHS_MY_SHELL" in
+case "${SHELL##*\/}" in
   bash)
     # Source the main profile
     [ -s /etc/bashrc ] && source /etc/bashrc
