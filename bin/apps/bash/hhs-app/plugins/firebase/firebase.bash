@@ -70,7 +70,11 @@ UUID=%UUID%
 # Load firebase settings.
 load_settings() {
 
-  [ -f "$FIREBASE_FILE" ] || quit 1 "Your need to setup your Firebase credentials first."
+  if [ ! -f "$FIREBASE_FILE" ]; then
+    echo -e "${YELLOW}Your need to setup your Firebase credentials first.${NC}"
+    sleep 1
+    setup_firebase
+  fi
   
   [ -f "$FIREBASE_FILE" ] && \. "$FIREBASE_FILE"
   [ -z "$PROJECT_ID" ] || [ -z "$FIREBASE_URL" ] || [ -z "$PASSPHRASE" ] || [ -z "$UUID" ] && quit 2 "Invalid settings file!"
@@ -85,18 +89,18 @@ setup_firebase() {
     clear
     echo "### Firebase setup"
     echo "-------------------------------"
-    read -r -p 'Please type you Project ID: ' ANS
-    [ -z "$ANS" ] || [ "$ANS" = "" ] && __hhs_errcho "${FUNCNAME[0]}: Invalid Project ID: ${ANS}${NC}" && sleep 1 && continue
-    fb_config="${FB_CONFIG_FMT//\%ID\%/$ANS}"
-    fb_config="${fb_config//\%URL\%/https://$ANS.firebaseio.com/homesetup}"
+    read -r -p 'Please type you Project ID: ' PROJECT_ID
+    [ -z "$PROJECT_ID" ] || [ "$PROJECT_ID" = "" ] && __hhs_errcho "${FUNCNAME[0]}: Invalid Project ID: ${PROJECT_ID}${NC}" && sleep 1 && continue
+    fb_config="${FB_CONFIG_FMT//\%ID\%/$PROJECT_ID}"
+    fb_config="${fb_config//\%URL\%/https://$PROJECT_ID.firebaseio.com/homesetup}"
     read -r -p 'Please type a password to encrypt you data: ' PASSWD
     [ -z "$PASSWD" ] && __hhs_errcho "${FUNCNAME[0]}: Blank passwords are not accepted: ${PASSWD}${NC}" && sleep 1 && continue
     fb_config="${fb_config//\%PWD\%/$PASSWD}"
-    read -r -p "Please type a UUID to use or press enter to generate a new one: " ANS
-    if [ -n "$ANS" ] && [[ "$ANS" =~ $UUID_RE ]]; then
-      u_uuid="$ANS"
-    elif [ -n "$ANS" ]; then
-      __hhs_errcho "${FUNCNAME[0]}: Invalid UUID: ${ANS}${NC}" && sleep 1 && continue
+    read -r -p "Please type a UUID to use or press enter to generate a new one: " UUID
+    if [ -n "$UUID" ] && [[ "$UUID" =~ $UUID_RE ]]; then
+      u_uuid="$UUID"
+    elif [ -n "$UUID" ]; then
+      __hhs_errcho "${FUNCNAME[0]}: Invalid UUID: ${UUID}${NC}" && sleep 1 && continue
     else
       u_uuid=$(python -c "import uuid as ul; print(str(ul.uuid4()));")
       echo "=> UUID automatically generated: ${u_uuid}"
@@ -104,6 +108,11 @@ setup_firebase() {
     fb_config="${fb_config//\%UUID\%/$u_uuid}"
     # Save user's Firebase data
     echo -e "$fb_config" > "$FIREBASE_FILE"
+    if [ -f "$FIREBASE_FILE" ] && fetch.bash GET --silent "https://${PROJECT_ID}.firebaseio.com/homesetup/dotfiles/${UUID}.json" &> /dev/null; then
+      echo "${GREEN}Firebase configuration suceeded ! ${NC}"
+    else
+      __hhs_errcho "${FUNCNAME[0]}: Configuration failed !" && continue
+    fi
   done
 }
 
