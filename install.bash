@@ -86,6 +86,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Define the HomeSetup directory.
     HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
+
     # Dotfiles source location
     DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
 
@@ -194,48 +195,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
 
-  # Check for backward HHS compatibility
-  compatibility_check() {
+  # Clone the repository and install dotfiles.
+  clone_repository() {
 
-    echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
+    [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely !"
+    [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: \"${HHS_HOME}\" !"
 
-    # Moving old hhs files into the proper directory
-    [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
-    [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
-    [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
-    [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
+    echo ''
+    echo -e "${WHITE}Cloning HomeSetup from repository ..."
 
-    # Removing the old $HOME/bin folder
-    if [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ]; then
-      command rm -f "${HOME:?}/bin"
-      echo -e "\n${ORANGE}Your old $HOME/bin link had to be removed. ${NC}"
-    fi
+    git clone "$REPO_URL" "$HHS_HOME" || quit 2 "Unable to properly clone the repository !"
 
-    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
-    if [ -L "${HOME}/.bash_aliasdef" ]; then
-      command rm -f "${HOME}/.bash_aliasdef"
-      echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
-    fi
+    \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
 
-    # .aliasdef Needs to be updated, so, we need to replace it
-    if [ -f "$HOME/.aliasdef" ]; then
-      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef-${TIMESTAMP}.bak"
-      command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
-      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef-${TIMESTAMP}.bak ${NC}"
-    fi
+    [ ! -d "${DOTFILES_DIR}" ] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
 
-    # .inputrc Needs to be updated, so, we need to replace it
-    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc-${TIMESTAMP}.bak" ]; then
-      command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
-      command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
-      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc-${TIMESTAMP}.bak ${NC}"
-    fi
-
-    # Moving .path file to .hhs
-    if [ -f "${HOME}/.path" ]; then
-      command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
-      echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
-    fi
+    # Find all dotfiles used by HomeSetup according to the current shell type
+    while IFS='' read -r dotfile; do
+      ALL_DOTFILES+=("${dotfile}")
+    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
   }
 
   # Install all dotfiles.
@@ -338,25 +316,48 @@ Usage: $APP_NAME [OPTIONS] <args>
     compatibility_check
   }
 
-  # Clone the repository and install dotfiles.
-  clone_repository() {
+  # Check for backward HHS compatibility
+  compatibility_check() {
 
-    [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely !"
-    [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: \"${HHS_HOME}\" !"
+    echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
 
-    echo ''
-    echo -e "${WHITE}Cloning HomeSetup from repository ..."
+    # Moving old hhs files into the proper directory
+    [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
+    [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
+    [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
+    [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
 
-    git clone "$REPO_URL" "$HHS_HOME" || quit 2 "Unable to properly clone the repository !"
-    
-    \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
-    
-    [ ! -d "${DOTFILES_DIR}" ] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
-    
-    # Find all dotfiles used by HomeSetup according to the current shell type
-    while IFS='' read -r dotfile; do
-      ALL_DOTFILES+=("${dotfile}")
-    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
+    # Removing the old $HOME/bin folder
+    if [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ]; then
+      command rm -f "${HOME:?}/bin"
+      echo -e "\n${ORANGE}Your old $HOME/bin link had to be removed. ${NC}"
+    fi
+
+    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
+    if [ -L "${HOME}/.bash_aliasdef" ]; then
+      command rm -f "${HOME}/.bash_aliasdef"
+      echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
+    fi
+
+    # .aliasdef Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.aliasdef" ]; then
+      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef-${TIMESTAMP}.bak"
+      command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
+      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef-${TIMESTAMP}.bak ${NC}"
+    fi
+
+    # .inputrc Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc-${TIMESTAMP}.bak" ]; then
+      command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
+      command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
+      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc-${TIMESTAMP}.bak ${NC}"
+    fi
+
+    # Moving .path file to .hhs
+    if [ -f "${HOME}/.path" ]; then
+      command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
+      echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
+    fi
   }
 
   # Check installed tools

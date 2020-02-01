@@ -21,6 +21,26 @@ Usage: $APP_NAME
 # shellcheck source=/dev/null
 [ -f ~/.bash_colors ] && \. ~/.bash_colors
 
+# Define the user HOME
+HOME=${HOME:-~}
+
+# Shell type
+SHELL_TYPE="${SHELL##*/}"
+
+# Define the HomeSetup directory.
+HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
+
+# Dotfiles source location
+DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
+
+# Find all dotfiles used by HomeSetup according to the current shell type
+while IFS='' read -r dotfile; do
+  ALL_DOTFILES+=("${dotfile}")
+done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
+
+# .dotfiles we will handle
+ALL_DOTFILES=()
+
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
@@ -45,17 +65,6 @@ usage() {
 }
 
 check_installation() {
-
-  # Dotfiles used by HomeSetup
-  ALL_DOTFILES=(
-    "bash_aliases"
-    "bash_colors"
-    "bash_env"
-    "bash_functions"
-    "bash_profile"
-    "bash_prompt"
-    "bashrc"
-  )
 
   if [ -n "$HHS_HOME" ] && [ -d "$HHS_HOME" ]; then
 
@@ -118,10 +127,10 @@ uninstall_dotfiles() {
   echo "* Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
   echo "* Your temporary PS1 => '$PS1'"
   echo ''
-  
-  echo '@@@ HomeSetup needs to close this terminal to finish the removal.'
-  read -rn 1 -p "Press any key to exit the session ..."
-  exit 0
 }
 
 check_installation
+
+echo '@@@ HomeSetup needs to close this terminal to finish the removal.'
+read -rn 1 -p "Press any key to exit the session ..."
+exit 0
