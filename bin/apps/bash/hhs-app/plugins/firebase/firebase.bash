@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # shellcheck disable=SC2034,SC1090
 
 #  Script: firebase.bash

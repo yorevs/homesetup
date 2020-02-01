@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 function about() {
   echo "A multi-faceted language for the Java platform"
 }

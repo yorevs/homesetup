@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #  Script: vault.bash
 # Purpose: Wrapper to vault application
 # Created: Jan 06, 2018

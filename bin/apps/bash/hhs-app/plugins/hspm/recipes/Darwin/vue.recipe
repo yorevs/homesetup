@@ -4,12 +4,12 @@
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 function about() {
-  echo "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine"
+  echo "Vuex is a state management pattern + library for Vue.js applications"
 }
 
 function depends() {
   if ! command -v nvm >/dev/null; then
-    __hhs_errcho "hspm.bash: nvm is required to install node"
+    __hhs_errcho "hspm.bash: nvm is required to install vue"
     return 1
   fi
 
@@ -17,12 +17,12 @@ function depends() {
 }
 
 function install() {
-  nvm install node
+  nvm install vue
   return $?
 }
 
 function uninstall() {
-  nvm deactivate node
-  nvm uninstall node
+  nvm deactivate vue
+  nvm uninstall vue
   return $?
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # shellcheck disable=SC2034,SC1090
 
 #  Script: hspm.bash
@@ -64,10 +65,10 @@ list_recipes() {
   
   for app in ${DEV_TOOLS[*]}; do
     recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
-    if [ -n "$recipe" ] && [ -f "$recipe" ]; then
+    if [ -n "${recipe}" ] && [ -f "${recipe}" ]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
-      \. "$recipe"
+      \. "${recipe}"
       if test -z "$1"; then
         printf '%3s - %s' "${index}" "${BLUE}${app} "
         printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
@@ -89,45 +90,54 @@ list_recipes() {
 # Install the specified app using the installation recipe
 install_recipe() {
 
-  local recipe
+  local recipe recipe_name
 
   recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
 
-  if [ -f "$recipe" ]; then
-    \. "$recipe"
+  if [ -f "${recipe}" ]; then
+    \. "${recipe}"
     if command -v "$1" > /dev/null; then
-      echo -e "${YELLOW}\"$1\" is already installed on the system !${NC}"
-      return 1
+      echo -e "${YELLOW}\"$1\" is already installed on the system !${NC}" && return 1
     fi
     echo -e "${YELLOW}Installing \"$1\", please wait ... "
     if install; then
       echo -e "${GREEN}Installation successful !${NC}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to install app \"$1\" !${NC}"
+      quit 1 "${PLUGIN_NAME}: Failed to install app \"$1\" !"
     fi
   else
-    quit 1 "${PLUGIN_NAME}: Unable to find recipe \"$recipe\" !${NC}"
+    recipe_name=$(basename "${recipe%\.*}")
+    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use brew to install it ...${NC}"
+    if ! brew install "${recipe_name}"; then
+      quit 1 "Unable to install \"${recipe_name}\" !"
+    fi
   fi
 }
 
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
+  local recipe recipe_name
+
   recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
-  if [ -f "$recipe" ]; then
-    \. "$recipe"
+  
+  if [ -f "${recipe}" ]; then
+    \. "${recipe}"
     if ! command -v "$1" > /dev/null; then
-      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}"
-      return 1
+      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}" && return 1
     fi
     echo -e "${YELLOW}Uninstalling $1, please wait ... "
     if uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !${NC}"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !"
     fi
   else
-    quit 1 "${PLUGIN_NAME}: Unable to find recipe \"$recipe\" !${NC}"
+    recipe_name=$(basename "${recipe%\.*}")
+    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use brew to uninstall it ...${NC}"
+    if ! brew uninstall "${recipe_name}"; then
+      quit 1 "Unable to uninstall \"${recipe_name}\" !"
+    fi
   fi
 }
 
@@ -163,11 +173,7 @@ function execute() {
       [ "$#" -le 0 ] && usage 1
       for next_recipe in "${@}"; do
         echo ''
-        if list_recipes "$next_recipe"; then
-          install_recipe "$next_recipe"
-        else
-          quit 1 "${PLUGIN_NAME}: Unable to find recipe for \"$next_recipe\" installation ! ${NC}"
-        fi
+        install_recipe "$next_recipe"
       done
       echo ''
       ;;
@@ -176,11 +182,7 @@ function execute() {
       [ "$#" -le 0 ] && usage 1
       for next_recipe in "${@}"; do
         echo ''
-        if list_recipes "$next_recipe"; then
-          uninstall_recipe "$next_recipe"
-        else
-          quit 1 "${PLUGIN_NAME}: Unable to find recipe for \"$next_recipe\" uninstallation ! ${NC}"
-        fi
+        uninstall_recipe "$next_recipe"
       done
       echo ''
       ;;
@@ -190,7 +192,7 @@ function execute() {
         LIST_ALL=1
       fi
       echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
-      list_recipes
+      list_recipes ""
       echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
       ;;
     *)
