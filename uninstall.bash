@@ -102,7 +102,6 @@ uninstall_dotfiles() {
       [ -f "${next}" ] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
     done
     echo ''
-    [ -d "$HHS_DIR" ] && command rm -rfv "$HHS_DIR"
   fi
   echo ''
 
