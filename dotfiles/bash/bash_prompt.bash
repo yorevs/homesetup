@@ -16,6 +16,7 @@
 
 # Configure git stuff.
 function prompt_git() {
+
   local s='' branchName=''
 
   # Check if the current directory is in a Git repository.

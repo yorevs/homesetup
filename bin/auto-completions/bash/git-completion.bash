@@ -2311,7 +2311,7 @@ __git_complete_config_variable_value ()
     ;;
   color.*.*)
     __gitcomp "
-      normal black red green yellow blue magenta cyan white
+      normal black red green yellow blue PURPLE cyan white
       bold dim ul blink reverse
       " "" "$cur_"
     return

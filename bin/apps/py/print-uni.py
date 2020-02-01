@@ -13,7 +13,7 @@
 
 import os,sys,re
 
-PROC_NAME       = os.path.basename(__file__)
+APP_NAME       = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
 VERSION         = (0, 9, 0)
@@ -23,7 +23,7 @@ USAGE           = """
 Print a backslash 4 digits unicode character E.g:. \\uf118 => \\uf118
 
 Usage: python {} <4-digit-unicode-escape>
-""".format(PROC_NAME)
+""".format(APP_NAME)
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
@@ -34,7 +34,7 @@ def usage(exit_code=0):
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME, VERSION[0], VERSION[1], VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
 
 

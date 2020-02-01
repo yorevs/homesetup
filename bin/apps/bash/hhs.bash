@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC2034
 
 #  Script: hhs.bash
 # Purpose: HomeSetup application
@@ -13,11 +14,9 @@ UNSETS+=(
   'register_plugins' 'register_local_functions' 'parse_args' 'invoke_command' 'register_hhs_functions'
 )
 
-# shellcheck disable=SC2034
 # Program version
-VERSION=0.9.1
+VERSION=1.0.0
 
-# shellcheck disable=SC2034
 # Usage message
 USAGE="
 Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
@@ -45,16 +44,21 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
     - To discover which plugins and functions are available type: hhs list
 "
 
-# shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
-# List of local functions that can be executed
-LOCAL_FUNCTIONS=()
+# Directiry containing all HHS plug-ins
+PLUGINS_DIR="$(dirname "${0//$HHS_DIR/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/plugins"
 
-# List of HomeSetup functions available
+# Directiry containing all local HHS functions.
+FUNCTIONS_DIR="$(dirname "${0//$HHS_DIR/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/functions"
+
+# List of local hhs functions that can be executed.
+HHS_APP_FUNCTIONS=()
+
+# List of HomeSetup functions available.
 HHS_FUNCTIONS=()
 
-# List of required functions a plugin must have
+# List of required functions a plugin must have.
 PLUGINS_FNCS=('help' 'version' 'execute')
 
 # List of valid plugins
@@ -67,7 +71,7 @@ PLUGINS=()
 # @param $1 [Req] : The plugin name.
 has_function() {
 
-  if [ -n "${1}" ] && [[ ${LOCAL_FUNCTIONS[*]} =~ ${1} ]]; then
+  if [ -n "${1}" ] && [[ ${HHS_APP_FUNCTIONS[*]} =~ ${1} ]]; then
     return 0
   fi
 
@@ -134,8 +138,8 @@ register_plugins() {
       PLUGINS+=("${plg_name}")
       PLUGINS_LIST+=("${plugin}")
     fi
-  done < <(find "${HHS_PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
-  IFS=$"$HHS_RESET_IFS"
+  done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
+  IFS=$"$RESET_IFS"
 }
 
 # Purpose: Parse command line arguments
@@ -165,7 +169,6 @@ parse_args() {
   done
 }
 
-# shellcheck disable=SC1090
 # Purpose: Invoke the plugin command
 invoke_command() {
 
@@ -197,18 +200,28 @@ invoke_command() {
   return ${ret}
 }
 
-# Purpose: Read all iinternal functions and make them available to use
+# Purpose: Read all internal functions and make them available to use
 register_local_functions() {
 
-  while IFS='' read -r fnc; do
-    f_name="${fnc##function }"
-    f_name="${f_name%\(\) \{}"
-    LOCAL_FUNCTIONS+=("${f_name}")
-  done < <(grep '^function .*()' < "$0")
-  # Register the functions to be unset when program quits
-  UNSETS+=("${LOCAL_FUNCTIONS[@]}")
+  while IFS=$'\n' read -r fnc_file; do
+    \. "${fnc_file}"
+    while IFS='' read -r fnc; do
+      f_name="${fnc##function }"
+      f_name="${f_name%\(\) \{}"
+      HHS_APP_FUNCTIONS+=("${f_name}")
+    done < <(grep '^function .*()' < "${fnc_file}")
+    # Register the functions to be unset when program quits
+    UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
+  done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
 }
 
+# ------------------------------------------
+# Local functions
+
+# Functions MUST start with 'function' keyword and
+# MUST quit <exit)coode> with the proper exit code
+
+# Purpose: Find all hhs-functions and make them available to use
 register_hhs_functions() {
 
   local all_hhs_fn
@@ -227,66 +240,24 @@ register_hhs_functions() {
 }
 
 # ------------------------------------------
-# Local functions
-
-# Functions MUST start with 'function' keyword and
-# MUST quit <exit)coode> with the proper exit code
-
-# Purpose: Provide a help for __hhs functions
-function help() {
-
-  usage 0
-}
-
-# Purpose: List all __hhs functions
-function list() {
-
-  echo ' '
-  echo "${YELLOW}HomeSetup Application Manager"
-  echo ' '
-  echo " ${YELLOW}---- Plugins"
-  echo ' '
-  for idx in "${!PLUGINS[@]}"; do
-    printf "${WHITE}%.2d. " "$((idx + 1))"
-    echo -e "Registered plug-in => ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
-  done
-
-  echo ' '
-  echo " ${YELLOW}---- Functions"
-  echo ' '
-  for idx in "${!LOCAL_FUNCTIONS[@]}"; do
-    printf "${WHITE}%.2d. " "$((idx + 1))"
-    echo -e "Registered built-in function => ${HHS_HIGHLIGHT_COLOR}\"${LOCAL_FUNCTIONS[$idx]}\"${NC}"
-  done
-
-  quit 0
-}
-
-function functions() {
-  
-  register_hhs_functions
-  
-  echo "${YELLOW}Available HomeSetup Functions"
-  echo ' '
-  for idx in "${!HHS_FUNCTIONS[@]}"; do
-    printf "${WHITE}%.2d. " "$((idx + 1))"
-    echo -e "Registered __hhs_<function> => ${HHS_HIGHLIGHT_COLOR}\"${HHS_FUNCTIONS[$idx]}\"${NC}"
-  done
-}
-
-# ------------------------------------------
 # Purpose: Program entry point
 main() {
+  
+  local fname
+  
   parse_args "${@}"
   register_local_functions
   register_plugins
   if has_function "${1}"; then
-    ${1} "${@}"
+    fname="${1}"
+    shift
+    ${fname} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
-  invoke_command "${@}" || quit 2 "Failed to execute (${?}) plugin: \"${1}\" !"
+  invoke_command "${@}" || quit 2
 }
 
 main "${@}"
+quit 0

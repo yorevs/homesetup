@@ -15,17 +15,16 @@ function __hhs_tailor() {
 
   local file
 
-  if [ -n "$1" ] && [ ! -f "$1" ]; then
+  if [ -z "$1" ]; then
     echo "Usage: ${FUNCNAME[0]} [filename]"
     echo ''
     echo '  Notes: '
     echo '    filename: If not provided, stdin will be used instead'
     return 1
   else
-
     [ -f "$HHS_DIR/.tailor" ] || echo -e "
     THREAD_NAME_RE=\" *[-a-zA-Z0-9_ ]+ *\"
-    THREAD_NAME_STYLE=\"${VIOLET}\"
+    THREAD_NAME_STYLE=\"${PURPLE}\"
     FQDN_RE=\"(([a-zA-Z\.][a-zA-Z0-9]*[\.\$])+[a-zA-Z0-9]+)\"
     FQDN_STYLE=\"${CYAN}\"
     LOG_LEVEL_RE=\"INFO|DEBUG|FINE\"
@@ -55,6 +54,7 @@ function __hhs_tailor() {
           -e "s/(${URI_FMT_RE})/${URI_FMT_STYLE}\1${NC}/g"
       done < "${file}"
     else
+      [ -d "${file}" ] || touch "${file}"
       tail -n 25 -F "${file}" | esed \
         -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
         -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \

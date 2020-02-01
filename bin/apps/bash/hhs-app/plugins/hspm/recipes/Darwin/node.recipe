@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # shellcheck disable=SC1090
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -7,7 +9,7 @@ function about() {
 
 function depends() {
   if ! command -v nvm >/dev/null; then
-    echo "${RED}nvm is required to install node${NC}"
+    __hhs_errcho "hspm.bash: nvm is required to install node"
     return 1
   fi
 

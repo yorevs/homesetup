@@ -75,7 +75,7 @@
     guitool = opendiff
     # Detect copies as well as renames
     renames = copies
-	external = $HHS_DIR/bin/git-diff-cmd.bash
+	external = $HHS_HOME/templates/git/git-diff-cmd.bash
 
 [diff "bin"]
     # Use `hexdump` to diff binary files
@@ -113,7 +113,7 @@
     header = white bold
     added = green bold
     changed = red bold
-    untracked = magenta bold
+    untracked = PURPLE bold
     updated = green bold
     nobranch = red reverse bold
 

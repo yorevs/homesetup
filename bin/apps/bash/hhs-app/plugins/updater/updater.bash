@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2181
+#shellcheck disable=SC2181,SC2034,SC1090
 
 #  Script: updater.bash
 # Purpose: Update manager for HomeSetup
@@ -10,17 +10,15 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# shellcheck disable=SC2034
 # Current script version.
 VERSION=0.9.0
 
 # Current plugin name
 PLUGIN_NAME="updater"
 
-# shellcheck disable=SC2034
 # Usage message
 USAGE="
-Usage: ${APP_NAME} ${PLUGIN_NAME} <option>
+Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} <option>
 
     Update manager for HomeSetup.
     
@@ -32,9 +30,10 @@ Usage: ${APP_NAME} ${PLUGIN_NAME} <option>
       -s  |  --stamp-next : Stamp the next auto-update check for 7 days ahead.
 "
 
-UNSETS=('help' 'version' 'cleanup' 'execute' 'update_hhs' 'stamp_next_update' 'stamp_next_update')
+UNSETS=(
+  help version cleanup execute update_hhs stamp_next_update stamp_next_update
+)
 
-# shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # shellcheck disable=SC2086,SC2120
@@ -47,9 +46,10 @@ update_hhs() {
   if [ -n "$HHS_VERSION" ]; then
     clear
     repo_ver="$(curl -s --fail -m 3 $VERSION_URL)"
-    if [ -n "$repo_ver" ]; then
-      is_different=$(test -n "$repo_ver" -a "$HHS_VERSION" != "$repo_ver" && echo 1)
-      if [ -n "$is_different" ]; then
+    re="[0-9]+\.[0-9]+\.[0-9]+"
+    
+    if [[ $repo_ver =~ $re ]]; then
+      if [[ ${repo_ver//./} -gt ${HHS_VERSION//./} ]]; then
         echo ''
         echo -e "${ORANGE}Your version of HomeSetup is not up-to-date: ${NC}"
         echo -e "=> Repository: ${GREEN}${repo_ver}${NC} , Yours: ${RED}${HHS_VERSION}${NC}"
@@ -57,38 +57,34 @@ update_hhs() {
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n]) ?" ANS
         [ -n "$ANS" ] && echo "${ANS}${NC}"
         if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-          pushd "$HHS_HOME" &> /dev/null || return 1
-          git pull || return 1
-          popd &> /dev/null || return 1
+          pushd "$HHS_HOME" &> /dev/null || quit 1
+          git pull || quit 1
+          popd &> /dev/null || quit 1
           if "${HHS_HOME}"/install.bash -q; then
             echo -e "${GREEN}Successfully updated HomeSetup !"
             sleep 1
             clear
-            # shellcheck disable=SC1090
             source ~/.bashrc
             echo -e "${HHS_MOTD}"
           else
-            echo -e "${RED}Failed to install HomeSetup update !${NC}"
-            return 1
+            quit 1 "${PLUGIN_NAME}: Failed to install HomeSetup update !${NC}"
           fi
         else
           echo ''
         fi
       else
-        echo -e "${GREEN}You version is up to date v${repo_ver} !"
+        echo -e "${GREEN}You version is up to date v${HHS_VERSION} !"
       fi
       stamp_next_update &> /dev/null
     else
-      echo "${RED}Unable to fetch repository version !${NC}"
-      return 1
+      quit 1 "${PLUGIN_NAME}: Unable to fetch repository version !"
     fi
   else
-    echo "${RED}HHS_VERSION was not defined !${NC}"
-    return 1
+    quit 1 "${PLUGIN_NAME}: HHS_VERSION was not defined !"
   fi
   echo -e "${NC}"
 
-  return 0
+  quit 0
 }
 
 # @function: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
@@ -128,7 +124,7 @@ function help() {
 
 function version() {
   echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
-  exit 0
+  quit 0
 }
 
 function cleanup() {
@@ -160,5 +156,5 @@ function execute() {
   esac
   shopt -u nocasematch
 
-  exit 0
+  quit 0
 }

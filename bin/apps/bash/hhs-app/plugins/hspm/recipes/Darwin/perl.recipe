@@ -1,10 +1,12 @@
+#!/usr/bin/env bash
+
 function about() {
   echo "Perl is a highly capable, feature-rich programming language with over 30 years of development"
 }
 
 function depends() {
   if ! command -v brew >/dev/null; then
-    echo "${RED}HomeBrew is required to install perl${NC}"
+    __hhs_errcho "hspm.bash: HomeBrew is required to install perl"
     return 1
   fi
 

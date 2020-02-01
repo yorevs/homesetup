@@ -23,7 +23,7 @@ if __hhs_has "dig"; then
 
   # @function: Resolve domain names associated with the IP.
   # @param $1 [Req] : The IP address to resolve.
-  function __hhs_ip-resolve() {
+  function __hhs_ip_resolve() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 1 ]; then
       echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
@@ -132,7 +132,7 @@ function __hhs_gateway_ip() {
 
 # @function: Check information about the specified IP.
 # @param $1 [Req] : The IP to get information about.
-function __hhs_ip-info() {
+function __hhs_ip_info() {
 
   local ipinfo
 
@@ -141,7 +141,7 @@ function __hhs_ip-info() {
     return 1
   else
     ipinfo=$(curl -m 5 --basic "ip-api.com/json/$1" 2> /dev/null | tr ' ' '_')
-    [ -n "$ipinfo" ] && __hhs_json-print "$ipinfo" && return 0
+    [ -n "$ipinfo" ] && __hhs_json_print "$ipinfo" && return 0
   fi
 
   return 1
@@ -149,7 +149,7 @@ function __hhs_ip-info() {
 
 # @function: Lookup DNS entries to determine the IP address.
 # @param $1 [Req] : The domain name to lookup.
-function __hhs_ip-lookup() {
+function __hhs_ip_lookup() {
 
   if [ "$#" -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <domain_name>"
@@ -164,7 +164,7 @@ function __hhs_ip-lookup() {
 # @function: Check the state of local port(s).
 # @param $1 [Req] : The port number regex.
 # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
-function __hhs_port-check() {
+function __hhs_port_check() {
 
   local state port re='(((([0-9]{1,3})\.){3}[0-9]{1,3})|\*)'
 
@@ -184,7 +184,7 @@ function __hhs_port-check() {
       echo ''
       return $?
     else
-      echo -e "${RED}## Invalid state \"$state\". Use one of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
+      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"$state\". Use one of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]"
     fi
   elif [ -n "$1" ] && [ -z "$2" ]; then
     port=${1:0:5}

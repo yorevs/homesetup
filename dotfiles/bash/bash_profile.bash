@@ -26,14 +26,11 @@ export USER=${USER:-$(whoami)}
 #   source -> ~/.colors can be used to extend/override .bash_colors
 #   source -> ~/.functions can be used to extend/override .bash_functions
 
-# Removes all aliases before setting them
-unalias -a
-
 # Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
-  profile bash_colors colors bash_env env bash_prompt prompt 
-  bash_aliases aliasdef aliases bash_functions functions bash_completions
+  'profile' 'bash_colors' 'colors' 'bash_env' 'env' 'bash_prompt' 'prompt'
+  'bash_aliases' 'aliases' 'bash_functions' 'functions' 'bash_completions'
 )
 
 # Load all HomeSetup dotfiles
@@ -46,45 +43,53 @@ unset file
 # -----------------------------------------------------------------------------------
 # Set default shell options
 
+HHS_TERM_OPTS=''
 case $HHS_MY_SHELL in
 
   bash)
     # If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
-    shopt -u nocaseglob
+    shopt -u nocaseglob && HHS_TERM_OPTS+='nocaseglob '
     # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-    shopt -s extglob
+    shopt -s extglob && HHS_TERM_OPTS+='extglob '
     # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-    shopt -s cdspell
+    shopt -s cdspell && HHS_TERM_OPTS+='cdspell '
     # Make bash check its window size after a process completes
-    shopt -s checkwinsize
+    shopt -s checkwinsize && HHS_TERM_OPTS+='checkwinsize '
     # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
-    shopt -u nocasematch
-    export HHS_TERM_OPTS='nocaseglob extglob cdspell checkwinsize nocasematch'
-    ;;
-  *)
-    export HHS_TERM_OPTS=''
+    shopt -u nocasematch && HHS_TERM_OPTS+='nocasematch '
     ;;
 esac
+
+export HHS_TERM_OPTS
 
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
 # - colored-stats: Displays possible completions using different colors to indicate their type
+# - <shift>+<tab> Will cicle forward though complete options
 
 if ! [ -f ~/.inputrc ]; then
-  echo "set completion-ignore-case on" > ~/.inputrc
-  echo "set colored-stats on" >> ~/.inputrc
+  {
+    echo "set completion-ignore-case on"
+    echo "set colored-stats on"
+    echo "TAB: complete"
+    echo "\"\e[Z\": menu-complete"
+  } > ~/.inputrc
 else
   case $HHS_MY_OS in
     Darwin)
       sed -i '' -E \
-        -e "s/(^set colored-stats) .*/\1 on/g" \
-        -e "s/(^set completion-ignore-case) .*/\1 on/g" \
+        -e 's/(^set colored-stats) .*/\1 on/g' \
+        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+        -e 's/(^TAB:) .*/\1 complete/g' \
+        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
         ~/.inputrc
       ;;
     Linux)
       sed -i'' -r \
-        -e "s/(^set colored-stats) .*/\1 on/g" \
-        -e "s/(^set completion-ignore-case) .*/\1 on/g" \
+        -e 's/(^set colored-stats) .*/\1 on/g' \
+        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+        -e 's/(^TAB:) .*/\1 complete/g' \
+        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
         ~/.inputrc
       ;;
   esac
@@ -100,4 +105,4 @@ paths -q -a "$HHS_DIR/bin"
 hhs updater execute --check
 
 # Erase what is before the MOTD message and print HHS MOTD
-cls && echo -e "${HHS_MOTD}"
+echo -e "\033[1J\033[H${HHS_MOTD}${NC}"

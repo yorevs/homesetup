@@ -13,6 +13,7 @@
 # System locale (defaults)
 export LC_ALL=en_US
 export LANG=en_US.UTF-8
+export RESET_IFS="$IFS"
 
 # Current OS and Terminal
 export HHS_MY_OS="$(uname -s)"
@@ -78,13 +79,11 @@ export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
 # Fixed
 export HHS_HOME="${HOME}/HomeSetup"
 export HHS_DIR="${HOME}/.hhs"
-export HHS_PLUGINS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins"
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
-export HHS_RESET_IFS="${IFS}"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
-export HHS_PATHS_FILE="${HOME}/.path"
+export HHS_PATHS_FILE="${HHS_DIR}/.path"
 
 # Customizeable
 export HHS_DEFAULT_EDITOR=
@@ -94,14 +93,13 @@ export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
-HHS_DEFAULT_DEV_TOOLS=(
-  ssh hexdump vim xcode-select brew tree
-  pcregrep shfmt shellcheck java rvm ruby
-  gcc make qmake doxygen ant mvn gradle
-  svn docker nvm node vue eslint gpg
-  md5 shasum htop dialog telnet figlet
-  base64 git go python python3 jq jenv
-  perl ifconfig groovy
+DEFAULT_DEV_TOOLS=(
+  'ssh' 'hexdump' 'vim' 'xcode-select' 'brew tree'
+  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'ruby'
+  'gcc' 'make' 'qmake' 'doxygen' 'ant' 'mvn' 'gradle'
+  'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 'md5'
+  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'base64 '
+  'git' 'go' 'python' 'jq' 'jenv' 'perl' 'ifconfig' 'groovy'
 )
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(echo "${HHS_DEFAULT_DEV_TOOLS[*]}" | tr ' ' '\n' | uniq | sort | tr '\n' ' ')}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<< "${DEFAULT_DEV_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}

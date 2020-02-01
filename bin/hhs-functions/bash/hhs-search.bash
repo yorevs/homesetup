@@ -13,7 +13,7 @@ if __hhs_has "python"; then
   # @function: Search for files and links to files recursively.
   # @param $1 [Req] : The base search path.
   # @param $2 [Req] : The GLOB expressions of the file search.
-  function __hhs_search-file() {
+  function __hhs_search_file() {
 
     local inames expr filter dir
 
@@ -38,7 +38,7 @@ if __hhs_has "python"; then
   # @function: Search for directories and links to directories recursively.
   # @param $1 [Req] : The base search path.
   # @param $2 [Req] : The GLOB expressions of the directory search.
-  function __hhs_search-dir() {
+  function __hhs_search_dir() {
 
     local inames expr dir filter
 
@@ -67,7 +67,7 @@ if __hhs_has "python"; then
   # @param $4 [Req] : The GLOB expression of the file search.
   # @param $5 [Opt] : Whether to replace the findings.
   # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
-  function __hhs_search-string() {
+  function __hhs_search_string() {
 
     local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
     local names_expr search_str base_cmd full_cmd dir
@@ -103,7 +103,7 @@ if __hhs_has "python"; then
           -r | --replace)
             replace=1
             shift
-            [ -z "$1" ] && echo "${RED}Missing replacement string !${NC}" && return 1
+            [ -z "$1" ] && __hhs_errcho "${FUNCNAME[0]}: Missing replacement string !" && return 1
             repl_str="$1"
             extra_str=", replacement: \"${repl_str}\""
             ;;
@@ -124,7 +124,7 @@ if __hhs_has "python"; then
       
       if [ -n "$replace" ]; then
         if [ "$filter_type" = 'string' ]; then
-          echo "${RED}Can't search and replace non-Regex expressions!${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"
           return 1
         fi
         [ "${HHS_MY_OS}" == "Darwin" ] && ised="sed -i '' -E"

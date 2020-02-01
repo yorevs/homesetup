@@ -1,10 +1,12 @@
+#!/usr/bin/env bash
+
 function about() {
   echo "Python is a programming language that lets you work quickly and integrate systems more effectively"
 }
 
 function depends() {
   if ! command -v brew >/dev/null; then
-    echo "${RED}HomeBrew is required to install python${NC}"
+    __hhs_errcho "hspm.bash: HomeBrew is required to install python"
     return 1
   fi
 

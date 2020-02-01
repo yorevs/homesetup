@@ -36,14 +36,21 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=(brew python pcregrep ifconfig gpg tree figlet)
+  
+  # Timestamp used to backup files
+  TIMESTAMP=$(\date "+%s%S")
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
   STAR_ICN="\xef\x80\x85"
   NOTE_ICN="\xef\x84\x98"
+  HANDPEACE_ICN="\xef\x89\x9b"
 
   # Functions to be unset after quit
-  UNSETS=(quit usage has check_inst_method install_dotfiles clone_repository check_installed activate_dotfiles)
+  UNSETS=(
+    quit usage has check_inst_method install_dotfiles clone_repository check_installed
+    activate_dotfiles compatibility_check
+  )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
@@ -157,7 +164,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create all user custom files.
     [ -f "$HOME/.aliasdef" ] || cp "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
-    [ -f "$HOME/.path" ] || touch "$HOME/.path"
+    [ -f "$HOME/.inputrc" ] || cp "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
     [ -f "$HOME/.aliases" ] || touch "$HOME/.aliases"
     [ -f "$HOME/.colors" ] || touch "$HOME/.colors"
     [ -f "$HOME/.env" ] || touch "$HOME/.env"
@@ -192,6 +199,50 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
 
+  # Check for backward HHS compatibility
+  compatibility_check() {
+  
+    echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
+
+    # Moving old hhs files into the proper directory
+    [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
+    [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
+    [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
+    [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
+
+    # Removing the old $HOME/bin folder
+    if [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ]; then
+      command rm -f "${HOME:?}/bin"
+      echo -e "\n${ORANGE}Your old $HOME/bin link had to be removed. ${NC}"
+    fi
+
+    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
+    if [ -L "${HOME}/.bash_aliasdef" ]; then
+      command rm -f "${HOME}/.bash_aliasdef"
+      echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
+    fi
+
+    # .aliasdef Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.aliasdef" ]; then
+      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef-${TIMESTAMP}.bak"
+      command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
+      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef-${TIMESTAMP}.bak ${NC}"
+    fi
+
+    # .inputrc Needs to be updated, so, we need to replace it
+    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc-${TIMESTAMP}.bak" ]; then
+      command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
+      command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
+      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc-${TIMESTAMP}.bak ${NC}"
+    fi
+    
+    # Moving .path file to .hhs
+    if [ -f "${HOME}/.path" ]; then
+      command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
+      echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
+    fi
+  }
+
   # Install all dotfiles.
   install_dotfiles() {
 
@@ -201,35 +252,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  Install Type: $METHOD"
     echo -e "         Shell: ${SHELL_TYPE}"
     echo -e "   Install Dir: ${HHS_HOME}"
-    echo -e "         Fonts: ${FONTS_DIR}"
+    echo -e "     Fonts Dir: ${FONTS_DIR}"
+    echo -e "  Dotfiles Dir: $DOTFILES_DIR"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]//hhs/${SHELL_TYPE}}"
     echo -e "${NC}"
 
     if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
       echo -e "${ORANGE}"
-      [ -z ${QUIET} ] && read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+      [ -z ${QUIET} ] && read -rn 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? " ANS
       echo -e "${NC}"
-      if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+      if [ ! "$ANS" = "y" ] && [ ! "$ANS" = "Y" ]; then
         [ -n "$ANS" ] && echo ''
-        echo -en "${WHITE}Backing up existing dotfiles ..."
-        # Moving old hhs files into the proper directory
-        [ -f "$HOME/.cmd_file" ] && mv -f "$HOME/.cmd_file" "$HHS_DIR/.cmd_file"
-        [ -f "$HOME/.saved_dir" ] && mv -f "$HOME/.saved_dir" "$HHS_DIR/.saved_dirs"
-        [ -f "$HOME/.punches" ] && mv -f "$HOME/.punches" "$HHS_DIR/.punches"
-        [ -f "$HOME/.firebase" ] && mv -f "$HOME/.firebase" "$HHS_DIR/.firebase"
-        # Removing the old $HOME/bin folder
-        [ -L "$HOME/bin" ] || [ -d "$HOME/bin" ] && command rm -f "${HOME:?}/bin"
-        echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-      else
-        [ -n "$ANS" ] && echo ''
-        quit 1 "Installation cancelled!"
+        quit 1 "Installation cancelled !"
       fi
     else
       OPT='all'
     fi
 
-    command pushd "$DOTFILES_DIR" &> /dev/null || quit 1 "Unable to enter dotfiles directory!"
-    echo -e "\n${WHITE}Installing dotfiles ${NC}"
+    command pushd "${DOTFILES_DIR}" &> /dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
+    echo -e "\n${WHITE}Installing dotfiles ...${NC}"
 
     # If `all' option is used, copy all files
     if [ "$OPT" = 'all' ]; then
@@ -237,7 +278,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dofile into $HOME/.hhs
-        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}".orig)"
+        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}-${TIMESTAMP}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
@@ -250,11 +291,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         echo ''
-        [ -z ${QUIET} ] && read -r -n 1 -sp "Link ${dotfile} (y/[n])? " ANS
+        [ -z ${QUIET} ] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && continue
         echo ''
-        # Backup existing dofile into $DOTFILES_DIR
-        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}".orig)"
+        # Backup existing dofile into ${DOTFILES_DIR}
+        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}-${TIMESTAMP}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
@@ -266,7 +307,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
     command find "$BIN_DIR" -maxdepth 1 -type l -delete -print &> /dev/null
-    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] && quit 2 "Unable to remove old app links from $BIN_DIR directory"
+    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] && quit 2 "Unable to remove old app links from \"$BIN_DIR\" directory !"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link apps into place
@@ -274,7 +315,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     command find "$HHS_HOME/bin/apps" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &> /dev/null
-    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
+    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] || quit 2 "Unable to link apps into \"$BIN_DIR\" directory !"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link auto-completes into place
@@ -282,63 +323,54 @@ Usage: $APP_NAME [OPTIONS] <args>
     command find "$HHS_HOME/bin/auto-completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &> /dev/null
-    [ -L "$BIN_DIR/git-completion.${SHELL_TYPE}" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
+    [ -L "$BIN_DIR/git-completion.${SHELL_TYPE}" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory !"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
-    [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory"
+    [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory !"
     command cp -fv "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR" &> /dev/null
     [ -f "$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
-    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory!"
+    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Copy HomeSetup git hooks into place
     echo -en "\n${WHITE}Copying git hooks into place ${BLUE}"
     command cp -fv "$HHS_HOME/templates/git/hooks/*" .git/hooks/ &> /dev/null
     [ -f "$HHS_HOME/templates/git/hooks/prepare-commit-msg" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
-    # HHS Compatibility {
-
-    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
-    [ -f ~/.bash_aliasdef ] && \rm -f ~/.bash_aliasdef
-
-    # hhu was remodeled, so, remove any alias in aliasdef of it
-    sed -i '' -E -e 's#((__hhs_alias|alias) hhu=.*)##g' -e '/^\s*$/d' ~/.aliasdef
-
-    # } HHS Compatibility
+    compatibility_check
   }
 
   # Clone the repository and install dotfiles.
   clone_repository() {
 
-    [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely"
-    [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: ${HHS_HOME}!"
+    [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely !"
+    [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: \"${HHS_HOME}\" !"
 
     echo ''
-    echo -e 'Cloning HomeSetup from repository ...'
+    echo -e "${WHITE}Cloning HomeSetup from repository ..."
     sleep 1
-    command git clone "$REPO_URL" "$HHS_HOME"
 
-    if [ -f "$DOTFILES_DIR/${SHELL}_colors.${SHELL_TYPE}" ]; then
-      \. "$DOTFILES_DIR/${SHELL}_colors.${SHELL_TYPE}"
+    if git clone "$REPO_URL" "$HHS_HOME"; then
+      \. "${DOTFILES_DIR}/${SHELL}_colors.${SHELL_TYPE}"
     else
-      quit 2 "Unable to properly clone the repository!"
+      quit 2 "Unable to properly clone the repository !"
     fi
   }
 
   # Check installed tools
   check_installed() {
-  
+
     echo ''
-    echo -e "Checking required tools "
+    echo -e "${WHITE}Checking required tools ..."
     echo ''
-    
+
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=10
 
     for tool_name in "${HHS_REQUIRED_TOOLS[@]}"; do
-      echo -en "Checking: ${YELLOW}${tool_name}${NC} ..."
+      echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
       if has "$tool_name"; then
         echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
@@ -346,7 +378,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
       fi
     done
-    
+
     sleep 2
   }
 
@@ -370,8 +402,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
       echo ''
     fi
-
-    echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") installed!"
+    echo -e "${HANDPEACE_ICN} Your shell, good as hell... not just dotfiles !"
+    echo ''
+    echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "$HHS_HOME/.VERSION") has been installed !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.${SHELL_TYPE}rc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"

@@ -29,7 +29,7 @@ for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bas
 done
 
 # Load all functions that were previously aliased
-for file in $(find "$HHS_HOME/bin/ext-tools/bash" -type f -name "*.bash" | sort); do
+for file in $(find "$HHS_HOME/bin/hhs-dev-tools/bash" -type f -name "*.bash" | sort); do
   source "$file"
 done
 

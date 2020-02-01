@@ -11,6 +11,8 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
+# @verified versions: ???
+
 from time import sleep, time as time
 from datetime import timedelta
 from decimal import Decimal

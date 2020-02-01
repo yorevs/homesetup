@@ -24,6 +24,11 @@
 # If not running interactively, don't load anything.
 [ -z "$PS1" ] && [ -z "$PS2" ] && return
 
+# The Internal Field Separator (IFS). The default value is <space><tab><newline>
+export IFS=' 	
+'
+# Do not change this formatting, it is required to proper reset IFS to it's defaults
+
 # Load the profile according to the SHELL defined
 case "${SHELL##*\/}" in
   bash)

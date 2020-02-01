@@ -8,6 +8,15 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: Echo a message in red color and to stderr
+function __hhs_errcho() {
+  
+  echo -e "${RED}${*}${NC}" 1>&2
+  echo ''
+  
+  return $?
+}
+
 # @function: Highlight words from the piped stream.
 # @param $1 [Req] : The word to highlight.
 # @param $1 [Pip] : The piped input stream.
@@ -35,7 +44,7 @@ function __hhs_highlight() {
 
 # @function: Pretty print (format) JSON string.
 # @param $1 [Req] : The unformatted JSON string.
-function __hhs_json-print() {
+function __hhs_json_print() {
 
   if [ $# -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} <json_string>"
@@ -59,7 +68,7 @@ function __hhs_edit() {
 
   if [ -n "$1" ]; then
     [ -f "$1" ] || touch "$1" > /dev/null 2>&1
-    [ -f "$1" ] || echo -e "${RED}Unable to create file \"$1\""
+    [ -f "$1" ] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"$1\""
     if [ -n "${HHS_DEFAULT_EDITOR}" ] && ${HHS_DEFAULT_EDITOR} "$1"; then
       echo ''
     elif open "$1" > /dev/null 2>&1; then
@@ -67,7 +76,7 @@ function __hhs_edit() {
     elif vi "$1"; then
       echo ''
     else
-      echo -e "${RED}Unable to find a editor thats fits the file \"$1\""
+      __hhs_errcho "${FUNCNAME[0]}: Unable to find a editor thats fits the file \"$1\""
       return 1
     fi
 

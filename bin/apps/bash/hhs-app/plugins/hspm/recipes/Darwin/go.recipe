@@ -1,10 +1,12 @@
+#!/usr/bin/env bash
+
 function about() {
   echo "Go is an open source programming language that makes it easy to build simple, reliable, and efficient software"
 }
 
 function depends() {
   if ! command -v brew >/dev/null; then
-    echo "${RED}HomeBrew is required to install go${NC}"
+    __hhs_errcho "hspm.bash: HomeBrew is required to install go"
     return 1
   fi
 

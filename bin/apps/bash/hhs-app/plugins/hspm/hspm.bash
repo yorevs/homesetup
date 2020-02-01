@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2034,SC1090
+
 #  Script: hspm.bash
 # Purpose: Manage your development tools using installation/uninstallation recipes.
 # Created: Jan 06, 2020
@@ -6,14 +9,12 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
-# shellcheck disable=SC2034
 # Current script version.
 VERSION=0.9.0
 
 # Current plugin name
 PLUGIN_NAME="hspm"
 
-# shellcheck disable=SC2034
 # Usage message
 USAGE="
 Usage: $PLUGIN_NAME <option> [arguments]
@@ -32,9 +33,10 @@ Usage: $PLUGIN_NAME <option> [arguments]
       all       : If this option is used, displays even tools without recipes.
 "
 
-UNSETS=('help' 'version' 'cleanup' 'execute' 'cleanup_recipes' 'list_recipes' 'install_recipe' 'uninstall_recipe')
+UNSETS=(
+  help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
+)
 
-# shellcheck disable=SC1090
 [ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Flag to enlist even the missing recipes
@@ -47,7 +49,7 @@ ALL_RECIPES=()
 DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 
 # Directiry containing all hspm recipes
-RECIPES_DIR="${HHS_PLUGINS_DIR}/hspm/recipes"
+RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
 # Unset all declared functions from the recipes
 cleanup_recipes() {
@@ -55,17 +57,18 @@ cleanup_recipes() {
   unset -f 'about' 'depends' 'install' 'uninstall'
 }
 
-# shellcheck disable=2155,SC2059,SC2183,SC1090
+# shellcheck disable=2155,SC2059,SC2183
 list_recipes() {
 
   local index=0 recipe pad_len=20
   local pad=$(printf '%0.1s' "."{1..60})
+  
   for app in ${DEV_TOOLS[*]}; do
     recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
-    if [ -n "$recipe" ] && [ -f "$recipe" ]; then
+    if [ -n "${recipe}" ] && [ -f "${recipe}" ]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
-      \. "$recipe"
+      \. "${recipe}"
       if test -z "$1"; then
         printf '%3s - %s' "${index}" "${BLUE}${app} "
         printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
@@ -84,54 +87,62 @@ list_recipes() {
   [ -n "$1" ] && return 1 || return 0
 }
 
-# shellcheck disable=SC1090
 # Install the specified app using the installation recipe
 install_recipe() {
 
-  local recipe
+  local recipe recipe_name
 
   recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
 
-  if [ -f "$recipe" ]; then
-    echo ''
-    \. "$recipe"
+  if [ -f "${recipe}" ]; then
+    \. "${recipe}"
     if command -v "$1" > /dev/null; then
-      quit 1 "${YELLOW}\"$1\" is already installed on the system !${NC}"
+      echo -e "${YELLOW}\"$1\" is already installed on the system !${NC}" && return 1
     fi
-    echo -e "${YELLOW}Installing \"$1\", please wait ... ${NC}"
+    echo -e "${YELLOW}Installing \"$1\", please wait ... "
     if install; then
       echo -e "${GREEN}Installation successful !${NC}"
     else
-      quit 2 "Failed to install app \"$1\" !"
+      quit 1 "${PLUGIN_NAME}: Failed to install app \"$1\" !"
     fi
   else
-    quit 1 "Unable to find recipe \"$recipe\" !"
+    recipe_name=$(basename "${recipe%\.*}")
+    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use brew to install it ...${NC}"
+    if ! brew install "${recipe_name}"; then
+      quit 1 "Unable to install \"${recipe_name}\" !"
+    fi
   fi
 }
 
-# shellcheck disable=SC1090
 # Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
+  local recipe recipe_name
+
   recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
-  if [ -f "$recipe" ]; then
-    echo ''
-    \. "$recipe"
+  
+  if [ -f "${recipe}" ]; then
+    \. "${recipe}"
     if ! command -v "$1" > /dev/null; then
-      quit 2 "${YELLOW}\"$1\" is not installed on the system !${NC}"
+      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}" && return 1
     fi
-    echo -e "${YELLOW}Uninstalling $1, please wait ... ${NC}"
+    echo -e "${YELLOW}Uninstalling $1, please wait ... "
     if uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
     else
-      quit 2 "Failed to uninstall app \"$1\" !"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !"
     fi
   else
-    quit 2 "Unable to find recipe \"$recipe\" !"
+    recipe_name=$(basename "${recipe%\.*}")
+    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use brew to uninstall it ...${NC}"
+    if ! brew uninstall "${recipe_name}"; then
+      quit 1 "Unable to uninstall \"${recipe_name}\" !"
+    fi
   fi
 }
 
 function help() {
+
   usage 0
 }
 
@@ -145,6 +156,7 @@ function cleanup() {
 }
 
 function execute() {
+
   [ -z "$1" ] && usage 1
   if [ ${#DEV_TOOLS[*]} -le 0 ]; then
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
@@ -159,20 +171,20 @@ function execute() {
     # Install the app
     -i | --install)
       [ "$#" -le 0 ] && usage 1
-      if list_recipes "$1"; then
-        install_recipe "$1"
-      else
-        quit 1 "Unable to find recipe for \"$1\" !"
-      fi
+      for next_recipe in "${@}"; do
+        echo ''
+        install_recipe "$next_recipe"
+      done
+      echo ''
       ;;
     # Uninstall the app
     -u | --uninstall)
       [ "$#" -le 0 ] && usage 1
-      if list_recipes "$1"; then
-        uninstall_recipe "$1"
-      else
-        quit 1 "Unable to find recipe for \"$1\" !"
-      fi
+      for next_recipe in "${@}"; do
+        echo ''
+        uninstall_recipe "$next_recipe"
+      done
+      echo ''
       ;;
     # List available apps
     -l | --list)
@@ -180,7 +192,7 @@ function execute() {
         LIST_ALL=1
       fi
       echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
-      list_recipes
+      list_recipes ""
       echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
       ;;
     *)
@@ -188,6 +200,6 @@ function execute() {
       ;;
   esac
   shopt -u nocasematch
-  
+
   exit 0
 }

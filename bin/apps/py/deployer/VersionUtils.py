@@ -1,5 +1,3 @@
-import re
-
 """
   @package: deployer
    @script: VersionUtils.py
@@ -10,6 +8,9 @@ import re
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <http://unlicense.org/>
 """
+
+import re
+from os.path import exists
 
 
 # @purpose: TODO Comment it
@@ -31,6 +32,10 @@ class Versioner:
     def __str__(self):
         return '%d.%d.%03d-%s' % (self.version[0], self.version[1], self.version[2], self.release)
 
+    def current(self):
+        self.read_file()
+        return self.__str__()
+
     # @purpose: TODO Comment it
     def max_value(self, field):
         return self.mappings[field]['max_value'] if self.mappings[field]['max_value'] is not None else 0
@@ -42,6 +47,7 @@ class Versioner:
     # @purpose: TODO Comment it
     def update_version(self):
         self.mappings[self.field]['upd_fn']()
+        self.write_file()
         print('Version updated to {}'.format(self))
 
     # @purpose: TODO Comment it
@@ -79,6 +85,9 @@ class Versioner:
 
     # @purpose: TODO Comment it
     def read_file(self):
+        if not exists(self.file):
+            self.reset()
+            self.write_file()
         with open(self.file, 'r') as fh:
             contents = fh.read().strip()
             self.version = map(int, re.sub('[-.][A-Z]*$', '', contents).split('.'))

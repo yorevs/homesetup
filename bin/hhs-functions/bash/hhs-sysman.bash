@@ -32,11 +32,11 @@ function __hhs_sysinfo() {
     printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
     echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
-    echo -e "  Hostname..... : $(hostname || echo "${RED}Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-    echo -e "  Gateway...... : $(__hhs_gateway_ip || echo "${RED}Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
+    echo -e "  Hostname..... : $(hostname || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
+    echo -e "  Gateway...... : $(__hhs_gateway_ip || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
     if __hhs_has "ifconfig"; then
       echo -e "$(ipl | sed 's/^/  /g')" # Get local IPs
-      echo -e "  IP-External.. : $(my-ip || echo "${RED}Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
+      echo -e "  IP-External.. : $(my-ip || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
       echo -e "  IP-VPN(tun).. : $(vpn-ip || echo "${YELLOW}Not connected${HHS_HIGHLIGHT_COLOR}")"
     fi
     echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
@@ -57,7 +57,7 @@ function __hhs_sysinfo() {
     fi
 
     echo "${NC}"
-    IFS=$HHS_RESET_IFS
+    IFS=$RESET_IFS
   fi
 
   return 0
@@ -135,11 +135,11 @@ function __hhs_process_list() {
           if ps -p "$pid" &> /dev/null; then
             echo -e "${GREEN} ${CHECK_ICN}  active"
           else
-            echo -e "${RED} ${CROSS_ICN}  ghost"
+            __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN}  ghost"
           fi
         fi
       done
-      IFS="$HHS_RESET_IFS"
+      IFS="$RESET_IFS"
     else
       echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
     fi
@@ -148,6 +148,30 @@ function __hhs_process_list() {
   echo -e "${NC}"
 
   return 0
+}
+
+# @function: Kills ALL processes specified by $1
+# @param $1 [Req] : The process name to kill
+function __hhs_process_kill() {
+
+  local force_flag=
+
+  if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+    shift
+    force_flag='-f'
+  fi
+
+  if [[ $# -gt 0 ]]; then
+    for nproc in "${@}"; do
+      __hhs_process_list -q $force_flag "${nproc}" kill
+      echo -e "\033[3A" # Move up 3 times to beautify the output
+    done
+    echo -e '\n'
+  else
+    echo "Usage: ${FUNCNAME[0]} <process_name...>"
+  fi
+
+  return $?
 }
 
 # @function: Exhibit a Human readable summary about all partitions.

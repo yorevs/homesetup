@@ -36,26 +36,30 @@ function __hhs_envs() {
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
-    columns="$(($(tput cols) - pad_len - 9))"
+    columns="$(($(tput cols) - pad_len - 10))"
     filter="$*"
-    [ -z "$filter" ] && filter="^[a-zA-Z0-9_]*.*"
+    [ -z "$filter" ] && filter=".*"
     echo ' '
     echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
     echo ' '
     IFS=$'\n'
     shopt -s nocasematch
     for v in $(env | sort); do
-      name=$(echo "$v" | cut -d '=' -f1)
-      value=$(echo "$v" | cut -d '=' -f2-)
+      name=${v%=*}
+      value=${v##*=}
       if [[ ${name} =~ ${filter} ]]; then
         echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
-        echo -en " ${GREEN}=> ${NC}${value:0:$columns} "
-        [ "${#value}" -ge "$columns" ] && echo "...${NC}" || echo "${NC}"
+        echo -en " ${GREEN}=> ${NC}"
+        echo -n "${value:0:${columns}}"
+        if [[ ${#value} -ge ${columns} ]]; then
+          echo -n "..."
+        fi
+        echo "${NC}"
       fi
     done
     shopt -u nocasematch
-    IFS="$HHS_RESET_IFS"
+    IFS="$RESET_IFS"
     echo ' '
   fi
 
@@ -63,9 +67,9 @@ function __hhs_envs() {
 }
 
 # @function: Select a shell from the existing shell list
-function __hhs_select-shell() {
+function __hhs_shell_select() {
 
-  local selIndex selShell mselectFile results=()
+  local sel_index sel_shell mselect_file avail_shells=()
 
   if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     echo "Usage: ${FUNCNAME[0]} "
@@ -74,28 +78,78 @@ function __hhs_select-shell() {
     echo "${YELLOW}@@ Please select your new default shell:"
     echo "-------------------------------------------------------------"
     echo -en "${NC}"
-    IFS=$'\n' read -d '' -r -a results <<< "$(grep '/.*' '/etc/shells')"
-    mselectFile=$(mktemp)
-    __hhs_mselect "$mselectFile" "${results[*]}"
-    # shellcheck disable=SC2181
-    if [ "$?" -eq 0 ]; then
-      selIndex=$(grep . "$mselectFile")
-      selShell=${results[$selIndex]}
-      if [ -n "$selShell" ] && [ -f "$selShell" ]; then
-        command chsh -s "$selShell"
-        if [ $? -eq 0 ]; then
+    IFS=$'\n' read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
+    # Add the brew bash/zsh as options
+    [ -f '/usr/local/bin/bash' ] && avail_shells+=('/usr/local/bin/bash')
+    [ -f '/usr/local/bin/zsh' ] && avail_shells+=('/usr/local/bin/zsh')
+    mselect_file=$(mktemp)
+    if __hhs_mselect "$mselect_file" "${avail_shells[@]}"; then
+      sel_index=$(grep . "$mselect_file")
+      sel_shell=${avail_shells[$sel_index]}
+      if [ -n "${sel_shell}" ] && [ -f "${sel_shell}" ]; then
+        if command chsh -s "${sel_shell}"; then
           clear
-          export SHELL="$selShell"
+          export SHELL="${sel_shell}"
           echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
           echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
+        else
+          __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"
         fi
       fi
     fi
-    IFS="$HHS_RESET_IFS"
+    IFS="$RESET_IFS"
     echo -e "${NC}"
 
-    [ -f "$mselectFile" ] && command rm -f "$mselectFile"
+    [ -f "$mselect_file" ] && command rm -f "$mselect_file"
   fi
 
   return 0
+}
+
+# @function: Terminal color pallete test
+function __hhs_color_pallete() {
+
+  echo ''
+  echo "--- Home Setup color pallete test"
+  echo ''
+
+  echo -en "${BLACK}  BLACK "
+  echo -en "${RED}    RED "
+  echo -en "${GREEN}  GREEN "
+  echo -en "${ORANGE} ORANGE "
+  echo -en "${BLUE}   BLUE "
+  echo -en "${PURPLE} PURPLE "
+  echo -en "${CYAN}   CYAN "
+  echo -en "${GRAY}   GRAY "
+  echo -en "${WHITE}  WHITE "
+  echo -en "${YELLOW} YELLOW "
+  echo -en "${VIOLET} VIOLET "
+  echo -e "${NC}\n"
+
+  echo "--- 16 Colors Low"
+  echo ''
+  for c in {30..37}; do
+    echo -en "\033[0;${c}mC16-${c} "
+  done
+  echo -e "${NC}\n"
+
+  echo "--- 16 Colors High"
+  echo ''
+  for c in {90..97}; do
+    echo -en "\033[0;${c}mC16-${c} "
+  done
+  echo -e "${NC}\n"
+
+  if [[ "${TERM##*-}" == "256color" ]]; then
+    echo "--- 256 Colors"
+    echo ''
+    for c in {1..256}; do
+      echo -en "\033[38;5;${c}m"
+      printf "C256-%-.3d " "${c}"
+      [ "$(echo "$c % 12" | bc)" -eq 0 ] && echo ''
+    done
+    echo -e "${NC}\n"
+  fi
+
+  echo ''
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2142,SC1090,SC2016
+# shellcheck disable=SC1117,SC2142,SC1090
 
 #  Script: bash_aliases.bash
 # Purpose: This file is used to configure some useful shell aliases
@@ -14,23 +14,26 @@
 
 # This is the only function in this file, intentionally
 
+# Removes all aliases before setting them.
+unalias -a
+
 # @function: Check if a command exists.
 # @param $1 [Req] : The command to check.
-__hhs_has() {
-  type "$1" >/dev/null 2>&1
+function __hhs_has() {
+  type "$1" > /dev/null 2>&1
 }
 
 # @function: Check if an alias exists and create it if it does not. Do not support the use of single quotes in the expression
 # @param $1 [Req] : The alias to set/check. Use the format __hhs_alias <alias_name='<alias_expr>'
-__hhs_alias() {
+function __hhs_alias() {
 
   local all_args alias_expr alias_name
-  
+
   all_args="${*}"
   alias_expr="${all_args#*=}"
-  alias_name="${all_args//=*}"
-  
-  if ! type "$alias_name" >/dev/null 2>&1; then
+  alias_name="${all_args//=*/}"
+
+  if ! type "$alias_name" > /dev/null 2>&1; then
     # shellcheck disable=SC2139
     alias "${alias_name}"="${alias_expr}"
     ret=$?
@@ -54,6 +57,8 @@ alias ?='pwd'
 
 # -----------------------------------------------------------------------------------
 # General
+
+# Short for exit terminal
 alias q="exit 0"
 
 # Enable aliases to be sudo’ed
@@ -89,13 +94,12 @@ alias cp='\cp -iv'
 alias mv='\mv -iv'
 
 # Nice command replacements
-alias cls='echo -en "\033[1J\033[H"'
 alias df='\df -H'
 alias du='\du -hcd 1'
 alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
 
-# Use vim instead of edit
-__hhs_has "vim" && alias vi='vim'
+# Use vim instead of vi
+__hhs_has "vim" && alias vi='\vim'
 
 # Interpret escape sequences
 alias more='\more -r'
@@ -122,11 +126,16 @@ __hhs_has "wget" || alias wget='\curl -O'
 alias ps1='export PS1=$PS1_STYLE'
 alias ps2='export PS1=$PS2_STYLE'
 
-# Change your shell by selecting from the current shell list
-alias chsh='__hhs_select-shell'
-
 # Use jq for format json instead of json_pp if it is installed
-__hhs_has "jq" && alias json_pp='jq'
+__hhs_has "jq" && alias json_pp='\jq'
+
+# HomeSetup
+alias __hhs_vault='hhs vault execute'
+alias __hhs_hspm='hhs hspm execute'
+alias __hhs_dotfiles='hhs firebase execute'
+alias __hhs_hhu='hhs updater execute'
+alias __hhs_reload='cls; source ${HOME}/.bashrc'
+alias __hhs_clear='cls; \reset'
 
 # -----------------------------------------------------------------------------------
 # Tool aliases
@@ -146,18 +155,18 @@ if __hhs_has "python"; then
   __hhs_has "json_pp" || alias json_pp='python -m json.tool'
 
   # Evaluate mathematical expression
-  alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+  __hhs_alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
 
   # URL-encode strings
-  alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-  alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+  __hhs_alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  __hhs_alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
   # Generate a UUID
-  alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+  __hhs_alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
 fi
 
 # Base64 encode shortcuts
-__hhs_has "base64" && alias encode="base64"
+__hhs_has "base64" && __hhs_alias encode="base64"
 
 # -----------------------------------------------------------------------------------
 # OS Specific aliases
@@ -168,7 +177,7 @@ case $HHS_MY_OS in
     __hhs_alias ised="sed -i'' -r"
     __hhs_alias esed="sed -r"
     __hhs_has "base64" && __hhs_alias decode='base64 -d'
-  ;;
+    ;;
 
   Darwin) # -- MACOS --
 
@@ -201,33 +210,43 @@ case $HHS_MY_OS in
     # macOS has no `sha1sum`, so use `shasum` as a fallback
     __hhs_has "sha1" || alias sha1='shasum'
     __hhs_has "sha1sum" || alias sha1sum='sha1'
-  ;;
+    ;;
 esac
 
 # -----------------------------------------------------------------------------------
 # Handy Terminal Shortcuts => TODO: adapt for zsh
 
-alias show-cursor='tput cnorm'      # Show the cursor using tput
-alias hide-cursor='tput civis'      # Hide the cursor using tput
-alias save-cursor-pos='tput sc'     # Save current cursor position
-alias restore-cursor-pos='tput rc'  # Restore saved cursor position
-alias enable-line-wrap='tput smam'  # Enable line wrapping
-alias disable-line-wrap='tput rmam' # Disable line wrapping
+case $HHS_MY_SHELL in
 
-# -----------------------------------------------------------------------------------
-# HomeSetup aliases
+  bash)
+    alias show-cursor='tput cnorm'
+    alias hide-cursor='tput civis'
+    alias save-cursor-pos='tput sc'
+    alias restore-cursor-pos='tput rc'
+    alias enable-line-wrap='tput smam'
+    alias disable-line-wrap='tput rmam'
+    alias enable-echo='stty echo -raw'
+    alias disable-echo='stty raw -echo min 0'
+    alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
+    ;;
+  zsh) # TODO Check how to do it
+    alias show-cursor='echo -e "\033[?25h"'
+    alias hide-cursor='echo -e "\033[?25l"'
+    alias save-cursor-pos=''
+    alias restore-cursor-pos=''
+    alias enable-line-wrap=''
+    alias disable-line-wrap=''
+    alias enable-echo=''
+    alias disable-echo=''
+    alias reset-cursor-attrs=''
+    ;;
+esac
 
-# Reload the bash session
-__hhs_alias reload='cls; source ~/.bashrc'
-__hhs_alias vault='hhs vault execute'
-__hhs_alias hspm='hhs hspm execute'
-__hhs_alias dotfiles='hhs firebase execute'
-__hhs_alias hhu='hhs updater execute --update'
+# This alias is going to clear and reset all cursor attributes and IFS
+alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
 
-# Directory Shortcuts
-[ -d "${DESKTOP}" ] && __hhs_alias desk='cd ${DESKTOP}'
-[ -d "${TEMP}" ] && __hhs_alias temp='cd ${TEMP}'
-[ -d "${DOWNLOADS}" ] && __hhs_alias dl='cd ${DOWNLOADS}'
+# Clear the screen and reset the terminal
+alias __hhs_reset="cls; \reset"
 
 # -----------------------------------------------------------------------------------
 # Perl dependent aliases
@@ -281,7 +300,7 @@ fi
 # Docker dependent aliases
 # inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
 
-if __hhs_has "docker" && docker info &>/dev/null; then
+if __hhs_has "docker" && docker info &> /dev/null; then
 
   alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'
   alias __hhs_docker_service='docker service'
@@ -294,3 +313,6 @@ if __hhs_has "docker" && docker info &>/dev/null; then
   alias __hhs_docker_up='docker-compose up --force-recreate --build --remove-orphans --detach'
   alias __hhs_docker_down='docker-compose stop'
 fi
+
+# Load alias definitions
+[ -s "${HOME}/.aliasdef" ] && \. "${HOME}/.aliasdef"

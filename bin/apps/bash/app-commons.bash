@@ -2,6 +2,7 @@
 # shellcheck disable=SC1090,SC1091
 
 #  Script: app-commons.bash
+# Purpose: Commonly used bash code
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -35,8 +36,8 @@ quit() {
   unset -f quit usage version trim "${UNSETS[*]}"
   exit_code=${1:-0}
   shift
-  [[ $exit_code -ne 0 ]] && echo -en "${RED}"
-  echo -e "${*} ${NC}" 1>&2
+  [[ ${exit_code} -ne 0 ]] && [[ ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
+  [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
   # shellcheck disable=SC2086
   exit ${exit_code}
