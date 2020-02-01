@@ -30,7 +30,7 @@ export IFS='
 # Do not change this formatting, it is required to proper reset IFS to it's defaults
 
 # Load the profile according to the SHELL defined
-case "$HHS_MY_SHELL" in
+case "${SHELL##*\/}" in
   bash)
     # Source the main profile
     [ -s /etc/bashrc ] && source /etc/bashrc
