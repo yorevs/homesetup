@@ -248,7 +248,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "         Shell: ${SHELL_TYPE}"
     echo -e "   Install Dir: ${HHS_HOME}"
     echo -e "     Fonts Dir: ${FONTS_DIR}"
-    echo -e "  Dotfiles Dir: $DOTFILES_DIR"
+    echo -e "  Dotfiles Dir: ${DOTFILES_DIR}"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
 
@@ -347,14 +347,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo ''
     echo -e "${WHITE}Cloning HomeSetup from repository ..."
-    sleep 1
 
-    if git clone "$REPO_URL" "$HHS_HOME"; then
-      \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
-    else
-      quit 2 "Unable to properly clone the repository !"
-    fi
-
+    git clone "$REPO_URL" "$HHS_HOME" || quit 2 "Unable to properly clone the repository !"
+    
+    \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+    
+    [ ! -d "${DOTFILES_DIR}" ] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
+    
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
