@@ -89,11 +89,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Dotfiles source location
     DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
 
-    # Find all dotfiles used by HomeSetup according to the current shell type
-    while IFS='' read -r dotfile; do
-      ALL_DOTFILES+=("${dotfile}")
-    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
-
     # Enable install script to use colors
     [ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [ -f "${HHS_HOME}/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
@@ -256,7 +251,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  Dotfiles Dir: $DOTFILES_DIR"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
-    
+
     sleep 3
 
     if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
@@ -359,6 +354,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to properly clone the repository !"
     fi
+
+    # Find all dotfiles used by HomeSetup according to the current shell type
+    while IFS='' read -r dotfile; do
+      ALL_DOTFILES+=("${dotfile}")
+    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
   }
 
   # Check installed tools

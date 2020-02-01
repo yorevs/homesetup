@@ -92,7 +92,7 @@ uninstall_dotfiles() {
   # shellcheck disable=SC2164
   cd "$HOME"
   [ -d "$HHS_HOME" ] && command rm -rfv "$HHS_HOME"
-  [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -f "$HHS_DIR/bin"
+  [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -rf "$HHS_DIR/bin"
   echo ''
 
   if [ -d "$HHS_DIR" ]; then
