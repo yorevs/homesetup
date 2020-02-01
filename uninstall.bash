@@ -33,13 +33,13 @@ HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
 # Dotfiles source location
 DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
 
+# .dotfiles we will handle
+ALL_DOTFILES=()
+
 # Find all dotfiles used by HomeSetup according to the current shell type
 while IFS='' read -r dotfile; do
   ALL_DOTFILES+=("${dotfile}")
 done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
-
-# .dotfiles we will handle
-ALL_DOTFILES=()
 
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code.
