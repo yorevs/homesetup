@@ -95,7 +95,8 @@ uninstall_dotfiles() {
 
   echo -e "Removing installed dotfiles ..."
   for next in ${ALL_DOTFILES[*]}; do
-    test -n "$next" -a -f "$HOME/.${next}" && command rm -fv "$HOME/.${next}"
+    dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
+    [ -f "${dotfile}" ] && command rm -fv "${dotfile}"
   done
 
   # shellcheck disable=SC2164
@@ -132,5 +133,3 @@ uninstall_dotfiles() {
 check_installation
 
 echo '@@@ HomeSetup needs to close this terminal to finish the removal.'
-read -rn 1 -p "Press any key to exit the session ..."
-exit 0
