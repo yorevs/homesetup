@@ -54,12 +54,12 @@ function funcs() {
 # Purpose: List all HomeSetup issues from GitHub.
 function issues() {
 
-  local repo_url="https://github.com/yorevs/homesetup/issues"
+  local repo_url="https://github.com/yorevs/homesetup/projects/1"
 
-  echo "${GREEN}Opening HomeSetup issues from: ${repo_url} ${NC}"
-  open "${repo_url}"
-
-  quit $? ' '
+  echo "${GREEN}Opening HomeSetup board from: ${repo_url} ${NC}"
+  open "${repo_url}" && quit 0 ' '
+  
+  quit 1 "Failed to open url \"${repo_url}\" !"
 }
 
 # Purpose: Retrieve/Get current hostname.
@@ -79,9 +79,8 @@ function host-name() {
       if [ "$(uname -s)" = "Darwin" ]; then
         if sudo scutil --set HostName "${new_hostn}"; then
           echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
-          quit 0
         else
-          __hhs_errcho "${FUNCNAME[0]}: Failed to change your hostname !"
+          quit 2 "Failed to change your hostname !"
         fi
       else
         # Change the hostname in /etc/hosts & /etc/hostname
@@ -90,16 +89,15 @@ function host-name() {
           read -rn 1 -p "${YELLOW}Press 'y' key to reboot now: ${NC}" ANS
           if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
             sudo reboot
-            quit 0
           fi
         else
-          __hhs_errcho "${FUNCNAME[0]}: Failed to change your hostname !"
+          quit 2 "Failed to change your hostname !"
         fi
       fi
     else
-      echo "${ORANGE}Your hostname hasn't changed !${NC}"
+      echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 1
     fi
   fi
 
-  quit 1
+  quit 0
 }

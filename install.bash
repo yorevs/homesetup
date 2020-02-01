@@ -39,6 +39,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=(brew python pcregrep ifconfig gpg tree figlet)
+  
+  # Timestamp used to backup files
+  TIMESTAMP=$(\date "+%s%S")
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -199,6 +202,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Check for backward HHS compatibility
   compatibility_check() {
+  
     echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
 
     # Moving old hhs files into the proper directory
@@ -221,16 +225,16 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # .aliasdef Needs to be updated, so, we need to replace it
     if [ -f "$HOME/.aliasdef" ]; then
-      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef.bak"
+      command cp -f "$HOME/.aliasdef" "$HHS_DIR/aliasdef-${TIMESTAMP}.bak"
       command cp -f "$HHS_HOME/dotfiles/aliasdef" "$HOME/.aliasdef"
-      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef.bak ${NC}"
+      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at $HHS_DIR/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .inputrc Needs to be updated, so, we need to replace it
-    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc.bak" ]; then
+    if [ -f "$HOME/.inputrc" ] && [ ! -f "$HHS_DIR/inputrc-${TIMESTAMP}.bak" ]; then
       command cp -f "$HOME/.inputrc" "$HHS_DIR/inputrc.bak"
       command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
-      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc.bak ${NC}"
+      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
     
     # Moving .path file to .hhs
@@ -249,24 +253,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  Install Type: $METHOD"
     echo -e "         Shell: ${SHELL_TYPE}"
     echo -e "   Install Dir: ${HHS_HOME}"
-    echo -e "         Fonts: ${FONTS_DIR}"
+    echo -e "     Fonts Dir: ${FONTS_DIR}"
+    echo -e "  Dotfiles Dir: $DOTFILES_DIR"
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]//hhs/${SHELL_TYPE}}"
     echo -e "${NC}"
 
     if [ "${METHOD}" = 'repair' ] || [ "${METHOD}" = 'local' ]; then
       echo -e "${ORANGE}"
-      [ -z ${QUIET} ] && read -r -n 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ?" ANS
+      [ -z ${QUIET} ] && read -rn 1 -p "Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? " ANS
       echo -e "${NC}"
       if [ ! "$ANS" = "y" ] && [ ! "$ANS" = "Y" ]; then
         [ -n "$ANS" ] && echo ''
-        quit 1 "Installation cancelled!"
+        quit 1 "Installation cancelled !"
       fi
     else
       OPT='all'
     fi
 
-    command pushd "$DOTFILES_DIR" &> /dev/null || quit 1 "Unable to enter dotfiles directory!"
-    echo -e "\n${WHITE}Installing dotfiles ${NC}"
+    command pushd "${DOTFILES_DIR}" &> /dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
+    echo -e "\n${WHITE}Installing dotfiles ...${NC}"
 
     # If `all' option is used, copy all files
     if [ "$OPT" = 'all' ]; then
@@ -274,7 +279,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dofile into $HOME/.hhs
-        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}".orig)"
+        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}-${TIMESTAMP}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
@@ -287,11 +292,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         echo ''
-        [ -z ${QUIET} ] && read -r -n 1 -sp "Link ${dotfile} (y/[n])? " ANS
+        [ -z ${QUIET} ] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [ "$ANS" != 'y' ] && [ "$ANS" != 'Y' ] && continue
         echo ''
-        # Backup existing dofile into $DOTFILES_DIR
-        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}".orig)"
+        # Backup existing dofile into ${DOTFILES_DIR}
+        [ -f "${dotfile}" ] && mv "${dotfile}" "$HHS_DIR/$(basename "${dotfile}-${TIMESTAMP}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
@@ -303,7 +308,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
     command find "$BIN_DIR" -maxdepth 1 -type l -delete -print &> /dev/null
-    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] && quit 2 "Unable to remove old app links from $BIN_DIR directory"
+    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] && quit 2 "Unable to remove old app links from \"$BIN_DIR\" directory !"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link apps into place
@@ -311,7 +316,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     command find "$HHS_HOME/bin/apps" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &> /dev/null
-    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] || quit 2 "Unable to link apps into $BIN_DIR directory"
+    [ -L "$BIN_DIR/hhs.${SHELL_TYPE}" ] || quit 2 "Unable to link apps into \"$BIN_DIR\" directory !"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Link auto-completes into place
@@ -319,16 +324,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     command find "$HHS_HOME/bin/auto-completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "$BIN_DIR" \; \
       -exec command chmod 755 {} \; &> /dev/null
-    [ -L "$BIN_DIR/git-completion.${SHELL_TYPE}" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory"
+    [ -L "$BIN_DIR/git-completion.${SHELL_TYPE}" ] || quit 2 "Unable to link auto-completions into bin ($BIN_DIR) directory !"
     echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
-    [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory"
+    [ -d "$FONTS_DIR" ] || quit 2 "Unable to locate fonts ($FONTS_DIR) directory !"
     command cp -fv "$HHS_HOME/misc/fonts"/*.* "$FONTS_DIR" &> /dev/null
     [ -f "$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf" ] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
 
-    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory!"
+    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Copy HomeSetup git hooks into place
     echo -en "\n${WHITE}Copying git hooks into place ${BLUE}"
@@ -341,18 +346,18 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Clone the repository and install dotfiles.
   clone_repository() {
 
-    [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely"
-    [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: ${HHS_HOME}!"
+    [ -z "$(command -v git)" ] && quit 2 "You need git installed in order to install HomeSetup remotely !"
+    [ ! -d "$HHS_HOME" ] && quit 2 "Installation directory was not created: \"${HHS_HOME}\" !"
 
     echo ''
     echo -e "${WHITE}Cloning HomeSetup from repository ..."
     sleep 1
     command git clone "$REPO_URL" "$HHS_HOME"
 
-    if [ -f "$DOTFILES_DIR/${SHELL}_colors.${SHELL_TYPE}" ]; then
-      \. "$DOTFILES_DIR/${SHELL}_colors.${SHELL_TYPE}"
+    if [ -f "${DOTFILES_DIR}/${SHELL}_colors.${SHELL_TYPE}" ]; then
+      \. "${DOTFILES_DIR}/${SHELL}_colors.${SHELL_TYPE}"
     else
-      quit 2 "Unable to properly clone the repository!"
+      quit 2 "Unable to properly clone the repository !"
     fi
   }
 
@@ -360,7 +365,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_installed() {
 
     echo ''
-    echo -e "${WHITE}Checking required tools "
+    echo -e "${WHITE}Checking required tools ..."
     echo ''
 
     pad=$(printf '%0.1s' "."{1..60})
