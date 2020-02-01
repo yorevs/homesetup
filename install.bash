@@ -36,7 +36,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=(brew python pcregrep ifconfig gpg tree figlet)
-  
+
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
 
@@ -89,6 +89,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Dotfiles source location
     DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
 
+    # Find all dotfiles used by HomeSetup according to the current shell type
+    while IFS='' read -r dotfile; do
+      ALL_DOTFILES+=("${dotfile}")
+    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
+
     # Enable install script to use colors
     [ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [ -f "${HHS_HOME}/.VERSION" ] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
@@ -115,11 +120,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       esac
       shift
     done
-
-    # Find all dotfiles used by HomeSetup according to the current shell type
-    while IFS='' read -r dotfile; do
-      ALL_DOTFILES+=("${dotfile}")
-    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
     # Create HomeSetup directory
     if [ ! -d "$HHS_HOME" ]; then
@@ -201,7 +201,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Check for backward HHS compatibility
   compatibility_check() {
-  
+
     echo -e "\n${WHITE}Checking HHS compatibility ${BLUE}"
 
     # Moving old hhs files into the proper directory
@@ -235,7 +235,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       command cp -f "$HHS_HOME/dotfiles/inputrc" "$HOME/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at $HHS_DIR/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
-    
+
     # Moving .path file to .hhs
     if [ -f "${HOME}/.path" ]; then
       command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
@@ -353,7 +353,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     sleep 1
 
     if git clone "$REPO_URL" "$HHS_HOME"; then
-      \. "${DOTFILES_DIR}/${SHELL}_colors.${SHELL_TYPE}"
+      \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     else
       quit 2 "Unable to properly clone the repository !"
     fi
