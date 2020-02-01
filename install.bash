@@ -351,9 +351,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}Cloning HomeSetup from repository ..."
     sleep 1
-    command git clone "$REPO_URL" "$HHS_HOME"
 
-    if [ -f "${DOTFILES_DIR}/${SHELL}_colors.${SHELL_TYPE}" ]; then
+    if git clone "$REPO_URL" "$HHS_HOME"; then
       \. "${DOTFILES_DIR}/${SHELL}_colors.${SHELL_TYPE}"
     else
       quit 2 "Unable to properly clone the repository !"
