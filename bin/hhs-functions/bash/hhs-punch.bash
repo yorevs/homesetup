@@ -31,7 +31,7 @@ function __hhs_punch() {
     echo '    When no arguments are provided it will !!PUNCH THE CLOCK!!.'
     return 1
   else
-    opt="$1"
+    opt="${1}"
     date_stamp="$(date +'%a %d-%m-%Y')"
     time_stamp="$(date +'%H:%M')"
     week_stamp="$(date +%V)"
@@ -101,7 +101,7 @@ function __hhs_punch() {
             fi
             totals+=("$daily_total")
           else
-            __hhs_errcho "${FUNCNAME[0]}:  --:-- ${NC}"
+            echo -e "${RED} --:-- ${NC}"
           fi
         fi
       done
