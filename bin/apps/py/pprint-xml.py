@@ -76,7 +76,9 @@ def walk_and_format(paths):
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
-    if len(argv) > 0:
+    if argv[0] == "-h" or argv[0] == "--help":
+        usage()
+    elif len(argv) > 0:
         walk_and_format(argv)
     else:
         usage()
