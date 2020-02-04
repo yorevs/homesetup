@@ -14,8 +14,8 @@
 
 import sys
 
-from VersionUtils import Versioner
-from GitUtils import Git
+from Versioner import Versioner
+from GitUtils import GitUtils
 
 from os import path, environ
 from getopt import getopt
@@ -84,10 +84,10 @@ def main(argv):
         # print('After increase build major: {}\n'.format(ver.current()))
 
         print("--- GitUtils ---")
-        print("TopLevelDir: {}".format(Git.top_level_dir()))
-        print("CurrentBranch: {}".format(Git.current_branch()))
-        print("GitUserName: {}\n".format(Git.user_name()))
-        print("v1.2.0 Released at {}\n".format(Git.release_date("v1.2.0")))
+        print("TopLevelDir: {}".format(GitUtils.top_level_dir()))
+        print("CurrentBranch: {}".format(GitUtils.current_branch()))
+        print("GitUserName: {}\n".format(GitUtils.username()))
+        print("v1.2.0 Released at {}\n".format(GitUtils.release_date("v1.2.0")))
         # print("Unreleased: ---- Current ---- \n{}\n".format(Git.unreleased()))
         # print("ChangeLog: ---- v1.2.0 ---- \n{}\n".format(Git.changelog("v1.2.0", "v1.3.0")))
         # print("ChangeLog: ---- v1.1.0 ---- \n{}\n".format(Git.changelog("v1.1.0", "v1.2.0")))
