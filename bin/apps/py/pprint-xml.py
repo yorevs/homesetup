@@ -15,6 +15,7 @@
 
 import sys
 import os
+import re
 import xml.dom.minidom
 
 APP_NAME = os.path.basename(__file__)
@@ -28,6 +29,10 @@ Format an XML file or scans a directory and walk though all subdirectories and f
 
 Usage: python {} <filename>/<dirname> ...
 """.format(APP_NAME)
+
+INDENT = '  '
+NEWLINE = '\n'
+ENCODING = None
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
@@ -45,8 +50,7 @@ def version():
 # @purpose: Format the specified XML file contents and return the formatted XML as a string.
 def pretty_print(xml_path):
     xml_dom = xml.dom.minidom.parse(xml_path)
-    pretty_xml = xml_dom.toprettyxml()
-
+    pretty_xml = xml_dom.toprettyxml(indent=INDENT, newl=NEWLINE, encoding=ENCODING)
     return pretty_xml
 
 
@@ -69,9 +73,13 @@ def walk_and_format(paths):
                     file_info = os.path.splitext(next_file)
                     if file_info[1].lower() == '.xml':
                         xml_file = os.path.join(subdir, next_file)
-                        save_xml_file(xml_file, pretty_print(xml_file))
+                        fmt_contents = pretty_print(xml_file).split('\n')
+                        filtered = filter(lambda x: not re.match(r'^\s*$', x), fmt_contents)
+                        save_xml_file(xml_file, '\n'.join(filtered))
         else:
-            save_xml_file(next_path, pretty_print(next_path))
+            fmt_contents = pretty_print(next_path).split('\n')
+            filtered = filter(lambda x: not re.match(r'^\s*$', x), fmt_contents)
+            save_xml_file(next_path, '\n'.join(filtered))
 
 
 # @purpose: Parse the command line arguments and execute the program accordingly.

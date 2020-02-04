@@ -10,9 +10,6 @@
 ### Gradle ###
 .gradle/
 
-### VSCode ###
-.vscode
-
 ### Node ###
 node_modules/
 *.suo
@@ -76,7 +73,8 @@ nbdist/
 ######################
 .DS_Store
 .DS_Store?
-Icon[]
+Icon[
+]
 ._*
 .Spotlight-V100
 .Trashes
