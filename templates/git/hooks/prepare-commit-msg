@@ -31,15 +31,15 @@ commit_msg_filename = sys.argv[1]
 commit_msg = None
 
 # CARDS
+changelog = '^([Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity){1} .*'
 card_prefix = '[a-zA-Z][a-zA-Z0-9\\-_]+'
 card_format = '%s - [%s-%s:{@%s}]'  # Msg/Card/Number/User
 card_regex = '(' + card_prefix + ')-(\\d+)'
 
 # NO CARDS
-no_card_changelog = '[Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity'
 no_card_prefix = 'test|hotfix|feature|develop'
-no_card_format = '%s %s - [%s:{@%s}]'  # ChangeLog/Msg/Issue/User
-no_card_regex = '(' + no_card_changelog + ') ' + '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
+no_card_format = '%s - [%s:{@%s}]'  # Msg/Issue/User
+no_card_regex = '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
 
 # Master protection
 master_unlock_file = 'master-unlock'
@@ -48,39 +48,23 @@ master_unlock_path = '%s/%s' % (top_level_dir, master_unlock_file)
 # This will prevent any commit to master, unless, you are sure of it by creating a master unlock file
 if branch_name == 'master':
     if not path.exists(master_unlock_path):
-        print '[ERROR] Can\'t commit direct to [MASTER]. Please use the a proper branch instead!'
-        print 'E.g: \'ISSUE-1230\''
-        print 'To create the branch type: '
-        print ' => $ git checkout -B ISSUE-1230'
+        print('[ERROR] Can\'t commit direct to [MASTER]. Please use the a proper branch instead!')
+        print('E.g: \'ISSUE-1230\'')
+        print('To create the branch type: ')
+        print(' => $ git checkout -B ISSUE-1230')
         sys.exit(1)
     else:
-        print '[WARN] Commit to master unlocked ONCE. Create another %s to commit to master again' % master_unlock_path
+        print('[WARN] Commit to master unlocked ONCE. Create another {} to commit to master again'
+              .format(master_unlock_path))
         try:
             remove(master_unlock_path)
         except OSError as error:
-            print '[ERROR] Unable to remove master unlock file: %s. Commit to master aborted!' % master_unlock_path
+            print('[ERROR] Unable to remove master unlock file: {}. Commit to master aborted!'
+                  .format(master_unlock_path))
             sys.exit(1)
 
-# Matching non-CARD branches
-if re.match(no_card_regex, branch_name):
-    mat = re.match(no_card_regex, branch_name)
-    change_log = mat.group(1).upper()
-    if change_log:
-        issue = mat.group(2).upper()
-        commit_msg_format = '%s .* - \\[%s\\:\\{\\@%s\\}\\]' % (change_log, issue, user_name)
-        with open(commit_msg_filename, 'r+') as fh:
-            commit_msg = fh.read().strip()
-            # Check if the commit message already matches the expected format
-            if not re.match(commit_msg_format, commit_msg):
-                formatted_msg = no_card_format % (commit_msg, issue, user_name)
-                fh.seek(0, 0)
-                fh.write(formatted_msg)
-    else:
-        print '[ERROR] Your message does not comply with any changelog type (). Commit aborted !' % no_card_changelog
-        sys.exit(1)
-
 # Matching CARD branches
-elif re.match(card_regex, branch_name):
+if re.match(card_regex, branch_name):
     mat = re.match(card_regex, branch_name)
     card_name = mat.group(1).upper()
     card_number = mat.group(2)
@@ -93,7 +77,25 @@ elif re.match(card_regex, branch_name):
             fh.seek(0, 0)
             fh.write(formatted_msg)
 
+# Matching non-CARD branches
+elif re.match(no_card_regex, branch_name):
+    mat = re.match(no_card_regex, branch_name)
+    branch = mat.group(1).upper()
+    commit_msg_format = '.* - \\[%s\\:\\{\\@%s\\}\\]' % (branch, user_name)
+    with open(commit_msg_filename, 'r+') as fh:
+        commit_msg = fh.read().strip()
+        if re.match(changelog, commit_msg):
+            # Check if the commit message already matches the expected format
+            if not re.match(commit_msg_format, commit_msg):
+                formatted_msg = no_card_format % (commit_msg, branch, user_name)
+                fh.seek(0, 0)
+                fh.write(formatted_msg)
+        else:
+            print('[ERROR] Your message does not comply with any changelog type {}. Commit aborted !'
+                  .format(changelog))
+            sys.exit(1)
+
 # Rejecting unknown branch names
 else:
-    print '[ERROR] Incorrect branch name: %s' % branch_name
+    print('[ERROR] Incorrect branch name: {}'.format(branch_name))
     sys.exit(1)
