@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """@package -
-   @script: prepare-commit-msg
+   @script: commit-msg
   @purpose: Prepares a git commit message to conform with the message format rules
   @created: Oct 30, 2019
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -21,8 +21,6 @@ import getpass
 
 from subprocess import check_output
 from os import path, remove
-
-print "DEBUG ENTREI"
 
 # App arguments
 branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()

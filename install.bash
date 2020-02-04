@@ -322,7 +322,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
-    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} .git/hooks/ \; &>/dev/null; then
+    rm -f '.git/hooks/*' &> /dev/null
+    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} '.git/hooks/' \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
