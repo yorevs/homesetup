@@ -30,3 +30,16 @@ class Git:
     @staticmethod
     def user_name():
         return getuser()
+
+    @staticmethod
+    def changelog(from_tag, to_tag):
+        return check_output(['git', 'log', '--oneline', '--pretty=format:%h %ad %s', '--date=short', "{}^..{}^".format(from_tag, to_tag)]).strip()
+
+    @staticmethod
+    def unreleased():
+        latest_tag = check_output(['git', 'describe', "--tags", '--abbrev=0', 'HEAD^']).strip()
+        return check_output(['git', 'log', '--oneline', '--pretty=format:%h %ad %s', '--date=short', "{}..HEAD".format(latest_tag)]).strip()
+
+    @staticmethod
+    def release_date(tag_name):
+        return check_output(['git', 'log', '-1', '--format=%ad', '--date=short', tag_name]).strip()
