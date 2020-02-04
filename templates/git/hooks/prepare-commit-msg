@@ -36,9 +36,10 @@ card_format = '%s - [%s-%s:{@%s}]'  # Msg/Card/Number/User
 card_regex = '(' + card_prefix + ')-(\\d+)'
 
 # NO CARDS
+no_card_changelog = '[Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity'
 no_card_prefix = 'test|hotfix|feature|develop'
-no_card_format = '%s - [%s:{@%s}]'  # Msg/Issue/User
-no_card_regex = '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
+no_card_format = '%s %s - [%s:{@%s}]'  # ChangeLog/Msg/Issue/User
+no_card_regex = '(' + no_card_changelog + ') ' + '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
 
 # Master protection
 master_unlock_file = 'master-unlock'
@@ -63,15 +64,20 @@ if branch_name == 'master':
 # Matching non-CARD branches
 if re.match(no_card_regex, branch_name):
     mat = re.match(no_card_regex, branch_name)
-    issue = mat.group(1).upper()
-    commit_msg_format = '.* - \\[%s\\:\\{\\@%s\\}\\]' % (issue, user_name)
-    with open(commit_msg_filename, 'r+') as fh:
-        commit_msg = fh.read().strip()
-        # Check if the commit message already matches the expected format
-        if not re.match(commit_msg_format, commit_msg):
-            formatted_msg = no_card_format % (commit_msg, issue, user_name)
-            fh.seek(0, 0)
-            fh.write(formatted_msg)
+    change_log = mat.group(1).upper()
+    if change_log:
+        issue = mat.group(2).upper()
+        commit_msg_format = '%s .* - \\[%s\\:\\{\\@%s\\}\\]' % (change_log, issue, user_name)
+        with open(commit_msg_filename, 'r+') as fh:
+            commit_msg = fh.read().strip()
+            # Check if the commit message already matches the expected format
+            if not re.match(commit_msg_format, commit_msg):
+                formatted_msg = no_card_format % (commit_msg, issue, user_name)
+                fh.seek(0, 0)
+                fh.write(formatted_msg)
+    else:
+        print '[ERROR] Your message does not comply with any changelog type (). Commit aborted !' % no_card_changelog
+        sys.exit(1)
 
 # Matching CARD branches
 elif re.match(card_regex, branch_name):
