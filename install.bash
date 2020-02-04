@@ -204,9 +204,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}Cloning HomeSetup from repository ..."
 
-    git clone "$REPO_URL" "${HHS_HOME}" || quit 2 "Unable to properly clone the repository !"
-
-    \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+    if git clone "$REPO_URL" "${HHS_HOME}"; then
+      \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+    else
+      quit 2 "Unable to properly clone the repository !"
+    fi
 
     [ ! -d "${DOTFILES_DIR}" ] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
   }
