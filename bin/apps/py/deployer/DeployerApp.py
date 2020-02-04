@@ -73,8 +73,15 @@ def main(argv):
         ver_file = '../samples/.VERSION'
         ver = Versioner(ver_field, ver_file)
         print('Current version: {}\n'.format(ver.current()))
+        ver.update_build()
         ver.update_version()
         print('After increase build version: {}\n'.format(ver.current()))
+        ver.update_minor()
+        ver.update_version()
+        print('After increase build minor: {}\n'.format(ver.current()))
+        ver.update_major()
+        ver.update_version()
+        print('After increase build major: {}\n'.format(ver.current()))
 
         print("--- GitUtils ---")
         print("TopLevelDir: {}".format(Git.top_level_dir()))
