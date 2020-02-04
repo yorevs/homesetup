@@ -108,7 +108,7 @@ PATH_STYLE="\[${WHITE}\] ${FOLDER_ICN}\[${ORANGE}\] \W"
 GIT_STYLE="\[${WHITE}\]\$(prompt_git \" ${GIT_ICN} \[${CYAN}\]\")"
 
 # User prompt format
-PROMPT="\[${WHITE}\] \$>\[${NC}\] "
+PROMPT="\[${WHITE}\] \$\[${NC}\] "
 
 # Set the terminal title and prompt.
 # Check ${HHS_HOME}/misc/prompt-codes.txt for more details
