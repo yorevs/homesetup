@@ -15,7 +15,10 @@
 # $2 - the source of the commit message
 # $3 - the commit SHA-1
 
-import sys, re, getpass
+import sys
+import re
+import getpass
+
 from subprocess import check_output
 from os import path, remove
 
@@ -24,18 +27,18 @@ branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
 user_name = getpass.getuser()
 top_level_dir = check_output(['git', 'rev-parse', '--show-toplevel']).strip()
 
-commit_msg_filepath = sys.argv[1]
+commit_msg_filename = sys.argv[1]
 commit_msg = None
 
 # CARDS
-card_prefix = '[a-zA-Z][a-zA-Z0-9\-_]+'
-card_format = '%s - [%s-%s:{@%s}]' # Msg/Card/Number/User
-card_regex = '(' + card_prefix + ')-(\d+)'
+card_prefix = '[a-zA-Z][a-zA-Z0-9\\-_]+'
+card_format = '%s - [%s-%s:{@%s}]'  # Msg/Card/Number/User
+card_regex = '(' + card_prefix + ')-(\\d+)'
 
 # NO CARDS
 no_card_prefix = 'test|hotfix|feature|develop'
-no_card_format = '%s - [%s:{@%s}]' # Msg/Issue/User
-no_card_regex = '(' + no_card_prefix + ')(-(\w+(-\d+)*))?'
+no_card_format = '%s - [%s:{@%s}]'  # Msg/Issue/User
+no_card_regex = '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
 
 # Master protection
 master_unlock_file = 'master-unlock'
@@ -45,14 +48,15 @@ master_unlock_path = '%s/%s' % (top_level_dir, master_unlock_file)
 if branch_name == 'master':
     if not path.exists(master_unlock_path):
         print '[ERROR] Can\'t commit direct to [MASTER]. Please use the a proper branch instead!'
-        print 'E.g: ISSUE-1230'
-        print 'To create the branch type: git checkout -B ISSUE-1230'
+        print 'E.g: \'ISSUE-1230\''
+        print 'To create the branch type: '
+        print ' => $ git checkout -B ISSUE-1230'
         sys.exit(1)
     else:
         print '[WARN] Commit to master unlocked ONCE. Create another %s to commit to master again' % master_unlock_path
         try:
             remove(master_unlock_path)
-        except:
+        except OSError as error:
             print '[ERROR] Unable to remove master unlock file: %s. Commit to master aborted!' % master_unlock_path
             sys.exit(1)
 
@@ -60,29 +64,30 @@ if branch_name == 'master':
 if re.match(no_card_regex, branch_name):
     mat = re.match(no_card_regex, branch_name)
     issue = mat.group(1).upper()
-    commit_msg_format = '.* - \[%s\:\{\@%s\}\]' % (issue, user_name)
-    with open(commit_msg_filepath, 'r+') as fh:
+    commit_msg_format = '.* - \\[%s\\:\\{\\@%s\\}\\]' % (issue, user_name)
+    with open(commit_msg_filename, 'r+') as fh:
         commit_msg = fh.read().strip()
         # Check if the commit message already matches the expected format
         if not re.match(commit_msg_format, commit_msg):
             formatted_msg = no_card_format % (commit_msg, issue, user_name)
             fh.seek(0, 0)
             fh.write(formatted_msg)
-# Macthing CARD branches
+
+# Matching CARD branches
 elif re.match(card_regex, branch_name):
     mat = re.match(card_regex, branch_name)
     card_name = mat.group(1).upper()
     card_number = mat.group(2)
-    commit_msg_format = '.* - \[%s\:\{\@%s\}\]' % (card_name, user_name)
-    with open(commit_msg_filepath, 'r+') as fh:
+    commit_msg_format = '.* - \\[%s\\:\\{\\@%s\\}\\]' % (card_name, user_name)
+    with open(commit_msg_filename, 'r+') as fh:
         commit_msg = fh.read().strip()
         # Check if the commit message already matches the expected format
         if not re.match(commit_msg_format, commit_msg):
             formatted_msg = card_format % (commit_msg, card_name, card_number, user_name)
             fh.seek(0, 0)
             fh.write(formatted_msg)
-# Rejecting unknown branc names
+
+# Rejecting unknown branch names
 else:
     print '[ERROR] Incorrect branch name: %s' % branch_name
     sys.exit(1)
-
