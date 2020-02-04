@@ -51,8 +51,8 @@ function funcs() {
   quit 0 ' '
 }
 
-# Purpose: List all HomeSetup issues from GitHub.
-function issues() {
+# Purpose: Open HomeSetup project board from GitHub.
+function board() {
 
   local repo_url="https://github.com/yorevs/homesetup/projects/1"
 
