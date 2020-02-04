@@ -311,7 +311,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
     [ -d "${FONTS_DIR}" ] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {}  "${FONTS_DIR}" \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
@@ -322,8 +321,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
-    rm -f '.git/hooks/*' &> /dev/null
-    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} '.git/hooks/' \; &>/dev/null; then
+    rm -f "${HHS_HOME}"/.git/hooks/* &> /dev/null
+    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
