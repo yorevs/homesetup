@@ -1,10 +1,6 @@
 {
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
   "Custom Directory" : "Recycle",
+  "Set Local Environment Vars" : false,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -12,7 +8,7 @@
     "Red Component" : 0,
     "Blue Component" : 0
   },
-  "Rows" : 26,
+  "Rows" : 25,
   "Ansi 11 Color" : {
     "Green Component" : 1,
     "Red Component" : 1,
@@ -281,7 +277,7 @@
   },
   "Name" : "HomeSetup-14-inch",
   "Blinking Cursor" : true,
-  "Guid" : "B18459B7-D0BD-4D64-B01C-F54262D9A72C",
+  "Guid" : "7AAA6B65-7B0C-4E55-B3A2-DE99D3D48E04",
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408,
@@ -343,6 +339,10 @@
   "Unicode Normalization" : 0,
   "Visual Bell" : true,
   "ASCII Ligatures" : false,
-  "Thin Strokes" : 3,
-  "Set Local Environment Vars" : false
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Thin Strokes" : 3
 }
