@@ -14,19 +14,38 @@ from getpass import getuser
 
 
 # @purpose: TODO Comment it
-class Git:
+class GitUtils:
 
     def __init__(self, command):
         self.command = 'project-dir'
 
+    # @purpose: TODO Comment it
     @staticmethod
     def top_level_dir():
         return check_output(['git', 'rev-parse', '--show-toplevel']).strip()
 
+    # @purpose: TODO Comment it
     @staticmethod
     def current_branch():
         return check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
 
+    # @purpose: TODO Comment it
     @staticmethod
-    def user_name():
+    def username():
         return getuser()
+
+    # @purpose: TODO Comment it
+    @staticmethod
+    def changelog(from_tag, to_tag):
+        return check_output(['git', 'log', '--oneline', '--pretty=format:%h %ad %s', '--date=short', "{}^..{}^".format(from_tag, to_tag)]).strip()
+
+    # @purpose: TODO Comment it
+    @staticmethod
+    def unreleased():
+        latest_tag = check_output(['git', 'describe', "--tags", '--abbrev=0', 'HEAD^']).strip()
+        return check_output(['git', 'log', '--oneline', '--pretty=format:%h %ad %s', '--date=short', "{}..HEAD".format(latest_tag)]).strip()
+
+    # @purpose: TODO Comment it
+    @staticmethod
+    def release_date(tag_name):
+        return check_output(['git', 'log', '-1', '--format=%ad', '--date=short', tag_name]).strip()

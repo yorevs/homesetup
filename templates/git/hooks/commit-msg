@@ -12,8 +12,6 @@
 
 # Git provided parameters:
 # $1 - the temporary file for the commit message
-# $2 - the source of the commit message
-# $3 - the commit SHA-1
 
 import sys
 import re
@@ -22,10 +20,11 @@ import getpass
 from subprocess import check_output
 from os import path, remove
 
+
 # App arguments
 branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
 user_name = getpass.getuser()
-top_level_dir = check_output(['git', 'rev-parse', '--show-toplevel']).strip()
+master_unlock = 'master_unlocked'
 
 commit_msg_filename = sys.argv[1]
 commit_msg = None
@@ -40,28 +39,6 @@ card_regex = '(' + card_prefix + ')-(\\d+)'
 no_card_prefix = 'test|hotfix|feature|develop'
 no_card_format = '%s - [%s:{@%s}]'  # Msg/Issue/User
 no_card_regex = '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
-
-# Master protection
-master_unlock_file = 'master-unlock'
-master_unlock_path = '%s/%s' % (top_level_dir, master_unlock_file)
-
-# This will prevent any commit to master, unless, you are sure of it by creating a master unlock file
-if branch_name == 'master':
-    if not path.exists(master_unlock_path):
-        print('[ERROR] Can\'t commit direct to [MASTER]. Please use the a proper branch instead!')
-        print('E.g: \'ISSUE-1230\'')
-        print('To create the branch type: ')
-        print(' => $ git checkout -B ISSUE-1230')
-        sys.exit(1)
-    else:
-        print('[WARN] Commit to master unlocked ONCE. Create another {} to commit to master again'
-              .format(master_unlock_path))
-        try:
-            remove(master_unlock_path)
-        except OSError as error:
-            print('[ERROR] Unable to remove master unlock file: {}. Commit to master aborted!'
-                  .format(master_unlock_path))
-            sys.exit(1)
 
 # Matching CARD branches
 if re.match(card_regex, branch_name):
@@ -97,5 +74,13 @@ elif re.match(no_card_regex, branch_name):
 
 # Rejecting unknown branch names
 else:
-    print('[ERROR] Incorrect branch name: {}'.format(branch_name))
-    sys.exit(1)
+    if "master" == branch_name: 
+        if not path.exists(master_unlock):
+            print('[ERROR] Master not unlocked: {}. Commit aborted !'
+                .format(master_unlock))
+            sys.exit(1)
+        else:
+            remove(master_unlock)
+    else:
+        print('[ERROR] Incorrect branch name: {}'.format(branch_name))
+        sys.exit(1)

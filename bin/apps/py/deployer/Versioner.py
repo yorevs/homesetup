@@ -1,6 +1,6 @@
 """
   @package: deployer
-   @script: VersionUtils.py
+   @script: Versioner.py
   @purpose: Provides an engine to handle app versions.
   @created: Nov 14, 2019
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -11,6 +11,18 @@
 
 import re
 from os.path import exists
+
+"""
+Labels:
+    MAJOR version when you make incompatible API changes.
+    MINOR version when you add functionality in a backwards compatible manner.
+    PATCH version when you make backwards compatible bug fixes.
+
+@Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
+
+Extensions:
+    SNAPSHOT => STABLE => RELEASE
+"""
 
 
 # @purpose: TODO Comment it
@@ -24,7 +36,7 @@ class Versioner:
         self.mappings = {
             'major': {'max_value': 100, 'upd_fn': self.update_major},
             'minor': {'max_value': 20, 'upd_fn': self.update_minor},
-            'build': {'max_value': 10, 'upd_fn': self.update_build}
+            'patch': {'max_value': 10, 'upd_fn': self.update_patch}
         }
         if self.field not in self.mappings:
             raise Exception('Invalid field \"{}\". Please use one of: {}'.format(self.field, self.mappings.keys()))
@@ -32,6 +44,7 @@ class Versioner:
     def __str__(self):
         return '%d.%d.%03d-%s' % (self.version[0], self.version[1], self.version[2], self.release)
 
+    # @purpose: TODO Comment it
     def current(self):
         self.read_file()
         return self.__str__()
@@ -63,9 +76,9 @@ class Versioner:
             print('Version has been demoted to {}'.format(self))
 
     # @purpose: TODO Comment it
-    def update_build(self):
+    def update_patch(self):
         self.version[2] = self.version[2] + 1
-        if self.version[2] > self.max_value('build'):
+        if self.version[2] > self.max_value('patch'):
             self.update_minor()
 
     # @purpose: TODO Comment it

@@ -18,13 +18,13 @@ import os
 import re
 import sys
 
-PROC_NAME       = os.path.basename(__file__)
+PROC_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
-VERSION         = (0, 9, 0)
+VERSION = (0, 9, 0)
 
 # Usage message
-USAGE           = """
+USAGE = """
 Calculate time based operations
 
 Usage: python {} [-d|--decimal] <HH1:MM1[:SS1]> <+|-> <HH2:MM2[:SS2]>
@@ -48,7 +48,7 @@ def decimal(time_raw=0):
     return int(round(((time_raw / 60.00) * 100.00) if DECIMAL else time_raw))
 
 
-DECIMAL=False
+DECIMAL = False
 TOTAL_SECONDS = 0
 OP = '+'
 
@@ -56,11 +56,10 @@ if len(sys.argv) == 1 or sys.argv[1] in ['-h', '--help']:
     usage()
 
 if sys.argv[1] in ['-d', '--decimal']:
-    DECIMAL=True
+    DECIMAL = True
     args = sys.argv[2:]
 else:
     args = sys.argv[1:]
-
 
 for tm in args:
     if re.match(r"[+-]", tm):

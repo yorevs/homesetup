@@ -14,8 +14,8 @@
 
 import sys
 
-from VersionUtils import Versioner
-from GitUtils import Git
+from Versioner import Versioner
+from GitUtils import GitUtils
 
 from os import path, environ
 from getopt import getopt
@@ -67,19 +67,32 @@ def main(argv):
             elif opt in ('-v', '--version'):
                 version()
 
-        print("--- VersionUtils ---")
-        ver_field = 'build' if len(argv) < 1 else argv[0].strip().lower()
-        # ver_file = environ['HHS_HOME'] + '/.VERSION'
-        ver_file = '../samples/.VERSION'
-        ver = Versioner(ver_field, ver_file)
-        print('Current version: {}\n'.format(ver.current()))
-        ver.update_version()
-        print('After increase build version: {}\n'.format(ver.current()))
+        # print("--- VersionUtils ---")
+        # ver_field = 'build' if len(argv) < 1 else argv[0].strip().lower()
+        # # ver_file = environ['HHS_HOME'] + '/.VERSION'
+        # ver_file = '../samples/.VERSION'
+        # ver = Versioner(ver_field, ver_file)
+        # print('Current version: {}\n'.format(ver.current()))
+        # ver.update_build()
+        # ver.update_version()
+        # print('After increase build version: {}\n'.format(ver.current()))
+        # ver.update_minor()
+        # ver.update_version()
+        # print('After increase build minor: {}\n'.format(ver.current()))
+        # ver.update_major()
+        # ver.update_version()
+        # print('After increase build major: {}\n'.format(ver.current()))
 
         print("--- GitUtils ---")
-        print("TopLevelDir: {}".format(Git.top_level_dir()))
-        print("CurrentBranch: {}".format(Git.current_branch()))
-        print("GitUserName: {}\n".format(Git.user_name()))
+        print("TopLevelDir: {}".format(GitUtils.top_level_dir()))
+        print("CurrentBranch: {}".format(GitUtils.current_branch()))
+        print("GitUserName: {}\n".format(GitUtils.username()))
+        print("v1.2.0 Released at {}\n".format(GitUtils.release_date("v1.2.0")))
+        # print("Unreleased: ---- Current ---- \n{}\n".format(Git.unreleased()))
+        # print("ChangeLog: ---- v1.2.0 ---- \n{}\n".format(Git.changelog("v1.2.0", "v1.3.0")))
+        # print("ChangeLog: ---- v1.1.0 ---- \n{}\n".format(Git.changelog("v1.1.0", "v1.2.0")))
+        # print("ChangeLog: ---- v1.0.0 ---- \n{}\n".format(Git.changelog("v1.0.0", "v1.1.0")))
+        # print("ChangeLog: ---- v0.9.0 ---- \n{}\n".format(Git.changelog("v0.9.0", "v1.0.0")))
 
     except Exception as err:  # catch *all* exceptions
         quit_app(1, '### A unexpected exception was thrown executing the app => \n\t{}'.format(err))

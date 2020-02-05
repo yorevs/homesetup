@@ -2,4 +2,4 @@
 #
 # Package: jsonutils
 
-__all__ = ["VersionUtils", "GitUtils"]
+__all__ = ["Versioner.py", "GitUtils"]
