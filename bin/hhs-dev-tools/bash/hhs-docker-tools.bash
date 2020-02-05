@@ -15,6 +15,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 
   # @function: Return the number of active docker containers
   function __hhs_docker_count() {
+
     count=$(docker container ls | wc -l | awk '{print $1}')
     echo "${count:-0}"
 
@@ -25,6 +26,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @param $1 [Req] : The running container ID
   # @param $2 [Opt] : The command to be executed
   function __hhs_docker_exec() {
+
     if [[ $# -lt 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       return 1
@@ -41,6 +43,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @param $1 [Req] : The running container ID
   # @param $2 [Opt] : The command to be executed
   function __hhs_docker_compose_exec() {
+
     if [[ $# -lt 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       return 1
@@ -68,6 +71,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @function: Fetch the logs of a container
   # @param $1 [Req] : The running container ID
   function __hhs_docker_logs() {
+
     if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
       return 1
@@ -79,13 +83,18 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 
   # @function: Remove all docker volumes not referenced by any containers (dangling)
   function __hhs_docker_remove_volumes() {
+
     if [ -n "$1" ] && [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]}"
-    elif [ -z "$1" ]; then
+    else
       for container in $(docker volume ls -qf dangling=true); do
-        echo -en "Removing Docker volume: ${container} ... "
-        docker volume rm "${container}" &> /dev/null && echo -e "[   ${GREEN}OK${NC}   ]" && return 0
-        echo -e "[ ${GREEN}FAIL${NC} ]"
+        echo -en "Removing dangling docker volume: ${container} ... "
+        if docker volume rm "${container}" &> /dev/null; then
+          echo -e "[   ${GREEN}OK${NC}   ]"
+          return 0
+        else
+          echo -e "[ ${GREEN}FAILED${NC} ]"
+        fi
       done
     fi
 
@@ -93,34 +102,36 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   }
 
   # shellcheck disable=SC2181
-  # @function: TODO Comment it
+  # @function: Stop, remove and remove dangling [active?] volumes of all docker containers
   function __hhs_docker_kill_all() {
 
-    local ret_val=0
+    local all_containers all
+
+    [[ "${1}" == '-a' ]] && all="-a" && shift
+
+    read -r -d '' -a all_containers <<< "$(docker ps ${all} --format "{{.ID}}")"
 
     if [ -n "$1" ] && [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
       echo "Usage: ${FUNCNAME[0]}"
     elif [ -z "$1" ]; then
-      for container in $(docker ps --format "{{.ID}}"); do
-        echo -en "Killing Docker container: ${container} ... "
+      for container in "${all_containers[@]}"; do
+        echo -en "Stopping Docker container: ${container} ... "
         if docker stop "${container}" &> /dev/null; then
+          echo -e "[   ${GREEN}OK${NC}   ]"
+          echo -en "Removing Docker container: ${container} ... "
           if docker rm "${container}" &> /dev/null; then
             echo -e "[   ${GREEN}OK${NC}   ]"
-            if ! __hhs_docker_remove_volumes "$@"; then
-              return 1
-            fi
           else
-            echo -e "[ ${GREEN}FAIL${NC} ]"
-            ret_val=1
+            echo -e "[ ${RED}FAILED${NC} ]"
           fi
         else
-          echo -e "[ ${GREEN}FAIL${NC} ]"
-          ret_val=1
+          echo -e "[ ${RED}FAILED${NC} ]"
         fi
       done
+      __hhs_docker_remove_volumes "$@"
     fi
 
-    return $ret_val
+    return 0
   }
 
 fi
