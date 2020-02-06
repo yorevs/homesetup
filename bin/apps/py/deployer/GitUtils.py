@@ -16,8 +16,8 @@ from getpass import getuser
 # @purpose: TODO Comment it
 class GitUtils:
 
-    def __init__(self, command):
-        self.command = 'project-dir'
+    def __init__(self):
+        pass
 
     # @purpose: TODO Comment it
     @staticmethod
@@ -49,3 +49,8 @@ class GitUtils:
     @staticmethod
     def release_date(tag_name):
         return check_output(['git', 'log', '-1', '--format=%ad', '--date=short', tag_name]).strip()
+
+        # @purpose: TODO Comment it
+    @staticmethod
+    def tag_list():
+        return check_output(['git', 'tag']).strip()

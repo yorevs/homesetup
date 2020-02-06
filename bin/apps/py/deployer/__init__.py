@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
 #
-# Package: jsonutils
+# Package: deployer
 
-__all__ = ["Versioner.py", "GitUtils"]
+__all__ = ["Versioner", "GitUtils", "DocBuilder.py"]
