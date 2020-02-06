@@ -12,10 +12,10 @@ if __hhs_has "gradle"; then
 
   # @function: Prefer using the wrapper instead of the command itself, but use the command if the wrapper was not found on current folder.
   function __hhs_gradlew() {
-    if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <gradle_task>"
       return 1
-    elif [ -f "./gradlew" ]; then
+    elif [[ -f "./gradlew" ]]; then
       ./gradlew "$@"
     else
       command gradle "$@"

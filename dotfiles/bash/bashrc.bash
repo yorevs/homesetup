@@ -15,14 +15,14 @@
 #   ~/.colors     : To customize your colors
 #   ~/.env        : To customize your environment variables
 #   ~/.aliases    : To customize your aliases
-#   ~/.aliasdef   : To customize your aliase definitions
+#   ~/.aliasdef   : To customize your aliases definitions
 #   ~/.prompt     : To customize your prompt
 #   ~/.functions  : To customize your functions
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
 # If not running interactively, don't load anything.
-[ -z "$PS1" ] && [ -z "$PS2" ] && return
+[[ -z "$PS1" && -z "$PS2" ]] && return
 
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>
 export IFS=' 	
@@ -33,9 +33,9 @@ export IFS='
 case "${SHELL##*\/}" in
   bash)
     # Source the main profile
-    [ -s /etc/bashrc ] && source /etc/bashrc
+    [[ -s /etc/bashrc ]] && source /etc/bashrc
     # Source the user profile
-    [ -s "$HOME/.bash_profile" ] && source "$HOME/.bash_profile"
+    [[ -s "$HOME/.bash_profile" ]] && source "$HOME/.bash_profile"
   ;;
   *)
     echo ''

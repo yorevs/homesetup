@@ -14,7 +14,7 @@ VERSION=1.0.0
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $APP_NAME <method> [options] <url>
+Usage: ${APP_NAME} <method> [options] <url>
 
         method                      : The http method to be used [ GET, POST, PUT, PATCH, DELETE ].
         url                         : The url to make the request.
@@ -30,7 +30,7 @@ Usage: $APP_NAME <method> [options] <url>
 UNSETS=( format_json do_fetch )
 
 # shellcheck disable=SC1090
-[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 # Request timeout in seconds
 REQ_TIMEOUT=5
@@ -80,51 +80,49 @@ while test -n "$1"; do
   shift
 done
 
-[ -z "$URL" ] && quit 2 "No URL was defined!"
+[[ -z "$URL" ]] && quit 2 "No URL was defined!"
 
-if [ "GET" = "${METHOD}" ] || [ "DELETE" = "${METHOD}" ]; then
-  [ -n "${BODY}" ] && quit 2 "${METHOD} does not accept any body"
-elif [ "PUT" = "${METHOD}" ] || [ "POST" = "${METHOD}" ] || [ "PATCH" = "${METHOD}" ]; then
-  [ -z "${BODY}" ] && quit 2 "${METHOD} requires a body"
-fi
+case "${METHOD}" in
+    'GET'|'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body";;
+    'PUT'|'POST'|'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body";;
+esac
 
 # Format or not the output
 format_json() {
 
   # Piped input
   read -r response
-  [ -n "${FORMAT}" ] && echo -e "$response" | json_pp
-  [ -z "${FORMAT}" ] && echo -e "$response"
+  [[ -n "${FORMAT}" ]] && echo -e "$response" | json_pp
+  [[ -z "${FORMAT}" ]] && echo -e "$response"
 }
 
 # Do the request
-# shellcheck disable=SC2086
 do_fetch() {
 
   curl_opts=( -s --fail -m "$REQ_TIMEOUT" )
 
-  if [ -z "$HEADERS" ] && [ -z "${BODY}" ]; then
+  if [[ -z "$HEADERS" && -z "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
-  elif [ -z "$HEADERS" ] && [ -n "${BODY}" ]; then
+  elif [[ -z "$HEADERS" && -n "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
-  elif [ -n "$HEADERS" ] && [ -n "${BODY}" ]; then
+  elif [[ -n "$HEADERS" && -n "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
-  elif [ -n "$HEADERS" ] && [ -z "${BODY}" ]; then
+  elif [[ -n "$HEADERS" && -z "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   fi
   RET=$?
-  if [ $RET -eq 0 ] && [ -n "${body}" ]; then
+  if [[ ${RET} -eq 0 && -n "${body}" ]]; then
     echo "${body}" | format_json
   fi
 
-  return $RET
+  return ${RET}
 }
 
-[ -z "${SILENT}" ] && echo -e "Fetching: ${METHOD} $URL ..."
+[[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} $URL ..."
 
 if do_fetch; then
   quit 0
 else
-  [ -z "${SILENT}" ] && msg="Failed to process request: (Ret=$RET)"
-  quit $RET "$msg"
+  [[ -z "${SILENT}" ]] && msg="Failed to process request: (Ret=${RET})"
+  quit ${RET} "$msg"
 fi

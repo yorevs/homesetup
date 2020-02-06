@@ -18,10 +18,10 @@ ALIAS_ICN="\xef\x87\xba \xef\x81\xa1"
 FUNC_ICN="\xef\x84\xae"
 
 # Load bash environment variables to use in here
-[ -f "$HOME/.bash_env" ] && source "$HOME/.bash_env"
+[[ -f "$HOME/.bash_env" ]] && source "$HOME/.bash_env"
 
 # Load bash colors to use in here
-[ -f "$HOME/.bash_colors" ] && source "$HOME/.bash_colors"
+[[ -f "$HOME/.bash_colors" ]] && source "$HOME/.bash_colors"
 
 # Load all function files prefixed with 'hhs-`
 for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
@@ -29,15 +29,15 @@ for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bas
 done
 
 # Load all functions that were previously aliased
-for file in $(find "$HHS_HOME/bin/hhs-dev-tools/bash" -type f -name "*.bash" | sort); do
+for file in $(find "${HHS_HOME}/bin/hhs-dev-tools/bash" -type f -name "*.bash" | sort); do
   source "$file"
 done
 
 # @function: Invoke the hhs application manager
 # @param $* [Opt] : All parameters are passed to hhs.bash
 function hhs() {
-  if [ -z "$1" ]; then
-    cd "$HHS_HOME" || return 1
+  if [[ -z "$1" ]]; then
+    cd "${HHS_HOME}" || return 1
   else
     hhs.bash "${@}" || return 1
   fi

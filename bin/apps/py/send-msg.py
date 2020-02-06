@@ -93,8 +93,8 @@ class TcpUdpIpSender(object):
                 print('\n###Error -> {}'.format(str(err)))
                 sys.exit(2)
 
-    def __interrupt_handler__(self, sigNum, fraNum):
-        print('Program has been interrupted [Ctrl+C] ^{}'.format(sigNum))
+    def __interrupt_handler__(self, sig_num, frame_num):
+        print('Program has been interrupted [Ctrl+C] ^{}'.format(sig_num))
         print('Terminating threads')
         self.isAlive = False
         if self.net_type == NET_TYPE_TCP:

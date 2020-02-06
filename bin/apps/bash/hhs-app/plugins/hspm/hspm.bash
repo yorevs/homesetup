@@ -37,7 +37,7 @@ UNSETS=(
   help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
 )
 
-[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "$HHS_DIR/bin/app-commons.bash" ]] && \. "$HHS_DIR/bin/app-commons.bash"
 
 # Flag to enlist even the missing recipes
 LIST_ALL=
@@ -48,7 +48,7 @@ ALL_RECIPES=()
 # shellcheck disable=2206
 DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 
-# Directiry containing all hspm recipes
+# Directory containing all hspm recipes
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
 # Unset all declared functions from the recipes
@@ -65,7 +65,7 @@ list_recipes() {
   
   for app in ${DEV_TOOLS[*]}; do
     recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
-    if [ -n "${recipe}" ] && [ -f "${recipe}" ]; then
+    if [[ -n "${recipe}" && -f "${recipe}" ]]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
       \. "${recipe}"
@@ -75,8 +75,8 @@ list_recipes() {
         echo -e "${GREEN} => ${WHITE}$(about) ${NC}"
       fi
       cleanup_recipes
-      [ "$1" = "$app" ] && return 0
-    elif [ "${LIST_ALL}" = "1" ]; then
+      [[ "$1" == "$app" ]] && return 0
+    elif [[ "${LIST_ALL}" == "1" ]]; then
       index=$((index + 1))
       printf '%3s - %s' "${index}" "${ORANGE}${app} "
       printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
@@ -84,7 +84,9 @@ list_recipes() {
     fi
   done
 
-  [ -n "$1" ] && return 1 || return 0
+  [[ -n "$1" ]] && return 1
+
+  return 0
 }
 
 # Install the specified app using the installation recipe
@@ -94,7 +96,7 @@ install_recipe() {
 
   recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
 
-  if [ -f "${recipe}" ]; then
+  if [[ -f "${recipe}" ]]; then
     \. "${recipe}"
     if command -v "$1" > /dev/null; then
       echo -e "${YELLOW}\"$1\" is already installed on the system !${NC}" && return 1
@@ -121,7 +123,7 @@ uninstall_recipe() {
 
   recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
   
-  if [ -f "${recipe}" ]; then
+  if [[ -f "${recipe}" ]]; then
     \. "${recipe}"
     if ! command -v "$1" > /dev/null; then
       echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}" && return 1
@@ -157,8 +159,8 @@ function cleanup() {
 
 function execute() {
 
-  [ -z "$1" ] && usage 1
-  if [ ${#DEV_TOOLS[*]} -le 0 ]; then
+  [[ -z "$1" ]] && usage 1
+  if [[ ${#DEV_TOOLS[*]} -le 0 ]]; then
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
   fi
 
@@ -170,7 +172,7 @@ function execute() {
   case "$cmd" in
     # Install the app
     -i | --install)
-      [ "$#" -le 0 ] && usage 1
+      [[ "$#" -le 0 ]] && usage 1
       for next_recipe in "${@}"; do
         echo ''
         install_recipe "$next_recipe"
@@ -179,7 +181,7 @@ function execute() {
       ;;
     # Uninstall the app
     -u | --uninstall)
-      [ "$#" -le 0 ] && usage 1
+      [[ "$#" -le 0 ]] && usage 1
       for next_recipe in "${@}"; do
         echo ''
         uninstall_recipe "$next_recipe"
@@ -188,7 +190,7 @@ function execute() {
       ;;
     # List available apps
     -l | --list)
-      if [ "$1" = "-a" ] || [ "$1" = "--all" ]; then
+      if [[ "$1" = "-a" || "$1" = "--all" ]]; then
         LIST_ALL=1
       fi
       echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"

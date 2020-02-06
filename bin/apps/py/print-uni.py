@@ -11,15 +11,17 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
-import os,sys,re
+import os
+import sys
+import re
 
-APP_NAME       = os.path.basename(__file__)
+APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
-VERSION         = (0, 9, 0)
+VERSION = (0, 9, 0)
 
 # Usage message
-USAGE           = """
+USAGE = """
 Print a backslash 4 digits unicode character E.g:. \\uf118 => \\uf118
 
 Usage: python {} <4-digit-unicode-escape>

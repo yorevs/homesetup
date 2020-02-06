@@ -24,9 +24,9 @@ Usage: ${APP_NAME} <arguments> [options]
 UNSETS=('quit' 'usage' 'version' 'trim')
 
 # Import pre-defined HomeSetup bash files
-[ -f ~/.bash_colors ] && \. ~/.bash_colors
-[ -f ~/.bash_aliases ] && \. ~/.bash_aliases
-[ -f ~/.bash_functions ] && \. ~/.bash_functions
+[[ -f ~/.bash_colors ]] && \. ~/.bash_colors
+[[ -f ~/.bash_aliases ]] && \. ~/.bash_aliases
+[[ -f ~/.bash_functions ]] && \. ~/.bash_functions
 
 # Purpose: Quit the program and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
@@ -59,8 +59,8 @@ version() {
 }
 
 # Check if the user passed the help or version parameters.
-[ "$1" = '-h' ] || [ "$1" = '--help' ] && usage 0
-[ "$1" = '-v' ] || [ "$1" = '--version' ] && version
+[[ "$1" = '-h' || "$1" = '--help' ]] && usage 0
+[[ "$1" = '-v' || "$1" = '--version' ]] && version
 
 # Trim whitespaces
 trim() {

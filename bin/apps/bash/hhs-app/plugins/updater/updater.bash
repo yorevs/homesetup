@@ -34,7 +34,7 @@ UNSETS=(
   help version cleanup execute update_hhs stamp_next_update stamp_next_update
 )
 
-[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 # shellcheck disable=SC2086,SC2120
 # @function: Check the current HomeSetup installation and look for updates.
@@ -43,21 +43,21 @@ update_hhs() {
   local repo_ver is_different
   local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
 
-  if [ -n "$HHS_VERSION" ]; then
+  if [[ -n "${HHS_VERSION}" ]]; then
     clear
-    repo_ver="$(curl -s --fail -m 3 $VERSION_URL)"
+    repo_ver="$(curl -s --fail -m 3 ${VERSION_URL})"
     re="[0-9]+\.[0-9]+\.[0-9]+"
     
-    if [[ $repo_ver =~ $re ]]; then
+    if [[ ${repo_ver} =~ $re ]]; then
       if [[ ${repo_ver//./} -gt ${HHS_VERSION//./} ]]; then
         echo ''
         echo -e "${ORANGE}Your version of HomeSetup is not up-to-date: ${NC}"
         echo -e "=> Repository: ${GREEN}${repo_ver}${NC} , Yours: ${RED}${HHS_VERSION}${NC}"
         echo ''
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n]) ?" ANS
-        [ -n "$ANS" ] && echo "${ANS}${NC}"
-        if [ "$ANS" = 'y' ] || [ "$ANS" = 'Y' ]; then
-          pushd "$HHS_HOME" &> /dev/null || quit 1
+        [[ -n "$ANS" ]] && echo "${ANS}${NC}"
+        if [[ "$ANS" == 'y' || "$ANS" == 'Y' ]]; then
+          pushd "${HHS_HOME}" &> /dev/null || quit 1
           git pull || quit 1
           popd &> /dev/null || quit 1
           if "${HHS_HOME}"/install.bash -q; then
@@ -105,7 +105,7 @@ update_check() {
 
 # @function: Stamp the next update timestamp
 stamp_next_update() {
-  if [ ! -f "${HHS_DIR}/.last_update" ]; then
+  if [[ ! -f "${HHS_DIR}/.last_update" ]]; then
     # Stamp the next update check for today
     next_check=$(date "+%s%S")
   else
@@ -132,7 +132,7 @@ function cleanup() {
 }
 
 function execute() {
-  [ -z "$1" ] && usage 1
+  [[ -z "$1" ]] && usage 1
   cmd="$1"
   shift
 

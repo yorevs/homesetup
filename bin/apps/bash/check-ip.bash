@@ -11,9 +11,6 @@
 # Current script version.
 VERSION=2.0.0
 
-# This script name.
-APP_NAME="${0##*/}"
-
 # Help message to be displayed by the script.
 USAGE="
 Usage: ${APP_NAME} [Options] <ip_address>
@@ -27,7 +24,7 @@ Usage: ${APP_NAME} [Options] <ip_address>
 UNSETS=(check_class check_scope check_valid)
 
 # shellcheck disable=SC1090
-[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 # The IP to be validated.
 IP_OCTETS=()
@@ -105,25 +102,25 @@ check_scope() {
     IP_SCOPE="Link Local" # Subnet -> Link Local : Auto-Assigned IP for no DHCP
   elif [[ ${IP_OCTETS[0]} -eq 172 ]] && [[ ${IP_OCTETS[1]} -le 31 ]]; then
     IP_SCOPE="Private" # Private Use Networks
-  elif [ "${IP_ADDRESS%\.*}" = "192.0.0" ]; then
+  elif [[ "${IP_ADDRESS%\.*}" == "192.0.0" ]]; then
     IP_SCOPE="Private" # IETF Protocol Assignments
-  elif [ "${IP_ADDRESS%\.*}" = "192.0.2" ]; then
+  elif [[ "${IP_ADDRESS%\.*}" == "192.0.2" ]]; then
     IP_SCOPE="TEST-NET-1" # Documentation -> TEST-NET-1
-  elif [ "${IP_ADDRESS%\.*}" = "192.88.99" ]; then
+  elif [[ "${IP_ADDRESS%\.*}" == "192.88.99" ]]; then
     IP_SCOPE="Anycast" # Internet -> 6to4 Relay Anycast
-  elif [[ ${IP_OCTETS[0]} -eq 192 ]] && [[ ${IP_OCTETS[1]} -eq 168 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 192 && ${IP_OCTETS[1]} -eq 168 ]]; then
     IP_SCOPE="Private" # Private Use Networks
-  elif [[ ${IP_OCTETS[0]} -eq 198 ]] && [[ ${IP_OCTETS[1]} -ge 18 ]] && [[ ${IP_OCTETS[1]} -le 19 ]]; then
+  elif [[ ${IP_OCTETS[0]} -eq 198 && ${IP_OCTETS[1]} -ge 18 && ${IP_OCTETS[1]} -le 19 ]]; then
     IP_SCOPE="Private" # Private Use Networks
-  elif [ "${IP_ADDRESS%\.*}" = "198.51.100" ]; then
+  elif [[ "${IP_ADDRESS%\.*}" == "198.51.100" ]]; then
     IP_SCOPE="TEST-NET-2" # Documentation -> TEST-NET-2
-  elif [ "${IP_ADDRESS%\.*}" = "203.0.113" ]; then
+  elif [[ "${IP_ADDRESS%\.*}" == "203.0.113" ]]; then
     IP_SCOPE="TEST-NET-3" # Documentation -> TEST-NET-3
-  elif [[ ${IP_OCTETS[0]} -ge 224 ]] && [[ ${IP_OCTETS[0]} -le 239 ]]; then
+  elif [[ ${IP_OCTETS[0]} -ge 224 && ${IP_OCTETS[0]} -le 239 ]]; then
     IP_SCOPE="Multicast" # Internet -> Multicast
-  elif [[ ${IP_OCTETS[0]} -ge 240 ]] && [[ ${IP_OCTETS[0]} -le 255 ]] && [ "${IP_ADDRESS##*\.}" = "254" ]; then
+  elif [[ ${IP_OCTETS[0]} -ge 240 && ${IP_OCTETS[0]} -le 255 && "${IP_ADDRESS##*\.}" = "254" ]]; then
     IP_SCOPE="Reserved" # n/a -> Reserved
-  elif [ "${IP_ADDRESS}" = "255.255.255.255" ]; then
+  elif [[ "${IP_ADDRESS}" = "255.255.255.255" ]]; then
     IP_SCOPE="Limited Broadcast"
   else
     IP_SCOPE="Public"
@@ -136,12 +133,12 @@ check_valid() {
   ip_regex="((2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))\.){3}(2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))"
 
   # On Mac option -r does not exist, -E on linux option does not exist
-  [ "$(uname -s)" = "Linux" ] && sflag='-r'
-  [ "$(uname -s)" = "Darwin" ] && sflag='-E'
-  is_valid=$(echo "${IP_ADDRESS}" | sed $sflag "s/${ip_regex}/VALIDIP/")
+  [[ "$(uname -s)" = "Linux" ]] && sflag='-r'
+  [[ "$(uname -s)" = "Darwin" ]] && sflag='-E'
+  is_valid=$(echo "${IP_ADDRESS}" | sed ${sflag} "s/${ip_regex}/VALID_IP/")
 
   # Inverted because we will use it as exit code
-  if [ "${is_valid}" != "VALIDIP" ]; then
+  if [[ "${is_valid}" != "VALID_IP" ]]; then
     IP_VALID=1
   else
     IP_VALID=0
@@ -156,14 +153,14 @@ main() {
 
   # Final result
   if [[ ${IP_VALID} -eq 0 ]]; then
-    if [[ $SILENT -eq 0 ]]; then
-      check_class "${IP_ADDRESS}"
-      check_scope "${IP_ADDRESS}"
+    if [[ ${SILENT} -eq 0 ]]; then
+      check_class
+      check_scope
       echo "Valid IP: ${IP_ADDRESS}, Class: $IP_CLASS, Scope: $IP_SCOPE"
-      [[ $EXTRA_INFO -eq 0 ]] || __hhs_ip_info "${IP_ADDRESS}"
+      [[ ${EXTRA_INFO} -eq 0 ]] || __hhs_ip_info "${IP_ADDRESS}"
     fi
   else
-    [[ $SILENT -eq 0 ]] && echo "## Invalid IP: ${IP_ADDRESS} ##"
+    [[ ${SILENT} -eq 0 ]] && echo "## Invalid IP: ${IP_ADDRESS} ##"
   fi
 }
 

@@ -18,8 +18,7 @@ Usage: $APP_NAME
 "
 
 # Import pre-defined Bash Colors
-# shellcheck source=/dev/null
-[ -f ~/.bash_colors ] && \. ~/.bash_colors
+[[ -f ~/.bash_colors ]] && \. ~/.bash_colors
 
 # Define the user HOME
 HOME=${HOME:-~}
@@ -96,20 +95,20 @@ uninstall_dotfiles() {
   echo -e "Removing installed dotfiles ..."
   for next in ${ALL_DOTFILES[*]}; do
     dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
-    [ -f "${dotfile}" ] && command rm -fv "${dotfile}"
+    [[ -f "${dotfile}" ]] && command rm -fv "${dotfile}"
   done
 
   # shellcheck disable=SC2164
   cd "$HOME"
-  [ -d "$HHS_HOME" ] && command rm -rfv "$HHS_HOME"
-  [ -L "$HHS_DIR/bin" ] || [ -d "$HHS_DIR/bin" ] && command rm -rf "$HHS_DIR/bin"
+  [[ -d "$HHS_HOME" ]] && command rm -rfv "$HHS_HOME"
+  [[ -L "${HHS_DIR}/bin" || -d "${HHS_DIR}/bin" ]] && command rm -rf "${HHS_DIR}/bin"
   echo ''
 
-  if [ -d "$HHS_DIR" ]; then
-    BACKUPS=("$(find "$HHS_DIR" -iname "*.orig")")
+  if [[ -d "${HHS_DIR}" ]]; then
+    BACKUPS=("$(find "${HHS_DIR}" -iname "*.orig")")
     echo "Restoring backups ..."
     for next in ${BACKUPS[*]}; do
-      [ -f "${next}" ] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
+      [[ -f "${next}" ]] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
     done
     echo ''
   fi

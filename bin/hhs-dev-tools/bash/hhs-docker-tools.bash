@@ -27,7 +27,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @param $2 [Opt] : The command to be executed
   function __hhs_docker_exec() {
 
-    if [[ $# -lt 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       return 1
     elif [[ $# -ge 2 ]]; then
@@ -44,7 +44,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @param $2 [Opt] : The command to be executed
   function __hhs_docker_compose_exec() {
 
-    if [[ $# -lt 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       return 1
     elif [[ $# -ge 2 ]]; then
@@ -59,7 +59,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @function: Display information about the container
   # @param $1 [Req] : The running container ID
   function __hhs_docker_info() {
-    if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
       return 1
     fi
@@ -72,7 +72,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @param $1 [Req] : The running container ID
   function __hhs_docker_logs() {
 
-    if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
       return 1
     fi
@@ -84,7 +84,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @function: Remove all docker volumes not referenced by any containers (dangling)
   function __hhs_docker_remove_volumes() {
 
-    if [ -n "$1" ] && [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
     else
       for container in $(docker volume ls -qf dangling=true); do
@@ -105,15 +105,15 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @function: Stop, remove and remove dangling [active?] volumes of all docker containers
   function __hhs_docker_kill_all() {
 
-    local all_containers all
+    local all_containers=() all
 
     [[ "${1}" == '-a' ]] && all="-a" && shift
 
     read -r -d '' -a all_containers <<< "$(docker ps ${all} --format "{{.ID}}")"
 
-    if [ -n "$1" ] && [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
-      echo "Usage: ${FUNCNAME[0]}"
-    elif [ -z "$1" ]; then
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+      echo "Usage: ${FUNCNAME[0]} [-a]"
+    else
       for container in "${all_containers[@]}"; do
         echo -en "Stopping Docker container: ${container} ... "
         if docker stop "${container}" &> /dev/null; then

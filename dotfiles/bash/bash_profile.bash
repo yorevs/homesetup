@@ -35,7 +35,7 @@ DOTFILES=(
 
 # Load all HomeSetup dotfiles
 for file in ${DOTFILES[*]}; do
-  [ -f "${HOME}/.${file}" ] && \. "${HOME}/.${file}"
+  [[ -f "${HOME}/.${file}" ]] && \. "${HOME}/.${file}"
 done
 
 unset file
@@ -44,10 +44,10 @@ unset file
 # Set default shell options
 
 HHS_TERM_OPTS=''
-case $HHS_MY_SHELL in
+case "${HHS_MY_SHELL}" in
 
   bash)
-    # If set, bash matches filenames in a case-insensitive fashion when performing pathname expansion.
+    # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
     shopt -u nocaseglob && HHS_TERM_OPTS+='nocaseglob '
     # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
     shopt -s extglob && HHS_TERM_OPTS+='extglob '
@@ -65,9 +65,9 @@ export HHS_TERM_OPTS
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
 # - colored-stats: Displays possible completions using different colors to indicate their type
-# - <shift>+<tab> Will cicle forward though complete options
+# - <shift>+<tab> Will cycle forward though complete options
 
-if ! [ -f ~/.inputrc ]; then
+if ! [[ -f ~/.inputrc ]]; then
   {
     echo "set completion-ignore-case on"
     echo "set colored-stats on"
@@ -75,7 +75,7 @@ if ! [ -f ~/.inputrc ]; then
     echo "\"\e[Z\": menu-complete"
   } > ~/.inputrc
 else
-  case $HHS_MY_OS in
+  case "${HHS_MY_OS}" in
     Darwin)
       sed -i '' -E \
         -e 's/(^set colored-stats) .*/\1 on/g' \
@@ -96,10 +96,10 @@ else
 fi
 
 # Add custom paths to the system `$PATH`
-[ -f "$HOME/.path" ] && export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
+[[ -f "$HOME/.path" ]] && export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
-paths -q -a "$HHS_DIR/bin"
+paths -q -a "${HHS_DIR}/bin"
 
 # Check for updates
 hhs updater execute --check

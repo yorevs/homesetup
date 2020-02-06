@@ -18,7 +18,7 @@ function __hhs_paths() {
   PATHS_D="/etc/paths.d"                        # Private system paths
   PVT_PATHS_D="/private/etc/paths"              # General system path dir
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo '    Options: '

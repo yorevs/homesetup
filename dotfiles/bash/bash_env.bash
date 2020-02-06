@@ -34,11 +34,11 @@ if command -v python > /dev/null; then
 fi
 
 # Qt
-if command -v qmake > /dev/null || [ -d /usr/local/opt/qt/bin ]; then
+if command -v qmake > /dev/null || [[ -d /usr/local/opt/qt/bin ]]; then
   export QT_HOME="/usr/local/opt/qt/bin"
 fi
 
-if [ "Darwin" = "$HHS_MY_OS" ]; then
+if [[ "Darwin" = "$HHS_MY_OS" ]]; then
   # Hide the annoying warning about zsh
   export BASH_SILENCE_DEPRECATION_WARNING=1
   # XCode
@@ -56,10 +56,10 @@ export TRASH="${TRASH:-$HOME/.Trash}"
 command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-$HOME/GIT-Repository}"
 command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-$HOME/SVN-Repository}"
 
-[ -d "$HOME/Workspace" ] && export WORKSPACE="${WORKSPACE:-$HOME/Workspace}"
-[ -d "$HOME/Desktop" ] && export DESKTOP="${DESKTOP:-$HOME/Desktop}"
-[ -d "$HOME/Downloads" ] && export DOWNLOADS="${DOWNLOADS:-$HOME/Downloads}"
-[ -d "$HOME/Dropbox" ] && export DROPBOX="${DROPBOX:-$HOME/Dropbox}"
+[[ -d "$HOME/Workspace" ]] && export WORKSPACE="${WORKSPACE:-$HOME/Workspace}"
+[[ -d "$HOME/Desktop" ]] && export DESKTOP="${DESKTOP:-$HOME/Desktop}"
+[[ -d "$HOME/Downloads" ]] && export DOWNLOADS="${DOWNLOADS:-$HOME/Downloads}"
+[[ -d "$HOME/Dropbox" ]] && export DROPBOX="${DROPBOX:-$HOME/Dropbox}"
 
 # ----------------------------------------------------------------------------
 # Bash History

@@ -11,20 +11,20 @@
 
 import re
 
+
 # @verified versions: Python 2.7 and Python 3.7
 
 class JsonUtils:
 
     # Construction
-    def __init__( self, separator='.', jsonNameRe='[a-zA-Z0-9_\- ]', jsonArrayIndexRe='[0-9]{1,}' ):
+    def __init__(self, separator='.', jsonNameRe='[a-zA-Z0-9_\- ]', jsonArrayIndexRe='[0-9]{1,}'):
 
         self.separator = separator
         self.jsonNameRe = jsonNameRe
         self.jsonArrayIndexRe = jsonArrayIndexRe
 
-
     # find the next element in the list matching the specified value.
-    def __findNextElement__( self, rootElement, matchName, matchValue = None, fetchParent=False ):
+    def __findNextElement__(self, rootElement, matchName, matchValue=None, fetchParent=False):
 
         selectedElement = rootElement
 
@@ -36,7 +36,7 @@ class JsonUtils:
 
                     selectedElement = nextInList.get(matchName)
 
-                    if selectedElement and ( matchValue is None or ( matchValue and selectedElement == matchValue )):
+                    if selectedElement and (matchValue is None or (matchValue and selectedElement == matchValue)):
 
                         # To return the parent element instead of the leaf
                         if fetchParent:
@@ -70,21 +70,18 @@ class JsonUtils:
 
         return selectedElement
 
-
     # Find the element in the sub-expressions.
-    def __findInSubex__(self, subExpressions, subSelectedElement, pat_subExprVal, fetchParent = False):
+    def __findInSubex__(self, subExpressions, subSelectedElement, pat_subExprVal, fetchParent=False):
 
         for nextSubExpr in subExpressions:
 
             if nextSubExpr:
-
                 subParts = re.search(pat_subExprVal, nextSubExpr)
                 subElemId = subParts.group(1)
                 subElemVal = subParts.group(3)
                 subSelectedElement = self.__findNextElement__(subSelectedElement, subElemId, subElemVal, fetchParent)
 
         return subSelectedElement
-
 
     # Purpose: Get the json element through it's path. Returned object is either [dict, list or unicode].
     #
@@ -99,10 +96,11 @@ class JsonUtils:
     #     elem1.elem2{property<value>}.elem3
     #     elem1.elem2{property<value>}[index].elem3
     #     elem1.elem2{property<value>}.{property2<value2>}.elem3
-    def jsonSelect( self, rootElement, searchPath, fetchParent=False ):
+    def jsonSelect(self, rootElement, searchPath, fetchParent=False):
 
         self.patElem = '%s+' % self.jsonNameRe
-        self.patSelElemVal = '(%s)?((\{(%s)(<(%s)>)?\})+)(\[(%s)\])?' % ( self.patElem, self.patElem, self.patElem, self.jsonArrayIndexRe )
+        self.patSelElemVal = '(%s)?((\{(%s)(<(%s)>)?\})+)(\[(%s)\])?' % (
+        self.patElem, self.patElem, self.patElem, self.jsonArrayIndexRe)
         self.patSubExpr = '(\{%s\})' % self.patElem
         self.patSubExprVal = '\{(%s)(<(%s)>)?\}' % (self.patElem, self.patElem)
 
@@ -114,7 +112,7 @@ class JsonUtils:
 
             for nextElement in searchTokens:
 
-                if nextElement.find('{') >= 0: # Next element has nested elements
+                if nextElement.find('{') >= 0:  # Next element has nested elements
 
                     parts = re.search(self.patSelElemVal, nextElement)
                     selElemId = parts.group(1)
@@ -133,20 +131,19 @@ class JsonUtils:
 
                             for nextInList in selectedElement:
 
-                                subSelectedElement = self.__findInSubex__(subExpressions, nextInList, self.patSubExprVal, fetchParent)
+                                subSelectedElement = self.__findInSubex__(subExpressions, nextInList,
+                                                                          self.patSubExprVal, fetchParent)
 
                                 # It subSelectedElement is not null then we have found what we wanted.
                                 if subSelectedElement:
-
                                     selectedElement = subSelectedElement
                                     break
 
                         # Check if there are indexed elements.
                         if elemArrayGroup and elemArrayIndex and type(selectedElement) is list:
-
                             selectedElement = selectedElement[int(elemArrayIndex)]
 
-                elif nextElement.find('[') >= 0: # Next element is indexed
+                elif nextElement.find('[') >= 0:  # Next element is indexed
 
                     pat_selElemIdx = '(%s)\[(%s)\]' % (self.patElem, self.jsonArrayIndexRe)
                     parts = re.search(pat_selElemIdx, nextElement)
@@ -162,7 +159,7 @@ class JsonUtils:
                         if type(el) is list:
                             selectedElement = el[int(elemArrayIndex)]
 
-                else: # Next element is simple
+                else:  # Next element is simple
 
                     selectedElement = selectedElement.get(nextElement)
 

@@ -20,13 +20,13 @@ function prompt_git() {
   local s='' branchName=''
 
   # Check if the current directory is in a Git repository.
-  if [ -n "$(command -v git)" ] && [ "$(
+  if [ -n "$(command -v git)" ] && [[ "$(
     git rev-parse --is-inside-work-tree &>/dev/null
     echo "${?}"
-  )" == '0' ]; then
+  )" == '0' ]]; then
 
     # check if the current directory is in .git before running git checks
-    if [ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == 'false' ]; then
+    if [[ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == 'false' ]]; then
 
       # Ensure the index is up to date.
       git update-index --really-refresh -q &>/dev/null
@@ -42,7 +42,7 @@ function prompt_git() {
       fi
 
       # Check for untracked files.
-      if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+      if [[ -n "$(git ls-files --others --exclude-standard)" ]]; then
         s+='?'
       fi
 
@@ -60,7 +60,7 @@ function prompt_git() {
       git rev-parse --short HEAD 2>/dev/null ||
       echo '(unknown)')"
 
-    [ -n "${s}" ] && s=" [${s}]"
+    [[ -n "${s}" ]] && s=" [${s}]"
 
     echo -e "${1}${branchName}${2}${s}"
   else
@@ -68,7 +68,7 @@ function prompt_git() {
   fi
 }
 
-if [[ $COLORTERM == gnome-* && $TERM == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+if [[ ${COLORTERM} == gnome-* && ${TERM} == xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
   export TERM='gnome-256color'
 elif infocmp xterm-256color >/dev/null 2>&1; then
   export TERM='xterm-256color'

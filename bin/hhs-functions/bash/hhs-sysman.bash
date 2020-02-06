@@ -13,7 +13,7 @@ function __hhs_sysinfo() {
 
   local username containers
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
     username="$(whoami)"
@@ -179,7 +179,7 @@ function __hhs_partitions() {
 
   local all_parts str_text mounted size used avail cap
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
     all_parts="$(df -Ha | tail -n +2)"

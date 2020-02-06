@@ -7,7 +7,7 @@
 #  Mailto: yorevs@hotmail.com
 
 # shellcheck disable=SC1090
-[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 # Functions to be unset after quit
 # shellcheck disable=SC2034

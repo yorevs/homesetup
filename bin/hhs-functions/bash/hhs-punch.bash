@@ -18,7 +18,7 @@ function __hhs_punch() {
 
   HHS_PUNCH_FILE=${HHS_PUNCH_FILE:-$HHS_DIR/.punches}
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo '    Options: '

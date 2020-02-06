@@ -27,7 +27,7 @@ if __hhs_has "git"; then
   # shellcheck disable=SC2044
   # @function: Get the current branch name of all repositories from the specified directory.
   function __hhs_git_branch_all() {
-    if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <dirname>"
       return 1
     else
@@ -47,7 +47,7 @@ if __hhs_has "git"; then
   # shellcheck disable=SC2044
   # @function: Get the status of current branch of all repositories from the specified directory.
   function __hhs_git_status_all() {
-    if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <dirname>"
       return 1
     else
@@ -69,7 +69,7 @@ if __hhs_has "git"; then
   # @param $2 [Req] : The second commit ID.
   # @param $3 [Req] : The filename to be compared.
   function __hhs_git_show_file_diff() {
-    if [[ $# -ne 3 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 3 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <first_commit_id> <second_commit_id> <filename>"
       return 1
     else
@@ -83,7 +83,7 @@ if __hhs_has "git"; then
   # @param $1 [Req] : The commit ID.
   # @param $2 [Req] : The filename to show contents from .
   function __hhs_git_show_file_contents() {
-    if [[ $# -ne 2 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 2 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <commit_id> <filename>"
       return 1
     else
@@ -96,7 +96,7 @@ if __hhs_has "git"; then
   # @function: List all the files in a commit
   # @param $1 [Req] : The commit ID
   function __hhs_git_show_changes() {
-    if [[ $# -ne 1 ]] || [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <commit_id>"
       return 1
     else
@@ -113,19 +113,19 @@ if __hhs_has "git"; then
     local all_branches=() ret_val=0 all_flag='-a' all_str='or remote'
     local sel_index sel_branch mchoose_file stash_flag b_name
 
-    if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} [options]"
       echo ''
       echo '    Options:'
       echo '      -l | --local : List only local branches. Do not fetch remote branches.'
       return 1
-    elif [ ! -d "$(pwd)/.git" ]; then
+    elif [[ ! -d "$(pwd)/.git" ]]; then
       echo "Not a git repository !"
       return 1
     else
-      [ "$1" = "-l" ] || [ "$1" = "--local" ] && unset all_flag && all_str='\b'
+      [[ "$1" = "-l" || "$1" = "--local" ]] && unset all_flag && all_str='\b'
       clear
-      if [ -n "$all_flag" ]; then
+      if [[ -n "${all_flag}" ]]; then
         echo -en "${YELLOW}=> Updating branches ${NC}"
         if ! git fetch; then
           __hhs_errcho "${FUNCNAME[0]}: ### Unable fetch from remote ${NC}"
@@ -157,7 +157,7 @@ if __hhs_has "git"; then
         b_name="${b_name##*\/}"
         if git checkout "$b_name"; then
           ret_val=$?
-          if [ -n "$stash_flag" ]; then
+          if [[ -n "$stash_flag" ]]; then
             echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
             if ! git stash pop &> /dev/null; then
               __hhs_errcho "${FUNCNAME[0]}: ### Unable to retrieve stash changes ${NC}"
@@ -183,7 +183,7 @@ if __hhs_has "git"; then
 
     local git_repos_path all_repos=() sel_indexes=() repository branch repo_dir stash_flag mchoose_file
 
-    if [ '-h' == "$1" ] || [ '--help' == "$1" ]; then
+    if [[ '-h' == "$1" ||  '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <repos_search_path> [repository]"
       echo ''
       echo '    Arguments:'
@@ -194,7 +194,7 @@ if __hhs_has "git"; then
 
     # Find all git repositories
     git_repos_path="${1:-.}"
-    [ ! -d "${git_repos_path}" ] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
+    [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
     IFS=$'\n' read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
@@ -213,7 +213,7 @@ if __hhs_has "git"; then
 
     for idx in "${!all_repos[@]}"; do
       repo_dir=$(dirname "${all_repos[$idx]}")
-      if [[ "${sel_indexes[$idx]}" == '1' ]] && [ -d "${repo_dir}" ]; then
+      if [[ "${sel_indexes[$idx]}" == '1' && -d "${repo_dir}" ]]; then
         pushd "${repo_dir}" &> /dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
         branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
         if git rev-parse --abbrev-ref "${branch}@{u}" &> /dev/null; then
@@ -221,8 +221,8 @@ if __hhs_has "git"; then
           echo ''
           printf '%0.1s' "-"{1..80}
           echo -e "${WHITE}\nUpdating project ${CYAN}\"${repo_dir}\" => ${PURPLE}${repository}/${branch} ...${NC}"
-          [ "${branch}" = "current" ] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
-          [ "${branch}" = "current" ] || gitbranch="${branch}"
+          [[ "${branch}" == "current" ]] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
+          [[ "${branch}" == "current" ]] || gitbranch="${branch}"
           if git fetch; then
             if ! git diff-index --quiet HEAD --; then
               echo -en "\n${YELLOW}=> Stashing your changes prior to change ... ${NC}"

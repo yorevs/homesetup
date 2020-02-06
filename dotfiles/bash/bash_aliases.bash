@@ -24,7 +24,7 @@ function __hhs_has() {
 }
 
 # @function: Check if an alias exists and create it if it does not. Do not support the use of single quotes in the expression
-# @param $1 [Req] : The alias to set/check. Use the format __hhs_alias <alias_name='<alias_expr>'
+# @param $1 [Req] : The alias to set/check. Use the format: __hhs_alias <alias_name>='<alias_expr>'
 function __hhs_alias() {
 
   local all_args alias_expr alias_name
@@ -38,14 +38,15 @@ function __hhs_alias() {
     alias "${alias_name}"="${alias_expr}"
     ret=$?
     [[ $ret -eq 0 ]] || echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
-    return $ret
+    return ${ret}
   fi
 
   return 1
 }
 
 # -----------------------------------------------------------------------------------
-# Navigational
+# @category: Navigational
+
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
@@ -56,7 +57,7 @@ alias -- -='cd -'
 alias ?='pwd'
 
 # -----------------------------------------------------------------------------------
-# General
+# @category: General
 
 # Short for exit terminal
 alias q="exit 0"
@@ -96,7 +97,7 @@ alias mv='\mv -iv'
 # Nice command replacements
 alias df='\df -H'
 alias du='\du -hcd 1'
-alias psg='\ps aux | grep -v grep | grep -i -e VSZ -e'
+alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 
 # Use vim instead of vi
 __hhs_has "vim" && alias vi='\vim'
@@ -129,7 +130,8 @@ alias ps2='export PS1=$PS2_STYLE'
 # Use jq for format json instead of json_pp if it is installed
 __hhs_has "jq" && alias json_pp='\jq'
 
-# HomeSetup
+# -----------------------------------------------------------------------------------
+# @category: HomeSetup
 alias __hhs_vault='hhs vault execute'
 alias __hhs_hspm='hhs hspm execute'
 alias __hhs_dotfiles='hhs firebase execute'
@@ -138,85 +140,67 @@ alias __hhs_reload='cls; source ${HOME}/.bashrc'
 alias __hhs_clear='cls; \reset'
 
 # -----------------------------------------------------------------------------------
-# Tool aliases
+# @category: Tool aliases
 
 # Jenv: Set JAVA_HOME using jenv
 __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
 
 # Dropbox: Recursively delete Dropbox conflicted files from the current directory
-[ -d "$DROPBOX" ] && alias cleanup-db="find . -name *\ \(*conflicted* -exec rm -v {} \;"
-
-# -----------------------------------------------------------------------------------
-# Python aliases
-
-if __hhs_has "python"; then
-
-  # Linux has no `json_pp`, so using python instead
-  __hhs_has "json_pp" || alias json_pp='python -m json.tool'
-
-  # Evaluate mathematical expression
-  __hhs_alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
-
-  # URL-encode strings
-  __hhs_alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-  __hhs_alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
-
-  # Generate a UUID
-  __hhs_alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
-fi
+[[ -d "${DROPBOX}" ]] && alias cleanup-db="find . -name *\ \(*conflicted* -exec rm -v {} \;"
 
 # Base64 encode shortcuts
-__hhs_has "base64" && __hhs_alias encode="base64"
+__hhs_has "base64" && alias encode="base64"
 
 # -----------------------------------------------------------------------------------
-# OS Specific aliases
-# Linux boxes have a different syntaxes for some commands, so we craete the alias to match the correct OS.
-case $HHS_MY_OS in
+# @category: OS Specific aliases
 
-  Linux) # -- LINUX --
-    __hhs_alias ised="sed -i'' -r"
-    __hhs_alias esed="sed -r"
-    __hhs_has "base64" && __hhs_alias decode='base64 -d'
+# Linux boxes have a different syntax for some commands, so we create the alias to match the correct OS.
+case "${HHS_MY_OS}" in
+
+  Linux)
+    alias ised="sed -i'' -r"
+    alias esed="sed -r"
+    __hhs_has "base64" && alias decode='base64 -d'
     ;;
 
-  Darwin) # -- MACOS --
-
-    __hhs_alias ised="sed -i '' -E"
-    __hhs_alias esed="sed -E"
-    __hhs_has "base64" && __hhs_alias decode='base64 -D'
+  Darwin)
+    alias ised="sed -i '' -E"
+    alias esed="sed -E"
+    __hhs_has "base64" && alias decode='base64 -D'
 
     # Delete all .DS_store files
     alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
     # Flush Directory Service cache
-    __hhs_has "dscacheutil" && __hhs_alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+    __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
 
-    # Clean up LaunchServices to remove duplicates in the “Open With” menu
+    # Clean up LaunchServices to remove duplicates in the "Open With" menu
     alias cleanup-reg="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
     # Show/hide hidden files in Finder
     alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
     alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
     # Hide/show all desktop icons
     alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
     alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
     # Canonical hex dump; some systems have this symlinked
-    __hhs_has "hd" || alias hd='hexdump -C'
+    __hhs_has "hd" || alias hd='\hexdump -C'
 
     # macOS has no `md5sum`, so use `md5` as a fallback
-    __hhs_has "md5sum" || alias md5sum='md5'
+    __hhs_has "md5sum" || alias md5sum='\md5'
 
     # macOS has no `sha1sum`, so use `shasum` as a fallback
-    __hhs_has "sha1" || alias sha1='shasum'
-    __hhs_has "sha1sum" || alias sha1sum='sha1'
+    __hhs_has "sha1" || alias sha1='\shasum'
+    __hhs_has "sha1sum" || alias sha1sum='\sha1'
     ;;
 esac
 
 # -----------------------------------------------------------------------------------
-# Handy Terminal Shortcuts => TODO: adapt for zsh
+# @category: Handy Terminal Shortcuts
 
-case $HHS_MY_SHELL in
+case "${HHS_MY_SHELL}" in
 
   bash)
     alias show-cursor='tput cnorm'
@@ -229,7 +213,7 @@ case $HHS_MY_SHELL in
     alias disable-echo='stty raw -echo min 0'
     alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
     ;;
-  zsh) # TODO Check how to do it
+  zsh) # TODO Check how to do the remaining
     alias show-cursor='echo -e "\033[?25h"'
     alias hide-cursor='echo -e "\033[?25l"'
     alias save-cursor-pos=''
@@ -249,7 +233,26 @@ alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS
 alias __hhs_reset="cls; \reset"
 
 # -----------------------------------------------------------------------------------
-# Perl dependent aliases
+# @category: Python aliases
+
+if __hhs_has "python"; then
+
+  # Linux has no `json_pp`, so using python instead
+  __hhs_has "json_pp" || alias json_pp='python -m json.tool'
+
+  # Evaluate mathematical expression
+  alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+
+  # URL-encode strings
+  alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+
+  # Generate a UUID
+  alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+fi
+
+# -----------------------------------------------------------------------------------
+# @category: Perl aliases
 
 if __hhs_has "perl"; then
 
@@ -260,7 +263,7 @@ if __hhs_has "perl"; then
 fi
 
 # -----------------------------------------------------------------------------------
-# Git dependent aliases
+# @category: Git aliases
 
 if __hhs_has "git"; then
 
@@ -282,7 +285,7 @@ if __hhs_has "git"; then
 fi
 
 # -----------------------------------------------------------------------------------
-# Gradle dependent aliases
+# @category: Gradle aliases
 
 if __hhs_has "gradle"; then
 
@@ -297,7 +300,8 @@ if __hhs_has "gradle"; then
 fi
 
 # -----------------------------------------------------------------------------------
-# Docker dependent aliases
+# @category: Docker aliases
+
 # inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
 
 if __hhs_has "docker" && docker info &> /dev/null; then
@@ -315,4 +319,4 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 fi
 
 # Load alias definitions
-[ -s "${HOME}/.aliasdef" ] && \. "${HOME}/.aliasdef"
+[[ -s "${HOME}/.aliasdef" ]] && \. "${HOME}/.aliasdef"

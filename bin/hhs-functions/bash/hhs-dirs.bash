@@ -16,26 +16,26 @@ function __hhs_change_dir() {
   if [[ '-L' = "${1}" ]] || [[ '-P' = "${1}" ]]; then
     flags="${1}" && shift
   fi
-  
+
   path="${1:-$(pwd)}"
 
-  if [ -z "${1}" ]; then
+  if [[ -z "${1}" ]]; then
     path="${HOME}"
-  elif [ '..' = "${1}" ]; then
+  elif [[ '..' == "${1}" ]]; then
     path='..'
-  elif [ '.' = "${1}" ]; then
+  elif [[ '.' == "${1}" ]]; then
     path=$(command pwd)
-  elif [ '-' = "${1}" ]; then
+  elif [[ '-' == "${1}" ]]; then
     path="${OLDPWD}"
-  elif [ -d "${1}" ]; then
+  elif [[ -d "${1}" ]]; then
     path="${1}"
-  elif [ -e "${1}" ]; then
+  elif [[ -e "${1}" ]]; then
     path="$(dirname "${1}")"
   fi
-  
+
   path="${path//\~/$HOME}"
 
-  [ ! -d "${path}" ] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && return 1
+  [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && return 1
 
   # shellcheck disable=SC2086
   command cd ${flags} "${path}"
@@ -49,20 +49,20 @@ function __hhs_change_dir() {
 function __hhs_changeback_ndirs() {
 
   last_pwd=$(pwd)
-  if [ -z "$1" ]; then
-    command cd .. 
+  if [[ -z "$1" ]]; then
+    command cd ..
     return 0
-  elif [ -n "$1" ]; then
+  elif [[ -n "$1" ]]; then
+    # shellcheck disable=SC2034
     for x in $(seq 1 "$1"); do
       command cd ..
     done
     echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
-    [ -d "${last_pwd}" ] && export OLDPWD="${last_pwd}"
+    [[ -d "${last_pwd}" ]] && export OLDPWD="${last_pwd}"
   fi
 
   return 0
 }
-
 
 # @function: Replace the build-in 'dirs' with a more flexible one.
 function __hhs_dirs() {
@@ -76,7 +76,7 @@ function __hhs_dirs() {
 
   IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p | sort | uniq)"
   len=${#results[@]}
-  
+
   if [[ ${len} -eq 1 ]]; then
     echo "${results[*]}"
   elif [[ ${len} -gt 1 ]]; then
@@ -88,16 +88,16 @@ function __hhs_dirs() {
     if __hhs_mselect "$mselect_file" "${results[@]}"; then
       sel_index=$(grep . "$mselect_file")
       path="${results[$sel_index]//\~/$HOME}"
-      [ ! -d "${path}" ] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && ret_val=1
+      [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && ret_val=1
     else
       ret_val=1
     fi
   else
-    echo "${ORANGE}No currently remembered directories available yet \"$HHS_SAVED_DIRS_FILE\" !${NC}"
+    echo "${ORANGE}No currently remembered directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
   fi
-  
+
   [[ ${ret_val} -eq 0 ]] && command cd "${path}"
-  
+
   # Remove dirs duplicated entries. Reading again to keep the order
   IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p)"
   dirs -c
@@ -106,22 +106,21 @@ function __hhs_dirs() {
     # shellcheck disable=SC2199,2076
     if [[ ! " ${uniq_dirs[@]} " =~ " ${path} " ]]; then
       uniq_dirs[$idx]="${path}"
-      [ -d "${path}" ] && command pushd -n &> /dev/null "${path}"
+      [[ -d "${path}" ]] && command pushd -n "${path}" &> /dev/null
     fi
   done
 
   return ${ret_val}
 }
 
-
 # @function: List all directories recursively (Nth level depth) as a tree
 # @param $1 [Req] : The max level depth to walk into
 function __hhs_list_tree() {
 
   if __hhs_has "tree"; then
-    if [ -n "$1" ] && [ -n "$2" ]; then
+    if [[ -n "$1" && -n "$2" ]]; then
       tree "$1" -L "$2"
-    elif [ -n "$1" ]; then
+    elif [[ -n "$1" ]]; then
       tree "$1"
     else
       tree '.'
@@ -141,9 +140,9 @@ function __hhs_save_dir() {
   local dir dir_alias all_dirs=()
 
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
-  touch "$HHS_SAVED_DIRS_FILE"
+  touch "${HHS_SAVED_DIRS_FILE}"
 
-  if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ -z "$1" || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] | [dir_to_save] [dir_alias]"
     echo ''
     echo 'Options: '
@@ -152,34 +151,34 @@ function __hhs_save_dir() {
     return 1
   else
 
-    [ -n "$2" ] || dir_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-    [ -n "$2" ] && dir_alias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    [[ -n "$2" ]] || dir_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    [[ -n "$2" ]] && dir_alias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
-    if [ "$1" = "-e" ]; then
-      edit "$HHS_SAVED_DIRS_FILE"
-    elif [ "$1" = "-r" ] && [ -n "$2" ]; then
+    if [[ "$1" == "-e" ]]; then
+      edit "${HHS_SAVED_DIRS_FILE}"
+    elif [[ "$1" == "-r" && -n "$2" ]]; then
       # Remove the previously saved directory aliased
-      if grep -q "$dir_alias" "$HHS_SAVED_DIRS_FILE"; then
+      if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
         echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
       fi
-      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS_FILE"
+      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
     else
       dir="$1"
       # If the path is not absolute, append the current directory to it.
-      if [ -z "${dir}" ] || [ "${dir}" = "." ]; then dir=${dir//./$(pwd)}; fi
-      if [ -d "${dir}" ] && [[ ! "${dir}" =~ ^/ ]]; then dir="$(pwd)/${dir}"; fi
-      if [ -n "${dir}" ] && [ "${dir}" = ".." ]; then dir=${dir//../$(pwd)}; fi
-      if [ -n "${dir}" ] && [ "${dir}" = "-" ]; then dir=${dir//-/$OLDPWD}; fi
-      if [ -n "${dir}" ] && [ ! -d "${dir}" ]; then
+      if [[ -z "${dir}" || "${dir}" = "." ]]; then dir=${dir//./$(pwd)}; fi
+      if [[ -d "${dir}" && ! "${dir}" =~ ^/ ]]; then dir="$(pwd)/${dir}"; fi
+      if [[ -n "${dir}" && "${dir}" = ".." ]]; then dir=${dir//../$(pwd)}; fi
+      if [[ -n "${dir}" && "${dir}" = "-" ]]; then dir=${dir//-/$OLDPWD}; fi
+      if [[ -n "${dir}" && ! -d "${dir}" ]]; then
         __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist !"
         return 1
       fi
       # Remove the old saved directory aliased
-      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "$HHS_SAVED_DIRS_FILE"
-      IFS=$'\n' read -d '' -r -a all_dirs < "$HHS_SAVED_DIRS_FILE"
+      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
+      IFS=$'\n' read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
       all_dirs+=("$dir_alias=${dir}")
-      printf "%s\n" "${all_dirs[@]}" > "$HHS_SAVED_DIRS_FILE"
-      sort "$HHS_SAVED_DIRS_FILE" -o "$HHS_SAVED_DIRS_FILE"
+      printf "%s\n" "${all_dirs[@]}" > "${HHS_SAVED_DIRS_FILE}"
+      sort "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
       echo "${GREEN}Directory saved: ${WHITE}\"${dir}\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
     fi
   fi
@@ -195,9 +194,9 @@ function __hhs_load_dir() {
   local dir_alias all_dirs=() dir pad pad_len mselect_file sel_index
 
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
-  touch "$HHS_SAVED_DIRS_FILE"
+  touch "${HHS_SAVED_DIRS_FILE}"
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [-l] | [dir_alias]"
     echo ''
     echo 'Options: '
@@ -209,7 +208,7 @@ function __hhs_load_dir() {
     return 1
   fi
 
-  IFS=$'\n' read -d '' -r -a all_dirs < "$HHS_SAVED_DIRS_FILE"
+  IFS=$'\n' read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
 
   if [ ${#all_dirs[@]} -ne 0 ]; then
 
@@ -228,7 +227,7 @@ function __hhs_load_dir() {
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
           echo -e "${YELLOW} was saved as ${WHITE}'${dir}'"
         done
-        IFS="$RESET_IFS"
+        IFS="${RESET_IFS}"
         echo "${NC}"
         return 0
         ;;
@@ -246,12 +245,12 @@ function __hhs_load_dir() {
             return 1
           fi
         else
-          echo "${ORANGE}No dirctories available yet !${NC}"
+          echo "${ORANGE}No directories available yet !${NC}"
         fi
         ;;
       [a-zA-Z0-9_]*)
         dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        dir=$(grep "^${dir_alias}=" "$HHS_SAVED_DIRS_FILE" | awk -F '=' '{ print $2 }')
+        dir=$(grep "^${dir_alias}=" "${HHS_SAVED_DIRS_FILE}" | awk -F '=' '{ print $2 }')
         ;;
       *)
         __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\"${NC}"
@@ -259,7 +258,7 @@ function __hhs_load_dir() {
         ;;
     esac
 
-    if [ -z "${dir}" ] || [ ! -d "${dir}" ]; then
+    if [[ -z "${dir}" || ! -d "${dir}" ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"$dir_alias\" was not found !"
       return 1
     else
@@ -268,10 +267,10 @@ function __hhs_load_dir() {
     fi
 
   else
-    echo "${ORANGE}No saved directories available yet \"$HHS_SAVED_DIRS_FILE\" !${NC}"
+    echo "${ORANGE}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
   fi
 
-  [ -f "$mselect_file" ] && command rm -f "$mselect_file"
+  [[ -f "$mselect_file" ]] && command rm -f "$mselect_file"
   echo ''
 
   return 0
@@ -284,28 +283,28 @@ function __hhs_go_dir() {
 
   local dir len mselect_file results=()
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -lt 1 ]; then
+  if [[ "$#" -lt 1 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
     return 1
-  elif [ -d "$1" ]; then
+  elif [[ -d "$1" ]]; then
     pushd "$1" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   else
     local searchPath name sel_index
-    [ -n "$2" ] && searchPath="$1" || searchPath="$(pwd)"
-    [ -n "$2" ] && name="$(basename "$2")" || name="$(basename "$1")"
+    [[ -n "$2" ]] && searchPath="$1" || searchPath="$(pwd)"
+    [[ -n "$2" ]] && name="$(basename "$2")" || name="$(basename "$1")"
     IFS=$'\n' read -d '' -r -a results <<< "$(find -L "${searchPath%/}" -type d -iname "*""$name" 2> /dev/null)"
     len=${#results[@]}
     # If no directory is found under the specified name
-    if [ "$len" -eq 0 ]; then
+    if [[ ${len} -eq 0 ]]; then
       echo "${YELLOW}No matches for directory with name \"$name\" found !${NC}"
       return 1
     # If there was only one directory found, CD into it
-    elif [ "$len" -eq 1 ]; then
+    elif [[ ${len} -eq 1 ]]; then
       dir=${results[0]}
     # If multiple directories were found with the same name, query the user
     else
       clear
-      echo "${YELLOW}@@ Multiple directories ($len) found. Please choose one to go into:"
+      echo "${YELLOW}@@ Multiple directories (${len}) found. Please choose one to go into:"
       echo "Base dir: $searchPath"
       echo "-------------------------------------------------------------"
       echo -en "${NC}"
@@ -317,10 +316,10 @@ function __hhs_go_dir() {
         return 1
       fi
     fi
-    [ -n "${dir}" ] && [ -d "${dir}" ] && pushd "${dir}" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
+    [[ -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   fi
 
-  [ -f "$mselect_file" ] && command rm -f "$mselect_file"
+  [[ -f "$mselect_file" ]] && command rm -f "$mselect_file"
   echo ''
 
   return 0
@@ -329,7 +328,7 @@ function __hhs_go_dir() {
 # @function: Create all folders using a dot notation path and immediatelly change into it
 # @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path
 function __hhs_mkcd() {
-  if [ -n "$1" ] && [ ! -d "$1" ]; then
+  if [[ -n "$1" && ! -d "$1" ]]; then
     dir="${1//.//}"
     mkdir -p "${dir}" || return 1
     last_pwd=$(pwd)

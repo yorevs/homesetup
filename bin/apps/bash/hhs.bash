@@ -44,15 +44,15 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
     - To discover which plugins and functions are available type: hhs list
 "
 
-[ -s "$HHS_DIR/bin/app-commons.bash" ] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 __hhs_has "python" || quit 1 "Python is required to execute ${APP_NAME}"
 
-# Directiry containing all HHS plug-ins
-PLUGINS_DIR="$(dirname "${0//$HHS_DIR/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/plugins"
+# Directory containing all HHS plug-ins
+PLUGINS_DIR="$(dirname "${0//${HHS_DIR}/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/plugins"
 
-# Directiry containing all local HHS functions.
-FUNCTIONS_DIR="$(dirname "${0//$HHS_DIR/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/functions"
+# Directory containing all local HHS functions.
+FUNCTIONS_DIR="$(dirname "${0//${HHS_DIR}/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/functions"
 
 # List of local hhs functions that can be executed.
 HHS_APP_FUNCTIONS=()
@@ -61,7 +61,7 @@ HHS_APP_FUNCTIONS=()
 HHS_FUNCTIONS=()
 
 # List of required functions a plugin must have.
-PLUGINS_FNCS=('help' 'version' 'execute')
+PLUGINS_FUNCS=('help' 'version' 'execute')
 
 # List of valid plugins
 PLUGINS_LIST=()
@@ -73,7 +73,7 @@ PLUGINS=()
 # @param $1 [Req] : The plugin name.
 has_function() {
 
-  if [ -n "${1}" ] && [[ ${HHS_APP_FUNCTIONS[*]} =~ ${1} ]]; then
+  if [[ -n "${1}" && ${HHS_APP_FUNCTIONS[*]} =~ ${1} ]]; then
     return 0
   fi
 
@@ -84,7 +84,7 @@ has_function() {
 # @param $1 [Req] : The plugin name.
 has_plugin() {
 
-  if [ -n "${1}" ] && [ "${#PLUGINS[@]}" -gt 0 ] && [[ ${PLUGINS[*]} =~ ${1} ]]; then
+  if [[ -n "${1}" && "${#PLUGINS[@]}" -gt 0 && ${PLUGINS[*]} =~ ${1} ]]; then
     return 0
   fi
 
@@ -95,7 +95,7 @@ has_plugin() {
 # @param $1 [Req] : The command name.
 has_command() {
 
-  if [ -n "${1}" ] && [ "${#PLUGINS_FNCS[@]}" -gt 0 ] && [[ ${PLUGINS_FNCS[*]} =~ ${1} ]]; then
+  if [[ -n "${1}" && "${#PLUGINS_FUNCS[@]}" -gt 0 && ${PLUGINS_FUNCS[*]} =~ ${1} ]]; then
     return 0
   fi
 
@@ -106,16 +106,16 @@ has_command() {
 # @param $1 [Req] : Array of plugin functions.
 validate_plugin() {
 
-  local i=0 j=0 plg_fncs=("$@")
+  local i=0 j=0 plg_funcs=("$@")
 
-  while [ "$i" -lt "${#PLUGINS_FNCS[@]}" ]; do
-    if [ "${plg_fncs[j]}" = "${PLUGINS_FNCS[i]}" ]; then
+  while [[ "$i" -lt "${#PLUGINS_FUNCS[@]}" ]]; do
+    if [[ "${plg_funcs[j]}" == "${PLUGINS_FUNCS[i]}" ]]; then
       i=$((i + 1))
       j=0
-      [ $i = ${#PLUGINS_FNCS[@]} ] && return 0
+      [[ $i = ${#PLUGINS_FUNCS[@]} ]] && return 0
     else
       j=$((j + 1))
-      [ $j = ${#plg_fncs[@]} ] && return 1
+      [[ $j = ${#plg_funcs[@]} ]] && return 1
     fi
   done
 
@@ -125,15 +125,15 @@ validate_plugin() {
 # Purpose: Search and register all hhs application plugins
 register_plugins() {
 
-  local plg_fncs=()
+  local plg_funcs=()
 
   while IFS='' read -r plugin; do
     while IFS='' read -r fnc; do
       f_name="${fnc##function }"
       f_name="${f_name%\(\) \{}"
-      plg_fncs+=("${f_name}")
+      plg_funcs+=("${f_name}")
     done < <(grep '^function .*()' < "${plugin}")
-    if ! validate_plugin "${plg_fncs[@]}"; then
+    if ! validate_plugin "${plg_funcs[@]}"; then
       INVALID+=("$(basename "${plugin}")")
     else
       plg_name=$(basename "${plugin%.*}")
@@ -141,7 +141,7 @@ register_plugins() {
       PLUGINS_LIST+=("${plugin}")
     fi
   done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
-  IFS=$"$RESET_IFS"
+  IFS=$"${RESET_IFS}"
 }
 
 # Purpose: Parse command line arguments
@@ -178,8 +178,8 @@ invoke_command() {
   # Open a new subshell, so that we can configure the running environment
   (
     for idx in "${!PLUGINS[@]}"; do
-      if [[ "${PLUGINS[idx]}" = "${1}" ]]; then
-        [ -s "${PLUGINS_LIST[idx]}" ] || exit 1
+      if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
+        [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
         \. "${PLUGINS_LIST[idx]}"
         shift
         plg_cmd="${1}"
@@ -188,8 +188,8 @@ invoke_command() {
         ${plg_cmd} "${@}"
         ret=${?}
         cleanup
-        unset "${PLUGINS_FNCS[@]}"
-        exit $ret
+        unset "${PLUGINS_FUNCS[@]}"
+        exit ${ret}
       else
         [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && exit 255
       fi

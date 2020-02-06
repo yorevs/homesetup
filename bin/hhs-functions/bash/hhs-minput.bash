@@ -11,20 +11,20 @@
 # @function: Retrieve the current cursor position on screen. ## This is a very expensive call
 function __hhs_minput_curpos() {
 
-  local row col
+  local row col pos=()
 
-  # Sometimes the cursor position is not comming, so make sure we have data to retrieve
+  # Sometimes the cursor position is not coming, so make sure we have data to retrieve
   while
-    [ -z "$row" ] || [ -z "$col" ]
+    [[ -z "$row" || -z "$col" ]]
     exec < /dev/tty
     disable-echo
     echo -en "\033[6n" > /dev/tty
-    IFS=';' read -r -d R -a pos
+    IFS=';' read -r -d 'R' -a pos
     enable-echo
     if [[ ${#pos} -gt 0 ]]; then
       row="${pos[0]:2}"
       col="${pos[1]}"
-      if [[ $row =~ ^[1-9]+$ ]] && [[ $col =~ ^[1-9]+$ ]]; then
+      if [[ ${row} =~ ^[1-9]+$ && ${col} =~ ^[1-9]+$ ]]; then
         echo "$((row - 1)),$((col - 1))"
         return 0
       else
@@ -42,6 +42,10 @@ function __hhs_minput_curpos() {
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
 
+  local outfile label_size value_size form_title all_fields=() cur_field=() field_parts=() all_pos=()
+  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout re_render=1
+  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes=() mi_types=() file_contents
+
   UNSELECTED_BG='\033[40m'
   SELECTED_BG='\033[44m'
   LOCKED_ICN='\357\200\243'
@@ -51,7 +55,7 @@ function __hhs_minput() {
   CHECKBOX_ICN='\357\203\210'
   CHECKBOX_ICN_CHECKED='\357\205\212'
 
-  if [[ $# -lt 2 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ $# -lt 2 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
     echo ''
     echo '    Arguments: '
@@ -76,11 +80,9 @@ function __hhs_minput() {
     return 1
   fi
 
-  local outfile="${1}" label_size value_size form_title all_fields=() cur_field=() field_parts=() all_pos=()
-  local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout re_render=1
-  local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes mi_types file_contents
+  outfile="${1}"
 
-  if [ -d "$1" ] || [ -s "$1" ]; then
+  if [[ -d "${outfile}" || -s "${outfile}" ]]; then
     __hhs_errcho "${FUNCNAME[0]}: \"$1\" is a directory or an existing non-empty file !${NC}"
     return 1
   fi
@@ -98,7 +100,7 @@ function __hhs_minput() {
     field="${all_fields[${idx}]}"
     IFS='|' read -rsa field_parts <<< "${field}"
     f_label="${field_parts[0]}"
-    [[ ! $f_label =~ ^[a-zA-Z0-9_]+$ ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters " && return 1
+    [[ ! ${f_label} =~ ^[a-zA-Z0-9_]+$ ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters " && return 1
     f_mode="${field_parts[1]}"
     f_mode=${f_mode:-input}
     [[ ! "${mi_modes[*]}" == *"${f_mode}"* ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid mode \"${f_mode}\". Valid modes are: [${mi_modes[*]}] " && return 1
@@ -115,7 +117,7 @@ function __hhs_minput() {
     f_perm=${f_perm:-rw}
     [[ ! "r rw" == *"${f_perm}"* ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid permission \"${f_perm}\". Valid permissions are: [r rw] " && return 1
     f_value="${field_parts[5]:0:${maxlen}}"
-    [[ "r" == "${f_perm}" ]] && [ -z "${f_value}" ] && echo "Read only fields can't have empty values." && return 1
+    [[ "r" == "${f_perm}" && -z "${f_value}" ]] && echo "Read only fields can't have empty values." && return 1
     [[ ${#f_label} -gt ${label_size} ]] && label_size=${#f_label}
     [[ ${maxlen} -gt ${value_size} ]] && value_size=${maxlen}
     all_fields[${idx}]="${f_label}|${f_mode}|${f_type}|${f_max_min_len}|${f_perm}|${f_value}"
@@ -133,7 +135,7 @@ function __hhs_minput() {
   while :; do
 
     # Menu Renderization {
-    if [ -n "$re_render" ]; then
+    if [[ -n "$re_render" ]]; then
       hide-cursor
       # Restore the cursor to the home position
       restore-cursor-pos
@@ -159,27 +161,27 @@ function __hhs_minput() {
         fi
         offset=${#f_value}
         margin=$((10 - (${#maxlen} + ${#offset})))
-        if [ "input" = "${f_mode}" ]; then
+        if [[ "input" == "${f_mode}" ]]; then
           icon="${EDIT_ICN}"
           printf "%-${value_size}s" "${f_value}"
-        elif [ "password" = "${f_mode}" ]; then 
+        elif [[ "password" == "${f_mode}" ]]; then
           icon="${PASSWORD_ICN}"
           printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
-        elif [ "checkbox" = "${f_mode}" ]; then 
+        elif [[ "checkbox" == "${f_mode}" ]]; then
           icon="${EDIT_ICN}"
-          if [ -n "${f_value}" ]; then 
-            printf "${CHECKBOX_ICN_CHECKED} %-$((value_size-2))s" " "
-          else 
-    
-            printf "${CHECKBOX_ICN} %-$((value_size-2))s" " "
-      fi
+          if [[ -n "${f_value}" ]]; then
+            printf "${CHECKBOX_ICN_CHECKED} %-$((value_size - 2))s" " "
+          else
+
+            printf "${CHECKBOX_ICN} %-$((value_size - 2))s" " "
+          fi
         fi
-        [ "r" = "${f_perm}" ] && icon="${LOCKED_ICN}"
+        [[ "r" = "${f_perm}" ]] && icon="${LOCKED_ICN}"
         # Remaining/max characters
-        printf " ${icon}  %d/%d" "${#f_value}" "${maxlen}" 
+        printf " ${icon}  %d/%d" "${#f_value}" "${maxlen}"
         printf "%*.*s${UNSELECTED_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"
         # Display any previously set error message
-        if [[ ${tab_index} -eq ${idx} ]] && [ -n "${err_msg}" ]; then
+        if [[ ${tab_index} -eq ${idx} && -n "${err_msg}" ]]; then
           err_msg="${err_msg}"
           dismiss_timeout=$((1 + (${#err_msg} / 25)))
           printf "${RED} ${ERROR_ICN}  %s" "${err_msg}"
@@ -188,7 +190,7 @@ function __hhs_minput() {
           IFS= read -rsn1000 -t ${dismiss_timeout} err_msg < "/dev/tty"
           enable-echo
           # Remove the message after the timeout
-          echo -en "\033[$((${#err_msg} + 4))D\033[0K${NC}" 
+          echo -en "\033[$((${#err_msg} + 4))D\033[0K${NC}"
           unset err_msg
         fi
         echo -e '\n'
@@ -205,10 +207,10 @@ function __hhs_minput() {
       unset re_render
     fi
     # } Menu Renderization
-    
+
     # Position the cursor to edit the current field
     [[ "checkbox" != "${cur_field[1]}" ]] && tput cup "${cur_row}" "${cur_col}" && show-cursor
-    
+
     # Navigation input {
     IFS= read -rsn1 keypress
     disable-echo
@@ -216,7 +218,7 @@ function __hhs_minput() {
       $'\011') # Handle TAB => Validate and move next. First case statement because next one also captures it
         minlen=${cur_field[3]%/*}
         if [[ ${minlen} -le ${#cur_field[5]} ]]; then
-          if [[ $((tab_index + 1)) -lt $len ]]; then
+          if [[ $((tab_index + 1)) -lt ${len} ]]; then
             tab_index=$((tab_index + 1))
           else
             tab_index=0
@@ -226,10 +228,10 @@ function __hhs_minput() {
         fi
         ;;
       $'\177') # Handle backspace
-        if [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -ge 1 ]]; then
+        if [[ "rw" == "${cur_field[4]}" ]] && [[ ${#cur_field[5]} -ge 1 ]]; then
           cur_field[5]="${cur_field[5]::${#cur_field[5]}-1}"
           all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
-        elif [ "r" = "${cur_field[4]}" ]; then
+        elif [[ "r" == "${cur_field[4]}" ]]; then
           err_msg="This field is read only !"
         fi
         ;;
@@ -237,14 +239,14 @@ function __hhs_minput() {
         f_mode="${cur_field[1]}"
         f_type="${cur_field[2]}"
         maxlen=${cur_field[3]##*/}
-        if [ "rw" = "${cur_field[4]}" ] && [[ "${f_mode}" == "checkbox" ]]; then
+        if [[ "rw" == "${cur_field[4]}" && "${f_mode}" == "checkbox" ]]; then
           if [[ "${#cur_field[5]}" -eq 0 ]]; then
             cur_field[5]=1
-          else 
+          else
             cur_field[5]=''
           fi
           all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
-        elif [ "rw" = "${cur_field[4]}" ] && [[ ${#cur_field[5]} -lt maxlen ]]; then
+        elif [[ "rw" == "${cur_field[4]}" && ${#cur_field[5]} -lt maxlen ]]; then
           case "${f_type}" in
             'letter') val_regex='^[a-zA-Z ]*$' ;;
             'number') val_regex='^[0-9]*$' ;;
@@ -258,7 +260,7 @@ function __hhs_minput() {
           else
             err_msg="This field only accept ${f_type}s !"
           fi
-        elif [ "r" = "${cur_field[4]}" ]; then
+        elif [[ "r" == "${cur_field[4]}" ]]; then
           err_msg="This field is read only !"
         fi
         ;;
@@ -273,7 +275,7 @@ function __hhs_minput() {
             fi
             ;;
           [B) # Cursor down
-            if [[ $((tab_index + 1)) -lt $len ]]; then
+            if [[ $((tab_index + 1)) -lt ${len} ]]; then
               tab_index=$((tab_index + 1))
             else
               continue
@@ -302,7 +304,7 @@ function __hhs_minput() {
             file_contents+="${f_label}=${f_value}\n"
           fi
         done
-        if [ -n "${file_contents}" ]; then
+        if [[ -n "${file_contents}" ]]; then
           echo -en "${file_contents}" > "${outfile}"
           break
         fi

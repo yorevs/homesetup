@@ -86,7 +86,7 @@ function __hhs_version() {
 # @function: Check whether a list of development tools are installed.
 function __hhs_tools() {
 
-  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
 
