@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
+# shellcheck disable=SC1117,SC1090
 
 #  Script: uninstall.bash
 # Purpose: Uninstall HomeSetup
@@ -65,7 +65,7 @@ usage() {
 
 check_installation() {
 
-  if [ -n "$HHS_HOME" ] && [ -d "$HHS_HOME" ]; then
+  if [[ -n "$HHS_HOME" && -d "$HHS_HOME" ]]; then
 
     echo "${BLUE}"
     echo '#'
@@ -78,9 +78,9 @@ check_installation() {
     echo "${RED}"
     read -r -n 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
     echo "${NC}"
-    [ -n "$ANS" ] && echo ''
+    [[ -n "$ANS" ]] && echo ''
 
-    if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+    if [[ "$ANS" = "y" || "$ANS" = "Y" ]]; then
       uninstall_dotfiles
     else
       quit 1 "Uninstallation cancelled!"
