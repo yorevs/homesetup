@@ -92,7 +92,7 @@ setup_firebase() {
     echo "### Firebase setup"
     echo "-------------------------------"
     read -r -p 'Please type you Project ID: ' PROJECT_ID
-    [[ -z "$PROJECT_ID" || "$PROJECT_ID" = "" ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid Project ID: ${PROJECT_ID}${NC}" && sleep 1 && continue
+    [[ -z "$PROJECT_ID" || "$PROJECT_ID" == "" ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid Project ID: ${PROJECT_ID}${NC}" && sleep 1 && continue
     fb_config="${FB_CONFIG_FMT//\%ID\%/$PROJECT_ID}"
     fb_config="${fb_config//\%URL\%/https://$PROJECT_ID.firebaseio.com/homesetup}"
     read -r -p 'Please type a password to encrypt you data: ' PASSWD
@@ -258,7 +258,7 @@ function execute() {
       echo -e "${ORANGE}"
       read -r -n 1 -p "All of your current .dotfiles will be replaced. Continue y/[n] ?" ANS
       echo -e "${NC}"
-      if [[ "$ANS" = "y" || "$ANS" = "Y" ]]; then
+      if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
         load_settings
         download "${FB_ALIAS}"
         parse_and_save

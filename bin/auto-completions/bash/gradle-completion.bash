@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2155,SC2207,SC2091,SC2206
+
 __gradle-completion-print-timestamp() {
     echo "$(($(gdate +'%s * 1000 + %-N / 1000000'))) - $1"
 }

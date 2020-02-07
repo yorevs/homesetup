@@ -16,7 +16,7 @@ function __hhs_mselect() {
   local all_options=() outfile sel_index=0 show_from=0 re_render=1 selector
   local index_len len show_to diff_index typed_index columns option_line
 
-  if [[ $# -eq 0 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <items...>"
     echo ''
     echo '    Arguments: '

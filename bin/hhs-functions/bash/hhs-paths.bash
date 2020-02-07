@@ -18,7 +18,7 @@ function __hhs_paths() {
   PATHS_D="/etc/paths.d"                        # Private system paths
   PVT_PATHS_D="/private/etc/paths"              # General system path dir
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo '    Options: '
@@ -32,8 +32,8 @@ function __hhs_paths() {
     echo '    When no arguments are provided it will list all PATH entries'
     return 1
   else
-    [[ "-q" = "$1" ]] && quiet=1 && shift
-    if [[ -z "$1" || "-c" = "$1" ]]; then
+    [[ "-q" == "$1" ]] && quiet=1 && shift
+    if [[ -z "$1" || "-c" == "$1" ]]; then
       [ -f "$HHS_PATHS_FILE" ] || touch "$HHS_PATHS_FILE"
       pad=$(printf '%0.1s' "."{1..70})
       pad_len=70
@@ -53,7 +53,7 @@ function __hhs_paths() {
         if [[ -d "$path" ]]; then
           echo -en "${GREEN} ${CHECK_ICN} => ${WHITE}"
         else
-          if [[ "-c" = "$1" ]]; then
+          if [[ "-c" == "$1" ]]; then
             ised -e "s#(^$path$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
             export PATH=${PATH//$path:/}
             echo -en "${RED} ${CROSS_ICN} => "
@@ -71,10 +71,10 @@ function __hhs_paths() {
       done
       IFS="$RESET_IFS"
       echo -e "${NC}"
-    elif [[ "-e" = "$1" ]]; then
+    elif [[ "-e" == "$1" ]]; then
       edit "$HHS_PATHS_FILE"
       return 0
-    elif [[ "-a" = "$1" ]]; then
+    elif [[ "-a" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
       if [[ -d "$2" ]]; then
@@ -84,7 +84,7 @@ function __hhs_paths() {
       else
         __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" does not exist" && return 1
       fi
-    elif [[ "-r" = "$1" ]]; then
+    elif [[ "-r" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
       if grep -q "$2" "$HHS_PATHS_FILE" && [[ -z $quiet ]]; then
         if ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"; then

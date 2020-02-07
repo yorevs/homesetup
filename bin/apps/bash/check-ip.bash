@@ -118,9 +118,9 @@ check_scope() {
     IP_SCOPE="TEST-NET-3" # Documentation -> TEST-NET-3
   elif [[ ${IP_OCTETS[0]} -ge 224 && ${IP_OCTETS[0]} -le 239 ]]; then
     IP_SCOPE="Multicast" # Internet -> Multicast
-  elif [[ ${IP_OCTETS[0]} -ge 240 && ${IP_OCTETS[0]} -le 255 && "${IP_ADDRESS##*\.}" = "254" ]]; then
+  elif [[ ${IP_OCTETS[0]} -ge 240 && ${IP_OCTETS[0]} -le 255 && "${IP_ADDRESS##*\.}" == "254" ]]; then
     IP_SCOPE="Reserved" # n/a -> Reserved
-  elif [[ "${IP_ADDRESS}" = "255.255.255.255" ]]; then
+  elif [[ "${IP_ADDRESS}" == "255.255.255.255" ]]; then
     IP_SCOPE="Limited Broadcast"
   else
     IP_SCOPE="Public"
@@ -133,8 +133,8 @@ check_valid() {
   ip_regex="((2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))\.){3}(2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))"
 
   # On Mac option -r does not exist, -E on linux option does not exist
-  [[ "$(uname -s)" = "Linux" ]] && sflag='-r'
-  [[ "$(uname -s)" = "Darwin" ]] && sflag='-E'
+  [[ "$(uname -s)" == "Linux" ]] && sflag='-r'
+  [[ "$(uname -s)" == "Darwin" ]] && sflag='-E'
   is_valid=$(echo "${IP_ADDRESS}" | sed ${sflag} "s/${ip_regex}/VALID_IP/")
 
   # Inverted because we will use it as exit code

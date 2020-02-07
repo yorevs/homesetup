@@ -17,7 +17,7 @@ if __hhs_has "python"; then
 
     local inames expr filter dir
 
-    if [[ "$#" -ne 2 || "$1" = "-h" || "$1" = "--help" ]]; then
+    if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <search_path> <file_globs...>"
       echo ''
       echo '  Notes: '
@@ -42,7 +42,7 @@ if __hhs_has "python"; then
 
     local inames expr dir filter
 
-    if [[ "$#" -ne 2 || "$1" = "-h" || "$1" = "--help" ]]; then
+    if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <search_path> <dir_names...>"
       echo ''
       echo '  Notes: '
@@ -72,7 +72,7 @@ if __hhs_has "python"; then
     local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
     local names_expr search_str base_cmd full_cmd dir
 
-    if [[ "$#" -lt 3 || "$1" = "-h" || "$1" = "--help" ]]; then
+    if [[ "$#" -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo ''
       echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <file_globs>"
       echo ''

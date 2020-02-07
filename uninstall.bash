@@ -80,7 +80,7 @@ check_installation() {
     echo "${NC}"
     [[ -n "$ANS" ]] && echo ''
 
-    if [[ "$ANS" = "y" || "$ANS" = "Y" ]]; then
+    if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
       uninstall_dotfiles
     else
       quit 1 "Uninstallation cancelled!"

@@ -234,7 +234,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${ORANGE}"
       [[ -z ${QUIET} ]] && read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
       echo -e "${NC}"
-      if [[ ! "$ANS" = "y" && ! "$ANS" = "Y" ]]; then
+      if [[ ! "$ANS" == "y" && ! "$ANS" == "Y" ]]; then
         [[ -n "$ANS" ]] && echo ''
         quit 1 "Installation cancelled !"
       fi

@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2207
+
 # bash completion for Cloud Foundry CLI
 
 _cf-cli() {

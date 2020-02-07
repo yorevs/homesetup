@@ -123,7 +123,7 @@ if __hhs_has "git"; then
       echo "Not a git repository !"
       return 1
     else
-      [[ "$1" = "-l" || "$1" = "--local" ]] && unset all_flag && all_str='\b'
+      [[ "$1" == "-l" || "$1" == "--local" ]] && unset all_flag && all_str='\b'
       clear
       if [[ -n "${all_flag}" ]]; then
         echo -en "${YELLOW}=> Updating branches ${NC}"

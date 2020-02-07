@@ -55,7 +55,7 @@ function __hhs_minput() {
   CHECKBOX_ICN='\357\203\210'
   CHECKBOX_ICN_CHECKED='\357\205\212'
 
-  if [[ $# -lt 2 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
     echo ''
     echo '    Arguments: '
@@ -176,7 +176,7 @@ function __hhs_minput() {
             printf "${CHECKBOX_ICN} %-$((value_size - 2))s" " "
           fi
         fi
-        [[ "r" = "${f_perm}" ]] && icon="${LOCKED_ICN}"
+        [[ "r" == "${f_perm}" ]] && icon="${LOCKED_ICN}"
         # Remaining/max characters
         printf " ${icon}  %d/%d" "${#f_value}" "${maxlen}"
         printf "%*.*s${UNSELECTED_BG}\033[0K" 0 "${margin}" "$(printf '%0.1s' " "{1..60})"

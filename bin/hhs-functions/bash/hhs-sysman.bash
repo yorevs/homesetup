@@ -13,7 +13,7 @@ function __hhs_sysinfo() {
 
   local username containers
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
     username="$(whoami)"
@@ -70,7 +70,7 @@ function __hhs_process_list() {
 
   local all_pids uid pid ppid cmd force quiet pad gflags='-E'
 
-  if [[ "$#" -lt 1 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
     echo ''
     echo '    Options: '
@@ -120,12 +120,12 @@ function __hhs_process_list() {
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "$pid" "$ppid" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "$pad"
-        if [[ -n "$pid" && "$2" = "kill" ]]; then
+        if [[ -n "$pid" && "$2" == "kill" ]]; then
           save-cursor-pos
           if [[ -z "${force}" ]]; then
             read -r -n 1 -p "${ORANGE} Kill this process y/[n]? " ANS
           fi
-          if [[ -n "${force}" || "$ANS" = "y" || "$ANS" = "Y" ]]; then
+          if [[ -n "${force}" || "$ANS" == "y" || "$ANS" == "Y" ]]; then
             restore-cursor-pos
             kill -9 "$pid" && echo -en "${RED}=> Killed with SIGKILL(-9)\033[K"
           fi
@@ -156,7 +156,7 @@ function __hhs_process_kill() {
 
   local force_flag=
 
-  if [[ "$1" = "-f" || "$1" = "--force" ]]; then
+  if [[ "$1" == "-f" || "$1" == "--force" ]]; then
     shift
     force_flag='-f'
   fi
@@ -179,7 +179,7 @@ function __hhs_partitions() {
 
   local all_parts str_text mounted size used avail cap
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
     all_parts="$(df -Ha | tail -n +2)"

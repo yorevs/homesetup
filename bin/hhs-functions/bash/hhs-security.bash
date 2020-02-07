@@ -16,7 +16,7 @@ if __hhs_has "gpg"; then
   # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
   function __hhs_encrypt_file() {
 
-    if [[ "$#" -ne 2 || "$1" = "-h" || "$1" = "--help" ]]; then
+    if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else
@@ -39,7 +39,7 @@ if __hhs_has "gpg"; then
   # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
   function __hhs_decrypt_file() {
 
-    if [[ "$#" -lt 2 || "$1" = "-h" || "$1" = "--help" ]]; then
+    if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else

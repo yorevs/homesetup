@@ -12,7 +12,7 @@
 # @param $1 [Req] : The searching command.
 function __hhs_history() {
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [command]"
     return 1
   elif [[ "$#" -eq 0 ]]; then
@@ -30,7 +30,7 @@ function __hhs_envs() {
 
   local pad pad_len filter name value columns
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [regex_filter]"
     return 1
   else
@@ -71,7 +71,7 @@ function __hhs_shell_select() {
 
   local sel_index sel_shell mselect_file avail_shells=()
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
     clear

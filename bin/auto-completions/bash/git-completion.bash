@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2206,SC2046,SC2155,SC2034,SC2004,SC2194
+#
 # bash/zsh completion support for core Git.
 #
 # Copyright (C) 2006,2007 Shawn O. Pearce <spearce@spearce.org>
@@ -1059,7 +1062,7 @@ __git_aliased_command ()
     *=*)  : setting env ;;
     git)  : git itself ;;
     \(\))   : skip parens of shell function definition ;;
-    {)  : skip start of shell helper function ;;
+    \{)  : skip start of shell helper function ;;
     :)  : skip null command ;;
     \'*)  : skip opening quote after sh -c ;;
     *)
@@ -1102,7 +1105,7 @@ __git_find_on_cmdline ()
 __git_get_option_value ()
 {
   local c short_opt long_opt val
-  local result= values config_key word
+  local result values config_key word
 
   short_opt="$1"
   long_opt="$2"
@@ -1305,7 +1308,7 @@ _git_branch ()
     __gitcomp_builtin branch
     ;;
   *)
-    if [ $only_local_ref = "y" -a $has_r = "n" ]; then
+    if [[ $only_local_ref = "y" && $has_r = "n" ]]; then
       __gitcomp_direct "$(__git_heads "" "$cur" " ")"
     else
       __git_complete_refs
@@ -2201,7 +2204,7 @@ _git_switch ()
       # dwim will be done when --detach is specified
       track_opt=
     fi
-    if [ $only_local_ref = y -a -z "$track_opt" ]; then
+    if [[ $only_local_ref = y && -z "$track_opt" ]]; then
       __gitcomp_direct "$(__git_heads "" "$cur" " ")"
     else
       __git_complete_refs $track_opt
@@ -2212,7 +2215,7 @@ _git_switch ()
 
 __git_config_get_set_variables ()
 {
-  local prevword word config_file= c=$cword
+  local prevword word config_file c=$cword
   while [ $c -gt 1 ]; do
     word="${words[c]}"
     case "$word" in

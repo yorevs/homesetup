@@ -78,7 +78,7 @@ function host-name() {
     new_hostn="${1}"
     [[ -z "${new_hostn}" ]] && read -r -p "${YELLOW}Enter new hostname (ENTER to cancel): ${NC}" new_hostn
     if [[ -n "${new_hostn}" && "${cur_hostn}" != "${new_hostn}" ]]; then
-      if [[ "$(uname -s)" = "Darwin" ]]; then
+      if [[ "$(uname -s)" == "Darwin" ]]; then
         if sudo scutil --set HostName "${new_hostn}"; then
           echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
         else
@@ -89,7 +89,7 @@ function host-name() {
         if sudo ised "s/${cur_hostn}/${new_hostn}/g" /etc/hosts && sudo ised "s/${cur_hostn}/${new_hostn}/g" /etc/hostname; then
           echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
           read -rn 1 -p "${YELLOW}Press 'y' key to reboot now: ${NC}" ANS
-          if [[ "$ANS" = "y" || "$ANS" = "Y" ]]; then
+          if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
             sudo reboot
           fi
         else

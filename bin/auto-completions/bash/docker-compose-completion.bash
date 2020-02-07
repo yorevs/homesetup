@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2155,SC2206,SC2207
 #
 # bash completion for docker-compose
 #

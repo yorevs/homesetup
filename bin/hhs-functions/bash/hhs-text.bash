@@ -24,7 +24,7 @@ function __hhs_highlight() {
 
   local search file hl_color="${HHS_HIGHLIGHT_COLOR}" gflags="-Ei"
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <text_to_highlight> [filename]"
     echo ''
     echo '  Notes: '
@@ -46,7 +46,7 @@ function __hhs_highlight() {
 # @param $1 [Req] : The unformatted JSON string.
 function __hhs_json_print() {
 
-  if [[ $# -le 0 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <json_string>"
     return 1
   else

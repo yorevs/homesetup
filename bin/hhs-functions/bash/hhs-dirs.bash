@@ -142,7 +142,7 @@ function __hhs_save_dir() {
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "${HHS_SAVED_DIRS_FILE}"
 
-  if [[ -z "$1" || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] | [dir_to_save] [dir_alias]"
     echo ''
     echo 'Options: '
@@ -165,10 +165,10 @@ function __hhs_save_dir() {
     else
       dir="$1"
       # If the path is not absolute, append the current directory to it.
-      if [[ -z "${dir}" || "${dir}" = "." ]]; then dir=${dir//./$(pwd)}; fi
+      if [[ -z "${dir}" || "${dir}" == "." ]]; then dir=${dir//./$(pwd)}; fi
       if [[ -d "${dir}" && ! "${dir}" =~ ^/ ]]; then dir="$(pwd)/${dir}"; fi
-      if [[ -n "${dir}" && "${dir}" = ".." ]]; then dir=${dir//../$(pwd)}; fi
-      if [[ -n "${dir}" && "${dir}" = "-" ]]; then dir=${dir//-/$OLDPWD}; fi
+      if [[ -n "${dir}" && "${dir}" == ".." ]]; then dir=${dir//../$(pwd)}; fi
+      if [[ -n "${dir}" && "${dir}" == "-" ]]; then dir=${dir//-/$OLDPWD}; fi
       if [[ -n "${dir}" && ! -d "${dir}" ]]; then
         __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist !"
         return 1
@@ -196,7 +196,7 @@ function __hhs_load_dir() {
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "${HHS_SAVED_DIRS_FILE}"
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [-l] | [dir_alias]"
     echo ''
     echo 'Options: '
@@ -283,7 +283,7 @@ function __hhs_go_dir() {
 
   local dir len mselect_file results=()
 
-  if [[ "$#" -lt 1 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
     return 1
   elif [[ -d "$1" ]]; then

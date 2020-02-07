@@ -18,7 +18,7 @@ function __hhs_punch() {
 
   HHS_PUNCH_FILE=${HHS_PUNCH_FILE:-$HHS_DIR/.punches}
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo '    Options: '
@@ -43,7 +43,7 @@ function __hhs_punch() {
     fi
   
     IFS=$'\n' 
-    if [[ "-w" = "$opt" ]]; then
+    if [[ "-w" == "$opt" ]]; then
       shift
       week_stamp="${1:-${week_stamp}}"
       week_stamp=$(printf "%02d" "${week_stamp}")
@@ -60,16 +60,16 @@ function __hhs_punch() {
     IFS="$RESET_IFS"
 
     # Edit punches
-    if [[ "-e" = "$opt" ]]; then
+    if [[ "-e" == "$opt" ]]; then
       edit "${HHS_PUNCH_FILE}"
     # Reset punches (backup as week-N.punch)
-    elif [[ "-r" = "$opt" ]]; then
+    elif [[ "-r" == "$opt" ]]; then
       mv -f "${HHS_PUNCH_FILE}" "$(dirname "${HHS_PUNCH_FILE}")/week-${week_stamp}.punch"
     else
       pad=$(printf '%0.1s' "."{1..60})
       pad_len=36
       # Display the Header of totals when listing
-      if [[ "-l" = "$opt" || "-w" = "$opt" ]]; then
+      if [[ "-l" == "$opt" || "-w" == "$opt" ]]; then
         echo -e "\n${YELLOW}Week-${week_stamp} punches"
         printf '%0.1s' "-"{1..82}
         echo "${NC}"
@@ -83,7 +83,7 @@ function __hhs_punch() {
           success='1'
           break
         # List week or current punches
-        elif [[ "-l" = "$opt" || "-w" = "$opt" ]]; then
+        elif [[ "-l" == "$opt" || "-w" == "$opt" ]]; then
           echo -en "${line//${date_stamp}/${HHS_HIGHLIGHT_COLOR}${date_stamp}}"
           # Read all timestamps and append them into an array.
           IFS=' ' read -r -a line_totals <<< "$(echo "${line}" | awk -F '=> ' '{ print $2 }')"
@@ -107,7 +107,7 @@ function __hhs_punch() {
       done
 
       # Display totals of the week when listing - Footer
-      if [[ "-l" = "$opt" || "-w" = "$opt" ]]; then
+      if [[ "-l" == "$opt" || "-w" == "$opt" ]]; then
         weekly_total="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]})"
         weekly_total_dec="$(tcalc.py -d ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]})"
         printf "${YELLOW}%0.1s" "-"{1..82}

@@ -190,7 +190,7 @@ function execute() {
       ;;
     # List available apps
     -l | --list)
-      if [[ "$1" = "-a" || "$1" = "--all" ]]; then
+      if [[ "$1" == "-a" || "$1" == "--all" ]]; then
         LIST_ALL=1
       fi
       echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"

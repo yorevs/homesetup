@@ -14,7 +14,7 @@ function __hhs_toolcheck() {
 
   local pad pad_len tool_name check is_alias quiet
 
-  if [[ "$#" -lt 1 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
     echo ''
     echo '    Options: '
@@ -22,7 +22,7 @@ function __hhs_toolcheck() {
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
-    if [[ "$1" = "-q" || "$1" = "--quiet" ]]; then shift; quiet=1; fi
+    if [[ "$1" == "-q" || "$1" == "--quiet" ]]; then shift; quiet=1; fi
     tool_name="$1"
     check=$(command -v "${tool_name}")
     is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
@@ -52,7 +52,7 @@ function __hhs_version() {
 
   local version
 
-  if [[ "$#" -ne 1 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -ne 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <app_name>"
     return 1
   else
@@ -86,7 +86,7 @@ function __hhs_version() {
 # @function: Check whether a list of development tools are installed.
 function __hhs_tools() {
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
 

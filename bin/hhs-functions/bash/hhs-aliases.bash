@@ -16,7 +16,7 @@ function __hhs_aliases() {
 
   local alias_file alias_name alias_expr pad pad_len all_aliases is_sorted=0
 
-  if [[ "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"
     echo ''
     echo '    Options: '
@@ -33,11 +33,11 @@ function __hhs_aliases() {
     alias_file="$HOME/.aliases"
     touch "$alias_file"
     
-    if [[ "$1" = '-e' || "$1" = "--edit" ]]; then
+    if [[ "$1" = '-e' || "$1" == "--edit" ]]; then
       edit "$alias_file"
       return $?
     fi
-    if [[ "$1" = '-s' || "$1" = "--sort" ]]; then
+    if [[ "$1" = '-s' || "$1" == "--sort" ]]; then
       is_sorted=1
       shift
     fi

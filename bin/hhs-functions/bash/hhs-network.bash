@@ -27,7 +27,7 @@ if __hhs_has "dig"; then
   # @param $1 [Req] : The IP address to resolve.
   function __hhs_ip_resolve() {
 
-    if [[ "$1" = "-h" || "$1" = "--help" || "$#" -ne 1 ]]; then
+    if [[ "$1" == "-h" || "$1" == "--help" || "$#" -ne 1 ]]; then
       echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
       return 1
     fi
@@ -138,7 +138,7 @@ function __hhs_ip_info() {
 
   local ipinfo
 
-  if [[ "$#" -le 0 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
     return 1
   else
@@ -153,7 +153,7 @@ function __hhs_ip_info() {
 # @param $1 [Req] : The domain name to lookup.
 function __hhs_ip_lookup() {
 
-  if [[ "$#" -le 0 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <domain_name>"
     return 1
   else
@@ -170,7 +170,7 @@ function __hhs_port_check() {
 
   local state port re='(((([0-9]{1,3})\.){3}[0-9]{1,3})|\*)'
 
-  if [[ "$#" -le 0 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <port_number> [port_state]"
     echo ''
     echo '  Notes: '

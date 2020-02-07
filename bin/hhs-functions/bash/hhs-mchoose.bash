@@ -13,7 +13,7 @@
 # @param $2 [Req] : The array of items.
 function __hhs_mchoose() {
 
-  if [[ $# -eq 0 || "$1" = "-h" || "$1" = "--help" ]]; then
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <output_file> <items...>"
     echo ''
     echo '    Options: '

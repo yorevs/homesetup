@@ -1,4 +1,6 @@
-#
+#!/usr/bin/env bash
+# shellcheck disable=SC2053,SC2207,SC2155,SC2076,SC2120
+
 # bash completion file for docker-machine commands
 #
 # This script provides completion of:
