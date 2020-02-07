@@ -39,7 +39,7 @@ function __hhs_mchoose() {
   local index_len len show_to diff_index typed_index columns option_line init_value=0 mark
 
   [[ '-c' = "${1}" ]] && shift && init_value=1
-  
+
   outfile="$1"
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
@@ -73,7 +73,7 @@ function __hhs_mchoose() {
         echo -ne "\033[2K\r"
         [[ ${idx} -eq ${cur_index} ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector='>'
         [[ ${sel_options[${idx}]} -eq 1 ]] && mark='x'
-        printf " %.${#len}d  %0.2s [%0.2s] %s" "$((idx + 1))" "$selector" "$mark" "$option_line"
+        printf " %.${#len}d  %0.2s [%0.2s] %s" "$((idx + 1))" "${selector}" "${mark}" "${option_line}"
         # Check if the text fits the screen and print it, otherwise print '...'
         [[ ${#option_line} -ge ${columns} ]] && echo -e "\033[4D\033[K..."
         echo -e "${NC}"

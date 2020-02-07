@@ -38,9 +38,9 @@ function __hhs_envs() {
     pad_len=40
     columns="$(($(tput cols) - pad_len - 10))"
     filter="$*"
-    [[ -z "$filter" ]] && filter=".*"
+    [[ -z "${filter}" ]] && filter=".*"
     echo ' '
-    echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
+    echo "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:"
     echo ' '
     IFS=$'\n'
     shopt -s nocasematch

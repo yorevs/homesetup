@@ -14,7 +14,8 @@
 # @param $2 [Opt] : The alias expression.
 function __hhs_aliases() {
 
-  local alias_file alias_name alias_expr pad pad_len all_aliases is_sorted=0 name expr col_offset=18 columns
+  local alias_file filter='.+' alias_name alias_expr pad pad_len all_aliases is_sorted=0 name expr
+  local col_offset=18 columns re
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"
@@ -22,22 +23,32 @@ function __hhs_aliases() {
     echo '    Options: '
     echo '      -e | --edit    : Edit the aliases file.'
     echo '      -s | --sort    : Sort results ASC.'
+    echo '      -r | --remove  : Remove an alias'
     echo ''
     echo '  Notes: '
-    echo '    List all aliases    : When both [alias] and [alias_expr] are NOT provided.'
+    echo '    List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter restuls using it.'
     echo '    Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
-    echo '    Remove the alias    : When [alias] is provided but [alias_expr] is not provided.'
     echo ''
     return 1
   else
     alias_file="${HOME}/.aliases"
     touch "${alias_file}"
 
-    if [[ "$1" = '-e' || "$1" == "--edit" ]]; then
+    if [[ "$1" == '-e' || "$1" == "--edit" ]]; then
       edit "${alias_file}"
       return $?
+    elif [[ "$1" == '-r' || "$1" == "--remove" ]] && [[ -n "$2" ]]; then
+      alias_name="$2"
+      # Remove one alias
+      ised -e "s#(^alias ${alias_name}=.*)*##g" -e '/^\s*$/d' "${alias_file}"
+      if unalias "${alias_name}" &> /dev/null; then
+        echo -e "${YELLOW}Alias removed: ${WHITE}\"${alias_name}\" ${NC}"
+      else
+        echo -e "${RED}Alias not found: \"${alias_name}\" ${NC}"
+      fi
+      return $?
     fi
-    if [[ "$1" = '-s' || "$1" == "--sort" ]]; then
+    if [[ "$1" == '-s' || "$1" == "--sort" ]]; then
       is_sorted=1
       shift
     fi
@@ -46,22 +57,28 @@ function __hhs_aliases() {
     shift
     alias_expr="$*"
 
-    if [[ -z "${alias_name}" && -z "${alias_expr}" ]]; then
+    if [[ -z "${alias_expr}" ]]; then
       # List all aliases; if sorted, skips comments
-      [[ "$is_sorted" == "0" ]] && all_aliases=$(grep . "${alias_file}") || all_aliases=$(grep -v ^\# "${alias_file}" | sort)
+      if [[ "$is_sorted" == "0" ]]; then
+        all_aliases=$(grep -v ^\# "${alias_file}")
+      else
+        all_aliases=$(grep -v ^\# "${alias_file}" | sort)
+      fi
       if [[ -n "${all_aliases}" ]]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=40
+        [[ -n "${alias_name}" ]] && filter="${alias_name}"
         echo ' '
-        echo "${YELLOW}Available custom aliases:"
+        echo "${YELLOW}Available custom aliases matching [${filter}]:"
         echo ' '
         (
           columns="$(($(tput cols) - pad_len - col_offset))"
           IFS=$'\n'
           for next in ${all_aliases}; do
-            local re='^alias .+=.+'
-            if [[ ${next} =~ $re ]]; then
+            re="^alias .+=.+"
+            if [[ ${next} =~ ${re} ]]; then
               name=$(echo -en "${next}" | cut -d'=' -f1 | cut -d ' ' -f2)
+              [[ ${name} =~ ${filter} ]] || continue
               expr=$(echo -en "${next}" | cut -d'=' -f2-)
               printf "%s" "${HHS_HIGHLIGHT_COLOR}${name//alias /}"
               printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
@@ -84,10 +101,6 @@ function __hhs_aliases() {
       echo "alias ${alias_name}='${alias_expr}'" >> "${alias_file}"
       echo -e "${GREEN}Alias set: ${WHITE}\"${alias_name}\" is ${HHS_HIGHLIGHT_COLOR}'${alias_expr}' ${NC}"
       \. "${alias_file}"
-    elif [[ -n "${alias_name}" && -z "${alias_expr}" ]]; then
-      # Remove one alias
-      ised -e "s#(^alias ${alias_name}=.*)*##g" -e '/^\s*$/d' "${alias_file}"
-      unalias "${alias_name}" &> /dev/null && echo -e "${YELLOW}Alias removed: ${WHITE}\"${alias_name}\" ${NC}"
     fi
   fi
 
