@@ -15,7 +15,7 @@ function __hhs_history() {
   if [[ "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [command]"
     return 1
-  elif [ "$#" -eq 0 ]; then
+  elif [[ "$#" -eq 0 ]]; then
     history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "^ *[0-9]*  "
   else
     history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "$*"
@@ -38,7 +38,7 @@ function __hhs_envs() {
     pad_len=40
     columns="$(($(tput cols) - pad_len - 10))"
     filter="$*"
-    [ -z "$filter" ] && filter=".*"
+    [[ -z "$filter" ]] && filter=".*"
     echo ' '
     echo "${YELLOW}Listing all exported environment variables matching [ $filter ]:"
     echo ' '
@@ -80,13 +80,13 @@ function __hhs_shell_select() {
     echo -en "${NC}"
     IFS=$'\n' read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
     # Add the brew bash/zsh as options
-    [ -f '/usr/local/bin/bash' ] && avail_shells+=('/usr/local/bin/bash')
-    [ -f '/usr/local/bin/zsh' ] && avail_shells+=('/usr/local/bin/zsh')
+    [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
+    [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
     if __hhs_mselect "$mselect_file" "${avail_shells[@]}"; then
       sel_index=$(grep . "$mselect_file")
       sel_shell=${avail_shells[$sel_index]}
-      if [ -n "${sel_shell}" ] && [ -f "${sel_shell}" ]; then
+      if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
         if command chsh -s "${sel_shell}"; then
           clear
           export SHELL="${sel_shell}"
@@ -100,7 +100,7 @@ function __hhs_shell_select() {
     IFS="$RESET_IFS"
     echo -e "${NC}"
 
-    [ -f "$mselect_file" ] && command rm -f "$mselect_file"
+    [[ -f "$mselect_file" ]] && command rm -f "$mselect_file"
   fi
 
   return 0
@@ -146,7 +146,7 @@ function __hhs_color_pallete() {
     for c in {1..256}; do
       echo -en "\033[38;5;${c}m"
       printf "C256-%-.3d " "${c}"
-      [ "$(echo "$c % 12" | bc)" -eq 0 ] && echo ''
+      [[ "$(echo "$c % 12" | bc)" -eq 0 ]] && echo ''
     done
     echo -e "${NC}\n"
   fi

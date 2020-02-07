@@ -14,12 +14,12 @@ function __hhs_activate_nvm() {
 
   echo -en "Activating NVM app ...... "
   # NVM setup
-  [ ! -d "$HOME/.nvm" ] && __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => Can't find NVM_DIR => \"$HOME/.nvm\" !" && return 1
+  [[ ! -d "$HOME/.nvm" ]] && __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => Can't find NVM_DIR => \"$HOME/.nvm\" !" && return 1
   export NVM_DIR="$HOME/.nvm"
-  if [ -s "$NVM_DIR/nvm.sh" ]; then
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
     \. "$NVM_DIR/nvm.sh"
     export PATH="$PATH:$NVM_DIR"
-    if [ -s "$NVM_DIR/bash_completion" ]; then
+    if [[ -s "$NVM_DIR/bash_completion" ]]; then
       \. "$NVM_DIR/bash_completion"
       export HHS_AUTO_COMPLETIONS="$HHS_AUTO_COMPLETIONS NVM"
     fi
@@ -36,9 +36,9 @@ function __hhs_activate_rvm() {
 
   echo -en "Activating RVM app ...... "
   # RVM setup
-  [ ! -d "$HOME/.rvm" ] && __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => Can't find RVM_HOME => \"$HOME/.rvm\" !" && return 1
+  [[ ! -d "$HOME/.rvm" ]] && __hhs_errcho "${FUNCNAME[0]}: [ FAIL ] => Can't find RVM_HOME => \"$HOME/.rvm\" !" && return 1
   export RVM_DIR="$HOME/.rvm"
-  if [ -s "$RVM_DIR/scripts/rvm" ]; then
+  if [[ -s "$RVM_DIR/scripts/rvm" ]]; then
     \. "$RVM_DIR/scripts/rvm"
     export PATH="$PATH:$RVM_DIR/bin"
     echo "${GREEN}[  OK  ]${NC}"

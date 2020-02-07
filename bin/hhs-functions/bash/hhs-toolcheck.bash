@@ -14,7 +14,7 @@ function __hhs_toolcheck() {
 
   local pad pad_len tool_name check is_alias quiet
 
-  if [ "$#" -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$#" -lt 1 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
     echo ''
     echo '    Options: '
@@ -22,24 +22,24 @@ function __hhs_toolcheck() {
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
-    if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then shift; quiet=1; fi
+    if [[ "$1" = "-q" || "$1" = "--quiet" ]]; then shift; quiet=1; fi
     tool_name="$1"
     check=$(command -v "${tool_name}")
     is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
-    [ -z "$quiet" ] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
-    [ -z "$quiet" ] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
-    [ -z "$quiet" ] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
+    [[ -z "$quiet" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
+    [[ -z "$quiet" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
+    [[ -z "$quiet" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
     if __hhs_has "${tool_name}"; then
-      if [ -z "$is_alias" ] && [[ $check =~ ^(\/.*) ]]; then
-        [ -z "$quiet" ] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
+      if [[ -z "$is_alias" && $check =~ ^(\/.*) ]]; then
+        [[ -z "$quiet" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
       elif [ -n "$is_alias" ]; then
-        [ -z "$quiet" ] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
+        [[ -z "$quiet" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
       else
-        [ -z "$quiet" ] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
+        [[ -z "$quiet" ]] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
       fi
       return 0
     else
-      [ -z "$quiet" ] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
+      [[ -z "$quiet" ]] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
     fi
   fi
 
@@ -52,7 +52,7 @@ function __hhs_version() {
 
   local version
 
-  if [ "$#" -ne 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$#" -ne 1 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <app_name>"
     return 1
   else

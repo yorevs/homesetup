@@ -15,7 +15,7 @@ function __hhs_tailor() {
 
   local file
 
-  if [ -z "$1" ]; then
+  if [[ -z "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} [filename]"
     echo ''
     echo '  Notes: '
@@ -39,10 +39,10 @@ function __hhs_tailor() {
     URI_FMT_STYLE=\"${ORANGE}\"
     " > "$HHS_DIR/.tailor"
 
-    [ -f "$HHS_DIR/.tailor" ] && \. "$HHS_DIR/.tailor"
+    [[ -f "$HHS_DIR/.tailor" ]] && \. "$HHS_DIR/.tailor"
     file="${1:-/dev/stdin}"
 
-    if [ "${file}" = '/dev/stdin' ]; then
+    if [[ "${file}" = '/dev/stdin' ]]; then
       while read -r stream; do
         echo "${stream}" | esed \
           -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
@@ -54,7 +54,7 @@ function __hhs_tailor() {
           -e "s/(${URI_FMT_RE})/${URI_FMT_STYLE}\1${NC}/g"
       done < "${file}"
     else
-      [ -d "${file}" ] || touch "${file}"
+      [[ -d "${file}" ]] || touch "${file}"
       tail -n 25 -F "${file}" | esed \
         -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
         -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \

@@ -46,7 +46,7 @@ function __hhs_highlight() {
 # @param $1 [Req] : The unformatted JSON string.
 function __hhs_json_print() {
 
-  if [ $# -le 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ $# -le 0 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <json_string>"
     return 1
   else
@@ -66,9 +66,9 @@ function __hhs_json_print() {
 # @param $1 [Req] : The file path
 function __hhs_edit() {
 
-  if [ -n "$1" ]; then
-    [ -f "$1" ] || touch "$1" > /dev/null 2>&1
-    [ -f "$1" ] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"$1\""
+  if [[ -n "$1" ]]; then
+    [[ -f "$1" ]] || touch "$1" > /dev/null 2>&1
+    [[ -f "$1" ]] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"$1\""
     if [ -n "${HHS_DEFAULT_EDITOR}" ] && ${HHS_DEFAULT_EDITOR} "$1"; then
       echo ''
     elif open "$1" > /dev/null 2>&1; then

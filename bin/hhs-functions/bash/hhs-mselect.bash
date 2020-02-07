@@ -13,7 +13,10 @@
 # @param $2 [Req] : The array of items.
 function __hhs_mselect() {
 
-  if [[ $# -eq 0 ]] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  local all_options=() outfile sel_index=0 show_from=0 re_render=1 selector
+  local index_len len show_to diff_index typed_index columns option_line
+
+  if [[ $# -eq 0 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <items...>"
     echo ''
     echo '    Arguments: '
@@ -26,16 +29,13 @@ function __hhs_mselect() {
     return 1
   fi
 
-  if [ -d "$1" ] || [ -s "$1" ]; then
+  if [[ -d "$1" || -s "$1" ]]; then
     __hhs_errcho "${FUNCNAME[0]}: \"$1\" is a directory or an existing non-empty file !${NC}"
     return 1
   fi
 
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
-  local all_options=() outfile sel_index=0 show_from=0 re_render=1 selector
-  local index_len len show_to diff_index typed_index columns option_line
-  
   outfile="$1"
   show_to="$((HHS_MENU_MAXROWS - 1))"
   diff_index="$((show_to - show_from))"
@@ -44,14 +44,14 @@ function __hhs_mselect() {
   len=${#all_options[*]}
 
   # When only one option is provided, select the typed_index 0 and return
-  [ "$len" -eq 1 ] && echo "0" > "$outfile" && return 0
+  [[ "$len" -eq 1 ]] && echo "0" >"$outfile" && return 0
   save-cursor-pos
   disable-line-wrap
 
   while :; do
 
     # Menu Renderization {
-    if [ -n "$re_render" ]; then
+    if [[ -n "$re_render" ]]; then
       columns="$(($(tput cols) - 7))"
       hide-cursor
       # Restore the cursor to the home position
@@ -79,59 +79,59 @@ function __hhs_mselect() {
     # Navigation input {
     IFS= read -rsn 1 keypress
     case "${keypress}" in
-      'q' | 'Q') # Exit requested
-        enable-line-wrap
-        echo -e "\n${NC}"
-        return 1
-        ;;
-      [[:digit:]]) # An index was typed
-        typed_index="${keypress}"
-        echo -en "${keypress}" && index_len=1
-        while [[ ${#typed_index} -lt ${#len} ]]; do
-          read -rs -n 1 numpress
-          [ -z "${numpress}" ] && break
-          [[ ! "${numpress}" =~ ^[0-9]*$ ]] && unset typed_index && break
-          typed_index="${typed_index}${numpress}"
-          echo -en "${numpress}" && index_len=$((index_len + 1))
-        done
-        echo -ne "\033[${index_len}D\033[K"
-        if [[ $typed_index -ge 1 ]] && [[ $typed_index -le $len ]]; then
-          show_to=$((typed_index - 1))
-          [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
-          show_from=$((show_to - diff_index))
-          sel_index=$((typed_index - 1)) && re_render=1
+    'q' | 'Q') # Exit requested
+      enable-line-wrap
+      echo -e "\n${NC}"
+      return 1
+      ;;
+    [[:digit:]]) # An index was typed
+      typed_index="${keypress}"
+      echo -en "${keypress}" && index_len=1
+      while [[ ${#typed_index} -lt ${#len} ]]; do
+        read -rs -n 1 numpress
+        [ -z "${numpress}" ] && break
+        [[ ! "${numpress}" =~ ^[0-9]*$ ]] && unset typed_index && break
+        typed_index="${typed_index}${numpress}"
+        echo -en "${numpress}" && index_len=$((index_len + 1))
+      done
+      echo -ne "\033[${index_len}D\033[K"
+      if [[ $typed_index -ge 1 && $typed_index -le $len ]]; then
+        show_to=$((typed_index - 1))
+        [ "$show_to" -le "$diff_index" ] && show_to=$diff_index
+        show_from=$((show_to - diff_index))
+        sel_index=$((typed_index - 1)) && re_render=1
+      fi
+      ;;
+    $'\033') # Handle escape '\e[nX' codes
+      IFS= read -rsn2 -t 1 keypress
+      case "${keypress}" in
+      [A) # Cursor up
+        if [[ $sel_index -eq $show_from && $show_from -gt 0 ]]; then
+          show_from=$((show_from - 1))
+          show_to=$((show_to - 1))
+        elif [[ $sel_index -eq 0 ]]; then
+          continue
+        fi
+        if [[ $((sel_index - 1)) -ge 0 ]]; then
+          sel_index=$((sel_index - 1)) && re_render=1
         fi
         ;;
-      $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 -t 1 keypress
-        case "${keypress}" in
-          [A) # Cursor up
-            if [[ $sel_index -eq $show_from ]] && [[ $show_from -gt 0 ]]; then
-              show_from=$((show_from - 1))
-              show_to=$((show_to - 1))
-            elif [[ $sel_index -eq 0 ]]; then
-              continue
-            fi
-            if [[ $((sel_index - 1)) -ge 0 ]]; then
-              sel_index=$((sel_index - 1)) && re_render=1
-            fi
-            ;;
-          [B) # Cursor down
-            if [[ $sel_index -eq $show_to ]] && [[ $((show_to + 1)) -lt $len ]]; then
-              show_from=$((show_from + 1))
-              show_to=$((show_to + 1))
-            elif [[ $((sel_index + 1)) -ge $len ]]; then
-              continue
-            fi
-            if [[ $((sel_index + 1)) -lt $len ]]; then
-              sel_index=$((sel_index + 1)) && re_render=1
-            fi
-            ;;
-        esac
+      [B) # Cursor down
+        if [[ $sel_index -eq $show_to && $((show_to + 1)) -lt $len ]]; then
+          show_from=$((show_from + 1))
+          show_to=$((show_to + 1))
+        elif [[ $((sel_index + 1)) -ge $len ]]; then
+          continue
+        fi
+        if [[ $((sel_index + 1)) -lt $len ]]; then
+          sel_index=$((sel_index + 1)) && re_render=1
+        fi
         ;;
-      $'') # Keep the current index and exit
-        echo '' && break
-        ;;
+      esac
+      ;;
+    $'') # Keep the current index and exit
+      echo '' && break
+      ;;
     esac
     # } Navigation input
 
@@ -140,7 +140,7 @@ function __hhs_mselect() {
   show-cursor
   enable-line-wrap
   echo -e "${NC}"
-  echo "$sel_index" > "$outfile"
+  echo "$sel_index" >"$outfile"
 
   return 0
 }

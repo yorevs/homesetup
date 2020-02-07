@@ -17,7 +17,7 @@ if __hhs_has "python"; then
 
     local inames expr filter dir
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+    if [[ "$#" -ne 2 || "$1" = "-h" || "$1" = "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <search_path> <file_globs...>"
       echo ''
       echo '  Notes: '
@@ -42,7 +42,7 @@ if __hhs_has "python"; then
 
     local inames expr dir filter
 
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$#" -ne 2 ]; then
+    if [[ "$#" -ne 2 || "$1" = "-h" || "$1" = "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <search_path> <dir_names...>"
       echo ''
       echo '  Notes: '
@@ -72,7 +72,7 @@ if __hhs_has "python"; then
     local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
     local names_expr search_str base_cmd full_cmd dir
 
-    if [ "$#" -lt 3 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    if [[ "$#" -lt 3 || "$1" = "-h" || "$1" = "--help" ]]; then
       echo ''
       echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <file_globs>"
       echo ''
@@ -86,7 +86,7 @@ if __hhs_has "python"; then
       echo '    ** <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
-      while [ -n "$1" ]; do
+      while [[ -n "$1" ]]; do
         case "$1" in
           -w | --words)
             gflags="${gflags//E/Fw}"
@@ -103,12 +103,12 @@ if __hhs_has "python"; then
           -r | --replace)
             replace=1
             shift
-            [ -z "$1" ] && __hhs_errcho "${FUNCNAME[0]}: Missing replacement string !" && return 1
+            [[ -z "$1" ]] && __hhs_errcho "${FUNCNAME[0]}: Missing replacement string !" && return 1
             repl_str="$1"
             extra_str=", replacement: \"${repl_str}\""
             ;;
           *)
-            [[ ! "$1" =~ ^-[wibr] ]] && [[ ! "$1" =~ ^--(words|ignore-case|binary|replace) ]] && break
+            [[ ! "$1" =~ ^-[wibr] && ! "$1" =~ ^--(words|ignore-case|binary|replace) ]] && break
             ;;
         esac
         shift
@@ -122,13 +122,13 @@ if __hhs_has "python"; then
       
       echo "${YELLOW}Searching for \"${filter_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${3}] ${extra_str} ${NC}"
       
-      if [ -n "$replace" ]; then
+      if [[ -n "$replace" ]]; then
         if [ "$filter_type" = 'string' ]; then
           __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"
           return 1
         fi
-        [ "${HHS_MY_OS}" == "Darwin" ] && ised="sed -i '' -E"
-        [ "${HHS_MY_OS}" == "Linux" ] && ised="sed -i'' -r"
+        [[ "${HHS_MY_OS}" == "Darwin" ]] && ised="sed -i '' -E"
+        [[ "${HHS_MY_OS}" == "Linux" ]] && ised="sed -i'' -r"
         full_cmd="${base_cmd} \; -exec $ised \"s/${search_str}/${repl_str}/g\" {} + | sed \"s/${search_str}/${repl_str}/g\"  | __hhs_highlight \"${repl_str}\""
       else
         full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight \"${search_str}\""

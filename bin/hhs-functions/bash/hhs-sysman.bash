@@ -48,7 +48,7 @@ function __hhs_sysinfo() {
 
     if __hhs_has "docker" && __hhs_has "__hhs_docker_ps"; then
       containers=$(__hhs_docker_ps -a)
-      if [ -n "${containers}" ] && [[ $(__hhs_docker_count) -gt 1 ]]; then
+      if [[ -n "${containers}" && $(__hhs_docker_count) -gt 1 ]]; then
         echo -e "\n${GREEN}Active Docker Containers: ${BLUE}"
         for next in ${containers}; do
           echo "$next" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
@@ -70,7 +70,7 @@ function __hhs_process_list() {
 
   local all_pids uid pid ppid cmd force quiet pad gflags='-E'
 
-  if [ "$#" -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  if [[ "$#" -lt 1 || "$1" = "-h" || "$1" = "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
     echo ''
     echo '    Options: '
@@ -83,7 +83,7 @@ function __hhs_process_list() {
     echo '    kill : If specified, it will kill the process it finds'
     return 1
   else
-    while [ -n "$1" ]; do
+    while [[ -n "$1" ]]; do
       case "$1" in
         -w | --words)
           gflags="${gflags//E/Fw}"
@@ -104,32 +104,32 @@ function __hhs_process_list() {
       shift
     done
     # shellcheck disable=SC2009
-    [ -n "$1" ] && all_pids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
-    if [ -n "$all_pids" ]; then
+    [[ -n "$1" ]] && all_pids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
+    if [[ -n "$all_pids" ]]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"
       echo ''
-      [ -z "$quiet" ] && printf "${WHITE}%4s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
-      [ -z "$quiet" ] && printf "%-154s\n\n" "$divider"
+      [[ -z "$quiet" ]] && printf "${WHITE}%4s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
+      [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
       IFS=$'\n'
       for next in $all_pids; do
         uid=$(echo "$next" | awk '{ print $1 }')
         pid=$(echo "$next" | awk '{ print $2 }')
         ppid=$(echo "$next" | awk '{ print $3 }')
         cmd=$(echo "$next" | awk '{ print $4 }')
-        [ "${#cmd}" -ge 37 ] && cmd="${cmd:0:37}..."
+        [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "$pid" "$ppid" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "$pad"
-        if [ -n "$pid" ] && [ "$2" = "kill" ]; then
+        if [[ -n "$pid" && "$2" = "kill" ]]; then
           save-cursor-pos
-          if [ -z "${force}" ]; then
+          if [[ -z "${force}" ]]; then
             read -r -n 1 -p "${ORANGE} Kill this process y/[n]? " ANS
           fi
-          if [ -n "${force}" ] || [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+          if [[ -n "${force}" || "$ANS" = "y" || "$ANS" = "Y" ]]; then
             restore-cursor-pos
             kill -9 "$pid" && echo -en "${RED}=> Killed with SIGKILL(-9)\033[K"
           fi
-          if [ -n "$ANS" ] || [ -n "${force}" ]; then echo -e "${NC}"; fi
+          if [[ -n "$ANS" || -n "${force}" ]]; then echo -e "${NC}"; fi
         else
           # Check for ghost processes
           if ps -p "$pid" &> /dev/null; then
@@ -156,7 +156,7 @@ function __hhs_process_kill() {
 
   local force_flag=
 
-  if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+  if [[ "$1" = "-f" || "$1" = "--force" ]]; then
     shift
     force_flag='-f'
   fi
