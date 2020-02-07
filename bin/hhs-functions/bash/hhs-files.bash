@@ -32,7 +32,7 @@ function __hhs_del_tree() {
     return 1
   else
     # Find all files and folders matching the <glob_exp>
-    all=$(find -L . "$1" -name "*$2" 2>/dev/null)
+    all=$(find -L . "$1" -name "*$2" 2> /dev/null)
     # Move all to trash
     if [[ -n "${all}" ]]; then
       read -rsn 1 -p "${RED}### Do you want to move all files and folders matching: \"$2\" in \"$1\" recursively to Trash (y/[n]) ? " ANS
@@ -44,7 +44,7 @@ function __hhs_del_tree() {
           while [[ -e "${TRASH}/$dest" ]]; do
             dest="${next##*/}-$(ts)"
           done
-          mv -v "$next" "${TRASH}/$dest"
+          mv -v "${next}" "${TRASH}/$dest"
         done
       else
         echo -e "${YELLOW}If you decide to delete, the following files will be affected:${NC}"

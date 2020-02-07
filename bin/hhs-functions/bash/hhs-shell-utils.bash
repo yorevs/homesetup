@@ -49,7 +49,7 @@ function __hhs_envs() {
       value=${v##*=}
       if [[ ${name} =~ ${filter} ]]; then
         echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
-        printf '%*.*s' 0 $((pad_len - ${#name})) "$pad"
+        printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
         echo -en " ${GREEN}=> ${NC}"
         echo -n "${value:0:${columns}}"
         if [[ ${#value} -ge ${columns} ]]; then
@@ -83,8 +83,8 @@ function __hhs_shell_select() {
     [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
     [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
-    if __hhs_mselect "$mselect_file" "${avail_shells[@]}"; then
-      sel_index=$(grep . "$mselect_file")
+    if __hhs_mselect "${mselect_file}" "${avail_shells[@]}"; then
+      sel_index=$(grep . "${mselect_file}")
       sel_shell=${avail_shells[$sel_index]}
       if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
         if command chsh -s "${sel_shell}"; then
@@ -100,7 +100,7 @@ function __hhs_shell_select() {
     IFS="$RESET_IFS"
     echo -e "${NC}"
 
-    [[ -f "$mselect_file" ]] && command rm -f "$mselect_file"
+    [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
   fi
 
   return 0

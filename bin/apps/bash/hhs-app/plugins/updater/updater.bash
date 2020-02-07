@@ -47,7 +47,7 @@ update_hhs() {
     clear
     repo_ver="$(curl -s --fail -m 3 ${VERSION_URL})"
     re="[0-9]+\.[0-9]+\.[0-9]+"
-    
+
     if [[ ${repo_ver} =~ $re ]]; then
       if [[ ${repo_ver//./} -gt ${HHS_VERSION//./} ]]; then
         echo ''
@@ -113,7 +113,7 @@ stamp_next_update() {
     next_check=$(date -v+7d "+%s%S")
   fi
   echo "${next_check}" > "${HHS_DIR}/.last_update"
-  echo "$next_check"
+  echo "${next_check}"
 
   return 0
 }

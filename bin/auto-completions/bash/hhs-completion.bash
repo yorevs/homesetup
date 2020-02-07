@@ -31,7 +31,7 @@ __hhs_comp_load_dir() {
 
 __hhs_comp_aliases() {
 
-  local suggestions=($(grep -v '^#' "$HOME/.aliases" | cut -d ' ' -f2- | awk -F'=' '{print $1}'))
+  local suggestions=($(grep -v '^#' "${HOME}/.aliases" | cut -d ' ' -f2- | awk -F'=' '{print $1}'))
 
   __hhs_complete "${suggestions[@]}"
 
@@ -63,7 +63,7 @@ __hhs_comp_punch() {
   dir="$(dirname "$HHS_PUNCH_FILE")"
   IFS=$'\n'
   puch_weeks="week-*.punch"
-  read -d '' -r -a suggestions <<<"$(find -L "${dir}" -maxdepth 1 -type f -iname "${puch_weeks}" 2>/dev/null)"
+  read -d '' -r -a suggestions <<< "$(find -L "${dir}" -maxdepth 1 -type f -iname "${puch_weeks}" 2> /dev/null)"
   for i in "${!suggestions[@]}"; do
     suggestions[$i]="${suggestions[$i]//${dir}\//}"
     suggestions[$i]=${suggestions[$i]//week-/}
@@ -100,7 +100,7 @@ __hhs_comp_paths() {
   elif [[ ${#COMP_WORDS[@]} -gt 3 ]]; then
     return 0
   elif [ "${COMP_WORDS[1]}" == "-r" ]; then
-    IFS=$'\n' read -d '' -r -a suggestions <<<"$(grep . "${HHS_PATHS_FILE}")"
+    IFS=$'\n' read -d '' -r -a suggestions <<< "$(grep . "${HHS_PATHS_FILE}")"
     suggestions=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[2]}"))
     COMPREPLY=("${suggestions[@]}")
     return 0
@@ -131,7 +131,7 @@ __hhs_comp_godir() {
   # Let the user know about the search
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   IFS=$'\n'
-  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -type d -iname "${base}" 2>/dev/null | esed 's#\./(.*)/*#\1/#')"
+  read -d '' -r -a suggestions <<< "$(find -L "${dir%/}" -type d -iname "${base}" 2> /dev/null | esed 's#\./(.*)/*#\1/#')"
   IFS=$"${RESET_IFS}"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"

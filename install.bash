@@ -75,7 +75,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # @function: Check if a command exists.
   # @param $1 [Req] : The command to check.
   has() {
-    type "$1" >/dev/null 2>&1
+    type "$1" > /dev/null 2>&1
   }
 
   # shellcheck disable=SC1091
@@ -83,7 +83,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_inst_method() {
 
     # Define the HomeSetup directory.
-    HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
+    HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 
     # Dotfiles source location
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
@@ -100,17 +100,17 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Short opts: -w, Long opts: --Word
     while test -n "$1"; do
       case "$1" in
-      -a | --all)
-        OPT="all"
-        ;;
-      -q | --quiet)
-        OPT="all"
-        ANS="Y"
-        QUIET=1
-        ;;
-      *)
-        quit 2 "Invalid option: \"$1\""
-        ;;
+        -a | --all)
+          OPT="all"
+          ;;
+        -q | --quiet)
+          OPT="all"
+          ANS="Y"
+          QUIET=1
+          ;;
+        *)
+          quit 2 "Invalid option: \"$1\""
+          ;;
       esac
       shift
     done
@@ -121,12 +121,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
-      command rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
+      touch "${HHS_HOME}/tmpfile" &> /dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
+      command rm -f "${HHS_HOME:?}/tmpfile" &> /dev/null
     fi
 
-    # Create/Define the $HOME/.hhs directory
-    HHS_DIR="${HHS_DIR:-$HOME/.hhs}"
+    # Create/Define the ${HOME}/.hhs directory
+    HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
 
     if [[ ! -d "${HHS_DIR}" ]]; then
       echo -en "\nCreating '.hhs' directory: "
@@ -134,8 +134,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       # Trying to write at the HomeSetup directory to check the permissions
-      touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
-      command rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
+      touch "${HHS_DIR}/tmpfile" &> /dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
+      command rm -f "${HHS_DIR:?}/tmpfile" &> /dev/null
     fi
 
     # Create/Define the ${HHS_DIR}/bin directory
@@ -152,17 +152,17 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Define user fonts directory
-    FONTS_DIR="$HOME/Library/Fonts"
+    FONTS_DIR="${HOME}/Library/Fonts"
 
     # Create all user custom files.
-    [[ -f "$HOME/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "$HOME/.aliasdef"
-    [[ -f "$HOME/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "$HOME/.inputrc"
-    [[ -f "$HOME/.aliases" ]] || touch "$HOME/.aliases"
-    [[ -f "$HOME/.colors" ]] || touch "$HOME/.colors"
-    [[ -f "$HOME/.env" ]] || touch "$HOME/.env"
-    [[ -f "$HOME/.functions" ]] || touch "$HOME/.functions"
-    [[ -f "$HOME/.profile" ]] || touch "$HOME/.profile"
-    [[ -f "$HOME/.prompt" ]] || touch "$HOME/.prompt"
+    [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+    [[ -f "${HOME}/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    [[ -f "${HOME}/.aliases" ]] || touch "${HOME}/.aliases"
+    [[ -f "${HOME}/.colors" ]] || touch "${HOME}/.colors"
+    [[ -f "${HOME}/.env" ]] || touch "${HOME}/.env"
+    [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
+    [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
+    [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
 
     # Check the installation method.
     if [[ -n "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
@@ -174,20 +174,20 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     case "$METHOD" in
-    remote)
-      clone_repository
-      install_dotfiles
-      check_installed
-      activate_dotfiles
-      ;;
-    local | repair)
-      install_dotfiles
-      check_installed
-      activate_dotfiles
-      ;;
-    *)
-      quit 2 "Installation method is not valid: ${METHOD}"
-      ;;
+      remote)
+        clone_repository
+        install_dotfiles
+        check_installed
+        activate_dotfiles
+        ;;
+      local | repair)
+        install_dotfiles
+        check_installed
+        activate_dotfiles
+        ;;
+      *)
+        quit 2 "Installation method is not valid: ${METHOD}"
+        ;;
     esac
   }
 
@@ -241,15 +241,15 @@ Usage: $APP_NAME [OPTIONS] <args>
       OPT='all'
     fi
 
-    command pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
+    command pushd "${DOTFILES_DIR}" &> /dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
     echo -e "\n${WHITE}Installing dotfiles ...${NC}"
 
     # If `all' option is used, copy all files
     if [[ "$OPT" == 'all' ]]; then
       # Copy all dotfiles
       for next in ${ALL_DOTFILES[*]}; do
-        dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
-        # Backup existing dotfile into $HOME/.hhs
+        dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
+        # Backup existing dotfile into ${HOME}/.hhs
         [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
@@ -261,7 +261,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       # Copy all dotfiles
       for next in ${ALL_DOTFILES[*]}; do
-        dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
+        dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
         [[ -z ${QUIET} ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [[ "$ANS" != 'y' && "$ANS" != 'Y' ]] && continue
@@ -278,7 +278,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
-    if command find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &>/dev/null; then
+    if command find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &> /dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
@@ -288,7 +288,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking apps into place ${BLUE}"
     if command find "${HHS_HOME}/bin/apps" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; &>/dev/null; then
+      -exec command chmod 755 {} \; &> /dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
@@ -298,7 +298,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking auto-completes into place ${BLUE}"
     if command find "${HHS_HOME}/bin/auto-completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; &>/dev/null; then
+      -exec command chmod 755 {} \; &> /dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link auto-completions into bin (${BIN_DIR}) directory !"
@@ -307,18 +307,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
+    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {} "${FONTS_DIR}" \; &> /dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    command popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
+    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
-    rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
-    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
+    rm -f "${HHS_HOME}"/.git/hooks/* &> /dev/null
+    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &> /dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
@@ -333,15 +333,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
 
     # Moving old hhs files into the proper directory
-    [[ -f "$HOME/.cmd_file" ]] && mv -f "$HOME/.cmd_file" "${HHS_DIR}/.cmd_file"
-    [[ -f "$HOME/.saved_dir" ]] && mv -f "$HOME/.saved_dir" "${HHS_DIR}/.saved_dirs"
-    [[ -f "$HOME/.punches" ]] && mv -f "$HOME/.punches" "${HHS_DIR}/.punches"
-    [[ -f "$HOME/.firebase" ]] && mv -f "$HOME/.firebase" "${HHS_DIR}/.firebase"
+    [[ -f "${HOME}/.cmd_file" ]] && mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
+    [[ -f "${HOME}/.saved_dir" ]] && mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
+    [[ -f "${HOME}/.punches" ]] && mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
+    [[ -f "${HOME}/.firebase" ]] && mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
 
-    # Removing the old $HOME/bin folder
-    if [[ -L "$HOME/bin" || -d "$HOME/bin" ]]; then
+    # Removing the old ${HOME}/bin folder
+    if [[ -L "${HOME}/bin" || -d "${HOME}/bin" ]]; then
       command rm -f "${HOME:?}/bin"
-      echo -e "\n${ORANGE}Your old $HOME/bin link had to be removed. ${NC}"
+      echo -e "\n${ORANGE}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
@@ -351,16 +351,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it
-    if [[ -f "$HOME/.aliasdef" ]]; then
-      command cp -f "$HOME/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
-      command cp -f "${HHS_HOME}/dotfiles/aliasdef" "$HOME/.aliasdef"
+    if [[ -f "${HOME}/.aliasdef" ]]; then
+      command cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
+      command cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .inputrc Needs to be updated, so, we need to replace it
-    if [[ -f "$HOME/.inputrc" ]]; then
-      command cp -f "$HOME/.inputrc" "${HHS_DIR}/inputrc.bak"
-      command cp -f "${HHS_HOME}/dotfiles/inputrc" "$HOME/.inputrc"
+    if [[ -f "${HOME}/.inputrc" ]]; then
+      command cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
+      command cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
@@ -383,7 +383,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     for tool_name in "${HHS_REQUIRED_TOOLS[@]}"; do
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
-      printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
+      printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "$tool_name"; then
         echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
       else
@@ -400,7 +400,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}"
 
     echo -e "${BLUE}"
-    if command -v figlet >/dev/null; then
+    if command -v figlet > /dev/null; then
       figlet -f colossal -ck "Welcome"
     else
       echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
@@ -414,15 +414,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. $HOME/.${SHELL_TYPE}rc"
+    echo -e "${YELLOW}${STAR_ICN} To activate dotfiles type: #> ${GREEN}\. ${HOME}/.${SHELL_TYPE}rc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
     echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
-    echo -e "${YELLOW}${STAR_ICN} To customize your aliases definitions change the file: ${GREEN}$HOME/.aliasdef"
+    echo -e "${YELLOW}${STAR_ICN} To customize your aliases definitions change the file: ${GREEN}${HOME}/.aliasdef"
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
 
-    date -v+7d "+%s%S" >"${HHS_DIR}/.last_update"
+    date -v+7d "+%s%S" > "${HHS_DIR}/.last_update"
     quit 0
   }
 

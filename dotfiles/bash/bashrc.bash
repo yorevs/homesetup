@@ -35,13 +35,13 @@ case "${SHELL##*\/}" in
     # Source the main profile
     [[ -s /etc/bashrc ]] && source /etc/bashrc
     # Source the user profile
-    [[ -s "$HOME/.bash_profile" ]] && source "$HOME/.bash_profile"
-  ;;
+    [[ -s "${HOME}/.bash_profile" ]] && source "${HOME}/.bash_profile"
+    ;;
   *)
     echo ''
     echo 'Sorry ! HomeSetup is only compatible with bash for now.'
     echo 'You can change your default shell by typing: '
     echo '#> sudo chsh -s /bin/bash'
     echo ''
-  ;;
+    ;;
 esac

@@ -27,7 +27,7 @@ HOME=${HOME:-~}
 SHELL_TYPE="${SHELL##*/}"
 
 # Define the HomeSetup directory.
-HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
+HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 
 # Dotfiles source location
 DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
@@ -93,12 +93,12 @@ uninstall_dotfiles() {
 
   echo -e "Removing installed dotfiles ..."
   for next in ${ALL_DOTFILES[*]}; do
-    dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
+    dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
     [[ -f "${dotfile}" ]] && command rm -fv "${dotfile}"
   done
 
   # shellcheck disable=SC2164
-  cd "$HOME"
+  cd "${HOME}"
   [[ -d "${HHS_HOME}" ]] && command rm -rfv "${HHS_HOME}"
   [[ -L "${HHS_DIR}/bin" || -d "${HHS_DIR}/bin" ]] && command rm -rf "${HHS_DIR}/bin"
   echo ''

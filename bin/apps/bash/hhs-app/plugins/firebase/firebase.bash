@@ -77,7 +77,7 @@ load_settings() {
     sleep 1
     setup_firebase
   fi
-  
+
   [[ -f "$FIREBASE_FILE" ]] && \. "$FIREBASE_FILE"
   [[ -z "$PROJECT_ID" || -z "${FIREBASE_URL}" || -z "$PASSPHRASE" || -z "${UUID}" ]] && quit 2 "Invalid settings file!"
 
@@ -125,15 +125,15 @@ build_payload() {
   local payload='' match=', } }' replacement=' } }'
 
   # Encode all present dotfiles
-  [[ -f "$HOME"/.aliases ]] && f_aliases=$(grep . "$HOME"/.aliases | base64)
-  [[ -f "$HOME"/.colors ]] && f_colors=$(grep . "$HOME"/.colors | base64)
-  [[ -f "$HOME"/.env ]] && f_env=$(grep . "$HOME"/.env | base64)
-  [[ -f "$HOME"/.functions ]] && f_functions=$(grep . "$HOME"/.functions | base64)
+  [[ -f "${HOME}"/.aliases ]] && f_aliases=$(grep . "${HOME}"/.aliases | base64)
+  [[ -f "${HOME}"/.colors ]] && f_colors=$(grep . "${HOME}"/.colors | base64)
+  [[ -f "${HOME}"/.env ]] && f_env=$(grep . "${HOME}"/.env | base64)
+  [[ -f "${HOME}"/.functions ]] && f_functions=$(grep . "${HOME}"/.functions | base64)
   [[ -f "${HHS_PATHS_FILE}" ]] && f_path=$(grep . "${HHS_PATHS_FILE}" | base64)
-  [[ -f "$HOME"/.profile ]] && f_profile=$(grep . "$HOME"/.profile | base64)
+  [[ -f "${HOME}"/.profile ]] && f_profile=$(grep . "${HOME}"/.profile | base64)
   [[ -f "$HHS_CMD_FILE" ]] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
   [[ -f "${HHS_SAVED_DIRS_FILE}" ]] && f_savedDirs=$(grep . "${HHS_SAVED_DIRS_FILE}" | base64)
-  [[ -f "$HOME"/.aliasdef ]] && f_aliasdef=$(grep . "$HOME"/.aliasdef | base64)
+  [[ -f "${HOME}"/.aliasdef ]] && f_aliasdef=$(grep . "${HOME}"/.aliasdef | base64)
 
   # Generate the request payload using the files above
   payload="{ \"${FB_ALIAS}\" : { "
@@ -206,15 +206,15 @@ parse_and_save() {
   f_aliasdef=$(json-find.py -a aliasdef -f "$RESPONSE_FILE" | base64 "${b64flag}")
 
   # Write all files into place
-  [[ -n "$f_aliases" ]] && echo "$f_aliases" > "$HOME/.aliases"
-  [[ -n "$f_colors" ]] && echo "$f_colors" > "$HOME/.colors"
-  [[ -n "$f_env" ]] && echo "$f_env" > "$HOME/.env"
-  [[ -n "$f_functions" ]] && echo "$f_functions" > "$HOME/.functions"
+  [[ -n "$f_aliases" ]] && echo "$f_aliases" > "${HOME}/.aliases"
+  [[ -n "$f_colors" ]] && echo "$f_colors" > "${HOME}/.colors"
+  [[ -n "$f_env" ]] && echo "$f_env" > "${HOME}/.env"
+  [[ -n "$f_functions" ]] && echo "$f_functions" > "${HOME}/.functions"
   [[ -n "$f_path" ]] && echo "$f_path" > "${HHS_PATHS_FILE}"
-  [[ -n "$f_profile" ]] && echo "$f_profile" > "$HOME/.profile"
+  [[ -n "$f_profile" ]] && echo "$f_profile" > "${HOME}/.profile"
   [[ -n "$f_cmdFile" ]] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
   [[ -n "$f_savedDirs" ]] && echo "$f_savedDirs" > "${HHS_SAVED_DIRS_FILE}"
-  [[ -n "$f_aliasdef" ]] && echo "$f_aliasdef" > "$HOME/.aliasdef"
+  [[ -n "$f_aliasdef" ]] && echo "$f_aliasdef" > "${HOME}/.aliasdef"
 }
 
 function help() {
@@ -270,6 +270,6 @@ function execute() {
       ;;
   esac
   shopt -u nocasematch
-  
+
   exit 0
 }

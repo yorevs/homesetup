@@ -14,8 +14,8 @@ function __hhs_activate_nvm() {
 
   echo -en "Activating NVM app ...... "
   # NVM setup
-  [[ ! -d "$HOME/.nvm" ]] && echo "${RED}[ FAIL ] => Can't find NVM_DIR => \"$HOME/.nvm\" ! ${NC}" && return 1
-  export NVM_DIR="$HOME/.nvm"
+  [[ ! -d "${HOME}/.nvm" ]] && echo "${RED}[ FAIL ] => Can't find NVM_DIR => \"${HOME}/.nvm\" ! ${NC}" && return 1
+  export NVM_DIR="${HOME}/.nvm"
   if [[ -s "$NVM_DIR/nvm.sh" ]]; then
     \. "$NVM_DIR/nvm.sh"
     export PATH="$PATH:$NVM_DIR"
@@ -27,7 +27,7 @@ function __hhs_activate_nvm() {
   else
     echo "${RED}[ FAIL ] => NVM is not installed ! ${NC}" && return 1
   fi
-  
+
   return 0
 }
 
@@ -36,8 +36,8 @@ function __hhs_activate_rvm() {
 
   echo -en "Activating RVM app ...... "
   # RVM setup
-  [[ ! -d "$HOME/.rvm" ]] && echo "${RED}[ FAIL ] => Can't find RVM_HOME => \"$HOME/.rvm\" ! ${NC}" && return 1
-  export RVM_DIR="$HOME/.rvm"
+  [[ ! -d "${HOME}/.rvm" ]] && echo "${RED}[ FAIL ] => Can't find RVM_HOME => \"${HOME}/.rvm\" ! ${NC}" && return 1
+  export RVM_DIR="${HOME}/.rvm"
   if [[ -s "$RVM_DIR/scripts/rvm" ]]; then
     \. "$RVM_DIR/scripts/rvm"
     export PATH="$PATH:$RVM_DIR/bin"
@@ -45,7 +45,7 @@ function __hhs_activate_rvm() {
   else
     echo "${RED}[ FAIL ] => RVM is not installed ! ${NC}" && return 1
   fi
-  
+
   return 0
 }
 
@@ -54,12 +54,12 @@ function __hhs_activate_jenv() {
 
   echo -en "Activating JENV app ..... "
   # JENV setup
-  if eval "$(jenv init -)" &>/dev/null; then
+  if eval "$(jenv init -)" &> /dev/null; then
     echo "${GREEN}[  OK  ] ${NC}"
   else
     echo "${RED}[ FAIL ] => JENV is not installed ! ${NC}" && return 1
   fi
-  
+
   return 0
 }
 
@@ -69,11 +69,11 @@ function __hhs_activate_docker() {
   echo -en "Activating Docker app ... "
   DK_LOC='/Applications/Docker.app'
   # Docker daemon setup
-  if open "${DK_LOC}" &>/dev/null; then
+  if open "${DK_LOC}" &> /dev/null; then
     echo "${GREEN}[  OK  ] ${NC}"
-  else 
+  else
     echo "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at ! ${NC}" && return 1
   fi
-  
+
   return 0
 }

@@ -51,15 +51,15 @@ fi
 # ----------------------------------------------------------------------------
 # Commonly used folders
 export TEMP="${TEMP:-$TMPDIR}"
-export TRASH="${TRASH:-$HOME/.Trash}"
+export TRASH="${TRASH:-${HOME}/.Trash}"
 
-command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-$HOME/GIT-Repository}"
-command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-$HOME/SVN-Repository}"
+command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
+command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
 
-[[ -d "$HOME/Workspace" ]] && export WORKSPACE="${WORKSPACE:-$HOME/Workspace}"
-[[ -d "$HOME/Desktop" ]] && export DESKTOP="${DESKTOP:-$HOME/Desktop}"
-[[ -d "$HOME/Downloads" ]] && export DOWNLOADS="${DOWNLOADS:-$HOME/Downloads}"
-[[ -d "$HOME/Dropbox" ]] && export DROPBOX="${DROPBOX:-$HOME/Dropbox}"
+[[ -d "${HOME}/Workspace" ]] && export WORKSPACE="${WORKSPACE:-${HOME}/Workspace}"
+[[ -d "${HOME}/Desktop" ]] && export DESKTOP="${DESKTOP:-${HOME}/Desktop}"
+[[ -d "${HOME}/Downloads" ]] && export DOWNLOADS="${DOWNLOADS:-${HOME}/Downloads}"
+[[ -d "${HOME}/Dropbox" ]] && export DROPBOX="${DROPBOX:-${HOME}/Dropbox}"
 
 # ----------------------------------------------------------------------------
 # Bash History
@@ -71,7 +71,7 @@ export HISTTIMEFORMAT=${HISTTIMEFORMAT:-"[%F %T] "}
 
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
-export HISTFILE="${HISTFILE:-$HOME/.bash_history}"
+export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables

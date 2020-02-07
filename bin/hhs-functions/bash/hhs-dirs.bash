@@ -33,7 +33,7 @@ function __hhs_change_dir() {
     path="$(dirname "${1}")"
   fi
 
-  path="${path//\~/$HOME}"
+  path="${path//\~/${HOME}}"
 
   [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && return 1
 
@@ -85,9 +85,9 @@ function __hhs_dirs() {
     echo "-------------------------------------------------------------"
     echo -en "${NC}"
     mselect_file=$(mktemp)
-    if __hhs_mselect "$mselect_file" "${results[@]}"; then
-      sel_index=$(grep . "$mselect_file")
-      path="${results[$sel_index]//\~/$HOME}"
+    if __hhs_mselect "${mselect_file}" "${results[@]}"; then
+      sel_index=$(grep . "${mselect_file}")
+      path="${results[$sel_index]//\~/${HOME}}"
       [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && ret_val=1
     else
       ret_val=1
@@ -102,7 +102,7 @@ function __hhs_dirs() {
   IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p)"
   dirs -c
   for idx in "${!results[@]}"; do
-    path="${results[$idx]//\~/$HOME}"
+    path="${results[$idx]//\~/${HOME}}"
     # shellcheck disable=SC2199,2076
     if [[ ! " ${uniq_dirs[@]} " =~ " ${path} " ]]; then
       uniq_dirs[$idx]="${path}"
@@ -221,10 +221,10 @@ function __hhs_load_dir() {
         echo ' '
         IFS=$'\n'
         for next in "${all_dirs[@]}"; do
-          dir_alias=$(echo -en "$next" | awk -F '=' '{ print $1 }')
-          dir=$(echo -en "$next" | awk -F '=' '{ print $2 }')
+          dir_alias=$(echo -en "${next}" | awk -F '=' '{ print $1 }')
+          dir=$(echo -en "${next}" | awk -F '=' '{ print $2 }')
           printf "${HHS_HIGHLIGHT_COLOR}${dir_alias}"
-          printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "$pad"
+          printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "${pad}"
           echo -e "${YELLOW} was saved as ${WHITE}'${dir}'"
         done
         IFS="${RESET_IFS}"
@@ -237,8 +237,8 @@ function __hhs_load_dir() {
           echo "${YELLOW}Available saved directories (${#all_dirs[@]}):"
           echo -en "${WHITE}"
           mselect_file=$(mktemp)
-          if __hhs_mselect "$mselect_file" "${all_dirs[@]}"; then
-            sel_index=$(grep . "$mselect_file")
+          if __hhs_mselect "${mselect_file}" "${all_dirs[@]}"; then
+            sel_index=$(grep . "${mselect_file}")
             dir_alias="${all_dirs[$sel_index]%=*}"
             dir="${all_dirs[$sel_index]##*=}"
           else
@@ -270,7 +270,7 @@ function __hhs_load_dir() {
     echo "${ORANGE}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
   fi
 
-  [[ -f "$mselect_file" ]] && command rm -f "$mselect_file"
+  [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
   echo ''
 
   return 0
@@ -309,8 +309,8 @@ function __hhs_go_dir() {
       echo "-------------------------------------------------------------"
       echo -en "${NC}"
       mselect_file=$(mktemp)
-      if __hhs_mselect "$mselect_file" "${results[@]//$searchPath\//}"; then
-        sel_index=$(grep . "$mselect_file")
+      if __hhs_mselect "${mselect_file}" "${results[@]//$searchPath\//}"; then
+        sel_index=$(grep . "${mselect_file}")
         dir=${results[$sel_index]}
       else
         return 1
@@ -319,7 +319,7 @@ function __hhs_go_dir() {
     [[ -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &> /dev/null && echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}" || return 1
   fi
 
-  [[ -f "$mselect_file" ]] && command rm -f "$mselect_file"
+  [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
   echo ''
 
   return 0

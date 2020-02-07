@@ -14,9 +14,9 @@ function __hhs_paths() {
 
   local pad pad_len path_dir custom private quiet
 
-  HHS_PATHS_FILE=${HHS_PATHS_FILE:-$HOME/.path} # Custom paths
-  PATHS_D="/etc/paths.d"                        # Private system paths
-  PVT_PATHS_D="/private/etc/paths"              # General system path dir
+  HHS_PATHS_FILE=${HHS_PATHS_FILE:-${HOME}/.path} # Custom paths
+  PATHS_D="/etc/paths.d"                          # Private system paths
+  PVT_PATHS_D="/private/etc/paths"                # General system path dir
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -48,7 +48,7 @@ function __hhs_paths() {
         [[ -d "$PVT_PATHS_D" ]] && private="$(grep ^"$path"$ ${PVT_PATHS_D})"
         [[ -d "$PATHS_D" ]] && path_dir="$(grep ^"$path"$ ${PATHS_D}/*)"
         echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
-        printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
+        printf '%*.*s' 0 $((pad_len - ${#path})) "${pad}"
         [[ "${#path}" -ge "$columns" ]] && echo -en "${NC}" || echo -en "${NC}"
         if [[ -d "$path" ]]; then
           echo -en "${GREEN} ${CHECK_ICN} => ${WHITE}"

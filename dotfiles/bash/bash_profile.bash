@@ -96,7 +96,7 @@ else
 fi
 
 # Add custom paths to the system `$PATH`
-[[ -f "$HOME/.path" ]] && export PATH="$(grep . "$HOME/.path" | tr '\n' ':'):$PATH"
+[[ -f "${HOME}/.path" ]] && export PATH="$(grep . "${HOME}/.path" | tr '\n' ':'):$PATH"
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
 paths -q -a "${HHS_DIR}/bin"

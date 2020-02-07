@@ -51,7 +51,7 @@ function __hhs_sysinfo() {
       if [[ -n "${containers}" && $(__hhs_docker_count) -gt 1 ]]; then
         echo -e "\n${GREEN}Active Docker Containers: ${BLUE}"
         for next in ${containers}; do
-          echo "$next" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
+          echo "${next}" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
         done
       fi
     fi
@@ -113,13 +113,13 @@ function __hhs_process_list() {
       [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
       IFS=$'\n'
       for next in ${all_pids}; do
-        uid=$(echo "$next" | awk '{ print $1 }')
-        pid=$(echo "$next" | awk '{ print $2 }')
-        ppid=$(echo "$next" | awk '{ print $3 }')
-        cmd=$(echo "$next" | awk '{ print $4 }')
+        uid=$(echo "${next}" | awk '{ print $1 }')
+        pid=$(echo "${next}" | awk '{ print $2 }')
+        ppid=$(echo "${next}" | awk '{ print $3 }')
+        cmd=$(echo "${next}" | awk '{ print $4 }')
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "$pid" "$ppid" "${cmd}"
-        printf '%*.*s' 0 $((40 - ${#cmd})) "$pad"
+        printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
         if [[ -n "$pid" && "$2" == "kill" ]]; then
           save-cursor-pos
           if [[ -z "${force}" ]]; then

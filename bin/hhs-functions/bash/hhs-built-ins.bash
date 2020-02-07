@@ -8,7 +8,6 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-
 # @function: Generate a random number int the range <min> <max>
 # @param $1 [Req] : The minimum range of the number
 # @param $2 [Req] : The maximum range of the number
@@ -20,14 +19,14 @@ function __hhs_random_number() {
   else
     echo "$((RANDOM % ($2 - $1 + 1) + $1))"
   fi
-  
+
   return 0
 }
 
 # @function: Display the decimal ASCII representation of a character
 # @param $1 [Req] : The character to display
 function __hhs_ascof() {
-  
+
   echo -n "${1}" | od -A n -t d1 | head -n 1 | awk '{print $1}' && return $?
 }
 
@@ -42,8 +41,8 @@ if __hhs_has "python"; then
     if [[ $# -gt 0 ]]; then
       for x in "$@"; do
         uni="${x:0:4}" # More digits will be ignored
-        echo -e "\n[Uni-$uni]: "
-        converted=$(print-uni.py "$uni" | hexdump -Cb)
+        echo -e "\n[Uni-${uni}]: "
+        converted=$(print-uni.py "${uni}" | hexdump -Cb)
         result=$(awk '
         NR == 1 {printf "  Hex => "; print $2" "$3" "$4}
         NR == 2 {printf "  Oct => "; print $2" "$3" "$4}

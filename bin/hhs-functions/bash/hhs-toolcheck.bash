@@ -22,13 +22,16 @@ function __hhs_toolcheck() {
   else
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=40
-    if [[ "$1" == "-q" || "$1" == "--quiet" ]]; then shift; quiet=1; fi
+    if [[ "$1" == "-q" || "$1" == "--quiet" ]]; then
+      shift
+      quiet=1
+    fi
     tool_name="$1"
     check=$(command -v "${tool_name}")
-    is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
+    is_alias=$(alias "${tool_name}" > /dev/null 2>&1 && echo "OK")
     [[ -z "$quiet" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
     [[ -z "$quiet" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
-    [[ -z "$quiet" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "$pad"
+    [[ -z "$quiet" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
     if __hhs_has "${tool_name}"; then
       if [[ -z "$is_alias" && $check =~ ^(\/.*) ]]; then
         [[ -z "$quiet" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
@@ -62,7 +65,7 @@ function __hhs_version() {
       __hhs_errcho "${FUNCNAME[0]}: Can't check version. \"${APP}\" is not installed on the system! ${NC}"
       return 2
     fi
-    
+
     if ! version=$(${APP} --version 2>&1); then
       if ! version=$(${APP} -v 2>&1); then
         if ! version=$(${APP} -version 2>&1); then

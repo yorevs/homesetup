@@ -62,7 +62,7 @@ list_recipes() {
 
   local index=0 recipe pad_len=20
   local pad=$(printf '%0.1s' "."{1..60})
-  
+
   for app in ${DEV_TOOLS[*]}; do
     recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
     if [[ -n "${recipe}" && -f "${recipe}" ]]; then
@@ -71,7 +71,7 @@ list_recipes() {
       \. "${recipe}"
       if test -z "$1"; then
         printf '%3s - %s' "${index}" "${BLUE}${app} "
-        printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
+        printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
         echo -e "${GREEN} => ${WHITE}$(about) ${NC}"
       fi
       cleanup_recipes
@@ -79,7 +79,7 @@ list_recipes() {
     elif [[ "${LIST_ALL}" == "1" ]]; then
       index=$((index + 1))
       printf '%3s - %s' "${index}" "${ORANGE}${app} "
-      printf '%*.*s' 0 $((pad_len - ${#app})) "$pad"
+      printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
       echo -e "${GREEN} => ${RED}[Recipe not found] ${NC}"
     fi
   done
@@ -122,7 +122,7 @@ uninstall_recipe() {
   local recipe recipe_name
 
   recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
-  
+
   if [[ -f "${recipe}" ]]; then
     \. "${recipe}"
     if ! command -v "$1" > /dev/null; then

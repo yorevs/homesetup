@@ -143,7 +143,7 @@ alias __hhs_clear='cls; \reset'
 # @category: Tool aliases
 
 # Jenv: Set JAVA_HOME using jenv
-__hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="$HOME/.jenv/versions/`jenv version-name`"'
+__hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="${HOME}/.jenv/versions/`jenv version-name`"'
 
 # Dropbox: Recursively delete Dropbox conflicted files from the current directory
 [[ -d "${DROPBOX}" ]] && alias cleanup-db="find . -name *\ \(*conflicted* -exec rm -v {} \;"
