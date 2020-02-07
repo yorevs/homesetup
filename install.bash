@@ -60,13 +60,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
 
-    ret=$1
-    shift
-    [[ "$ret" -gt 1 ]] && echo -en "${RED}"
-    [[ "$#" -gt 0 ]] && echo -en "$*"
-    # Unset all declared functions
-    echo -e "${NC}"
-    exit "$ret"
+    test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
+    test -n "$2" -a "$2" != "" && echo -e "${2}"
+    test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
+    echo ''
+    exit "$1"
   }
 
   # Usage message.
@@ -95,8 +93,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HHS_HOME}/.VERSION" ]] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
 
     # Check if the user passed the help or version parameters.
-    [[ "$1" = '-h' || "$1" = '--help' ]] && quit 0 "$USAGE"
-    [[ "$1" = '-v' || "$1" = '--version' ]] && version
+    [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "$USAGE"
+    [[ "$1" == '-v' || "$1" == '--version' ]] && version
 
     # Loop through the command line options.
     # Short opts: -w, Long opts: --Word
@@ -135,7 +133,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       mkdir -p "${HHS_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-        # Trying to write at the HomeSetup directory to check the permissions
+      # Trying to write at the HomeSetup directory to check the permissions
       touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
       command rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
     fi
@@ -230,12 +228,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
 
-    if [[ "${METHOD}" = 'repair' || "${METHOD}" = 'local' ]]; then
+    if [[ "${METHOD}" == 'repair' || "${METHOD}" == 'local' ]]; then
       echo -e "${ORANGE}"
       [[ -z ${QUIET} ]] && read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
       echo -e "${NC}"
+      [[ -n "$ANS" ]] && echo ''
       if [[ ! "$ANS" == "y" && ! "$ANS" == "Y" ]]; then
-        [[ -n "$ANS" ]] && echo ''
         quit 1 "Installation cancelled !"
       fi
     else
@@ -247,7 +245,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Installing dotfiles ...${NC}"
 
     # If `all' option is used, copy all files
-    if [[ "$OPT" = 'all' ]]; then
+    if [[ "$OPT" == 'all' ]]; then
       # Copy all dotfiles
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
@@ -309,7 +307,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {}  "${FONTS_DIR}" \; &>/dev/null; then
+    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -319,7 +317,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
-    rm -f "${HHS_HOME}"/.git/hooks/* &> /dev/null
+    rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else

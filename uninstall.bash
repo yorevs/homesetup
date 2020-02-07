@@ -30,7 +30,7 @@ SHELL_TYPE="${SHELL##*/}"
 HHS_HOME=${HHS_HOME:-$HOME/HomeSetup}
 
 # Dotfiles source location
-DOTFILES_DIR="$HHS_HOME/dotfiles/${SHELL_TYPE}"
+DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
 
 # .dotfiles we will handle
 ALL_DOTFILES=()
@@ -65,25 +65,24 @@ usage() {
 
 check_installation() {
 
-  if [[ -n "$HHS_HOME" && -d "$HHS_HOME" ]]; then
+  if [[ -n "${HHS_HOME}" && -d "${HHS_HOME}" ]]; then
 
-    echo "${BLUE}"
-    echo '#'
-    echo '# Uninstall settings:'
-    echo "# - HHS_HOME: $HHS_HOME"
-    echo "# - METHOD: Remove"
-    echo "# - FILES: ${ALL_DOTFILES[*]}"
-    echo "#${NC}"
+    echo -e ''
+    echo -e "${WHITE}### Uninstallation Settings ###"
+    echo -e "${BLUE}"
+    echo -e "  Uninstall Type: remove"
+    echo -e "     Install Dir: ${HHS_HOME}"
+    echo -e "        Dotfiles: ${ALL_DOTFILES[*]}"
+    echo -e "${NC}"
 
-    echo "${RED}"
-    read -r -n 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
-    echo "${NC}"
+    echo -e "${ORANGE}"
+    read -rn 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
+    echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
-
     if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
       uninstall_dotfiles
     else
-      quit 1 "Uninstallation cancelled!"
+      quit 1 "Uninstallation cancelled !"
     fi
   else
     quit 2 "Installation files were not found or removed !"
@@ -100,7 +99,7 @@ uninstall_dotfiles() {
 
   # shellcheck disable=SC2164
   cd "$HOME"
-  [[ -d "$HHS_HOME" ]] && command rm -rfv "$HHS_HOME"
+  [[ -d "${HHS_HOME}" ]] && command rm -rfv "${HHS_HOME}"
   [[ -L "${HHS_DIR}/bin" || -d "${HHS_DIR}/bin" ]] && command rm -rf "${HHS_DIR}/bin"
   echo ''
 
