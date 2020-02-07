@@ -252,7 +252,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="$HOME/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dotfile into $HOME/.hhs
-        [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}-${TIMESTAMP}".orig)"
+        [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
@@ -269,7 +269,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         [[ "$ANS" != 'y' && "$ANS" != 'Y' ]] && continue
         echo ''
         # Backup existing dotfile into ${DOTFILES_DIR}
-        [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}-${TIMESTAMP}".orig)"
+        [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
