@@ -105,7 +105,7 @@ __hhs_comp_paths() {
     COMPREPLY=("${suggestions[@]}")
     return 0
   fi
-  
+
   return 1
 }
 
