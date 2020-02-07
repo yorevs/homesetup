@@ -1,10 +1,10 @@
 {
-  "ASCII Ligatures" : false,
   "Ansi 5 Color" : {
     "Green Component" : 0,
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0.73333334922790527
   },
+  "Set Local Environment Vars" : false,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -25,7 +25,7 @@
     "Blue Component" : 0.73333334922790527
   },
   "Right Option Key Sends" : 0,
-  "Show Status Bar" : true,
+  "Show Status Bar" : false,
   "Character Encoding" : 4,
   "Selection Color" : {
     "Green Component" : 0.8353000283241272,
@@ -53,6 +53,38 @@
   "Scrollback With Status Bar" : true,
   "Scrollback Lines" : 10000,
   "Draw Powerline Glyphs" : true,
+  "Status Bar Layout" : {
+    "components" : [
+      {
+        "class" : "iTermStatusBarCPUUtilizationComponent",
+        "configuration" : {
+          "knobs" : {
+            "base: priority" : 5,
+            "base: compression resistance" : 1
+          },
+          "layout advanced configuration dictionary value" : {
+            "algorithm" : 0
+          }
+        }
+      },
+      {
+        "class" : "iTermStatusBarMemoryUtilizationComponent",
+        "configuration" : {
+          "knobs" : {
+            "base: priority" : 5,
+            "base: compression resistance" : 1
+          },
+          "layout advanced configuration dictionary value" : {
+            "algorithm" : 0
+          }
+        }
+      }
+    ],
+    "advanced configuration" : {
+      "font" : ".AppleSystemUIFont 12",
+      "algorithm" : 0
+    }
+  },
   "Flashing Bell" : false,
   "BM Growl" : true,
   "Ansi 3 Color" : {
@@ -302,7 +334,7 @@
     "Blue Component" : 0
   },
   "Blur" : true,
-  "Normal Font" : "DroidSansMonoNerdFontComplete- 12",
+  "Normal Font" : "DroidSansMonoNerdFontComplete- 11",
   "Vertical Spacing" : 1,
   "Ansi 7 Color" : {
     "Green Component" : 0.73333334922790527,
@@ -312,8 +344,8 @@
   "Space" : 0,
   "Command" : "",
   "Terminal Type" : "xterm-256color",
-  "Reduce Flicker" : true,
   "Horizontal Spacing" : 1,
+  "Reduce Flicker" : true,
   "Option Key Sends" : 0,
   "Blink Allowed" : true,
   "Ansi 15 Color" : {
@@ -344,5 +376,5 @@
   "Visual Bell" : true,
   "Custom Directory" : "Recycle",
   "Thin Strokes" : 3,
-  "Set Local Environment Vars" : false
+  "ASCII Ligatures" : false
 }

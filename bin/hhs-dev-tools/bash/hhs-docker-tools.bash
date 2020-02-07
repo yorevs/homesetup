@@ -101,7 +101,6 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return 1
   }
 
-  # shellcheck disable=SC2181
   # @function: Stop, remove and remove dangling [active?] volumes of all docker containers
   function __hhs_docker_kill_all() {
 
