@@ -34,7 +34,7 @@ function __hhs_paths() {
   else
     [[ "-q" == "$1" ]] && quiet=1 && shift
     if [[ -z "$1" || "-c" == "$1" ]]; then
-      [ -f "$HHS_PATHS_FILE" ] || touch "$HHS_PATHS_FILE"
+      [[ -f "${HHS_PATHS_FILE}" ]] || touch "${HHS_PATHS_FILE}"
       pad=$(printf '%0.1s' "."{1..70})
       pad_len=70
       columns=66
@@ -44,9 +44,9 @@ function __hhs_paths() {
       IFS=$'\n'
       for path in $(echo -e "${PATH//:/\\n}"); do
         path="${path:0:$columns}"
-        [[ -f "$HHS_PATHS_FILE" ]] && custom="$(grep ^"$path"$ "$HHS_PATHS_FILE")"
-        [[ -d "$PVT_PATHS_D" ]] && private="$(grep ^"$path"$ $PVT_PATHS_D)"
-        [[ -d "$PATHS_D" ]] && path_dir="$(grep ^"$path"$ $PATHS_D/*)"
+        [[ -f "${HHS_PATHS_FILE}" ]] && custom="$(grep ^"$path"$ "${HHS_PATHS_FILE}")"
+        [[ -d "$PVT_PATHS_D" ]] && private="$(grep ^"$path"$ ${PVT_PATHS_D})"
+        [[ -d "$PATHS_D" ]] && path_dir="$(grep ^"$path"$ ${PATHS_D}/*)"
         echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
         printf '%*.*s' 0 $((pad_len - ${#path})) "$pad"
         [[ "${#path}" -ge "$columns" ]] && echo -en "${NC}" || echo -en "${NC}"
@@ -54,14 +54,14 @@ function __hhs_paths() {
           echo -en "${GREEN} ${CHECK_ICN} => ${WHITE}"
         else
           if [[ "-c" == "$1" ]]; then
-            ised -e "s#(^$path$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+            ised -e "s#(^$path$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"
             export PATH=${PATH//$path:/}
             echo -en "${RED} ${CROSS_ICN} => "
           else
             echo -en "${ORANGE} ${CROSS_ICN} => "
           fi
         fi
-        [[ -n "$custom" ]] && echo -n "at $HHS_PATHS_FILE"
+        [[ -n "$custom" ]] && echo -n "at ${HHS_PATHS_FILE}"
         [[ -n "$path_dir" ]] && echo -n "from $PATHS_D"
         [[ -n "$private" ]] && echo -n "from $PVT_PATHS_D"
         if [[ -z "$custom" && -z "$path_dir" && -z "$private" ]]; then
@@ -69,25 +69,25 @@ function __hhs_paths() {
         fi
         echo -e "${NC}"
       done
-      IFS="$RESET_IFS"
+      IFS="${RESET_IFS}"
       echo -e "${NC}"
     elif [[ "-e" == "$1" ]]; then
-      edit "$HHS_PATHS_FILE"
+      edit "${HHS_PATHS_FILE}"
       return 0
     elif [[ "-a" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
-      ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"
+      ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"
       if [[ -d "$2" ]]; then
-        echo "$2" >> "$HHS_PATHS_FILE"
+        echo "$2" >> "${HHS_PATHS_FILE}"
         export PATH="$2:$PATH"
-        [[ -z $quiet ]] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
+        [[ -z "${quiet}" ]] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
       else
         __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" does not exist" && return 1
       fi
     elif [[ "-r" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
-      if grep -q "$2" "$HHS_PATHS_FILE" && [[ -z $quiet ]]; then
-        if ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "$HHS_PATHS_FILE"; then
+      if grep -q "$2" "${HHS_PATHS_FILE}" && [[ -z ${quiet} ]]; then
+        if ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"; then
           export PATH=${PATH//$2:/}
           echo "${YELLOW}Path was removed: ${WHITE}\"$2\" ${NC}"
         fi

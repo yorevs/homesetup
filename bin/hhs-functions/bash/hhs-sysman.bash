@@ -57,7 +57,7 @@ function __hhs_sysinfo() {
     fi
 
     echo "${NC}"
-    IFS=$RESET_IFS
+    IFS=${RESET_IFS}
   fi
 
   return 0
@@ -105,14 +105,14 @@ function __hhs_process_list() {
     done
     # shellcheck disable=SC2009
     [[ -n "$1" ]] && all_pids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
-    if [[ -n "$all_pids" ]]; then
+    if [[ -n "${all_pids}" ]]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"
       echo ''
       [[ -z "$quiet" ]] && printf "${WHITE}%4s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
       [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
       IFS=$'\n'
-      for next in $all_pids; do
+      for next in ${all_pids}; do
         uid=$(echo "$next" | awk '{ print $1 }')
         pid=$(echo "$next" | awk '{ print $2 }')
         ppid=$(echo "$next" | awk '{ print $3 }')
@@ -139,7 +139,7 @@ function __hhs_process_list() {
           fi
         fi
       done
-      IFS="$RESET_IFS"
+      IFS="${RESET_IFS}"
     else
       echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
     fi

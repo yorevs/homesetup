@@ -22,7 +22,7 @@ function __hhs_tailor() {
     echo '    filename: If not provided, stdin will be used instead'
     return 1
   else
-    [ -f "$HHS_DIR/.tailor" ] || echo -e "
+    [[ -f "${HHS_DIR}/.tailor" ]] || echo -e "
     THREAD_NAME_RE=\" *[-a-zA-Z0-9_ ]+ *\"
     THREAD_NAME_STYLE=\"${PURPLE}\"
     FQDN_RE=\"(([a-zA-Z\.][a-zA-Z0-9]*[\.\$])+[a-zA-Z0-9]+)\"
@@ -37,9 +37,9 @@ function __hhs_tailor() {
     DATE_FMT_STYLE=\"${DIM}\"
     URI_FMT_RE=\"((https?|ftp|file):\/)?\/[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*\.*[-A-Za-z0-9\+&@#/%=~_|]\"
     URI_FMT_STYLE=\"${ORANGE}\"
-    " > "$HHS_DIR/.tailor"
+    " > "${HHS_DIR}/.tailor"
 
-    [[ -f "$HHS_DIR/.tailor" ]] && \. "$HHS_DIR/.tailor"
+    [[ -f "${HHS_DIR}/.tailor" ]] && \. "${HHS_DIR}/.tailor"
     file="${1:-/dev/stdin}"
 
     if [[ "${file}" = '/dev/stdin' ]]; then

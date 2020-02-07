@@ -123,7 +123,7 @@ if __hhs_has "python"; then
       echo "${YELLOW}Searching for \"${filter_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${3}] ${extra_str} ${NC}"
       
       if [[ -n "$replace" ]]; then
-        if [ "$filter_type" = 'string' ]; then
+        if [[ "$filter_type" = 'string' ]]; then
           __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"
           return 1
         fi
