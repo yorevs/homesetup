@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2034
+# shellcheck disable=SC2034
 
 #  Script: fetch.bash
 # Purpose: Script to fetch REST APIs data.
@@ -27,7 +27,9 @@ Usage: ${APP_NAME} <method> [options] <url>
 "
 
 # Functions to be unset after quit
-UNSETS=( format_json do_fetch )
+UNSETS=(
+  format_json do_fetch parse_args
+)
 
 # shellcheck disable=SC1090
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
@@ -38,76 +40,69 @@ REQ_TIMEOUT=5
 # Return code
 RET=0
 
-shopt -s nocasematch
-case "$1" in
-'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
-  METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
-  shift
-  ;;
-*)
-  quit 2 "Method \"$1\" is not not valid!"
-  ;;
-esac
-shopt -u nocasematch
+# Purpose: Parse command line arguments
+parse_args() {
 
-# Loop through the command line options.
-while test -n "$1"; do
+  [[ $# -lt 2 ]] && usage 1
+
+  shopt -s nocasematch
   case "$1" in
-  --headers)
+  'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
+    METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
     shift
-    IFS=','
-    arr=("$1")
-    for h in ${arr[*]}; do
-      HEADERS="$HEADERS -H $h"
-    done
-    IFS=' '
     ;;
-  --body)
-    shift
-    BODY="$1"
-    ;;
-  --format)
-    FORMAT=1
-    ;;
-  --silent)
-    SILENT=1
-    ;;
-  *)
-    URL="$*"
-    break
-    ;;
+  *) quit 2 "Method \"$1\" is not not valid!" ;;
   esac
-  shift
-done
+  shopt -u nocasematch
 
-[[ -z "$URL" ]] && quit 2 "No URL was defined!"
+  # Loop through the command line options.
+  while test -n "$1"; do
+    case "$1" in
+    --headers)
+      shift
+      HEADERS=" -H ${1//,/ -H }"
+      ;;
+    --body)
+      shift
+      BODY="$1"
+      ;;
+    --format)
+      FORMAT=1
+      ;;
+    --silent)
+      SILENT=1
+      ;;
+    *)
+      URL="$*"
+      break
+      ;;
+    esac
+    shift
+  done
+}
 
-case "${METHOD}" in
-    'GET'|'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body";;
-    'PUT'|'POST'|'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body";;
-esac
-
-# Format or not the output
+# Purpose: Format or not the output
 format_json() {
 
   # Piped input
   read -r response
-  [[ -n "${FORMAT}" ]] && echo -e "$response" | json_pp
-  [[ -z "${FORMAT}" ]] && echo -e "$response"
+  [[ -n "${FORMAT}" ]] && echo -e "${response}" | json_pp
+  [[ -z "${FORMAT}" ]] && echo -e "${response}"
 }
 
-# Do the request
+# shellcheck disable=SC2086
+# Purpose: Do the request
 do_fetch() {
 
-  curl_opts=( -s --fail -m "$REQ_TIMEOUT" )
+  curl_opts=(-s --fail -m "$REQ_TIMEOUT")
 
-  if [[ -z "$HEADERS" && -z "${BODY}" ]]; then
+  if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
-  elif [[ -z "$HEADERS" && -n "${BODY}" ]]; then
+  elif [[ -z "${HEADERS}" && -n "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
-  elif [[ -n "$HEADERS" && -n "${BODY}" ]]; then
+  elif [[ -n "${HEADERS}" && -n "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
-  elif [[ -n "$HEADERS" && -z "${BODY}" ]]; then
+  elif [[ -n "${HEADERS}" && -z "${BODY}" ]]; then
     body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   fi
   RET=$?
@@ -118,11 +113,28 @@ do_fetch() {
   return ${RET}
 }
 
-[[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} $URL ..."
+# ------------------------------------------
+# Purpose: Program entry point
+main() {
 
-if do_fetch; then
-  quit 0
-else
-  [[ -z "${SILENT}" ]] && msg="Failed to process request: (Ret=${RET})"
-  quit ${RET} "$msg"
-fi
+  parse_args "${@}"
+
+  shopt -s nocasematch
+  case "${METHOD}" in
+  'GET' | 'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body" ;;
+  'PUT' | 'POST' | 'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body" ;;
+  esac
+  shopt -u nocasematch
+
+  [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${URL} ..."
+
+  if do_fetch; then
+    quit 0
+  else
+    [[ -z "${SILENT}" ]] && msg="Failed to process request: (Ret=${RET})"
+    quit ${RET} "$msg"
+  fi
+}
+
+main "${@}"
+quit 0

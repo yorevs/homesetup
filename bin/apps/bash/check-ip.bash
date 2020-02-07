@@ -21,7 +21,7 @@ Usage: ${APP_NAME} [Options] <ip_address>
 "
 
 # Functions to be unset after quit
-UNSETS=(check_class check_scope check_valid)
+UNSETS=(main check_class check_scope check_valid parse_args)
 
 # shellcheck disable=SC1090
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
@@ -36,6 +36,42 @@ IP_SCOPE=
 # Modes
 SILENT=0     # Not set
 EXTRA_INFO=0 # Not set
+
+# Purpose: Parse command line arguments
+parse_args() {
+
+  # If no argument is passed, just enter HomeSetup directory
+  if [[ ${#} -eq 0 ]]; then
+    usage 0
+  fi
+
+  # Loop through the command line options.
+  # Short opts: -<C>, Long opts: --<Word>
+  while [[ ${#} -gt 0 ]]; do
+    case "${1}" in
+    -h | --help)
+      usage 0
+      ;;
+    -v | --version)
+      version
+      ;;
+    -q | --quiet)
+      SILENT=1
+      ;;
+    -i | --info)
+      EXTRA_INFO=1
+      ;;
+
+    *)
+      break
+      ;;
+    esac
+    shift
+  done
+
+  IP_ADDRESS="${1}"
+  IFS='.' read -r -a IP_OCTETS <<<"${IP_ADDRESS}"
+}
 
 # – Class A addresses: Large numbers of nodes – Intended for a LARGE organisation
 #     IP = Net.Node.Node.Node
@@ -89,7 +125,7 @@ check_class() {
 # Purpose: Find the IP scope.
 # @param $1 [Req] : The IP to get the scope from
 check_scope() {
-  
+
   if [[ ${IP_OCTETS[0]} -eq 0 ]]; then
     IP_SCOPE="'This' Network"
   elif [[ ${IP_OCTETS[0]} -eq 10 ]]; then
@@ -149,6 +185,7 @@ check_valid() {
 # Purpose: Program entry point
 main() {
 
+  parse_args "${@}"
   check_valid
 
   # Final result
@@ -163,38 +200,6 @@ main() {
     [[ ${SILENT} -eq 0 ]] && echo "## Invalid IP: ${IP_ADDRESS} ##"
   fi
 }
-
-# If no argument is passed, just enter HomeSetup directory
-if [[ ${#} -eq 0 ]]; then
-  usage 0
-fi
-
-# Loop through the command line options.
-# Short opts: -<C>, Long opts: --<Word>
-while [[ ${#} -gt 0 ]]; do
-  case "${1}" in
-    -h | --help)
-      usage 0
-      ;;
-    -v | --version)
-      version
-      ;;
-    -q | --quiet)
-      SILENT=1
-      ;;
-    -i | --info)
-      EXTRA_INFO=1
-      ;;
-
-    *)
-      break
-      ;;
-  esac
-  shift
-done
-
-IP_ADDRESS="${1}"
-IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
 
 main "${@}"
 quit ${IP_VALID}

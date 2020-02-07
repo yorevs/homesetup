@@ -112,10 +112,10 @@ validate_plugin() {
     if [[ "${plg_funcs[j]}" == "${PLUGINS_FUNCS[i]}" ]]; then
       i=$((i + 1))
       j=0
-      [[ $i = ${#PLUGINS_FUNCS[@]} ]] && return 0
+      [[ $i == "${#PLUGINS_FUNCS[@]}" ]] && return 0
     else
       j=$((j + 1))
-      [[ $j = ${#plg_funcs[@]} ]] && return 1
+      [[ $j == "${#plg_funcs[@]}" ]] && return 1
     fi
   done
 
