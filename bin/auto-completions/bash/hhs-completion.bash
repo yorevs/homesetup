@@ -162,7 +162,7 @@ __hhs_comp_hhs() {
 
   local suggestions=()
 
-  [[ "${#COMP_WORDS[@]}" -gt 2 ]] && return 0
+  [[ "${#COMP_WORDS[@]}" -gt 3 ]] && return 0
 
   if [[ ${#COMP_WORDS[@]} -eq 2 ]]; then
     # Let the user know about the search
@@ -171,6 +171,8 @@ __hhs_comp_hhs() {
     # Erase the searching text after search is done
     echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
     COMPREPLY=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[1]}"))
+  elif [[ ${#COMP_WORDS[@]} -eq 3 ]]; then
+    COMPREPLY=($(compgen -W "help version execute" -- "${COMP_WORDS[2]}"))
   fi
 }
 

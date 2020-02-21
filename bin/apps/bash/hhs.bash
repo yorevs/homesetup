@@ -182,8 +182,8 @@ invoke_command() {
         [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
         \. "${PLUGINS_LIST[idx]}"
         shift
-        plg_cmd="${1}"
-        has_command "${plg_cmd}" || quit 1 "Command not available: ${plg_cmd}"
+        plg_cmd="${1:-help}"
+        has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
         shift
         ${plg_cmd} "${@}"
         ret=${?}
