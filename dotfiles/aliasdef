@@ -12,15 +12,15 @@
 # Notice:
 #   Using __hhs_alias instead of alias will prevent from re-aliasing any current alias
 
-# Built-ins replacements
-alias ..='__hhs_changeback_ndirs'
-alias cd='__hhs_change_dir'
-alias dirs='__hhs_dirs'
-
 # Directory Shortcuts
 [ -d "${DESKTOP}" ] && __hhs_alias desk="cd ${DESKTOP}"
 [ -d "${TEMP}" ] && __hhs_alias temp="cd ${TEMP}"
 [ -d "${DOWNLOADS}" ] && __hhs_alias dl="cd ${DOWNLOADS}"
+
+# Built-ins replacements
+alias ..='__hhs_changeback_ndirs'
+alias cd='__hhs_change_dir'
+alias dirs='__hhs_dirs'
 
 # HHS-App Aliases
 __hhs_alias vault='__hhs_vault'
@@ -31,6 +31,7 @@ __hhs_alias errcho='__hhs_errcho'
 __hhs_alias fetch='fetch.bash'
 
 # General shortcuts
+__hhs_alias about='__hhs_about_command'
 __hhs_alias lt='__hhs_list_tree'
 __hhs_alias lss='__hhs_ls_sorted'
 __hhs_alias pk='__hhs_process_kill'
