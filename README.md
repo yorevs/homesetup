@@ -1,5 +1,34 @@
 # HomeSetup
-## Terminal .dotfiles and bash improvements for MacOS
+## Your shell good as hell ! Not just dotfiles
+
+Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
+your shell to another level. There are many improvements and facilities, especially for developers that will ease the
+usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
+to adapt all of the code code be able to run under Linux and also, add support for Zsh.
+
+## Table of contents
+
+<!-- toc -->
+
+- [Installation](#1.-Installation)
+  * [Local Installation](#1.1-Local-installation)
+  * [Remote Installation](#1.2-Remote-installation)
+  * [Firebase Setup](#1.3-Firebase-setup)
+    + [Create Account](#1.3.1-Create-new-account)
+    + [Configure Account](#1.3.2-Configure-account)
+- [Uninstallation](#2.-Uninstallation)
+- [Dotfiles in this project](#3.-Dotfiles-in-this-project)
+- [Aliases](#4.-Aliases)
+- [Functions](#5.-Functions)
+- [Applications](#6.-Applications)
+  * [Python Apps](#6.1-Python-apps)
+  * [Bash Apps](#6.2-Bash-apps)
+- [Terminal Setup](#7.-Terminal-setup)
+  * [Terminal.app](#7.1-Terminal.app)
+  * [iTerm2.app](#7.2-iTerm2.app)
+
+<!-- tocstop -->
+
 
 ### 1. Installation
 
@@ -19,9 +48,9 @@ or
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 
-#### 1.2 Remote installation ( Directly from GitHub )
+#### 1.2 Remote installation
 
-Use the following command to clone and install the HomeSetup.
+You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
 
 `#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
@@ -29,13 +58,15 @@ or
 
 `#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
-#### 1.3 Setup a Firebase account for custom files synchronization
+#### 1.3 Firebase setup
 
 HomeSetup allows you to use your Firebase account to upload and download your custom files
-to your *Realtime Database*. To be able to use this feature, you need first to configure
-your Firebase account with HomeSetup.
+(dotfiles files synchronization) to your *Realtime Database*. To be able to use this feature, you need first 
+to configure your Google Firebase account.
 
-##### 1.3.1 Create a Firebase accout using your Google credentials (If you do not have one)
+##### 1.3.1 Create new account
+
+If you have a Google account but do not have a Firebase one, you can do that using your Google credentials.
 
 Access: https://console.firebase.google.com/
 
@@ -47,9 +78,17 @@ Access: https://console.firebase.google.com/
         - Change the line from: `".read": false,` to `".read": true,`.
         - Change the line from: `".write": false,` to `".write": true,`.
         - Click on the *Publish* button and accept changes.
-3. Grab you *Project ID* from the settings Settings menu.
 
-Type in a shell: `#> dotfiles.bash fb setup`
+##### 1.3.2 Configure account
+
+In order to use your Firebase account with HomeSetup, you will need to configure the read and write permissions as 
+showed on topic [1.3.1](#1.3.1-Create-new-account).
+
+Access your account from: https://console.firebase.google.com/
+
+Grab you *Project ID* from the settings Settings menu.
+
+Type in a shell: `#> dotfiles --setup`
 
 Fill in the information required.
 You are now ready to use the Firebase features of HomeSetup.
@@ -59,7 +98,7 @@ Type: `#> dotfiles.bash help fb` for further information about using it.
 
 If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command in a shell: `# HomeSetup> ./uninstall.bash`
 
-The uninstaller will remove all files and foders related to HomeSetup for good.
+The uninstaller will remove all files and folders related to HomeSetup for good.
 
 ### 3. Dotfiles in this project
 
@@ -98,7 +137,7 @@ To override or add customised stuff, you need to create a custom file as follows
 
 This project will many aliases (shortcuts) to your shell:
 
-#### Navigational
+#### 4.1 Navigational
 
 ALIAS           | Equivalent
 --------------- | ---------------
@@ -110,7 +149,7 @@ ALIAS           | Equivalent
 \-              | cd -
 ?               | pwd
 
-#### General
+#### 4.2 General
 
 ALIAS           | Equivalent
 --------------- | ---------------
@@ -150,7 +189,7 @@ ts              | 'Current **timestamp** in milliseconds'
 wget            | 'MacOS has no wget, so use **curl** instead'
 rand            | 'Generate a random number from **<min>** to  **<max>**'
 
-#### Python aliases
+#### 4.3 Python aliases
 ALIAS           | Equivalent
 --------------- | ---------------
 json_pp         | linux has no **json_pp**, so using python instead
@@ -160,13 +199,13 @@ urld            | 'URL-decode string'
 uuid            | 'Generate a random UUID'
 utoh            | 'Convert unicode to hexadecimal'
 
-#### Perl aliases
+#### 4.4 Perl aliases
 ALIAS           | Equivalent
 --------------- | ---------------
 cse             | Clean escape (\EscXX) codes from text
 clipboard       | Copy to clipboard **pbcopy required**
 
-#### IP related aliases
+#### 4.5 IP related aliases
 
 ALIAS           | Equivalent
 --------------- | ---------------
@@ -175,22 +214,22 @@ ifa             | 'List all active interfaces on the system' **pcregrep required
 ipl             | 'Get all Local IPs on the local network' **pcregrep required**
 ips             | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **ifconfig required**
 
-#### Mac Stuff aliases
+#### 4.6 Mac Stuff aliases
 
 ALIAS           | Equivalent
 --------------- | ---------------
 cleanup-ds      | 'Delete all **.DS_store** files'
 flush           | 'Flush Directory Service cache'
-cleanup-reg      | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
+cleanup-reg     | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
 show-files      | '**Show** hidden files in Finder' **defaults required**
 hide-files      | '**Hide** hidden files in Finder' **defaults required**
-show-deskicons   | 'Show all desktop icons'
-hide-deskicons   | 'Hide all desktop icons'
-hd              | 'Canonical hex dump; some systems have this symlinked'
+show-deskicons  | 'Show all desktop icons'
+hide-deskicons  | 'Hide all desktop icons'
+hd              | 'Canonical hex dump; some systems have this sym-linked'
 md5sum          | 'macOS has no **md5sum**, so use **md5** as a fallback'
 sha1            | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
 
-**Please check: [bash_aliases](./bash_aliases.bash) for all aliases**
+**Please check: [bash_aliases](dotfiles/bash/bash_aliases.bash) for all aliases**
 
 ### 5. Functions
 
@@ -229,13 +268,13 @@ sysinfo         | Retrieve relevant system information.
 parts           | Exhibit a Human readable summary about all partitions.
 hhu             | Check the current **HomeSetup** installation and look for updates..
 
-**Please check: [bash_functions](./bash_functions.bash) for all functions**
+**Please check: [bash_functions](dotfiles/bash/bash_functions.bash) for all functions**
 
-### 6. Scripts
+### 6. Applications
 
 The project contains some useful scripts that can be used directly from shell. It is also added to your path variable.
 
-#### 6.1 Python scripts
+#### 6.1 Python apps
 
 Function        | Purpose
 --------------- | ---------------
@@ -246,7 +285,7 @@ pprint-xml.py   | Pretty print (format) an xml file.
 send-msg.py     | IP Message Sender. Sends UDP/TCP messages using multi-threads.
 hhu             | Check for HomeSetup updates.
 
-#### 6.2 Shell scripts
+#### 6.2 Bash apps
 
 Function                | Purpose
 ----------------------- | -----------------------
@@ -261,7 +300,7 @@ toolcheck.bash          | Check if the a tool is installed on the system.
 
 **Please check: [bin](./bin) for all scripts**
 
-### 7. HomeSetup Terminal setup
+### 7. Terminal setup
 
 #### 7.1 Terminal.app
 
