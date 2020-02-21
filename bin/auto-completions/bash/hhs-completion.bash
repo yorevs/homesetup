@@ -63,7 +63,7 @@ __hhs_comp_punch() {
   dir="$(dirname "$HHS_PUNCH_FILE")"
   IFS=$'\n'
   puch_weeks="week-*.punch"
-  read -d '' -r -a suggestions <<< "$(find -L "${dir}" -maxdepth 1 -type f -iname "${puch_weeks}" 2> /dev/null)"
+  read -d '' -r -a suggestions <<<"$(find -L "${dir}" -maxdepth 1 -type f -iname "${puch_weeks}" 2>/dev/null)"
   for i in "${!suggestions[@]}"; do
     suggestions[$i]="${suggestions[$i]//${dir}\//}"
     suggestions[$i]=${suggestions[$i]//week-/}
@@ -100,7 +100,7 @@ __hhs_comp_paths() {
   elif [[ ${#COMP_WORDS[@]} -gt 3 ]]; then
     return 0
   elif [ "${COMP_WORDS[1]}" == "-r" ]; then
-    IFS=$'\n' read -d '' -r -a suggestions <<< "$(grep . "${HHS_PATHS_FILE}")"
+    IFS=$'\n' read -d '' -r -a suggestions <<<"$(grep . "${HHS_PATHS_FILE}")"
     suggestions=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[2]}"))
     COMPREPLY=("${suggestions[@]}")
     return 0
@@ -131,7 +131,7 @@ __hhs_comp_godir() {
   # Let the user know about the search
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   IFS=$'\n'
-  read -d '' -r -a suggestions <<< "$(find -L "${dir%/}" -type d -iname "${base}" 2> /dev/null | esed 's#\./(.*)/*#\1/#')"
+  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -type d -iname "${base}" 2>/dev/null | esed 's#\./(.*)/*#\1/#')"
   IFS=$"${RESET_IFS}"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
@@ -158,6 +158,22 @@ __hhs_comp_hist() {
   COMPREPLY=("${suggestions[@]}")
 }
 
+__hhs_comp_hhs() {
+
+  local suggestions=()
+
+  [[ "${#COMP_WORDS[@]}" -gt 2 ]] && return 0
+
+  if [[ ${#COMP_WORDS[@]} -eq 2 ]]; then
+    # Let the user know about the search
+    echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
+    suggestions=($(hhs list opts))
+    # Erase the searching text after search is done
+    echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
+    COMPREPLY=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[1]}"))
+  fi
+}
+
 complete -o default -F __hhs_comp_godir godir
 complete -o default -F __hhs_comp_paths paths
 complete -F __hhs_comp_load_dir load
@@ -166,3 +182,4 @@ complete -F __hhs_comp_cmd cmd
 complete -F __hhs_comp_punch punch
 complete -F __hhs_comp_envs envs
 complete -F __hhs_comp_hist hist
+complete -F __hhs_comp_hhs hhs

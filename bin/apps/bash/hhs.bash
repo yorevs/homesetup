@@ -175,7 +175,7 @@ parse_args() {
 invoke_command() {
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
-  # Open a new subshell, so that we can configure the running environment
+  # Open a new subshell, so that we can configure the running environment properly
   (
     for idx in "${!PLUGINS[@]}"; do
       if [[ "${PLUGINS[idx]}" == "${1}" ]]; then

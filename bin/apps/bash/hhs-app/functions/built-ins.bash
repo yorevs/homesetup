@@ -15,25 +15,33 @@ function help() {
 }
 
 # Purpose: List all HHS App Plug-ins and HHS-Functions
+# @param $1 [opt] : Instead of a formatted listing, flat the commands for completion.
 function list() {
 
-  echo ' '
-  echo "${YELLOW}HomeSetup Application Manager"
-  echo ' '
-  echo " ${YELLOW}---- Plugins"
-  echo ' '
-  for idx in "${!PLUGINS[@]}"; do
-    printf "${WHITE}%.2d. " "$((idx + 1))"
-    echo -e "Registered plug-in => ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
-  done
+  if [[ "$1" == "opts" ]]; then
+    for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
+    for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
+    echo ''
+    quit 0
+  else
+    echo ' '
+    echo "${YELLOW}HomeSetup Application Manager"
+    echo ' '
+    echo " ${YELLOW}---- Plugins"
+    echo ' '
+    for idx in "${!PLUGINS[@]}"; do
+      printf "${WHITE}%.2d. " "$((idx + 1))"
+      echo -e "Registered plug-in => ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
+    done
 
-  echo ' '
-  echo " ${YELLOW}---- Functions"
-  echo ' '
-  for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
-    printf "${WHITE}%.2d. " "$((idx + 1))"
-    echo -e "Registered built-in function => ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
-  done
+    echo ' '
+    echo " ${YELLOW}---- Functions"
+    echo ' '
+    for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
+      printf "${WHITE}%.2d. " "$((idx + 1))"
+      echo -e "Registered built-in function => ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
+    done
+  fi
 
   quit 0 ' '
 }
@@ -60,7 +68,7 @@ function board() {
 
   echo "${GREEN}Opening HomeSetup board from: ${repo_url} ${NC}"
   open "${repo_url}" && quit 0 ' '
-  
+
   quit 1 "Failed to open url \"${repo_url}\" !"
 }
 

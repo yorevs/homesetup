@@ -33,6 +33,9 @@ for file in $(find "${HHS_HOME}/bin/hhs-dev-tools/bash" -type f -name "*.bash" |
   source "$file"
 done
 
+# Unalias any hhs found because we need this name to use for HomeSetup
+unalias hhs &> /dev/null
+
 # @function: Invoke the hhs application manager
 # @param $* [Opt] : All parameters are passed to hhs.bash
 function hhs() {
