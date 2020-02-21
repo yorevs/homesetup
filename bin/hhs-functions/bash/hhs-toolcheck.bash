@@ -28,7 +28,7 @@ function __hhs_toolcheck() {
     fi
     tool_name="$1"
     check=$(command -v "${tool_name}")
-    is_alias=$(alias "${tool_name}" > /dev/null 2>&1 && echo "OK")
+    is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
     [[ -z "$quiet" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
     [[ -z "$quiet" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
     [[ -z "$quiet" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
@@ -105,6 +105,27 @@ function __hhs_tools() {
     echo -e "${YELLOW}${STAR_ICN} To override the list of tools, type: ${GREEN}#> export HHS_DEV_TOOLS=( \"tool1\" \"tool2\" ... )"
     echo -e "${NC}"
   fi
+
+  return 0
+}
+
+# @function: TODO Comment it
+function __hhs_about_command() {
+  (
+    cmd=${1}
+    cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
+    if [[ -n "${cmd_ret}" ]]; then
+      echo ''
+      printf "${GREEN}%12s ${cmd_ret} ${NC} \n" "Current:"
+      if unalias "${cmd}" 2>/dev/null; then
+        cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
+        if [[ -n "${cmd_ret}" ]]; then
+          printf "${BLUE}%12s ${cmd_ret} ${NC} \n" "Unaliased:"
+        fi
+      fi
+      echo ''
+    fi
+  )
 
   return 0
 }

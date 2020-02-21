@@ -25,19 +25,23 @@ if __hhs_has "git"; then
   }
 
   # shellcheck disable=SC2044
-  # @function: Get the current branch name of all repositories from the specified directory.
+  # @function: Get the current branch name of all repositories from the base search path.
+  # @param $1 [Opt] : The base path to search for git repositories. Default is current directory.
   function __hhs_git_branch_all() {
-    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <dirname>"
+
+    local git_repos_path
+
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+      echo "Usage: ${FUNCNAME[0]} [base_search_path]"
       return 1
     else
-      for x in $(find "$1" -maxdepth 2 -type d -iname ".git"); do
-        cd "${x//\/\.git/}" || continue
-        pwd
-        echo -en "${CYAN}"
+      git_repos_path=${1:-.}
+      for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git"); do
+        pushd "${repo//\/\.git/}" &> /dev/null || continue
+        echo -e "\n${BLUE}Fetching status of $(basename $(pwd)) ...${NC}\n"
         git status | head -n 1 || continue
-        echo -en "${NC}"
-        cd - > /dev/null || continue
+        popd &> /dev/null || continue
+        sleep 1
       done
     fi
 
@@ -45,19 +49,23 @@ if __hhs_has "git"; then
   }
 
   # shellcheck disable=SC2044
-  # @function: Get the status of current branch of all repositories from the specified directory.
+  # @function: Get the status of current branch of all repositories from the base search path.
+  # @param $1 [Opt] : The base path to search for git repositories. Default is current directory.
   function __hhs_git_status_all() {
-    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <dirname>"
+
+    local git_repos_path
+
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+      echo "Usage: ${FUNCNAME[0]} [base_search_path]"
       return 1
     else
-      for x in $(find "$1" -maxdepth 2 -type d -iname "*.git"); do
-        cd "${x//\/\.git/}" || continue
-        pwd
-        echo -en "${CYAN}"
+      git_repos_path=${1:-.}
+      for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname "*.git"); do
+        pushd "${repo//\/\.git/}" &> /dev/null || continue
+        echo -e "\n${BLUE}Fetching status of $(basename $(pwd)) ...${NC}\n"
         git status || continue
-        echo -en "${NC}"
-        cd - > /dev/null || continue
+        popd &> /dev/null || continue
+        sleep 1
       done
     fi
 
@@ -177,18 +185,18 @@ if __hhs_has "git"; then
   }
 
   # @function: Search and `git pull all' projects from the specified path using the given repository/branch.
-  # @param $1 [Opt] : TODO Comment it
-  # @param $2 [Opt] : TODO Comment it
+  # @param $1 [Opt] : The base path to search for git repositories. Default is current directory.
+  # @param $2 [Opt] : The remote repository to pull from. Default is "origin"
   function __hhs_git_pull_all() {
 
     local git_repos_path all_repos=() sel_indexes=() repository branch repo_dir stash_flag mchoose_file
 
     if [[ '-h' == "$1" ||  '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <repos_search_path> [repository]"
+      echo "Usage: ${FUNCNAME[0]} [base_search_path] [repository]"
       echo ''
       echo '    Arguments:'
-      echo '      repos_search_path   : Where to find out git repositories to pull'
-      echo '      repository          : The remote repository to pull from. Default is \"origin\"'
+      echo '      repos_search_path   : The base path to search for git repositories. Default is current directory.'
+      echo '      repository          : The remote repository to pull from. Default is \"origin\".'
       return 1
     fi
 
