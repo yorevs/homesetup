@@ -4,7 +4,7 @@
 Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
 your shell to another level. There are many improvements and facilities, especially for developers that will ease the
 usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
-to adapt all of the code code be able to run under Linux and also, add support for Zsh.
+to adapt all of the code to be able to run under Linux and also, add support for Zsh.
 
 ## Table of contents
 
@@ -130,104 +130,185 @@ To override or add customised stuff, you need to create a custom file as follows
 ~/.functions        : To customize your functions
 ~/.profile          : To customize your profile
 ~/.path             : To customize your paths
-~/.aliasdef    : To customize your alias definitions
+~/.aliasdef         : To customize your alias definitions
 ```
 
 ### 4. Aliases
 
-This project will many aliases (shortcuts) to your shell:
+HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 #### 4.1 Navigational
 
-ALIAS           | Equivalent
---------------- | ---------------
-..              | cd ..
-...             | cd ...
-....            | cd ....
-.....           | cd .....
-~               | cd ~
-\-              | cd -
-?               | pwd
+ALIAS           | Equivalent      | Description
+--------------- | --------------- | ---------------
+...             | cd ...          | Change-back two previous directories
+....            | cd ....         | Change-back three previous directories
+.....           | cd .....        | Change-back four previous directories
+~               | cd ~            | Change the current directory to HOME dir
+\-              | cd -            | Change the current directory to the previous dir
+?               | pwd             | Display the current directory path
 
 #### 4.2 General
 
-ALIAS           | Equivalent
+ALIAS           | Description
 --------------- | ---------------
-q               | exit
-reload          | 'Reload all **.dotfiles**'
-pk              | 'Kills all processes matching the specified **<name>**'
-sudo            | 'Enable aliases to be **sudo’ed**'
-ls              | 'Always use color output for **ls**'
-l               | 'List all files colorized in long format'
-ll              | 'List all files colorized in long format, including dot files'
-lll             | 'List all **.dotfiles**'
-lld             | 'List all **.dotfolders**'
-lt              | 'List all directories recursively (Nth level depth) as a tree'
-grep            | 'Always enable colorized **grep** output'
-egrep           | 'Always enable colorized **egrep** output'
-fgrep           | 'Always enable colorized **fgrep** output'
-rm              | **rm -iv** 'For safety, by default this command will input for confirmation'
-cp              | **cp -iv** 'For safety, by default this command will input for confirmation'
-mv              | **mv -iv** 'For safety, by default this command will input for confirmation'
-cls             | clear
-pk              | 'Kills all processes matching <ProcName>'
-cleanup-db      | 'Recursively delete Dropbox conflicted files from the current directory'
-vi              | vim
-tl              | 'Tail a log using colors specified in .tailor file.'
-df              | df -H
-du              | du -hcd 1
-more            | more -R
-less            | less -R
-mount           | 'Make mount command output pretty and human readable format'
-mkcd            | Create all folders using a **dot notation path** and immediatelly change into it
-cpu             | **top** shortcut ordered by cpu
-mem             | **top** shortcut ordered by memory
-encode          | base64 encode synonym
-week            | 'Current **week** of the month' 
-now             | 'Current **date**'
-ts              | 'Current **timestamp** in milliseconds'
-wget            | 'MacOS has no wget, so use **curl** instead'
-rand            | 'Generate a random number from **<min>** to  **<max>**'
+q               | Short for `exit 0' from terminal
+sudo            | Enable aliases to be sudo’ed
+ls              | Always use color output for **ls**
+l               | List _all files_ colorized in long format
+lsd             | List _all directories_ in long format
+ll              | List _all files_ colorized in long format, **including dot files**
+lll             | List _all **.dotfiles**_ colorized in long format
+lld             | List _all **.dotfolders**_ colorized in long format
+grep            | Always enable colored **grep** output
+egrep           | Always enable colored **fgrep** output
+fgrep           | Always enable colored **egrep** output
+rm              | By default **rm** will prompt for confirmation and will be verbose
+cp              | By default **cp** will prompt for confirmation and will be verbose
+mv              | By default **mv** will prompt for confirmation and will be verbose
+df              | Make **df** command output pretty and human readable format
+du              | Make **du** command output pretty and human readable format
+psg             | Make **ps** command output pretty and human readable format
+vi              | Use **vim** instead of **vi** if installed
+more            | **more** will interpret escape sequences
+less            | **less** will interpret escape sequences
+mount           | Make `mount' command output pretty and human readable format
+cpu             | **top** shortcut ordered by _cpu_
+mem             | **top** shortcut ordered by _Memory_
+week            | Date&Time - Display current **week number**
+now             | Date&Time - Display current **date and time**
+ts              | Date&Time - Display current **timestamp**
+wget            | If **wget** is not available, use **curl** instead
+ps1             | Make _PS1_ prompt active
+ps2             | Make _PS2_ prompt active
+jq              | Use `jq' to format json instead of `json_pp' if installed
 
-#### 4.3 Python aliases
-ALIAS           | Equivalent
---------------- | ---------------
-json_pp         | linux has no **json_pp**, so using python instead
-calc            | 'Evaluate mathematical expressions'
-urle            | 'URL-encode string'
-urld            | 'URL-decode string'
-uuid            | 'Generate a random UUID'
-utoh            | 'Convert unicode to hexadecimal'
+#### 4.3 HomeSetup
 
-#### 4.4 Perl aliases
-ALIAS           | Equivalent
+ALIAS           | Description
 --------------- | ---------------
-cse             | Clean escape (\EscXX) codes from text
+__hhs_vault     | Shortcut for hhs vault plug-in
+__hhs_hspm      | Shortcut for hhs hspm plug-in
+__hhs_dotfiles  | Shortcut for hhs firebase plug-in
+__hhs_hhu       | Shortcut for hhs updater plug-in
+__hhs_reload    | Reload HomeSetup
+__hhs_clear     | Clear and reset all cursor attributes and IFS
+__hhs_reset     | Clear the screen and reset the terminal
+
+#### 4.4 Tool aliases
+
+ALIAS               | Description
+------------------- | -------------------
+jenv_set_java_home  | Jenv - Set JAVA_HOME using jenv
+cleanup-db          | Dropbox - Recursively delete Dropbox conflicted files from the current directory
+encode              | Shortcut for base64 encode
+
+#### 4.5 OS Specific aliases
+
+##### 4.5.2 Linux
+
+ALIAS           | Description
+--------------- | ---------------
+ised            | Same as sed -i'' -r (Linux)
+esed            | Same as sed -r (Linux)
+decode          | Shortcut for base64 decode (Linux)
+
+##### 4.5.2 Darwin
+
+ALIAS           | Description
+--------------- | ---------------
+ised            | Same as sed -i '' -E (Darwin)
+esed            | Same as sed -E (Darwin)
+decode          | Shortcut for **base64** decode (Darwin)
+cleanup-ds      | Delete all _.DS_store_ files recursively
+flush           | Flush Directory Service cache
+cleanup-reg     | Clean up LaunchServices to remove duplicates in the **"Open With"** menu
+show-files      | Show hidden files in Finder
+hide-files      | Hide hidden files in Finder
+show-deskicons  | Show all desktop icons
+hide-deskicons  | Hide all desktop icons
+hd              | Canonical hex dump; some systems have this symlinked
+md5sum          | If **md5sum** is not available, use **md5** instead`
+sha1            | If **sha1** is not available, use **shasum** instead`
+
+
+#### 4.6 Handy Terminal Shortcuts
+
+ALIAS               | Description
+------------------- | -------------------
+show-cursor         | Make terminal cursor visible
+hide-cursor         | Make terminal cursor invisible
+save-cursor-pos     | Save terminal cursor position
+restore-cursor-pos  | Restore terminal cursor position
+enable-line-wrap    | Enable terminal line wrap
+disable-line-wrap   | Disable terminal line wrap
+enable-echo         | Enable terminal echo
+disable-echo        | Disable terminal echo
+reset-cursor-attrs  | Reset all terminal cursor attributes
+
+#### 4.7 Python aliases
+ALIAS           | Description
+--------------- | ---------------
+json_pp         | If **json_pp** is not available, use **python** instead
+calc            | Evaluate mathematical expressions
+urle            | URL-encode strings
+urld            | URL-decode strings
+uuid            | Generate a random UUID
+
+#### 4.8 Perl aliases
+ALIAS           | Description
+--------------- | ---------------
+clean_escapes   | Remove escape (\EscXX) codes from text
 clipboard       | Copy to clipboard **pbcopy required**
 
-#### 4.5 IP related aliases
+#### 4.9 Git aliases
 
-ALIAS           | Equivalent
---------------- | ---------------
-ip              | 'Get the Real IP on the internet'
-ifa             | 'List all active interfaces on the system' **pcregrep required**
-ipl             | 'Get all Local IPs on the local network' **pcregrep required**
-ips             | 'Get all (ipv4 & ipv6) associated local IPs of the machine' **ifconfig required**
+ALIAS                   | Description
+----------------------- | -----------------------
+__hhs_git_status        | Git - Enhancement for **git status**
+__hhs_git_fetch         | Git - Shortcut for **git fetch**
+__hhs_git_history       | Git - Shortcut for **git log**
+__hhs_git_branch        | Git - Shortcut for **git branch**
+__hhs_git_diff          | Git - Shortcut for **git diff**
+__hhs_git_pull          | Git - Shortcut for **git pull**
+__hhs_git_log           | Git - Enhancement for **git log**
+__hhs_git_checkout      | Git - Shortcut for git **checkout**
+__hhs_git_add           | Git - Shortcut for git **add**
+__hhs_git_commit        | Git - Shortcut for git **commit**
+__hhs_git_amend         | Git - Shortcut for git **commit amend**
+__hhs_git_pull_rebase   | Git - Shortcut for git **pull rebase**
+__hhs_git_push          | Git - Shortcut for git **push**
+__hhs_git_show          | Git - Enhancement for **git diff-tree**
+__hhs_git_difftool      | Git - Enhancement for **git difftool**
 
-#### 4.6 Mac Stuff aliases
+#### 4.10 Gradle aliases
 
-ALIAS           | Equivalent
---------------- | ---------------
-cleanup-ds      | 'Delete all **.DS_store** files'
-flush           | 'Flush Directory Service cache'
-cleanup-reg     | 'Clean up LaunchServices to remove duplicates in the “Open With” menu'
-show-files      | '**Show** hidden files in Finder' **defaults required**
-hide-files      | '**Hide** hidden files in Finder' **defaults required**
-show-deskicons  | 'Show all desktop icons'
-hide-deskicons  | 'Hide all desktop icons'
-hd              | 'Canonical hex dump; some systems have this sym-linked'
-md5sum          | 'macOS has no **md5sum**, so use **md5** as a fallback'
-sha1            | 'macOS has no **sha1sum**, so use **shasum** as a fallback'
+ALIAS                   | Description
+----------------------- | -----------------------
+__hhs_gradle_build      | Gradle - Enhancement for **gradle build**
+__hhs_gradle_run        | Gradle - Enhancement for **gradle bootRun**
+__hhs_gradle_test       | Gradle - Shortcut for **gradle Test**
+__hhs_gradle_init       | Gradle - Shortcut for **gradle init**
+__hhs_gradle_quiet      | Gradle - Shortcut for **gradle -q**
+__hhs_gradle_wrapper    | Gradle - Shortcut for **gradle wrapper**
+__hhs_gradle_projects   | Gradle -  Displays all available gradle projects
+__hhs_gradle_tasks      | Gradle - Displays all available gradle project tasks
+
+
+#### 4.11 Docker aliases
+
+ALIAS                       | Description
+--------------------------- | ---------------------------
+__hhs_docker_images         | Docker - Enhancement for docker images
+__hhs_docker_service        | Docker - Shortcut for docker service
+__hhs_docker_logs           | Docker - Shortcut for docker logs
+__hhs_docker_remove         | Docker - Shortcut for docker container rm
+__hhs_docker_remove_image   | Docker - Shortcut for docker rmi
+__hhs_docker_ps             | Docker - Enhancement for docker ps
+__hhs_docker_top            | Docker - Enhancement for docker stats
+__hhs_docker_ls             | Docker - Enhancement for docker container ls
+__hhs_docker_up             | Enhancement for `docker compose up
+__hhs_docker_down           | Shortcut for `docker compose stop
 
 **Please check: [bash_aliases](dotfiles/bash/bash_aliases.bash) for all aliases**
 

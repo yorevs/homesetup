@@ -49,7 +49,7 @@ __hhs_alias aa='__hhs_aliases'
 __hhs_alias has='__hhs_has'
 __hhs_alias ver='__hhs_version'
 __hhs_alias cmd='__hhs_command'
-__hhs_alias cse='__hhs_clean_escapes'
+__hhs_alias cse='clean_escapes'
 __hhs_alias ipl='__hhs_local_ip'
 __hhs_alias ips='__hhs_all_ips'
 __hhs_alias ifa='__hhs_active_ifaces'
@@ -130,7 +130,7 @@ if __hhs_has "gradle"; then
 fi
 
 # Docker shortcuts
-if __hhs_has "docker" && docker info &>/dev/null; then
+if __hhs_has "docker" && docker info &> /dev/null; then
   __hhs_alias dk='docker'
   __hhs_alias dkc='docker-compose'
   __hhs_alias dkr='docker run'

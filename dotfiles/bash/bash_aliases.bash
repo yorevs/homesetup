@@ -46,11 +46,11 @@ function __hhs_alias() {
 # -----------------------------------------------------------------------------------
 # @category: Navigational
 
-# @alias: Changeback two previous directories
+# @alias: Change-back two previous directories
 alias ...='.. 2'
-# @alias: Changeback three previous directories
+# @alias: Change-back three previous directories
 alias ....='.. 3'
-# @alias: Changeback four previous directories
+# @alias: Change-back four previous directories
 alias .....='.. 4'
 # @alias: Change the current directory to HOME dir
 alias ~='cd ~'
@@ -76,16 +76,16 @@ alias ls='\ls ${COLOR_FLAG} -F'
 # @alias: List all files colorized in long format
 alias l='ls -lh'
 
-# @alias: List all directories
+# @alias: List all directories in long format
 alias lsd="ls -d */"
 
 # @alias: List all files colorized in long format, including dot files
 alias ll='ls -lah'
 
-# @alias: List all dotfiles
+# @alias: List all .dotfiles colorized in long format
 alias lll='ls -lhd .??* | grep "^-"'
 
-# @alias: List all dotdirs
+# @alias: List all .dotfolders colorized in long format
 alias lld='ls -lhd .??*/'
 
 # @alias: Always enable colored `grep` output
@@ -95,11 +95,11 @@ alias fgrep='\fgrep --color=auto'
 # @alias: Always enable colored `egrep` output
 alias egrep='\egrep --color=auto'
 
-# @alias: By default rm will prompt for confirmation and will be verbose
+# @alias: By default `rm' will prompt for confirmation and will be verbose
 alias rm='\rm -iv'
-# @alias: By default cp will prompt for confirmation and will be verbose
+# @alias: By default `cp' will prompt for confirmation and will be verbose
 alias cp='\cp -iv'
-# @alias: By default mv will prompt for confirmation and will be verbose
+# @alias: By default `mv' will prompt for confirmation and will be verbose
 alias mv='\mv -iv'
 
 # @alias: Make `df' command output pretty and human readable format
@@ -109,7 +109,7 @@ alias du='\du -hcd 1'
 # @alias: Make `ps' command output pretty and human readable format
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 
-# @alias: Use vim instead of vi if it is installed
+# @alias: Use `vim' instead of `vi' if installed
 __hhs_has "vim" && alias vi='\vim'
 
 # @alias: `more' will interpret escape sequences
@@ -120,28 +120,28 @@ alias less='\less -r'
 # @alias: Make `mount' command output pretty and human readable format
 alias mount='\mount | column -t'
 
-# @alias: Top shortcut ordered by cpu
+# @alias: `top' shortcut ordered by cpu
 alias cpu='\top -o cpu'
 
-# @alias: Top shortcut ordered by Memory
+# @alias: `top' shortcut ordered by Memory
 alias mem='\top -o rsize'
 
 # @alias: Date&Time - Display current week number
 alias week='\date +%V'
-# @alias: Date&Time - Display current datetime
+# @alias: Date&Time - Display current date and time
 alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
 # @alias: Date&Time - Display current timestamp
 alias ts='\date "+%s%S"'
 
-# @alias: If `wget' is not available, use `curl' instead`
+# @alias: If `wget' is not available, use `curl' instead
 __hhs_has "wget" || alias wget='\curl -O'
 
 # @alias: Make PS1 prompt active
 alias ps1='export PS1=$PS1_STYLE'
-# @alias: Make PS1 prompt active
+# @alias: Make PS2 prompt active
 alias ps2='export PS1=$PS2_STYLE'
 
-# @alias: Use jq for format json instead of json_pp if it is installed
+# @alias: Use jq for format json instead of json_pp if installed
 __hhs_has "jq" && alias json_pp='\jq'
 
 # -----------------------------------------------------------------------------------
@@ -157,8 +157,10 @@ alias __hhs_dotfiles='hhs firebase execute'
 alias __hhs_hhu='hhs updater execute'
 # @alias: Reload HomeSetup
 alias __hhs_reload='cls; source ${HOME}/.bashrc'
-# @alias: Clear the screen
-alias __hhs_clear='cls'
+# @alias: Clear and reset all cursor attributes and IFS
+alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
+# @alias: Clear the screen and reset the terminal
+alias __hhs_reset="__hhs_clear; \reset"
 
 # -----------------------------------------------------------------------------------
 # @category: Tool aliases
@@ -195,7 +197,7 @@ case "${HHS_MY_OS}" in
     # @alias: Shortcut for base64 decode (Darwin)
     __hhs_has "base64" && alias decode='base64 -D'
 
-    # @alias: Delete all .DS_store files
+    # @alias: Delete all .DS_store files recursively
     alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
     # @alias: Flush Directory Service cache
@@ -209,9 +211,9 @@ case "${HHS_MY_OS}" in
     # @alias: Hide hidden files in Finder
     alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
-    # @alias: Hide all desktop icons
-    alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
     # @alias: Show all desktop icons
+    alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+    # @alias: Hide all desktop icons
     alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
     # @alias: Canonical hex dump; some systems have this symlinked
@@ -272,25 +274,20 @@ case "${HHS_MY_SHELL}" in
     ;;
 esac
 
-# @alias: Clear and reset all cursor attributes and IFS
-alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
-
-# @alias: Clear the screen and reset the terminal
-alias __hhs_reset="__hhs_clear; \reset"
-
 # -----------------------------------------------------------------------------------
 # @category: Python aliases
 
 if __hhs_has "python"; then
 
-  # @alias: Linux has no `json_pp`, so using python instead
+  # @alias: If `json_pp' is not available, use `python' instead
   __hhs_has "json_pp" || alias json_pp='python -m json.tool'
 
-  # @alias: Evaluate mathematical expression
+  # @alias: Evaluate mathematical expressions
   alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
 
   # @alias: URL-encode strings
   alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  # @alias: URL-decode strings
   alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
 
   # @alias: Generate a UUID
@@ -302,8 +299,8 @@ fi
 
 if __hhs_has "perl"; then
 
-  # @alias: Clean escape (\EscXX) codes from text
-  alias __hhs_clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
+  # @alias: Remove escape (\EscXX) codes from text
+  alias clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
   # @alias: Copy to clipboard pbcopy required
   __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
 fi
@@ -376,13 +373,13 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 
   # @alias: Docker - Enhancement for `docker images'
   alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'
-  # @alias: Docker - Shorcut for `docker service'
+  # @alias: Docker - Shortcut for `docker service'
   alias __hhs_docker_service='docker service'
-  # @alias: Docker - Shorcut for `docker logs'
+  # @alias: Docker - Shortcut for `docker logs'
   alias __hhs_docker_logs='docker logs'
-  # @alias: Docker - Shorcut for `docker container rm'
+  # @alias: Docker - Shortcut for `docker container rm'
   alias __hhs_docker_remove='docker container rm'
-  # @alias: Docker - Shorcut for `docker rmi'
+  # @alias: Docker - Shortcut for `docker rmi'
   alias __hhs_docker_remove_image='docker rmi'
   # @alias: Docker - Enhancement for `docker ps'
   alias __hhs_docker_ps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
@@ -392,7 +389,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   alias __hhs_docker_ls='docker container ls -a'
   # @alias: Docker - Enhancement for `docker compose up'
   alias __hhs_docker_up='docker-compose up --force-recreate --build --remove-orphans --detach'
-  # @alias: Docker - Shorcut for `docker compose stop'
+  # @alias: Docker - Shortcut for `docker compose stop'
   alias __hhs_docker_down='docker-compose stop'
 fi
 
