@@ -44,8 +44,8 @@ to adapt all of the code to be able to run under Linux and also, add support for
   * [8.2. Functions](#hhs-functions)
 - [9. Auto-completes](#auto-completes)
 - [10. Terminal setup](#terminal-setup)
-  * [10.1. Terminal.app](#terminal.app)
-  * [10.2. iTerm2.app](#iterm2.app)
+  * [10.1. Terminal App](#terminal-app)
+  * [10.2. iTerm2 App](#iterm2-app)
 - [11. Final notes](#final-notes)
 
 <!-- tocstop -->
@@ -522,12 +522,12 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 * [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
-### Terminal.app
+### Terminal App
 
 * [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
 * [x] Set HomeSetup as the default profile.
 
-### iTerm2.app
+### iTerm2 App
 
 * [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
 * [x] Set HomeSetup as the default profile.
