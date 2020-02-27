@@ -228,7 +228,7 @@ register_hhs_functions() {
 
   local all_hhs_fn
 
-  all_hhs_fn=$(grep -nR "^function __hhs_" "${HHS_HOME}" | sed -E 's/:  /:/' | awk "NR != 1 {print \$1 \$2}")
+  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${HHS_HOME}" | sed -E 's/:  /:/' | awk "NR != 0 {print \$1 \$2}")
 
   for fn in ${all_hhs_fn}; do
     filename=$(basename "$fn" | awk -F ':function' '{print $1}')
