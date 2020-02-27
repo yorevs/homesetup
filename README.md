@@ -10,35 +10,50 @@ to adapt all of the code to be able to run under Linux and also, add support for
 
 <!-- toc -->
 
-- [Installation](#1.-Installation)
-  * [Local Installation](#1.1-Local-installation)
-  * [Remote Installation](#1.2-Remote-installation)
-  * [Firebase Setup](#1.3-Firebase-setup)
-    + [Create Account](#1.3.1-Create-new-account)
-    + [Configure Account](#1.3.2-Configure-account)
-- [Uninstallation](#2.-Uninstallation)
-- [Dotfiles in this project](#3.-Dotfiles-in-this-project)
-- [Aliases](#4.-Aliases)
-- [Functions](#5.-Functions)
-- [Applications](#6.-Applications)
-  * [Bash Apps](#6.1-Bash-apps)
-  * [Python Apps](#6.2-Python-apps)
-- [Alias Definitions](#7.-Alias-definitions)
-- [HomeSetup Application](#8.-HomeSetup-Application)
-  * [Plugins](#8.1-Plugins)
-  * [Functions](#8.2-Functions)
-- [Auto-Completes](#9.-Auto-Completes)
-- [Terminal Setup](#10.-Terminal-setup)
-  * [Terminal.app](#10.1-Terminal.app)
-  * [iTerm2.app](#10.2-iTerm2.app)
-- [Final Notes](#11.-Final-notes)
+- [1. Installation](#1.-Installation)
+  * [1.1. Local installation](#1.1.-Local-installation)
+  * [1.2. Remote installation](#1.2.-Remote-installation)
+  * [1.3. Firebase setup](#1.3.-Firebase-setup)
+    + [1.3.1. Create account](#1.3.1.-Create-new-account)
+    + [1.3.2. Configure account](#1.3.2.-Configure-account)
+- [2. Uninstallation](#2.-Uninstallation)
+- [3. Dotfiles in this project](#3.-Dotfiles-in-this-project)
+- [4. Aliases](#4.-Aliases)
+  * [4.1. Navigational](#4.1.-Navigational)
+  * [4.2. General](#4.2.-General)
+  * [4.3. HomeSetup](#4.3.-HomeSetup)
+  * [4.4. Tool aliases](#4.4.-Tool-aliases)
+  * [4.5. OS Specific aliases](#4.5.-OS-Specific-aliases)
+    + [4.5.1. Linux](#4.5.1.-Linux)
+    + [4.5.2. Darwin](#4.5.2.-Darwin)
+  * [4.6. Handy terminal shortcuts](#4.6.-Handy-Terminal-Shortcuts)
+  * [4.7. Python aliases](#4.7.-Python-aliases)
+  * [4.8. Perl aliases](#4.8.-Perl-aliases)
+  * [4.9. Git aliases](#4.9.-Git-aliases)
+  * [4.10. Gradle aliases](#4.10.-Gradle-aliases)
+  * [4.11. Docker aliases](#4.11.-Docker-aliases)
+- [5. Functions](#5.-Functions)
+  * [5.1. Standard tools](#5.1.-Standard-tools)
+  * [5.2. Development tools](#5.2.-Development-tools)
+- [6. Applications](#6.-Applications)
+  * [6.1. Bash apps](#6.1.-Bash-apps)
+  * [6.2. Python apps](#6.2.-Python-apps)
+- [7. Alias Definitions](#7.-Alias-definitions)
+- [8. HomeSetup application](#8.-HomeSetup-Application)
+  * [8.1. Plugins](#8.1.-Plugins)
+  * [8.2. Functions](#8.2-Functions)
+- [9. Auto-completes](#9.-Auto-Completes)
+- [10. Terminal setup](#10.-Terminal-setup)
+  * [10.1. Terminal.app](#10.1.-Terminal.app)
+  * [10.2. iTerm2.app](#10.2.-iTerm2.app)
+- [11. Final notes](#11.-Final-notes)
 
 <!-- tocstop -->
 
 
 ### 1. Installation
 
-#### 1.1 Local installation
+#### 1.1. Local installation
 
 Clone the repository using the following command:
 
@@ -54,7 +69,7 @@ or
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 
-#### 1.2 Remote installation
+#### 1.2. Remote installation
 
 You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
 
@@ -64,13 +79,13 @@ or
 
 `#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
-#### 1.3 Firebase setup
+#### 1.3. Firebase setup
 
 HomeSetup allows you to use your Firebase account to upload and download your custom files
 (dotfiles files synchronization) to your *Realtime Database*. To be able to use this feature, you need first 
 to configure your Google Firebase account.
 
-##### 1.3.1 Create new account
+##### 1.3.1. Create new account
 
 If you have a Google account but do not have a Firebase one, you can do that using your Google credentials.
 
@@ -85,10 +100,10 @@ Access: https://console.firebase.google.com/
         - Change the line from: `".write": false,` to `".write": true,`.
         - Click on the *Publish* button and accept changes.
 
-##### 1.3.2 Configure account
+##### 1.3.2. Configure account
 
 In order to use your Firebase account with HomeSetup, you will need to configure the read and write permissions as 
-showed on topic [1.3.1](#1.3.1-Create-new-account).
+showed on topic [1.3.1.](#1.3.1.-Create-new-account).
 
 Access your account from: https://console.firebase.google.com/
 
@@ -143,7 +158,7 @@ To override or add customised stuff, you need to create a custom file as follows
 
 HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
-#### 4.1 Navigational
+#### 4.1. Navigational
 
 | ALIAS | Equivalent | Description                                      |
 | ----- | ---------- | ------------------------------------------------ |
@@ -154,7 +169,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | \-    | cd -       | Change the current directory to the previous dir |
 | ?     | pwd        | Display the current directory path               |
 
-#### 4.2 General
+#### 4.2. General
 
 | ALIAS | Description                                                        |
 | ----- | ------------------------------------------------------------------ |
@@ -188,7 +203,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | ps1   | Make _PS1_ prompt active                                           |
 | ps2   | Make _PS2_ prompt active                                           |
 
-#### 4.3 HomeSetup
+#### 4.3. HomeSetup
 
 | ALIAS          | Description                                   |
 | -------------- | --------------------------------------------- |
@@ -200,7 +215,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_clear    | Clear and reset all cursor attributes and IFS |
 | __hhs_reset    | Clear the screen and reset the terminal       |
 
-#### 4.4 Tool aliases
+#### 4.4. Tool aliases
 
 | ALIAS              | Description                                                                      |
 | ------------------ | -------------------------------------------------------------------------------- |
@@ -208,9 +223,9 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | cleanup-db         | Dropbox - Recursively delete Dropbox conflicted files from the current directory |
 | encode             | Shortcut for base64 encode                                                       |
 
-#### 4.5 OS Specific aliases
+#### 4.5. OS Specific aliases
 
-##### 4.5.2 Linux
+##### 4.5.1. Linux
 
 | ALIAS  | Description                        |
 | ------ | ---------------------------------- |
@@ -218,7 +233,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | esed   | Same as sed -r (Linux)             |
 | decode | Shortcut for base64 decode (Linux) |
 
-##### 4.5.2 Darwin
+##### 4.5.2. Darwin
 
 | ALIAS          | Description                                                              |
 | -------------- | ------------------------------------------------------------------------ |
@@ -237,7 +252,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | sha1           | If **sha1** is not available, use **shasum** instead`                    |
 
 
-#### 4.6 Handy Terminal Shortcuts
+#### 4.6. Handy Terminal Shortcuts
 
 | ALIAS              | Description                          |
 | ------------------ | ------------------------------------ |
@@ -251,7 +266,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | disable-echo       | Disable terminal echo                |
 | reset-cursor-attrs | Reset all terminal cursor attributes |
 
-#### 4.7 Python aliases
+#### 4.7. Python aliases
 
 | ALIAS | Description                       |
 | ----- | --------------------------------- |
@@ -260,14 +275,14 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | urld  | URL-decode strings                |
 | uuid  | Generate a random UUID            |
 
-#### 4.8 Perl aliases
+#### 4.8. Perl aliases
 
 | ALIAS         | Description                            |
 | ------------- | -------------------------------------- |
 | clean_escapes | Remove escape (\EscXX) codes from text |
 | clipboard     | Copy to clipboard **pbcopy required**  |
 
-#### 4.9 Git aliases
+#### 4.9. Git aliases
 
 | ALIAS                 | Description                             |
 | --------------------- | --------------------------------------- |
@@ -287,7 +302,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_git_show        | Git - Enhancement for **git diff-tree** |
 | __hhs_git_difftool    | Git - Enhancement for **git difftool**  |
 
-#### 4.10 Gradle aliases
+#### 4.10. Gradle aliases
 
 | ALIAS                 | Description                                          |
 | --------------------- | ---------------------------------------------------- |
@@ -300,7 +315,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_gradle_projects | Gradle -  Displays all available gradle projects     |
 | __hhs_gradle_tasks    | Gradle - Displays all available gradle project tasks |
 
-#### 4.11 Docker aliases
+#### 4.11. Docker aliases
 
 | ALIAS                     | Description                                  |
 | ------------------------- | -------------------------------------------- |
@@ -320,7 +335,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 HomeSetup provides many functions for the shell. All functions includes a help using the options -h or --help.
 
-#### 5.1. Standard Tools
+#### 5.1. Standard tools
 
 | File                   | Function               | Purpose                                                                     |
 | ---------------------- | ---------------------- | --------------------------------------------------------------------------- |
@@ -384,7 +399,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_tools            | Check whether a list of development tools are installed or not              |
 |                        | __hhs_about_command    | Display information about the given command                                 |
 
-#### 5.2. Development Tools
+#### 5.2. Development tools
 
 | File                  | Function                     | Purpose                                                                            |
 | --------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
@@ -409,7 +424,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 
 HomeSetup provides useful applications that can be used directly from shell. It is also added to your PATH variable.
 
-#### 6.1 Bash apps
+#### 6.1. Bash apps
 
 | Application      | Purpose                                                                                      |
 | ---------------- | -------------------------------------------------------------------------------------------- |
@@ -418,7 +433,7 @@ HomeSetup provides useful applications that can be used directly from shell. It 
 | fetch.bash       | Script to fetch REST APIs data                                                               |
 | hhs.bash         | HomeSetup application                                                                        |
 
-#### 6.2 Python apps
+#### 6.2. Python apps
 
 | Function      | Purpose                                                       |
 | ------------- | ------------------------------------------------------------- |
@@ -468,7 +483,7 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
     - To discover which plugins and functions are available type: hhs list
 ```
 
-#### 8.1 Plugins
+#### 8.1. Plugins
 
 | Plug-in  | Purpose                                                                  |
 | -------- | ------------------------------------------------------------------------ |
@@ -489,7 +504,7 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
 
 ### 9. Auto Completes
 
-#### 9.1 Bash completes
+#### 9.1. Bash completes
 
 | File                           | Purpose                                           |
 | ------------------------------ | ------------------------------------------------- |
@@ -507,12 +522,12 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 * [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
-#### 10.1 Terminal.app
+#### 10.1. Terminal.app
 
 * [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
 * [x] Set HomeSetup as the default profile.
 
-#### 10.2 iTerm2.app
+#### 10.2. iTerm2.app
 
 * [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
 * [x] Set HomeSetup as the default profile.
