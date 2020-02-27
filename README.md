@@ -10,8 +10,8 @@ to adapt all of the code to be able to run under Linux and also, add support for
 
 <!-- toc -->
 
-- [1. Installation](#1.-Installation)
-  * [1.1. Local installation](#1.1.-Local-installation)
+- [1. Installation](#1.-installation)
+  * [1.1. Local installation](#1.1.-local-installation)
   * [1.2. Remote installation](#1.2.-Remote-installation)
   * [1.3. Firebase setup](#1.3.-Firebase-setup)
     + [1.3.1. Create account](#1.3.1.-Create-new-account)
