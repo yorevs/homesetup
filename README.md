@@ -536,7 +536,7 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 You can support HomeSetup by donating or helping code it. Fell free to contact me for details.
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MK8QK97Q4Y5MW)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
 ## Final notes
 
