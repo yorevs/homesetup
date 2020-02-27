@@ -106,11 +106,11 @@ function __hhs_shell_select() {
   return 0
 }
 
-# @function: Terminal color pallete test.
-function __hhs_color_pallete() {
+# @function: Terminal color palette test.
+function __hhs_color_palette() {
 
   echo ''
-  echo "--- Home Setup color pallete test"
+  echo "--- Home Setup color palette test"
   echo ''
 
   echo -en "${BLACK}  BLACK "
