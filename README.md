@@ -532,6 +532,12 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 * [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
 * [x] Set HomeSetup as the default profile.
 
+## Support HomeSetup
+
+You can support HomeSetup by donating or helping code it. Fell free to contact me for details.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MK8QK97Q4Y5MW)
+
 ## Final notes
 
 HomeSetup will fetch for update automatically every 7 days from the installation on.
