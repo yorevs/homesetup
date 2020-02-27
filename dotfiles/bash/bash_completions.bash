@@ -33,8 +33,8 @@ case "${HHS_MY_SHELL}" in
     fi
 
     # Enable tab completion for `docker`
-    # Thanks to: Built in docker scripts
-    if command -v docker &> /dev/null; then
+    # Thanks to: Built in docker scripts. *Requires bash_complete
+    if command -v docker &> /dev/null &&command -v _filedir &> /dev/null; then
       if [[ -f "$AUTO_CPL_D/docker-compose-completion.bash" ]]; then
         \. "$AUTO_CPL_D/docker-compose-completion.bash"
         AUTO_CPL_TYPES+=('Docker-Compose')
