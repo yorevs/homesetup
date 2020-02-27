@@ -23,13 +23,15 @@ to adapt all of the code to be able to run under Linux and also, add support for
 - [Applications](#6.-Applications)
   * [Bash Apps](#6.1-Bash-apps)
   * [Python Apps](#6.2-Python-apps)
-- [HomeSetup Application](#7.-HomeSetup-Application)
-  * [Plugins](#7.1-Plugins)
-  * [Functions](#7.2-Functions)
-- [Auto-Completes](#8.-Auto-Completes)
-- [Terminal Setup](#9.-Terminal-setup)
-  * [Terminal.app](#9.1-Terminal.app)
-  * [iTerm2.app](#9.2-iTerm2.app)
+- [Alias Definitions](#7.-Alias-definitions)
+- [HomeSetup Application](#8.-HomeSetup-Application)
+  * [Plugins](#8.1-Plugins)
+  * [Functions](#8.2-Functions)
+- [Auto-Completes](#9.-Auto-Completes)
+- [Terminal Setup](#10.-Terminal-setup)
+  * [Terminal.app](#10.1-Terminal.app)
+  * [iTerm2.app](#10.2-iTerm2.app)
+- [Final Notes](#11.-Final-notes)
 
 <!-- tocstop -->
 
@@ -322,15 +324,11 @@ File                    | Function                  | Purpose
 ----------------------- | ------------------------- | -------------------------
 bash_aliases.bash       | __hhs_has                 | Check if a command exists
                         | __hhs_alias               | Check if an alias does not exists and create it, otherwise ignore it
-                        |                           |                                                                   
 hhs-aliases.bash        | __hhs_aliases             | Manipulate custom aliases (add/remove/edit/list)
-                        |                           |                                                                   
 hhs-built-ins.bash      | __hhs_random_number       | Generate a random number int the range <min> <max>
                         | __hhs_ascof               | Display the decimal ASCII representation of a character
                         | __hhs_utoh                | Convert unicode to hexadecimal
-                        |                           |                                                                   
 hhs-command.bash        | __hhs_command             | Add/Remove/List/Execute saved bash commands
-                        |                           |                                                                   
 hhs-dirs.bash           | __hhs_change_dir          | Replace the build-in 'cd' with a more flexible one.
                         | __hhs_changeback_ndirs    | Change back the shell working directory by N directories
                         | __hhs_dirs                | Replace the build-in 'dirs' with a more flexible one
@@ -339,17 +337,12 @@ hhs-dirs.bash           | __hhs_change_dir          | Replace the build-in 'cd' 
                         | __hhs_load_dir            | **Pushd** into a saved directory previously issued by save
                         | __hhs_go_dir              | Search and **pushd** into the first match of the specified directory name
                         | __hhs_mkcd                | Create all folders using a dot notation path and immediately change into it
-                        |                           |                                                                   
 hhs-files.bash          | __hhs_ls_sorted           | List files and sort by the specified column
                         | __hhs_del_tree            | Move files recursively to the Trash
-                        |                           |                                                                   
 hhs-mchoose.bash        | __hhs_mchoose             | Choose options from a list using a navigable menu
-                        |                           |                                                                   
 hhs-minput.bash         | __hhs_minput_curpos       | Retrieve the current cursor position on screen
                         | __hhs_minput              | Provide a terminal form input with validation checking
-                        |                           |                                                                   
 hhs-mselect.bash        | __hhs_mselect             | Select an option from a list using a navigable menu
-                        |                           |                                                                   
 hhs-network.bash        | __hhs_my_ip               | Find external IP by performing a DNS lookup
                         | __hhs_ip_resolve          | Resolve domain names associated with the specified IP
                         | __hhs_all_ips             | Display a list of all assigned IPs
@@ -360,40 +353,30 @@ hhs-network.bash        | __hhs_my_ip               | Find external IP by perfor
                         | __hhs_ip_info             | Get information about the specified IP
                         | __hhs_ip_lookup           | Lookup DNS entries to determine the IP address
                         | __hhs_port_check          | Check the state of local port(s)
-                        |                           |                                                                   
 hhs-paths.bash          | __hhs_paths               | Print each PATH entry on a separate line
-                        |                           |                                                                   
 hhs-profile-tools.bash  | __hhs_activate_nvm        | Lazy load helper to activate NVM for the terminal
                         | __hhs_activate_rvm        | Lazy load helper to activate RVM for the terminal
                         | __hhs_activate_jenv       | Lazy load helper to activate Jenv for the terminal
                         | __hhs_activate_docker     | Lazy load helper to start Docker-Daemon for the terminal
-                        |                           |                                                                   
 hhs-punch.bash          | __hhs_punch               | Punch the Clock. Add/Remove/Edit/List clock punches
-                        |                           |                                                                   
 hhs-search.bash         | __hhs_search_file         | Search for files and links to files recursively
                         | __hhs_search_dir          | Search for directories and links to directories recursively
                         | __hhs_search_string       | Search for strings matching the specified criteria in files recursively
-                        |                           |                                                                   
 hhs-security.bash       | __hhs_encrypt_file        | Encrypt file using GPG
                         | __hhs_decrypt_file        | Decrypt file using GPG
-                        |                           |                                                                   
 hhs-shell-utils.bash    | __hhs_history             | Search for previous issued commands from history using filters
                         | __hhs_envs                | Display all environment variables using filters
                         | __hhs_shell_select        | Select a shell from the existing shell list
                         | __hhs_color_pallete       | Terminal color pallete test
-                        |                           |                                                                   
 hhs-sysman.bash         | __hhs_sysinfo             | Display relevant system information
                         | __hhs_process_list        | Display a process list matching the process name/expression
                         | __hhs_process_kill        | Kills ALL processes specified by name
                         | __hhs_partitions          | Exhibit a Human readable summary about all partitions
-                        |                           |                                                                   
 hhs-taylor.bash         | __hhs_tailor              | Tail a log using colors and patterns specified on **.tailor** file
-                        |                           |                                                                   
 hhs-text.bash           | __hhs_errcho              | Echo a message in red color and to stderr
                         | __hhs_highlight           | Highlight words from the piped stream
                         | __hhs_json_print          | Pretty print (format) JSON string
                         | __hhs_edit                | Create and/or open a file using the default editor or vi if not set
-                        |                           |                                                                   
 hhs-toolcheck.bash      | __hhs_toolcheck           | Check whether a tool is installed on the system
                         | __hhs_version             | Check the version of the app using the most common ways
                         | __hhs_tools               | Check whether a list of development tools are installed or not
@@ -410,7 +393,6 @@ hhs-docker-tools.bash   | __hhs_docker_count            | Return the number of a
                         | __hhs_docker_logs             | Fetch the logs of a container
                         | __hhs_docker_remove_volumes   | Remove all docker volumes not referenced by any containers (dangling)
                         | __hhs_docker_kill_all         | Stop, remove and remove dangling (active?) volumes of all docker containers
-                        |                               |                                                               
 hhs-git-tools.bash      | __hhs_git_branch_previous     | Checkout the previous branch in history (skips branch-to-same-branch changes)
                         | __hhs_git_branch_all          | Get the current branch name of all repositories from the base search path
                         | __hhs_git_status_all          | Get the status of current branch of all repositories from the base search path
@@ -419,7 +401,6 @@ hhs-git-tools.bash      | __hhs_git_branch_previous     | Checkout the previous 
                         | __hhs_git_show_changes        | List all changed files from a commit ID
                         | __hhs_git_select_branch       | Select and checkout a local or remote branch
                         | __hhs_git_pull_all            | Search and pull projects from the specified path using the given repository/branch
-                        |                               |                                                               
 hhs-gradle-tools.bash   | __hhs_gradlew                 | Prefer using the wrapper instead of the command itself
 
 ### 6. Applications
@@ -446,7 +427,15 @@ print-uni.py            | Print a backslash (4 digits) unicode character E.g:. \
 send-msg.py             | IP Message Sender. Sends TCP/UDP messages (multi-threaded).
 tcalc.py                | Simple app to do mathematical calculations with time.
 
-### 7. HomeSetup Application
+### 7. Alias definitions
+
+You can customize most of HomeSetup aliases by editing your file `~/.aliasdef`. When you first install HomeSetup,
+this file will be automatically generated for you. Further updates may require this file to be updated. We always keep a
+backup of this file, so, you can preserve your customizations, but this process has to be manual.
+
+The original content and aliases are defined on the original [aliasdef](dotfiles/aliasdef) file.
+
+### 8. HomeSetup Application
 
 HomeSetup application is a bundle of scripts and functions to extend the terminal features. There are plug-able scripts
 and functions to be incorporated into the app.
@@ -477,7 +466,7 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
     - To discover which plugins and functions are available type: hhs list
 ```
 
-#### 7.1 Plugins
+#### 8.1 Plugins
 
 Plug-in                 | Purpose
 ----------------------- | -----------------------
@@ -486,7 +475,7 @@ firebase                | Manager for HomeSetup Firebase integration.
 hspm                    | Manage your development tools using installation/uninstallation recipes.
 vault                   | This application is a vault for secrets and passwords.
 
-#### 7.2 Functions
+#### 8.2 Functions
 
 Function                | Purpose
 ----------------------- | -----------------------
@@ -497,9 +486,9 @@ board                   | Open the HomeSetup GitHub project board for the curren
 host-name               | Retrieve/Get/Set the current hostname.
 
 
-### 8. Auto Completes
+### 9. Auto Completes
 
-#### 8.1 Bash completes
+#### 9.1 Bash completes
 
 File                            | Purpose
 ------------------------------- | -------------------------------
@@ -511,24 +500,23 @@ gradle-completion.bash          | Bash and Zsh completion support for Gradle.
 hhs-completion.bash             | Bash completion for HomeSetup.
 pcf-completion.bash             | Bash completion for Cloud Foundry CLI.
 
-### 9. Terminal setup
+### 10. Terminal setup
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
-#### 9.1 Terminal.app
+#### 10.1 Terminal.app
 
 * [x] Install the terminal font from '$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
 * [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
 * [x] Set HomeSetup as the default profile.
 
-#### 9.2 iTerm2.app
+#### 10.2 iTerm2.app
 
 * [x] Install the terminal font from '$HHS_HOME/misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf'.
 * [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
 * [x] Set HomeSetup as the default profile.
 
-
-### 10. Final notes
+### 11. Final notes
 
 HomeSetup will fetch for update automatically every 7 days from the installation on.
 
