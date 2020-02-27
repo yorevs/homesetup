@@ -8,7 +8,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Select an option from a list using a navigable menu.
+# @function: Choose options from a list using a navigable menu.
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The array of items.
 function __hhs_mchoose() {

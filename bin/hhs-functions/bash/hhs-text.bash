@@ -8,12 +8,12 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Echo a message in red color and to stderr
+# @function: Echo a message in red color and to stderr.
 function __hhs_errcho() {
-  
+
   echo -e "${RED}${*}${NC}" 1>&2
   echo ''
-  
+
   return $?
 }
 
@@ -30,7 +30,7 @@ function __hhs_highlight() {
     echo '  Notes: '
     echo '    filename: If not provided, stdin will be used instead'
   else
-    search="${1:-.*}" 
+    search="${1:-.*}"
     file="${2:-/dev/stdin}"
     hl_color=${HHS_HIGHLIGHT_COLOR//\e[/}
     hl_color=${HHS_HIGHLIGHT_COLOR/m/}

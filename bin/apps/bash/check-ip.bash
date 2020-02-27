@@ -2,7 +2,7 @@
 # shellcheck disable=SC1117,SC2034
 
 #  Script: check-ip.bash
-# Purpose: Validate and check IP information.
+# Purpose: Validate and check information about a specified IP.
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -49,28 +49,28 @@ parse_args() {
   # Short opts: -<C>, Long opts: --<Word>
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
-    -h | --help)
-      usage 0
-      ;;
-    -v | --version)
-      version
-      ;;
-    -q | --quiet)
-      SILENT=1
-      ;;
-    -i | --info)
-      EXTRA_INFO=1
-      ;;
+      -h | --help)
+        usage 0
+        ;;
+      -v | --version)
+        version
+        ;;
+      -q | --quiet)
+        SILENT=1
+        ;;
+      -i | --info)
+        EXTRA_INFO=1
+        ;;
 
-    *)
-      break
-      ;;
+      *)
+        break
+        ;;
     esac
     shift
   done
 
   IP_ADDRESS="${1}"
-  IFS='.' read -r -a IP_OCTETS <<<"${IP_ADDRESS}"
+  IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
 }
 
 # – Class A addresses: Large numbers of nodes – Intended for a LARGE organisation

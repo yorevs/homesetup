@@ -3,7 +3,7 @@
 """
   @package: -
    @script: tcalc.py
-  @purpose: Provides time calculations.
+  @purpose: Simple app to do mathematical calculations with time.
   @created: Aug 26, 2017
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@hotmail.com

@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2155,SC2207,SC2091,SC2206
 
+# Bash and Zsh completion support for Gradle.
+#
+# This provides fast tab completion for:
+#
+# Gradle tasks for the current project and sub-projects
+# Gradle CLI switches (e.g. --parallel)
+# Common Gradle properties (e.g. -Dorg.gradle.debug)
+# It also handles custom default build files, so rootProject.buildFileName = 'build.gradle.kts' is supported.
+#
+# Source: https://github.com/gradle/gradle-completion
+
 __gradle-completion-print-timestamp() {
   echo "$(($(gdate +'%s * 1000 + %-N / 1000000'))) - $1"
 }

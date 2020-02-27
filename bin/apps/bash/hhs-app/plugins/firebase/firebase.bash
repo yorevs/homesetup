@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034,SC1090
 
 #  Script: firebase.bash
-# Purpose: Manage your HomeSetup Firebase files
+# Purpose: Manager for HomeSetup Firebase integration
 # Created: Jan 06, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

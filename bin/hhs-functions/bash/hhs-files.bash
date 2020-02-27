@@ -8,7 +8,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: List all file names sorted by name
+# @function: List files and sort by the specified column.
 # @param $1 [Opt] : The column to sort; 9 (filename) by default
 function __hhs_ls_sorted() {
 

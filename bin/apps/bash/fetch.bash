@@ -47,35 +47,35 @@ parse_args() {
 
   shopt -s nocasematch
   case "$1" in
-  'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
-    METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
-    shift
-    ;;
-  *) quit 2 "Method \"$1\" is not not valid!" ;;
+    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
+      METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+      shift
+      ;;
+    *) quit 2 "Method \"$1\" is not not valid!" ;;
   esac
   shopt -u nocasematch
 
   # Loop through the command line options.
   while test -n "$1"; do
     case "$1" in
-    --headers)
-      shift
-      HEADERS=" -H ${1//,/ -H }"
-      ;;
-    --body)
-      shift
-      BODY="$1"
-      ;;
-    --format)
-      FORMAT=1
-      ;;
-    --silent)
-      SILENT=1
-      ;;
-    *)
-      URL="$*"
-      break
-      ;;
+      --headers)
+        shift
+        HEADERS=" -H ${1//,/ -H }"
+        ;;
+      --body)
+        shift
+        BODY="$1"
+        ;;
+      --format)
+        FORMAT=1
+        ;;
+      --silent)
+        SILENT=1
+        ;;
+      *)
+        URL="$*"
+        break
+        ;;
     esac
     shift
   done
@@ -86,7 +86,7 @@ format_json() {
 
   # Piped input
   read -r response
-  [[ -n "${FORMAT}" ]] && echo -e "${response}" | json_pp
+  [[ -n "${FORMAT}" ]] && echo -e "${response}" | __hhs_json_print
   [[ -z "${FORMAT}" ]] && echo -e "${response}"
 }
 
@@ -121,8 +121,8 @@ main() {
 
   shopt -s nocasematch
   case "${METHOD}" in
-  'GET' | 'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body" ;;
-  'PUT' | 'POST' | 'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body" ;;
+    'GET' | 'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body" ;;
+    'PUT' | 'POST' | 'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body" ;;
   esac
   shopt -u nocasematch
 

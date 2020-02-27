@@ -3,7 +3,7 @@
 
 """@package -
    @script: print-uni.py
-  @purpose: Print a backslash 4 digits unicode character E.g:. \\uf118.
+  @purpose: Print a backslash (4 digits) unicode character E.g:. \\uf118.
   @created: Sep 12, 2019
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@gmail.com

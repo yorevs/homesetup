@@ -1,7 +1,7 @@
 """
     @package: -
     @script: vault.py
-    @purpose: This application is a vault for passwords
+    @purpose: This application is a vault for secrets and passwords
     @created: Thu 21, 2019
     @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
     @mailto: yorevs@hotmail.com

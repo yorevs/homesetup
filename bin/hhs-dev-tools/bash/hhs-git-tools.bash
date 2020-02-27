@@ -72,7 +72,7 @@ if __hhs_has "git"; then
     return 0
   }
 
-  # @function: Display a file diff comparing the version beetwen the first and second commit IDs.
+  # @function: Display a file diff comparing the version between the first and second commit IDs.
   # @param $1 [Req] : The first commit ID.
   # @param $2 [Req] : The second commit ID.
   # @param $3 [Req] : The filename to be compared.
@@ -101,7 +101,7 @@ if __hhs_has "git"; then
     return $?
   }
 
-  # @function: List all the files in a commit
+  # @function: List all changed files from a commit ID.
   # @param $1 [Req] : The commit ID
   function __hhs_git_show_changes() {
     if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
@@ -114,7 +114,7 @@ if __hhs_has "git"; then
     return $?
   }
 
-  # @function: Select and checkout local branch
+  # @function: Select and checkout a local or remote branch.
   # @param $1 [Opt] : Fetch all branches instead of only local branches (default).
   function __hhs_git_select_branch() {
 
@@ -184,14 +184,14 @@ if __hhs_has "git"; then
     return $ret_val
   }
 
-  # @function: Search and `git pull all' projects from the specified path using the given repository/branch.
+  # @function: Search and pull projects from the specified path using the given repository/branch.
   # @param $1 [Opt] : The base path to search for git repositories. Default is current directory.
   # @param $2 [Opt] : The remote repository to pull from. Default is "origin"
   function __hhs_git_pull_all() {
 
     local git_repos_path all_repos=() sel_indexes=() repository branch repo_dir stash_flag mchoose_file
 
-    if [[ '-h' == "$1" ||  '--help' == "$1" ]]; then
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} [base_search_path] [repository]"
       echo ''
       echo '    Arguments:'

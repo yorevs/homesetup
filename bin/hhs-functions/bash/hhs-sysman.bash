@@ -8,7 +8,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Retrieve relevant system information.
+# @function: Display relevant system information.
 function __hhs_sysinfo() {
 
   local username containers
@@ -150,7 +150,7 @@ function __hhs_process_list() {
   return 0
 }
 
-# @function: Kills ALL processes specified by $1
+# @function: Kills ALL processes specified by name
 # @param $1 [Req] : The process name to kill
 function __hhs_process_kill() {
 
@@ -164,7 +164,7 @@ function __hhs_process_kill() {
   if [[ $# -gt 0 ]]; then
     for nproc in "${@}"; do
       __hhs_process_list -q $force_flag "${nproc}" kill
-      echo -e "\033[3A" # Move up 3 times to beautify the output
+      echo -e "\033[3A" # Move up 3 lines to beautify the output
     done
     echo -e '\n'
   else

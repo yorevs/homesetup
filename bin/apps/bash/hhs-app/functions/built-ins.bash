@@ -14,7 +14,7 @@ function help() {
   usage 0
 }
 
-# Purpose: List all HHS App Plug-ins and HHS-Functions
+# Purpose: List all HHS App Plug-ins and Functions
 # @param $1 [opt] : Instead of a formatted listing, flat the commands for completion.
 function list() {
 
@@ -46,7 +46,7 @@ function list() {
   quit 0 ' '
 }
 
-# Purpose: List all __hhs_functions describing it's containing file name and line number.
+# Purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
   register_hhs_functions
@@ -61,7 +61,7 @@ function funcs() {
   quit 0 ' '
 }
 
-# Purpose: Open HomeSetup project board from GitHub.
+# Purpose:Open the HomeSetup GitHub project board for the current version.
 function board() {
 
   local repo_url="https://github.com/yorevs/homesetup/projects/1"
@@ -72,7 +72,7 @@ function board() {
   quit 1 "Failed to open url \"${repo_url}\" !"
 }
 
-# Purpose: Retrieve/Get current hostname.
+# Purpose: Retrieve/Get/Set the current hostname.
 function host-name() {
 
   local cur_hostn new_hostn

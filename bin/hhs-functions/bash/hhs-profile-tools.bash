@@ -9,7 +9,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Lazy load healper function to initialize NVM for the terminal
+# @function: Lazy load helper function to initialize NVM for the terminal.
 function __hhs_activate_nvm() {
 
   echo -en "Activating NVM app ...... "
@@ -31,7 +31,7 @@ function __hhs_activate_nvm() {
   return 0
 }
 
-# @function: Lazy load healper function to initialize RVM for the terminal
+# @function: Lazy load helper function to initialize RVM for the terminal.
 function __hhs_activate_rvm() {
 
   echo -en "Activating RVM app ...... "
@@ -49,7 +49,7 @@ function __hhs_activate_rvm() {
   return 0
 }
 
-# @function: Lazy load healper function to initialize Jenv for the terminal
+# @function: Lazy load helper function to initialize Jenv for the terminal.
 function __hhs_activate_jenv() {
 
   echo -en "Activating JENV app ..... "
@@ -63,7 +63,7 @@ function __hhs_activate_jenv() {
   return 0
 }
 
-# @function: Lazy load healper function to initialize Docker-Daemon for the terminal
+# @function: Lazy load helper function to initialize Docker-Daemon for the terminal.
 function __hhs_activate_docker() {
 
   echo -en "Activating Docker app ... "

@@ -2,7 +2,7 @@
 # shellcheck disable=SC1090,SC1091
 
 #  Script: app-commons.bash
-# Purpose: Commonly used bash code
+# Purpose: Commonly used bash code functions and variables
 # Created: Oct 5, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

@@ -24,13 +24,13 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
     HomeSetup Application Manager.
     
     Options:
-      -v  |  --version              : Display current program version.
-      -h  |     --help              : Display this help message.
+      -v  |  --version  : Display current program version.
+      -h  |     --help  : Display this help message.
     
     Tasks:
-      help            : Display a help about the plugin.
-      version         : Display current plugin version.
-      execute         : Execute a plugin command.
+      help      : Display a help about the plugin.
+      version   : Display current plugin version.
+      execute   : Execute a plugin command.
 
     Arguments:
       args    : Plugin command arguments will depend on the plugin. May be mandatory or not.

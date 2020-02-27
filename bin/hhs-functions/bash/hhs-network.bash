@@ -8,10 +8,10 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# The followng functions require dig to work
+# The followng functions require dig to work.
 if __hhs_has "dig"; then
 
-  # @function: Find external IP by performinf a DNS lookup against o-o.myaddr.l.google.com
+  # @function: Find external IP by performing a DNS lookup.
   function __hhs_my_ip() {
 
     local ext_ip
@@ -23,7 +23,7 @@ if __hhs_has "dig"; then
     return 1
   }
 
-  # @function: Resolve domain names associated with the IP.
+  # @function: Resolve domain names associated with the specified IP.
   # @param $1 [Req] : The IP address to resolve.
   function __hhs_ip_resolve() {
 
@@ -38,7 +38,7 @@ if __hhs_has "dig"; then
 
 else
 
-  # @function: Find external IP using curl as an alternative, however, in most cases it may be inaccurate
+  # @function: Find external IP using curl as an alternative, however, in most cases it may be inaccurate.
   function __hhs_my_ip() {
 
     local ext_ip
@@ -52,10 +52,10 @@ else
 
 fi
 
-# The followng functions require ifconfig to work
+# The followng functions require ifconfig to work.
 if __hhs_has "ifconfig"; then
 
-  # @function: Get a list of all machine IPs
+  # @function: Display a list of all assigned IPs.
   function __hhs_all_ips() {
 
     local all_ips
@@ -67,7 +67,7 @@ if __hhs_has "ifconfig"; then
     return 1
   }
 
-  # @function: Get local IP of active interfaces
+  # @function: Display local IP's of active interfaces.
   function __hhs_local_ip() {
 
     local local_ips
@@ -88,7 +88,7 @@ if __hhs_has "ifconfig"; then
     return 1
   }
 
-  # @function: Get a list of active network interfaces
+  # @function: Display a list of active network interfaces.
   function __hhs_active_ifaces() {
 
     local ifaces
@@ -105,7 +105,7 @@ if __hhs_has "ifconfig"; then
     return 1
   }
 
-  # @function: Get IP of active VPN
+  # @function: Get the IP associated to the active VPN connection.
   function __hhs_vpn_ip() {
 
     local vpn_ip
@@ -132,7 +132,7 @@ function __hhs_gateway_ip() {
   return 1
 }
 
-# @function: Check information about the specified IP.
+# @function: Retrieve information about the specified IP.
 # @param $1 [Req] : The IP to get information about.
 function __hhs_ip_info() {
 

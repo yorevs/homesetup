@@ -10,7 +10,7 @@
 
 if __hhs_has "gpg"; then
 
-  # @function: Encrypt file using GPG encryption.
+  # @function: Encrypt file using GPG.
   # @param $1 [Req] : The file to encrypt.
   # @param $2 [Req] : The passphrase to encrypt the file.
   # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
@@ -33,7 +33,7 @@ if __hhs_has "gpg"; then
     return 1
   }
 
-  # @function: Decrypt file using GPG encryption.
+  # @function: Decrypt file using GPG.
   # @param $1 [Req] : The file to decrypt.
   # @param $2 [Req] : The passphrase to decrypt the file.
   # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.

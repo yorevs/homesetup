@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2206,SC2207
 
+#  Script: hhs-completion.bash
+# Purpose: Bash completion for HomeSetup
+# Created: Dec 19, 2019
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+#    Site: https://github.com/yorevs/homesetup
+# License: Please refer to <http://unlicense.org/>
+
+# Complete command helper
 __hhs_complete() {
 
   local all suggestions=()
@@ -20,6 +29,7 @@ __hhs_complete() {
   return 0
 }
 
+# Complete the function __hhs_load_dir
 __hhs_comp_load_dir() {
 
   local suggestions=($(grep . "$HHS_SAVED_DIRS_FILE" | awk -F'=' '{print $1}'))
@@ -29,6 +39,7 @@ __hhs_comp_load_dir() {
   return $?
 }
 
+# Complete the function __hhs_aliases
 __hhs_comp_aliases() {
 
   local suggestions=($(grep -v '^#' "${HOME}/.aliases" | cut -d ' ' -f2- | awk -F'=' '{print $1}'))
@@ -38,6 +49,7 @@ __hhs_comp_aliases() {
   return $?
 }
 
+# Complete the function __hhs_command
 __hhs_comp_cmd() {
 
   local suggestions=($(esed 's/^Command ([A-Z0-9_]*):(.*)?/\1/' "$HHS_CMD_FILE"))
@@ -47,6 +59,7 @@ __hhs_comp_cmd() {
   return $?
 }
 
+# Complete the function __hhs_punch
 __hhs_comp_punch() {
 
   if [ "${#COMP_WORDS[@]}" == "2" ]; then
@@ -76,6 +89,7 @@ __hhs_comp_punch() {
   return $?
 }
 
+# Complete the function __hhs_envs
 __hhs_comp_envs() {
 
   local suggestions=() filter
@@ -90,6 +104,7 @@ __hhs_comp_envs() {
   return $?
 }
 
+# Complete the function __hhs_paths
 __hhs_comp_paths() {
 
   local dir puch_weeks suggestions=()
@@ -109,6 +124,7 @@ __hhs_comp_paths() {
   return 1
 }
 
+# Complete the function __hhs_godir
 __hhs_comp_godir() {
 
   local dir base suggestions=()
@@ -142,6 +158,7 @@ __hhs_comp_godir() {
   return 0
 }
 
+# Complete the function __hhs_history
 __hhs_comp_hist() {
 
   local suggestions=()
@@ -158,6 +175,7 @@ __hhs_comp_hist() {
   COMPREPLY=("${suggestions[@]}")
 }
 
+# Complete the app hhs
 __hhs_comp_hhs() {
 
   local suggestions=()

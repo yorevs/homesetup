@@ -24,7 +24,7 @@ function __hhs_history() {
   return $?
 }
 
-# @function: Prints all environment variables on a separate line using filters.
+# @function: Display all environment variables using filters.
 # @param $1 [Opt] : Filter environments.
 function __hhs_envs() {
 
@@ -66,7 +66,7 @@ function __hhs_envs() {
   return 0
 }
 
-# @function: Select a shell from the existing shell list
+# @function: Select a shell from the existing shell list.
 function __hhs_shell_select() {
 
   local sel_index sel_shell mselect_file avail_shells=()
@@ -106,7 +106,7 @@ function __hhs_shell_select() {
   return 0
 }
 
-# @function: Terminal color pallete test
+# @function: Terminal color pallete test.
 function __hhs_color_pallete() {
 
   echo ''

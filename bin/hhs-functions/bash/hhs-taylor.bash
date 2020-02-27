@@ -9,7 +9,7 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Tail a log using colors specified in .tailor file.
+# @function: Tail a log using colors and patterns specified on `.tailor' file
 # @param $1 [Req] : The log file name.
 function __hhs_tailor() {
 

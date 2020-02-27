@@ -13,7 +13,7 @@
 
 if __hhs_has "docker" && docker info &> /dev/null; then
 
-  # @function: Return the number of active docker containers
+  # @function: Return the number of active docker containers.
   function __hhs_docker_count() {
 
     count=$(docker container ls | wc -l | awk '{print $1}')
@@ -22,9 +22,9 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return 0
   }
 
-  # @function: Run a command or bash in a running container
-  # @param $1 [Req] : The running container ID
-  # @param $2 [Opt] : The command to be executed
+  # @function: Run a command or bash in a running container.
+  # @param $1 [Req] : The running container ID.
+  # @param $2 [Opt] : The command to be executed.
   function __hhs_docker_exec() {
 
     if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
@@ -39,9 +39,9 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return $?
   }
 
-  # @function: This is the equivalent of docker exec, but for docker-compose
-  # @param $1 [Req] : The running container ID
-  # @param $2 [Opt] : The command to be executed
+  # @function: This is the equivalent of docker exec, but for docker-compose.
+  # @param $1 [Req] : The running container ID.
+  # @param $2 [Opt] : The command to be executed.
   function __hhs_docker_compose_exec() {
 
     if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
@@ -56,8 +56,8 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return $?
   }
 
-  # @function: Display information about the container
-  # @param $1 [Req] : The running container ID
+  # @function: Display information about the container.
+  # @param $1 [Req] : The running container ID.
   function __hhs_docker_info() {
     if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
@@ -68,8 +68,8 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return $?
   }
 
-  # @function: Fetch the logs of a container
-  # @param $1 [Req] : The running container ID
+  # @function: Fetch the logs of a container.
+  # @param $1 [Req] : The running container ID.
   function __hhs_docker_logs() {
 
     if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
@@ -81,7 +81,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return $?
   }
 
-  # @function: Remove all docker volumes not referenced by any containers (dangling)
+  # @function: Remove all docker volumes not referenced by any containers (dangling).
   function __hhs_docker_remove_volumes() {
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
@@ -101,7 +101,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     return 1
   }
 
-  # @function: Stop, remove and remove dangling [active?] volumes of all docker containers
+  # @function: Stop, remove and remove dangling [active?] volumes of all docker containers.
   function __hhs_docker_kill_all() {
 
     local all_containers=() all

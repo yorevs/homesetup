@@ -9,11 +9,12 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: Replace the build-in 'cd' with a more flexible one.
+# @param $1 [Opt] : TODO COmment it
 function __hhs_change_dir() {
 
   local flags path
 
-  if [[ '-L' = "${1}" ]] || [[ '-P' = "${1}" ]]; then
+  if [[ '-L' = "${1}" || '-P' = "${1}" ]]; then
     flags="${1}" && shift
   fi
 
@@ -44,8 +45,8 @@ function __hhs_change_dir() {
   return 0
 }
 
-# @function: Change back the shell working directory by N directories
-# @param $1 [Opt] : The amount of directories to jump back
+# @function: Change back the shell working directory by N directories.
+# @param $1 [Opt] : The amount of directories to jump back.
 function __hhs_changeback_ndirs() {
 
   last_pwd=$(pwd)
@@ -98,7 +99,7 @@ function __hhs_dirs() {
 
   [[ ${ret_val} -eq 0 ]] && command cd "${path}"
 
-  # Remove dirs duplicated entries. Reading again to keep the order
+  # Remove dirs duplicated entries. Reading again to keep the order.
   IFS=$'\n' read -r -d '\n' -a results <<< "$(dirs -p)"
   dirs -c
   for idx in "${!results[@]}"; do
@@ -113,8 +114,8 @@ function __hhs_dirs() {
   return ${ret_val}
 }
 
-# @function: List all directories recursively (Nth level depth) as a tree
-# @param $1 [Req] : The max level depth to walk into
+# @function: List all directories recursively (Nth level depth) as a tree.
+# @param $1 [Req] : The max level depth to walk into.
 function __hhs_list_tree() {
 
   if __hhs_has "tree"; then
@@ -187,7 +188,7 @@ function __hhs_save_dir() {
 }
 
 # shellcheck disable=SC2059,SC2181,SC2046
-# @function: Pushd into a saved directory issued by save.
+# @function: `Pushd' into a saved directory issued by save.
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load_dir() {
 
@@ -276,7 +277,7 @@ function __hhs_load_dir() {
   return 0
 }
 
-# @function: Pushd from the first match of the specified directory name.
+# @function: Search and `pushd' into the first match of the specified directory name.
 # @param $1 [Req] : The base search path.
 # @param $1 [Req] : The directory name to go.
 function __hhs_go_dir() {
@@ -325,8 +326,8 @@ function __hhs_go_dir() {
   return 0
 }
 
-# @function: Create all folders using a dot notation path and immediatelly change into it
-# @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path
+# @function: Create all folders using a dot notation path and immediately change into it.
+# @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path.
 function __hhs_mkcd() {
   if [[ -n "$1" && ! -d "$1" ]]; then
     dir="${1//.//}"

@@ -37,7 +37,7 @@ function __hhs_minput_curpos() {
   return 1
 }
 
-# @function: Select an option from a list using a navigable menu.
+# @function: Provide a terminal form input with validation checking.
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {

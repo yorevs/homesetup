@@ -21,7 +21,7 @@ function __hhs_has() {
 }
 
 # shellcheck disable=SC2139
-# @function: Check if an alias exists and create it if it does not. Do not support the use of single quotes in the expression
+# @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression
 # @param $1 [Req] : The alias to set/check. Use the format: __hhs_alias <alias_name>='<alias_expr>'
 function __hhs_alias() {
 
@@ -140,9 +140,6 @@ __hhs_has "wget" || alias wget='\curl -O'
 alias ps1='export PS1=$PS1_STYLE'
 # @alias: Make PS2 prompt active
 alias ps2='export PS1=$PS2_STYLE'
-
-# @alias: Use jq for format json instead of json_pp if installed
-__hhs_has "jq" && alias json_pp='\jq'
 
 # -----------------------------------------------------------------------------------
 # @category: HomeSetup
@@ -279,17 +276,12 @@ esac
 
 if __hhs_has "python"; then
 
-  # @alias: If `json_pp' is not available, use `python' instead
-  __hhs_has "json_pp" || alias json_pp='python -m json.tool'
-
   # @alias: Evaluate mathematical expressions
   alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
-
   # @alias: URL-encode strings
   alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
   # @alias: URL-decode strings
   alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
-
   # @alias: Generate a UUID
   alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
 fi
