@@ -17,11 +17,12 @@ case "${HHS_MY_SHELL}" in
   bash)
     AUTO_CPL_D="${HHS_DIR}/bin"
 
-    # If bash_completion is installed source it
-    if [[ -f /usr/local/etc/bash_completion ]]; then
-      \. /usr/local/etc/bash_completion
-      AUTO_CPL_TYPES+=('Bash_Completion')
-    fi
+    # If bash_completion is installed source it.
+    # FIXME: This auto-complete was commented out because it is hanging for some reason
+    # if [[ -f /usr/local/etc/bash_completion ]]; then
+    #   \. /usr/local/etc/bash_completion
+    #   AUTO_CPL_TYPES+=('Bash_Completion')
+    # fi
 
     # Enable tab completion for `git`
     # Thanks to: https://github.com/git/git/tree/master/contrib/completion
