@@ -416,7 +416,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                       | __hhs_git_show_file_diff     | Display a file diff comparing the version between the first and second commit IDs  |
 |                       | __hhs_git_show_file_contents | Display the contents of a file from specific commit ID                             |
 |                       | __hhs_git_show_changes       | List all changed files from a commit ID                                            |
-|                       | __hhs_git_select_branch      | Select and checkout a local or remote branch                                       |
+|                       | __hhs_git_branch_select      | Select and checkout a local or remote branch                                       |
 |                       | __hhs_git_pull_all           | Search and pull projects from the specified path using the given repository/branch |
 | hhs-gradle-tools.bash | __hhs_gradlew                | Prefer using the wrapper instead of the command itself                             |
 

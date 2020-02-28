@@ -55,7 +55,8 @@ case "${HHS_MY_SHELL}" in
     shopt -s cdspell && HHS_TERM_OPTS+='cdspell '
     # Make bash check its window size after a process completes
     shopt -s checkwinsize && HHS_TERM_OPTS+='checkwinsize '
-    # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while executing case or [[ conditional commands.
+    # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
+    # executing case or [[ conditional commands.
     shopt -u nocasematch && HHS_TERM_OPTS+='nocasematch '
     ;;
 esac

@@ -116,7 +116,7 @@ if __hhs_has "git"; then
 
   # @function: Select and checkout a local or remote branch.
   # @param $1 [Opt] : Fetch all branches instead of only local branches (default).
-  function __hhs_git_select_branch() {
+  function __hhs_git_branch_select() {
 
     local all_branches=() ret_val=0 all_flag='-a' all_str='or remote'
     local sel_index sel_branch mchoose_file stash_flag b_name
@@ -127,7 +127,7 @@ if __hhs_has "git"; then
       echo '    Options:'
       echo '      -l | --local : List only local branches. Do not fetch remote branches.'
       return 1
-    elif [[ ! -d "$(pwd)/.git" ]]; then
+    elif [[ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == 'false' ]]; then
       echo "Not a git repository !"
       return 1
     else
@@ -135,7 +135,7 @@ if __hhs_has "git"; then
       clear
       if [[ -n "${all_flag}" ]]; then
         echo -en "${YELLOW}=> Updating branches ${NC}"
-        if ! git fetch; then
+        if ! git fetch &>/dev/null; then
           __hhs_errcho "${FUNCNAME[0]}: ### Unable fetch from remote ${NC}"
           return 1
         fi
@@ -228,7 +228,7 @@ if __hhs_has "git"; then
           stash_flag=0
           echo ''
           printf '%0.1s' "-"{1..80}
-          echo -e "${WHITE}\nUpdating project ${CYAN}\"${repo_dir}\" => ${PURPLE}${repository}/${branch} ...${NC}"
+          echo -e "${WHITE}\nUpdating project ${CYAN}\"${repo_dir}\" => ${PURPLE}${repository}/${branch} ... \n${NC}"
           [[ "${branch}" == "current" ]] && gitbranch=$(git branch | grep '\*' | cut -d ' ' -f2)
           [[ "${branch}" == "current" ]] || gitbranch="${branch}"
           if git fetch; then

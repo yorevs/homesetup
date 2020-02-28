@@ -15,15 +15,12 @@
 # Improved with: http://ezprompt.net
 
 # Configure git stuff.
-function prompt_git() {
+function __hhs_git_prompt() {
 
-  local s='' branchName=''
+  local st_flag='' branchName=''
 
-  # Check if the current directory is in a Git repository.
-  if [ -n "$(command -v git)" ] && [[ "$(
-    git rev-parse --is-inside-work-tree &>/dev/null
-    echo "${?}"
-  )" == '0' ]]; then
+  # Check if the current directory is a Git repository.
+  if __hhs_has git && [[ "$(git rev-parse --is-inside-work-tree &> /dev/null && echo "${?}")" == '0' ]]; then
 
     # check if the current directory is in .git before running git checks
     if [[ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == 'false' ]]; then
@@ -33,36 +30,33 @@ function prompt_git() {
 
       # Check for uncommitted changes in the index.
       if ! git diff --quiet --ignore-submodules --cached; then
-        s+='+'
+        st_flag+='+'
       fi
 
       # Check for unstaged changes.
       if ! git diff-files --quiet --ignore-submodules --; then
-        s+='!'
+        st_flag+='!'
       fi
 
       # Check for untracked files.
       if [[ -n "$(git ls-files --others --exclude-standard)" ]]; then
-        s+='?'
+        st_flag+='?'
       fi
 
       # Check for stashed files.
       if git rev-parse --verify refs/stash &>/dev/null; then
-        s+='$'
+        st_flag+='$'
       fi
 
     fi
 
-    # Get the short symbolic ref.
-    # If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
+    # Get the short symbolic ref. If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
     # Otherwise, just give up.
-    branchName="$(git symbolic-ref --quiet --short HEAD 2>/dev/null ||
-      git rev-parse --short HEAD 2>/dev/null ||
-      echo '(unknown)')"
+    branchName="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null || echo '(unknown)')"
 
-    [[ -n "${s}" ]] && s=" [${s}]"
+    [[ -n "${st_flag}" ]] && st_flag=" [${st_flag}]"
 
-    echo -e "${1}${branchName}${2}${s}"
+    echo -e "${1}${branchName}${2}${st_flag}"
   else
     return
   fi
@@ -105,7 +99,7 @@ fi
 PATH_STYLE="\[${WHITE}\] ${FOLDER_ICN}\[${ORANGE}\] \W"
 
 # Git style
-GIT_STYLE="\[${WHITE}\]\$(prompt_git \" ${GIT_ICN} \[${CYAN}\]\")"
+GIT_STYLE="\[${WHITE}\]\$(__hhs_git_prompt \" ${GIT_ICN} \[${CYAN}\]\")"
 
 # User prompt format
 PROMPT="\[${WHITE}\] \$\[${NC}\] "
@@ -122,7 +116,7 @@ PS1_STYLE+="${GIT_STYLE}"  # Git repository details
 PS1_STYLE+="${PROMPT}"     # Prompt symbol
 
 # PS2 Style: No icons, simple prompt.
-PS2_STYLE='\[\h: \W \u\$ '
+PS2_STYLE='\! \h: \W \u \$ '
 
 export PS1=${CUSTOM_PS:-$PS1_STYLE}
 export PS2=${CUSTOM_PS:-$PS2_STYLE}
