@@ -85,8 +85,10 @@ case "${HHS_MY_SHELL}" in
     fi
 
     # Enable tab completion for `HomeSetup`
-    \. "$AUTO_CPL_D/hhs-completion.bash"
-    AUTO_CPL_TYPES+=('HomeSetup')
+    if [[ -f "$AUTO_CPL_D/hhs-completion.bash" ]]; then
+      \. "$AUTO_CPL_D/hhs-completion.bash"
+      AUTO_CPL_TYPES+=('HomeSetup')
+    fi
     ;;
 
 esac

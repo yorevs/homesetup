@@ -369,6 +369,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
+
+    # .bash_completions was renamed to .bash_completion. #e6ce231
+    if [[ -L "${HOME}/.bash_completions" ]]; then
+      command rm -f "${HOME}/.bash_completions"
+      echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
+    fi
   }
 
   # Check installed tools
