@@ -116,7 +116,7 @@ PS1_STYLE+="${GIT_STYLE}"  # Git repository details
 PS1_STYLE+="${PROMPT}"     # Prompt symbol
 
 # PS2 Style: No icons, simple prompt.
-PS2_STYLE='\! \h: \W \u \$ '
+PS2_STYLE='\h:\u \W \$ '
 
 export PS1=${CUSTOM_PS:-$PS1_STYLE}
 export PS2=${CUSTOM_PS:-$PS2_STYLE}
