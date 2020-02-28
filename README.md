@@ -16,11 +16,12 @@ to adapt all of the code to be able to run under Linux and also, add support for
 <!-- toc -->
 
 - [1. Installation](#installation)
-  * [1.1. Local installation](#local-installation)
-  * [1.2. Remote installation](#remote-installation)
-  * [1.3. Firebase setup](#firebase-setup)
-    + [1.3.1. Create account](#create-new-account)
-    + [1.3.2. Configure account](#configure-account)
+  * [1.1. Requirements](#requirements)
+  * [1.2. Local installation](#local-installation)
+  * [1.3. Remote installation](#remote-installation)
+  * [1.4. Firebase setup](#firebase-setup)
+    + [1.4.1. Create account](#create-new-account)
+    + [1.4.2. Configure account](#configure-account)
 - [2. Uninstallation](#uninstallation)
 - [3. Dotfiles in this project](#dotfiles-in-this-project)
 - [4. Aliases](#aliases)
@@ -59,6 +60,30 @@ to adapt all of the code to be able to run under Linux and also, add support for
 
 
 ## Installation
+
+### Requirements
+
+#### Mandatory
+
+- python 2.7+ or 3.0+
+- brew 2.2+
+- git 2.21+
+- bash 3.2+
+- curl 7.64+
+- perl 5+
+
+#### Recommended
+
+- pcregrep 8.43+
+- dig 9.10+
+- tree 1.8+
+- figlet 2.2.5+
+- vim 8+
+
+#### Optional
+
+- docker 19.03+
+- gradle 4+
 
 ### Local installation
 
