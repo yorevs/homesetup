@@ -1,6 +1,8 @@
 # HomeSetup
 ## Your shell good as hell ! Not just dotfiles
 
+[![Join the chat at https://gitter.im/yorevs-homesetup/community](https://badges.gitter.im/yorevs-homesetup/community.svg)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
 your shell to another level. There are many improvements and facilities, especially for developers that will ease the
 usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
@@ -532,11 +534,15 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 * [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
 * [x] Set HomeSetup as the default profile.
 
+## Contact
+
+You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/community) community.
+
 ## Support HomeSetup
 
 You can support HomeSetup by donating or helping code it. Fell free to contact me for details.
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) [![Join the chat at https://gitter.im/yorevs-homesetup/community](https://badges.gitter.im/yorevs-homesetup/community.svg)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
 ## Final notes
 
