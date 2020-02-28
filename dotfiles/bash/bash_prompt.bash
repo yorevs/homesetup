@@ -22,7 +22,7 @@ function __hhs_git_prompt() {
   # Check if the current directory is a Git repository.
   if __hhs_has git && [[ "$(git rev-parse --is-inside-work-tree &> /dev/null && echo "${?}")" == '0' ]]; then
 
-    # check if the current directory is in .git before running git checks
+    # check if the current directory is in .git before running git checks.
     if [[ "$(git rev-parse --is-inside-git-dir 2>/dev/null)" == 'false' ]]; then
 
       # Ensure the index is up to date.
