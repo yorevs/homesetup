@@ -51,7 +51,9 @@ to adapt all of the code to be able to run under Linux and also, add support for
 - [10. Terminal setup](#terminal-setup)
   * [10.1. Terminal App](#terminal-app)
   * [10.2. iTerm2 App](#iterm2-app)
-- [11. Final notes](#final-notes)
+- [11. Contact](#contact)
+- [12. Support HomeSetup](#support-homesetup)
+- [13. Final notes](#final-notes)
 
 <!-- tocstop -->
 
