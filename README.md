@@ -536,7 +536,7 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 You can support HomeSetup by donating or helping code it. Fell free to contact me for details.
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) [![Join the chat at https://gitter.im/yorevs-homesetup/community](https://badges.gitter.im/yorevs-homesetup/community.svg)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Final notes
 
