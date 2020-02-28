@@ -13,6 +13,7 @@
 # System locale (defaults)
 export LC_ALL=en_US
 export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
 export RESET_IFS="$IFS"
 
 # Current OS and Terminal
@@ -52,6 +53,7 @@ fi
 # Commonly used folders
 export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
+export EDITOR="${EDITOR:-vi}"
 
 command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
 command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
