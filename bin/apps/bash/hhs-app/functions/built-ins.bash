@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
 #  Script: built-ins.bash
-# Purpose: Contains all od the HHS-App callable functions
+# @purpose: Contains all od the HHS-App callable functions
 # Created: Jan 06, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
-# Purpose: Provide a help for __hhs functions
+# @purpose: Provide a help for __hhs functions
 function help() {
 
   usage 0
 }
 
-# Purpose: List all HHS App Plug-ins and Functions
+# @purpose: List all HHS App Plug-ins and Functions
 # @param $1 [opt] : Instead of a formatted listing, flat the commands for completion.
 function list() {
 
@@ -46,7 +46,7 @@ function list() {
   quit 0 ' '
 }
 
-# Purpose: Search for all __hhs_functions describing it's containing file name and line number.
+# @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
   register_hhs_functions
@@ -61,7 +61,7 @@ function funcs() {
   quit 0 ' '
 }
 
-# Purpose:Open the HomeSetup GitHub project board for the current version.
+# @purpose: Open the HomeSetup GitHub project board for the current version.
 function board() {
 
   local repo_url="https://github.com/yorevs/homesetup/projects/1"
@@ -72,7 +72,7 @@ function board() {
   quit 1 "Failed to open url \"${repo_url}\" !"
 }
 
-# Purpose: Retrieve/Get/Set the current hostname.
+# @purpose: Retrieve/Get/Set the current hostname.
 function host-name() {
 
   local cur_hostn new_hostn
@@ -108,6 +108,56 @@ function host-name() {
       echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 1
     fi
   fi
+
+  quit 0
+}
+
+# @purpose: Terminal color palette test.
+function color-test() {
+
+  echo ''
+  echo "--- Home Setup color palette test"
+  echo ''
+
+  echo -en "${BLACK}  BLACK "
+  echo -en "${RED}    RED "
+  echo -en "${GREEN}  GREEN "
+  echo -en "${ORANGE} ORANGE "
+  echo -en "${BLUE}   BLUE "
+  echo -en "${PURPLE} PURPLE "
+  echo -en "${CYAN}   CYAN "
+  echo -en "${GRAY}   GRAY "
+  echo -en "${WHITE}  WHITE "
+  echo -en "${YELLOW} YELLOW "
+  echo -en "${VIOLET} VIOLET "
+  echo -e "${NC}\n"
+
+  echo "--- 16 Colors Low"
+  echo ''
+  for c in {30..37}; do
+    echo -en "\033[0;${c}mC16-${c} "
+  done
+  echo -e "${NC}\n"
+
+  echo "--- 16 Colors High"
+  echo ''
+  for c in {90..97}; do
+    echo -en "\033[0;${c}mC16-${c} "
+  done
+  echo -e "${NC}\n"
+
+  if [[ "${TERM##*-}" == "256color" ]]; then
+    echo "--- 256 Colors"
+    echo ''
+    for c in {1..256}; do
+      echo -en "\033[38;5;${c}m"
+      printf "C256-%-.3d " "${c}"
+      [[ "$(echo "$c % 12" | bc)" -eq 0 ]] && echo ''
+    done
+    echo -e "${NC}\n"
+  fi
+
+  echo ''
 
   quit 0
 }
