@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-# shellcheck disable=SC2206,SC2046,SC2155,SC2034,SC2004,SC2194
+# shellcheck disable=SC2206,SC2046,SC2155,SC2034,SC2004,SC2194,SC2086,SC2154,SC2219
 #
 # bash/zsh completion support for core Git.
 #

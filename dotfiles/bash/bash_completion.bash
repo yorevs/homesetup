@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 
-#  Script: bash_completions.bash
+#  Script: bash_completion.bash
 # Purpose: This file is used to configure all bash auto completions
 # Created: Jan 14, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -34,7 +34,7 @@ case "${HHS_MY_SHELL}" in
 
     # Enable tab completion for `docker`
     # Thanks to: Built in docker scripts. *Requires bash_complete
-    if command -v docker &> /dev/null &&command -v _filedir &> /dev/null; then
+    if command -v docker &> /dev/null && command -v _filedir &> /dev/null; then
       if [[ -f "$AUTO_CPL_D/docker-compose-completion.bash" ]]; then
         \. "$AUTO_CPL_D/docker-compose-completion.bash"
         AUTO_CPL_TYPES+=('Docker-Compose')
@@ -67,6 +67,23 @@ case "${HHS_MY_SHELL}" in
       fi
     fi
 
+    # Enable tab completion for `brew'
+    # Thanks to: https://github.com/Bash-it/bash-it/blob/master/completion/available/brew.completion.bash
+    if command -v brew &> /dev/null; then
+      if [[ -f "$AUTO_CPL_D/brew-completion.bash" ]]; then
+        \. "$AUTO_CPL_D/brew-completion.bash"
+        AUTO_CPL_TYPES+=('Brew')
+      fi
+    fi
+
+    # Enable tab completion for `Kubernetes' CLI
+    if command -v kubectl &> /dev/null; then
+      if [[ -f "$AUTO_CPL_D/kubectl-completion.bash" ]]; then
+        \. "$AUTO_CPL_D/kubectl-completion.bash"
+        AUTO_CPL_TYPES+=('Kubernetes')
+      fi
+    fi
+
     # Enable tab completion for `HomeSetup`
     \. "$AUTO_CPL_D/hhs-completion.bash"
     AUTO_CPL_TYPES+=('HomeSetup')
@@ -74,6 +91,6 @@ case "${HHS_MY_SHELL}" in
 
 esac
 
-export HHS_AUTO_COMPLETIONS="${AUTO_CPL_TYPES[*]}"
+export HHS_BASH_COMPLETIONS="${AUTO_CPL_TYPES[*]}"
 
 unset AUTO_CPL_TYPES

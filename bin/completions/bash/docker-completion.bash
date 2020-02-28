@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck disable=SC2016,SC2119,SC2155,SC2206,SC2207
 #
 # Shellcheck ignore list:

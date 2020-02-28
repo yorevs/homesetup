@@ -21,7 +21,7 @@ function __hhs_activate_nvm() {
     export PATH="$PATH:$NVM_DIR"
     if [[ -s "$NVM_DIR/bash_completion" ]]; then
       \. "$NVM_DIR/bash_completion"
-      export HHS_AUTO_COMPLETIONS="$HHS_AUTO_COMPLETIONS NVM"
+      export HHS_BASH_COMPLETIONS="$HHS_BASH_COMPLETIONS NVM"
     fi
     echo "${GREEN}[  OK  ]${NC}"
   else

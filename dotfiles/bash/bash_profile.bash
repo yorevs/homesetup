@@ -30,7 +30,7 @@ export USER=${USER:-$(whoami)}
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
   'profile' 'bash_colors' 'colors' 'bash_env' 'env' 'bash_prompt' 'prompt'
-  'bash_aliases' 'aliases' 'bash_functions' 'functions' 'bash_completions'
+  'bash_aliases' 'aliases' 'bash_functions' 'functions' 'bash_completion'
 )
 
 # Load all HomeSetup dotfiles

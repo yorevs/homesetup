@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck disable=SC2206,SC2207
 
 #  Script: hhs-completion.bash

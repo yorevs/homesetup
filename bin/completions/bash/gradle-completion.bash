@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # shellcheck disable=SC2155,SC2207,SC2091,SC2206
 
 # Bash and Zsh completion support for Gradle.

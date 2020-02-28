@@ -48,7 +48,8 @@ to adapt all of the code to be able to run under Linux and also, add support for
 - [8. HomeSetup application](#homesetup-application)
   * [8.1. Plugins](#hhs-plugins)
   * [8.2. Functions](#hhs-functions)
-- [9. Auto-completes](#auto-completes)
+- [9. Auto completions](#auto-completions)
+  * [9.1. Bash completions](#bash-completions)
 - [10. Terminal setup](#terminal-setup)
   * [10.1. Terminal App](#terminal-app)
   * [10.2. iTerm2 App](#iterm2-app)
@@ -534,19 +535,21 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
 | board     | Open the HomeSetup GitHub project board for the current version.                     |
 | host-name | Retrieve/Get/Set the current hostname.                                               |
 
-## Auto Completes
+## Auto completions
 
-### Bash completes
+### Bash completions
 
-| File                           | Purpose                                           |
-| ------------------------------ | ------------------------------------------------- |
-| docker-completion.bash         | Bash completion file for core docker commands.    |
-| docker-compose-completion.bash | Bash completion for docker-compose commands.      |
-| docker-machine-completion.bash | Bash completion file for docker-machine commands. |
-| git-completion.bash            | Bash/zsh completion support for core Git.         |
-| gradle-completion.bash         | Bash and Zsh completion support for Gradle.       |
-| hhs-completion.bash            | Bash completion for HomeSetup.                    |
-| pcf-completion.bash            | Bash completion for Cloud Foundry CLI.            |
+| File                              | Purpose                                           |
+| --------------------------------- | ------------------------------------------------- |
+| brew-completion.bash              | Bash completion file for Homebrew commands        |
+| docker-completion.bash            | Bash completion file for core docker commands.    |
+| docker-compose-completion.bash    | Bash completion for docker-compose commands.      |
+| docker-machine-completion.bash    | Bash completion file for docker-machine commands. |
+| git-completion.bash               | Bash/zsh completion support for core Git.         |
+| gradle-completion.bash            | Bash and Zsh completion support for Gradle.       |
+| hhs-completion.bash               | Bash completion for HomeSetup.                    |
+| pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
+| kubectl-completion.bash           | Bash completion for kubectl.                      |
 
 ## Terminal setup
 
