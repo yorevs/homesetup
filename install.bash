@@ -296,12 +296,12 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link auto-completes into place
     echo -en "\n${WHITE}Linking auto-completes into place ${BLUE}"
-    if command find "${HHS_HOME}/bin/auto-completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
+    if command find "${HHS_HOME}/bin/completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
       -exec command chmod 755 {} \; &> /dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
-      quit 2 "Unable to link auto-completions into bin (${BIN_DIR}) directory !"
+      quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
     fi
 
     # Copy HomeSetup fonts into place
