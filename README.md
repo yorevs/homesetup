@@ -2,7 +2,7 @@
 ## Your shell good as hell ! Not just dotfiles
 
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Terminal](https://badgen.net/badge/icon/homesetup?icon=terminal&label)](https://github.com/yorevs/homesetup)
+[![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Donate](https://badgen.net/badge/paypal/donate/orange)]()
 
 Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
