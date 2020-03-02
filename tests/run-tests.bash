@@ -24,6 +24,7 @@ fi
 echo ''
 echo -e "Executing HomeSetup automated tests --------------------"
 
+# TODO filter tests by category
 # Scan and execute bats tests
 while read -r result; do
   if [[ ${result} =~ ^(ok|not) ]]; then

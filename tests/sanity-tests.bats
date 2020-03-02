@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-#  Script: sample.bats
+#  Script: sample-tests.bats
 # Purpose: Bats sample file
 # Created: Mar 02, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -11,3 +11,5 @@
 @test "check-install-dirs-test" {
   [[ -d "$HHS_HOME" && -d "$HHS_DIR" ]]
 }
+
+## TODO Add more sanity tests
