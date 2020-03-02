@@ -21,6 +21,9 @@ else
   export GREEN='\033[0;32m'
 fi
 
+pushd &> /dev/null "${HHS_HOME}"/tests/ || exit 128
+echo '' > "${ERR_LOG}"
+
 echo ''
 echo -e "Executing HomeSetup automated tests --------------------"
 
@@ -35,11 +38,25 @@ while read -r result; do
     echo -e "=> Running tests ${result//\.\./ to } ..."
     echo ''
   else
-    echo -e "\n${result}\n" >> "${ERR_LOG}"
+    echo -e "${result}" >> "${ERR_LOG}"
   fi
 done < <(bats --tap ./*.bats 2>&1)
 
+popd &> /dev/null || exit 255
 echo ''
-echo '* Finished running all tests.'
-echo "@ To see the error report access the file \"${ERR_LOG}\" !"
+echo 'Finished running all tests.'
+
+if [[ "$( grep . "${ERR_LOG}")" != "" ]]; then
+  echo ''
+  echo '### The following errors were reported'
+  cat "${ERR_LOG}"
+  echo ''
+  echo "@ To access the error report file open: \"${ERR_LOG}\" !"
+  echo ''
+   echo "${RED}TEST FAILED${NC}"
+else
+  echo ''
+  echo "${GREEN}TEST SUCCESSFULL${NC}"
+fi
+
 echo ''

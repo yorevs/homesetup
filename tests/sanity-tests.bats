@@ -8,8 +8,24 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
 
-@test "check-install-dirs-test" {
-  [[ -d "$HHS_HOME" && -d "$HHS_DIR" ]]
+@test "check-hhs-dirs-exist-test" {
+  [[
+    -d "$HHS_HOME"
+    && -d "$HHS_DIR"
+  ]]
 }
 
-## TODO Add more sanity tests
+@test "check-dotfiles-exist-test" {
+  declare -a result=()
+
+  for next in "$HHS_HOME"/dotfiles/bash/*.bash; do
+    dotfile="${HOME}/.$(basename "${next}")"
+    dotfile="${dotfile%\.*}"
+    [[ -f "${dotfile}" ]] || result+=("${dotfile}")
+  done
+
+  [[ -f "${HOME}/.aliasdef" ]] || result+=("${HOME}/.aliasdef")
+  [[ -f "${HOME}/.inputrc" ]] || result+=("${HOME}/.inputrc")
+
+  [[ ${#result} -eq 0 ]]
+}

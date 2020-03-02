@@ -46,6 +46,15 @@ function list() {
   quit 0 ' '
 }
 
+
+# @purpose: Execute all HomeSetup automated tests.
+function tests() {
+  [[ -f "${HHS_HOME}"/tests/run-tests.bash ]] || quit 1 "Unable to find automated tests executor !"
+  "${HHS_HOME}"/tests/run-tests.bash
+
+  quit 0 ''
+}
+
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
