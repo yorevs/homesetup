@@ -100,7 +100,7 @@ DEFAULT_DEV_TOOLS=(
   'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'ruby'
   'gcc' 'make' 'qmake' 'doxygen' 'ant' 'mvn' 'gradle'
   'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 'md5'
-  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'base64 '
+  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'base64' 'bats'
   'git' 'go' 'python' 'jq' 'jenv' 'perl' 'ifconfig' 'groovy'
 )
 

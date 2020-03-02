@@ -1,8 +1,10 @@
 # HomeSetup
 ## Your shell good as hell ! Not just dotfiles
 
-[![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License](https://badgen.net/badge/license/the-unlicense/green)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+[![Release](https://badgen.net/badge/release/v1.3.0/blue)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
+[![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
 
@@ -17,45 +19,50 @@ to adapt all of the code to be able to run under Linux and also, add support for
 
 - [1. Installation](#installation)
   * [1.1. Requirements](#requirements)
+    + [1.1.1. Supported Bash versions](#supported-bash-versions)
+    + [1.1.2. Required software](#required-software)
+    + [1.1.3. Recommended software](#recommended-software)
+    + [1.1.4. Optional software](#optional-software)
   * [1.2. Local installation](#local-installation)
   * [1.3. Remote installation](#remote-installation)
   * [1.4. Firebase setup](#firebase-setup)
     + [1.4.1. Create account](#create-new-account)
     + [1.4.2. Configure account](#configure-account)
 - [2. Uninstallation](#uninstallation)
-- [3. Dotfiles in this project](#dotfiles-in-this-project)
-- [4. Aliases](#aliases)
-  * [4.1. Navigational](#navigational)
-  * [4.2. General](#general)
-  * [4.3. HomeSetup](#homesetup)
-  * [4.4. Tool aliases](#tool-aliases)
-  * [4.5. OS Specific aliases](#os-specific-aliases)
-    + [4.5.1. Linux](#linux)
-    + [4.5.2. Darwin](#darwin)
-  * [4.6. Handy terminal shortcuts](#handy-terminal-shortcuts)
-  * [4.7. Python aliases](#python-aliases)
-  * [4.8. Perl aliases](#perl-aliases)
-  * [4.9. Git aliases](#git-aliases)
-  * [4.10. Gradle aliases](#gradle-aliases)
-  * [4.11. Docker aliases](#docker-aliases)
-- [5. Functions](#functions)
-  * [5.1. Standard tools](#standard-tools)
-  * [5.2. Development tools](#development-tools)
-- [6. Applications](#applications)
-  * [6.1. Bash apps](#bash-apps)
-  * [6.2. Python apps](#python-apps)
-- [7. Alias Definitions](#alias-definitions)
-- [8. HomeSetup application](#homesetup-application)
-  * [8.1. Plugins](#hhs-plugins)
-  * [8.2. Functions](#hhs-functions)
-- [9. Auto completions](#auto-completions)
-  * [9.1. Bash completions](#bash-completions)
-- [10. Terminal setup](#terminal-setup)
-  * [10.1. Terminal App](#terminal-app)
-  * [10.2. iTerm2 App](#iterm2-app)
-- [11. Contact](#contact)
-- [12. Support HomeSetup](#support-homesetup)
-- [13. Final notes](#final-notes)
+- [3. Usage](#usage)
+- [4. Dotfiles in this project](#dotfiles-in-this-project)
+- [5. Aliases](#aliases)
+  * [5.1. Navigational](#navigational)
+  * [5.2. General](#general)
+  * [5.3. HomeSetup](#homesetup)
+  * [5.4. Tool aliases](#tool-aliases)
+  * [5.5. OS Specific aliases](#os-specific-aliases)
+    + [5.5.1. Linux](#linux)
+    + [5.5.2. Darwin](#darwin)
+  * [5.6. Handy terminal shortcuts](#handy-terminal-shortcuts)
+  * [5.7. Python aliases](#python-aliases)
+  * [5.8. Perl aliases](#perl-aliases)
+  * [5.9. Git aliases](#git-aliases)
+  * [5.10. Gradle aliases](#gradle-aliases)
+  * [5.11. Docker aliases](#docker-aliases)
+- [6. Functions](#functions)
+  * [6.1. Standard tools](#standard-tools)
+  * [6.2. Development tools](#development-tools)
+- [7. Applications](#applications)
+  * [7.1. Bash apps](#bash-apps)
+  * [7.2. Python apps](#python-apps)
+- [8. Alias Definitions](#alias-definitions)
+- [9. HomeSetup application](#homesetup-application)
+  * [9.1. Plugins](#hhs-plugins)
+  * [9.2. Functions](#hhs-functions)
+- [10. Auto completions](#auto-completions)
+  * [10.1. Bash completions](#bash-completions)
+- [11. Terminal setup](#terminal-setup)
+  * [11.1. Terminal App](#terminal-app)
+  * [11.2. iTerm2 App](#iterm2-app)
+- [12. Contact](#contact)
+- [13. Support HomeSetup](#support-homesetup)
+- [14. Final notes](#final-notes)
 
 <!-- tocstop -->
 
@@ -64,24 +71,35 @@ to adapt all of the code to be able to run under Linux and also, add support for
 
 ### Requirements
 
-#### Mandatory
+#### Supported Bash versions
 
-- python 2.7+ or 3.0+
-- brew 2.2+
-- git 2.21+
-- bash 3.2+
-- curl 7.64+
-- perl 5+
+- Everything from 3.2.57(1) and higher (macOS's highest version)
 
-#### Recommended
+#### Required software
 
-- pcregrep 8.43+
-- dig 9.10+
-- tree 1.8+
-- figlet 2.2.5+
-- vim 8+
+The following software are required either to clone the repository, execute the tests and install packages:
 
-#### Optional
+- **git** v2.20+
+- **brew** v2.0+
+- **bats** v0.4+
+
+#### Recommended software
+
+HomeSetup relies on a series of tools. To use most of the features of HomeSetup, the following packages are required:
+
+- **python** v2.7+ or v3.0+
+- **curl** v7.64+
+- **perl** v5.0+
+- **pcregrep** v8.43+
+- **dig** v9.10+
+- **tree** v1.8+
+- **vim** v8.0+
+- **figlet** v2.2.5+
+
+#### Optional software
+
+There are some tools that are also good to have  if you are a developer. HomeSetup provides some features to help using
+those tools:
 
 - docker 19.03+
 - gradle 4+
@@ -150,9 +168,16 @@ Type: `#> dotfiles.bash help fb` for further information about using it.
 
 ## Uninstallation
 
-If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command in a shell: `# HomeSetup> ./uninstall.bash`
+If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command 
+in a shell: `# HomeSetup> ./uninstall.bash`
 
-The uninstaller will remove all files and folders related to HomeSetup for good.
+The uninstaller will remove all files and folders related to HomeSetup for good. The only folder that will stay is
+the ~/.hhs where your configurations were stored. It's safe to delete this folder after the uninstallation of HomeSetup.
+
+## Usage
+
+HomeSetup provides a [User Handbook](docs/USER_HANDBOOK.md) with all commands and examples of usage. There will also be a video about how to
+install, configure and all available features demo.
 
 ## Dotfiles in this project
 
