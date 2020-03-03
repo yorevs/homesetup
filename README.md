@@ -21,10 +21,8 @@ Latest version of MacOS comes with zsh as the default shell. You can change it a
 If apple decides to remove from next MacOS releases, you can always use HomeBrew version. In this case, the path is 
 different, like this:
 
-`
-$ brew install bash
-$ sudo chsh -s /usr/local/bin/bash
-`
+`$ brew install bash`
+`$ sudo chsh -s /usr/local/bin/bash`
 
 ## Table of contents
 
