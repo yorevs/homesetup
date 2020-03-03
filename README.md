@@ -14,6 +14,18 @@ your shell to another level. There are many improvements and facilities, especia
 usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
 to adapt all of the code to be able to run under Linux and also, add support for Zsh.
 
+Latest version of MacOS comes with zsh as the default shell. You can change it at any time using the following command:
+
+`$ sudo chsh -s /bin/bash`
+
+If apple decides to remove from next MacOS releases, you can always use HomeBrew version. In this case, the path is 
+different, like this:
+
+`
+$ brew install bash
+$ sudo chsh -s /usr/local/bin/bash
+`
+
 ## Table of contents
 
 <!-- toc -->
@@ -102,8 +114,8 @@ HomeSetup relies on a series of tools. To use most of the features of HomeSetup,
 There are some tools that are also good to have  if you are a developer. HomeSetup provides some features to help using
 those tools:
 
-- docker 19.03+
-- gradle 4+
+- **docker** 19.03+
+- **gradle** 4+
 
 ### Local installation
 
