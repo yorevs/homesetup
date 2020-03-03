@@ -5,14 +5,13 @@ charset = utf-8
 end_of_line = lf
 indent_style = space
 max_line_length = 120
-trim_trailing_whitespace = true
+trim_trailing_whitespace = false
 insert_final_newline = true
 
 [{*.bash,*.zsh,*.sh}]
 indent_size = 2
 tab_width = 2
 
-[*.md]
-trim_trailing_whitespace = false
+[{*.md,*.py}]
 indent_size = 4
 tab_width = 4
