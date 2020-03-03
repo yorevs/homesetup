@@ -1,7 +1,7 @@
 # HomeSetup
 ## Your shell good as hell ! Not just dotfiles
 
-[![Build](badge.svg)](images/badge.svg)
+[![Build](images/badge.svg)](images/badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
 [![Release](https://badgen.net/badge/release/v1.3.23/gray)](.VERSION)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
