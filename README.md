@@ -56,8 +56,8 @@ $ sudo chsh -s /usr/local/bin/bash
     + [1.1.2. Required software](#required-software)
     + [1.1.3. Recommended software](#recommended-software)
     + [1.1.4. Optional software](#optional-software)
-  * [1.2. Local installation](#local-installation)
-  * [1.3. Remote installation](#remote-installation)
+  * [1.2. Remote installation](#remote-installation)
+  * [1.3. Local installation](#local-installation)
   * [1.4. Firebase setup](#firebase-setup)
     + [1.4.1. Create account](#create-new-account)
     + [1.4.2. Configure account](#configure-account)
@@ -112,14 +112,14 @@ $ sudo chsh -s /usr/local/bin/bash
 
 The following software are required either to clone the repository, execute the tests and install packages:
 
-- **git** v2.20+
-- **brew** v2.0+
-- **bats** v0.4+
+- **git** v2.20+ : To clone and maintain the code
+- **brew** v2.0+ : To install the required tools
 
 #### Recommended software
 
 HomeSetup relies on a series of tools. To use most of the features of HomeSetup, the following packages are required:
 
+- **bats** v0.4+ : To run the automated tests
 - **python** v2.7+ or v3.0+
 - **curl** v7.64+
 - **perl** v5.0+
@@ -137,6 +137,16 @@ those tools:
 - **docker** 19.03+
 - **gradle** 4+
 
+### Remote installation
+
+You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
+
+`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+
+or
+
+`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+
 ### Local installation
 
 Clone the repository using the following command:
@@ -152,16 +162,6 @@ or
 `#> cd ~/HomeSetup && ./install.bash --all` => **To install all files**
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
-
-### Remote installation
-
-You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
-
-`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
-
-or
-
-`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 ### Firebase setup
 

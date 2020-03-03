@@ -49,6 +49,7 @@ function list() {
 
 # @purpose: Execute all HomeSetup automated tests.
 function tests() {
+  command -v bats &> /dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
   [[ -f "${HHS_HOME}"/tests/run-tests.bash ]] || quit 1 "Unable to find automated tests executor !"
   "${HHS_HOME}"/tests/run-tests.bash
 
