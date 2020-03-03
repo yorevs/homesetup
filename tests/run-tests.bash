@@ -14,8 +14,8 @@ ERR_LOG=$(mktemp)
 # shellcheck disable=SC1090
 \. "$HOME/.bash_colors"
 
-pushd &> /dev/null "${HHS_HOME}"/tests/ || exit 128
-echo '' > "${ERR_LOG}"
+pushd &>/dev/null "${HHS_HOME}"/tests/ || exit 128
+echo '' >"${ERR_LOG}"
 
 echo ''
 echo -e "Executing HomeSetup automated tests --------------------"
@@ -34,25 +34,27 @@ while read -r result; do
     echo -e "=> Running tests ${result//\.\./ to } ..."
     echo ''
   else
-    echo -e "${result}" >> "${ERR_LOG}"
+    echo -e "${result}" >>"${ERR_LOG}"
   fi
 done < <(bats --tap ./*.bats 2>&1)
 
-popd &> /dev/null || exit 255
+popd &>/dev/null || exit 255
 echo ''
 echo 'Finished running all tests.'
 
-if [[ "$( grep . "${ERR_LOG}")" != "" ]]; then
+if [[ "$(grep . "${ERR_LOG}")" != "" ]]; then
   echo ''
   echo '### The following errors were reported'
   cat "${ERR_LOG}"
   echo ''
   echo "@ To access the error report file open: \"${ERR_LOG}\" !"
   echo ''
-   echo "${RED}TEST FAILED${NC}"
+  echo "${RED}TEST FAILED${NC}"
+  curl 'https://badgen.net/badge/build/failed/red' --output "${HHS_HOME}"/images/badge.svg &>/dev/null
 else
   echo ''
   echo "${GREEN}TEST SUCCESSFULL${NC}"
+  curl 'https://badgen.net/badge/build/passed/green' --output "${HHS_HOME}"/images/badge.svg &>/dev/null
 fi
 
 echo ''
