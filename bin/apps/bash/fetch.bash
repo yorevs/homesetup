@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034
 
 #  Script: fetch.bash
-# Purpose: Script to fetch REST APIs data.
+# Purpose: Fetch REST APIs data easily.
 # Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -18,7 +18,7 @@ Usage: ${APP_NAME} <method> [options] <url>
 
         method                      : The http method to be used [ GET, POST, PUT, PATCH, DELETE ].
         url                         : The url to make the request.
-        
+
     Options:
         --headers <json_headers>    : The http request headers.
         --body    <json_body>       : The http request body (payload).

@@ -484,27 +484,27 @@ HomeSetup provides useful applications that can be used directly from shell. It 
 
 ### Bash apps
 
-| Application      | Purpose                                                                                      |
-| ---------------- | -------------------------------------------------------------------------------------------- |
-| app-commons.bash | Commonly used bash code functions and variables that you may include it on your bash scripts |
-| check-ip.bash    | Validate and check information about a specified IP                                          |
-| fetch.bash       | Script to fetch REST APIs data                                                               |
-| hhs.bash         | HomeSetup application                                                                        |
+| Application      | Purpose                                                                                       |
+| ---------------- | --------------------------------------------------------------------------------------------- |
+| app-commons.bash | Commonly used bash code functions and variables that you may include it on your bash scripts. |
+| check-ip.bash    | Validate and check information about a specified IP.                                          |
+| fetch.bash       | Fetch REST APIs data easily.                                                                  |
+| hhs.bash         | HomeSetup application.                                                                        |
 
 ### Python apps
 
-| Function      | Purpose                                                       |
-| ------------- | ------------------------------------------------------------- |
-| free.py       | Report system memory usage.                                   |
-| json-find.py  | Find an object from the Json string or file.                  |
-| pprint-xml.py | Pretty print (format) an xml file.                            |
-| print-uni.py  | Print a backslash (4 digits) unicode character E.g:. \\uf118. |
-| send-msg.py   | IP Message Sender. Sends TCP/UDP messages (multi-threaded).   |
-| tcalc.py      | Simple app to do mathematical calculations with time.         |
+| Function         | Purpose                                                       |
+| ---------------- | ------------------------------------------------------------- |
+| free.py          | Report system memory usage.                                   |
+| json-find.py     | Find an object from the Json string or file.                  |
+| pprint-xml.py    | Pretty print (format) an xml file.                            |
+| print-uni.py     | Print a backslash (4 digits) unicode character E.g:. \\uf118. |
+| send-msg.py      | IP Message Sender. Sends TCP/UDP messages (multi-threaded).   |
+| tcalc.py         | Simple app to do mathematical calculations with time.         |
 
 ## Alias definitions
 
-You can customize most of HomeSetup aliases by editing your file `~/.aliasdef`. When you first install HomeSetup,
+You can customize most of HomeSetup aliases by editing your file **~/.aliasdef**. When you first install HomeSetup,
 this file will be automatically generated for you. Further updates may require this file to be updated. We always keep a
 backup of this file, so, you can preserve your customizations, but this process has to be manual.
 
@@ -556,17 +556,21 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
 | --------- | ------------------------------------------------------------------------------------ |
 | help      | Provide a help for __hhs functions.                                                  |
 | list      | List all HHS App Plug-ins and Functions.                                             |
+| tests     | Execute all HomeSetup automated tests.                                               |
 | funcs     | Search for all hhs <functions> describing it's containing file name and line number. |
 | board     | Open the HomeSetup GitHub project board for the current version.                     |
 | host-name | Retrieve/Get/Set the current hostname.                                               |
 
 ## Auto completions
 
+In addition to the normal bash <tab> complete, HomeSetup comes with another <shift+tab> complete. With this, you can iterate
+over the options provided by the complete function instead of just displaying them. 
+
 ### Bash completions
 
 | File                              | Purpose                                           |
 | --------------------------------- | ------------------------------------------------- |
-| brew-completion.bash              | Bash completion file for Homebrew commands        |
+| brew-completion.bash              | Bash completion file for HomeBrew commands        |
 | docker-completion.bash            | Bash completion file for core docker commands.    |
 | docker-compose-completion.bash    | Bash completion for docker-compose commands.      |
 | docker-machine-completion.bash    | Bash completion file for docker-machine commands. |
