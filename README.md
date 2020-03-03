@@ -1,4 +1,5 @@
 # HomeSetup
+
 ## Your shell good as hell ! Not just dotfiles
 
 [![Build](images/badge.svg)](images/badge.svg)
@@ -8,15 +9,34 @@
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
-
 Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
 your shell to another level. There are many improvements and facilities, especially for developers that will ease the
 usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
 to adapt all of the code to be able to run under Linux and also, add support for Zsh.
 
+## Highlights
+
+HomeSetup was created to help using the command line. The purpose was to create useful and easy-to-use features that helps
+on the daily tasks such as, punching the clock, searching for strings and files, change directories, etc...
+
+- Auto setup commonly used configurations.
+- New <tab+shift> complete using menu-complete.
+- Prompt with a new font that supports icons.
+- Package manager like app to help install apps using recipes.
+- Put your custom dotfiles on the cloud and use it wherever you go.
+- New visual way to select and input data for yours scripts without any dependency (pure bash).
+- Dozens of functions to help you configure your terminal the way you want.
+- Highly customizable aliases, so you dictate what mnemonics you want to use.
+- All code is unlicensed, so, you can modify and use freely.
+- All command have a small learning curve, and a provided user handbook (ongoing feature).
+
+## Catalina moved from bash to zsh
+
 Latest version of MacOS comes with zsh as the default shell. You can change it at any time using the following command:
 
-`$ sudo chsh -s /bin/bash`
+```bash
+$ sudo chsh -s /bin/bash
+```
 
 If apple decides to remove from next MacOS releases, you can always use HomeBrew version. In this case, the path is 
 different, like this:
@@ -611,7 +631,8 @@ HomeSetup suggests a terminal profile to use. If you want to, you will need to d
 
 ## Contact
 
-You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/community) community.
+You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/community) community or using our 
+[Reddit](https://www.reddit.com/user/yorevs).
 
 ## Support HomeSetup
 
