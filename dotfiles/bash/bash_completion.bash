@@ -50,7 +50,7 @@ case "${HHS_MY_SHELL}" in
       fi
     fi
 
-    # Enable tab completion for `gradle`
+    # Enable tab completion for `gradle`.
     # Thanks to: https://github.com/gradle/gradle-completion
     if command -v gradle &> /dev/null; then
       if [[ -f "$AUTO_CPL_D/gradle-completion.bash" ]]; then
@@ -59,7 +59,7 @@ case "${HHS_MY_SHELL}" in
       fi
     fi
 
-    # Enable tab completion for `cf`
+    # Enable tab completion for `cf`.
     # Thanks to: https://github.com/cloudfoundry/cli/blob/master/ci/installers/completion/cf
     if command -v cf &> /dev/null; then
       if [[ -f "$AUTO_CPL_D/pcf-completion.bash" ]]; then
@@ -68,7 +68,7 @@ case "${HHS_MY_SHELL}" in
       fi
     fi
 
-    # Enable tab completion for `brew'
+    # Enable tab completion for `brew'.
     # Thanks to: https://github.com/Bash-it/bash-it/blob/master/completion/available/brew.completion.bash
     if command -v brew &> /dev/null; then
       if [[ -f "$AUTO_CPL_D/brew-completion.bash" ]]; then
@@ -77,15 +77,25 @@ case "${HHS_MY_SHELL}" in
       fi
     fi
 
-    # Enable tab completion for `Kubernetes' CLI
+    # Enable tab completion for `Kubernetes' CLI.
+    # TODO Check if it is required to generate it on the fly.
     if command -v kubectl &> /dev/null; then
       if [[ -f "$AUTO_CPL_D/kubectl-completion.bash" ]]; then
         \. "$AUTO_CPL_D/kubectl-completion.bash"
         AUTO_CPL_TYPES+=('Kubernetes')
       fi
     fi
+    
+    # Enable tab completion for `Helm' (Kubernetes Package Manager)
+    # TODO Check if it is required to generate it on the fly.
+    if command -v help &> /dev/null; then
+      if [[ -f "$AUTO_CPL_D/helm-completion.bash" ]]; then
+        \. "$AUTO_CPL_D/helm-completion.bash"
+        AUTO_CPL_TYPES+=('Helm')
+      fi
+    fi
 
-    # Enable tab completion for `HomeSetup`
+    # Enable tab completion for `HomeSetup`.
     if [[ -f "$AUTO_CPL_D/hhs-completion.bash" ]]; then
       \. "$AUTO_CPL_D/hhs-completion.bash"
       AUTO_CPL_TYPES+=('HomeSetup')
