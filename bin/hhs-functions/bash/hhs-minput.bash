@@ -8,16 +8,17 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# inspiRED by: https://stackoverflow.com/questions/2575037/how-to-get-the-cursor-position-in-bash
 # @function: Retrieve the current cursor position on screen. ## This is a very expensive call
 function __hhs_minput_curpos() {
 
   local row col pos=()
 
-  # Sometimes the cursor position is not coming, so make sure we have data to retrieve
-  while
-    [[ -z "$row" || -z "$col" ]]
+  # Sometimes the cursor position is empty, so make sure we have enough data to return.
+  while [[ -z "$row" || -z "$col" ]]
     exec < /dev/tty
     disable-echo
+    # Query for the cursor position.
     echo -en "\033[6n" > /dev/tty
     IFS=';' read -r -d 'R' -a pos
     enable-echo
@@ -76,7 +77,7 @@ function __hhs_minput() {
     echo '    - The outfile must not exist or be an empty file.'
     echo ''
     echo '  Examples: '
-    echo '    minput /tmp/out.txt "Name|||5/30|rw|" "Age||number|1/3||" "Password|password||5|rw|" "Role|||||Admin" "Accept_Conditions|checkbox||||"'
+    echo '    minput /tmp/out.txt "Name|||5/30|rw|" "Age||number|1/3||" "Password|password||5|rw|" "Role||||r|Admin" "Accept_Conditions|checkbox||||"'
     return 1
   fi
 
