@@ -141,6 +141,9 @@ alias ps1='export PS1=$PS1_STYLE'
 # @alias: Make PS2 prompt active
 alias ps2='export PS1=$PS2_STYLE'
 
+# Execute the previous command again, but this time running with sudo
+alias please='sudo !!'
+
 # -----------------------------------------------------------------------------------
 # @category: HomeSetup
 

@@ -12,6 +12,7 @@ environment variables, configuration files and such.
 - [Aliases](#aliases) 
 - [Functions](#functions) 
 - [Applications](#applications) 
+- [Templates](#templates) 
 
 <!-- tocstop -->
 
@@ -21,7 +22,7 @@ Your new terminal uses a bunch of environment variables, that will be extended b
 [bash_envs.bash](../dotfiles/bash/bash_env.bash). You can add or override the default definitions by
 adding them to an **~/.env** file.
 
-    - HHS_HOME : This is where HomeSetup was installed.
+    - HHS_HOME : HomeSetup installation directory.
     - HHS_DIR : This is where HomeSetup stores it's configuration files.
     - HHS_VERSION : Currently installed HomeSetup version.
     - HHS_MOTD : Message of the day, to be displayed when HomeSetup is loaded.
@@ -36,6 +37,38 @@ adding them to an **~/.env** file.
 
 ## Aliases
 
+HomeSetup defines some aliases that can be used to ease common tasks and commands. We provide many functions tha are 
+also aliased, but those can be customised using the installed `~/.aliasdef` file. When you install HomeSetup, a new
+[aliasdef][../dotfiles/aliasdef] file will be created.
+
+### Categories
+
+We group our aliases using the following categories:
+
+- [Navigational](#navigational)
+- [General](#general)
+- [HomeSetup](#homesetup)
+- [Tool aliases](#tool-aliases)
+- [OS Specific aliases](#os-specific-aliases)
+- [Handy Terminal Shortcuts](#handy-terminal-shortcuts)
+- [Python aliases](#python-aliases)
+- [Perl aliases](#perl-aliases)
+- [Git aliases](#git-aliases)
+- [Gradle aliases](#gradle-aliases)
+- [Docker aliases](#docker-aliases)
+
 ## Functions
 
+HomeSetup defines a bunch of functions to help with the daily tasks such as "punch the clock", calculations with time,
+search and cd into directories, save most used directories, aliases and commands, git stuff and more. They can also be 
+aliased using the `~/.aliasdef` file. We also define some default values for them (that you can also change later).
+
+Functions are grouped into two categories:
+
+- [Standard tools](#standard-tools)
+- [Development tools](#development-tools)
+
 ## Applications
+
+In addition to aliases and functions, HomeSetup also puts available some applications for different purposes, such as
+IP information verification, fetch REST services, and more.

@@ -16,19 +16,20 @@ to adapt all of the code to be able to run under Linux and also, add support for
 
 ## Highlights
 
-HomeSetup was created to help using the command line. The purpose was to create useful and easy-to-use features that helps
-on the daily tasks such as, punching the clock, searching for strings and files, change directories, etc...
+HomeSetup was created to help users with the command line. The purpose was to create useful and easy-to-use features 
+that speedup daily tasks such as, punching the clock, searching for strings and files, change directories, using git, 
+gradle, docker, etc...
 
-- Auto setup commonly used configurations.
-- New <tab+shift> complete using menu-complete.
-- Prompt with a new font that supports icons.
-- Package manager like app to help install apps using recipes.
-- Put your custom dotfiles on the cloud and use it wherever you go.
-- New visual way to select and input data for yours scripts without any dependency (pure bash).
-- Dozens of functions to help you configure your terminal the way you want.
-- Highly customizable aliases, so you dictate what mnemonics you want to use.
-- All code is unlicensed, so, you can modify and use freely.
-- All command have a small learning curve, and a provided user handbook (ongoing feature).
+- Setup most common configurations automatically.
+- New <tab+shift> complete (using menu-complete) that will cycle though options.
+- Prompt with a new monospaced font that supports [font-awesome](https://fontawesome.com/cheatsheet?from=io) icons.
+- Package manager helper to help installing application using recipes (not only brew installs).
+- Save your custom dotfiles on the [cloud](https://console.firebase.google.com) and use it wherever you go.
+- New visual way to **select** and **input** data for your scripts without dependencies (pure bash code).
+- Dozens of functions to help you configure your terminal, and do daily tasks.
+- Highly customizable aliases, so you dictate what mnemonics you want to use (use your own syntax).
+- All code is [unlicensed](LICENSE.md), so, you can modify and use freely.
+- Small learning curve and a provided [user's handbook](docs/USER_HANDBOOK.md).
 
 ## Catalina moved from bash to zsh
 
@@ -612,22 +613,23 @@ over the options provided by the complete function instead of just displaying th
 | hhs-completion.bash               | Bash completion for HomeSetup.                    |
 | pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
 | kubectl-completion.bash           | Bash completion for kubectl.                      |
+| helm-completion.bash              | Bash completion for helm.                         |
 
 ## Terminal setup
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
-* [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
+    [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
 ### Terminal App
 
-* [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
-* [x] Set HomeSetup as the default profile.
+    [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
+    [x] Set HomeSetup as the default profile.
 
 ### iTerm2 App
 
-* [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
-* [x] Set HomeSetup as the default profile.
+    [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
+    [x] Set HomeSetup as the default profile.
 
 ## Contact
 
@@ -636,12 +638,14 @@ You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/communi
 
 ## Support HomeSetup
 
-You can support HomeSetup by donating or helping code it. Fell free to contact me for details.
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) 
+or coding. Fell free to contact me for details. When contributing with code change please take a look at our 
+[guidelines](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Final notes
 
 HomeSetup will fetch for update automatically every 7 days from the installation on.
 
-**To manually keep your HomeSetup updated, run `#> hhu` . This will pull the latest HomeSetup code**
+**To manually keep your HomeSetup updated**, run `$ hhs updater execute`. This will install the latest HomeSetup version.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
