@@ -12,6 +12,10 @@ Usage: ${APP_NAME} <arg_name> [options]
     Arguments:
       ARG_1   : TODO: Description about the argument
     
+    Examples:
+      Example description:
+        => example
+    
     Exit Status:
       (0) Success 
       (1) Failure due to missing/wrong client input or similar issues

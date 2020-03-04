@@ -1,6 +1,6 @@
 # HomeSetup
 
-## Your shell good as hell ! Not just dotfiles
+## Your shell, good as hell !
 
 [![Build](images/badge.svg)](images/badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
@@ -9,10 +9,12 @@
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
-Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
-your shell to another level. There are many improvements and facilities, especially for developers that will ease the
-usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
-to adapt all of the code to be able to run under Linux and also, add support for Zsh.
+HomeSetup is a bundle os scripts and dotfiles that will elevate your bash shell experience to another level. There are 
+many improvements and facilities, especially for developers that will ease the usage and highly improve your productivity. 
+Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans to adapt all of the code to be able to run under 
+Linux and also, add support for Zsh.
+
+**This it not just another dotfiles framework**
 
 ## Highlights
 
@@ -140,27 +142,28 @@ those tools:
 
 ### Remote installation
 
-You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
+_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the following 
+command to clone and install:
 
-`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+`$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 or
 
-`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+`$ wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 ### Local installation
 
 Clone the repository using the following command:
 
-`#> git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
+`$ git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
 
 And then install dotfiles using the following command:
 
-`#> cd ~/HomeSetup && ./install.bash` => **To install one by one**
+`$ cd ~/HomeSetup && ./install.bash` => **To install one by one**
 
 or
 
-`#> cd ~/HomeSetup && ./install.bash --all` => **To install all files**
+`$ cd ~/HomeSetup && ./install.bash --all` => **To install all files**
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 
@@ -194,11 +197,11 @@ Access your account from: https://console.firebase.google.com/
 
 Grab you *Project ID* from the settings Settings menu.
 
-Type in a shell: `#> dotfiles --setup`
+Type in a shell: `$ dotfiles --setup`
 
 Fill in the information required.
 You are now ready to use the Firebase features of HomeSetup.
-Type: `#> dotfiles.bash help fb` for further information about using it.
+Type: `$ dotfiles.bash help fb` for further information about using it.
 
 ## Uninstallation
 
@@ -263,37 +266,38 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### General
 
-| ALIAS | Description                                                        |
-| ----- | ------------------------------------------------------------------ |
-| q     | Short for `exit 0' from terminal                                   |
-| sudo  | Enable aliases to be sudo’ed                                       |
-| ls    | Always use color output for **ls**                                 |
-| l     | List _all files_ colorized in long format                          |
-| lsd   | List _all directories_ in long format                              |
-| ll    | List _all files_ colorized in long format, **including dot files** |
-| lll   | List _all **.dotfiles**_ colorized in long format                  |
-| lld   | List _all **.dotfolders**_ colorized in long format                |
-| grep  | Always enable colored **grep** output                              |
-| egrep | Always enable colored **fgrep** output                             |
-| fgrep | Always enable colored **egrep** output                             |
-| rm    | By default **rm** will prompt for confirmation and will be verbose |
-| cp    | By default **cp** will prompt for confirmation and will be verbose |
-| mv    | By default **mv** will prompt for confirmation and will be verbose |
-| df    | Make **df** command output pretty and human readable format        |
-| du    | Make **du** command output pretty and human readable format        |
-| psg   | Make **ps** command output pretty and human readable format        |
-| vi    | Use **vim** instead of **vi** if installed                         |
-| more  | **more** will interpret escape sequences                           |
-| less  | **less** will interpret escape sequences                           |
-| mount | Make `mount' command output pretty and human readable format       |
-| cpu   | **top** shortcut ordered by _cpu_                                  |
-| mem   | **top** shortcut ordered by _Memory_                               |
-| week  | Date&Time - Display current **week number**                        |
-| now   | Date&Time - Display current **date and time**                      |
-| ts    | Date&Time - Display current **timestamp**                          |
-| wget  | If **wget** is not available, use **curl** instead                 |
-| ps1   | Make _PS1_ prompt active                                           |
-| ps2   | Make _PS2_ prompt active                                           |
+| ALIAS     | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| q         | Short for `exit 0' from terminal                                      |
+| sudo      | Enable aliases to be sudo’ed                                          |
+| ls        | Always use color output for **ls**                                    |
+| l         | List _all files_ colorized in long format                             |
+| lsd       | List _all directories_ in long format                                 |
+| ll        | List _all files_ colorized in long format, **including dot files**    |
+| lll       | List _all **.dotfiles**_ colorized in long format                     |
+| lld       | List _all **.dotfolders**_ colorized in long format                   |
+| grep      | Always enable colored **grep** output                                 |
+| egrep     | Always enable colored **fgrep** output                                |
+| fgrep     | Always enable colored **egrep** output                                |
+| rm        | By default **rm** will prompt for confirmation and will be verbose    |
+| cp        | By default **cp** will prompt for confirmation and will be verbose    |
+| mv        | By default **mv** will prompt for confirmation and will be verbose    |
+| df        | Make **df** command output pretty and human readable format           |
+| du        | Make **du** command output pretty and human readable format           |
+| psg       | Make **ps** command output pretty and human readable format           |
+| vi        | Use **vim** instead of **vi** if installed                            |
+| more      | **more** will interpret escape sequences                              |
+| less      | **less** will interpret escape sequences                              |
+| mount     | Make `mount' command output pretty and human readable format          |
+| cpu       | **top** shortcut ordered by _cpu_                                     |
+| mem       | **top** shortcut ordered by _Memory_                                  |
+| week      | Date&Time - Display current **week number**                           |
+| now       | Date&Time - Display current **date and time**                         |
+| ts        | Date&Time - Display current **timestamp**                             |
+| wget      | If **wget** is not available, use **curl** instead                    |
+| ps1       | Make _PS1_ prompt active                                              |
+| ps2       | Make _PS2_ prompt active                                              |
+| please    | Execute the previous command again, but this time running with sudo   |
 
 ### HomeSetup
 
@@ -548,32 +552,6 @@ The original content and aliases are defined on the original [aliasdef](dotfiles
 
 HomeSetup application is a bundle of scripts and functions to extend the terminal features. There are plug-able scripts
 and functions to be incorporated into the app.
-
-```
-Usage:  [option] {function | plugin {task} <command>} [args...]
-
-    HomeSetup Application Manager.
-
-    Options:
-      -v  |  --version  : Display current program version.
-      -h  |     --help  : Display this help message.
-
-    Tasks:
-      help      : Display a help about the plugin.
-      version   : Display current plugin version.
-      execute   : Execute a plugin command.
-
-    Arguments:
-      args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
-
-    Exit Status:
-      (0) Success.
-      (1) Failure due to missing/wrong client input or similar issues.
-      (2) Failure due to program/plugin execution failures.
-
-  Notes:
-    - To discover which plugins and functions are available type: hhs list
-```
 
 ### HHS plugins
 
