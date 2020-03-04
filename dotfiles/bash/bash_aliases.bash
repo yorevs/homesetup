@@ -132,6 +132,8 @@ alias week='\date +%V'
 alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
 # @alias: Date&Time - Display current timestamp
 alias ts='\date "+%s%S"'
+# @alias: Date&Time - Display current time in millis
+alias time-ms='python -c "import time; print(int(round(time.time() * 1000)))"'
 
 # @alias: If `wget' is not available, use `curl' instead
 __hhs_has "wget" || alias wget='\curl -O'

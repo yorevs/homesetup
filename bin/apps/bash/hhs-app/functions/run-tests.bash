@@ -11,13 +11,13 @@
 # @purpose: Execute all HomeSetup automated tests.
 function tests() {
   
-  local started_sec started_min finished_sec finished_min err_log output badge
+  local started_sec started finished  err_log output badge
   
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 
   err_log=$(mktemp)
-  badge=""${HHS_HOME}"/images/tests-badge.svg"
-  started_sec=$()
+  badge="${HHS_HOME}/images/tests-badge.svg"
+  started=$(python -c "import time; print(int(round(time.time() * 1000)))")
 
   pushd &>/dev/null "${HHS_HOME}"/tests/ || exit 128
   echo '' >"${err_log}"
@@ -44,6 +44,11 @@ function tests() {
   popd &>/dev/null || exit 255
   echo ''
   echo 'Finished running all tests.'
+  
+  finished=$(python -c "import time; print(int(round(time.time() * 1000)))")
+  diff_time=$((finished - started))
+  diff_time_sec=$((diff_time/1000))
+  diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
   if [[ "$(grep . "${err_log}")" != "" ]]; then
     echo ''
@@ -52,11 +57,11 @@ function tests() {
     echo ''
     echo "@ To access the error report file open: \"${err_log}\" !"
     echo ''
-    echo "${RED}TEST FAILED${NC}"
+    echo "${RED}TEST FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" &>/dev/null
   else
     echo ''
-    echo "${GREEN}TEST SUCCESSFULL${NC} in 1m 23s"
+    echo "${GREEN}TEST SUCCESSFULL${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" &>/dev/null
   fi
 

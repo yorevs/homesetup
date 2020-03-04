@@ -141,7 +141,8 @@ register_plugins() {
       PLUGINS_LIST+=("${plugin}")
     fi
   done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
-  IFS=$"${RESET_IFS}"
+  
+  return 0
 }
 
 # @purpose: Invoke the plugin command
@@ -150,6 +151,7 @@ invoke_command() {
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
   # Open a new subshell, so that we can configure the running environment properly
   (
+    # We have to use exit and not quit, because we are in a subshell
     for idx in "${!PLUGINS[@]}"; do
       if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
         [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
@@ -188,6 +190,8 @@ register_local_functions() {
     # Register the functions to be unset when program quits
     UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
   done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
+  
+  return 0
 }
 
 # ------------------------------------------
@@ -209,7 +213,6 @@ register_hhs_functions() {
     fn_name=$(awk -F ':function' '{print $2}' <<< "$fn")
     HHS_FUNCTIONS+=("${filename// /.} => ${fn_name}")
   done
-  echo "${NR}"
 
   return 0
 }
