@@ -77,7 +77,7 @@ We group our aliases using the following categories:
 
 HomeSetup defines a bunch of functions to help with the daily tasks such as "punch the clock", calculations with time,
 search and cd into directories, save most used directories, aliases and commands, git stuff and more. They can also be 
-aliased using the `~/.aliasdef` file. We also define some default values for them (that you can also change later).
+aliased using the **~/.aliasdef** file. We also define some default values for them (that you can also change later).
 
 You can override or add additional variables by adding entries to your installed **~/.functions** file. When you first 
 install HomeSetup this file will be created automatically for you, so you just need to edit it.

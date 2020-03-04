@@ -1,4 +1,4 @@
-Applications help template
+Help template
 -------------------------------------------------------------------------------
 ```
 Usage: ${APP_NAME} <arg_name> [options]
