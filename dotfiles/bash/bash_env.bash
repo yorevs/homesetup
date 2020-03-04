@@ -11,9 +11,11 @@
 # !NOTICE: Do not change this file. To customize your environment variables edit the file ~/.env
 
 # System locale (defaults)
-export LC_ALL=en_US
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US:en
+export LANG=${LANG:-en_US.UTF-8}
+export LANGUAGE=${LANGUAGE:-en_US:en}
+export LC_ALL=${LANG}
+
+# Save the original IFS
 export RESET_IFS="$IFS"
 
 # Current OS and Terminal
@@ -55,14 +57,6 @@ export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
 export EDITOR="${EDITOR:-vi}"
 
-command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
-command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
-
-[[ -d "${HOME}/Workspace" ]] && export WORKSPACE="${WORKSPACE:-${HOME}/Workspace}"
-[[ -d "${HOME}/Desktop" ]] && export DESKTOP="${DESKTOP:-${HOME}/Desktop}"
-[[ -d "${HOME}/Downloads" ]] && export DOWNLOADS="${DOWNLOADS:-${HOME}/Downloads}"
-[[ -d "${HOME}/Dropbox" ]] && export DROPBOX="${DROPBOX:-${HOME}/Dropbox}"
-
 # ----------------------------------------------------------------------------
 # Bash History
 
@@ -94,13 +88,21 @@ export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 
+command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
+command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
+
+[[ -d "${HOME}/Workspace" ]] && export WORKSPACE="${WORKSPACE:-${HOME}/Workspace}"
+[[ -d "${HOME}/Desktop" ]] && export DESKTOP="${DESKTOP:-${HOME}/Desktop}"
+[[ -d "${HOME}/Downloads" ]] && export DOWNLOADS="${DOWNLOADS:-${HOME}/Downloads}"
+[[ -d "${HOME}/Dropbox" ]] && export DROPBOX="${DROPBOX:-${HOME}/Dropbox}"
+
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 DEFAULT_DEV_TOOLS=(
-  'ssh' 'hexdump' 'vim' 'xcode-select' 'brew tree'
+  'hexdump' 'vim' 'xcode-select' 'brew' 'bats' 'tree'
   'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'ruby'
   'gcc' 'make' 'qmake' 'doxygen' 'ant' 'mvn' 'gradle'
   'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 'md5'
-  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'base64' 'bats'
+  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'asciinema' 'base64'
   'git' 'go' 'python' 'jq' 'jenv' 'perl' 'ifconfig' 'groovy'
 )
 

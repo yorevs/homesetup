@@ -1,7 +1,9 @@
+Applications help template
+-------------------------------------------------------------------------------
+```
 Usage: ${APP_NAME} <arg_name> [options]
-    # TODO: App. SYNOPSIS.
-
-    # TODO: App. DESCRIPTION.
+    # Optional: App. SYNOPSIS.
+    # Optional: App. DESCRIPTION.
 
     Options:
       -A | --Along            : TODO: Description about the option -A
@@ -15,8 +17,10 @@ Usage: ${APP_NAME} <arg_name> [options]
       (1) Failure due to missing/wrong client input or similar issues
       (2) Failure due to program execution failures
   
-  Notes: TODO: Program NOTES
+  Notes: Optional: App. NOTES
+```
 
+Notes
 -------------------------------------------------------------------------------
 # Uses [options] to indicate where the options go
 # - arg_name for a required, singular arg

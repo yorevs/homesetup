@@ -129,7 +129,7 @@ uninstall_recipe() {
       echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}" && return 1
     fi
     echo -e "${YELLOW}Uninstalling $1, please wait ... "
-    if uninstall; then
+    if uninstall && brew deps asciinema | xargs brew remove --ignore-dependencies; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
     else
       quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !"
