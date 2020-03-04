@@ -1,34 +1,37 @@
 # HomeSetup
 
-## Your shell good as hell ! Not just dotfiles
+## Your shell, good as hell !
 
 [![Build](images/badge.svg)](images/badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.3.23/gray)](.VERSION)
+[![Release](https://badgen.net/badge/release/v1.3.26/gray)](.VERSION)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
-Terminal .dotfiles and bash improvements for MacOS. HomeSetup is a bundle os scripts and dotfiles that will elevate 
-your shell to another level. There are many improvements and facilities, especially for developers that will ease the
-usage and highly improve your productivity. Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans
-to adapt all of the code to be able to run under Linux and also, add support for Zsh.
+HomeSetup is a bundle os scripts and dotfiles that will elevate your bash shell experience to another level. There are 
+many improvements and facilities, especially for developers that will ease the usage and highly improve your productivity. 
+Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans to adapt all of the code to be able to run under 
+Linux and also, add support for Zsh.
+
+**This it not just another dotfiles framework**
 
 ## Highlights
 
-HomeSetup was created to help using the command line. The purpose was to create useful and easy-to-use features that helps
-on the daily tasks such as, punching the clock, searching for strings and files, change directories, etc...
+HomeSetup was created to help users with the command line. The purpose was to create useful and easy-to-use features 
+that speedup daily tasks such as, punching the clock, searching for strings and files, change directories, using git, 
+gradle, docker, etc...
 
-- Auto setup commonly used configurations.
-- New <tab+shift> complete using menu-complete.
-- Prompt with a new font that supports icons.
-- Package manager like app to help install apps using recipes.
-- Put your custom dotfiles on the cloud and use it wherever you go.
-- New visual way to select and input data for yours scripts without any dependency (pure bash).
-- Dozens of functions to help you configure your terminal the way you want.
-- Highly customizable aliases, so you dictate what mnemonics you want to use.
-- All code is unlicensed, so, you can modify and use freely.
-- All command have a small learning curve, and a provided user handbook (ongoing feature).
+- Setup most common configurations automatically.
+- New <tab+shift> complete (using menu-complete) that will cycle though options.
+- Prompt with a new monospaced font that supports [font-awesome](https://fontawesome.com/cheatsheet?from=io) icons.
+- Package manager helper to help installing application using recipes (not only brew installs).
+- Save your custom dotfiles on the [cloud](https://console.firebase.google.com) and use it wherever you go.
+- New visual way to **select** and **input** data for your scripts without dependencies (pure bash code).
+- Dozens of functions to help you configure your terminal, and do daily tasks.
+- Highly customizable aliases, so you dictate what mnemonics you want to use (use your own syntax).
+- All code is [unlicensed](LICENSE.md), so, you can modify and use freely.
+- Small learning curve and a provided [user's handbook](docs/USER_HANDBOOK.md).
 
 ## Catalina moved from bash to zsh
 
@@ -139,27 +142,28 @@ those tools:
 
 ### Remote installation
 
-You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
+_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the following 
+command to clone and install:
 
-`#> curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+`$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 or
 
-`#> wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+`$ wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 ### Local installation
 
 Clone the repository using the following command:
 
-`#> git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
+`$ git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
 
 And then install dotfiles using the following command:
 
-`#> cd ~/HomeSetup && ./install.bash` => **To install one by one**
+`$ cd ~/HomeSetup && ./install.bash` => **To install one by one**
 
 or
 
-`#> cd ~/HomeSetup && ./install.bash --all` => **To install all files**
+`$ cd ~/HomeSetup && ./install.bash --all` => **To install all files**
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 
@@ -193,11 +197,11 @@ Access your account from: https://console.firebase.google.com/
 
 Grab you *Project ID* from the settings Settings menu.
 
-Type in a shell: `#> dotfiles --setup`
+Type in a shell: `$ dotfiles --setup`
 
 Fill in the information required.
 You are now ready to use the Firebase features of HomeSetup.
-Type: `#> dotfiles.bash help fb` for further information about using it.
+Type: `$ dotfiles.bash help fb` for further information about using it.
 
 ## Uninstallation
 
@@ -262,37 +266,38 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### General
 
-| ALIAS | Description                                                        |
-| ----- | ------------------------------------------------------------------ |
-| q     | Short for `exit 0' from terminal                                   |
-| sudo  | Enable aliases to be sudo’ed                                       |
-| ls    | Always use color output for **ls**                                 |
-| l     | List _all files_ colorized in long format                          |
-| lsd   | List _all directories_ in long format                              |
-| ll    | List _all files_ colorized in long format, **including dot files** |
-| lll   | List _all **.dotfiles**_ colorized in long format                  |
-| lld   | List _all **.dotfolders**_ colorized in long format                |
-| grep  | Always enable colored **grep** output                              |
-| egrep | Always enable colored **fgrep** output                             |
-| fgrep | Always enable colored **egrep** output                             |
-| rm    | By default **rm** will prompt for confirmation and will be verbose |
-| cp    | By default **cp** will prompt for confirmation and will be verbose |
-| mv    | By default **mv** will prompt for confirmation and will be verbose |
-| df    | Make **df** command output pretty and human readable format        |
-| du    | Make **du** command output pretty and human readable format        |
-| psg   | Make **ps** command output pretty and human readable format        |
-| vi    | Use **vim** instead of **vi** if installed                         |
-| more  | **more** will interpret escape sequences                           |
-| less  | **less** will interpret escape sequences                           |
-| mount | Make `mount' command output pretty and human readable format       |
-| cpu   | **top** shortcut ordered by _cpu_                                  |
-| mem   | **top** shortcut ordered by _Memory_                               |
-| week  | Date&Time - Display current **week number**                        |
-| now   | Date&Time - Display current **date and time**                      |
-| ts    | Date&Time - Display current **timestamp**                          |
-| wget  | If **wget** is not available, use **curl** instead                 |
-| ps1   | Make _PS1_ prompt active                                           |
-| ps2   | Make _PS2_ prompt active                                           |
+| ALIAS     | Description                                                           |
+| --------- | --------------------------------------------------------------------- |
+| q         | Short for `exit 0' from terminal                                      |
+| sudo      | Enable aliases to be sudo’ed                                          |
+| ls        | Always use color output for **ls**                                    |
+| l         | List _all files_ colorized in long format                             |
+| lsd       | List _all directories_ in long format                                 |
+| ll        | List _all files_ colorized in long format, **including dot files**    |
+| lll       | List _all **.dotfiles**_ colorized in long format                     |
+| lld       | List _all **.dotfolders**_ colorized in long format                   |
+| grep      | Always enable colored **grep** output                                 |
+| egrep     | Always enable colored **fgrep** output                                |
+| fgrep     | Always enable colored **egrep** output                                |
+| rm        | By default **rm** will prompt for confirmation and will be verbose    |
+| cp        | By default **cp** will prompt for confirmation and will be verbose    |
+| mv        | By default **mv** will prompt for confirmation and will be verbose    |
+| df        | Make **df** command output pretty and human readable format           |
+| du        | Make **du** command output pretty and human readable format           |
+| psg       | Make **ps** command output pretty and human readable format           |
+| vi        | Use **vim** instead of **vi** if installed                            |
+| more      | **more** will interpret escape sequences                              |
+| less      | **less** will interpret escape sequences                              |
+| mount     | Make `mount' command output pretty and human readable format          |
+| cpu       | **top** shortcut ordered by _cpu_                                     |
+| mem       | **top** shortcut ordered by _Memory_                                  |
+| week      | Date&Time - Display current **week number**                           |
+| now       | Date&Time - Display current **date and time**                         |
+| ts        | Date&Time - Display current **timestamp**                             |
+| wget      | If **wget** is not available, use **curl** instead                    |
+| ps1       | Make _PS1_ prompt active                                              |
+| ps2       | Make _PS2_ prompt active                                              |
+| please    | Execute the previous command again, but this time running with sudo   |
 
 ### HomeSetup
 
@@ -548,32 +553,6 @@ The original content and aliases are defined on the original [aliasdef](dotfiles
 HomeSetup application is a bundle of scripts and functions to extend the terminal features. There are plug-able scripts
 and functions to be incorporated into the app.
 
-```
-Usage:  [option] {function | plugin {task} <command>} [args...]
-
-    HomeSetup Application Manager.
-
-    Options:
-      -v  |  --version  : Display current program version.
-      -h  |     --help  : Display this help message.
-
-    Tasks:
-      help      : Display a help about the plugin.
-      version   : Display current plugin version.
-      execute   : Execute a plugin command.
-
-    Arguments:
-      args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
-
-    Exit Status:
-      (0) Success.
-      (1) Failure due to missing/wrong client input or similar issues.
-      (2) Failure due to program/plugin execution failures.
-
-  Notes:
-    - To discover which plugins and functions are available type: hhs list
-```
-
 ### HHS plugins
 
 | Plug-in  | Purpose                                                                  |
@@ -612,22 +591,23 @@ over the options provided by the complete function instead of just displaying th
 | hhs-completion.bash               | Bash completion for HomeSetup.                    |
 | pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
 | kubectl-completion.bash           | Bash completion for kubectl.                      |
+| helm-completion.bash              | Bash completion for helm.                         |
 
 ## Terminal setup
 
 HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
 
-* [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
+    [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
 ### Terminal App
 
-* [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
-* [x] Set HomeSetup as the default profile.
+    [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
+    [x] Set HomeSetup as the default profile.
 
 ### iTerm2 App
 
-* [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
-* [x] Set HomeSetup as the default profile.
+    [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
+    [x] Set HomeSetup as the default profile.
 
 ## Contact
 
@@ -636,12 +616,14 @@ You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/communi
 
 ## Support HomeSetup
 
-You can support HomeSetup by donating or helping code it. Fell free to contact me for details.
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) 
+or coding. Fell free to contact me for details. When contributing with code change please take a look at our 
+[guidelines](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Final notes
 
 HomeSetup will fetch for update automatically every 7 days from the installation on.
 
-**To manually keep your HomeSetup updated, run `#> hhu` . This will pull the latest HomeSetup code**
+**To manually keep your HomeSetup updated**, run `$ hhs updater execute`. This will install the latest HomeSetup version.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)

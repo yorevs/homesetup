@@ -71,13 +71,14 @@ function __hhs_minput() {
     echo '             [Perm] : The field permissions. One of {r|[rw]}. Where \"r\" for Read Only ; \"rw\" for Read & Write.'
     echo '            [Value] : The initial value of the field. This field may not be blank if the field is read only.'
     echo ''
+    echo '    Examples: '
+    echo '      Form with 4 fields (Name,Age,Password,Role,Accept_Conditions): '
+    echo "        => ${FUNCNAME[0]} /tmp/out.txt 'Name|||5/30|rw|' 'Age||number|1/3||' 'Password|password||5|rw|' 'Role||||r|Admin' 'Accept_Conditions|checkbox||||' "
+    echo ''
     echo '  Notes: '
     echo '    - Optional fields will assume a default value if they are not specified.'
-    echo '    - A temporary file is suggested to used with this command: #> mktemp.'
+    echo '    - A temporary file is suggested to used with this command: $ mktemp.'
     echo '    - The outfile must not exist or be an empty file.'
-    echo ''
-    echo '  Examples: '
-    echo '    minput /tmp/out.txt "Name|||5/30|rw|" "Age||number|1/3||" "Password|password||5|rw|" "Role||||r|Admin" "Accept_Conditions|checkbox||||"'
     return 1
   fi
 
@@ -129,7 +130,7 @@ function __hhs_minput() {
   disable-line-wrap
   tab_index=0
   clear
-
+  echo -e "\033[H\033[1B\033[J"
   echo -e "\033[2K${YELLOW}${form_title}${NC}\n"
   save-cursor-pos
 

@@ -8,6 +8,8 @@ You are welcome to contribute with the project by following the guidelines below
 2. If you write [bats tests](tests) for your code, it will be approved faster.
 3. Use [ShellCheck](https://www.shellcheck.net) to make sure your code has a "good smell".
 4. Provide a meaningful help using the [Help template](templates/txt/help.txt).
+5. Commits to the repository must follow the [commit-templates](templates/git/commits).
+6. Create a fork or branch with an adequate name.
 
 You can contribute in many ways:
 
@@ -17,4 +19,3 @@ You can contribute in many ways:
 - Providing ME a constructive feedback.
 
 Best Regards.
-/Yore.

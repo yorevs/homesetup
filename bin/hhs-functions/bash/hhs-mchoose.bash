@@ -22,8 +22,14 @@ function __hhs_mchoose() {
     echo '    Arguments: '
     echo '      output_file : The output file where the result will be stored.'
     echo ''
+    echo '    Examples: '
+    echo '      Choose numbers from 1 to 20 (start with all options checked):'
+    echo "        => ${FUNCNAME[0]} /tmp/out.txt {1..20} && cat /tmp/out.txt"
+    echo '      Choose numbers from 1 to 20 (start with all options unchecked):'
+    echo "        => ${FUNCNAME[0]} -c /tmp/out.txt {1..20} && cat /tmp/out.txt"
+    echo ''
     echo '  Notes: '
-    echo '    - A temporary file is suggested to used with this command: #> mktemp.'
+    echo '    - A temporary file is suggested to used with this command: $ mktemp.'
     echo '    - The outfile must not exist or it be an empty file.'
     return 1
   fi
@@ -52,8 +58,9 @@ function __hhs_mchoose() {
     sel_options[idx]=${init_value}
   done
 
-  save-cursor-pos
   disable-line-wrap
+  echo -e "\033[H\033[1B\033[J"
+  save-cursor-pos
 
   while :; do
 

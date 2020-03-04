@@ -22,9 +22,13 @@ function __hhs_mselect() {
     echo '    Arguments: '
     echo '      output_file : The output file where the result will be stored.'
     echo ''
+    echo '    Examples: '
+    echo '      Selct a number from 1 to 100:'
+    echo "        => ${FUNCNAME[0]} /tmp/out.txt {1..100} && cat /tmp/out.txt"
+    echo ''
     echo '  Notes: '
     echo '    - If only one option is available, mselect will select it and return.'
-    echo '    - A temporary file is suggested to used with this command: #> mktemp.'
+    echo '    - A temporary file is suggested to used with this command: $ mktemp.'
     echo '    - The outfile must not exist or it be an empty file.'
     return 1
   fi
@@ -45,8 +49,10 @@ function __hhs_mselect() {
 
   # When only one option is provided, select the typed_index 0 and return
   [[ "$len" -eq 1 ]] && echo "0" > "$outfile" && return 0
-  save-cursor-pos
+  
   disable-line-wrap
+  echo -e "\033[H\033[1B\033[J"
+  save-cursor-pos
 
   while :; do
 

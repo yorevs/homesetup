@@ -141,6 +141,9 @@ alias ps1='export PS1=$PS1_STYLE'
 # @alias: Make PS2 prompt active
 alias ps2='export PS1=$PS2_STYLE'
 
+# @alias: Execute the previous command again, but this time running with sudo.
+alias please='sudo !!'
+
 # -----------------------------------------------------------------------------------
 # @category: HomeSetup
 
@@ -293,8 +296,8 @@ if __hhs_has "perl"; then
 
   # @alias: Remove escape (\EscXX) codes from text
   alias clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
-  # @alias: Copy to clipboard pbcopy required
-  __hhs_has "pbcopy" && alias clipboard="cse | pbcopy"
+  # @alias: Copy to clipboard removing any escape sequences. pbcopy is required
+  __hhs_has "pbcopy" && alias clipboard="clean_escapes | pbcopy"
 fi
 
 # -----------------------------------------------------------------------------------
