@@ -2,7 +2,7 @@
 
 ## Your shell, good as hell !
 
-[![Tests](images/badge.svg)](images/badge.svg)
+[![Tests](images/tests-badge.svg)](images/tests-badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
 [![Release](https://badgen.net/badge/release/v1.3.26/gray)](.VERSION)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
