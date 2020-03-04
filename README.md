@@ -2,7 +2,7 @@
 
 ## Your shell, good as hell !
 
-[![Build](images/badge.svg)](images/badge.svg)
+[![Tests](images/badge.svg)](images/badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
 [![Release](https://badgen.net/badge/release/v1.3.26/gray)](.VERSION)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
@@ -294,6 +294,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | week      | Date&Time - Display current **week number**                           |
 | now       | Date&Time - Display current **date and time**                         |
 | ts        | Date&Time - Display current **timestamp**                             |
+| time-ms   | Date&Time - Display current **time in millis**                        |
 | wget      | If **wget** is not available, use **curl** instead                    |
 | ps1       | Make _PS1_ prompt active                                              |
 | ps2       | Make _PS2_ prompt active                                              |

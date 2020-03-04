@@ -101,7 +101,7 @@ Currently HomeSetup offers a handful of templates, that helps you code or config
 are provided with the latest version:
 
 - [Bash templates](../templates/bash)
-    * [Bash Apps](../templates/bash/app.bash) : Create bash applications using our style.
+    * [app.bash](../templates/bash/app.bash) : Create bash applications using our style.
 - [Git templates](../templates/git)
     * [commits](../templates/git/commits) : HomeSetup commit messages format.
     * [gitconfig](../templates/git/gitconfig) : .gitconfig file template.
@@ -109,8 +109,8 @@ are provided with the latest version:
     * [commit-msg](../templates/git/hooks/commit-msg) : Git hook to make sure your commit message is following our format.
     * [prepare-commit-msg](../templates/git/hooks/prepare-commit-msg) : Make sure no one commits on master.
 - [Python templates](../templates/py)
-    * [Python Apps](../templates/py/app.py) : Create python applications using our style.
+    * [app.py](../templates/py/app.py) : Create python applications using our style.
 - [Text templates](../templates/txt)
-    * [Help](../templates/txt/help.txt) : Template used to create HomeSetup help messages.
-    * [Man Page](../templates/txt/man.txt) : Template used to create bash man pages.
+    * [help.txt](../templates/txt/help.txt) : Template used to create HomeSetup help messages.
+    * [man.txt](../templates/txt/man.txt) : Template used to create bash man pages.
 
