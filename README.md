@@ -26,7 +26,7 @@ gradle, docker, etc...
 - New <tab+shift> complete (using menu-complete) that will cycle though options.
 - Prompt with a new monospaced font that supports [font-awesome](https://fontawesome.com/cheatsheet?from=io) icons.
 - Package manager helper to help installing application using recipes (not only brew installs).
-- Save your custom dotfiles on the [cloud](https://console.firebase.google.com) and use it wherever you go.
+- Save your custom dotfiles on [firebase](https://console.firebase.google.com) and use it wherever you go.
 - New visual way to **select** and **input** data for your scripts without dependencies (pure bash code).
 - Dozens of functions to help you configure your terminal, and do daily tasks.
 - Highly customizable aliases, so you dictate what mnemonics you want to use (use your own syntax).
@@ -408,7 +408,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_gradle_init     | Gradle - Shortcut for **gradle init**                |
 | __hhs_gradle_quiet    | Gradle - Shortcut for **gradle -q**                  |
 | __hhs_gradle_wrapper  | Gradle - Shortcut for **gradle wrapper**             |
-| __hhs_gradle_projects | Gradle -  Displays all available gradle projects     |
+| __hhs_gradle_projects | Gradle - Displays all available gradle projects     |
 | __hhs_gradle_tasks    | Gradle - Displays all available gradle project tasks |
 
 ### Docker aliases
