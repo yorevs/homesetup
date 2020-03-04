@@ -116,7 +116,7 @@ function __hhs_about_command() {
     cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
     if [[ -n "${cmd_ret}" ]]; then
       echo ''
-      printf "${GREEN}%12s ${cmd_ret} ${NC} \n" "Current:"
+      printf "${GREEN}%12s ${cmd_ret//\%/%%} ${NC} \n" "Current:"
       if unalias "${cmd}" 2> /dev/null; then
         cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
         if [[ -n "${cmd_ret}" ]]; then
