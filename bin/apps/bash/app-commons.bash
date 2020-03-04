@@ -9,13 +9,13 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <http://unlicense.org/>
 
-# Current script version.
+# Current application version.
 VERSION=${VERSION:-0.9.0}
 
-# This script name.
+# This application name.
 APP_NAME="${0##*/}"
 
-# Help message to be displayed by the script.
+# Help message to be displayed by the application.
 USAGE=${USAGE:-"
 Usage: ${APP_NAME} <arguments> [options]
 "}
@@ -28,11 +28,11 @@ UNSETS=('quit' 'usage' 'version' 'trim')
 [[ -f ~/.bash_aliases ]] && \. ~/.bash_aliases
 [[ -f ~/.bash_functions ]] && \. ~/.bash_functions
 
-# Purpose: Quit the program and exhibits an exit message if specified.
+# @purpose: Quit the application and exhibits an exit message if specified.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
-  # Unset all declared functions
+  # Unset all declared functions.
   unset -f quit usage version trim "${UNSETS[*]}"
   exit_code=${1:-0}
   shift
@@ -43,8 +43,8 @@ quit() {
   exit ${exit_code}
 }
 
-# Usage message.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
+# @purpose: Display the usage message and exit with the specified code ( or zero as default ).
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE .
 usage() {
   exit_code=${1:-0}
   shift
@@ -53,7 +53,7 @@ usage() {
   quit "${exit_code}" "$@"
 }
 
-# Version message.
+# @purpose: Display the current application version and exit.
 version() {
   quit 0 "$APP_NAME v$VERSION"
 }
@@ -62,7 +62,7 @@ version() {
 [[ "$1" = '-h' || "$1" = '--help' ]] && usage 0
 [[ "$1" = '-v' || "$1" = '--version' ]] && version
 
-# Trim whitespaces
+# @purpose: Trim whitespaces.
 trim() {
 
   local var="$*"

@@ -8,22 +8,27 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <http://unlicense.org/>
 
+# Vault python application location
 VAULT_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault"
 
+# @purpose: HHS plugin required function
 function help() {
   python "${VAULT_DIR}/vault.py" -h
   exit $?
 }
 
+# @purpose: HHS plugin required function
 function version() {
   python "${VAULT_DIR}/vault.py" -v
   exit $?
 }
 
+# @purpose: HHS plugin required function
 function cleanup() {
   echo -n ''
 }
 
+# @purpose: HHS plugin required function
 function execute() {
   python "${VAULT_DIR}/vault.py" "${@}"
   exit $?

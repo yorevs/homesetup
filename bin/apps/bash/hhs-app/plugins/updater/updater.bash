@@ -37,7 +37,7 @@ UNSETS=(
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 # shellcheck disable=SC2086,SC2120
-# @function: Check the current HomeSetup installation and look for updates.
+# @purpose: Check the current HomeSetup installation and look for updates.
 update_hhs() {
 
   local repo_ver is_different
@@ -87,7 +87,7 @@ update_hhs() {
   quit 0
 }
 
-# @function: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
+# @purpose: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
 update_check() {
 
   local today next_check
@@ -103,7 +103,7 @@ update_check() {
   return 0
 }
 
-# @function: Stamp the next update timestamp
+# @purpose: Stamp the next update timestamp
 stamp_next_update() {
   if [[ ! -f "${HHS_DIR}/.last_update" ]]; then
     # Stamp the next update check for today
@@ -118,19 +118,23 @@ stamp_next_update() {
   return 0
 }
 
+# @purpose: HHS plugin required function
 function help() {
   usage 0
 }
 
+# @purpose: HHS plugin required function
 function version() {
   echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
   quit 0
 }
 
+# @purpose: HHS plugin required function
 function cleanup() {
   unset "${UNSETS[@]}"
 }
 
+# @purpose: HHS plugin required function
 function execute() {
   [[ -z "$1" ]] && usage 1
   cmd="$1"

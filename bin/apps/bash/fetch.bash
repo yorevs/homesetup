@@ -40,7 +40,42 @@ REQ_TIMEOUT=5
 # Return code
 RET=0
 
-# Purpose: Parse command line arguments
+# @purpose: Format or not the output
+format_json() {
+
+  # Piped input
+  read -r response
+  [[ -n "${FORMAT}" ]] && echo -e "${response}" | __hhs_json_print
+  [[ -z "${FORMAT}" ]] && echo -e "${response}"
+}
+
+# shellcheck disable=SC2086
+# @purpose: Do the request
+do_fetch() {
+
+  curl_opts=(-s --fail -m "$REQ_TIMEOUT")
+
+  if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+  elif [[ -z "${HEADERS}" && -n "${BODY}" ]]; then
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+  elif [[ -n "${HEADERS}" && -n "${BODY}" ]]; then
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+  elif [[ -n "${HEADERS}" && -z "${BODY}" ]]; then
+    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+  fi
+  RET=$?
+  if [[ ${RET} -eq 0 && -n "${body}" ]]; then
+    echo "${body}" | format_json
+  fi
+
+  return ${RET}
+}
+
+# ------------------------------------------
+# Basics
+
+# @purpose: Parse command line arguments
 parse_args() {
 
   [[ $# -lt 2 ]] && usage 1
@@ -81,40 +116,7 @@ parse_args() {
   done
 }
 
-# Purpose: Format or not the output
-format_json() {
-
-  # Piped input
-  read -r response
-  [[ -n "${FORMAT}" ]] && echo -e "${response}" | __hhs_json_print
-  [[ -z "${FORMAT}" ]] && echo -e "${response}"
-}
-
-# shellcheck disable=SC2086
-# Purpose: Do the request
-do_fetch() {
-
-  curl_opts=(-s --fail -m "$REQ_TIMEOUT")
-
-  if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
-  elif [[ -z "${HEADERS}" && -n "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
-  elif [[ -n "${HEADERS}" && -n "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
-  elif [[ -n "${HEADERS}" && -z "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
-  fi
-  RET=$?
-  if [[ ${RET} -eq 0 && -n "${body}" ]]; then
-    echo "${body}" | format_json
-  fi
-
-  return ${RET}
-}
-
-# ------------------------------------------
-# Purpose: Program entry point
+# @purpose: Program entry point
 main() {
 
   parse_args "${@}"

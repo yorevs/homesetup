@@ -51,13 +51,13 @@ DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 # Directory containing all hspm recipes
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
-# Unset all declared functions from the recipes
+# purpose: Unset all declared functions from the recipes
 cleanup_recipes() {
 
   unset -f 'about' 'depends' 'install' 'uninstall'
 }
 
-# shellcheck disable=2155,SC2059,SC2183
+# purpose: shellcheck disable=2155,SC2059,SC2183
 list_recipes() {
 
   local index=0 recipe pad_len=20
@@ -89,7 +89,7 @@ list_recipes() {
   return 0
 }
 
-# Install the specified app using the installation recipe
+# purpose: Install the specified app using the installation recipe
 install_recipe() {
 
   local recipe recipe_name
@@ -116,7 +116,7 @@ install_recipe() {
   fi
 }
 
-# Uninstall the specified app using the uninstallation recipe
+# purpose: Uninstall the specified app using the uninstallation recipe
 uninstall_recipe() {
 
   local recipe recipe_name
@@ -143,20 +143,24 @@ uninstall_recipe() {
   fi
 }
 
+# @purpose: HHS plugin required function
 function help() {
 
   usage 0
 }
 
+# @purpose: HHS plugin required function
 function version() {
   echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
   exit 0
 }
 
+# @purpose: HHS plugin required function
 function cleanup() {
   unset "${UNSETS[@]}"
 }
 
+# @purpose: HHS plugin required function
 function execute() {
 
   [[ -z "$1" ]] && usage 1

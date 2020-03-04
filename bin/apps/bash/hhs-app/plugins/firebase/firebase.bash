@@ -69,7 +69,7 @@ UUID=%UUID%
 
 FB_ALIAS=''
 
-# Load firebase settings.
+# @purpose: Load firebase settings.
 load_settings() {
 
   if [[ ! -f "$FIREBASE_FILE" ]]; then
@@ -84,7 +84,7 @@ load_settings() {
   return 0
 }
 
-# Setup Firebase credentials and settings
+# @purpose: Setup Firebase credentials and settings
 setup_firebase() {
   [[ -f "$FIREBASE_FILE" ]] && rm -f "$FIREBASE_FILE"
   while [[ ! -f "$FIREBASE_FILE" ]]; do
@@ -118,7 +118,7 @@ setup_firebase() {
   done
 }
 
-# Build the dotfiles json request payload.
+# @purpose: Build the dotfiles json request payload.
 build_payload() {
 
   local f_aliases f_colors f_env f_functions f_path f_profile f_cmdFile f_savedDirs f_aliasdef
@@ -154,7 +154,7 @@ build_payload() {
   echo -en "$payload"
 }
 
-# Download the User dotfiles from Firebase.
+# @purpose: Download the User dotfiles from Firebase.
 download() {
 
   local fb_alias="$1"
@@ -172,7 +172,7 @@ download() {
   return 0
 }
 
-# Upload the User dotfiles to Firebase.
+# @purpose: Upload the User dotfiles to Firebase.
 upload() {
 
   local body
@@ -186,7 +186,7 @@ upload() {
   fi
 }
 
-# Parse the dotfiles response payload and save the files.
+# @purpose: Parse the dotfiles response payload and save the files.
 parse_and_save() {
 
   local f_aliases f_colors f_env f_functions f_profile f_cmdFile f_savedDirs f_aliasdef
@@ -217,19 +217,23 @@ parse_and_save() {
   [[ -n "$f_aliasdef" ]] && echo "$f_aliasdef" > "${HOME}/.aliasdef"
 }
 
+# @purpose: HHS plugin required function
 function help() {
   usage 0
 }
 
+# @purpose: HHS plugin required function
 function version() {
   echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
   exit 0
 }
 
+# @purpose: HHS plugin required function
 function cleanup() {
   unset "${UNSETS[@]}"
 }
 
+# @purpose: HHS plugin required function
 function execute() {
   [[ -z "$1" ]] && usage 1
   cmd="$1"

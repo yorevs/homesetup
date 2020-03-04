@@ -11,16 +11,22 @@
   @license: Please refer to <http://unlicense.org/>
 """
 
-import sys, os, getopt
+import sys
+import os
+import getopt
 
-PROC_NAME = os.path.basename(__file__)
-# Version tuple: (major,minor,build)
+# This application name.
+APP_NAME = os.path.basename(__file__)
+
+# Current application version; tuple: (major,minor,build)
 VERSION = (0, 9, 0)
-# Usage message
-USAGE = """
-Usage: python {} [optionals] <mandatories>
-""".format(PROC_NAME)
 
+# Help message to be displayed by the application.
+USAGE = """
+Usage: python {} <arguments> [options]
+""".format(APP_NAME)
+
+# Program arguments map
 ARGS_MAP = {
     'input': None,
     'output': None
@@ -28,14 +34,14 @@ ARGS_MAP = {
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
-def usage(exitCode=0):
+def usage(exit_code=0):
     print(USAGE)
-    sys.exit(exitCode)
+    sys.exit(exit_code)
 
 
-# @purpose: Display the current program version and exit
+# @purpose: Display the current application version and exit.
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME, VERSION[0], VERSION[1], VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
 
 
@@ -93,6 +99,7 @@ def main(argv):
         sys.exit(2)
 
 
+# Application entry point
 if __name__ == "__main__":
     main(sys.argv[1:])
     sys.exit(0)

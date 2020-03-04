@@ -10,7 +10,7 @@
 
 # Functions to be unset after quit
 UNSETS+=(
-  'main' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
+  'main' 'parse_args' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
   'register_plugins' 'register_local_functions' 'parse_args' 'invoke_command' 'register_hhs_functions'
 )
 
@@ -69,7 +69,7 @@ PLUGINS_LIST=()
 # List plugin commands
 PLUGINS=()
 
-# Purpose: Checks whether a plugin is registered or not.
+# @purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
 has_function() {
 
@@ -80,7 +80,7 @@ has_function() {
   return 1
 }
 
-# Purpose: Checks whether a plugin is registered or not.
+# @purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
 has_plugin() {
 
@@ -91,7 +91,7 @@ has_plugin() {
   return 1
 }
 
-# Purpose: Checks whether a plugin contains the command or not
+# @purpose: Checks whether a plugin contains the command or not
 # @param $1 [Req] : The command name.
 has_command() {
 
@@ -102,7 +102,7 @@ has_command() {
   return 1
 }
 
-# Purpose: Validates if the plugin contains the required hhs application plugin structure
+# @purpose: Validates if the plugin contains the required hhs application plugin structure
 # @param $1 [Req] : Array of plugin functions.
 validate_plugin() {
 
@@ -122,7 +122,7 @@ validate_plugin() {
   return 1
 }
 
-# Purpose: Search and register all hhs application plugins
+# @purpose: Search and register all hhs application plugins
 register_plugins() {
 
   local plg_funcs=()
@@ -144,34 +144,7 @@ register_plugins() {
   IFS=$"${RESET_IFS}"
 }
 
-# Purpose: Parse command line arguments
-parse_args() {
-
-  # If no argument is passed, just enter HomeSetup directory
-  if [[ ${#} -eq 0 ]]; then
-    usage 0
-  fi
-
-  # Loop through the command line options.
-  # Short opts: -<C>, Long opts: --<Word>
-  while [[ ${#} -gt 0 ]]; do
-    case "${1}" in
-      -h | --help)
-        usage 0
-        ;;
-      -v | --version)
-        version
-        ;;
-
-      *)
-        break
-        ;;
-    esac
-    shift
-  done
-}
-
-# Purpose: Invoke the plugin command
+# @purpose: Invoke the plugin command
 invoke_command() {
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
@@ -202,7 +175,7 @@ invoke_command() {
   return ${ret}
 }
 
-# Purpose: Read all internal functions and make them available to use
+# @purpose: Read all internal functions and make them available to use
 register_local_functions() {
 
   while IFS=$'\n' read -r fnc_file; do
@@ -223,7 +196,7 @@ register_local_functions() {
 # Functions MUST start with 'function' keyword and
 # MUST quit <exit)coode> with the proper exit code
 
-# Purpose: Find all hhs-functions and make them available to use
+# @purpose: Find all hhs-functions and make them available to use
 register_hhs_functions() {
 
   local all_hhs_fn
@@ -242,7 +215,36 @@ register_hhs_functions() {
 }
 
 # ------------------------------------------
-# Purpose: Program entry point
+# Basics
+
+# @purpose: Parse command line arguments
+parse_args() {
+
+  # If not enough arguments is passed, display usage message.
+  if [[ ${#} -eq 0 ]]; then
+    usage 0
+  fi
+
+  # Loop through the command line options.
+  # Short opts: -<C>, Long opts: --<Word>
+  while [[ ${#} -gt 0 ]]; do
+    case "${1}" in
+      -h | --help)
+        usage 0
+        ;;
+      -v | --version)
+        version
+        ;;
+
+      *)
+        break
+        ;;
+    esac
+    shift
+  done
+}
+
+# @purpose: Program entry point.
 main() {
   
   local fname

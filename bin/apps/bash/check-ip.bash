@@ -37,42 +37,6 @@ IP_SCOPE=
 SILENT=0     # Not set
 EXTRA_INFO=0 # Not set
 
-# Purpose: Parse command line arguments
-parse_args() {
-
-  # If no argument is passed, just enter HomeSetup directory
-  if [[ ${#} -eq 0 ]]; then
-    usage 0
-  fi
-
-  # Loop through the command line options.
-  # Short opts: -<C>, Long opts: --<Word>
-  while [[ ${#} -gt 0 ]]; do
-    case "${1}" in
-      -h | --help)
-        usage 0
-        ;;
-      -v | --version)
-        version
-        ;;
-      -q | --quiet)
-        SILENT=1
-        ;;
-      -i | --info)
-        EXTRA_INFO=1
-        ;;
-
-      *)
-        break
-        ;;
-    esac
-    shift
-  done
-
-  IP_ADDRESS="${1}"
-  IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
-}
-
 # – Class A addresses: Large numbers of nodes – Intended for a LARGE organisation
 #     IP = Net.Node.Node.Node
 # - Class B addresses: Medium number of nodes
@@ -87,7 +51,7 @@ parse_args() {
 # IP<multicast> Class D addresses: [   224.0.0.1 - 239.255.255.255 ] =>
 # IP<reserved>  Class E addresses: [   240.0.0.1 - 255.255.255.254 ] =>
 
-# Purpose: Find the IP class.
+# @purpose: Find the IP class.
 check_class() {
 
   if [[ ${IP_OCTETS[0]} -le 127 ]]; then
@@ -122,7 +86,7 @@ check_class() {
 #       240.0.0.0 - 255.255.255.254 | n/a             | Reserved
 # 255.255.255.255                   | n/a             | Limited Broadcast
 
-# Purpose: Find the IP scope.
+# @purpose: Find the IP scope.
 # @param $1 [Req] : The IP to get the scope from
 check_scope() {
 
@@ -163,7 +127,7 @@ check_scope() {
   fi
 }
 
-# Purpose: Validate the IP. Required format [0-255].[0-255].[0-255].[0-255] .
+# @purpose: Validate the IP. Required format [0-255].[0-255].[0-255].[0-255] .
 check_valid() {
 
   ip_regex="((2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))\.){3}(2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))"
@@ -182,7 +146,45 @@ check_valid() {
 }
 
 # ------------------------------------------
-# Purpose: Program entry point
+# Basics
+
+# @purpose: Parse command line arguments
+parse_args() {
+
+  # If no argument is passed, just enter HomeSetup directory
+  if [[ ${#} -eq 0 ]]; then
+    usage 0
+  fi
+
+  # Loop through the command line options.
+  # Short opts: -<C>, Long opts: --<Word>
+  while [[ ${#} -gt 0 ]]; do
+    case "${1}" in
+      -h | --help)
+        usage 0
+        ;;
+      -v | --version)
+        version
+        ;;
+      -q | --quiet)
+        SILENT=1
+        ;;
+      -i | --info)
+        EXTRA_INFO=1
+        ;;
+
+      *)
+        break
+        ;;
+    esac
+    shift
+  done
+
+  IP_ADDRESS="${1}"
+  IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
+}
+
+# @purpose: Program entry point
 main() {
 
   parse_args "${@}"

@@ -484,7 +484,7 @@ def main(argv):
         cprint(Colors.RED, err)
         quit(2)
 
-
+# Application entry point
 if __name__ == "__main__":
     main(sys.argv[1:])
     quit(0)
