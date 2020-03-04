@@ -30,7 +30,7 @@ commit_msg_filename = sys.argv[1]
 commit_msg = None
 
 # CARDS
-changelog = '^(([Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity){1} ).*'
+changelog = '^(([Mm]erge|[Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity){1} ).*'
 card_prefix = '[a-zA-Z][a-zA-Z0-9\\-_]+'
 card_format = '%s - [%s-%s:{@%s}]'  # Msg/Card/Number/User
 card_regex = '(' + card_prefix + ')-(\\d+)'
