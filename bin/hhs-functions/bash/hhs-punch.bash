@@ -91,7 +91,6 @@ function __hhs_punch() {
           if [[ ${#line_totals[@]} -gt 0 && "$(echo "${#line_totals[@]} % 2" | bc)" -eq 0 ]]; then
             daily_total="$(tcalc.py ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})"        # Up to 3 pairs of timestamps.
             daily_total_dec="$(tcalc.py -d ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})" # Up to 3 pairs of timestamps.
-            daily_total_dec=${daily_total_dec//:/.}
             printf ' %*.*s' 0 $((pad_len - ${#line_totals[@]} * 6)) "${pad}"
             # If the daily subtotal is greater or equal to the nominal 8 hours, color it green; red otherwise.
             if [[ "$daily_total" =~ ^([12][0-9]|0[89]):..:.. ]]; then

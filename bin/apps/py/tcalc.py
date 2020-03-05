@@ -78,4 +78,7 @@ for tm in args:
 TOTAL_SECONDS, seconds = divmod(TOTAL_SECONDS, 60)
 hours, minutes = divmod(TOTAL_SECONDS, 60)
 
-print('{0:02d}:{1:02d}:{2:02d}'.format(hours, decimal(minutes), decimal(seconds)))
+if DECIMAL:
+    print('{0:02d}.{1:02d}.{2:02d}'.format(hours, decimal(minutes), decimal(seconds)))
+else:
+    print('{0:02d}:{1:02d}:{2:02d}'.format(hours, decimal(minutes), decimal(seconds)))
