@@ -83,22 +83,25 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 
   # @function: Remove all docker volumes not referenced by any containers (dangling).
   function __hhs_docker_remove_volumes() {
-
+    
+    local volumes=() retVal=0
+    
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
     else
-      for container in $(docker volume ls -qf dangling=true); do
+      IFS=$'\n' read -d '' -r -a volumes <<< "$(docker volume ls -qf dangling=true)"
+      for container in "${volumes[@]}"; do
         echo -en "Removing dangling docker volume: ${container} ... "
         if docker volume rm "${container}" &> /dev/null; then
           echo -e "[   ${GREEN}OK${NC}   ]"
-          return 0
         else
           echo -e "[ ${GREEN}FAILED${NC} ]"
+          retVal=1
         fi
       done
     fi
 
-    return 1
+    return $retVal
   }
 
   # @function: Stop, remove and remove dangling [active?] volumes of all docker containers.
