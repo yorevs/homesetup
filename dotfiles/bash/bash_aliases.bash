@@ -17,15 +17,19 @@ unalias -a
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
 function __hhs_has() {
+  [[ $# -eq 0 || '-h' == "$1" ]] && echo "Usage: ${FUNCNAME[0]} <command>" && return 1
   type "$1" > /dev/null 2>&1
 }
 
 # shellcheck disable=SC2139
 # @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression
-# @param $1 [Req] : The alias to set/check. Use the format: __hhs_alias <alias_name>='<alias_expr>'
+# @param $1 [Req] : The alias to set/check.
+# @param $* [Req] : The alias expression.
 function __hhs_alias() {
-
+  
   local all_args alias_expr alias_name
+  
+  [[ $# -eq 0 || '-h' == "$1" ]] && echo "Usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>" && return 1
 
   all_args="${*}"
   alias_expr="${all_args#*=}"

@@ -21,9 +21,9 @@ function __hhs_aliases() {
     echo "Usage: ${FUNCNAME[0]} [-s|--sort] [alias] [alias_expr]"
     echo ''
     echo '    Options: '
-    echo '      -e | --edit    : Edit the aliases file.'
+    echo '      -e | --edit    : Open the aliases file for editting.'
     echo '      -s | --sort    : Sort results ASC.'
-    echo '      -r | --remove  : Remove an alias'
+    echo '      -r | --remove  : Remove an alias.'
     echo ''
     echo '  Notes: '
     echo '    List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter restuls using it.'

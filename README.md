@@ -439,7 +439,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 | bash_aliases.bash      | __hhs_has              | Check if a command is available on the current shell session.               |
 |                        | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it        |
 | hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list)                            |
-| hhs-built-ins.bash     | __hhs_random_number    | Generate a random number int the range <min> <max>                          |
+| hhs-built-ins.bash     | __hhs_random_number    | Generate a random number int the range <min> <max> (all limits included)    |
 |                        | __hhs_ascof            | Display the decimal ASCII representation of a character                     |
 |                        | __hhs_utoh             | Convert unicode to hexadecimal                                              |
 | hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands                                 |

@@ -8,9 +8,9 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Generate a random number int the range <min> <max>
-# @param $1 [Req] : The minimum range of the number
-# @param $2 [Req] : The maximum range of the number
+# @function: Generate a random number int the range <min> <max> (all limits included).
+# @param $1 [Req] : The minimum range of the number.
+# @param $2 [Req] : The maximum range of the number.
 function __hhs_random_number() {
 
   if [[ $# -ne 2 ]]; then
@@ -23,10 +23,11 @@ function __hhs_random_number() {
   return 0
 }
 
-# @function: Display the decimal ASCII representation of a character
-# @param $1 [Req] : The character to display
+# @function: Display the decimal ASCII representation of a character.
+# @param $1 [Req] : The character to display.
 function __hhs_ascof() {
-
+  
+  [[ $# -eq 0 || '-h' == "$1" ]] && echo "Usage: ${FUNCNAME[0]} <character>" && return 1
   echo -n "${1}" | od -A n -t d1 | head -n 1 | awk '{print $1}' && return $?
 }
 
