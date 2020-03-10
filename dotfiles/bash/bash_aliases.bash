@@ -14,7 +14,7 @@
 # Remove all aliases before setting them again.
 unalias -a
 
-# @function: Check if a command exists.
+# @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
 function __hhs_has() {
   type "$1" > /dev/null 2>&1
@@ -40,7 +40,7 @@ function __hhs_alias() {
     fi
   fi
 
-  return 0
+  return 1
 }
 
 # -----------------------------------------------------------------------------------

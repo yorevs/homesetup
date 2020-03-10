@@ -1,0 +1,6 @@
+{
+  "files.exclude": {
+    ".github": true,
+    ".vscode": true
+  }
+}

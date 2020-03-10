@@ -86,6 +86,8 @@ Functions are grouped into two categories:
 - [Standard tools](../README.md#standard-tools)
 - [Development tools](../README.md#development-tools)
 
+Checkout the full handbook of [functions here](FUNCTIONS.md).
+
 ## Applications
 
 In addition to aliases and functions, HomeSetup also puts available some [applications](../README.md#applications)
@@ -94,6 +96,8 @@ kinds of applications:
 
 - [Bash applications](../README.md#bash-apps)
 - [Python applications](../README.md#python-apps)
+
+Checkout the full handbook of [applications here](APPLICATIONS.md).
 
 ## Templates
 

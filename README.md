@@ -31,7 +31,7 @@ gradle, docker, etc...
 - Dozens of functions to help you configure your terminal, and do daily tasks.
 - Highly customizable aliases, so you dictate what mnemonics you want to use (use your own syntax).
 - All code is [unlicensed](LICENSE.md), so, you can modify and use freely.
-- Small learning curve and a provided [user's handbook](docs/USER_HANDBOOK.md).
+- Small learning curve and a provided [user's handbook](docs/handbook/USER_HANDBOOK.md).
 
 ## Catalina moved from bash to zsh
 
@@ -213,7 +213,7 @@ the ~/.hhs where your configurations were stored. It's safe to delete this folde
 
 ## Usage
 
-HomeSetup provides a [User Handbook](docs/USER_HANDBOOK.md) with all commands and examples of usage. There will also be a video about how to
+HomeSetup provides a [User Handbook](docs/handbook/USER_HANDBOOK.md) with all commands and examples of usage. There will also be a video about how to
 install, configure and all available features demo.
 
 ## Dotfiles in this project
@@ -436,7 +436,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 
 | File                   | Function               | Purpose                                                                     |
 | ---------------------- | ---------------------- | --------------------------------------------------------------------------- |
-| bash_aliases.bash      | __hhs_has              | Check if a command exists                                                   |
+| bash_aliases.bash      | __hhs_has              | Check if a command is available on the current shell session.               |
 |                        | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it        |
 | hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list)                            |
 | hhs-built-ins.bash     | __hhs_random_number    | Generate a random number int the range <min> <max>                          |
