@@ -16,26 +16,32 @@
 import sys
 import re
 import getpass
+import os.path
 
 from subprocess import check_output
 from os import path, remove
 
+commit_msg_file = sys.argv[1] if len(sys.argv) > 1 else None
+
+if commit_msg_file is None or not os.path.exists(commit_msg_file):
+    print('[ERROR] Message file "{}" does not exist'.format(commit_msg_file))
+    sys.exit(1)
 
 # App arguments
 branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
 user_name = getpass.getuser()
 master_unlock = 'master_unlocked'
 
-commit_msg_filename = sys.argv[1]
+commit_msg_filename = commit_msg_file
 commit_msg = None
 
 # CARDS
-changelog = '^(([Mm]erge|[Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity){1} ).*'
 card_prefix = '[a-zA-Z][a-zA-Z0-9\\-_]+'
 card_format = '%s - [%s-%s:{@%s}]'  # Msg/Card/Number/User
 card_regex = '(' + card_prefix + ')-(\\d+)'
 
 # NO CARDS
+changelog = '^(([Mm]erge|[Aa]dded|[Cc]hanged|[Dd]eprecated|[Rr]emoved|[Ff]ixed|[Ss]ecurity){1}).+'
 no_card_prefix = 'test|hotfix|feature|develop'
 no_card_format = '%s - [%s:{@%s}]'  # Msg/Issue/User
 no_card_regex = '(' + no_card_prefix + ')(-(\\w+(-\\d+)*))?'
@@ -45,7 +51,7 @@ if re.match(card_regex, branch_name):
     mat = re.match(card_regex, branch_name)
     card_name = mat.group(1).upper()
     card_number = mat.group(2)
-    commit_msg_format = '.* - \\[%s\\:\\{\\@%s\\}\\]' % (card_name, user_name)
+    commit_msg_format = '.*- \\[%s-%s\\:\\{\\@%s\\}\\]' % (card_name, card_number, user_name)
     with open(commit_msg_filename, 'r+') as fh:
         commit_msg = fh.read().strip()
         # Check if the commit message already matches the expected format
@@ -74,10 +80,9 @@ elif re.match(no_card_regex, branch_name):
 
 # Rejecting unknown branch names
 else:
-    if "master" == branch_name: 
+    if "master" == branch_name:
         if not path.exists(master_unlock):
-            print('[ERROR] Master not unlocked: {}. Commit aborted !'
-                .format(master_unlock))
+            print('[ERROR] Master not unlocked: {}. Commit aborted !'.format(master_unlock))
             sys.exit(1)
         else:
             remove(master_unlock)
