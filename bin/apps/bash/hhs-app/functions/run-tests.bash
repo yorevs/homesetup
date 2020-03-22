@@ -11,7 +11,7 @@
 # @purpose: Execute all HomeSetup automated tests.
 function tests() {
   
-  local started_sec started finished  err_log output badge
+  local started finished  err_log output badge
   
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 

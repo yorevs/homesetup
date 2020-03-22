@@ -43,7 +43,7 @@ if __hhs_has "gpg"; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
       return 1
     else
-      if base64 -i "$1" -o "$1.gpg"; then
+      if base64 -D -i "$1" -o "$1.gpg"; then
         if gpg --yes --batch --passphrase="$2" "$1.gpg" &> /dev/null; then
           echo -e "${GREEN}File \"$1\" has been decrypted!${NC}" && rm -f "$1.gpg"
           return 0
