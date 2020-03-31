@@ -107,6 +107,7 @@ if __hhs_has "git"; then
   __hhs_alias gca='__hhs_git_amend'
   __hhs_alias gba='__hhs_git_branch_all'
   __hhs_alias gsa='__hhs_git_status_all'
+  __hhs_alias gpa='__hhs_git_pull_all'
   __hhs_alias gdt='__hhs_git_difftool'
   __hhs_alias gsc='__hhs_git_show_changes'
   __hhs_alias gdfs='__hhs_git_show_file_diff'
