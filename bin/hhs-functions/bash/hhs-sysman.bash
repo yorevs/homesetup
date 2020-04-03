@@ -104,7 +104,7 @@ function __hhs_process_list() {
       shift
     done
     # shellcheck disable=SC2009
-    [[ -n "$1" ]] && all_pids=$(ps -efc | grep ${gflags} "$1" | awk '{ print $1,$2,$3,$8 }')
+    [[ -n "$1" ]] && all_pids=$(ps -efc | grep ${gflags} "$1")
     if [[ -n "${all_pids}" ]]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"
@@ -116,23 +116,27 @@ function __hhs_process_list() {
         uid=$(echo "${next}" | awk '{ print $1 }')
         pid=$(echo "${next}" | awk '{ print $2 }')
         ppid=$(echo "${next}" | awk '{ print $3 }')
-        cmd=$(echo "${next}" | awk '{ print $4 }')
+        cmd=$(echo "${next}" | awk '{for(i=8;i<=NF;i++) printf $i" "; print ""}')
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
-        printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "$pid" "$ppid" "${cmd}"
+        printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "${pid}" "$ppid" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
-        if [[ -n "$pid" && "$2" == "kill" ]]; then
+        if [[ -n "${pid}" && "$2" == "kill" ]]; then
           save-cursor-pos
           if [[ -z "${force}" ]]; then
             read -r -n 1 -p "${ORANGE} Kill this process y/[n]? " ANS
           fi
           if [[ -n "${force}" || "$ANS" == "y" || "$ANS" == "Y" ]]; then
             restore-cursor-pos
-            kill -9 "$pid" && echo -en "${RED}=> Killed with SIGKILL(-9)\033[K"
+            if kill -9 "${pid}" &> /dev/null; then 
+              echo -en "${GREEN}=> Killed \"${pid}\" with SIGKILL(-9)\033[K"
+            else
+              echo -en "${YELLOW}=> Skipped \"${pid}\" (NOT ACTIVE)\033[K"
+            fi
           fi
           if [[ -n "$ANS" || -n "${force}" ]]; then echo -e "${NC}"; fi
         else
           # Check for ghost processes
-          if ps -p "$pid" &> /dev/null; then
+          if ps -p "${pid}" &> /dev/null; then
             echo -e "${GREEN} ${CHECK_ICN}  active"
           else
             __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN}  ghost"
