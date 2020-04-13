@@ -34,6 +34,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   # .dotfiles we will handle
   ALL_DOTFILES=()
 
+  # Supported shell types. For now, only bash is supported
+  SUPP_SHELL_TYPES=('bash')
+
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=(brew python pcregrep ifconfig gpg tree figlet)
 
@@ -48,7 +51,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Functions to be unset after quit
   UNSETS=(
-    quit usage has check_inst_method install_dotfiles clone_repository check_installed
+    quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_installed
     activate_dotfiles compatibility_check
   )
 
@@ -75,7 +78,16 @@ Usage: $APP_NAME [OPTIONS] <args>
   # @function: Check if a command exists.
   # @param $1 [Req] : The command to check.
   has() {
-    type "$1" > /dev/null 2>&1
+    type "$1" >/dev/null 2>&1
+  }
+  
+  # shellcheck disable=SC2199,SC2076
+  # Check current active User shell type
+  check_current_shell() {
+
+    if [[ ! " ${SUPP_SHELL_TYPES[@]} " =~ " ${SHELL##*/} " ]]; then
+      quit 2 "Your current shell type is not supported: \"${SHELL}\""
+    fi
   }
 
   # shellcheck disable=SC1091
@@ -100,17 +112,17 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Short opts: -w, Long opts: --Word
     while test -n "$1"; do
       case "$1" in
-        -a | --all)
-          OPT="all"
-          ;;
-        -q | --quiet)
-          OPT="all"
-          ANS="Y"
-          QUIET=1
-          ;;
-        *)
-          quit 2 "Invalid option: \"$1\""
-          ;;
+      -a | --all)
+        OPT="all"
+        ;;
+      -q | --quiet)
+        OPT="all"
+        ANS="Y"
+        QUIET=1
+        ;;
+      *)
+        quit 2 "Invalid option: \"$1\""
+        ;;
       esac
       shift
     done
@@ -121,8 +133,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      touch "${HHS_HOME}/tmpfile" &> /dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
-      command rm -f "${HHS_HOME:?}/tmpfile" &> /dev/null
+      touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
+      command rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
     fi
 
     # Create/Define the ${HOME}/.hhs directory
@@ -134,8 +146,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       # Trying to write at the HomeSetup directory to check the permissions
-      touch "${HHS_DIR}/tmpfile" &> /dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
-      command rm -f "${HHS_DIR:?}/tmpfile" &> /dev/null
+      touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
+      command rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
     fi
 
     # Create/Define the ${HHS_DIR}/bin directory
@@ -174,20 +186,20 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     case "$METHOD" in
-      remote)
-        clone_repository
-        install_dotfiles
-        check_installed
-        activate_dotfiles
-        ;;
-      local | repair)
-        install_dotfiles
-        check_installed
-        activate_dotfiles
-        ;;
-      *)
-        quit 2 "Installation method is not valid: ${METHOD}"
-        ;;
+    remote)
+      clone_repository
+      install_dotfiles
+      check_installed
+      activate_dotfiles
+      ;;
+    local | repair)
+      install_dotfiles
+      check_installed
+      activate_dotfiles
+      ;;
+    *)
+      quit 2 "Installation method is not valid: ${METHOD}"
+      ;;
     esac
   }
 
@@ -241,7 +253,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OPT='all'
     fi
 
-    command pushd "${DOTFILES_DIR}" &> /dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
+    command pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
     echo -e "\n${WHITE}Installing dotfiles ...${NC}"
 
     # If `all' option is used, copy all files
@@ -278,7 +290,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
-    if command find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &> /dev/null; then
+    if command find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
@@ -288,7 +300,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking apps into place ${BLUE}"
     if command find "${HHS_HOME}/bin/apps" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; &> /dev/null; then
+      -exec command chmod 755 {} \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
@@ -298,7 +310,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking auto-completes into place ${BLUE}"
     if command find "${HHS_HOME}/bin/completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; &> /dev/null; then
+      -exec command chmod 755 {} \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
@@ -307,18 +319,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {} "${FONTS_DIR}" \; &> /dev/null; then
+    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    command popd &> /dev/null || quit 1 "Unable to leave dotfiles directory !"
+    command popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
-    rm -f "${HHS_HOME}"/.git/hooks/* &> /dev/null
-    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &> /dev/null; then
+    rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
+    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
@@ -406,7 +418,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}"
 
     echo -e "${BLUE}"
-    if command -v figlet > /dev/null; then
+    if command -v figlet >/dev/null; then
       figlet -f colossal -ck "Welcome"
     else
       echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
@@ -428,11 +440,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
 
-    date -v+7d "+%s%S" > "${HHS_DIR}/.last_update"
+    date -v+7d "+%s%S" >"${HHS_DIR}/.last_update"
     quit 0
   }
 
   clear
+  check_current_shell
   check_inst_method "$@"
 
 }
