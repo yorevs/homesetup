@@ -14,7 +14,7 @@ function __hhs_command() {
 
   HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
-  local cmd_name cmd_alias cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_index
+  local cmd_name cmd_alias cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_index ret=1
 
   touch "${HHS_CMD_FILE}"
 
@@ -29,7 +29,7 @@ function __hhs_command() {
     echo '      -l | --list   : List all stored commands.'
     echo ''
     echo '  Notes: '
-    echo '    MSelect command : When no arguments are provided.'
+    echo '    MSelect command : When no arguments are provided, the menu will be displayed.'
     return 1
   else
 
@@ -49,7 +49,8 @@ function __hhs_command() {
           __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"${cmd_name}\"\t\"${cmd_expr}\"${NC}"
           return 1
         fi
-        ised -e "s#(^Command ${cmd_name}: .*)*##g" -e '/^\s*$/d' "${HHS_CMD_FILE}"
+        ised -e "s#(^Command ${cmd_name}: .*)##g" -e '/^\s*$/d' "${HHS_CMD_FILE}"
+        IFS=$'\n' read -d '' -r -a all_cmds < "${HHS_CMD_FILE}"
         all_cmds+=("Command ${cmd_name}: ${cmd_expr}")
         printf "%s\n" "${all_cmds[@]}" > "${HHS_CMD_FILE}"
         sort "${HHS_CMD_FILE}" -o "${HHS_CMD_FILE}"
@@ -108,7 +109,7 @@ function __hhs_command() {
             sel_index=$(grep . "${mselect_file}")
             # sel_index is zero-based, so we need to increment this number
             cmd_expr="${all_cmds[$sel_index]##*: }"
-            [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}"
+            [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}" && ret=$?
           else
             return 1
           fi
@@ -118,12 +119,12 @@ function __hhs_command() {
         ;;
       [[:digit:]])
         cmd_expr="${all_cmds[$(($1 - 1))]##*: }"
-        [[ -n "${cmd_expr}" ]] && echo -e "#> ${cmd_expr}" && eval "${cmd_expr}"
+        [[ -n "${cmd_expr}" ]] && echo -e "#> ${cmd_expr}" && eval "${cmd_expr}" && ret=$?
         [[ -z "${cmd_expr}" ]] && __hhs_errcho "${FUNCNAME[0]}: Command indexed by \"$1\" was not found !"
         ;;
       [a-zA-Z0-9_]*)
         cmd_expr=$(grep "Command $1:" "${HHS_CMD_FILE}" | awk -F ': ' '{ print $2 }')
-        [[ -n "${cmd_expr}" ]] && echo -e "#> ${cmd_expr}" && eval "${cmd_expr}"
+        [[ -n "${cmd_expr}" ]] && echo -e "#> ${cmd_expr}" && eval "${cmd_expr}" && ret=$?
         [[ -z "${cmd_expr}" ]] && __hhs_errcho "${FUNCNAME[0]}: Command aliased by \"$1\" was not found !"
         ;;
       *)
@@ -135,5 +136,5 @@ function __hhs_command() {
 
   [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
 
-  return 0
+  return ${ret}
 }
