@@ -117,7 +117,7 @@ function __hhs_command() {
           echo "${ORANGE}No commands available yet !${NC}"
         fi
         ;;
-      [[:digit:]])
+      [[:digit:]]*)
         cmd_expr="${all_cmds[$(($1 - 1))]##*: }"
         [[ -n "${cmd_expr}" ]] && echo -e "#> ${cmd_expr}" && eval "${cmd_expr}" && ret=$?
         [[ -z "${cmd_expr}" ]] && __hhs_errcho "${FUNCNAME[0]}: Command indexed by \"$1\" was not found !"
