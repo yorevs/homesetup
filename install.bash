@@ -63,9 +63,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
 
-    test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
-    test -n "$2" -a "$2" != "" && echo -e "${2}"
-    test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
+    test "$1" != '0' -a "$1" != '1' && echo -e "${RED}" 1>&2
+    test -n "$2" -a "$2" != "" && echo -e "${2}" 1>&2
+    test "$1" != '0' -a "$1" != '1' && echo -e "${NC}" 1>&2
     echo ''
     exit "$1"
   }
