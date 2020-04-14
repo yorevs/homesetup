@@ -144,18 +144,19 @@ function __hhs_save_dir() {
     return 1
   else
 
-    [[ -n "$2" ]] || dir_alias=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-    [[ -n "$2" ]] && dir_alias=$(echo -en "$2" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+    dir_alias=$(echo -en "${2:-$1}" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
 
     if [[ "$1" == "-e" ]]; then
       edit "${HHS_SAVED_DIRS_FILE}"
+      return $?
     elif [[ "$1" == "-r" && -n "$2" ]]; then
       # Remove the previously saved directory aliased
       if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
         echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
+        return 0
       fi
       ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
-    else
+    elif [[ -n "$2" ]]; then
       dir="$1"
       # If the path is not absolute, append the current directory to it.
       if [[ -z "${dir}" || "${dir}" == "." ]]; then dir=${dir//./$(pwd)}; fi
@@ -167,16 +168,22 @@ function __hhs_save_dir() {
         return 1
       fi
       # Remove the old saved directory aliased
-      ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
+      ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
       IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
-      all_dirs+=("$dir_alias=${dir}")
+      all_dirs+=("${dir_alias}=${dir}")
       printf "%s\n" "${all_dirs[@]}" >"${HHS_SAVED_DIRS_FILE}"
       sort "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
-      echo "${GREEN}Directory saved: ${WHITE}\"${dir}\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
+      if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
+        echo "${GREEN}Directory saved: ${WHITE}\"${dir}\" as ${HHS_HIGHLIGHT_COLOR}$dir_alias ${NC}"
+        return 0
+      fi
+    else
+      __hhs_errcho "${FUNCNAME[0]}: Invalid alias \"${2}\" !"
+      return 1
     fi
   fi
 
-  return 0
+  return 1
 }
 
 # shellcheck disable=SC2059,SC2181,SC2046
