@@ -73,7 +73,7 @@ function __hhs_command() {
           echo "${YELLOW}Command removed: ${WHITE}\"${cmd_alias}\" ${NC}"
           ret_val=0
         else
-          __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"${cmd_alias}\"\t\"${cmd_expr}\"${NC}"
+          __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"${cmd_alias}\"\t\"${cmd_expr}\""
         fi
         ;;
       -l | --list)

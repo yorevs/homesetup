@@ -334,7 +334,7 @@ function __hhs_godir() {
 # @function: Create all folders using a slash or dot notation path and immediately change into it.
 # @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path.
 function __hhs_mkcd() {
-  if [[ -n "$1" && ! -d "$1" ]]; then
+  if [[ -n "$1" && ! -d "$1" ]] || [[ "$1" == "-h" || "$1" == "--help" ]]; then
     dir="${1//.//}"
     mkdir -p "${dir}" || return 1
     last_pwd=$(pwd)
