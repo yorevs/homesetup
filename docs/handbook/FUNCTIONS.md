@@ -119,7 +119,7 @@ Usage: __hhs_command [options [cmd_alias] <cmd_expression>] | [cmd_index]
       -l | --list   : List all stored commands.
 
   Notes:
-    MSelect default : When no arguments are provided, the menu will be displayed.
+    MSelect default : When no arguments is provided, a menu with options will be displayed.
 ```
 
 **Purpose**: Add/Remove/List/Execute saved bash commands.
@@ -129,9 +129,9 @@ Usage: __hhs_command [options [cmd_alias] <cmd_expression>] | [cmd_index]
   - $2..$N *Conditional* : The command expression. This is required when alias is provided.
 
 _Examples:_
-    `$ cmd -a test ls -la && echo "Created a test command"`
-    `$ cmd test && echo "Executed ls -la"`
-    `$ cmd -r test && echo "Removed a test command"`
+    `$ __hhs_command -a test ls -la && echo "Created a test command"`
+    `$ __hhs_command test && echo "Executed ls -la"`
+    `$ __hhs_command -r test && echo "Removed a test command"`
 
 
 ### __hhs_change_dir
@@ -151,7 +151,7 @@ Usage: __hhs_change_dir [-L|-P] [dir]
   - $2 *Optional* : The directory to change. If not provided, default DIR is the value of the HOME variable.
 
 _Examples:_
-    `$ cd /tmp && echo "Directory changed to /tmp"`
+    `$ __hhs_change_dir /tmp && echo "Directory changed to /tmp"`
 
 
 ### __hhs_changeback_ndirs
@@ -183,7 +183,7 @@ Usage: __hhs_dirs
   - $N *Optional* : If any parameter is used, the default dirs command is invoked instead.
 
 _Examples:_
-    `$ dirs`
+    `$ __hhs_dirs`
 
 
 ### __hhs_list_tree
@@ -193,7 +193,7 @@ Usage: __hhs_list_tree [from_dir] [recurse_level]
 
 **Purpose**: List contents of directories in a tree-like format.
 **Returns**: 0 on success ; non-zero otherwise.
-**Parameters**: 
+**Parameters**: -
 
 _Examples:_
     `$ __hhs_list_tree . 5`
@@ -201,6 +201,80 @@ _Examples:_
     `$ __hhs_list_tree /Users`
 
 
+### __hhs_save_dir
+```bash
+Usage: __hhs_save_dir -e | [-r] <dir_alias> | <dir_to_save> <dir_alias>
+
+Options:
+    -e : Edit the saved dirs file.
+    -r : Remove saved dir.
+```
+
+**Purpose**: Save one directory path for future __hhs_load.
+**Returns**: 0 if the command is successful; non-zero otherwise.
+**Parameters**: 
+  - $1 *Conditional* : The directory path to save or the alias to be removed.
+  - $2 *Conditional* : The alias to name the saved path.
+
+_Examples:_
+    `$ __hhs_save_dir . dot && echo "Directory . saved as dot"`
+    `$ __hhs_save_dir -r dot && echo "Directory dot removed"`
+
+
+### __hhs_load_dir
+```bash
+Usage: __hhs_load_dir [-l] | [dir_alias]
+
+Options:
+    [dir_alias] : The alias to load the path from.
+             -l : List all saved dirs.
+
+  Notes:
+    MSelect default : When no arguments are provided, a menu with options will be displayed.
+```
+
+**Purpose**: Change the current working directory to pre-saved entry from __hhs_save.
+**Returns**: 0 if the command is successful; non-zero otherwise.
+**Parameters**: 
+  - $1 *Optional* : The alias to load the path from.
+
+_Examples:_
+    `$ __hhs_load_dir dot`
+    `$ __hhs_load_dir -l`
+
+
+### __hhs_godir
+```bash
+Usage: __hhs_godir [search_path] <dir_name>
+```
+
+**Purpose**: Search and cd into the first match of the specified directory name.
+**Returns**: 0 if blablabla; non-zero otherwise.
+**Parameters**: 
+  - $1 *Optional* : The base search path.
+  - $2 *Required* : The directory name to search and cd into.
+
+_Examples:_
+    `$ __hhs_godir /usr bin && echo "Entered the bin directory"`
+    `$ __hhs_godir bin && echo "Entered the bin directory"`
+
+
+### __hhs_mkcd
+```bash
+Usage: __hhs_mkcd <dirtree | package>
+
+E.g:. __hhs_mkcd dir1/dir2/dir3 (dirtree)
+E.g:. __hhs_mkcd dir1.dir2.dir3 (FQDN)
+```
+
+**Purpose**: Create all folders using a slash or dot notation path and immediately change into it.
+**Returns**: 0 if blablabla; non-zero otherwise.
+**Parameters**: 
+  - $1 *Required* : The directory tree or the package name
+
+_Examples:_
+    `$ __hhs_mkcd dir1/dir2/dir3 && echo "Changed to dir3: $(pwd)"`
+    `$ __hhs_mkcd br.edu.hhs && echo "Changed to hhs: $(pwd)"`
 
 
 

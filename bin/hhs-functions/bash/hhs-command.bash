@@ -30,7 +30,7 @@ function __hhs_command() {
     echo '      -l | --list   : List all stored commands.'
     echo ''
     echo '  Notes: '
-    echo '    MSelect command : When no arguments are provided, the menu will be displayed.'
+    echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
 
     IFS=$'\n' read -d '' -r -a all_cmds < "${HHS_CMD_FILE}"
@@ -111,8 +111,9 @@ function __hhs_command() {
             # sel_index is zero-based, so we need to increment this number
             cmd_expr="${all_cmds[$sel_index]##*: }"
             [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}" && ret_val=$?
+          else
+            return 1
           fi
-          [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
         else
           echo "${ORANGE}No commands available yet !${NC}"
         fi
@@ -132,6 +133,9 @@ function __hhs_command() {
         __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\"${NC}"
         ;;
     esac
+    
+    [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
+    echo ''
   fi
 
   return ${ret_val}
