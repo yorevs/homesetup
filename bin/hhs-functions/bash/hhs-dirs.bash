@@ -241,7 +241,9 @@ function __hhs_load_dir() {
             dir_alias="${all_dirs[$sel_index]%=*}"
             dir="${all_dirs[$sel_index]##*=}"
             ret_val=0
+            command rm -f "${mselect_file}"
           else
+            [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
             return 1
           fi
         else
@@ -268,8 +270,6 @@ function __hhs_load_dir() {
     else
       echo "${ORANGE}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
     fi
-    
-    [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
     echo ''
   fi
 
@@ -313,19 +313,18 @@ function __hhs_godir() {
       if __hhs_mselect "${mselect_file}" "${results[@]//$search_path\//}"; then
         sel_index=$(grep . "${mselect_file}")
         dir=${results[$sel_index]}
+        command rm -f "${mselect_file}"
       else
+        [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
         return 1
       fi
     fi
-    echo "N: ${search_name} P: ${search_path}"
-    return 1
-    if [[ -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &>/dev/null; then
-      echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
-      ret_val=0
-    fi
   fi
-
-  [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
+  # If a valid directory was selected, change to it.
+  if [[ -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &>/dev/null; then
+    echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+    ret_val=0
+  fi
   echo ''
 
   return ${ret_val}
