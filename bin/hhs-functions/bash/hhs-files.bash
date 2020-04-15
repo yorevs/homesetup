@@ -8,53 +8,76 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: List files and sort by the specified column.
+# @function: List files sorted by the specified column.
 # @param $1 [Opt] : The column to sort; 9 (filename) by default
 function __hhs_ls_sorted() {
 
-  col="${1:-9}"
-  command ls -la | sort -k "$col"
-
-  return $?
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [column_number]"
+    return 1
+  else
+    col="${1:-9}"
+    command ls -la | sort -k "$col"
+    return $?
+  fi
 }
 
 # @function: Move files recursively to the Trash.
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function __hhs_del_tree() {
 
-  local all dest
+  local all trash_dest search_path glob dry_run='Y'
 
-  if [[ $# -le 1 || ! -d "$1" ]]; then
-    echo "Usage: del-tree <search_path> <glob_expr>"
-    return 1
-  elif [[ "$1" = '/' ]] || [[ "$(pwd)" = '/' && "$1" = '.' ]]; then
-    echo "### Can't deltree a protected folder"
+  if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [-n|-f] <search_path> <glob_expr>"
+    echo ''
+    echo '  Options:'
+    echo "    -n | --dry-run  : Dry run. Don't actually remove anything, just show what would be done."
+    echo '    -f | --force    : Actually delete all files/directories it finds.'
     return 1
   else
-    # Find all files and folders matching the <glob_exp>
-    all=$(find -L . "$1" -name "*$2" 2> /dev/null)
-    # Move all to trash
+
+    case "$1" in
+      '-f' | '--force')
+        dry_run='N'
+        shift
+        ;;
+      '-n' | '--dry-run')
+        dry_run='Y'
+        shift
+        ;;
+    esac
+
+    if [[ "$1" == '/' ]] || [[ "$(pwd)" == '/' && "$1" == '.' ]]; then
+      __hhs_errcho "${FUNCNAME[0]}: Can't del-tree the root folder"
+      return 1
+    fi
+
+    search_path="$1"
+    glob="$2"
+    all=$(find -L "${search_path}" -name "${glob}" 2> /dev/null)
+
     if [[ -n "${all}" ]]; then
-      read -rsn 1 -p "${RED}### Do you want to move all files and folders matching: \"$2\" in \"$1\" recursively to Trash (y/[n]) ? " ANS
-      echo ' '
-      if [[ "$ANS" = 'y' || "$ANS" = 'Y' ]]; then
-        echo ' '
+      if [[ "$dry_run" == 'N' ]]; then
         for next in ${all}; do
-          dest=${next##*/}
-          while [[ -e "${TRASH}/$dest" ]]; do
-            dest="${next##*/}-$(ts)"
+          trash_dest="${next##*/}"
+          while [[ -e "${TRASH}/${trash_dest}" ]]; do
+            trash_dest="${next##*/}-$(ts)"
           done
-          mv -v "${next}" "${TRASH}/$dest"
+          if command mv "${next}" "${TRASH}/${trash_dest}" &> /dev/null; then
+            echo -e "${ORANGE}Deleted: ${WHITE}${next} -> ${TRASH}/${trash_dest}${NC}"
+          else
+            __hhs_errcho "${FUNCNAME[0]}: Could not move \"${next}\" to ${TRASH}/${trash_dest}"
+          fi
         done
       else
-        echo -e "${YELLOW}If you decide to delete, the following files will be affected:${NC}"
-        echo ' '
-        echo "${all}" | grep "$2"
+        for next in ${all}; do
+          echo -e "${YELLOW}Would delete ${WHITE}-> ${next}${NC}"
+        done
       fi
-      echo "${NC}"
     else
       echo ' '
-      echo "${YELLOW}No files or folders matching \"$2\" were found in \"$1\" !${NC}"
+      echo "${YELLOW}No files or folders matching \"${glob}\" were found in \"$1\" !${NC}"
       echo ' '
     fi
   fi

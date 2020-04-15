@@ -32,7 +32,7 @@ function __hhs_ascof() {
 }
 
 # @function: Convert unicode to hexadecimal
-# @param $1..N [Req] : The unicodes to convert
+# @param $1..$N [Req] : The unicode values to convert
 if __hhs_has "python"; then
 
   function __hhs_utoh() {

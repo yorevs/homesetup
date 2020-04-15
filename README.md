@@ -449,7 +449,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_list_tree        | List all directories recursively (Nth level depth) as a tree                |
 |                        | __hhs_save_dir         | Save the one directory to be loaded by load                                 |
 |                        | __hhs_load_dir         | **Pushd** into a saved directory previously issued by save                  |
-|                        | __hhs_go_dir           | Search and **pushd** into the first match of the specified directory name   |
+|                        | __hhs_godir           | Search and **pushd** into the first match of the specified directory name   |
 |                        | __hhs_mkcd             | Create all folders using a dot notation path and immediately change into it |
 | hhs-files.bash         | __hhs_ls_sorted        | List files and sort by the specified column                                 |
 |                        | __hhs_del_tree         | Move files recursively to the Trash                                         |
