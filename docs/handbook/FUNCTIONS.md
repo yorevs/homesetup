@@ -3,7 +3,6 @@
 ## Standard tools
 
 
-------
 ### __hhs_has
 
 ```bash
@@ -501,17 +500,150 @@ Move files recursively to the Trash.
 ##### **Examples:**
 
 ```bash
-  $ del-tree . '.DS_Store' && echo "Would not delete since default is dry run"
-  $ del-tree -f . '.DS_Store' && echo "Would delete all .DS_Store it finds"
+  $ __hhs_del_tree . '.DS_Store' && echo "Would not delete since default is dry run"
+  $ __hhs_del_tree -f . '.DS_Store' && echo "Would delete all .DS_Store it finds"
 ```
 
 
+------
+### __hhs_mchoose
+```bash
+Usage: __hhs_mchoose [options] <output_file> <items...>
+
+    Options:
+      -c  : All options are initially checked instead of unchecked.
+
+    Arguments:
+      output_file : The output file where the results will be stored.
+      items       : The items to be displayed for choosing.
+
+    Examples:
+      Choose numbers from 1 to 20 (start with all options checked):
+        => __hhs_mchoose /tmp/out.txt {1..20} && cat /tmp/out.txt
+      Choose numbers from 1 to 20 (start with all options unchecked):
+        => __hhs_mchoose -c /tmp/out.txt {1..20} && cat /tmp/out.txt
+
+  Notes:
+    - A temporary file is suggested to used with this command: $ mktemp.
+    - The outfile must not exist or it be an empty file.
+```
+
+##### **Purpose**:
+
+Choose options from a list using a navigable menu.
+
+##### **Returns**:
+
+  - **0** on success and if chosen items were Accepted.
+  - **127** if the user Canceled (**Q** pressed).
+  - **non-zero** for all other cases.
+
+##### **Parameters**:
+
+  - $1 _Required_     : The output file where the results will be stored.
+  - $2..$N _Required_ : The items to be displayed for choosing.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_mchoose /tmp/out.txt {1..20} && echo "All options initially unchecked" && cat /tmp/out.txt
+  $ __hhs_mchoose -c /tmp/out.txt {1..20} && echo "All options initially checked" && cat /tmp/out.txt
+```
 
 
+------
+### __hhs_minput
+```bash
+Usage: __hhs_minput <output_file> <fields...>
+
+    Arguments:
+      output_file : The output file where the results will be stored.
+        fields    : A list of form fields: Label|Mode|Type|Min/Max len|Perm|Value
+
+    Fields:
+            <Label> : The field label. Consisting only of alphanumeric characters and under‐scores.
+             [Mode] : The input mode. One of {[input]|password|checkbox}.
+             [Type] : The input type. One of {letter|number|alphanumeric|[any]}.
+      [Min/Max len] : The minimum and maximum length of characters allowed. Defauls to [0/30].
+             [Perm] : The field permissions. One of {r|[rw]}. Where \"r\" for Read Only ; \"rw\" for Read & Write.
+            [Value] : The initial value of the field. This field may not be blank if the field is read only.
+
+    Examples:
+      Form with 4 fields (Name,Age,Password,Role,Accept_Conditions):
+        => __hhs_minput /tmp/out.txt 'Name|||5/30|rw|' 'Age||number|1/3||' 'Password|password||5|rw|' 'Role||||r|Admin' 'Accept_Conditions|checkbox||||'
+
+  Notes:
+    - Optional fields will assume a default value if they are not specified.
+    - A temporary file is suggested to used with this command: $ mktemp.
+    - The outfile must not exist or be an empty file.
+```
+
+##### **Purpose**:
+
+Provide a terminal form input with simple validation.
+
+##### **Returns**:
+
+  - **0** on success and form was validated and Accepted.
+  - **127** if the user Canceled (**Esc** pressed).
+  - **non-zero** for all other cases.
+
+##### **Parameters**:
+
+  - $1 _Required_     : The output file where the results will be stored.
+  - $2..$N _Required_ : The form fields to be displayed for input.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_minput /tmp/out.txt \
+    'Name|||5/30|rw|' \
+    'Age||number|1/3||' \
+    'Password|password||5|rw|' \
+    'Role||||r|Admin' \
+    'Accept_Conditions|checkbox||||' && cat /tmp/out.txt
+```
 
 
+------
+### __hhs_mselect
+```bash
+Usage: __hhs_mselect <output_file> <items...>
 
+    Arguments:
+      output_file : The output file where the result will be stored.
+      items       : The items to be displayed for selecting.
 
+    Examples:
+      Selct a number from 1 to 100:
+        => __hhs_mselect /tmp/out.txt {1..100} && cat /tmp/out.txt
+
+  Notes:
+    - If only one option is available, mselect will select it and return.
+    - A temporary file is suggested to used with this command: $ mktemp.
+    - The outfile must not exist or it be an empty file.
+```
+
+##### **Purpose**:
+
+Select an option from a list using a navigable menu.
+
+##### **Returns**:
+
+  - **0** on success and if the selected item was Accepted.
+  - **127** if the user Canceled (**Q** pressed).
+  - **non-zero** for all other cases.
+
+##### **Parameters**:
+
+  - $1 _Required_     : The output file where the result will be stored.
+  - $2..$N _Required_ : The items to be displayed for selecting.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_mselect /tmp/out.txt {1..100} && echo "One item has been selected" && cat /tmp/out.txt
+```
 
 
 ------
@@ -526,18 +658,52 @@ TODO
 
 ##### **Returns**:
 
-**0** if TODO; **non-zero** otherwise.
+**0** on success; **non-zero** otherwise.
 
 ##### **Parameters**: 
 
 TODO
-
 
 ##### **Examples:**
 
 ```bash
   $ example here
 ```
+
+
+
+
+
+
+
+
+
+
+------
+### __hhs
+```bash
+Usage:
+```
+
+##### **Purpose**:
+
+TODO
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**:
+
+TODO
+
+##### **Examples:**
+
+```bash
+  $ example here
+```
+
+
 
 
 
