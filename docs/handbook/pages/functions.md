@@ -1,9 +1,37 @@
 # HomeSetup Functions Handbook
 
-## Standard tools
+## Table of contents
 
+<!-- toc -->
+- [Standard Tools](#standard-tools)
+  * [General](#general)
+  * [Aliases Related](#aliases-related)
+  * [Built-ins](#built-ins)
+  * [Command Tool](#command-tool)
+  * [Directory Related](#directory-related)
+  * [File Related](#file-related)
+  * [MChoose Tool](#mchoose-tool)
+  * [MInput Tool](#minput-tool)
+  * [MSelect Tool](#mselect-tool)
+  * [Network Related](#network-related)
+  * [Paths Tool](#paths-tool)
+  * [Profile Related](#profile-related)
+  * [Punch-Tool](#punch-tool)
+  * [Search Related](#search-related)
+  * [Security Related](#security-related)
+  * [Shell Utilities](#shell-utilities)
+  * [System Utilities](#system-utilities)
+  * [Taylor Tool](#taylor-tool)
+  * [Text Tool](#text-tool)
+  * [Toolchecks](#toolchecks)
+- [Development Tools](#development-tools)
+<!-- tocstop -->
 
-### __hhs_has
+## Standard Tools
+
+### General
+
+#### __hhs_has
 
 ```bash
 Usage: __hhs_has <command>
@@ -28,9 +56,9 @@ Check if a command is available on the current shell session.
   $ __hhs_has noexist || echo "ls is not installed"
 ```
 
+### Aliases Related
 
-------
-### __hhs_alias
+#### __hhs_alias
 
 ```bash
 Usage: __hhs_alias <alias_name>='<alias_expr>'
@@ -58,7 +86,7 @@ Check if an alias does not exists and create it, otherwise just ignore it. Do no
 
 
 ------
-### __hhs_aliases
+#### __hhs_aliases
 
 ```bash
 Usage: __hhs_aliases [-s|--sort] [alias <alias_expr>]
@@ -95,8 +123,9 @@ Manipulate custom aliases (add/remove/edit/list).
 ```
 
 
-------
-### __hhs_random_number
+### Built-ins
+
+#### __hhs_random_number
 
 ```bash
 Usage: __hhs_random_number <min-val> <max-val>
@@ -123,7 +152,8 @@ Generate a random number int the range <min> <max> (all limits included).
 
 
 ------
-### __hhs_ascof
+#### __hhs_ascof
+
 ```bash
 Usage: __hhs_ascof <character>
 ```
@@ -148,7 +178,8 @@ Display the decimal ASCII representation of a character.
 
 
 ------
-### __hhs_utoh
+#### __hhs_utoh
+
 ```bash
 Usage: __hhs_utoh <unicode...>
 
@@ -174,8 +205,10 @@ Convert unicode to hexadecimal
 ```
 
 
-------
-### __hhs_command
+### Command Tool
+
+#### __hhs_command
+
 ```bash
 Usage: __hhs_command [options [cmd_alias] <cmd_expression>] | [cmd_index]
 
@@ -212,8 +245,10 @@ Add/Remove/List/Execute saved bash commands.
 ```
 
 
-------
-### __hhs_change_dir
+### Directory Related
+
+#### __hhs_change_dir
+
 ```bash
 Usage: __hhs_change_dir [-L|-P] [dir]
 
@@ -244,7 +279,8 @@ Change the current working directory to a specific Folder.
 
 
 ------
-### __hhs_changeback_ndirs
+#### __hhs_changeback_ndirs
+
 ```bash
 Usage: __hhs_changeback_ndirs [ndirs]
 
@@ -273,7 +309,8 @@ Change the current working directory to the previous folder by N times.
 
 
 ------
-### __hhs_dirs
+#### __hhs_dirs
+
 ```bash
 Usage: __hhs_dirs
 ```
@@ -298,7 +335,8 @@ Display the list of currently selectable remembered directories.
 
 
 ------
-### __hhs_list_tree
+#### __hhs_list_tree
+
 ```bash
 Usage: __hhs_list_tree [from_dir] [recurse_level]
 ```
@@ -324,7 +362,8 @@ List contents of directories in a tree-like format.
 
 
 ------
-### __hhs_save_dir
+#### __hhs_save_dir
+
 ```bash
 Usage: __hhs_save_dir -e | [-r] <dir_alias> | <dir_to_save> <dir_alias>
 
@@ -355,7 +394,8 @@ Save one directory path for future __hhs_load.
 
 
 ------
-### __hhs_load_dir
+#### __hhs_load_dir
+
 ```bash
 Usage: __hhs_load_dir [-l] | [dir_alias]
 
@@ -388,7 +428,8 @@ Change the current working directory to pre-saved entry from __hhs_save.
 
 
 ------
-### __hhs_godir
+#### __hhs_godir
+
 ```bash
 Usage: __hhs_godir [search_path] <dir_name>
 ```
@@ -415,7 +456,8 @@ Search and cd into the first match of the specified directory name.
 
 
 ------
-### __hhs_mkcd
+#### __hhs_mkcd
+
 ```bash
 Usage: __hhs_mkcd <dirtree | package> 
 
@@ -443,8 +485,10 @@ Create all folders using a slash or dot notation path and immediately change int
 ```
 
 
-------
-### __hhs_ls_sorted
+### File Related
+
+#### __hhs_ls_sorted
+
 ```bash
 Usage: __hhs_ls_sorted [column_number]
 ```
@@ -474,7 +518,8 @@ List files sorted by the specified column. The following columns apply:
 
 
 ------
-### __hhs_del_tree
+#### __hhs_del_tree
+
 ```bash
 Usage: __hhs_del_tree [-n|-f] <search_path> <glob_expr>
 
@@ -505,8 +550,10 @@ Move files recursively to the Trash.
 ```
 
 
-------
-### __hhs_mchoose
+### MChoose Tool
+
+#### __hhs_mchoose
+
 ```bash
 Usage: __hhs_mchoose [options] <output_file> <items...>
 
@@ -551,8 +598,10 @@ Choose options from a list using a navigable menu.
 ```
 
 
-------
-### __hhs_minput
+### MInput Tool
+
+#### __hhs_minput
+
 ```bash
 Usage: __hhs_minput <output_file> <fields...>
 
@@ -605,8 +654,10 @@ Provide a terminal form input with simple validation.
 ```
 
 
-------
-### __hhs_mselect
+### MSelect Tool
+
+#### __hhs_mselect
+
 ```bash
 Usage: __hhs_mselect <output_file> <items...>
 
@@ -645,9 +696,60 @@ Select an option from a list using a navigable menu.
   $ __hhs_mselect /tmp/out.txt {1..100} && echo "One item has been selected" && cat /tmp/out.txt
 ```
 
+### Network Related
+
+TODO
+
+### Paths Tool
+
+TODO
+
+### Profile Related
+
+TODO
+
+### Punch-Tool
+
+TODO
+
+### Search Related
+
+TODO
+
+### Security Related
+
+TODO
+
+### Shell Utilities
+
+TODO
+
+### System Utilities
+
+TODO
+
+### Taylor Tool
+
+TODO
+
+### Text Tool
+
+TODO
+
+### Toolchecks
+
+TODO
+
+
+
+
+
+
+
 
 ------
 ### __hhs
+
 ```bash
 Usage: 
 ```
@@ -676,39 +778,7 @@ TODO
 
 
 
-
-
-
 ------
-### __hhs
-```bash
-Usage: 
-```
-
-##### **Purpose**:
-
-TODO
-
-##### **Returns**:
-
-**0** on success; **non-zero** otherwise.
-
-##### **Parameters**: 
-
-TODO
-
-##### **Examples:**
-
-```bash
-  $ example here
-```
-
-
-
-
-
-
-------
-## Development tools
+## Development Tools
 
 TODO

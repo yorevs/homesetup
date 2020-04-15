@@ -10,6 +10,7 @@ environment variables, configuration files and such.
 
 - [Environment variables](#environment-variables)
 - [Aliases](#aliases)
+  * [Alias Definitions](#alias-definitions)
   * [Categories](#categories)
 - [Functions](#functions)
 - [Applications](#applications)
@@ -58,9 +59,9 @@ to be manual. The original content is defined on the original [aliasdef](../../d
 
 ### Alias Definitions
 
-Here is where you feel yourself home. You can override or add additional aliases by adding entries to your installed 
-**~/.aliases** file. When you first install HomeSetup this file will be created automatically for you, so you just 
-need to customise it the wat you want.
+Here is where you feel yourself home. You can override our default aliases by changing your installed **~/.aliases** file. 
+When you first install HomeSetup this file will be created automatically for you, so you just need to customise it the 
+what you desire.
 
 **Notice that** Sometimes we need to update this file when we add/change some functions. We will always keep a backup of this file prior to 
 changing it, so you can always get what you have inside it and move to the new file.
