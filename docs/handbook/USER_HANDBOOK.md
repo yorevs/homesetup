@@ -19,7 +19,7 @@ environment variables, configuration files and such.
 ## Environment Variables
 
 Your new terminal uses a bunch of environment variables, that will be extended by HomeSetup using the 
-[bash_envs.bash](../dotfiles/bash/bash_env.bash).
+[bash_envs.bash](../../dotfiles/bash/bash_env.bash).
 
 You can override or add additional variables by adding entries to your installed **~/.env** file. When you first 
 install HomeSetup this file will be created automatically for you, so you just need to edit it.
@@ -51,7 +51,7 @@ aliases by editing this file.
 
 When you first install HomeSetup, the file will be automatically generated for you. Further updates may require this 
 file to be updated. We always keep a backup of this file, so, you can preserve your customizations, but this process has 
-to be manual. The original content is defined on the original [aliasdef](../dotfiles/aliasdef) file.
+to be manual. The original content is defined on the original [aliasdef](../../dotfiles/aliasdef) file.
 
 You can override or add additional aliases by adding entries to your installed **~/.aliases** file. When you first 
 install HomeSetup this file will be created automatically for you, so you just need to edit it.
