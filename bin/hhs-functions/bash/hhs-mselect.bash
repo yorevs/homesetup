@@ -13,7 +13,7 @@
 # @param $2 [Req] : The array of items.
 function __hhs_mselect() {
 
-  local all_options=() outfile sel_index=0 show_from=0 re_render=1 selector
+  local outfile ret_val=1 all_options=() sel_index=0 show_from=0 re_render=1 selector
   local index_len len show_to diff_index typed_index columns option_line
 
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
@@ -21,6 +21,7 @@ function __hhs_mselect() {
     echo ''
     echo '    Arguments: '
     echo '      output_file : The output file where the result will be stored.'
+    echo '      items       : The items to be displayed for selecting.'
     echo ''
     echo '    Examples: '
     echo '      Selct a number from 1 to 100:'
@@ -86,9 +87,9 @@ function __hhs_mselect() {
     IFS= read -rsn 1 keypress
     case "${keypress}" in
       'q' | 'Q') # Exit requested
-        enable-line-wrap
+        ret_val=127
         echo -e "\n${NC}"
-        return 1
+        break;
         ;;
       [[:digit:]]) # An index was typed
         typed_index="${keypress}"
@@ -136,17 +137,17 @@ function __hhs_mselect() {
         esac
         ;;
       $'') # Keep the current index and exit
-        echo '' && break
+        ret_val=0
+        echo ''
+        break
         ;;
     esac
     # } Navigation input
 
   done
 
-  show-cursor
-  enable-line-wrap
-  echo -e "${NC}"
-  echo "$sel_index" > "$outfile"
+  [[ ${ret_val} -eq 0 ]] && echo "$sel_index" > "$outfile"
+  cls && echo -e "${NC}"
 
-  return 0
+  return ${ret_val}
 }
