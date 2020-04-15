@@ -104,17 +104,17 @@ Checkout the full handbook of [applications here](APPLICATIONS.md).
 Currently HomeSetup offers a handful of templates, that helps you code or configure your git like we do. The following
 are provided with the latest version:
 
-- [Bash templates](../templates/bash)
-    * [app.bash](../templates/bash/app.bash) : Create bash applications using our style.
-- [Git templates](../templates/git)
-    * [commits](../templates/git/commits) : HomeSetup commit messages format.
-    * [gitconfig](../templates/git/gitconfig) : .gitconfig file template.
-    * [gitignore](../templates/git/gitignore) : .gitignore file template.
-    * [commit-msg](../templates/git/hooks/commit-msg) : Git hook to make sure your commit message is following our format.
-    * [prepare-commit-msg](../templates/git/hooks/prepare-commit-msg) : Make sure no one commits on master.
-- [Python templates](../templates/py)
-    * [app.py](../templates/py/app.py) : Create python applications using our style.
-- [Text templates](../templates/txt)
-    * [help.txt](../templates/txt/help.txt) : Template used to create HomeSetup help messages.
-    * [man.txt](../templates/txt/man.txt) : Template used to create bash man pages.
+- [Bash templates](../../templates/bash)
+    * [app.bash](../../templates/bash/app.bash) : Create bash applications using our style.
+- [Git templates](../../templates/git)
+    * [commits](../../templates/git/commits) : HomeSetup commit messages format.
+    * [gitconfig](../../templates/git/gitconfig) : .gitconfig file template.
+    * [gitignore](../../templates/git/gitignore) : .gitignore file template.
+    * [commit-msg](../../templates/git/hooks/commit-msg) : Git hook to make sure your commit message is following our format.
+    * [prepare-commit-msg](../../templates/git/hooks/prepare-commit-msg) : Make sure no one commits on master.
+- [Python templates](../../templates/py)
+    * [app.py](../../templates/py/app.py) : Create python applications using our style.
+- [Text templates](../../templates/txt)
+    * [help.txt](../../templates/txt/help.txt) : Template used to create HomeSetup help messages.
+    * [man.txt](../../templates/txt/man.txt) : Template used to create bash man pages.
 
