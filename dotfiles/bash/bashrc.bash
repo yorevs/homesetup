@@ -5,7 +5,7 @@
 # Purpose: This file is user specific file that gets loaded each time user creates a new
 #          local session i.e. in simple words, opens a new terminal. All environment variables
 #          created in this file would take effect every time a new local session is started.
-# Created: Aug 26, 2008
+# Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup

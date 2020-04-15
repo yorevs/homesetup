@@ -3,7 +3,7 @@
 """@package -
    @script: free.py
   @purpose: Report system memory usage.
-  @created: Nov 20, 2008
+  @created: Nov 20, 2018
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@gmail.com
      @site: https://github.com/yorevs/homesetup
