@@ -20,7 +20,8 @@ function __hhs_mchoose() {
     echo '      -c  : All options are initially checked instead of unchecked.'
     echo ''
     echo '    Arguments: '
-    echo '      output_file : The output file where the result will be stored.'
+    echo '      output_file : The output file where the results will be stored.'
+    echo '      items       : The items to be displayed for choosing.'
     echo ''
     echo '    Examples: '
     echo '      Choose numbers from 1 to 20 (start with all options checked):'
@@ -41,7 +42,7 @@ function __hhs_mchoose() {
 
   HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
 
-  local all_options=() sel_options=() outfile cur_index=0 show_from=0 re_render=1 selector
+  local outfile ret_val=1 all_options=() sel_options=() cur_index=0 show_from=0 re_render=1 selector
   local index_len len show_to diff_index typed_index columns option_line init_value=0 mark
 
   [[ '-c' = "${1}" ]] && shift && init_value=1
@@ -104,9 +105,9 @@ function __hhs_mchoose() {
         re_render=1 && continue
         ;;
       'q' | 'Q') # Exit requested
-        enable-line-wrap
         echo -e "\n${NC}"
-        return 1
+        ret_val=127
+        break
         ;;
       [[:digit:]]) # An index was typed
         typed_index="${keypress}"
@@ -154,17 +155,17 @@ function __hhs_mchoose() {
         esac
         ;;
       $'') # Keep the current index and exit
-        echo '' && break
+        ret_val=0
+        echo ''
+        break
         ;;
     esac
     # } Navigation input
 
   done
 
-  show-cursor
-  enable-line-wrap
-  echo -e "${NC}"
-  echo "${sel_options[*]}" > "$outfile"
+  [[ ${ret_val} -eq 0 ]] && echo "${sel_options[*]}" > "$outfile"
+  cls && echo -e "${NC}"
 
-  return 0
+  return ${ret_val}
 }

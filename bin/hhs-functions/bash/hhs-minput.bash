@@ -38,15 +38,20 @@ function __hhs_minput_curpos() {
   return 1
 }
 
-# @function: Provide a terminal form input with validation checking.
+# @function: Provide a terminal form input with simple validation.
 # @param $1 [Req] : The response file.
 # @param $2 [Req] : The form fields.
+#
+# TODOs:
+#   1. Move the cursor using left and right arrow keys.
+#   2. Passwords and encoded with the OS username on save.
 function __hhs_minput() {
 
-  local outfile label_size value_size form_title all_fields=() cur_field=() field_parts=() all_pos=()
+  local outfile ret_val=1 label_size=10 value_size=30 form_title all_fields=() cur_field=() field_parts=() all_pos=()
   local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout re_render=1
   local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes=() mi_types=() file_contents
-
+  
+  # Form icons and colors
   UNSELECTED_BG='\033[40m'
   SELECTED_BG='\033[44m'
   LOCKED_ICN='\357\200\243'
@@ -60,7 +65,7 @@ function __hhs_minput() {
     echo "Usage: ${FUNCNAME[0]} <output_file> <fields...>"
     echo ''
     echo '    Arguments: '
-    echo '      output_file : The output file where the result will be stored.'
+    echo '      output_file : The output file where the results will be stored.'
     echo '        fields    : A list of form fields: Label|Mode|Type|Min/Max len|Perm|Value'
     echo ''
     echo '    Fields: '
@@ -95,8 +100,6 @@ function __hhs_minput() {
   # Validate field syntax => "Label:Mode:Type:Min/Max len:Perm:Value" ...{
   mi_modes=('input' 'password' 'checkbox')
   mi_types=('letter' 'number' 'alphanumeric' 'any')
-  label_size=10 # Default Label column length
-  value_size=30 # Default Value column length
   all_fields=("${@}")
   for idx in "${!all_fields[@]}"; do
     field="${all_fields[${idx}]}"
@@ -211,7 +214,8 @@ function __hhs_minput() {
     # } Menu Renderization
 
     # Position the cursor to edit the current field
-    [[ "checkbox" != "${cur_field[1]}" ]] && tput cup "${cur_row}" "${cur_col}" && show-cursor
+    [[ "checkbox" != "${cur_field[1]}" ]] && tput cup "${cur_row}" "${cur_col}"
+    show-cursor
 
     # Navigation input {
     IFS= read -rsn1 keypress
@@ -285,6 +289,7 @@ function __hhs_minput() {
             ;;
           *) # Escape pressed
             if [[ "${#keypress}" -eq 1 ]]; then
+              ret_val=127
               break
             fi
             ;;
@@ -306,8 +311,10 @@ function __hhs_minput() {
             file_contents+="${f_label}=${f_value}\n"
           fi
         done
+        # Having content on file_contents means that the form was accepted and validated
         if [[ -n "${file_contents}" ]]; then
           echo -en "${file_contents}" > "${outfile}"
+          ret_val=0
           break
         fi
         ;;
@@ -318,8 +325,8 @@ function __hhs_minput() {
     # } Navigation input
     re_render=1
   done
-  cls
-  echo -e "${NC}"
+  
+  cls && echo -e "${NC}"
 
-  return 0
+  return ${ret_val}
 }
