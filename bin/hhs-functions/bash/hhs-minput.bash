@@ -51,7 +51,7 @@ function __hhs_minput() {
   local outfile ret_val=1 label_size=10 value_size=30 form_title all_fields=() cur_field=() field_parts=() all_pos=()
   local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout re_render=1
   local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes=() mi_types=() file_contents
-
+  
   # Form icons and colors
   UNSELECTED_BG='\033[40m'
   SELECTED_BG='\033[44m'
