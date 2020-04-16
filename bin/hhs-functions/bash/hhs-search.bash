@@ -12,16 +12,16 @@ if __hhs_has "python"; then
 
   # @function: Search for files and links to files recursively.
   # @param $1 [Req] : The base search path.
-  # @param $2 [Req] : The GLOB expressions of the file search.
+  # @param $2 [Req] : The search glob expressions.
   function __hhs_search_file() {
 
     local inames expr filter dir
 
     if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <search_path> <file_globs...>"
+      echo "Usage: ${FUNCNAME[0]} <search_path> <globs...>"
       echo ''
       echo '  Notes: '
-      echo '    ** <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
+      echo '    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
       dir="${1}"
@@ -37,7 +37,7 @@ if __hhs_has "python"; then
 
   # @function: Search for directories and links to directories recursively.
   # @param $1 [Req] : The base search path.
-  # @param $2 [Req] : The GLOB expressions of the directory search.
+  # @param $2 [Req] : The search glob expressions.
   function __hhs_search_dir() {
 
     local inames expr dir filter
@@ -60,7 +60,7 @@ if __hhs_has "python"; then
     fi
   }
 
-  # @function: Search for strings matching the specified criteria in files recursively.
+  # @function: Search in files for strings matching the specified criteria recursively.
   # @param $1 [Req] : Search options.
   # @param $2 [Req] : The base search path.
   # @param $3 [Req] : The searching string.
@@ -73,8 +73,7 @@ if __hhs_has "python"; then
     local names_expr search_str base_cmd full_cmd dir
 
     if [[ "$#" -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo ''
-      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <file_globs>"
+      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <globs>"
       echo ''
       echo '    Options: '
       echo '      -i | --ignore-case            : Makes the search case INSENSITIVE.'
@@ -83,7 +82,7 @@ if __hhs_has "python"; then
       echo '      -b | --binary                 : Includes BINARY files in the search.'
       echo ''
       echo '  Notes: '
-      echo '    ** <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
+      echo '    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
       while [[ -n "$1" ]]; do

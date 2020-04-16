@@ -9,8 +9,8 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Punch the Clock. Add/Remove/Edit/List clock punches.
-# @param $1 [Opt] : Punch options
+# @function: PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheets.
+# @param $1 [Con] : The week list punches from.
 function __hhs_punch() {
 
   local line_totals=() totals=() date_stamp time_stamp week_stamp opt lines=() balance
@@ -24,7 +24,7 @@ function __hhs_punch() {
     echo '    Options: '
     echo '      -l        : List all registered punches.'
     echo '      -e        : Edit current punch file.'
-    echo '      -r        : Reset punches for the current week.'
+    echo '      -r        : Reset punches for the current week and save the previous one.'
     echo '      -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch.'
     echo ''
     echo '  Notes: '

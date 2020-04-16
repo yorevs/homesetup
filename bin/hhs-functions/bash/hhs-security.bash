@@ -12,17 +12,20 @@ if __hhs_has "gpg"; then
 
   # @function: Encrypt file using GPG.
   # @param $1 [Req] : The file to encrypt.
-  # @param $2 [Req] : The passphrase to encrypt the file.
+  # @param $2 [Req] : The passphrase used to encrypt the file.
   # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
   function __hhs_encrypt_file() {
 
-    if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
+    local keep_file="${3}"
+
+    if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
       if gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null; then
-        if base64 -i "$1.gpg" -o "$1" && rm -f "$1.gpg"; then
-          echo -e "${GREEN}File \"$1\" has been encrypted!${NC}"
+        if base64 -i "$1.gpg" -o "$1"; then
+          [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "$1.gpg" &> /dev/null
+          echo -e "${GREEN}File \"$1\" has been encrypted !${NC}"
           return 0
         fi
       fi
@@ -33,19 +36,22 @@ if __hhs_has "gpg"; then
     return 1
   }
 
-  # @function: Decrypt file using GPG.
+  # @function: Decrypt a GPG encrypted file.
   # @param $1 [Req] : The file to decrypt.
-  # @param $2 [Req] : The passphrase to decrypt the file.
+  # @param $2 [Req] : The passphrase used to decrypt the file.
   # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
   function __hhs_decrypt_file() {
 
+    local keep_file="$3"
+
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase>"
+      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
       if base64 -D -i "$1" -o "$1.gpg"; then
         if gpg --yes --batch --passphrase="$2" "$1.gpg" &> /dev/null; then
-          echo -e "${GREEN}File \"$1\" has been decrypted!${NC}" && rm -f "$1.gpg"
+          [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "$1.gpg" &> /dev/null
+          echo -e "${GREEN}File \"$1\" has been decrypted !${NC}"
           return 0
         fi
       fi

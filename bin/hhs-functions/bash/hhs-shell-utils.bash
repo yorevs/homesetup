@@ -8,24 +8,24 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Search for previous issued commands from history using filters.
-# @param $1 [Req] : The searching command.
+# @function: Search for previously issued commands from history using filters.
+# @param $1 [Req] : The case-insensitive filter to be used when listing.
 function __hhs_history() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [command]"
+    echo "Usage: ${FUNCNAME[0]} [regex_filter]"
     return 1
   elif [[ "$#" -eq 0 ]]; then
-    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "^ *[0-9]*  "
+    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep -i "^ *[0-9]*  "
   else
-    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep "$*"
+    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep -i "$*"
   fi
 
   return $?
 }
 
 # @function: Display all environment variables using filters.
-# @param $1 [Opt] : Filter environments.
+# @param $1 [Opt] : The case-insensitive filter to be used when listing.
 function __hhs_envs() {
 
   local pad pad_len filter name value columns
@@ -69,7 +69,7 @@ function __hhs_envs() {
 # @function: Select a shell from the existing shell list.
 function __hhs_shell_select() {
 
-  local sel_index sel_shell mselect_file avail_shells=()
+  local sel_index ret_val=1 sel_shell mselect_file avail_shells=()
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
@@ -79,7 +79,7 @@ function __hhs_shell_select() {
     echo "-------------------------------------------------------------"
     echo -en "${NC}"
     IFS=$'\n' read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
-    # Add the brew bash/zsh as options
+    # Add the brew bash and zsh as options
     [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
     [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
@@ -88,20 +88,21 @@ function __hhs_shell_select() {
       sel_shell=${avail_shells[$sel_index]}
       if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
         if command chsh -s "${sel_shell}"; then
+          ret_val=$?
           clear
           export SHELL="${sel_shell}"
           echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
           echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
+          command rm -f "${mselect_file}"
         else
           __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"
+          [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
         fi
       fi
     fi
     IFS="$RESET_IFS"
     echo -e "${NC}"
-
-    [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
   fi
 
-  return 0
+  return ${ret_val}
 }

@@ -696,45 +696,338 @@ Select an option from a list using a navigable menu.
   $ __hhs_mselect /tmp/out.txt {1..100} && echo "One item has been selected" && cat /tmp/out.txt
 ```
 
+
 ### Network Related
 
 TODO
 
+
 ### Paths Tool
 
-TODO
+### __hhs_paths
+
+```bash
+Usage: __hhs_paths [options] <args>
+
+    Options:
+      -a <path> : Add to the current <path> to PATH.
+      -r <path> : Remove from the current <path> from PATH.
+      -e        : Edit current HHS_PATHS_FILE.
+      -c        : Attempt to clears non-existing paths. System paths are not affected
+      -q        : Quiet mode on
+
+  Notes:
+    When no arguments are provided it will list all PATH entries
+```
+
+##### **Purpose**:
+
+Manage your custom PATH entries. To add to your PATH, the directory must be a valid dirctory path.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Conditional_     : The path to be added or removed.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_paths -a /tmp && echo "/tmp added to your custom PATH"
+  $ __hhs_paths -r /tmp && echo "/tmp removed from your custom PATH"
+  $ __hhs_paths -c && echo "Cleaned up invalid custom PATHs"
+```
 
 ### Profile Related
 
 TODO
 
+
 ### Punch-Tool
 
-TODO
+### __hhs_punch
+
+```bash
+Usage: __hhs_punch [options] <args>
+
+    Options:
+      -l        : List all registered punches.
+      -e        : Edit current punch file.
+      -r        : Reset punches for the current week and save the previous one.
+      -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch.
+
+  Notes:
+    When no arguments are provided it will !!PUNCH THE CLOCK!!.
+```
+
+##### **Purpose**:
+
+PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheets.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Conditional_     : The week list punches from.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_punch && echo "I just punched the clock"
+  $ __hhs_punch -l && echo "Thats all current week's punches"
+  $ __hhs_punch -w 15 && echo "Listing week 16 punches"
+```
+
 
 ### Search Related
 
-TODO
+### __hhs_search_file
+
+```bash
+Usage: __hhs_search_file <search_path> <globs...>
+
+  Notes:
+    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"
+```
+
+##### **Purpose**:
+
+Search for files and links to files recursively.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_     : The base search path.
+  - $2 _Required_     : The search glob expressions.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_search_file /var/log '*.log'
+  $ __hhs_search_file . '*.properties,*.yaml'
+```
+
+------
+### __hhs_search_dir
+
+```bash
+Usage: __hhs_search_dir <search_path> <dir_names...>
+
+  Notes:
+  ** <dir_names...>: Comma separated directories. E.g:. "dir1,dir2,dir2"
+```
+
+##### **Purpose**:
+
+Search for directories and links to directories recursively.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_     : The base search path.
+  - $2 _Required_     : The search glob expressions.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_search_dir /tmp 'com*'
+  $ __hhs_search_dir . 'java*,resources*'
+```
+
+------
+### __hhs_search_string
+
+```bash
+Usage: __hhs_search_string [options] <search_path> <regex/string> <globs>
+
+    Options:
+      -i | --ignore-case            : Makes the search case INSENSITIVE.
+      -w | --words                  : Makes the search to use the STRING words instead of a REGEX.
+      -r | --replace <replacement>  : Makes the search to REPLACE all occurrences by the replacement string.
+      -b | --binary                 : Includes BINARY files in the search.
+
+  Notes:
+    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"
+```
+
+##### **Purpose**:
+
+Search in files for strings matching the specified criteria recursively.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_     : The base search path.
+  - $2 _Required_     : The search expression. Can be a regex or just a string.
+  - $3 _Required_     : The search glob expressions.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_search_string /var/log 'apple' '*.log'
+  $ __hhs_search_string . 'server.port' '*.properties,*.yaml'
+  $ __hhs_search_string -r 'server.port = 1234' . 'server.port *= *.*' '*.properties,*.yaml'
+```
+
 
 ### Security Related
 
-TODO
+### __hhs_encrypt_file
+
+```bash
+Usage: __hhs_encrypt_file <filename> <passphrase>  [keep]
+```
+
+##### **Purpose**:
+
+Encrypt file using GPG.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The file to encrypt.
+  - $2 _Required_ : The passphrase used to encrypt the file.
+  - $3 _Required_ : If provided, keeps the decrypted file, delete it otherwise.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_encrypt_file my-passwords.txt 112233 && echo "my-passwords.txt is now encrypted"
+```
+
+------
+### __hhs_decrypt_file
+
+```bash
+Usage: __hhs_decrypt_file <filename> <passphrase> [keep]
+```
+
+##### **Purpose**:
+
+Decrypt a GPG encrypted file.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The file to decrypt.
+  - $2 _Required_ : The passphrase used to decrypt the file.
+  - $3 _Required_ : If provided, keeps the encrypted file, delete it otherwise.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_decrypt_file my-passwords.txt 112233 && echo "my-passwords.txt is now decrypted"
+```
+
 
 ### Shell Utilities
 
-TODO
+### __hhs_history
+
+```bash
+Usage: __hhs_history [regex_filter]
+```
+
+##### **Purpose**:
+
+Search for previously issued commands from history using filters.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Optional_ : The case-insensitive filter to be used when listing.
+
+##### **Examples:**
+
+```bash
+  $ hist ls && echo "List previously type `ls' commands"
+```
+
+------
+### __hhs_envs
+
+```bash
+Usage: __hhs_envs [regex_filter]
+```
+
+##### **Purpose**:
+
+Display all environment variables using filters.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Optional_ : The case-insensitive filter to be used when listing.
+
+##### **Examples:**
+
+```bash
+  $ envs hhs && echo "That's all HHS variables"
+```
+
+------
+### __hhs_shell_select
+
+```bash
+Usage: __hhs_shell_select
+```
+
+##### **Purpose**:
+
+Select a shell from the existing shell list.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_shell_select
+```
+
 
 ### System Utilities
 
 TODO
 
+
 ### Taylor Tool
 
 TODO
 
+
 ### Text Tool
 
 TODO
+
 
 ### Toolchecks
 

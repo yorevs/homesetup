@@ -8,8 +8,9 @@
 # License: Please refer to <http://unlicense.org/>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Print each PATH entry on a separate line.
 # shellcheck disable=SC2155
+# @function: Manage your PATH entries.
+# @param $1 [Con] : The path to be added or removed.
 function __hhs_paths() {
 
   local pad pad_len path_dir custom private quiet
