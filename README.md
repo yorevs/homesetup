@@ -409,7 +409,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_gradle_init     | Gradle - Shortcut for **gradle init**                |
 | __hhs_gradle_quiet    | Gradle - Shortcut for **gradle -q**                  |
 | __hhs_gradle_wrapper  | Gradle - Shortcut for **gradle wrapper**             |
-| __hhs_gradle_projects | Gradle - Displays all available gradle projects     |
+| __hhs_gradle_projects | Gradle - Displays all available gradle projects      |
 | __hhs_gradle_tasks    | Gradle - Displays all available gradle project tasks |
 
 ### Docker aliases
@@ -449,7 +449,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_list_tree        | List all directories recursively (Nth level depth) as a tree                |
 |                        | __hhs_save_dir         | Save the one directory to be loaded by load                                 |
 |                        | __hhs_load_dir         | **Pushd** into a saved directory previously issued by save                  |
-|                        | __hhs_godir           | Search and **pushd** into the first match of the specified directory name   |
+|                        | __hhs_godir            | Search and **pushd** into the first match of the specified directory name   |
 |                        | __hhs_mkcd             | Create all folders using a dot notation path and immediately change into it |
 | hhs-files.bash         | __hhs_ls_sorted        | List files and sort by the specified column                                 |
 |                        | __hhs_del_tree         | Move files recursively to the Trash                                         |
@@ -482,7 +482,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_envs             | Display all environment variables using filters                             |
 |                        | __hhs_shell_select     | Select a shell from the existing shell list                                 |
 |                        | __hhs_color_palette    | Terminal color palette test                                                 |
-| hhs-sysman.bash        | __hhs_sysinfo          | Display relevant system information                                         |
+| hhs-sys-utils.bash     | __hhs_sysinfo          | Display relevant system information                                         |
 |                        | __hhs_process_list     | Display a process list matching the process name/expression                 |
 |                        | __hhs_process_kill     | Kills ALL processes specified by name                                       |
 |                        | __hhs_partitions       | Exhibit a Human readable summary about all partitions                       |
