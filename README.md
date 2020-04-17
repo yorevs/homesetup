@@ -22,27 +22,27 @@ HomeSetup was created to help users with the command line. The purpose was to cr
 that speedup daily tasks such as, punching the clock, searching for strings and files, change directories, using git, 
 gradle, docker, etc...
 
-- Setup most common configurations automatically.
+- Setup most common used configurations automatically.
 - New <tab+shift> complete (using menu-complete) that will cycle though options.
-- Prompt with a new monospaced font that supports [font-awesome](https://fontawesome.com/cheatsheet?from=io) icons.
-- Package manager helper to help installing application using recipes (not only brew installs).
-- Save your custom dotfiles on [firebase](https://console.firebase.google.com) and use it wherever you go.
-- New visual way to **select** and **input** data for your scripts without dependencies (pure bash code).
-- Dozens of functions to help you configure your terminal, and do daily tasks.
-- Highly customizable aliases, so you dictate what mnemonics you want to use (use your own syntax).
+- Prompt with a monospaced font that supports [font-awesome](https://fontawesome.com/cheatsheet?from=io) icons.
+- Package manager helper to help installing application using recipes (**not only brew installs**).
+- Save your custom dotfiles on a [Firebase](https://console.firebase.google.com) and download it wherever you go.
+- New visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
+- Dozens of functions to help you configure your terminal and deal with your daily tasks.
+- Highly customizable aliases, so, you dictate what mnemonics you want to use (use your own syntax).
 - All code is licensed under [The Unlicensed](LICENSE.md), so, you can modify and use freely.
 - Small learning curve and a complete [user's handbook](docs/handbook/USER_HANDBOOK.md).
 
 ## Catalina moved from bash to zsh
 
-Latest version of MacOS comes with zsh as the default shell. You can change it at any time using the following command:
+Latest version of MacOS comes with **zsh** as the _default shell_, but you can change it at any time with the following command:
 
 ```bash
 $ sudo chsh -s /bin/bash
 ```
 
-If apple decides to remove from next MacOS releases, you can always use HomeBrew version. In this case, the path is 
-different, like this:
+If apple decides to remove from next MacOS releases, you can always use HomeBrew's version. In this case, the path is 
+different:
 
 ```bash
 $ brew install bash

@@ -1,8 +1,8 @@
 # HomeSetup User Handbook
 
-**Thank you** for using HomeSetup. This is a handbook contains a collection of instructions intended to provide ready
+**Thank you** for using HomeSetup. This handbook contains a collection of instructions intended to provide ready
 reference for your new terminal features. We will cover all related aliases, applications and functions, as well as 
-environment variables, configuration files and such.
+environment variables, configuration files and more.
 
 ## Table of contents
 
@@ -59,9 +59,11 @@ to be manual. The original content is defined on the original [aliasdef](../../d
 
 ### Alias Definitions
 
-Here is where you feel yourself home. You can override our default aliases by changing your installed **~/.aliases** file. 
+Here is where you feel yourself home. You can override our default aliases by changing your installed **~/.aliasdef** file. 
 When you first install HomeSetup this file will be created automatically for you, so you just need to customise it the 
 what you desire.
+
+If you want to add more aliases, you can edit the file **~/.aliases**. HomeSetup will always load this file after the defaults, so whatever you write in this file, will prevail over the default.
 
 **Notice that** Sometimes we need to update this file when we add/change some functions. We will always keep a backup of this file prior to 
 changing it, so you can always get what you have inside it and move to the new file.
@@ -130,3 +132,4 @@ are provided with the latest version:
     * [help.txt](../../templates/txt/help.txt) : Template used to create HomeSetup help messages.
     * [man.txt](../../templates/txt/man.txt) : Template used to create bash man pages.
 
+**Do you have a nicer template ? Send it to us !**
