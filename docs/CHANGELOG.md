@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 [semver]: https://semver.org/
 
 
-## [Unreleased]
+## Unreleased
 
 ### Added
 
@@ -52,7 +52,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 * Fixed __hhs_docker_kill_all stopping at first error.
 
 
-## [1.3.0] - 2020-01-21
+## 1.3.0 - 2020-01-21
 
 ### Added
 

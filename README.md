@@ -4,7 +4,7 @@
 
 [![Tests](images/tests-badge.svg)](images/tests-badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.3.26/gray)](.VERSION)
+[![Release](https://badgen.net/badge/release/v1.3.26/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
@@ -14,7 +14,7 @@ many improvements and facilities, especially for developers that will ease the u
 Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans to adapt all of the code to be able to run under 
 Linux and also, add support for Zsh.
 
-**This it not just another dotfiles framework**
+**THIS IT NOT JUST ANOTHER DOTFILES FRAMEWORK**
 
 ## Highlights
 
@@ -30,8 +30,8 @@ gradle, docker, etc...
 - New visual way to **select** and **input** data for your scripts without dependencies (pure bash code).
 - Dozens of functions to help you configure your terminal, and do daily tasks.
 - Highly customizable aliases, so you dictate what mnemonics you want to use (use your own syntax).
-- All code is [unlicensed](LICENSE.md), so, you can modify and use freely.
-- Small learning curve and a provided [user's handbook](docs/handbook/USER_HANDBOOK.md).
+- All code is licensed under [The Unlicensed](LICENSE.md), so, you can modify and use freely.
+- Small learning curve and a complete [user's handbook](docs/handbook/USER_HANDBOOK.md).
 
 ## Catalina moved from bash to zsh
 
