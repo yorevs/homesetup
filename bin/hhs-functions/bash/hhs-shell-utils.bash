@@ -73,6 +73,7 @@ function __hhs_shell_select() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
+    return 1
   else
     clear
     echo "${YELLOW}@@ Please select your new default shell:"

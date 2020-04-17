@@ -1016,12 +1016,146 @@ Select a shell from the existing shell list.
 
 ### System Utilities
 
-TODO
+### __hhs_sysinfo
+
+```bash
+Usage: __hhs_sysinfo
+```
+
+##### **Purpose**:
+
+Display relevant system information.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_sysinfo
+```
+
+------
+### __hhs_process_list
+
+```bash
+Usage: __hhs_process_list [options] <process_name> [kill]
+
+    Options:
+        -i : Make case insensitive search
+        -w : Match full words only
+        -f : Do not ask questions when killing processes
+        -q : Be less verbose as possible
+
+  Notes:
+    kill : If specified, it will kill the process it finds
+```
+
+##### **Purpose**:
+
+Display a process list matching the process name/expression.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 __Required__ : The process name to check.
+  - $2 __Optional__ : Whether to kill all found processes.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_process_list java && echo "Listed all Java processes"
+  $ __hhs_process_list -i JAVA kill && echo "Listed all Java processes and killing them"
+```
+
+------
+### __hhs_process_kill
+
+```bash
+Usage: __hhs_process_kill [options] <process_name>
+
+    Options:
+        -f | --force : Do not prompt for confirmation when killing a process
+```
+
+##### **Purpose**:
+
+Kills ALL processes specified by name.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 __Required__ : The process name to kill.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_process_kill java
+```
+
+------
+### __hhs_partitions
+
+```bash
+Usage: __hhs_partitions
+```
+
+##### **Purpose**:
+
+Exhibit a Human readable summary about all partitions.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_partitions
+```
 
 
 ### Taylor Tool
 
-TODO
+------
+### __hhs_tailor
+
+```bash
+Usage: __hhs_tailor [filename]
+
+  Notes:
+    filename: If not provided, stdin will be used instead
+```
+
+##### **Purpose**:
+
+Tail a log using colors and patterns specified on `.tailor' file
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  $1 _Required_ : The log file name.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_tailor /var/log/syslog.log
+  $ cat /var/log/syslog.log | __hhs_tailor
+```
 
 
 ### Text Tool

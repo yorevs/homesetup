@@ -10,9 +10,14 @@
 
 # @function: Echo a message in red color and to stderr.
 function __hhs_errcho() {
-
-  echo -e "${RED}${*}${NC}" 1>&2
-  echo ''
+  
+  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <message>"
+    return 1
+  else
+    echo -e "${RED}${*}${NC}" 1>&2
+    echo ''
+  fi
 
   return $?
 }
@@ -29,6 +34,7 @@ function __hhs_highlight() {
     echo ''
     echo '  Notes: '
     echo '    filename: If not provided, stdin will be used instead'
+    return 1
   else
     search="${1:-.*}"
     file="${2:-/dev/stdin}"

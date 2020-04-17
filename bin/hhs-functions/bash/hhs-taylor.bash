@@ -15,7 +15,7 @@ function __hhs_tailor() {
 
   local file
 
-  if [[ -z "$1" ]]; then
+  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [filename]"
     echo ''
     echo '  Notes: '

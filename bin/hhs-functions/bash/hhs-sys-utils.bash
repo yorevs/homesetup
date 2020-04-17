@@ -15,6 +15,7 @@ function __hhs_sysinfo() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
+    return 1
   else
     username="$(whoami)"
     echo -e "\n${ORANGE}System information ------------------------------------------------"
@@ -130,16 +131,16 @@ function __hhs_process_list() {
             if kill -9 "${pid}" &> /dev/null; then 
               echo -en "${GREEN}=> Killed \"${pid}\" with SIGKILL(-9)\033[K"
             else
-              echo -en "${YELLOW}=> Skipped \"${pid}\" (NOT ACTIVE)\033[K"
+              echo -en "${ORANGE}=> Skipped \"${pid}\" (INACTIVE)\033[K"
             fi
           fi
           if [[ -n "$ANS" || -n "${force}" ]]; then echo -e "${NC}"; fi
         else
           # Check for ghost processes
           if ps -p "${pid}" &> /dev/null; then
-            echo -e "${GREEN} ${CHECK_ICN}  active"
+            echo -e "${GREEN} ${CHECK_ICN}  active process"
           else
-            __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN}  ghost"
+            __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN}  ghost process"
           fi
         fi
       done
@@ -158,24 +159,29 @@ function __hhs_process_list() {
 # @param $1 [Req] : The process name to kill
 function __hhs_process_kill() {
 
-  local force_flag=
-
+  local ret_val=1 force_flag=
+  
+  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [options] <process_name>"
+    echo ''
+    echo '    Options: '
+    echo '        -f | --force : Do not prompt for confirmation when killing a process'
+    return 1
+  fi
+  
   if [[ "$1" == "-f" || "$1" == "--force" ]]; then
     shift
     force_flag='-f'
   fi
 
-  if [[ $# -gt 0 ]]; then
-    for nproc in "${@}"; do
-      __hhs_process_list -q $force_flag "${nproc}" kill
-      echo -e "\033[3A" # Move up 3 lines to beautify the output
-    done
-    echo -e '\n'
-  else
-    echo "Usage: ${FUNCNAME[0]} <process_name...>"
-  fi
+  for nproc in "${@}"; do
+    __hhs_process_list -q $force_flag "${nproc}" kill
+    ret_val=$?
+    echo -e "\033[3A" # Move up 3 lines to beautify the output
+  done
+  echo -e '\n'
 
-  return $?
+  return ${ret_val}
 }
 
 # @function: Exhibit a Human readable summary about all partitions.
@@ -185,6 +191,7 @@ function __hhs_partitions() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
+    return 1
   else
     all_parts="$(df -Ha | tail -n +2)"
     (
