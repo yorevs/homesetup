@@ -87,14 +87,20 @@ function __hhs_version() {
 }
 
 # @function: Check whether a list of development tools are installed or not.
+# @param $1..$N [Opt] : The tool list to be checked.
 function __hhs_tools() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} "
+    echo "Usage: ${FUNCNAME[0]} [tool_list]"
+    return 1
   else
-
+    if [[ $# -gt 0 ]]; then
+      tool_list=$*
+    else
+      tool_list=${HHS_DEV_TOOLS[*]}
+    fi
     IFS=$' '
-    for app in ${HHS_DEV_TOOLS[*]}; do
+    for app in ${tool_list}; do
       __hhs_toolcheck "$app"
     done
     IFS="$RESET_IFS"
@@ -110,22 +116,28 @@ function __hhs_tools() {
 }
 
 # @function: Display information about the given command.
+# @param $1 [Req] : The command to check.
 function __hhs_about_command() {
-  (
-    cmd=${1}
-    cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
-    if [[ -n "${cmd_ret}" ]]; then
-      echo ''
-      printf "${GREEN}%12s ${cmd_ret//\%/%%} ${NC} \n" "Current:"
-      if unalias "${cmd}" 2> /dev/null; then
-        cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
-        if [[ -n "${cmd_ret}" ]]; then
-          printf "${BLUE}%12s ${cmd_ret} ${NC} \n" "Unaliased:"
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  else
+    (
+      cmd=${1}
+      cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
+      if [[ -n "${cmd_ret}" ]]; then
+        echo ''
+        printf "${GREEN}%12s ${cmd_ret//\%/%%} ${NC} \n" "Current:"
+        if unalias "${cmd}" 2> /dev/null; then
+          cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
+          if [[ -n "${cmd_ret}" ]]; then
+            printf "${BLUE}%12s ${cmd_ret} ${NC} \n" "Unaliased:"
+          fi
         fi
+        echo ''
       fi
-      echo ''
-    fi
-  )
-
+    )
+  fi
+  
   return 0
 }

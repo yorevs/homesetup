@@ -742,7 +742,96 @@ Manage your custom PATH entries. To add to your PATH, the directory must be a va
 
 ### Profile Related
 
-TODO
+### __hhs_activate_nvm
+
+```bash
+Usage: __hhs_activate_nvm
+```
+
+##### **Purpose**:
+
+Lazy load helper function to initialize NVM for the terminal.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_activate_nvm
+```
+
+------
+### __hhs_activate_rvm
+
+```bash
+Usage: __hhs_activate_rvm
+```
+
+##### **Purpose**:
+
+Lazy load helper function to initialize RVM for the terminal.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_activate_rvm
+```
+
+------
+### __hhs_activate_jenv
+
+```bash
+Usage: __hhs_activate_jenv
+```
+
+##### **Purpose**:
+
+Lazy load helper function to initialize Jenv for the terminal.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_activate_jenv
+```
+
+------
+### __hhs_activate_docker
+
+```bash
+Usage: __hhs_activate_docker
+```
+
+##### **Purpose**:
+
+Lazy load helper function to initialize Docker-Daemon for the terminal.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_activate_docker
+```
 
 
 ### Punch-Tool
@@ -1160,13 +1249,217 @@ Tail a log using colors and patterns specified on `.tailor' file
 
 ### Text Tool
 
-TODO
+### __hhs_errcho
+
+```bash
+Usage: __hhs_errcho <message>
+```
+
+##### **Purpose**:
+
+Echo a message in red color into stderr.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The message to be echoed.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_errcho "Invalid parameters"
+```
+
+------
+### __hhs_highlight
+
+```bash
+Usage: __hhs_highlight <text_to_highlight> [filename]
+
+  Notes:
+    filename: If not provided, stdin will be used instead
+```
+
+##### **Purpose**:
+
+Highlight words from the piped stream.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The word to highlight.
+  - $2 _Piped_ : The piped input stream.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_highlight "apple" /var/log/system.log
+  $ cat /var/log/system.log | __hhs_highlight "apple"
+```
+
+------
+### __hhs_json_print
+
+```bash
+Usage: __hhs_json_print <json_string>
+```
+
+##### **Purpose**:
+
+Pretty print (format) JSON string.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The unformatted JSON string.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_json_print '[{"name":"my name","age":30}]'
+```
+
+------
+### __hhs_edit
+
+```bash
+Usage: __hhs_edit <file_path>
+```
+
+##### **Purpose**:
+
+Create and/or open a file using the default editor.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The file path.
+
+##### **Examples:**
+
+```bash
+  $ example here
+```
 
 
 ### Toolchecks
 
-TODO
+------
+### __hhs_toolcheck
 
+```bash
+Usage: __hhs_toolcheck [options] <app_name>
+
+    Options:
+      -q  : Quiet mode on
+```
+
+##### **Purpose**:
+
+Check whether a tool is installed on the system.
+
+##### **Returns**:
+
+**0** if the tool is installed; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The app to check.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_toolcheck java && echo "java is installed"
+  $ __hhs_toolcheck -q nottatool || echo "nottatool is not installed"
+```
+
+------
+### __hhs_version
+
+```bash
+Usage: __hhs_version <app_name>
+```
+
+##### **Purpose**:
+
+Check the version of the app using the most common ways.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The app to check.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_version java
+  $ __hhs_version git
+```
+
+------
+### __hhs_tools
+
+```bash
+Usage: __hhs_tools [tool_list]
+```
+
+##### **Purpose**:
+
+Check whether a list of development tools are installed or not.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1..$N _Optional_ : The tool list to be checked.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_tools 'git' 'svn' 'java' 'python'
+```
+
+------
+### __hhs_about_command
+
+```bash
+Usage: __hhs_about_command <command>
+```
+
+##### **Purpose**:
+
+Display information about the given command.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The command to check.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_about_command ls
+```
 
 
 
