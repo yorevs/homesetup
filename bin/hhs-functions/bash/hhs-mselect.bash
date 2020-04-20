@@ -24,7 +24,7 @@ function __hhs_mselect() {
     echo '      items       : The items to be displayed for selecting.'
     echo ''
     echo '    Examples: '
-    echo '      Selct a number from 1 to 100:'
+    echo '      Select a number from 1 to 100:'
     echo "        => ${FUNCNAME[0]} /tmp/out.txt {1..100} && cat /tmp/out.txt"
     echo ''
     echo '  Notes: '

@@ -666,7 +666,7 @@ Usage: __hhs_mselect <output_file> <items...>
       items       : The items to be displayed for selecting.
 
     Examples:
-      Selct a number from 1 to 100:
+      Select a number from 1 to 100:
         => __hhs_mselect /tmp/out.txt {1..100} && cat /tmp/out.txt
 
   Notes:
