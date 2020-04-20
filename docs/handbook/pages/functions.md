@@ -699,7 +699,247 @@ Select an option from a list using a navigable menu.
 
 ### Network Related
 
-TODO
+### __hhs_my_ip
+
+```bash
+Usage: __hhs_my_ip
+```
+
+##### **Purpose**:
+
+Find external IP by performing a DNS lookup.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_my_ip
+```
+
+------
+### __hhs_ip_resolve
+
+```bash
+Usage: __hhs_ip_resolve <IPv4_address>
+```
+
+##### **Purpose**:
+
+Resolve domain names associated with the specified IP.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The IP address to resolve.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_ip_resolve 8.8.8.8 && echo "Resolved google DNS"
+```
+
+------
+### __hhs_all_ips
+
+```bash
+Usage: __hhs_all_ips
+```
+
+##### **Purpose**:
+
+Display a list of all assigned IPs.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_all_ips
+```
+
+------
+### __hhs_local_ip
+
+```bash
+Usage: __hhs_local_ip
+```
+
+##### **Purpose**:
+
+Display local IP's of active interfaces.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ __hhs_local_ip
+```
+
+------
+### __hhs_active_ifaces
+
+```bash
+Usage: __hhs_active_ifaces
+```
+
+##### **Purpose**:
+
+Display a list of active network interfaces.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+$ __hhs_active_ifaces
+```
+
+------
+### __hhs_vpn_ip
+
+```bash
+Usage: __hhs_vpn_ip
+```
+
+##### **Purpose**:
+
+Get the IP associated to the active VPN connection.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+$ __hhs_vpn_ip
+```
+
+------
+### __hhs_gateway_ip
+
+```bash
+Usage: __hhs_gateway_ip
+```
+
+##### **Purpose**: 
+
+Get IP or hostname of the default gateway.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+$ __hhs_gateway_ip
+```
+
+------
+### __hhs_ip_info
+
+```bash
+Usage: __hhs_ip_info <IPv4_address>
+```
+
+##### **Purpose**:
+
+Retrieve information about the specified IP.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The IP to get information about.
+
+##### **Examples:**
+
+```bash
+$ __hhs_ip_info 8.8.8.8
+```
+
+------
+### __hhs_ip_lookup
+
+```bash
+Usage: __hhs_ip_lookup <domain_name>
+```
+
+##### **Purpose**:
+
+Lookup DNS entries to determine the IP address.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  $1 _Required_ : The domain name to lookup.
+
+##### **Examples:**
+
+```bash
+$ __hhs_ip_lookup www.google.com
+```
+
+------
+### __hhs_port_check
+
+```bash
+Usage: 
+```
+
+##### **Purpose**:
+
+Usage: __hhs_port_check <port_number> [port_state]
+
+  Notes:
+    States: One of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The port number regex.
+  - $2 _Optional_ : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ].
+
+##### **Examples:**
+
+```bash
+$ __hhs_port_check 8080
+$ __hhs_port_check 8080 listen
+```
 
 
 ### Paths Tool
@@ -1462,10 +1702,9 @@ Display information about the given command.
 ```
 
 
+## Development Tools
 
-
-
-
+TODO
 
 ------
 ### __hhs
@@ -1489,16 +1728,5 @@ TODO
 ##### **Examples:**
 
 ```bash
-  $ example here
+$ example here
 ```
-
-
-
-
-
-
-
-------
-## Development Tools
-
-TODO

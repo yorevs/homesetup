@@ -14,13 +14,18 @@ if __hhs_has "dig"; then
   # @function: Find external IP by performing a DNS lookup.
   function __hhs_my_ip() {
 
-    local ext_ip
+    local ext_ip ret_val=1
+
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]}"
+      return 1
+    fi
 
     ext_ip=$(dig -4 TXT +time=1 +short o-o.myaddr.l.google.com @ns1.google.com 2> /dev/null)
 
-    [[ -n "$ext_ip" ]] && echo "${ext_ip//\"/}" && return 0
+    [[ -n "$ext_ip" ]] && echo "${ext_ip//\"/}" && ret_val=0
 
-    return 1
+    return ${ret_val}
   }
 
   # @function: Resolve domain names associated with the specified IP.
@@ -60,6 +65,11 @@ if __hhs_has "ifconfig"; then
 
     local all_ips
 
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]}"
+      return 1
+    fi
+
     all_ips=$(ifconfig -a | grep -o "inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)" | awk "{ sub(/inet6? (addr:)? ?/, \"\"); print }")
 
     [[ -n "$all_ips" ]] && echo "${all_ips}" && return 0
@@ -71,6 +81,11 @@ if __hhs_has "ifconfig"; then
   function __hhs_local_ip() {
 
     local local_ips
+
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]}"
+      return 1
+    fi
 
     if __hhs_has "pcregrep"; then
       local_ips="$(ifa | grep -o "^en[0-9]\|^eth[0-9]")"
@@ -93,6 +108,11 @@ if __hhs_has "ifconfig"; then
 
     local ifaces
 
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]}"
+      return 1
+    fi
+
     if __hhs_has "pcregrep"; then
       ifaces=$(ifconfig | pcregrep -M -o "^[^\t:]+:([^\n]|\n\t)*status: active")
     else
@@ -108,9 +128,14 @@ if __hhs_has "ifconfig"; then
   # @function: Get the IP associated to the active VPN connection.
   function __hhs_vpn_ip() {
 
-    local vpn_ip
+    local vpn_ip iface_prefix="${1:-'tun'}"
 
-    vpn_ip=$(ifconfig | grep -A1 '.*tun[0-9]' | grep 'inet ' | cut -d ' ' -f2)
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]}"
+      return 1
+    fi
+
+    vpn_ip=$(ifconfig | grep -A1 ".*${iface_prefix}[0-9]" | grep 'inet ' | cut -d ' ' -f2)
 
     [[ -n "$vpn_ip" ]] && echo "${vpn_ip}" && return 0
 
@@ -119,8 +144,15 @@ if __hhs_has "ifconfig"; then
 
 fi
 
-# @function: Get IP or hostname of the default gateway
+# @function: Get IP or hostname of the default gateway.
 function __hhs_gateway_ip() {
+
+  local gw_ip
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]}"
+    return 1
+  fi
 
   gw_ip=$(route get default 2> /dev/null)
 
@@ -165,7 +197,7 @@ function __hhs_ip_lookup() {
 
 # @function: Check the state of local port(s).
 # @param $1 [Req] : The port number regex.
-# @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ] .
+# @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ].
 function __hhs_port_check() {
 
   local state port re='(((([0-9]{1,3})\.){3}[0-9]{1,3})|\*)'
