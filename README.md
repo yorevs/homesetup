@@ -434,6 +434,8 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 
 ### Standard tools
 
+The complete handbook of standard tools can be found [here](docs/handbook/pages/functions.md#standard-tools)
+
 | File                   | Function               | Purpose                                                                     |
 | ---------------------- | ---------------------- | --------------------------------------------------------------------------- |
 | bash_aliases.bash      | __hhs_has              | Check if a command is available on the current shell session.               |
@@ -452,26 +454,26 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_godir            | Search and **pushd** into the first match of the specified directory name   |
 |                        | __hhs_mkcd             | Create all folders using a dot notation path and immediately change into it |
 | hhs-files.bash         | __hhs_ls_sorted        | List files and sort by the specified column                                 |
-|                        | __hhs_del_tree         | Move files recursively to the Trash                                         |
+|                        | __hhs_del_tree         | Move files recursively to the **Trash**                                     |
 | hhs-mchoose.bash       | __hhs_mchoose          | Choose options from a list using a navigable menu                           |
 | hhs-minput.bash        | __hhs_minput_curpos    | Retrieve the current cursor position on screen                              |
 |                        | __hhs_minput           | Provide a terminal form input with validation checking                      |
 | hhs-mselect.bash       | __hhs_mselect          | Select an option from a list using a navigable menu                         |
-| hhs-network.bash       | __hhs_my_ip            | Find external IP by performing a DNS lookup                                 |
+| hhs-network.bash       | __hhs_my_ip            | Find external IP by performing a **DNS lookup**                             |
 |                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP                       |
 |                        | __hhs_all_ips          | Display a list of all assigned IPs                                          |
 |                        | __hhs_local_ip         | Display local IP's of active interfaces                                     |
 |                        | __hhs_active_ifaces    | Display a list of active network interfaces                                 |
-|                        | __hhs_vpn_ip           | Get the IP associated to the active VPN connection                          |
-|                        | __hhs_gateway_ip       | Get IP or hostname of the default gateway                                   |
+|                        | __hhs_vpn_ip           | Get the IP associated to the active **VPN connection**                      |
+|                        | __hhs_gateway_ip       | Get IP or hostname of the **default gateway**                               |
 |                        | __hhs_ip_info          | Get information about the specified IP                                      |
 |                        | __hhs_ip_lookup        | Lookup DNS entries to determine the IP address                              |
 |                        | __hhs_port_check       | Check the state of local port(s)                                            |
 | hhs-paths.bash         | __hhs_paths            | Print each PATH entry on a separate line                                    |
-| hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper to activate NVM for the terminal                           |
-|                        | __hhs_activate_rvm     | Lazy load helper to activate RVM for the terminal                           |
-|                        | __hhs_activate_jenv    | Lazy load helper to activate Jenv for the terminal                          |
-|                        | __hhs_activate_docker  | Lazy load helper to start Docker-Daemon for the terminal                    |
+| hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper to activate **NVM** for the terminal                       |
+|                        | __hhs_activate_rvm     | Lazy load helper to activate **RVM** for the terminal                       |
+|                        | __hhs_activate_jenv    | Lazy load helper to activate **Jenv** for the terminal                      |
+|                        | __hhs_activate_docker  | Lazy load helper to start **Docker-Daemon** for the terminal                |
 | hhs-punch.bash         | __hhs_punch            | Punch the Clock. Add/Remove/Edit/List clock punches                         |
 | hhs-search.bash        | __hhs_search_file      | Search for files and links to files recursively                             |
 |                        | __hhs_search_dir       | Search for directories and links to directories recursively                 |
@@ -484,12 +486,12 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_color_palette    | Terminal color palette test                                                 |
 | hhs-sys-utils.bash     | __hhs_sysinfo          | Display relevant system information                                         |
 |                        | __hhs_process_list     | Display a process list matching the process name/expression                 |
-|                        | __hhs_process_kill     | Kills ALL processes specified by name                                       |
+|                        | __hhs_process_kill     | Kills **ALL processes** specified by name                                   |
 |                        | __hhs_partitions       | Exhibit a Human readable summary about all partitions                       |
 | hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on **.tailor** file          |
 | hhs-text.bash          | __hhs_errcho           | Echo a message in red color and to stderr                                   |
 |                        | __hhs_highlight        | Highlight words from the piped stream                                       |
-|                        | __hhs_json_print       | Pretty print (format) JSON string                                           |
+|                        | __hhs_json_print       | Pretty print **(format) JSON** string                                           |
 |                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |
 | hhs-toolcheck.bash     | __hhs_toolcheck        | Check whether a tool is installed on the system                             |
 |                        | __hhs_version          | Check the version of the app using the most common ways                     |
@@ -497,6 +499,8 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 |                        | __hhs_about_command    | Display information about the given command                                 |
 
 ### Development tools
+
+The complete handbook of development tools can be found [here](docs/handbook/pages/functions.md#development-tools)
 
 | File                  | Function                     | Purpose                                                                            |
 | --------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
@@ -520,6 +524,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 ## Applications
 
 HomeSetup provides useful applications that can be used directly from shell. It is also added to your PATH variable.
+The complete handbook of development tools can be found [here](docs/handbook/pages/applications.md)
 
 ### Bash apps
 
@@ -565,14 +570,14 @@ and functions to be incorporated into the app.
 
 ### HHS functions
 
-| Function  | Purpose                                                                              |
-| --------- | ------------------------------------------------------------------------------------ |
-| help      | Provide a help for __hhs functions.                                                  |
-| list      | List all HHS App Plug-ins and Functions.                                             |
-| tests     | Execute all HomeSetup automated tests.                                               |
-| funcs     | Search for all hhs <functions> describing it's containing file name and line number. |
-| board     | Open the HomeSetup GitHub project board for the current version.                     |
-| host-name | Retrieve/Get/Set the current hostname.                                               |
+| Function  | Purpose                                                                                   |
+| --------- | ----------------------------------------------------------------------------------------- |
+| help      | Provide a **help** for __hhs functions.                                                   |
+| list      | List all HHS App **Plug-ins** and **Functions**.                                          |
+| tests     | Execute all HomeSetup **automated tests**.                                                |
+| funcs     | Search for all hhs **functions** describing it's containing file name and line number.    |
+| board     | Open the HomeSetup GitHub project **board** for the current version.                      |
+| host-name | Retrieve/Get/Set the current hostname.                                                    |
 
 ## Auto completions
 
@@ -589,10 +594,10 @@ over the options provided by the complete function instead of just displaying th
 | docker-machine-completion.bash    | Bash completion file for docker-machine commands. |
 | git-completion.bash               | Bash/zsh completion support for core Git.         |
 | gradle-completion.bash            | Bash and Zsh completion support for Gradle.       |
-| hhs-completion.bash               | Bash completion for HomeSetup.                    |
-| pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
-| kubectl-completion.bash           | Bash completion for kubectl.                      |
 | helm-completion.bash              | Bash completion for helm.                         |
+| hhs-completion.bash               | Bash completion for HomeSetup.                    |
+| kubectl-completion.bash           | Bash completion for kubectl.                      |
+| pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
 
 ## Terminal setup
 

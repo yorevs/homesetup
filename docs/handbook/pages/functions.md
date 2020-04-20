@@ -1706,27 +1706,4 @@ Display information about the given command.
 
 TODO
 
-------
-### __hhs
 
-```bash
-Usage: 
-```
-
-##### **Purpose**:
-
-TODO
-
-##### **Returns**:
-
-**0** on success; **non-zero** otherwise.
-
-##### **Parameters**: 
-
-TODO
-
-##### **Examples:**
-
-```bash
-$ example here
-```
