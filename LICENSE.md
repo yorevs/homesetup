@@ -26,5 +26,4 @@
 
 ----
 
-For more information, please refer to <https://en.wikipedia.org/wiki/MIT_License/>
-
+For more information, please refer to [MIT License](https://en.wikipedia.org/wiki/MIT_License)

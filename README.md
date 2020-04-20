@@ -300,7 +300,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | ps2       | Make _PS2_ prompt active                                              |
 | please    | Execute the previous command again, but this time running with sudo   |
 
-### HomeSetup
+### HomeSetup (HHS)
 
 | ALIAS          | Description                                   |
 | -------------- | --------------------------------------------- |
