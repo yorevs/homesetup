@@ -30,7 +30,7 @@ gradle, docker, etc...
 - New visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
 - Dozens of functions to help you configure your terminal and deal with your daily tasks.
 - Highly customizable aliases, so, you dictate what mnemonics you want to use (use your own syntax).
-- All code is licensed under [The Unlicensed](LICENSE.md), so, you can modify and use freely.
+- All code is licensed under [MIT](LICENSE.md), so, you can modify and use freely.
 - Small learning curve and a complete [user's handbook](docs/handbook/USER_HANDBOOK.md).
 
 ## Catalina moved from bash to zsh
