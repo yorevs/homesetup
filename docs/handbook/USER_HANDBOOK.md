@@ -74,7 +74,7 @@ We group our aliases using the following categories:
 
 - [Navigational](../../README.md#navigational)
 - [General](../../README.md#general)
-- [HomeSetup](../../README.md#homesetup)
+- [HomeSetup](../../README.md#homesetup-hhs)
 - [Tool aliases](../../README.md#tool-aliases)
 - [OS Specific aliases](../../README.md#os-specific-aliases)
 - [Handy Terminal Shortcuts](../../README.md#handy-terminal-shortcuts)
@@ -93,7 +93,7 @@ They can also be aliased using the **~/.aliasdef** file. We also define some def
 You can override or add additional variables by adding entries to your installed **~/.functions** file. When you first 
 install HomeSetup this file will be created automatically for you, so you just need to edit it.
 
-**All HomeSetup functions are prefixed with __hhs_**
+**All HomeSetup functions are prefixed with `__hhs_`**
 
 Functions are grouped into two categories:
 
