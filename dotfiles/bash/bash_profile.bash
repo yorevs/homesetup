@@ -107,3 +107,14 @@ hhs updater execute --check
 
 # Erase what is before the MOTD message and print HHS MOTD
 echo -e "\033[1J\033[H${HHS_MOTD}${NC}"
+
+# Print any warning messages
+if [[ -z "${HHS_SILENT_WARNINGS}" \
+  && -f "${HHS_WARNINGS_FILE}" 
+  && $(wc -l < "${HHS_WARNINGS_FILE}" | awk '{print $1}') -gt 1 ]]; then
+    echo ''
+    echo -e "${ORANGE}HomeSetup loaded with the following warnings:${NC}"
+    echo "${YELLOW}"
+    head "${HHS_WARNINGS_FILE}"
+    echo "${NC}"
+  fi

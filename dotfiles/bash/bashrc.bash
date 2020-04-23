@@ -24,6 +24,9 @@
 # If not running interactively, don't load anything.
 [[ -z "$PS1" && -z "$PS2" ]] && return
 
+# Re-reate the warnings file
+echo "HomeSetup reloaded at: $(date)" > "${HHS_WARNINGS_FILE}"
+
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>
 export IFS=' 	
 '

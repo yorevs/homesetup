@@ -42,6 +42,8 @@ function __hhs_alias() {
       echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
       return 1
     fi
+  else
+    echo "Alias: \"${alias_name}\" was skipped because it already exists !" >> "${HHS_WARNINGS_FILE}"
   fi
 
   return 1
@@ -189,10 +191,15 @@ case "${HHS_MY_OS}" in
   Linux)
     # @alias: Same as sed -i'' -r (Linux)
     alias ised="sed -i'' -r"
+    
     # @alias: Same as sed -r (Linux)
     alias esed="sed -r"
+    
     # @alias: Shortcut for base64 decode (Linux)
     __hhs_has "base64" && alias decode='base64 -d'
+        
+    # @alias: Replacing open by xdg-open
+    alias open="xdg-open"
     ;;
 
   Darwin)
@@ -201,9 +208,6 @@ case "${HHS_MY_OS}" in
     
     # @alias: Same as sed -E (Darwin)
     alias esed="sed -E"
-    
-    # @alias: Replacing open by xdg-open
-    alias open="xdg-open"
     
     # @alias: Shortcut for base64 decode (Darwin)
     __hhs_has "base64" && alias decode='base64 -D'

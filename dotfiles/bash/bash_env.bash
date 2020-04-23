@@ -80,9 +80,11 @@ export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
 export HHS_PATHS_FILE="${HHS_DIR}/.path"
+export HHS_WARNINGS_FILE="${HHS_DIR}/.warnings.log"
 
 # Customizeable
-export HHS_DEFAULT_EDITOR=
+export HHS_SILENT_WARNINGS=${HHS_SILENT_WARNINGS:-}
+export HHS_DEFAULT_EDITOR=${HHS_DEFAULT_EDITOR:-}
 export HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:-15}
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
