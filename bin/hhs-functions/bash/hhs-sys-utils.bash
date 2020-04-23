@@ -69,7 +69,7 @@ function __hhs_sysinfo() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_process_list() {
 
-  local all_pids uid pid ppid cmd force quiet pad gflags='-E' psflags='-efc'
+  local all_pids uid pid ppid cmd force quiet pad gflags='-E'
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
@@ -104,9 +104,9 @@ function __hhs_process_list() {
       esac
       shift
     done
-    [[ "${HHS_MY_OS}" == "Linux" ]] && psflags='-axo  uid,pid,ppid,comm'
-    # shellcheck disable=SC2009
-    [[ -n "$1" ]] && all_pids=$(ps ${psflags} | grep ${gflags} "$1")
+    [[ "${HHS_MY_OS}" == "Linux" ]]
+    # shellcheck disable=SC2009,SC2086
+    [[ -n "$1" ]] && all_pids=$(ps -axco uid,pid,ppid,comm | grep ${gflags} "$1")
     if [[ -n "${all_pids}" ]]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"
@@ -118,10 +118,7 @@ function __hhs_process_list() {
         uid=$(echo "${next}" | awk '{ print $1 }')
         pid=$(echo "${next}" | awk '{ print $2 }')
         ppid=$(echo "${next}" | awk '{ print $3 }')
-        cmd=$(echo "${next}" | awk '{for(i=8;i<=NF;i++) printf $i" "; print ""}')
-        [[ "${#uid}" -ge 5 ]] && uid="${uid:0:5}..."
-        [[ "${#pid}" -ge 5 ]] && pid="${pid:0:5}..."
-        [[ "${#ppid}" -ge 5 ]] && cmd="${ppid:0:5}..."
+        cmd=$(echo "${next}" | awk '{for(i=4;i<=NF;i++) printf $i" "; print ""}')
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%5s\t%5s\t%5s\t%s" "${uid}" "${pid}" "${ppid}" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
@@ -144,7 +141,7 @@ function __hhs_process_list() {
           if ps -p "${pid}" &> /dev/null; then
             echo -e "${GREEN} ${CHECK_ICN}  active process"
           else
-            __hhs_errcho "${FUNCNAME[0]}:  ${CROSS_ICN}  ghost process"
+            echo -e "${RED} ${CROSS_ICN}  ghost process"
           fi
         fi
       done
