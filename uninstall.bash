@@ -120,6 +120,8 @@ uninstall_dotfiles() {
   unset HHS_VERSION
   export PS1='\[\h:\W \u \$ '
   export PS2="$PS1"
+  
+  cd "${HOME}" || cd ..
 
   echo 'HomeSetup has been uninstalled !'
   echo ''

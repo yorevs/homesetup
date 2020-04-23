@@ -42,6 +42,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
+  
+  # User's operating system
+  MY_OS=$(uname -s)
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -129,7 +132,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create HomeSetup directory
     if [[ ! -d "${HHS_HOME}" ]]; then
-      echo -en "\nCreating 'HomeSetup' directory: "
+      echo -en "\nCreating ${HHS_HOME} directory: "
       mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
@@ -139,9 +142,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create/Define the ${HOME}/.hhs directory
     HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
-
     if [[ ! -d "${HHS_DIR}" ]]; then
-      echo -en "\nCreating '.hhs' directory: "
+      echo -en "\nCreating ${HHS_DIR} directory: "
       mkdir -p "${HHS_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
@@ -152,19 +154,26 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create/Define the ${HHS_DIR}/bin directory
     BIN_DIR="${HHS_DIR}/bin"
-
-    # Create or directory ~/bin if it does not exist
     if [[ ! -L "${BIN_DIR}" && ! -d "${BIN_DIR}" ]]; then
-      echo -en "\nCreating 'bin' directory: "
-      mkdir "${BIN_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
+      echo -en "\nCreating ${BIN_DIR} directory: "
+      mkdir -p "${BIN_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       # Cleaning up old dotfiles links
       [[ -d "${BIN_DIR}" ]] && rm -f "${BIN_DIR:?}/*.*"
     fi
 
-    # Define user fonts directory
-    FONTS_DIR="${HOME}/Library/Fonts"
+    # Create fonts directory if it does not exist
+    if [[ "Darwin" == "${MY_OS}" ]]; then
+      FONTS_DIR="${HOME}/Library/Fonts"
+    elif [[ "Linux" == "${MY_OS}" ]]; then
+      FONTS_DIR="${HOME}/.local/share/fonts"
+    fi
+    if [[ ! -L "${FONTS_DIR}" && ! -d "${FONTS_DIR}" ]]; then
+      echo -en "\nCreating ${FONTS_DIR} directory: "
+      mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create directory ${FONTS_DIR}"
+      echo -e " ... [   ${GREEN}OK${NC}   ]"
+    fi
 
     # Create all user custom files.
     [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
@@ -232,7 +241,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e ''
     echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
-    echo -e "  Install Type: $METHOD"
+    echo -e "  Install Type: ${METHOD}"
+    echo -e "            OS: ${MY_OS}"
     echo -e "         Shell: ${SHELL_TYPE}"
     echo -e "   Install Dir: ${HHS_HOME}"
     echo -e "     Fonts Dir: ${FONTS_DIR}"
