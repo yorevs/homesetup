@@ -100,13 +100,19 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check which installation method should be used.
   check_inst_method() {
 
-    # Define the HomeSetup directory.
+    # Define the HomeSetup location.
     HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 
-    # Dotfiles source location
+    # Dotfiles source location.
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
+    
+    # HHS applications location.
+    APPS_DIR="${HHS_HOME}/bin/apps"
+    
+    # Auto-completions location.
+    COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
 
-    # Enable install script to use colors
+    # Enable install script to use colors.
     [[ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -f "${HHS_HOME}/.VERSION" ]] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
 
@@ -178,16 +184,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     fi
 
-    # Create all user custom files.
-    [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
-    [[ -f "${HOME}/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-    [[ -f "${HOME}/.aliases" ]] || touch "${HOME}/.aliases"
-    [[ -f "${HOME}/.colors" ]] || touch "${HOME}/.colors"
-    [[ -f "${HOME}/.env" ]] || touch "${HOME}/.env"
-    [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
-    [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
-    [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
-
     # Check the installation method.
     if [[ -n "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
       METHOD='repair'
@@ -235,7 +231,17 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Install all dotfiles.
   install_dotfiles() {
-
+    
+    # Create all user custom files.
+    [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+    [[ -f "${HOME}/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    [[ -f "${HOME}/.aliases" ]] || touch "${HOME}/.aliases"
+    [[ -f "${HOME}/.colors" ]] || touch "${HOME}/.colors"
+    [[ -f "${HOME}/.env" ]] || touch "${HOME}/.env"
+    [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
+    [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
+    [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
+    
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
@@ -309,8 +315,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Link apps into place
-    echo -en "\n${WHITE}Linking apps into place ${BLUE}"
-    if command find "${HHS_HOME}/bin/apps" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
+    echo -en "\n${WHITE}Linking apps from ${APPS_DIR} to ${BIN_DIR} ${BLUE}"
+    if command find "${APPS_DIR}" -maxdepth 2 -type f \
+      \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
       -exec command chmod 755 {} \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
@@ -319,8 +326,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Link auto-completes into place
-    echo -en "\n${WHITE}Linking auto-completes into place ${BLUE}"
-    if command find "${HHS_HOME}/bin/completions/${SHELL_TYPE}" -maxdepth 2 -type f \( -iname "**.${SHELL_TYPE}" \) \
+    echo -en "\n${WHITE}Linking auto-completes from ${COMPLETIONS_DIR} to ${BIN_DIR} ${BLUE}"
+    if command find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
+      \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
       -exec command chmod 755 {} \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
@@ -329,9 +337,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Copy HomeSetup fonts into place
-    echo -en "\n${WHITE}Copying HomeSetup fonts into place ${BLUE}"
+    echo -en "\n${WHITE}Copying HomeSetup into ${FONTS_DIR} ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f -name "*" -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
+    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
+      \( -iname "**.otf" -o -iname "**.ttf" \) \
+      -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -342,7 +352,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
     rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
-    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
+    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
+      -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
@@ -431,7 +442,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo -e "${BLUE}"
     if command -v figlet >/dev/null; then
-      figlet -f colossal -ck "Welcome"
+      figlet -f colossal -ck "Welcome" 2> /dev/null || figlet "Welcome"
     else
       echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
       echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
