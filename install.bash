@@ -462,7 +462,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "${WHITE}Installing [${HHS_MISSING_TOOLS[*]}] (${MY_OS}) ..."
       if [[ "Darwin" == "${MY_OS}" ]]; then
         brew install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
-      elif [[ "Linux" == "${MY_OS}" ]]; then
+      else
         if has "apt-get"; then
           sudo apt-get install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
         elif has "yum"; then
@@ -502,8 +502,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
-
-    date -v+7d "+%s%S" >"${HHS_DIR}/.last_update"
+    
+    if [[ "${MY_OS}" == "Darwin" ]]; then
+      date -v+7d "+%s%S" >"${HHS_DIR}/.last_update"
+    else
+      date -d "+7 days" >"${HHS_DIR}/.last_update"
+    fi
     quit 0
   }
 

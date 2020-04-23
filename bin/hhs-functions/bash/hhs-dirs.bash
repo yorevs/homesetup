@@ -148,7 +148,7 @@ function __hhs_save_dir() {
     dir_alias=$(tr '[:punct:]' '_' <<<"${dir_alias}")
 
     if [[ "$1" == "-e" ]]; then
-      edit "${HHS_SAVED_DIRS_FILE}"
+      __hhs_edit "${HHS_SAVED_DIRS_FILE}"
       return $?
     elif [[ "$1" == "-r" && -n "$2" ]]; then
       # Remove the previously saved directory aliased

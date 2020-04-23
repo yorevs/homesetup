@@ -35,7 +35,7 @@ function __hhs_aliases() {
     touch "${alias_file}"
 
     if [[ "$1" == '-e' || "$1" == "--edit" ]]; then
-      edit "${alias_file}"
+      __hhs_edit "${alias_file}"
       return $?
     elif [[ "$1" == '-r' || "$1" == "--remove" ]] && [[ -n "$2" ]]; then
       alias_name="$2"

@@ -37,7 +37,7 @@ function __hhs_command() {
 
     case "$1" in
       -e | --edit)
-        edit "${HHS_CMD_FILE}"
+        __hhs_edit "${HHS_CMD_FILE}"
         ret_val=$?
         ;;
       -a | --add)

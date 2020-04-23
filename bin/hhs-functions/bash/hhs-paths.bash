@@ -73,7 +73,7 @@ function __hhs_paths() {
       IFS="${RESET_IFS}"
       echo -e "${NC}"
     elif [[ "-e" == "$1" ]]; then
-      edit "${HHS_PATHS_FILE}"
+      __hhs_edit "${HHS_PATHS_FILE}"
       return 0
     elif [[ "-a" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
