@@ -129,6 +129,7 @@ uninstall_dotfiles() {
   [[ -n "$ANS" ]] && echo ''
   if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
     [[ -d "${HHS_DIR}" ]] && command rm -fv "${HHS_DIR}"
+    command rm -fv .prompt .aliasdef .functions .env .aliases 2> /dev/null
   fi
 
   echo 'HomeSetup has been uninstalled !'
