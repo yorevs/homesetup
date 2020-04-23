@@ -118,8 +118,11 @@ function __hhs_process_list() {
         pid=$(echo "${next}" | awk '{ print $2 }')
         ppid=$(echo "${next}" | awk '{ print $3 }')
         cmd=$(echo "${next}" | awk '{for(i=8;i<=NF;i++) printf $i" "; print ""}')
+        [[ "${#uid}" -ge 5 ]] && uid="${uid:0:5}..."
+        [[ "${#pid}" -ge 5 ]] && pid="${pid:0:5}..."
+        [[ "${#ppid}" -ge 5 ]] && cmd="${ppid:0:5}..."
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
-        printf "${HHS_HIGHLIGHT_COLOR}%4d\t%5d\t%5d\t%s" "$uid" "${pid}" "$ppid" "${cmd}"
+        printf "${HHS_HIGHLIGHT_COLOR}%5s\t%5s\t%5s\t%s" "${uid}" "${pid}" "${ppid}" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
         if [[ -n "${pid}" && "$2" == "kill" ]]; then
           save-cursor-pos

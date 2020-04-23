@@ -198,8 +198,13 @@ case "${HHS_MY_OS}" in
   Darwin)
     # @alias: Same as sed -i '' -E (Darwin)
     alias ised="sed -i '' -E"
+    
     # @alias: Same as sed -E (Darwin)
     alias esed="sed -E"
+    
+    # @alias: Replacing open by xdg-open
+    alias open="xdg-open"
+    
     # @alias: Shortcut for base64 decode (Darwin)
     __hhs_has "base64" && alias decode='base64 -D'
 
