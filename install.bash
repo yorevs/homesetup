@@ -370,6 +370,16 @@ Usage: $APP_NAME [OPTIONS] <args>
   compatibility_check() {
 
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
+    # Removing the old .profile if exists
+    if [[ -L "${HOME}/.profile" || -f "${HOME}/.bashrc" ]]; then
+      [[ -f "${HOME}/.profile" ]] \
+        && command cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.bak" \
+        && echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
+      
+      [[ -f "${HOME}/.profile" ]] \
+        && command cp -f "${HOME}/.bashrc" "${HHS_DIR}/bashrc-${TIMESTAMP}.bak" \
+        && echo -e "\n${ORANGE}Your old .bashrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/bashrc-${TIMESTAMP}.bak ${NC}"
+    fi
 
     # Moving old hhs files into the proper directory
     [[ -f "${HOME}/.cmd_file" ]] && mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
