@@ -11,11 +11,11 @@ Clone the repository using the following command:
 
 And then install dotfiles using the following command:
 
-`#> cd ~/HomeSetup && ./install.bash` => **To install one by one**
+`$ cd ~/HomeSetup && ./install.bash` => **To install all files**
 
 or
 
-`#> cd ~/HomeSetup && ./install.bash --all` => **To install all files**
+`$ cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
 

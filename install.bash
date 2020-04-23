@@ -18,7 +18,7 @@
   USAGE="
 Usage: $APP_NAME [OPTIONS] <args>
 
-  -a | --all                : Install all scripts into the user HomeSetup directory without prompting.
+  -i | --interactive        : Install all scripts into the user HomeSetup directory interactively.
   -q | --quiet              : Do not prompt for questions, use all defaults.
 "
 
@@ -27,6 +27,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Define the user HOME
   HOME=${HOME:-~}
+  
+  # Option to allow install to be interactive
+  OPT='all'
 
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
@@ -115,12 +118,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Short opts: -w, Long opts: --Word
     while test -n "$1"; do
       case "$1" in
-      -a | --all)
-        OPT="all"
+      -i | --interactively)
+        OPT=''
         ;;
       -q | --quiet)
-        OPT="all"
-        ANS="Y"
+        OPT='all'
+        ANS='Y'
         QUIET=1
         ;;
       *)
@@ -255,12 +258,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -z ${QUIET} ]] && read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
       echo -e "${NC}"
       [[ -n "$ANS" ]] && echo ''
-      if [[ ! "$ANS" == "y" && ! "$ANS" == "Y" ]]; then
+      if [[ ! "$ANS" == "y" && ! "$ANS" == 'Y' ]]; then
         quit 1 "Installation cancelled !"
       fi
     else
       read -rn 1 -p "Press any key to continue with the installation ..."
-      OPT='all'
     fi
 
     command pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"

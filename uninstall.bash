@@ -120,8 +120,16 @@ uninstall_dotfiles() {
   unset HHS_VERSION
   export PS1='\[\h:\W \u \$ '
   export PS2="$PS1"
-  
+
   cd "${HOME}" || cd ..
+
+  echo -e "${ORANGE}"
+  [[ -z ${QUIET} ]] && read -rn 1 -p 'Also delete HomeSetup config (.hhs) files y/[n] ? ' ANS
+  echo -e "${NC}"
+  [[ -n "$ANS" ]] && echo ''
+  if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+    [[ -d "${HHS_DIR}" ]] && command rm -fv "${HHS_DIR}"
+  fi
 
   echo 'HomeSetup has been uninstalled !'
   echo ''
