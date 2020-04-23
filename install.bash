@@ -49,6 +49,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=('python' 'pcregrep' 'ifconfig' 'gpg' 'tree' 'figlet' 'vim' 'curl')
   [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew')
+  [[ "${MY_OS}" == "Linux" ]] && HHS_REQUIRED_TOOLS+=('net-tools')
   
   # Missing HomeSetup required tools
   HHS_MISSING_TOOLS=()
@@ -146,11 +147,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Create HomeSetup directory
     if [[ ! -d "${HHS_HOME}" ]]; then
       echo -en "\nCreating ${HHS_HOME} directory: "
-      mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
+      \mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
-      command rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
+      \rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
     fi
 
     # Create/Define the ${HOME}/.hhs directory
@@ -162,14 +163,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       # Trying to write at the HomeSetup directory to check the permissions
       touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
-      command rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
+      \rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
     fi
 
     # Create/Define the ${HHS_DIR}/bin directory
     BIN_DIR="${HHS_DIR}/bin"
     if [[ ! -L "${BIN_DIR}" && ! -d "${BIN_DIR}" ]]; then
       echo -en "\nCreating ${BIN_DIR} directory: "
-      mkdir -p "${BIN_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
+      \mkdir -p "${BIN_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       # Cleaning up old dotfiles links
@@ -184,7 +185,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
     if [[ ! -L "${FONTS_DIR}" && ! -d "${FONTS_DIR}" ]]; then
       echo -en "\nCreating ${FONTS_DIR} directory: "
-      mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create directory ${FONTS_DIR}"
+      \mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create directory ${FONTS_DIR}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     fi
 
@@ -218,7 +219,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Clone the repository and install dotfiles.
   clone_repository() {
 
-    [[ -z "$(command -v git)" ]] && quit 2 "You need git installed in order to install HomeSetup remotely !"
+    has git || quit 2 "You need git installed in order to install HomeSetup remotely !"
     [[ ! -d "${HHS_HOME}" ]] && quit 2 "Installation directory was not created: \"${HHS_HOME}\" !"
 
     echo ''
@@ -275,7 +276,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       read -rn 1 -p "Press any key to continue with the installation ..."
     fi
 
-    command pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
+    pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
     echo -e "\n${WHITE}Installing dotfiles ...${NC}"
 
     # If `all' option is used, copy all files
@@ -312,7 +313,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
-    if command find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &>/dev/null; then
+    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
@@ -320,10 +321,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link apps into place
     echo -en "\n${WHITE}Linking apps from ${APPS_DIR} to ${BIN_DIR} ${BLUE}"
-    if command find "${APPS_DIR}" -maxdepth 2 -type f \
+    if find "${APPS_DIR}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
-      -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; 1>/dev/null; then
+      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
@@ -331,10 +332,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link auto-completes into place
     echo -en "\n${WHITE}Linking auto-completes from ${COMPLETIONS_DIR} to ${BIN_DIR} ${BLUE}"
-    if command find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
+    if find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" \) \
-      -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; 1>/dev/null; then
+      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
@@ -343,21 +344,21 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup into ${FONTS_DIR} ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if command find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
+    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
       \( -iname "**.otf" -o -iname "**.ttf" \) \
-      -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
+      -exec cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    command popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
+    \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
     rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
-      -exec command ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; &>/dev/null; then
+      -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
@@ -371,14 +372,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # Removing the old .profile if exists
-    if [[ -L "${HOME}/.profile" || -f "${HOME}/.bashrc" ]]; then
+    if [[ -L "${HOME}/.profile" ]]; then
       [[ -f "${HOME}/.profile" ]] \
-        && command cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.bak" \
+        && cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" \
         && echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
-      
-      [[ -f "${HOME}/.profile" ]] \
-        && command cp -f "${HOME}/.bashrc" "${HHS_DIR}/bashrc-${TIMESTAMP}.bak" \
-        && echo -e "\n${ORANGE}Your old .bashrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/bashrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving old hhs files into the proper directory
@@ -389,39 +386,39 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Removing the old ${HOME}/bin folder
     if [[ -L "${HOME}/bin" || -d "${HOME}/bin" ]]; then
-      command rm -f "${HOME:?}/bin"
+      rm -f "${HOME:?}/bin"
       echo -e "\n${ORANGE}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     if [[ -L "${HOME}/.bash_aliasdef" ]]; then
-      command rm -f "${HOME}/.bash_aliasdef"
+      rm -f "${HOME}/.bash_aliasdef"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.aliasdef" ]]; then
-      command cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
-      command cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+      cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
+      cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .inputrc Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.inputrc" ]]; then
-      command cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
-      command cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+      cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
+      cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving .path file to .hhs
     if [[ -f "${HOME}/.path" ]]; then
-      command mv -f "${HOME}/.path" "${HHS_DIR}/.path"
+      mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
 
     # .bash_completions was renamed to .bash_completion. #e6ce231
     if [[ -L "${HOME}/.bash_completions" ]]; then
-      command rm -f "${HOME}/.bash_completions"
+      rm -f "${HOME}/.bash_completions"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
     fi
   }
@@ -481,7 +478,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}"
 
     echo -e "${BLUE}"
-    if command -v figlet >/dev/null; then
+    if has figlet &>/dev/null; then
       figlet -f colossal -ck "Welcome" 2> /dev/null || figlet "Welcome"
     else
       echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
@@ -506,7 +503,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ "${MY_OS}" == "Darwin" ]]; then
       date -v+7d "+%s%S" >"${HHS_DIR}/.last_update"
     else
-      date -d "+7 days" >"${HHS_DIR}/.last_update"
+      date -d "+7 days" "+%s%S" >"${HHS_DIR}/.last_update"
     fi
     quit 0
   }
