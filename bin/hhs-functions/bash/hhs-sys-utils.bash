@@ -69,7 +69,7 @@ function __hhs_sysinfo() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_process_list() {
 
-  local all_pids uid pid ppid cmd force quiet pad gflags='-E'
+  local all_pids uid pid ppid cmd force quiet pad gflags='-E' psflags='-efc'
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
@@ -104,13 +104,14 @@ function __hhs_process_list() {
       esac
       shift
     done
+    [[ "${HHS_MY_OS}" == "Linux" ]] && psflags='-axo  uid,pid,ppid,comm'
     # shellcheck disable=SC2009
-    [[ -n "$1" ]] && all_pids=$(ps -efc | grep ${gflags} "$1")
+    [[ -n "$1" ]] && all_pids=$(ps ${psflags} | grep ${gflags} "$1")
     if [[ -n "${all_pids}" ]]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"
       echo ''
-      [[ -z "$quiet" ]] && printf "${WHITE}%4s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
+      [[ -z "$quiet" ]] && printf "${WHITE}%5s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
       [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
       IFS=$'\n'
       for next in ${all_pids}; do
