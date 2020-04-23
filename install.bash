@@ -40,14 +40,18 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Supported shell types. For now, only bash is supported
   SUPP_SHELL_TYPES=('bash')
 
-  # HomeSetup required tools
-  HHS_REQUIRED_TOOLS=(brew python pcregrep ifconfig gpg tree figlet)
-
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
   
   # User's operating system
   MY_OS=$(uname -s)
+  
+  # HomeSetup required tools
+  HHS_REQUIRED_TOOLS=('python' 'pcregrep' 'ifconfig' 'gpg' 'tree' 'figlet' 'vim' 'curl')
+  [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew')
+  
+  # Missing HomeSetup required tools
+  HHS_MISSING_TOOLS=()
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -58,7 +62,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_installed
-    activate_dotfiles compatibility_check
+    activate_dotfiles compatibility_check install_missing_tools
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
@@ -319,7 +323,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if command find "${APPS_DIR}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; &>/dev/null; then
+      -exec command chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
@@ -330,7 +334,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if command find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" \) \
       -exec command ln -sfv {} "${BIN_DIR}" \; \
-      -exec command chmod 755 {} \; &>/dev/null; then
+      -exec command chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
@@ -339,7 +343,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup into ${FONTS_DIR} ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
+    if command find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
       \( -iname "**.otf" -o -iname "**.ttf" \) \
       -exec command cp -f {} "${FONTS_DIR}" \; &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
@@ -429,8 +433,34 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
       else
         echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
+        HHS_MISSING_TOOLS+=("${tool_name}")
       fi
     done
+    
+    [[ ${#HHS_MISSING_TOOLS[@]} -ne 0 ]] && install_missing_tools
+  }
+  
+  # shellcheck disable=SC2086
+  # Install missing tools
+  install_missing_tools() {
+    echo -e "${ORANGE}"
+    [[ -z ${QUIET} ]] && read -rn 1 -p 'Would you like to install missing required tools y/[n] ? ' ANS
+    echo -e "${NC}"
+    [[ -n "$ANS" ]] && echo ''
+    if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+      echo ''
+      echo -en "${WHITE}Installing [${HHS_MISSING_TOOLS[*]}] (${MY_OS}) ..."
+      if [[ "Darwin" == "${MY_OS}" ]]; then
+        brew install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+      elif [[ "Linux" == "${MY_OS}" ]]; then
+        if has "apt-get"; then
+          sudo apt-get install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+        elif has "yum"; then
+          sudo yum install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+        fi
+      fi
+      echo -e " ... [   ${GREEN}OK${NC}   ]"
+    fi
   }
 
   # Reload the terminal and apply installed files.
