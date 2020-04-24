@@ -18,19 +18,19 @@ ALIAS_ICN="\xef\x87\xba \xef\x81\xa1"
 FUNC_ICN="\xef\x84\xae"
 
 # Load bash environment variables to use in here
-[[ -f "${HOME}/.bash_env" ]] && source "${HOME}/.bash_env"
+[[ -f "${HOME}/.bash_env" ]] && \. "${HOME}/.bash_env"
 
 # Load bash colors to use in here
-[[ -f "${HOME}/.bash_colors" ]] && source "${HOME}/.bash_colors"
+[[ -f "${HOME}/.bash_colors" ]] && \. "${HOME}/.bash_colors"
 
 # Load all function files prefixed with 'hhs-`
 for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
-  source "$file"
+  \. "$file"
 done
 
 # Load all functions that were previously aliased
 for file in $(find "${HHS_HOME}/bin/dev-tools/bash" -type f -name "*.bash" | sort); do
-  source "$file"
+  \. "$file"
 done
 
 # Unalias any hhs found because we need this name to use for HomeSetup

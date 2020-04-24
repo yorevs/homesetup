@@ -165,7 +165,7 @@ function __hhs_mchoose() {
   done
 
   [[ ${ret_val} -eq 0 ]] && echo "${sel_options[*]}" > "$outfile"
-  cls && echo -e "${NC}"
+  __hhs_clear && echo -e "${NC}"
 
   return ${ret_val}
 }

@@ -147,7 +147,7 @@ function __hhs_mselect() {
   done
 
   [[ ${ret_val} -eq 0 ]] && echo "$sel_index" > "$outfile"
-  cls && echo -e "${NC}"
+  __hhs_clear && echo -e "${NC}"
 
   return ${ret_val}
 }

@@ -54,12 +54,16 @@ function __hhs_alias() {
 
 # @alias: Change-back two previous directories
 alias ...='.. 2'
+
 # @alias: Change-back three previous directories
 alias ....='.. 3'
+
 # @alias: Change-back four previous directories
 alias .....='.. 4'
+
 # @alias: Change the current directory to HOME dir
 alias ~='cd ~'
+
 # @alias: Change the current directory to the previous dir
 alias -- -='cd -'
 
@@ -95,23 +99,30 @@ alias lll='ls -lhd .??* | grep "^-"'
 alias lld='ls -lhd .??*/'
 
 # @alias: Always enable colored `grep` output
-alias grep='\grep --color=auto' # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+alias grep='\grep --color=auto'
+
 # @alias: Always enable colored `fgrep` output
 alias fgrep='\fgrep --color=auto'
+
 # @alias: Always enable colored `egrep` output
 alias egrep='\egrep --color=auto'
 
 # @alias: By default `rm' will prompt for confirmation and will be verbose
 alias rm='\rm -iv'
+
 # @alias: By default `cp' will prompt for confirmation and will be verbose
 alias cp='\cp -iv'
+
 # @alias: By default `mv' will prompt for confirmation and will be verbose
 alias mv='\mv -iv'
 
 # @alias: Make `df' command output pretty and human readable format
 alias df='\df -H'
+
 # @alias: Make `du' command output pretty and human readable format
 alias du='\du -hcd 1'
+
 # @alias: Make `ps' command output pretty and human readable format
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 
@@ -134,10 +145,13 @@ alias mem='\top -o rsize'
 
 # @alias: Date&Time - Display current week number
 alias week='\date +%V'
+
 # @alias: Date&Time - Display current date and time
 alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
+
 # @alias: Date&Time - Display current timestamp
 alias ts='\date "+%s%S"'
+
 # @alias: Date&Time - Display current time in millis
 alias time-ms='python -c "import time; print(int(round(time.time() * 1000)))"'
 
@@ -146,6 +160,7 @@ __hhs_has "wget" || alias wget='\curl -O'
 
 # @alias: Make PS1 prompt active
 alias ps1='export PS1=$PS1_STYLE'
+
 # @alias: Make PS2 prompt active
 alias ps2='export PS1=$PS2_STYLE'
 
@@ -157,16 +172,22 @@ alias please='sudo !!'
 
 # @alias: Shortcut for hhs vault plug-in
 alias __hhs_vault='hhs vault execute'
+
 # @alias: Shortcut for hhs hspm plug-in
 alias __hhs_hspm='hhs hspm execute'
+
 # @alias: Shortcut for hhs firebase plug-in
 alias __hhs_dotfiles='hhs firebase execute'
+
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='hhs updater execute'
+
 # @alias: Reload HomeSetup
-alias __hhs_reload='cls; source ${HOME}/.bashrc'
+alias __hhs_reload='__hhs_clear; source ${HOME}/.bashrc'
+
 # @alias: Clear and reset all cursor attributes and IFS
 alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
+
 # @alias: Clear the screen and reset the terminal
 alias __hhs_reset="__hhs_clear; \reset"
 
@@ -402,6 +423,3 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   # @alias: Docker - Shortcut for `docker compose stop'
   alias __hhs_docker_down='docker-compose stop'
 fi
-
-# Load alias definitions
-[[ -s "${HOME}/.aliasdef" ]] && \. "${HOME}/.aliasdef"

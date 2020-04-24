@@ -30,7 +30,7 @@ export USER=${USER:-$(whoami)}
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
   'profile' 'bash_colors' 'colors' 'bash_env' 'env' 'bash_prompt' 'prompt'
-  'bash_aliases' 'aliases' 'bash_functions' 'functions' 'bash_completion'
+  'bash_aliases' 'aliases' 'aliasdef' 'bash_functions' 'functions' 'bash_completion'
 )
 
 # Load all HomeSetup dotfiles
@@ -100,21 +100,10 @@ fi
 [[ -f "${HOME}/.path" ]] && export PATH="$(grep . "${HOME}/.path" | tr '\n' ':'):$PATH"
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
-paths -q -a "${HHS_DIR}/bin"
+__hhs_paths -q -a "${HHS_DIR}/bin"
 
 # Check for updates
-hhs updater execute --check
-
-# Erase what is before the MOTD message and print HHS MOTD
-echo -e "\033[1J\033[H${HHS_MOTD}${NC}"
-
-# Print any warning messages
-if [[ -z "${HHS_SILENT_WARNINGS}" \
-  && -f "${HHS_WARNINGS_FILE}" 
-  && $(wc -l < "${HHS_WARNINGS_FILE}" | awk '{print $1}') -gt 1 ]]; then
-    echo ''
-    echo -e "${ORANGE}HomeSetup loaded with the following warnings:${NC}"
-    echo "${YELLOW}"
-    head "${HHS_WARNINGS_FILE}"
-    echo "${NC}"
-  fi
+if [[ ! -f "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+  echo -e "${GREEN}Home setup is checking for updates ..."
+  hhs updater execute --check
+fi

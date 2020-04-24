@@ -327,7 +327,7 @@ function __hhs_minput() {
     re_render=1
   done
 
-  cls && echo -e "${NC}"
+  __hhs_cls && echo -e "${NC}"
 
   return ${ret_val}
 }

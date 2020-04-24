@@ -22,10 +22,11 @@
 #   ~/.path       : To customize your paths
 
 # If not running interactively, don't load anything.
+
 [[ -z "$PS1" && -z "$PS2" ]] && return
 
 # Re-reate the warnings file
-echo "HomeSetup reloaded at: $(date)" > "${HHS_WARNINGS_FILE}"
+:> "${HHS_WARNINGS_FILE}"
 
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>
 export IFS=' 	
@@ -37,6 +38,7 @@ case "${SHELL##*\/}" in
   bash)
     # Source the main profile
     [[ -s /etc/bashrc ]] && source /etc/bashrc
+    
     # Source the user profile
     [[ -s "${HOME}/.bash_profile" ]] && source "${HOME}/.bash_profile"
     ;;
@@ -48,3 +50,17 @@ case "${SHELL##*\/}" in
     echo ''
     ;;
 esac
+
+# Erase what is before the MOTD message and print HHS MOTD
+# echo -e "\033[1J\033[H${HHS_MOTD}${NC}"
+echo -e "${HHS_MOTD}${NC}"
+
+# Print any warning messages
+if [[ "${HHS_SHOW_WARNINGS}" -eq 1 \
+  && -f "${HHS_WARNINGS_FILE}" ]]; then
+    echo ''
+    echo -e "${ORANGE}HomeSetup loaded with the following warnings:${NC}"
+    echo "${YELLOW}"
+    head "${HHS_WARNINGS_FILE}"
+    echo "${NC}"
+fi
