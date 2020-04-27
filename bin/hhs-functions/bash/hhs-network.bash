@@ -181,7 +181,7 @@ function __hhs_ip_info() {
   return 1
 }
 
-# @function: Lookup DNS entries to determine the IP address.
+# @function: Lookup DNS payload to determine the IP address.
 # @param $1 [Req] : The domain name to lookup.
 function __hhs_ip_lookup() {
 

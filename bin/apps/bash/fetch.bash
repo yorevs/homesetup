@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034
 
 #  Script: fetch.bash
-# Purpose: Fetch REST APIs data easily.
+# Purpose: Fetch REST APIs payload easily.
 # Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -22,7 +22,7 @@ Usage: ${APP_NAME} <method> [options] <url>
     Options:
         --headers <json_headers>    : The http request headers.
         --body    <json_body>       : The http request body (payload).
-        --format                    : Format the json response.
+        --format                    : Format the json responseonse.
         --silent                    : Omits all informational messages.
 "
 
@@ -44,9 +44,9 @@ RET=0
 format_json() {
 
   # Piped input
-  read -r response
-  [[ -n "${FORMAT}" ]] && echo -e "${response}" | __hhs_json_print
-  [[ -z "${FORMAT}" ]] && echo -e "${response}"
+  read -r responseonse
+  [[ -n "${FORMAT}" ]] && echo -e "${responseonse}" | __hhs_json_print
+  [[ -z "${FORMAT}" ]] && echo -e "${responseonse}"
 }
 
 # shellcheck disable=SC2086
@@ -56,17 +56,21 @@ do_fetch() {
   curl_opts=(-s --fail -m "$REQ_TIMEOUT")
 
   if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+    response=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   elif [[ -z "${HEADERS}" && -n "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+    response=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [[ -n "${HEADERS}" && -n "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+    response=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [[ -n "${HEADERS}" && -z "${BODY}" ]]; then
-    body=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+    response=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   fi
   RET=$?
-  if [[ ${RET} -eq 0 && -n "${body}" ]]; then
-    echo "${body}" | format_json
+  if [[ ${RET} -eq 0 && -n "${response}" ]]; then
+    echo -en "${response}" | format_json
+  elif [[ ${RET} -ne 0 && "${response}" ]]; then
+    if [[ ${response} -ge 400 && ${response} -lt 600 ]]; then
+      RET="${response}"
+    fi
   fi
 
   return ${RET}
@@ -128,13 +132,18 @@ main() {
   esac
   shopt -u nocasematch
 
-  [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${URL} ..."
+  [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."
 
   if do_fetch; then
     quit 0
   else
-    [[ -z "${SILENT}" ]] && msg="Failed to process request: (Ret=${RET})"
-    quit ${RET} "$msg"
+    if [[ -z "${SILENT}" ]]; then
+      msg="Failed to process request: (Ret=${RET})"
+      __hhs_errcho "${msg}"
+    else
+      echo "${RET}" 1>&2
+    fi
+    quit 2
   fi
 }
 

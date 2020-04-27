@@ -14,7 +14,7 @@ function __hhs_minput_curpos() {
 
   local row col pos=()
 
-  # Sometimes the cursor position is empty, so make sure we have enough data to return.
+  # Sometimes the cursor position is empty, so make sure we have enough payload to return.
   while
     [[ -z "$row" || -z "$col" ]]
     exec < /dev/tty

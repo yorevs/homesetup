@@ -8,3 +8,328 @@
         @site: https://github.com/yorevs/homesetup
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
+import atexit
+import base64
+import getopt
+import getpass
+import signal
+import traceback
+import uuid
+
+from datetime import datetime
+from os import path
+
+from lib.commons import *
+from lib.fetch import *
+
+# Application name, read from it's own file path
+APP_NAME = os.path.basename(__file__)
+
+# Version tuple: (major,minor,build)
+VERSION = (1, 1, 0)
+
+# Usage message
+USAGE = """
+Usage: {} <option> [arguments]
+
+    HomeSetup firebase v{} Manage your firebase integration.
+    
+    Options:
+      -v  |  --version              : Display current program version.
+      -h  |     --help              : Display this help message.
+      -s  |    --setup              : Setup your Firebase account to use with HomeSetup.
+      -u  |   --upload <db_alias>   : Upload dotfiles to your Firebase Realtime Database.
+      -d  | --download <db_alias>   : Download dotfiles from your Firebase Realtime Database.
+      
+    Arguments:
+      db_alias  : Alias to be used to identify the firebase object to fetch payload from.
+""".format(APP_NAME, ' '.join(map(str, VERSION)))
+
+OPTIONS_MAP = {}
+
+FIREBASE_USER = getpass.getuser()
+
+HOME_DIR = os.environ.get("HOME", "/Users/{}".format(FIREBASE_USER))
+
+HHS_DIR = os.environ.get("HHS_DIR", "/{}/.hhs".format(HOME_DIR))
+
+LOG_FILE = "{}/firebase.log".format(HHS_DIR)
+
+# Firebase configuration file.
+FB_CFG_FILE = "{}/.firebase".format(HHS_DIR)
+
+# Firebase url template
+FB_URL_TPL = "https://{}.firebaseio.com/homesetup/dotfiles/{}"
+
+# Regex to validate the created UUID
+UUID_RE = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+
+# Dotfiles managed by this app.
+DOTFILES = {
+    'aliases': '{}/.aliases'.format(HOME_DIR),
+    'colors': '{}/.colors'.format(HOME_DIR),
+    'env': '{}/.env'.format(HOME_DIR),
+    'functions': '{}/.functions'.format(HOME_DIR),
+    'path': '{}/.path'.format(HHS_DIR),
+    'profile': '{}/.profile'.format(HOME_DIR),
+    'commands': '{}/.cmd_file'.format(HHS_DIR),
+    'savedDirs': '{}/.saved_dirs'.format(HHS_DIR),
+    'aliasdef': '{}/.aliasdef'.format(HOME_DIR),
+}
+
+WELCOME = """
+
+HomeSetup Firebase v{}
+
+Settings ==============================
+
+        FIREBASE_USER: {}
+        FB_CFG_FILE: {}
+""".format(VERSION, FIREBASE_USER, FB_CFG_FILE)
+
+# Firebase configuration format
+FB_CONFIG_FMT = """
+# Your Firebase configuration:
+# --------------------------
+PROJECT_ID={}
+USERNAME={}
+FIREBASE_URL={}
+PASSPHRASE={}
+UUID={}
+"""
+
+
+# @purpose: Display the usage message and exit with the specified code ( or zero as default )
+def usage(exit_code=0):
+    print(USAGE)
+    sys.exit(exit_code)
+
+
+# @purpose: Display the current program version and exit
+def version():
+    print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
+    sys.exit(0)
+
+
+class Config:
+    @staticmethod
+    def of_dict(config_dict):
+        return Config(
+            config_dict['PROJECT_ID'],
+            config_dict['USERNAME'],
+            config_dict['FIREBASE_URL'],
+            config_dict['PASSPHRASE'],
+            config_dict['UUID']
+        )
+
+    def __init__(self, project_id=None, username=None, firebase_url=None, passphrase=None, project_uuid=None):
+        self.project_id = project_id
+        self.username = username
+        self.firebase_url = firebase_url
+        self.passprase = passphrase
+        self.project_uuid = project_uuid
+
+    def __str__(self):
+        return FB_CONFIG_FMT.format(
+            self.project_id, self.username, self.firebase_url, self.passprase, self.project_uuid
+        )
+
+    # @purpose: Prompt the user for information and create a config file
+    @staticmethod
+    def prompt():
+        config = Config()
+        print("### Firebase setup")
+        print('-' * 31)
+        config.project_id = raw_input('Please type you Project ID: ')
+        config.username = FIREBASE_USER
+        config.passprase = getpass.getpass('Please type a password to encrypt you payload: ')
+        config.project_uuid = raw_input('Please type a UUID to use or press enter to generate a new one: ')
+        config.project_uuid = str(uuid.uuid4()) if not config.project_uuid else config.project_uuid
+        config.firebase_url = FB_URL_TPL.format(config.project_id, config.project_uuid)
+
+        return config
+
+    # @purpose: Load config from file
+    @staticmethod
+    def load():
+        if path.exists(FB_CFG_FILE):
+            log.info("Config file exists, reading payload")
+            with open(FB_CFG_FILE, 'r') as f_config:
+                cfg = {}
+                for line in f_config:
+                    line = line.strip()
+                    if line.startswith("#") or "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    cfg[key.strip()] = value.strip()
+                return Config.of_dict(cfg) if len(cfg) == 5 else None
+        else:
+            log.warn("Config file does not exist, creating new")
+            create_file(FB_CFG_FILE)
+
+    # @purpose: Save the current config file
+    def save(self):
+        with open(FB_CFG_FILE, 'w') as f_config:
+            f_config.write(str(self))
+            cprint(Colors.GREEN, "Firebase configuration succeeded !")
+            log.info("Firebase configuration saved !")
+
+
+class Entry:
+    @staticmethod
+    def load(db_alias, username):
+        entry = Entry(db_alias, username)
+        with open(DOTFILES['aliases'], 'r') as f_aliases:
+            entry.data['aliases'] = str(base64.b64encode(f_aliases.read()))
+        with open(DOTFILES['colors'], 'r') as f_colors:
+            entry.data['colors'] = str(base64.b64encode(f_colors.read()))
+        with open(DOTFILES['env'], 'r') as f_env:
+            entry.data['env'] = str(base64.b64encode(f_env.read()))
+        with open(DOTFILES['functions'], 'r') as f_functions:
+            entry.data['functions'] = str(base64.b64encode(f_functions.read()))
+        with open(DOTFILES['path'], 'r') as f_path:
+            entry.data['path'] = str(base64.b64encode(f_path.read()))
+        with open(DOTFILES['profile'], 'r') as f_profile:
+            entry.data['profile'] = str(base64.b64encode(f_profile.read()))
+        with open(DOTFILES['commands'], 'r') as f_commands:
+            entry.data['commands'] = str(base64.b64encode(f_commands.read()))
+        with open(DOTFILES['savedDirs'], 'r') as f_savedDirs:
+            entry.data['savedDirs'] = str(base64.b64encode(f_savedDirs.read()))
+        with open(DOTFILES['aliasdef'], 'r') as f_aliasdef:
+            entry.data['aliasdef'] = str(base64.b64encode(f_aliasdef.read()))
+
+        return entry
+    
+    @staticmethod
+    def dumps(payload):
+        entry = Entry()
+        return entry
+    
+    def save(self):
+        pass
+    
+    def __init__(self, db_alias, username):
+        self.data = {
+            'lastUpdate': datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 
+            'lastUser': username
+        }
+
+    def __str__(self):
+        return json.dumps(self.__dict__)
+
+
+# @purpose: Represents the firebase
+class Firebase(object):
+
+    def __init__(self):
+        self.payload = None
+        self.config = None
+
+    def __str__(self):
+        return str(self.payload)
+
+    def load_settings(self):
+        self.config = Config.load()
+
+    def setup(self):
+        self.config = Config.prompt()
+        self.config.save()
+
+    def upload(self, db_alias):
+        self.payload = json.dumps(Entry.load(db_alias, self.config.username).data)
+        url = '{}/{}.json'.format(self.config.firebase_url, db_alias)
+        patch(url, self.payload)
+
+    def download(self, db_alias):
+        url = '{}/{}.json'.format(self.config.firebase_url, db_alias)
+        self.payload = get(url)
+        entry = Entry.dumps(self.payload)
+        entry.save()
+
+    def is_setup(self):
+        return self.config is None
+
+
+# @purpose: Execute the specified operation
+def exec_operation(op, firebase):
+    options = list(OPTIONS_MAP[op])
+    firebase.load_settings()
+    if firebase.is_setup and "upload" == op:
+        firebase.upload(options[0])
+    elif firebase.is_setup and "download" == op:
+        firebase.download(options[0])
+    elif not firebase.is_setup or "setup" == op:
+        firebase.setup()
+    else:
+        cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
+        usage(1)
+
+
+# @purpose: Execute the app business logic
+def app_exec(vault):
+    for op in OPTIONS_MAP:
+        if not OPTIONS_MAP[op] is None:
+            exec_operation(op, vault)
+            break
+
+
+# @purpose: Parse the command line arguments and execute the program accordingly.
+def main(argv):
+    firebase = Firebase()
+
+    try:
+
+        # Handle program arguments and options
+        # Short opts: -<C>, Long opts: --<Word>
+        opts, args = getopt.getopt(argv, 'vhsu:d:l', ['version', 'help', 'setup', 'upload', 'download', 'list'])
+
+        if len(opts) == 0:
+            usage()
+
+        # Parse the command line arguments passed
+        for opt, arg in opts:
+            if opt in ('-v', '--version'):
+                version()
+            elif opt in ('-h', '--help'):
+                usage()
+            elif opt in ('-s', '--setup'):
+                OPTIONS_MAP['setup'] = args
+            elif opt in ('-u', '--upload'):
+                OPTIONS_MAP['upload'] = args if check_arguments(args, 1) else usage(1)
+            elif opt in ('-d', '--download'):
+                OPTIONS_MAP['download'] = args if check_arguments(args, 1) else usage(1)
+            else:
+                assert False, '### Unhandled option: {}'.format(opt)
+            break
+
+        log_init(LOG_FILE)
+        log.info(WELCOME)
+        signal.signal(signal.SIGINT, exit_handler)
+        atexit.register(exit_handler)
+        app_exec(firebase)
+
+    # Catch getopt exceptions
+    except getopt.GetoptError as err:
+        cprint(Colors.RED, 'Invalid option: => {}'.format(err.msg))
+        usage(2)
+
+    # Catch keyboard interrupts
+    except KeyboardInterrupt:
+        print ('')
+        quit(1)
+
+    # Catch other exceptions
+    except Exception as err:
+        traceback.format_exc()
+        log.error("Exception in user code:")
+        log.error('-' * 60)
+        log.error(traceback.format_exc())
+        log.error('-' * 60)
+        cprint(Colors.RED, err)
+        quit(2)
+
+
+# Application entry point
+if __name__ == "__main__":
+    main(sys.argv[1:])
+    quit(0)

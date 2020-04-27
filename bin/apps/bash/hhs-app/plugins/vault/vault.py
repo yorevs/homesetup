@@ -10,8 +10,6 @@
 """
 import atexit
 import signal
-import sys
-import os
 import re
 import getopt
 import getpass
@@ -19,7 +17,9 @@ import base64
 import subprocess
 import datetime
 import traceback
-import logging as log
+
+from lib.commons import *
+
 
 # Application name, read from it's own file path
 APP_NAME = os.path.basename(__file__)
@@ -39,13 +39,13 @@ Usage: {} <option> [arguments]
       -a  |  --add <name> <hint> [password] : Add a password entry to the vault.
       -d  |  --del <name>                   : Remove a password entry from the vault.
       -u  |  --upd <name> <hint> [password] : Update a password entry from the vault.
-      -l  |  --list [filter]                : List all password entries or matching the given filter.
+      -l  |  --list [filter]                : List all password payload or matching the given filter.
 
     Arguments:
       name      : The name of the vault entry. That will identify the entry (key).
       hint      : Any hint related to that vault entry.
       password  : The password of the vault entry. If not provided, further input will be required.
-      filter    : Filter the vault entries by name.
+      filter    : Filter the vault payload by name.
 """.format(APP_NAME, ' '.join(map(str, VERSION)))
 
 OPTIONS_MAP = {}
@@ -65,8 +65,6 @@ VAULT_USER = os.environ.get("HHS_VAULT_USER", getpass.getuser())
 HHS_DIR = os.environ.get("HHS_DIR", "/Users/{}/.hhs".format(VAULT_USER))
 
 LOG_FILE = "{}/vault.log".format(HHS_DIR)
-
-MAX_LOG_FILE_SIZE = 1 * 1024 * 1024
 
 VAULT_FILE = os.environ.get("HHS_VAULT_FILE", "{}/{}".format(HHS_DIR, '.vault'))
 
@@ -93,19 +91,6 @@ def usage(exit_code=0):
 def version():
     print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
-
-
-# @purpose: Terminal colors
-class Colors:
-    def __init__(self):
-        pass
-    NC = '\x1b[0m'
-    BLUE = '\x1b[0;34m'
-    CYAN = '\x1b[0;36m'
-    GREEN = '\x1b[0;32m'
-    ORANGE = '\x1b[0;33m'
-    RED = '\x1b[0;31m'
-    YELLOW = '\x1b[0;33m'
 
 
 # @purpose: Represents the vault
@@ -229,14 +214,14 @@ class Vault(object):
         self.is_open = True
         log.debug("Vault is decrypted !")
 
-    # @purpose: Save all vault entries
+    # @purpose: Save all vault payload
     def save(self):
         with open(VAULT_FILE, 'w') as f_vault:
             for entry in self.data:
                 f_vault.write(str(self.data[entry]))
-            log.debug("Vault data is saved")
+            log.debug("Vault payload is saved")
 
-    # @purpose: Read all existing vault entries
+    # @purpose: Read all existing vault payload
     def read(self):
         if os.path.exists(VAULT_FILE):
             try:
@@ -247,26 +232,26 @@ class Vault(object):
                         (key, password, hint, modified) = line.strip().split('|')
                         entry = Vault.Entry(key, password, hint, modified)
                         self.data[key] = entry
-                    log.debug("Vault has been read. Returned entries={}".format(len(self.data)))
+                    log.debug("Vault has been read. Returned payload={}".format(len(self.data)))
             except ValueError:
                 log.error("Attempt to read from Vault failed")
                 raise TypeError("### Vault file '{}' is invalid".format(VAULT_FILE))
 
-    # @purpose: Filter and sort vault data and return the proper header for listing them
+    # @purpose: Filter and sort vault payload and return the proper header for listing them
     def fetch_data(self, filter_expr):
         if filter_expr:
             data = list(filter(lambda x: filter_expr in x, self.data))
-            header = """\n=== Listing vault entries containing '{}' ===\n""".format(filter_expr)
+            header = """\n=== Listing vault payload containing '{}' ===\n""".format(filter_expr)
         else:
             data = list(self.data)
-            header = "\n=== Listing all vault entries ===\n"
+            header = "\n=== Listing all vault payload ===\n"
         data.sort()
         log.debug(
-            "Vault data fetched. Returned entries={} filtered={}".format(len(self.data), len(self.data) - len(data)))
+            "Vault payload fetched. Returned payload={} filtered={}".format(len(self.data), len(self.data) - len(data)))
 
         return data, header
 
-    # @purpose: List all vault entries
+    # @purpose: List all vault payload
     def list(self, filter_expr=None):
         if len(self.data) > 0:
             (data, header) = self.fetch_data(filter_expr)
@@ -349,12 +334,6 @@ class Vault(object):
             return ENTRY_FORMAT.format(Colors.GREEN, self.key, Colors.NC, self.key, password, self.hint, self.modified)
 
 
-# @purpose: Get an argument from the list or None if index is out of range
-def get_argument(options, index, fallback=None):
-    argument = fallback if len(options) < index + 1 else options[index]
-    return argument
-
-
 # @purpose: Execute the specified operation
 def exec_operation(op, vault):
     options = list(OPTIONS_MAP[op])
@@ -383,32 +362,6 @@ def app_exec(vault):
             break
 
 
-# @purpose: Execute the app business logic
-def check_arguments(args, args_num=0):
-    if len(args) < args_num:
-        cprint(Colors.RED, "### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
-        usage(1)
-
-
-# @purpose: Initialize the logger
-def log_init():
-    with open(LOG_FILE, 'a'):
-        os.utime(LOG_FILE, None)
-    f_size = os.path.getsize(LOG_FILE)
-    f_mode = "a" if f_size < MAX_LOG_FILE_SIZE else "w"
-    log.basicConfig(
-        filename=LOG_FILE,
-        format='%(asctime)s [%(threadName)-10.10s] %(levelname)-5.5s ::%(funcName)s(@line-%(lineno)d) %(message)s ',
-        level=log.DEBUG,
-        filemode=f_mode)
-    log.info(WELCOME)
-
-
-# @purpose: Colored print
-def cprint(color, message):
-    print("{}{}{}".format(color, message, Colors.NC))
-
-
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
     vault = Vault()
@@ -429,24 +382,21 @@ def main(argv):
             elif opt in ('-h', '--help'):
                 usage()
             elif opt in ('-a', '--add'):
-                check_arguments(args, 2)
-                OPTIONS_MAP['add'] = args
+                OPTIONS_MAP['add'] = args if check_arguments(args, 2) else usage(1)
             elif opt in ('-g', '--get'):
-                check_arguments(args, 1)
-                OPTIONS_MAP['get'] = args
+                OPTIONS_MAP['get'] = args if check_arguments(args, 1) else usage(1)
             elif opt in ('-d', '--del'):
-                check_arguments(args, 1)
-                OPTIONS_MAP['del'] = args
+                OPTIONS_MAP['del'] = args if check_arguments(args, 1) else usage(1)
             elif opt in ('-u', '--upd'):
-                check_arguments(args, 2)
-                OPTIONS_MAP['upd'] = args
+                OPTIONS_MAP['upd'] = args if check_arguments(args, 2) else usage(1)
             elif opt in ('-l', '--list'):
                 OPTIONS_MAP['list'] = args
             else:
                 assert False, '### Unhandled option: {}'.format(opt)
             break
 
-        log_init()
+        log_init(LOG_FILE)
+        log.info(WELCOME)
         signal.signal(signal.SIGINT, vault.exit_handler)
         atexit.register(vault.exit_handler)
         app_exec(vault)
@@ -483,6 +433,7 @@ def main(argv):
         log.error('-' * 60)
         cprint(Colors.RED, err)
         quit(2)
+
 
 # Application entry point
 if __name__ == "__main__":

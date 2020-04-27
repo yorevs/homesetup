@@ -2604,7 +2604,7 @@ _docker_daemon() {
     _filedir
     return
     ;;
-  --exec-root | --data-root)
+  --exec-root | --payload-root)
     _filedir -d
     return
     ;;
@@ -4029,10 +4029,10 @@ _docker_swarm_init() {
     COMPREPLY=($(compgen -W "active drain pause" -- "$cur"))
     return
     ;;
-  --cert-expiry | --data-path-port | --default-addr-pool | --default-addr-pool-mask-length | --dispatcher-heartbeat | --external-ca | --max-snapshots | --snapshot-interval | --task-history-limit)
+  --cert-expiry | --payload-path-port | --default-addr-pool | --default-addr-pool-mask-length | --dispatcher-heartbeat | --external-ca | --max-snapshots | --snapshot-interval | --task-history-limit)
     return
     ;;
-  --data-path-addr)
+  --payload-path-addr)
     __docker_complete_local_interfaces
     return
     ;;
@@ -4069,7 +4069,7 @@ _docker_swarm_join() {
     COMPREPLY=($(compgen -W "active drain pause" -- "$cur"))
     return
     ;;
-  --data-path-addr)
+  --payload-path-addr)
     __docker_complete_local_interfaces
     return
     ;;

@@ -9,7 +9,7 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # shellcheck disable=SC2155
-# @function: Manage your PATH entries.
+# @function: Manage your PATH payload.
 # @param $1 [Con] : The path to be added or removed.
 function __hhs_paths() {
 
@@ -30,7 +30,7 @@ function __hhs_paths() {
     echo '      -q        : Quiet mode on'
     echo ''
     echo '  Notes: '
-    echo '    When no arguments are provided it will list all PATH entries'
+    echo '    When no arguments are provided it will list all PATH payload'
     return 1
   else
     [[ "-q" == "$1" ]] && quiet=1 && shift
@@ -98,7 +98,7 @@ function __hhs_paths() {
     fi
   fi
 
-  # Remove all $PATH duplicated entries
+  # Remove all $PATH duplicated payload
   export PATH=$(echo -en "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
 
   return 0

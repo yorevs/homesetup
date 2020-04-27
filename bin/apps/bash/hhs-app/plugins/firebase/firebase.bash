@@ -95,7 +95,7 @@ setup_firebase() {
     [[ -z "$PROJECT_ID" || "$PROJECT_ID" == "" ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid Project ID: ${PROJECT_ID}${NC}" && sleep 1 && continue
     fb_config="${FB_CONFIG_FMT//\%ID\%/$PROJECT_ID}"
     fb_config="${fb_config//\%URL\%/https://$PROJECT_ID.firebaseio.com/homesetup}"
-    read -r -p 'Please type a password to encrypt you data: ' PASSWD
+    read -r -p 'Please type a password to encrypt you payload: ' PASSWD
     [[ -z "$PASSWD" ]] && __hhs_errcho "${FUNCNAME[0]}: Blank passwords are not accepted: ${PASSWD}${NC}" && sleep 1 && continue
     fb_config="${fb_config//\%PWD\%/$PASSWD}"
     read -r -p "Please type a UUID to use or press enter to generate a new one: " UUID
@@ -108,7 +108,7 @@ setup_firebase() {
       echo "=> UUID automatically generated: ${u_uuid}"
     fi
     fb_config="${fb_config//\%UUID\%/${u_uuid}}"
-    # Save user's Firebase data
+    # Save user's Firebase payload
     echo -e "${fb_config}" > "${FIREBASE_FILE}"
     if [ -f "${FIREBASE_FILE}" ] && fetch.bash GET --silent "https://${PROJECT_ID}.firebaseio.com/homesetup/dotfiles/${UUID}.json" &> /dev/null; then
       echo "${GREEN}Firebase configuration suceeded ! ${NC}"
