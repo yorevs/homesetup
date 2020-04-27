@@ -6,7 +6,7 @@
 # Created: Jan 06, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
-# License: Please refer to <http://unlicense.org/>
+# License: Please refer to <https://opensource.org/licenses/MIT>
 
 # Functions to be unset after quit
 UNSETS+=(

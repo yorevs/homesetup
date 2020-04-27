@@ -6,7 +6,7 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
-# License: Please refer to <http://unlicense.org/>
+# License: Please refer to <https://opensource.org/licenses/MIT>
 
 @test "check-hhs-dirs-exist-test" {
   [[ -d "$HHS_HOME" && -d "$HHS_DIR" ]]
