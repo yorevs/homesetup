@@ -72,13 +72,13 @@ FB_ALIAS=''
 # @purpose: Load firebase settings.
 load_settings() {
 
-  if [[ ! -f "$FIREBASE_FILE" ]]; then
+  if [[ ! -f "${FIREBASE_FILE}" ]]; then
     echo -e "${YELLOW}Your need to setup your Firebase credentials first.${NC}"
     sleep 1
     setup_firebase
   fi
 
-  [[ -f "$FIREBASE_FILE" ]] && \. "$FIREBASE_FILE"
+  [[ -f "${FIREBASE_FILE}" ]] && \. "${FIREBASE_FILE}"
   [[ -z "$PROJECT_ID" || -z "${FIREBASE_URL}" || -z "$PASSPHRASE" || -z "${UUID}" ]] && quit 2 "Invalid settings file!"
 
   return 0
@@ -86,8 +86,8 @@ load_settings() {
 
 # @purpose: Setup Firebase credentials and settings
 setup_firebase() {
-  [[ -f "$FIREBASE_FILE" ]] && rm -f "$FIREBASE_FILE"
-  while [[ ! -f "$FIREBASE_FILE" ]]; do
+  [[ -f "${FIREBASE_FILE}" ]] && rm -f "${FIREBASE_FILE}"
+  while [[ ! -f "${FIREBASE_FILE}" ]]; do
     clear
     echo "### Firebase setup"
     echo "-------------------------------"
@@ -99,7 +99,7 @@ setup_firebase() {
     [[ -z "$PASSWD" ]] && __hhs_errcho "${FUNCNAME[0]}: Blank passwords are not accepted: ${PASSWD}${NC}" && sleep 1 && continue
     fb_config="${fb_config//\%PWD\%/$PASSWD}"
     read -r -p "Please type a UUID to use or press enter to generate a new one: " UUID
-    if [[ -n "${UUID}" ]] && [[ "${UUID}" =~ ${UUID}_RE ]]; then
+    if [[ -n "${UUID}" ]] && [[ "${UUID}" =~ ${UUID_RE} ]]; then
       u_uuid="${UUID}"
     elif [[ -n "${UUID}" ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Invalid UUID: ${UUID}${NC}" && sleep 1 && continue
@@ -107,10 +107,10 @@ setup_firebase() {
       u_uuid=$(python -c "import uuid as ul; print(str(ul.uuid4()));")
       echo "=> UUID automatically generated: ${u_uuid}"
     fi
-    fb_config="${fb_config//\%UUID\%/$u_uuid}"
+    fb_config="${fb_config//\%UUID\%/${u_uuid}}"
     # Save user's Firebase data
-    echo -e "$fb_config" > "$FIREBASE_FILE"
-    if [ -f "$FIREBASE_FILE" ] && fetch.bash GET --silent "https://${PROJECT_ID}.firebaseio.com/homesetup/dotfiles/${UUID}.json" &> /dev/null; then
+    echo -e "${fb_config}" > "${FIREBASE_FILE}"
+    if [ -f "${FIREBASE_FILE}" ] && fetch.bash GET --silent "https://${PROJECT_ID}.firebaseio.com/homesetup/dotfiles/${UUID}.json" &> /dev/null; then
       echo "${GREEN}Firebase configuration suceeded ! ${NC}"
     else
       __hhs_errcho "${FUNCNAME[0]}: Configuration failed !" && continue
@@ -121,7 +121,7 @@ setup_firebase() {
 # @purpose: Build the dotfiles json request payload.
 build_payload() {
 
-  local f_aliases f_colors f_env f_functions f_path f_profile f_cmdFile f_savedDirs f_aliasdef
+  local f_aliases f_colors f_env f_functions f_path f_profile f_cmdFile f_saved_dirs f_aliasdef
   local payload='' match=', } }' replacement=' } }'
 
   # Encode all present dotfiles
@@ -132,7 +132,7 @@ build_payload() {
   [[ -f "${HHS_PATHS_FILE}" ]] && f_path=$(grep . "${HHS_PATHS_FILE}" | base64)
   [[ -f "${HOME}"/.profile ]] && f_profile=$(grep . "${HOME}"/.profile | base64)
   [[ -f "$HHS_CMD_FILE" ]] && f_cmdFile=$(grep . "$HHS_CMD_FILE" | base64)
-  [[ -f "${HHS_SAVED_DIRS_FILE}" ]] && f_savedDirs=$(grep . "${HHS_SAVED_DIRS_FILE}" | base64)
+  [[ -f "${HHS_SAVED_DIRS_FILE}" ]] && f_saved_dirs=$(grep . "${HHS_SAVED_DIRS_FILE}" | base64)
   [[ -f "${HOME}"/.aliasdef ]] && f_aliasdef=$(grep . "${HOME}"/.aliasdef | base64)
 
   # Generate the request payload using the files above
@@ -144,7 +144,7 @@ build_payload() {
   [[ -n "$f_path" ]] && payload="${payload}\"path\" : \"$f_path\","
   [[ -n "$f_profile" ]] && payload="${payload}\"profile\" : \"$f_profile\","
   [[ -n "$f_cmdFile" ]] && payload="${payload}\"commands\" : \"$f_cmdFile\","
-  [[ -n "$f_savedDirs" ]] && payload="${payload}\"savedDirs\" : \"$f_savedDirs\","
+  [[ -n "$f_saved_dirs" ]] && payload="${payload}\"savedDirs\" : \"$f_saved_dirs\","
   [[ -n "$f_aliasdef" ]] && payload="${payload}\"aliasdef\" : \"$f_aliasdef\","
   payload="${payload}\"lastUpdate\" : \"$(date +'%d-%m-%Y %T')\","
   payload="${payload}\"lastUser\" : \"$(whoami)\""
@@ -159,11 +159,11 @@ download() {
 
   local fb_alias="$1"
 
-  [[ -f "$RESPONSE_FILE" ]] && rm -f "$RESPONSE_FILE"
-  fetch.bash GET --silent "${FIREBASE_URL}/dotfiles/${UUID}/${fb_alias}.json" > "$RESPONSE_FILE"
+  [[ -f "${RESPONSE_FILE}" ]] && rm -f "${RESPONSE_FILE}"
+  fetch.bash GET --silent "${FIREBASE_URL}/dotfiles/${UUID}/${fb_alias}.json" > "${RESPONSE_FILE}"
   ret=$?
 
-  if [[ $ret -eq 0 && -f "$RESPONSE_FILE" && "$(grep . "$RESPONSE_FILE")" =~ ${RESPONSE_RE// /} ]]; then
+  if [[ $ret -eq 0 && -f "${RESPONSE_FILE}" && "$(grep . "${RESPONSE_FILE}")" =~ ${RESPONSE_RE// /} ]]; then
     echo -e "\n${GREEN}Dotfiles \"${fb_alias}\" successfully downloaded!${NC}"
   else
     quit 2 "Failed to download \"${fb_alias}\" Dotfiles!"
@@ -175,8 +175,7 @@ download() {
 # @purpose: Upload the User dotfiles to Firebase.
 upload() {
 
-  local body
-  local fb_alias="$1"
+  local body fb_alias="$1"
 
   body=$(build_payload)
   if fetch.bash PATCH --silent --body "$body" "${FIREBASE_URL}/dotfiles/${UUID}.json" &> /dev/null; then
@@ -189,21 +188,20 @@ upload() {
 # @purpose: Parse the dotfiles response payload and save the files.
 parse_and_save() {
 
-  local f_aliases f_colors f_env f_functions f_profile f_cmdFile f_savedDirs f_aliasdef
-  local b64flag
+  local f_aliases f_colors f_env f_functions f_profile f_cmdFile f_saved_dirs f_aliasdef b64flag
 
   if [[ "$(uname -s)" == "Linux" ]]; then b64flag='-d'; else b64flag='-D'; fi
 
   # Encode all received dotfiles
-  f_aliases=$(json-find.py -a aliases -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_colors=$(json-find.py -a colors -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_env=$(json-find.py -a env -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_functions=$(json-find.py -a functions -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_profile=$(json-find.py -a profile -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_path=$(json-find.py -a path -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_cmdFile=$(json-find.py -a commands -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_savedDirs=$(json-find.py -a savedDirs -f "$RESPONSE_FILE" | base64 "${b64flag}")
-  f_aliasdef=$(json-find.py -a aliasdef -f "$RESPONSE_FILE" | base64 "${b64flag}")
+  f_aliases=$(json-find.py -a aliases -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_colors=$(json-find.py -a colors -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_env=$(json-find.py -a env -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_functions=$(json-find.py -a functions -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_profile=$(json-find.py -a profile -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_path=$(json-find.py -a path -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_cmdFile=$(json-find.py -a commands -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_saved_dirs=$(json-find.py -a savedDirs -f "${RESPONSE_FILE}" | base64 "${b64flag}")
+  f_aliasdef=$(json-find.py -a aliasdef -f "${RESPONSE_FILE}" | base64 "${b64flag}")
 
   # Write all files into place
   [[ -n "$f_aliases" ]] && echo "$f_aliases" > "${HOME}/.aliases"
@@ -213,7 +211,7 @@ parse_and_save() {
   [[ -n "$f_path" ]] && echo "$f_path" > "${HHS_PATHS_FILE}"
   [[ -n "$f_profile" ]] && echo "$f_profile" > "${HOME}/.profile"
   [[ -n "$f_cmdFile" ]] && echo "$f_cmdFile" > "$HHS_CMD_FILE"
-  [[ -n "$f_savedDirs" ]] && echo "$f_savedDirs" > "${HHS_SAVED_DIRS_FILE}"
+  [[ -n "$f_saved_dirs" ]] && echo "$f_saved_dirs" > "${HHS_SAVED_DIRS_FILE}"
   [[ -n "$f_aliasdef" ]] && echo "$f_aliasdef" > "${HOME}/.aliasdef"
 }
 

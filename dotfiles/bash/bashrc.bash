@@ -22,7 +22,6 @@
 #   ~/.path       : To customize your paths
 
 # If not running interactively, don't load anything.
-
 [[ -z "$PS1" && -z "$PS2" ]] && return
 
 # Re-reate the warnings file
