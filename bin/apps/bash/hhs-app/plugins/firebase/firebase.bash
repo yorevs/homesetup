@@ -160,7 +160,7 @@ download() {
   local fb_alias="$1"
 
   [[ -f "${RESPONSE_FILE}" ]] && rm -f "${RESPONSE_FILE}"
-  fetch.bash GET --silent "${FIREBASE_URL}/dotfiles/${UUID}/${fb_alias}.json" > "${RESPONSE_FILE}"
+  fetch.bash GET --silent "${FIREBASE_URL}/dotfiles/${UUID}/${fb_alias}.json" 1> "${RESPONSE_FILE}" 2> "${HHS_WARNINGS_FILE}"
   ret=$?
 
   if [[ $ret -eq 0 && -f "${RESPONSE_FILE}" && "$(grep . "${RESPONSE_FILE}")" =~ ${RESPONSE_RE// /} ]]; then
@@ -178,8 +178,8 @@ upload() {
   local body fb_alias="$1"
 
   body=$(build_payload)
-  if fetch.bash PATCH --silent --body "$body" "${FIREBASE_URL}/dotfiles/${UUID}.json" &> /dev/null; then
-    echo "${GREEN}Dotfiles \"${fb_alias}\" successfully uploaded!${NC}"
+  if fetch.bash PATCH --silent --body "$body" "${FIREBASE_URL}/dotfiles/${UUID}.json" 1> /dev/null 2> "${HHS_WARNINGS_FILE}"; then
+    echo "${GREEN}Dotfiles \"${fb_alias}\" successfully uploaded !${NC}"
   else
     quit 2 "Failed to upload Dotfiles as ${fb_alias}"
   fi
