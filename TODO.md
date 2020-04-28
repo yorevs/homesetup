@@ -3,10 +3,9 @@
     [x] 1. Change license from the unlicensed to MIT.
     [ ] 2. Fill developer tools handbook.
     [ ] 3. Split functions handbook into pages.
-    [ ] 4. Link README.md functions with functions handbook.
-    [ ] 5. Fill applicaitons handbook.
-    [ ] 6. Record HHS movies.
-    [ ] 7. Include handbook navigation buttons.
-    [*] 8. Linux integration issues
+    [ ] 4. Fill applicaitons handbook.
+    [ ] 5. Record HHS movies.
+    [ ] 6. Include handbook navigation buttons.
+    [ ] 7. Fix linux integration issues
         * ss
-        * hhs firebase execute --setup
+    [ ] 8. Move the encode/encrypt logic from vaulty.py and move to lib

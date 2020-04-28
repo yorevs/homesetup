@@ -87,10 +87,10 @@ WELCOME = """
 HomeSetup Firebase v{}
 
 Settings ==============================
-
         FIREBASE_USER: {}
         FB_CFG_FILE: {}
-""".format(VERSION, FIREBASE_USER, FB_CFG_FILE)
+        STARTED: {}
+""".format(VERSION, FIREBASE_USER, FB_CFG_FILE, datetime.now())
 
 # Firebase configuration format
 FB_CONFIG_FMT = """
@@ -154,7 +154,7 @@ class FirebaseConfig:
         print('-' * 31)
         config.project_id = raw_input('Please type you Project ID: ')
         config.username = FIREBASE_USER
-        config.passprase = getpass.getpass('Please type a password to encrypt you payload: ')
+        config.passprase = base64.b32encode(getpass.getpass('Please type a password to encrypt you payload: '))
         config.project_uuid = raw_input('Please type a UUID to use or press enter to generate a new one: ')
         config.project_uuid = str(uuid.uuid4()) if not config.project_uuid else config.project_uuid
         config.firebase_url = FB_URL_TPL.format(config.project_id)
@@ -197,8 +197,6 @@ class DotfilesPayload:
         dict_entry = dict(ast.literal_eval(json.loads(payload)))
         for key, value in dict_entry.iteritems():
             self.data[key] = value
-
-        print(str(self))
 
         return self
 
