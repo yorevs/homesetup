@@ -33,6 +33,8 @@ def log_init(log_file, level=log.DEBUG, log_fmt=DEFAULT_LOG_FMT, max_log_size=MA
         format=log_fmt,
         level=level,
         filemode=f_mode)
+    
+    return log
 
 
 # @purpose: Get an argument from the list or None if index is out of range

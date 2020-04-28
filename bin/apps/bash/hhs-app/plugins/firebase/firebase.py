@@ -55,6 +55,8 @@ HHS_DIR = os.environ.get("HHS_DIR", "/{}/.hhs".format(HOME_DIR))
 
 LOG_FILE = "{}/firebase.log".format(HHS_DIR)
 
+LOG = log_init(LOG_FILE)
+
 # Firebase configuration file.
 FB_CFG_FILE = "{}/.firebase".format(HHS_DIR)
 
@@ -114,11 +116,11 @@ def version():
     sys.exit(0)
 
 
-class Config:
+class FirebaseConfig:
     # @purpose: Create config from dict
     @staticmethod
     def of(config_dict):
-        return Config(
+        return FirebaseConfig(
             config_dict['PROJECT_ID'],
             config_dict['USERNAME'],
             config_dict['FIREBASE_URL'],
@@ -130,7 +132,7 @@ class Config:
     @staticmethod
     def from_file():
         if path.exists(FB_CFG_FILE):
-            log.info("Config file exists, reading payload")
+            LOG.info("Config file exists, reading payload")
             with open(FB_CFG_FILE, 'r') as f_config:
                 cfg = {}
                 for line in f_config:
@@ -139,15 +141,15 @@ class Config:
                         continue
                     key, value = line.split("=", 1)
                     cfg[key.strip()] = value.strip()
-                return Config.of(cfg) if len(cfg) == 5 else None
+                return FirebaseConfig.of(cfg) if len(cfg) == 5 else None
         else:
-            log.warn("Config file does not exist, creating new")
+            LOG.warn("Config file does not exist, creating new")
             create_file(FB_CFG_FILE)
 
     # @purpose: Create a config prompting the user for information
     @staticmethod
     def prompt():
-        config = Config()
+        config = FirebaseConfig()
         print("### Firebase setup")
         print('-' * 31)
         config.project_id = raw_input('Please type you Project ID: ')
@@ -175,13 +177,12 @@ class Config:
     def save(self):
         with open(FB_CFG_FILE, 'w') as f_config:
             f_config.write(str(self))
-            cprint(Colors.GREEN, "Firebase configuration succeeded !")
-            log.info("Firebase configuration saved !")
+            LOG.info("Firebase configuration saved !")
         
         return self
 
 
-class Entry:
+class DotfilesPayload:
     def __init__(self, db_alias, username):
         self.db_alias = db_alias
         self.data = {
@@ -192,7 +193,7 @@ class Entry:
     def __str__(self):
         return json.dumps(self.__dict__)
 
-    def dumps(self, payload):
+    def parse_payload(self, payload):
         dict_entry = dict(ast.literal_eval(json.loads(payload)))
         for key, value in dict_entry.iteritems():
             self.data[key] = value
@@ -201,25 +202,25 @@ class Entry:
 
         return self
 
-    def load(self):
+    def load_all(self):
         for name, dotfile in DOTFILES.iteritems():
             if path.exists(dotfile):
-                log.debug("Reading name={} dotfile={}".format(name, dotfile))
+                LOG.debug("Reading name={} dotfile={}".format(name, dotfile))
                 with open(dotfile, 'r') as f_dotfile:
                     self.data[name] = str(base64.b64encode(f_dotfile.read()))
             else:
-                log.warn("Dotfile {} does not exist. Ignoring it".format(dotfile))
+                LOG.warn("Dotfile {} does not exist. Ignoring it".format(dotfile))
 
         return self
 
-    def save(self):
+    def save_all(self):
         for name, dotfile in DOTFILES.iteritems():
             if name in self.data:
-                log.debug("Saving name={} dotfile={}".format(name, dotfile))
+                LOG.debug("Saving name={} dotfile={}".format(name, dotfile))
                 with open(dotfile, 'w') as f_dotfile:
                     f_dotfile.write(str(base64.b64decode(self.data[name])))
             else:
-                log.warn("Name={} is not part of data. Ignoring it".format(name))
+                LOG.warn("Name={} is not part of data. Ignoring it".format(name))
 
         return self
 
@@ -235,22 +236,37 @@ class Firebase(object):
         return str(self.payload)
 
     def load_settings(self):
-        self.config = Config.from_file()
+        self.config = FirebaseConfig.from_file()
 
     def setup(self):
-        self.config = Config.prompt().save()
+        self.config = FirebaseConfig.prompt().save()
+        cprint(Colors.GREEN, "Firebase configuration succeeded !")
 
     def upload(self, db_alias):
-        entry = Entry(db_alias, self.config.username)
-        self.payload = json.dumps(entry.load().data)
+        entry = DotfilesPayload(db_alias, self.config.username)
+        self.payload = json.dumps(entry.load_all().data)
         url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
-        patch(url, self.payload)
+        patch(url, self.payload, silent=True)
+        if self.validate_upload():
+            cprint(Colors.GREEN, 'Dotfiles \"{}\" successfully uploaded !'.format(db_alias))
+        else:
+            cprint(Colors.RED, 'Failed to upload Dotfiles as {}'.format(db_alias))
+    
+    def validate_upload(self):
+        return True
 
     def download(self, db_alias):
-        entry = Entry(db_alias, self.config.username)
+        entry = DotfilesPayload(db_alias, self.config.username)
         url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
-        self.payload = get(url)
-        entry.dumps(self.payload).save()
+        self.payload = get(url, silent=True)
+        entry.parse_payload(self.payload).save_all()
+        if self.validate_download():
+            cprint(Colors.GREEN, 'Dotfiles \"{}\" successfully downloaded !'.format(db_alias))
+        else:
+            cprint(Colors.RED, 'Failed to download dotfiles from {}'.format(db_alias))
+    
+    def validate_download(self):
+        return True
 
     def is_setup(self):
         return self.config is None
@@ -308,8 +324,7 @@ def main(argv):
                 assert False, '### Unhandled option: {}'.format(opt)
             break
 
-        log_init(LOG_FILE)
-        log.info(WELCOME)
+        LOG.info(WELCOME)
         signal.signal(signal.SIGINT, exit_handler)
         atexit.register(exit_handler)
         app_exec(firebase)
@@ -327,10 +342,10 @@ def main(argv):
     # Catch other exceptions
     except Exception as err:
         traceback.format_exc()
-        log.error("Exception in user code:")
-        log.error('-' * 60)
-        log.error(traceback.format_exc())
-        log.error('-' * 60)
+        LOG.error("Exception in user code:")
+        LOG.error('-' * 60)
+        LOG.error(traceback.format_exc())
+        LOG.error('-' * 60)
         cprint(Colors.RED, err)
         quit(2)
 
