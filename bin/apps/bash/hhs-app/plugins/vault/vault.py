@@ -409,6 +409,7 @@ def main(argv):
 
     # Catch keyboard interrupts
     except KeyboardInterrupt:
+        LOG.error("Program was interrupted by the user")
         print ('')
         quit(1)
 

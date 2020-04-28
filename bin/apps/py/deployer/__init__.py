@@ -2,4 +2,4 @@
 #
 # Package: deployer
 
-__all__ = ["Versioner", "GitUtils", "DocBuilder.py"]
+__all__ = ["Versioner", "GitUtils", "DocBuilder"]

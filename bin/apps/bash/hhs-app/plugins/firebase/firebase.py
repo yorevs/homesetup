@@ -16,6 +16,7 @@ import getpass
 import signal
 import traceback
 import uuid
+
 from datetime import datetime
 from os import path
 
@@ -194,11 +195,13 @@ class DotfilesPayload:
         return json.dumps(self.__dict__)
 
     def parse_payload(self, payload):
-        dict_entry = dict(ast.literal_eval(json.loads(payload)))
-        for key, value in dict_entry.iteritems():
-            self.data[key] = value
-
-        return self
+        try:
+            dict_entry = dict(ast.literal_eval(json.loads(payload)))
+            for key, value in dict_entry.iteritems():
+                self.data[key] = value
+            return True
+        except ValueError:
+            return False
 
     def load_all(self):
         for name, dotfile in DOTFILES.iteritems():
@@ -238,48 +241,55 @@ class Firebase(object):
 
     def setup(self):
         self.config = FirebaseConfig.prompt().save()
-        cprint(Colors.GREEN, "Firebase configuration succeeded !")
+        response = get(self.config.firebase_url, silent=True)
+        if response is not None:
+            LOG.debug('Successfully fetch from firebase: {} => {}'.format(self.config.firebase_url, response))
+            cprint(Colors.GREEN, 'Firebase configuration for \"{}\" succeeded !'.format(self.config.username))
 
     def upload(self, db_alias):
+        url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
         entry = DotfilesPayload(db_alias, self.config.username)
         self.payload = json.dumps(entry.load_all().data)
-        url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
         patch(url, self.payload, silent=True)
-        if self.validate_upload():
+        if Firebase.validate_upload(entry, url):
             cprint(Colors.GREEN, 'Dotfiles \"{}\" successfully uploaded !'.format(db_alias))
         else:
-            cprint(Colors.RED, 'Failed to upload Dotfiles as {}'.format(db_alias))
+            cprint(Colors.RED, 'Failed to upload \"{}\" to firebase'.format(db_alias))
     
-    def validate_upload(self):
-        return True
-
+    @staticmethod
+    def validate_upload(entry, url):
+        LOG.debug('Validating upload to {} at {}'.format(url, entry.data['lastUpdate']))
+        try:
+            uploaded = get(url, silent=True)
+            return uploaded is not None and entry.data['lastUpdate'] in uploaded
+        except subprocess.CalledProcessError as err:
+            LOG.error('Failed to upload \"{}\" to firebase'.format(err))
+            return False
+        
     def download(self, db_alias):
-        entry = DotfilesPayload(db_alias, self.config.username)
         url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
+        entry = DotfilesPayload(db_alias, self.config.username)
         self.payload = get(url, silent=True)
-        entry.parse_payload(self.payload).save_all()
-        if self.validate_download():
+        if entry.parse_payload(self.payload):
+            entry.save_all()
             cprint(Colors.GREEN, 'Dotfiles \"{}\" successfully downloaded !'.format(db_alias))
         else:
-            cprint(Colors.RED, 'Failed to download dotfiles from {}'.format(db_alias))
-    
-    def validate_download(self):
-        return True
+            cprint(Colors.RED, 'Failed to download \"{}\" from firebase'.format(db_alias))
 
     def is_setup(self):
-        return self.config is None
+        return self.config is not None and self.config.firebase_url is not None
 
 
 # @purpose: Execute the specified operation
 def exec_operation(op, firebase):
     options = list(OPTIONS_MAP[op])
     firebase.load_settings()
-    if firebase.is_setup and "upload" == op:
-        firebase.upload(options[0])
-    elif firebase.is_setup and "download" == op:
-        firebase.download(options[0])
-    elif not firebase.is_setup or "setup" == op:
+    if not firebase.is_setup() or "setup" == op:
         firebase.setup()
+    if firebase.is_setup() and "upload" == op:
+        firebase.upload(options[0])
+    elif firebase.is_setup() and "download" == op:
+        firebase.download(options[0])
     else:
         cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
         usage(1)
@@ -301,7 +311,7 @@ def main(argv):
 
         # Handle program arguments and options
         # Short opts: -<C>, Long opts: --<Word>
-        opts, args = getopt.getopt(argv, 'vhsu:d:l', ['version', 'help', 'setup', 'upload', 'download', 'list'])
+        opts, args = getopt.getopt(argv, 'vhsu:d:l', ['version', 'help', 'setup', 'upload', 'download'])
 
         if len(opts) == 0:
             usage()
@@ -334,6 +344,7 @@ def main(argv):
 
     # Catch keyboard interrupts
     except KeyboardInterrupt:
+        LOG.error("Program was interrupted by the user")
         print ('')
         quit(1)
 
