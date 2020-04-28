@@ -8,6 +8,7 @@
         @site: https://github.com/yorevs/homesetup
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
+import ast
 import atexit
 import base64
 import getopt
@@ -15,7 +16,6 @@ import getpass
 import signal
 import traceback
 import uuid
-
 from datetime import datetime
 from os import path
 
@@ -59,7 +59,10 @@ LOG_FILE = "{}/firebase.log".format(HHS_DIR)
 FB_CFG_FILE = "{}/.firebase".format(HHS_DIR)
 
 # Firebase url template
-FB_URL_TPL = "https://{}.firebaseio.com/homesetup/dotfiles/{}"
+FB_URL_TPL = "https://{}.firebaseio.com/homesetup"
+
+# Firebase dotfiles url template
+FB_DOTFILES_URL_TPL = "{}/dotfiles/{}/{}.json"
 
 # Regex to validate the created UUID
 UUID_RE = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
@@ -112,8 +115,9 @@ def version():
 
 
 class Config:
+    # @purpose: Create config from dict
     @staticmethod
-    def of_dict(config_dict):
+    def of(config_dict):
         return Config(
             config_dict['PROJECT_ID'],
             config_dict['USERNAME'],
@@ -121,6 +125,39 @@ class Config:
             config_dict['PASSPHRASE'],
             config_dict['UUID']
         )
+
+    # @purpose: Create a config loading the config file
+    @staticmethod
+    def from_file():
+        if path.exists(FB_CFG_FILE):
+            log.info("Config file exists, reading payload")
+            with open(FB_CFG_FILE, 'r') as f_config:
+                cfg = {}
+                for line in f_config:
+                    line = line.strip()
+                    if line.startswith("#") or "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    cfg[key.strip()] = value.strip()
+                return Config.of(cfg) if len(cfg) == 5 else None
+        else:
+            log.warn("Config file does not exist, creating new")
+            create_file(FB_CFG_FILE)
+
+    # @purpose: Create a config prompting the user for information
+    @staticmethod
+    def prompt():
+        config = Config()
+        print("### Firebase setup")
+        print('-' * 31)
+        config.project_id = raw_input('Please type you Project ID: ')
+        config.username = FIREBASE_USER
+        config.passprase = getpass.getpass('Please type a password to encrypt you payload: ')
+        config.project_uuid = raw_input('Please type a UUID to use or press enter to generate a new one: ')
+        config.project_uuid = str(uuid.uuid4()) if not config.project_uuid else config.project_uuid
+        config.firebase_url = FB_URL_TPL.format(config.project_id)
+
+        return config
 
     def __init__(self, project_id=None, username=None, firebase_url=None, passphrase=None, project_uuid=None):
         self.project_id = project_id
@@ -134,88 +171,57 @@ class Config:
             self.project_id, self.username, self.firebase_url, self.passprase, self.project_uuid
         )
 
-    # @purpose: Prompt the user for information and create a config file
-    @staticmethod
-    def prompt():
-        config = Config()
-        print("### Firebase setup")
-        print('-' * 31)
-        config.project_id = raw_input('Please type you Project ID: ')
-        config.username = FIREBASE_USER
-        config.passprase = getpass.getpass('Please type a password to encrypt you payload: ')
-        config.project_uuid = raw_input('Please type a UUID to use or press enter to generate a new one: ')
-        config.project_uuid = str(uuid.uuid4()) if not config.project_uuid else config.project_uuid
-        config.firebase_url = FB_URL_TPL.format(config.project_id, config.project_uuid)
-
-        return config
-
-    # @purpose: Load config from file
-    @staticmethod
-    def load():
-        if path.exists(FB_CFG_FILE):
-            log.info("Config file exists, reading payload")
-            with open(FB_CFG_FILE, 'r') as f_config:
-                cfg = {}
-                for line in f_config:
-                    line = line.strip()
-                    if line.startswith("#") or "=" not in line:
-                        continue
-                    key, value = line.split("=", 1)
-                    cfg[key.strip()] = value.strip()
-                return Config.of_dict(cfg) if len(cfg) == 5 else None
-        else:
-            log.warn("Config file does not exist, creating new")
-            create_file(FB_CFG_FILE)
-
-    # @purpose: Save the current config file
+    # @purpose: Save the current config
     def save(self):
         with open(FB_CFG_FILE, 'w') as f_config:
             f_config.write(str(self))
             cprint(Colors.GREEN, "Firebase configuration succeeded !")
             log.info("Firebase configuration saved !")
+        
+        return self
 
 
 class Entry:
-    @staticmethod
-    def load(db_alias, username):
-        entry = Entry(db_alias, username)
-        with open(DOTFILES['aliases'], 'r') as f_aliases:
-            entry.data['aliases'] = str(base64.b64encode(f_aliases.read()))
-        with open(DOTFILES['colors'], 'r') as f_colors:
-            entry.data['colors'] = str(base64.b64encode(f_colors.read()))
-        with open(DOTFILES['env'], 'r') as f_env:
-            entry.data['env'] = str(base64.b64encode(f_env.read()))
-        with open(DOTFILES['functions'], 'r') as f_functions:
-            entry.data['functions'] = str(base64.b64encode(f_functions.read()))
-        with open(DOTFILES['path'], 'r') as f_path:
-            entry.data['path'] = str(base64.b64encode(f_path.read()))
-        with open(DOTFILES['profile'], 'r') as f_profile:
-            entry.data['profile'] = str(base64.b64encode(f_profile.read()))
-        with open(DOTFILES['commands'], 'r') as f_commands:
-            entry.data['commands'] = str(base64.b64encode(f_commands.read()))
-        with open(DOTFILES['savedDirs'], 'r') as f_savedDirs:
-            entry.data['savedDirs'] = str(base64.b64encode(f_savedDirs.read()))
-        with open(DOTFILES['aliasdef'], 'r') as f_aliasdef:
-            entry.data['aliasdef'] = str(base64.b64encode(f_aliasdef.read()))
-
-        return entry
-    
-    @staticmethod
-    def dumps(payload):
-        entry = Entry()
-        return entry
-    
-    def save(self):
-        pass
-    
     def __init__(self, db_alias, username):
+        self.db_alias = db_alias
         self.data = {
-            'lastUpdate': datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 
+            'lastUpdate': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
             'lastUser': username
         }
 
     def __str__(self):
         return json.dumps(self.__dict__)
+
+    def dumps(self, payload):
+        dict_entry = dict(ast.literal_eval(json.loads(payload)))
+        for key, value in dict_entry.iteritems():
+            self.data[key] = value
+
+        print(str(self))
+
+        return self
+
+    def load(self):
+        for name, dotfile in DOTFILES.iteritems():
+            if path.exists(dotfile):
+                log.debug("Reading name={} dotfile={}".format(name, dotfile))
+                with open(dotfile, 'r') as f_dotfile:
+                    self.data[name] = str(base64.b64encode(f_dotfile.read()))
+            else:
+                log.warn("Dotfile {} does not exist. Ignoring it".format(dotfile))
+
+        return self
+
+    def save(self):
+        for name, dotfile in DOTFILES.iteritems():
+            if name in self.data:
+                log.debug("Saving name={} dotfile={}".format(name, dotfile))
+                with open(dotfile, 'w') as f_dotfile:
+                    f_dotfile.write(str(base64.b64decode(self.data[name])))
+            else:
+                log.warn("Name={} is not part of data. Ignoring it".format(name))
+
+        return self
 
 
 # @purpose: Represents the firebase
@@ -229,22 +235,22 @@ class Firebase(object):
         return str(self.payload)
 
     def load_settings(self):
-        self.config = Config.load()
+        self.config = Config.from_file()
 
     def setup(self):
-        self.config = Config.prompt()
-        self.config.save()
+        self.config = Config.prompt().save()
 
     def upload(self, db_alias):
-        self.payload = json.dumps(Entry.load(db_alias, self.config.username).data)
-        url = '{}/{}.json'.format(self.config.firebase_url, db_alias)
+        entry = Entry(db_alias, self.config.username)
+        self.payload = json.dumps(entry.load().data)
+        url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
         patch(url, self.payload)
 
     def download(self, db_alias):
-        url = '{}/{}.json'.format(self.config.firebase_url, db_alias)
+        entry = Entry(db_alias, self.config.username)
+        url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
         self.payload = get(url)
-        entry = Entry.dumps(self.payload)
-        entry.save()
+        entry.dumps(self.payload).save()
 
     def is_setup(self):
         return self.config is None
