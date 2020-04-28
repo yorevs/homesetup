@@ -111,9 +111,9 @@ function __hhs_command() {
             # sel_index is zero-based, so we need to increment this number
             cmd_expr="${all_cmds[$sel_index]##*: }"
             [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}" && ret_val=$?
-            command rm -f "${mselect_file}"
+            \rm -f "${mselect_file}"
           else
-            [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
+            [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
             return 1
           fi
         else

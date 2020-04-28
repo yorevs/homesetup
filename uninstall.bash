@@ -94,20 +94,20 @@ uninstall_dotfiles() {
   echo -e "Removing installed dotfiles ..."
   for next in ${ALL_DOTFILES[*]}; do
     dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
-    [[ -f "${dotfile}" ]] && command rm -fv "${dotfile}"
+    [[ -f "${dotfile}" ]] && \rm -fv "${dotfile}"
   done
 
   # shellcheck disable=SC2164
   cd "${HOME}"
-  [[ -d "${HHS_HOME}" ]] && command rm -rfv "${HHS_HOME}"
-  [[ -L "${HHS_DIR}/bin" || -d "${HHS_DIR}/bin" ]] && command rm -rf "${HHS_DIR}/bin"
+  [[ -d "${HHS_HOME}" ]] && \rm -rfv "${HHS_HOME:?}"
+  [[ -L "${HHS_DIR}/bin" || -d "${HHS_DIR}/bin" ]] && \rm -rf "${HHS_DIR:?}/bin"
   echo ''
 
   if [[ -d "${HHS_DIR}" ]]; then
     BACKUPS=("$(find "${HHS_DIR}" -iname "*.orig")")
     echo "Restoring backups ..."
     for next in ${BACKUPS[*]}; do
-      [[ -f "${next}" ]] && command cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
+      [[ -f "${next}" ]] && \cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
     done
     echo ''
   fi
@@ -128,8 +128,8 @@ uninstall_dotfiles() {
   echo -e "${NC}"
   [[ -n "$ANS" ]] && echo ''
   if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-    [[ -d "${HHS_DIR}" ]] && command rm -fv "${HHS_DIR}"
-    command rm -fv .prompt .aliasdef .functions .env .aliases 2> /dev/null
+    [[ -d "${HHS_DIR}" ]] && \rm -fv "${HHS_DIR}"
+    \rm -fv .prompt .aliasdef .functions .env .aliases 2> /dev/null
   fi
 
   echo 'HomeSetup has been uninstalled !'

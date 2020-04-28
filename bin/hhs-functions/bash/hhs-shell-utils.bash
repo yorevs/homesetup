@@ -88,16 +88,16 @@ function __hhs_shell_select() {
       sel_index=$(grep . "${mselect_file}")
       sel_shell=${avail_shells[$sel_index]}
       if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
-        if command chsh -s "${sel_shell}"; then
+        if \chsh -s "${sel_shell}"; then
           ret_val=$?
           clear
           export SHELL="${sel_shell}"
           echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
           echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
-          command rm -f "${mselect_file}"
+          \rm -f "${mselect_file}"
         else
           __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"
-          [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
+          [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
         fi
       fi
     fi

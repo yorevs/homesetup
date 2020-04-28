@@ -17,7 +17,7 @@ function __hhs_ls_sorted() {
     return 1
   else
     col="${1:-9}"
-    command ls -la | sort -k "$col"
+    \ls -la | sort -k "$col"
     return $?
   fi
 }
@@ -64,7 +64,7 @@ function __hhs_del_tree() {
           while [[ -e "${TRASH}/${trash_dest}" ]]; do
             trash_dest="${next##*/}-$(ts)"
           done
-          if command mv "${next}" "${TRASH}/${trash_dest}" &> /dev/null; then
+          if \mv "${next}" "${TRASH}/${trash_dest}" &> /dev/null; then
             echo -e "${ORANGE}Deleted: ${WHITE}${next} -> ${TRASH}/${trash_dest}${NC}"
           else
             __hhs_errcho "${FUNCNAME[0]}: Could not move \"${next}\" to ${TRASH}/${trash_dest}"

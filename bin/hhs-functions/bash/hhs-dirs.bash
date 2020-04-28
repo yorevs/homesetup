@@ -26,7 +26,7 @@ function __hhs_change_dir() {
   elif [[ '..' == "${1}" ]]; then
     path='..'
   elif [[ '.' == "${1}" ]]; then
-    path=$(command pwd)
+    path=$(\pwd)
   elif [[ '-' == "${1}" ]]; then
     path="${OLDPWD}"
   elif [[ -d "${1}" ]]; then
@@ -40,8 +40,8 @@ function __hhs_change_dir() {
   [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && return 1
 
   # shellcheck disable=SC2086
-  command cd ${flags} "${path}" || return 1
-  command pushd -n "$(pwd)" &>/dev/null
+  \cd ${flags} "${path}" || return 1
+  \pushd -n "$(pwd)" &>/dev/null
 
   return 0
 }
@@ -55,10 +55,10 @@ function __hhs_changeback_ndirs() {
   last_pwd=$(pwd)
 
   if [[ -z "$1" ]]; then
-    command cd ..
+    \cd ..
   elif [[ -n "$1" ]]; then
     for x in $(seq 1 "$1"); do
-      command cd .. || return 1
+      \cd .. || return 1
     done
     echo "${GREEN}Changed directory backwards by ${x} time(s) and landed at: ${WHITE}\"$(pwd)\"${NC}"
     [[ -d "${last_pwd}" ]] && export OLDPWD="${last_pwd}"
@@ -74,7 +74,7 @@ function __hhs_dirs() {
 
   # If any argument is passed, use the old style dirs
   if [[ $# -gt 0 ]]; then
-    command dirs "${@}"
+    \dirs "${@}"
     return $?
   fi
 
@@ -100,7 +100,7 @@ function __hhs_dirs() {
     fi
   fi
 
-  [[ ${ret_val} -eq 0 ]] && command cd "${path}"
+  [[ ${ret_val} -eq 0 ]] && \cd "${path}"
 
   return ${ret_val}
 }
@@ -119,7 +119,7 @@ function __hhs_list_tree() {
       tree '.'
     fi
   else
-    command ls -Rl
+    \ls -Rl
   fi
 
   return $?
@@ -241,9 +241,9 @@ function __hhs_load_dir() {
             dir_alias="${all_dirs[$sel_index]%=*}"
             dir="${all_dirs[$sel_index]##*=}"
             ret_val=0
-            command rm -f "${mselect_file}"
+            \rm -f "${mselect_file}"
           else
-            [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
+            [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
             return 1
           fi
         else
@@ -313,9 +313,9 @@ function __hhs_godir() {
       if __hhs_mselect "${mselect_file}" "${results[@]//$search_path\//}"; then
         sel_index=$(grep . "${mselect_file}")
         dir=${results[$sel_index]}
-        command rm -f "${mselect_file}"
+        \rm -f "${mselect_file}"
       else
-        [[ -f "${mselect_file}" ]] && command rm -f "${mselect_file}"
+        [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
         return 1
       fi
     fi

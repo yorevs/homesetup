@@ -16,10 +16,10 @@ if __hhs_has "git"; then
     local cur_branch prev_branch
 
     # Get the current branch.
-    cur_branch="$(command git rev-parse --abbrev-ref HEAD)"
+    cur_branch="$(\git rev-parse --abbrev-ref HEAD)"
     # Get the previous branch. Skip the same branch change (that is what is different from git checkout -).
-    prev_branch=$(command git reflog | grep 'checkout: ' | grep -v "from $cur_branch to $cur_branch" | head -n1 | awk '{ print $6 }')
-    command git checkout "$prev_branch"
+    prev_branch=$(\git reflog | grep 'checkout: ' | grep -v "from $cur_branch to $cur_branch" | head -n1 | awk '{ print $6 }')
+    \git checkout "$prev_branch"
 
     return $?
   }

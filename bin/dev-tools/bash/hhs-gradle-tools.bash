@@ -18,7 +18,7 @@ if __hhs_has "gradle"; then
     elif [[ -f "./gradlew" ]]; then
       ./gradlew "$@"
     else
-      command gradle "$@"
+      \gradle "$@"
     fi
 
     return $?
