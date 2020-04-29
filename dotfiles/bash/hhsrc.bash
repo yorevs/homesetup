@@ -59,7 +59,7 @@ DOTFILES=(
 )
 
 # Re-create the HomeSetup log file
-echo -e "HomeSetup started at $(date)" > "${HHS_LOGFILE}"
+echo -e "HomeSetup loaded at $(date)" > "${HHS_LOGFILE}"
 
 # Load all HomeSetup dotfiles
 for file in ${DOTFILES[*]}; do

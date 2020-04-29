@@ -67,7 +67,8 @@ function funcs() {
 function logs() {
   nlogs=${1:-100}
   echo ''
-  echo -e "${ORANGE}HomeSetup contains following logs (last ${nlogs} lines):${NC}"
+  echo -e "${ORANGE}HomeSetup logs (last ${nlogs} lines):${NC}"
+  echo ''
   tail -${nlogs} "${HHS_LOGFILE}"
   echo ''
 }
