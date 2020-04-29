@@ -26,10 +26,10 @@ export HHS_ACTIVE_DOTFILES='.bashrc'
 
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
-  bash)
+  'bash')
     # Source the user profile
     # shellcheck disable=1090
-    #[[ -s "${HOME}/.hhsrc" ]] && \. "${HOME}/.hhsrc"
+    [[ -s "${HOME}/.hhsrc" ]] && \. "${HOME}/.hhsrc"
     ;;
   *)
     echo ''

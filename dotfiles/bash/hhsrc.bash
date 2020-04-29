@@ -63,7 +63,7 @@ echo -e "HomeSetup started at $(date)" > "${HHS_LOGFILE}"
 
 # Load all HomeSetup dotfiles
 for file in ${DOTFILES[*]}; do
-  if [[ -f "${HOME}/.${file}" ]]; then
+  if [[ -s "${HOME}/.${file}" ]]; then
     echo -e "Loading dotfile: ${HOME}/.${file}" >> "${HHS_LOGFILE}"
     \. "${HOME}/.${file}"
   fi
