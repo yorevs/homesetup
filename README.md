@@ -362,6 +362,8 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | enable-echo        | Enable terminal echo                 |
 | disable-echo       | Disable terminal echo                |
 | reset-cursor-attrs | Reset all terminal cursor attributes |
+| save-screen        | Save the current terminal screen     |
+| restore-screen     | Load the saved terminal screen       |
 
 ### Python aliases
 

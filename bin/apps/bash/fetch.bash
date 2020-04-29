@@ -35,7 +35,7 @@ UNSETS=(
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 # Request timeout in seconds
-REQ_TIMEOUT=5
+REQ_TIMEOUT=3
 
 # Return code
 RET=0
@@ -85,12 +85,12 @@ parse_args() {
   [[ $# -lt 2 ]] && usage 1
 
   shopt -s nocasematch
-  case "$1" in
+  case "${1}" in
     'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
-      METHOD="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+      METHOD="$(tr '[:lower:]' '[:upper:]' <<< "${1}")"
       shift
       ;;
-    *) quit 2 "Method \"$1\" is not not valid!" ;;
+    *) quit 2 "Method \"${1}\" is not not valid!" ;;
   esac
   shopt -u nocasematch
 
@@ -125,12 +125,10 @@ main() {
 
   parse_args "${@}"
 
-  shopt -s nocasematch
   case "${METHOD}" in
     'GET' | 'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body" ;;
     'PUT' | 'POST' | 'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body" ;;
   esac
-  shopt -u nocasematch
 
   [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."
 

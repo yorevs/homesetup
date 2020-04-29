@@ -11,6 +11,8 @@
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.aliases
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_aliases"
+
 # Remove all aliases before setting them again.
 unalias -a
 
@@ -43,7 +45,7 @@ function __hhs_alias() {
       return 1
     fi
   else
-    echo "Alias: \"${alias_name}\" was skipped because it already exists !" >> "${HHS_WARNINGS_FILE}"
+    echo "Alias: \"${alias_name}\" was skipped because it already exists !" >> "${HHS_LOGFILE}"
   fi
 
   return 1
@@ -183,7 +185,7 @@ alias __hhs_dotfiles='hhs firebase execute'
 alias __hhs_hhu='hhs updater execute'
 
 # @alias: Reload HomeSetup
-alias __hhs_reload='__hhs_clear; source ${HOME}/.bashrc'
+alias __hhs_reload='__hhs_clear; source "${HOME}/.hhsrc"'
 
 # @alias: Clear and reset all cursor attributes and IFS
 alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
@@ -244,11 +246,13 @@ case "${HHS_MY_OS}" in
 
     # @alias: Show hidden files in Finder
     alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    
     # @alias: Hide hidden files in Finder
     alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
     # @alias: Show all desktop icons
     alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+    
     # @alias: Hide all desktop icons
     alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
@@ -287,6 +291,10 @@ case "${HHS_MY_SHELL}" in
     alias disable-echo='stty raw -echo min 0'
     # @alias: Reset all terminal cursor attributes (Bash)
     alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
+    # @alias: Save the current terminal screen
+    alias save-screen='tput smcup'
+    # @alias: Load the saved terminal screen
+    alias restore-screen='tput rmcup'
     ;;
   zsh)
     # @alias: Make terminal cursor visible (Zsh)
@@ -307,6 +315,10 @@ case "${HHS_MY_SHELL}" in
     alias disable-echo='' # TODO Check how to do
     # @alias: Reset all terminal cursor attributes (Zsh)
     alias reset-cursor-attrs='' # TODO Check how to do
+    # @alias: Save the current terminal screen
+    alias save-screen='' # TODO Check how to do
+    # @alias: Load the saved terminal screen
+    alias restore-screen='' # TODO Check how to do
     ;;
 esac
 

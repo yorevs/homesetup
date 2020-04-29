@@ -285,12 +285,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dotfile into ${HOME}/.hhs
-        [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
+        [[ -s "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
-        [[ -f "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-        [[ -f "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
       done
     # If `all' option is NOT used, prompt for confirmation
     else
@@ -302,12 +302,12 @@ Usage: $APP_NAME [OPTIONS] <args>
         [[ "$ANS" != 'y' && "$ANS" != 'Y' ]] && continue
         echo ''
         # Backup existing dotfile into ${DOTFILES_DIR}
-        [[ -f "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
+        [[ -s "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
-        [[ -f "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-        [[ -f "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
       done
     fi
 

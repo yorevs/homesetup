@@ -9,3 +9,5 @@
     [ ] 7. Move the encode/encrypt logic from vaulty.py and move to lib.
     [ ] 8. Include oauth2 security do firebase requests.
     [ ] 9. Encrypt the .firebase config file.
+    [ ] 10. Improve hhs app
+            * hhs find __hhs_function | __hhs_alias ....

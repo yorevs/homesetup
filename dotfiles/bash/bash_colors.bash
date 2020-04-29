@@ -13,6 +13,8 @@
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 # improved with: https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_colors"
+
 # Detect which `ls` flavor is in use
 # LS_Colors builder: https://geoff.greer.fm/lscolors/
 # Items:
@@ -23,7 +25,6 @@
 #   ex: Executable     tw: Dir. write others(sticky)
 #                      ow: Dir. write others(no-sticky)
 #
-
 if ls --color &> /dev/null; then # GNU `ls`
   export COLOR_FLAG="--color"
   export LS_COLORS='di=1;34:ln=1;36:so=35:pi=33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'

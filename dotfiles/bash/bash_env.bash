@@ -10,6 +10,8 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your environment variables edit the file ~/.env
 
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_env"
+
 # System locale (defaults)
 export LANG=${LANG:-en_US.UTF-8}
 export LANGUAGE=${LANGUAGE:-en_US:en}
@@ -73,17 +75,13 @@ export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
 # HomeSetup variables
 
 # Fixed
-export HHS_HOME="${HOME}/HomeSetup"
-export HHS_DIR="${HOME}/.hhs"
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
 export HHS_PATHS_FILE="${HHS_DIR}/.path"
-export HHS_WARNINGS_FILE="${HHS_DIR}/.warnings.log"
 
 # Customizeable
-export HHS_SHOW_WARNINGS=${HHS_SHOW_WARNINGS:-}
 export HHS_DEFAULT_EDITOR=${HHS_DEFAULT_EDITOR:-}
 export HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:-15}
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"

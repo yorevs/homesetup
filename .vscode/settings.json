@@ -1,6 +1,7 @@
 {
   "files.exclude": {
     ".github": true,
-    ".vscode": true
+    ".vscode": true,
+    "**/*.pyc": true
   }
 }

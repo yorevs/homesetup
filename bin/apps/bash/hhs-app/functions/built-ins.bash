@@ -51,7 +51,7 @@ function funcs() {
 
   register_hhs_functions
 
-  echo "${YELLOW}Available HomeSetup Functions"
+  echo "${YELLOW}Available HomeSetup __hhs_Functions"
   echo ' '
   for idx in "${!HHS_FUNCTIONS[@]}"; do
     printf "${WHITE}%.2d. " "$((idx + 1))"
@@ -59,6 +59,30 @@ function funcs() {
   done
 
   quit 0 ' '
+}
+
+# shellcheck disable=2086
+# @purpose: Retrieve HoseSetup logs
+# @param $1 [opt] : The number of log lines to retrieve.
+function logs() {
+  nlogs=${1:-100}
+  echo ''
+  echo -e "${ORANGE}HomeSetup contains following logs (last ${nlogs} lines):${NC}"
+  tail -${nlogs} "${HHS_LOGFILE}"
+  echo ''
+}
+
+# @purpose: Fetch the ss64 manual from the web for the specified bash command.
+# @param $1 [req] : The bash command to find out the manual.
+function man() {
+  
+  local ss63_url='https://ss64.com/bash/{}.html'
+  
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: ${FUNCNAME[0]} <bash_command>"
+  else
+    open "${ss63_url//\{\}/${1}}"
+  fi
 }
 
 # @purpose: Open the HomeSetup GitHub project board for the current version.
@@ -70,44 +94,4 @@ function board() {
   open "${repo_url}" && quit 0 ' '
 
   quit 1 "Failed to open url \"${repo_url}\" !"
-}
-
-# @purpose: Retrieve/Get/Set the current hostname.
-function host-name() {
-
-  local cur_hostn new_hostn
-
-  if [[ -z "${1}" ]]; then
-    echo -en "${GREEN}Your current hostname is: ${PURPLE}"
-    hostname
-    quit $? "${NC}"
-  else
-    cur_hostn=$(hostname)
-    new_hostn="${1}"
-    [[ -z "${new_hostn}" ]] && read -r -p "${YELLOW}Enter new hostname (ENTER to cancel): ${NC}" new_hostn
-    if [[ -n "${new_hostn}" && "${cur_hostn}" != "${new_hostn}" ]]; then
-      if [[ "$(uname -s)" == "Darwin" ]]; then
-        if sudo scutil --set HostName "${new_hostn}"; then
-          echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
-        else
-          quit 2 "Failed to change your hostname !"
-        fi
-      else
-        # Change the hostname in /etc/hosts & /etc/hostname
-        if sudo ised "s/${cur_hostn}/${new_hostn}/g" /etc/hosts && sudo ised "s/${cur_hostn}/${new_hostn}/g" /etc/hostname; then
-          echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
-          read -rn 1 -p "${YELLOW}Press 'y' key to reboot now: ${NC}" ANS
-          if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
-            sudo reboot
-          fi
-        else
-          quit 2 "Failed to change your hostname !"
-        fi
-      fi
-    else
-      echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 1
-    fi
-  fi
-
-  quit 0
 }

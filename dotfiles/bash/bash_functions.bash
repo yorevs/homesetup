@@ -10,6 +10,8 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_functions"
+
 # Fontawesome icons
 CROSS_ICN="\xef\x81\x97"
 CHECK_ICN="\xef\x81\x98"

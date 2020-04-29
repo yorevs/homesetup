@@ -10,100 +10,44 @@
 #  Mailto: yorevs@hotmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
-# !NOTICE: Do not change this file. To customize your profile edit the file `~/.profile`
+#
+# !NOTICE: Do not change this file. To customize your shell create/change the following files:
+#   ~/.colors     : To customize your colors
+#   ~/.env        : To customize your environment variables
+#   ~/.aliases    : To customize your aliases
+#   ~/.aliasdef   : To customize your aliases definitions
+#   ~/.prompt     : To customize your prompt
+#   ~/.functions  : To customize your functions
+#   ~/.profile    : To customize your profile
+#   ~/.path       : To customize your paths
 
-# inspiRED by: https://github.com/mathiasbynens/dotfiles
+# If not running interactively, don't load anything.
+[[ -z "$PS1" && -z "$PS2" ]] && return
 
-export HOME=${HOME:-~/}
-export USER=${USER:-$(whoami)}
+export HHS_ACTIVE_DOTFILES='.bash_profile'
 
-# Load the shell dotfiles, and then:
-#   source -> ~/.path can be used to extend `$PATH`
-#   source -> ~/.prompt can be used to extend/override .bash_prompt
-#   source -> ~/.aliases can be used to extend/override .bash_aliases
-#   source -> ~/.profile can be used to extend/override .bash_profile
-#   source -> ~/.env can be used to extend/override .bash_env
-#   source -> ~/.colors can be used to extend/override .bash_colors
-#   source -> ~/.functions can be used to extend/override .bash_functions
-
-# Install and load all dotfiles. Custom dotfiles comes last, so defaults can be overriden.
-# Notice that the order here is important, do not reorder it.
-DOTFILES=(
-  'profile' 'bash_colors' 'colors' 'bash_env' 'env' 'bash_prompt' 'prompt'
-  'bash_aliases' 'aliases' 'aliasdef' 'bash_functions' 'functions' 'bash_completion'
-)
-
-# Load all HomeSetup dotfiles
-for file in ${DOTFILES[*]}; do
-  [[ -f "${HOME}/.${file}" ]] && \. "${HOME}/.${file}"
-done
-
-unset file
-
-# -----------------------------------------------------------------------------------
-# Set default shell options
-
-HHS_TERM_OPTS=''
-case "${HHS_MY_SHELL}" in
-
+# Load the profile according to the user's SHELL.
+case "${SHELL##*\/}" in
   bash)
-    # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
-    shopt -u nocaseglob && HHS_TERM_OPTS+='nocaseglob '
-    # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-    shopt -s extglob && HHS_TERM_OPTS+='extglob '
-    # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-    shopt -s cdspell && HHS_TERM_OPTS+='cdspell '
-    # Make bash check its window size after a process completes
-    shopt -s checkwinsize && HHS_TERM_OPTS+='checkwinsize '
-    # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
-    # executing case or [[ conditional commands.
-    shopt -u nocasematch && HHS_TERM_OPTS+='nocasematch '
+    # Source the user profile
+    # shellcheck disable=1090
+    [[ -s "${HOME}/.hhsrc" ]] && \. "${HOME}/.hhsrc"
+    ;;
+  *)
+    echo ''
+    echo 'Sorry ! HomeSetup is only compatible with bash for now.'
+    echo 'You can change your default shell by typing: '
+    echo "#> sudo chsh -s $(command -v bash)"
+    echo ''
     ;;
 esac
 
-export HHS_TERM_OPTS
-
-# Input-rc Options:
-# - completion-ignore-case: Turns off the case-sensitive completion
-# - colored-stats: Displays possible completions using different colors to indicate their type
-# - <shift>+<tab> Will cycle forward though complete options
-
-if ! [[ -f ~/.inputrc ]]; then
-  {
-    echo "set completion-ignore-case on"
-    echo "set colored-stats on"
-    echo "TAB: complete"
-    echo "\"\e[Z\": menu-complete"
-  } > ~/.inputrc
-else
-  case "${HHS_MY_OS}" in
-    Darwin)
-      sed -i '' -E \
-        -e 's/(^set colored-stats) .*/\1 on/g' \
-        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-        -e 's/(^TAB:) .*/\1 complete/g' \
-        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
-        ~/.inputrc
-      ;;
-    Linux)
-      sed -i'' -r \
-        -e 's/(^set colored-stats) .*/\1 on/g' \
-        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-        -e 's/(^TAB:) .*/\1 complete/g' \
-        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
-        ~/.inputrc
-      ;;
-  esac
+# Set path so it includes user's private bin if it exists
+if [[ -d "${HOME}/bin" ]]; then
+  PATH="${PATH}:${HOME}/bin"
 fi
 
-# Add custom paths to the system `$PATH`
-[[ -f "${HOME}/.path" ]] && export PATH="$(grep . "${HOME}/.path" | tr '\n' ':'):$PATH"
-
-# Add `$HHS_DIR/bin` to the system `$PATH`
-__hhs_paths -q -a "${HHS_DIR}/bin"
-
-# Check for updates
-if [[ ! -f "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
-  echo -e "${GREEN}Home setup is checking for updates ..."
-  hhs updater execute --check
+# Set path so it includes user's private bin if it exists
+if [[ -d "${HOME}/.local/bin" ]]; then
+  PATH="${PATH}:${HOME}/.local/bin"
 fi

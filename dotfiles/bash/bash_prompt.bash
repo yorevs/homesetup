@@ -14,6 +14,8 @@
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
 # Improved with: http://ezprompt.net
 
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_prompt"
+
 # Configure git stuff.
 function __hhs_git_prompt() {
 
