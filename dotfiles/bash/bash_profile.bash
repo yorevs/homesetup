@@ -2,9 +2,8 @@
 # shellcheck disable=SC2155,SC1090
 
 #  Script: bash_profile.bash
-# Purpose: This file is user specific remote login file. Environment variables listed in this
-#          file are invoked every time the user is logged in remotely i.e. using ssh session.
-#          If this file is not present, system looks for either .bash_login or .profile files.
+# Purpose: This is user specific file that gets loaded each time user creates a new login
+#          shell. It simply loads the required HomeSetup dotfiles and set some required paths.
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com

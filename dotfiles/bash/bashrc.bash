@@ -2,7 +2,7 @@
 
 #  Script: bashrc.bash
 # Purpose: This is user specific file that gets loaded each time user creates a new non-login
-#          shell. It simply load the required HomeSetup files and set some required paths
+#          shell. It simply loads the required HomeSetup dotfiles and set some required paths.
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
