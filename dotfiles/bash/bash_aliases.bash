@@ -49,7 +49,7 @@ function __hhs_alias() {
       echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
     fi
   else
-    __hhs_log "WARN" "Setting alias: \"${alias_name}\" was skipped because it already exists !"
+    echo "WARN" "Setting alias: \"${alias_name}\" was skipped because it already exists !"
   fi
 
   return 1

@@ -45,21 +45,21 @@ case "${HHS_MY_SHELL}" in
       esac
       if [[ "${skip_completion}" == 'OK' ]]; then
         if [[ -f "${AUTO_CPL_D}/${completion}-completion.bash" ]]; then
-          __hhs_log "INFO" "Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash"
+          echo "INFO" "Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash"
           __hhs_source "${AUTO_CPL_D}/${completion}-completion.bash"
           BASH_COMPLETIONS+="${completion} "
         fi
       else
-        __hhs_log "INFO" "Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash"
+        echo "INFO" "Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash"
       fi
     done
     ;;
   *)
-    __hhs_log "WARN" "\"${HHS_MY_SHELL}\" shell does not include any completions"
+    echo "WARN" "\"${HHS_MY_SHELL}\" shell does not include any completions"
     ;;
 esac
 
-__hhs_log "INFO" "Loaded bash completions: ${BASH_COMPLETIONS[*]}"
+echo "INFO" "Loaded bash completions: ${BASH_COMPLETIONS[*]}"
 
 # shellcheck disable=2206
 export HHS_BASH_COMPLETIONS="${BASH_COMPLETIONS[*]}"
