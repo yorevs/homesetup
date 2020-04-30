@@ -333,13 +333,16 @@ function __hhs_godir() {
 # @function: Create all folders using a slash or dot notation path and immediately change into it.
 # @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path.
 function __hhs_mkcd() {
+  __hhs_ascof "${IFS}"
   if [[ -n "$1" && ! -d "$1" ]] || [[ "$1" == "-h" || "$1" == "--help" ]]; then
     dir="${1//.//}"
     mkdir -p "${dir}" || return 1
     last_pwd=$(pwd)
-    for d in ${dir//\// }; do
+    IFS='/'
+    for d in ${dir}; do
       cd "$d" || return 1
     done
+    IFS="$RESET_IFS"
     export OLDPWD=${last_pwd}
     echo "${GREEN}${dir}${NC}"
   else
