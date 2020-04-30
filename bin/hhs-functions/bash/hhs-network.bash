@@ -80,15 +80,15 @@ function __hhs_ip() {
       [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
       [[ -n "${if_ip}" ]] && echo "IP-${ip_kind} : ${if_ip}" && return 0
     fi
-    if [[ "vpn" == "${ip_kind}" || "local" == "${ip_kind}" ]]; then
+    if [[ "all" == "${ip_kind}" || "vpn" == "${ip_kind}" || "local" == "${ip_kind}" ]]; then
       if_list="$(__hhs_active_ifaces)"
       IFS=' '
-      [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[0-9]*'
-      [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[0-9]*'
+      [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]*'
+      [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]*'
       for next in ${if_list}; do
         if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
           if_ip="$(ifconfig "${next}" | grep -E "^\tinet " | awk '{print $2}')"
-          [[ -n "${if_ip}" ]] && echo "IP-${ip_kind} : ${if_ip}" && ret_val=0
+          [[ -n "${if_ip}" ]] && echo "IP-${ip_kind//all/${next}} : ${if_ip}" && ret_val=0
         fi
       done
       IFS="${RESET_IFS}"
