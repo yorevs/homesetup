@@ -28,7 +28,7 @@ Usage: ${APP_NAME} <method> [options] <url>
 
 # Functions to be unset after quit
 UNSETS=(
-  format_json do_fetch parse_args
+  format_json fetch_with_curl parse_args
 )
 
 # shellcheck disable=SC1090
@@ -50,10 +50,10 @@ format_json() {
 }
 
 # shellcheck disable=SC2086
-# @purpose: Do the request
-do_fetch() {
+# @purpose: Do the request according to the method
+fetch_with_curl() {
 
-  curl_opts=(-s --fail -m "$REQ_TIMEOUT")
+  curl_opts=('-s' '--fail' '-m' "$REQ_TIMEOUT")
 
   if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
     response=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
@@ -132,7 +132,7 @@ main() {
 
   [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."
 
-  if do_fetch; then
+  if fetch_with_curl; then
     quit 0
   else
     if [[ -z "${SILENT}" ]]; then
