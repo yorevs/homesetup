@@ -190,6 +190,9 @@ alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS
 
 # @alias: Clear the screen and reset the terminal
 alias __hhs_reset="__hhs_clear; \reset"
+    
+# @alias: Replacing open to test which app to open stuff
+alias open="__hhs_open"
 
 # -----------------------------------------------------------------------------------
 # @category: Tool aliases
@@ -224,9 +227,6 @@ case "${HHS_MY_OS}" in
     
     # @alias: Shortcut for base64 decode (Linux)
     __hhs_has "base64" && alias decode='base64 -d'
-        
-    # @alias: Replacing open by xdg-open
-    alias open="xdg-open"
     ;;
 
   Darwin)

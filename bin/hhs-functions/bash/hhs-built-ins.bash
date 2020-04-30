@@ -31,6 +31,18 @@ function __hhs_ascof() {
   echo -n "${1}" | od -A n -t d1 | head -n 1 | awk '{print $1}' && return $?
 }
 
+# @function: Open a file or URL with the default program.
+# @param $1..$N [Req] : The url or program arguments to be passed to open.
+function __hhs_open() {
+  if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
+    __hhs_has 'open' && \open "$@" && return 0
+  elif [[ "Linux" == "${HHS_MY_OS}" ]]; then
+    __hhs_has 'xdg-open' && \xdg-open "$@" && return 0
+  fi
+  
+  return 1
+}
+
 # @function: Convert unicode to hexadecimal
 # @param $1..$N [Req] : The unicode values to convert
 if __hhs_has "python"; then
