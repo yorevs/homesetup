@@ -491,12 +491,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: #> ${GREEN}exec bash"
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles open a new terminal window"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
-    echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
-    echo -e "${YELLOW}${STAR_ICN} To customize your aliases definitions change the file: ${GREEN}${HOME}/.aliasdef"
     echo ''
-    echo -e "${YELLOW}${NOTE_ICN} Check ${BLUE}README.md${WHITE} for full details about your new Terminal"
+    echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
     
     if [[ "${MY_OS}" == "Darwin" ]]; then
@@ -510,5 +508,4 @@ Usage: $APP_NAME [OPTIONS] <args>
   clear
   check_current_shell
   check_inst_method "$@"
-
 }
