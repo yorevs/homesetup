@@ -20,6 +20,7 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
+# Unset all HHS_ variables
 unset "${!HHS_@}"
 
 # If not running interactively, don't load anything.
