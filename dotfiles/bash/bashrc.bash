@@ -23,6 +23,16 @@ unset "${!HHS_@}"
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 
+# Set path so it includes user's private bin if it exists
+if [[ -d "${HOME}/bin" ]]; then
+  PATH="${PATH}:${HOME}/bin"
+fi
+
+# Set path so it includes user's private bin if it exists
+if [[ -d "${HOME}/.local/bin" ]]; then
+  PATH="${PATH}:${HOME}/.local/bin"
+fi
+
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
   'bash')
@@ -38,13 +48,3 @@ case "${SHELL##*\/}" in
     echo ''
     ;;
 esac
-
-# Set path so it includes user's private bin if it exists
-if [[ -d "${HOME}/bin" ]]; then
-  PATH="${PATH}:${HOME}/bin"
-fi
-
-# Set path so it includes user's private bin if it exists
-if [[ -d "${HOME}/.local/bin" ]]; then
-  PATH="${PATH}:${HOME}/.local/bin"
-fi
