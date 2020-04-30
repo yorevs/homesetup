@@ -497,10 +497,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
     
-    if [[ "${MY_OS}" == "Darwin" ]]; then
-      date -v+7d "+%s%S" >"${HHS_DIR}/.last_update"
+    if [[ "Darwin" == "${MY_OS}" ]]; then
+      date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
     else
-      date -d "+7 days" "+%s%S" >"${HHS_DIR}/.last_update"
+      date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
     fi
   }
 

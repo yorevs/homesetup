@@ -110,7 +110,11 @@ stamp_next_update() {
     next_check=$(date "+%s%S")
   else
     # Stamp the next update check for next week
-    next_check=$(date -v+7d "+%s%S")
+    if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
+      next_check=$(date -v+7d '+%s%S')
+    else
+      next_check=$(date -d '+7 days' '+%s%S')
+    fi
   fi
   echo "${next_check}" > "${HHS_DIR}/.last_update"
   echo "${next_check}"
