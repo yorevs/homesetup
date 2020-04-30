@@ -20,7 +20,9 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-export HHS_ACTIVE_DOTFILES='.bash_profile'
+unset "${!HHS_@}"
+
+export HHS_ACTIVE_DOTFILES='bash_profile'
 
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in

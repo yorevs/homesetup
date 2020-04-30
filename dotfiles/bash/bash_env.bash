@@ -10,7 +10,7 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your environment variables edit the file ~/.env
 
-export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_env"
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
 # System locale (defaults)
 export LANG=${LANG:-en_US.UTF-8}

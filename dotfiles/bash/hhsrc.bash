@@ -21,12 +21,10 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .hhsrc"
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
 # Unset all aliases before setting them again.
 unalias -a
-# Unset all HHS variables before setting them again.
-unset "${!HHS_@}"
 
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HHS_HOME="${HOME}/HomeSetup"
@@ -169,7 +167,7 @@ __hhs_paths -q -a "${HHS_DIR}/bin"
 
 # Add custom paths to the system `$PATH`
 if [[ -f "${HOME}/.path" ]]; then
-  PATH="$(grep . "${HOME}/.path" | tr '\n' ':'):$PATH"
+  PATH="$(grep . "${HOME}/.path" | tr '\n' ':'):${PATH}"
   export PATH
 fi
 

@@ -9,20 +9,20 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file
-
+#
 # Thanks to: https://github.com/git/git/tree/master/contrib/completion
 # Thanks to: Built-in docker scripts. *Requires bash_complete
 # Thanks to: https://github.com/gradle/gradle-completion
 # Thanks to: https://github.com/cloudfoundry/cli/blob/master/ci/installers/completion/cf
 # Thanks to: https://github.com/Bash-it/bash-it/blob/master/completion/available/brew.completion.bash
 
-export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_completion"
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_completion"
 
 # HomeSetup auto-completions dirctory
 AUTO_CPL_D="${HHS_DIR}/bin"
 
 # Represents all loaded auto-completions
-LOADED_AUTO_CPL_TYPES=()
+BASH_COMPLETIONS=()
 
 # All HomeSetup available auto-completions
 ALL_BASH_CPL_TYPES=(
@@ -47,7 +47,7 @@ case "${HHS_MY_SHELL}" in
         if [[ -f "${AUTO_CPL_D}/${completion}-completion.bash" ]]; then
           __hhs_log "INFO" "Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash"
           __hhs_source "${AUTO_CPL_D}/${completion}-completion.bash"
-          LOADED_AUTO_CPL_TYPES+=("${completion}")
+          IFS=' ' BASH_COMPLETIONS+=("${completion}")
         fi
       else
         __hhs_log "INFO" "Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash"
@@ -60,6 +60,7 @@ case "${HHS_MY_SHELL}" in
 
 esac
 
-export HHS_BASH_COMPLETIONS="${LOADED_AUTO_CPL_TYPES[*]}"
+__hhs_log "INFO" "Loaded bash completions: ${BASH_COMPLETIONS[*]}"
 
-unset LOADED_AUTO_CPL_TYPES
+# shellcheck disable=2206
+export HHS_BASH_COMPLETIONS="${BASH_COMPLETIONS[*]}"

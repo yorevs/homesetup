@@ -73,7 +73,7 @@ __hhs_comp_punch() {
   local dir puch_weeks suggestions=()
 
   dir="$(dirname "$HHS_PUNCH_FILE")"
-  IFS=$'\n'
+  IFS=$'\n' 
   puch_weeks="week-*.punch"
   read -d '' -r -a suggestions <<<"$(find -L "${dir}" -maxdepth 1 -type f -iname "${puch_weeks}" 2>/dev/null)"
   for i in "${!suggestions[@]}"; do
@@ -145,9 +145,7 @@ __hhs_comp_godir() {
   fi
   # Let the user know about the search
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-  IFS=$'\n'
-  read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -type d -iname "${base}" 2>/dev/null | esed 's#\./(.*)/*#\1/#')"
-  IFS=$"${RESET_IFS}"
+  IFS=$'\n' read -d '' -r -a suggestions <<<"$(find -L "${dir%/}" -type d -iname "${base}" 2>/dev/null | esed 's#\./(.*)/*#\1/#')"
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   # If there's only one option, avoid to complete it as usual since it's a search
@@ -166,9 +164,7 @@ __hhs_comp_hist() {
 
   # Let the user know about the search
   echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-  IFS=$'\n'
-  suggestions=($(hist "${COMP_WORDS[1]}" | cut -c30-))
-  IFS=$"${RESET_IFS}"
+  IFS=$'\n' suggestions=($(hist "${COMP_WORDS[1]}" | cut -c30-))
   # Erase the searching text after search is done
   echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
   COMPREPLY=("${suggestions[@]}")

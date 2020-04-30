@@ -502,7 +502,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       date -d "+7 days" "+%s%S" >"${HHS_DIR}/.last_update"
     fi
-    exec bash || quit 0
   }
 
   clear

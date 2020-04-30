@@ -11,7 +11,7 @@
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.aliases
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 
-export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_aliases"
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
@@ -189,7 +189,7 @@ alias __hhs_dotfiles='hhs firebase execute'
 alias __hhs_hhu='hhs updater execute'
 
 # @alias: Reload HomeSetup
-alias __hhs_reload='__hhs_clear; source "${HOME}/.hhsrc"'
+alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
 
 # @alias: Clear and reset all cursor attributes and IFS
 alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
