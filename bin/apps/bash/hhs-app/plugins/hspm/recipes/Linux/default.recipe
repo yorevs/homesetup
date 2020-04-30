@@ -15,13 +15,21 @@ function depends() {
 }
 
 function install() {
-  command -v 'apt-get' && sudo apt-get install "$@"
-  command -v 'yum' && sudo yum install "$@"
-  return $?
+  if command -v 'apt-get' && sudo apt-get install "$@"; then
+    return $?
+  elif command -v 'yum' && sudo yum install "$@"; then
+    return $?
+  else
+    return 1
+  fi
 }
 
 function uninstall() {
-  command -v 'apt-get' && sudo apt-get uninstall "$@"
-  command -v 'yum' && sudo yum uninstall "$@"
-  return $?
+  if command -v 'apt-get' && sudo apt-get uninstall "$@"; then
+    return $?
+  elif command -v 'yum' && sudo yum uninstall "$@"; then
+    return $?
+  else
+    return 1
+  fi
 }
