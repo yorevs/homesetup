@@ -25,9 +25,9 @@ function install() {
 }
 
 function uninstall() {
-  if command -v 'apt-get' && sudo apt-get uninstall "$@"; then
+  if command -v 'apt-get' && sudo apt-get remove "$@"; then
     return $?
-  elif command -v 'yum' && sudo yum uninstall "$@"; then
+  elif command -v 'yum' && sudo yum remove "$@"; then
     return $?
   else
     return 1
