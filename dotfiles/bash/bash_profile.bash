@@ -22,6 +22,9 @@
 
 unset "${!HHS_@}"
 
+# If not running interactively, don't load anything.
+[[ -z "$PS1" && -z "$PS2" ]] && return
+
 export HHS_ACTIVE_DOTFILES='bash_profile'
 
 # Set path so it includes user's private bin if it exists
