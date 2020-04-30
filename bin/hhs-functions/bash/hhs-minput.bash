@@ -67,7 +67,7 @@ function __hhs_minput() {
     echo ''
     echo '    Arguments: '
     echo '      output_file : The output file where the results will be stored.'
-    echo '        fields    : A list of form fields: Label|Mode|Type|Min/Max len|Perm|Value'
+    echo '           fields : A list of form fields: Label|Mode|Type|Min/Max len|Perm|Value'
     echo ''
     echo '    Fields: '
     echo "            <Label> : The field label. Consisting only of alphanumeric characters and under‐scores."

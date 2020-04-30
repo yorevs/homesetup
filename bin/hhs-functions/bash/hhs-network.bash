@@ -8,13 +8,78 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# @function: Display a list of active network interfaces.
+function __hhs_active_ifaces() {
 
-# hsn ip local|external|gateway|vpn|all
-# hsn ifaces active|all
+  local if_all if_name if_flags if_mtu
 
-# 
-function __hhs_network() {
-  echo "NETWORK"
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]}"
+    return 1
+  fi
+
+  if_all=$(ifconfig -a | grep '^[a-z0-9]*: ')
+
+  if [[ -n "${if_all}" ]]; then
+    echo ' '
+    echo "${YELLOW}Listing all network interfaces:${NC}"
+    echo ' '
+    IFS=$'\n'
+    for next in ${if_all}; do
+      if_name=$(echo "${next%%:*}" | awk '{ print $1 }')
+      if_mtu=$(echo "${next}" | awk '{ print $4 }')
+      if_flags=$(echo "${next}" | awk '{ print $2 }')
+      printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU %-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
+    done
+    IFS="${RESET_IFS}"
+    echo ' '
+    return 0
+  fi
+
+  return 1
+}
+
+# TODO
+function __hhs_ip() {
+
+  local ip_type if_state
+
+  if [[ "$#" -le 1 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [kind]"
+    echo ''
+    echo '    Arguments:'
+    echo '      type : The kind of IP to get. One of [local|external|gateway|vpn]'
+    echo ''
+    echo '    Types:'
+    echo '         local : Get your local network IPv4'
+    echo '      external : Get your external network IPv4'
+    echo '       gateway : Get the IPv4 of your gateway'
+    echo '           vpn : Get your IPv4 assigned by your VPN'
+    echo ''
+    echo ''
+    echo '  Notes: '
+    echo '    - If no kind is specified, all ips assigned to the machine will be retrieved'
+    return 1
+  else
+    case "${1}" in
+      'ip')
+        ip_type=${2:-all}
+        if [[ "local" == "${ip_type}" ]]; then
+          local_ips="$(ifconfig | grep -E '^(en|eth|inet)[0-9]')"
+          for iface in ${local_ips}; do
+            echo "IP-Local(${iface}) : $(ipconfig getifaddr "${iface}")"
+          done
+          [[ -z "$local_ips" ]] && echo "IP-Local(---) : ${YELLOW}Unable to get${HHS_HIGHLIGHT_COLOR}" && return 1
+        fi
+        ;;
+      'if')
+        if_state=${2:-all}
+        ;;
+      *)
+        __hhs_errcho "Invalid argument: \"${1}\". Use one of [ip|if]"
+        ;;
+    esac
+  fi
 }
 
 # @function: Retrieve information about the specified IP.
@@ -54,14 +119,14 @@ function __hhs_ip_lookup() {
 function __hhs_port_check() {
 
   local state port states
-  
+
   states='CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT'
 
   if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <port_number> [port_state]"
     echo ''
     echo '  Notes: '
-    echo "    States: One of [${states//|,, }]"
+    echo "    States: One of [${states//|,, /}]"
     return 1
   elif [[ -n "$1" && -n "$2" ]]; then
     port=${1:0:5}
@@ -72,7 +137,7 @@ function __hhs_port_check() {
       netstat -an | grep -E "[.:]${port} " | __hhs_highlight "${state}"
       return $?
     else
-      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, }]"
+      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, /}]"
     fi
   elif [[ -n "$1" && -z "$2" ]]; then
     port=${1:0:5}
