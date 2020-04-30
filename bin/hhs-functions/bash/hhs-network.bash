@@ -89,6 +89,8 @@ function __hhs_ip() {
         if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
           if_ip="$(ifconfig "${next}" | grep -E "^\tinet " | awk '{print $2}')"
           [[ -n "${if_ip}" ]] && echo "IP-${ip_kind//all/${next}} : ${if_ip}" && ret_val=0
+        else
+          echo "IP-${ip_kind//all/${next}} : unavailable"
         fi
       done
       IFS="${RESET_IFS}"
