@@ -23,7 +23,7 @@ if __hhs_has "gpg"; then
       return 1
     else
       if gpg --yes --batch --passphrase="$2" -c "$1" &> /dev/null; then
-        if base64 -i "$1.gpg" -o "$1"; then
+        if encode "$1.gpg" > "$1"; then
           [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "$1.gpg" &> /dev/null
           echo -e "${GREEN}File \"$1\" has been encrypted !${NC}"
           return 0
@@ -48,7 +48,7 @@ if __hhs_has "gpg"; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
-      if base64 -D -i "$1" -o "$1.gpg"; then
+      if decode "$1" > "$1.gpg"; then
         if gpg --yes --batch --passphrase="$2" "$1.gpg" &> /dev/null; then
           [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "$1.gpg" &> /dev/null
           echo -e "${GREEN}File \"$1\" has been decrypted !${NC}"
