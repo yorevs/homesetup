@@ -34,12 +34,10 @@ function __hhs_sysinfo() {
     echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-    echo -e "  Gateway...... : $(__hhs_gateway_ip || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-    if __hhs_has "ifconfig"; then
-      echo -e "$(ipl | sed 's/^/  /g')" # Get local IPs
-      echo -e "  IP-External.. : $(my-ip || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-      echo -e "  IP-VPN(tun).. : $(vpn-ip || echo "${YELLOW}Not connected${HHS_HIGHLIGHT_COLOR}")"
-    fi
+    echo -e "  Gateway...... : $(__hhs_ip gateway || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
+    echo -e "$(__hhs_ip local | sed 's/^/  /g')" # Get local IPs
+    echo -e "  IP-External.. : $(__hhs_ip external || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
+    echo -e "  IP-VPN(tun).. : $(__hhs_ip vpn || echo "${YELLOW}Not connected${HHS_HIGHLIGHT_COLOR}")"
     echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
 
     IFS=$'\n'
