@@ -20,9 +20,6 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-# If not running interactively, don't load anything.
-[[ -z "$PS1" && -z "$PS2" ]] && return
-
 export HHS_ACTIVE_DOTFILES='.bash_profile'
 
 # Load the profile according to the user's SHELL.

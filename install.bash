@@ -472,12 +472,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
     
-    \exec \bash
-
     echo ''
     echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
     echo -e "${BLUE}"
-
+    
     echo -e "${BLUE}"
     if has figlet &>/dev/null; then
       figlet -f colossal -ck "Welcome" 2> /dev/null || figlet "Welcome"
@@ -493,6 +491,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
     echo ''
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: #> ${GREEN}exec bash"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
     echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup© type: #> ${GREEN}reload"
     echo -e "${YELLOW}${STAR_ICN} To customize your aliases definitions change the file: ${GREEN}${HOME}/.aliasdef"
@@ -505,7 +504,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       date -d "+7 days" "+%s%S" >"${HHS_DIR}/.last_update"
     fi
-    quit 0
+    exec bash || quit 0
   }
 
   clear
