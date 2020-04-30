@@ -99,7 +99,7 @@ function __hhs_paths() {
   fi
 
   # Remove all $PATH duplicated payload
-  export PATH=$(echo -en "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++')
+  export PATH=$(awk -v RS=: -v ORS=: '!arr[$0]++' <<< "$PATH")
 
   return 0
 }

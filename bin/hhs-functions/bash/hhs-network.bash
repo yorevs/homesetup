@@ -27,9 +27,9 @@ function __hhs_active_ifaces() {
     echo ' '
     IFS=$'\n'
     for next in ${if_all}; do
-      if_name=$(echo "${next%%:*}" | awk '{ print $1 }')
-      if_mtu=$(echo "${next}" | awk '{ print $4 }')
-      if_flags=$(echo "${next}" | awk '{ print $2 }')
+      if_name=$(awk '{ print $1 }' <<< "${next%%:*}")
+      if_mtu=$(awk '{ print $4 }' <<< "${next}")
+      if_flags=$(awk '{ print $2 }' <<< "${next}")
       printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU=%-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
     done
     IFS="${RESET_IFS}"
@@ -38,7 +38,7 @@ function __hhs_active_ifaces() {
   elif [[ -n "${if_all}" && -z "${1}" ]]; then
     IFS=$'\n'
     for next in ${if_all}; do
-      if_name=$(echo "${next%%:*}" | awk '{ print $1 }')
+      if_name=$(awk '{ print $1 }' <<< "${next%%:*}")
       if_list="${if_name} ${if_list}"
     done
     IFS="${RESET_IFS}"
@@ -73,12 +73,12 @@ function __hhs_ip() {
     ip_kind=${1:-all}
     if [[ "external" == "${ip_kind}" ]]; then
       if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2> /dev/null)"
-      [[ -n "${if_ip}" ]] && echo "IP-${ip_kind} : ${if_ip}" && return 0
+      [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
     fi
     if [[ "gateway" == "${ip_kind}" ]]; then
       [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2> /dev/null | grep 'gateway' | cut -b 14- | uniq)"
       [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
-      [[ -n "${if_ip}" ]] && echo "IP-${ip_kind} : ${if_ip}" && return 0
+      [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
     fi
     if [[ "all" == "${ip_kind}" || "vpn" == "${ip_kind}" || "local" == "${ip_kind}" ]]; then
       if_list="$(__hhs_active_ifaces)"
@@ -88,7 +88,7 @@ function __hhs_ip() {
       for next in ${if_list}; do
         if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
           if_ip="$(ifconfig "${next}" | grep -E "inet " | awk '{print $2}')"
-          [[ -n "${if_ip}" ]] && echo "IP-${next} : ${if_ip}" && ret_val=0
+          [[ -n "${if_ip}" ]] && echo "IP-${next}: ${if_ip}" && ret_val=0
         fi
       done
       IFS="${RESET_IFS}"

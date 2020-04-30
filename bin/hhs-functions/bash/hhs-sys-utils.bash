@@ -33,11 +33,17 @@ function __hhs_sysinfo() {
     printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
     echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
-    echo -e "  Hostname..... : $(hostname || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-    echo -e "  Gateway...... : $(__hhs_ip gateway || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-    echo -e "$(__hhs_ip local | sed 's/^/  /g')" # Get local IPs
-    echo -e "  IP-External.. : $(__hhs_ip external || echo "Not connected to the internet${HHS_HIGHLIGHT_COLOR}")"
-    echo -e "  IP-VPN(tun).. : $(__hhs_ip vpn || echo "${YELLOW}Not connected${HHS_HIGHLIGHT_COLOR}")"
+    echo -e "  Hostname..... : $(hostname)"
+    if __hhs_has "ifconfig"; then
+      ip_gw=$(__hhs_ip gateway | awk '{print $2}')
+      ip_local=$(__hhs_ip local | awk '{print $2}' | tr '\n' ' ')
+      ip_ext=$(__hhs_ip external | awk '{print $2}')
+      ip_vpn=$(__hhs_ip vpn | awk '{print $2}')
+      echo -e "  Gateway...... : ${ip_gw:-${YELLOW}Unavailable${HHS_HIGHLIGHT_COLOR}}"
+      echo -e "  IP-Local......: ${ip_local:-${YELLOW}Unavailable${HHS_HIGHLIGHT_COLOR}}"
+      echo -e "  IP-External.. : ${ip_ext:-${YELLOW}Not connected to the internet${HHS_HIGHLIGHT_COLOR}}"
+      echo -e "  IP-VPN(tun).. : ${ip_vpn:-${YELLOW}Not connected to VPN${HHS_HIGHLIGHT_COLOR}}"
+    fi
     echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
 
     IFS=$'\n'
@@ -113,10 +119,10 @@ function __hhs_process_list() {
       [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
       IFS=$'\n'
       for next in ${all_pids}; do
-        uid=$(echo "${next}" | awk '{ print $1 }')
-        pid=$(echo "${next}" | awk '{ print $2 }')
-        ppid=$(echo "${next}" | awk '{ print $3 }')
-        cmd=$(echo "${next}" | awk '{for(i=4;i<=NF;i++) printf $i" "; print ""}')
+        uid=$(awk '{ print $1 }' <<< "${next}")
+        pid=$(awk '{ print $2 }' <<< "${next}")
+        ppid=$(awk '{ print $3 }' <<< "${next}")
+        cmd=$(awk '{for(i=4;i<=NF;i++) printf $i" "; print ""}' <<< "${next}")
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%5s\t%5s\t%5s\t%s" "${uid}" "${pid}" "${ppid}" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
@@ -174,7 +180,7 @@ function __hhs_process_kill() {
   fi
 
   for nproc in "${@}"; do
-    __hhs_process_list -q $force_flag "${nproc}" kill
+    __hhs_process_list -q ${force_flag} "${nproc}" kill
     ret_val=$?
     echo -e "\033[3A" # Move up 3 lines to beautify the output
   done
@@ -196,20 +202,16 @@ function __hhs_partitions() {
     (
       IFS=$'\n'
       echo "${WHITE}"
-      printf '%-25s\t%-4s\t%-4s\t%-4s\t%-4s\t\n' 'Mounted-ON' 'Size' 'Used' 'Avail' 'Capacity'
+      printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' 'Size' 'Avail' 'Used' 'Capacity' 'Mounted-ON'   
       echo -e "----------------------------------------------------------------${HHS_HIGHLIGHT_COLOR}"
       for next in $all_parts; do
         str_text=${next:16}
-        mounted="$(echo "$str_text" | awk '{ print $8 }')"
-        size="$(echo "$str_text" | awk '{ print $1 }')"
-        used="$(echo "$str_text" | awk '{ print $2 }')"
-        avail="$(echo "$str_text" | awk '{ print $3 }')"
-        cap="$(echo "$str_text" | awk '{ print $4 }')"
-        printf '%-25s\t' "${mounted:0:25}"
-        printf '%4s\t' "${size:0:4}"
-        printf '%4s\t' "${used:0:4}"
-        printf '%4s\t' "${avail:0:4}"
-        printf '%4s\n' "${cap:0:4}"
+        size="$(awk '{ print $1 }' <<< "${str_text}")"
+        avail="$(awk '{ print $3 }' <<< "${str_text}")"
+        used="$(awk '{ print $2 }' <<< "${str_text}")"
+        cap="$(awk '{ print $4 }' <<< "${str_text}")"
+        mounted="$(awk '{ print $8 }' <<< "${str_text}")"
+        printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' "${size:0:4}" "${avail:0:4}" "${used:0:4}" "${cap:0:4}" "${mounted:0:40}"
       done
       echo "${NC}"
     )

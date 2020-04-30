@@ -76,7 +76,7 @@ function __hhs_punch() {
       fi
       # Loop through all of the timestamps
       for idx in "${!lines[@]}"; do
-        line="$(echo "${lines[idx]}" | awk 'BEGIN { OFS=" "}; {$1=$1; print $0}')"
+        line="$(awk 'BEGIN { OFS=" "}; {$1=$1; print $0}' <<< "${lines[idx]}")"
         if [[ -z "$opt" && "${line}" =~ $re ]]; then
           # Do the punch of the current day
           ised "s#(${date_stamp}) => (.*)#\1 => \2${time_stamp} #g" "${HHS_PUNCH_FILE}"
@@ -86,7 +86,7 @@ function __hhs_punch() {
         elif [[ "-l" == "$opt" || "-w" == "$opt" ]]; then
           echo -en "${line//${date_stamp}/${HHS_HIGHLIGHT_COLOR}${date_stamp}}"
           # Read all timestamps and append them into an array.
-          IFS=' ' read -r -a line_totals <<< "$(echo "${line}" | awk -F '=> ' '{ print $2 }')"
+          IFS=' ' read -r -a line_totals <<< "$(awk -F '=> ' '{ print $2 }' <<< "${line}")"
           # If we have an even number of timestamps, display subtotals; **:** otherwise
           if [[ ${#line_totals[@]} -gt 0 && "$(echo "${#line_totals[@]} % 2" | bc)" -eq 0 ]]; then
             daily_total="$(tcalc.py ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})"        # Up to 3 pairs of timestamps.
