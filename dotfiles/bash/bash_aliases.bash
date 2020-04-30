@@ -13,14 +13,16 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .bash_aliases"
 
-# Remove all aliases before setting them again.
-unalias -a
-
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
 function __hhs_has() {
-  [[ $# -eq 0 || '-h' == "$1" ]] && echo "Usage: ${FUNCNAME[0]} <command>" && return 1
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  fi
   type "$1" > /dev/null 2>&1
+  
+  return $?
 }
 
 # shellcheck disable=SC2139
@@ -31,7 +33,10 @@ function __hhs_alias() {
   
   local all_args alias_expr alias_name
   
-  [[ $# -eq 0 || '-h' == "$1" ]] && echo "Usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>" && return 1
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>"
+    return 1
+  fi
 
   all_args="${*}"
   alias_expr="${all_args#*=}"
@@ -42,10 +47,9 @@ function __hhs_alias() {
       return 0
     else
       echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
-      return 1
     fi
   else
-    echo "Alias: \"${alias_name}\" was skipped because it already exists !" >> "${HHS_LOGFILE}"
+    __hhs_log "WARN" "Setting alias: \"${alias_name}\" was skipped because it already exists !"
   fi
 
   return 1

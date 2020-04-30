@@ -113,11 +113,6 @@ uninstall_dotfiles() {
   fi
   echo ''
 
-  echo "Unsetting aliases and variables ..."
-  unalias -a
-  unset HHS_HOME
-  unset HHS_DIR
-  unset HHS_VERSION
   export PS1='\[\h:\W \u \$ '
   export PS2="$PS1"
 
@@ -131,6 +126,10 @@ uninstall_dotfiles() {
     [[ -d "${HHS_DIR}" ]] && \rm -fv "${HHS_DIR}"
     \rm -fv .prompt .aliasdef .functions .env .aliases 2> /dev/null
   fi
+  
+  echo "Unsetting aliases and variables ..."
+  unalias -a
+  unset "${!HHS_@}"
 
   echo 'HomeSetup has been uninstalled !'
   echo ''

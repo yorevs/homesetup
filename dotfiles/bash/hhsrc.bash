@@ -23,6 +23,11 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} .hhsrc"
 
+# Unset all aliases before setting them again.
+unalias -a
+# Unset all HHS variables before setting them again.
+unset "${!HHS_@}"
+
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HHS_HOME="${HOME}/HomeSetup"
 export HHS_DIR="${HOME}/.hhs"
@@ -49,24 +54,56 @@ export IFS='
 # Load all dotfiles following the order. Custom dotfiles comes after the default one, so they can be overriden.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
-  'profile' \
-  'bash_env' 'env' \
-  'bash_colors' 'colors' \
-  'bash_prompt' 'prompt' \
-  'bash_aliases' 'aliases' 'aliasdef' \
-  'bash_functions' 'functions' \
+  'profile'
+  'bash_env' 'env'
+  'bash_colors' 'colors'
+  'bash_prompt' 'prompt'
+  'bash_aliases' 'aliases' 'aliasdef'
+  'bash_functions' 'functions'
   'bash_completion'
 )
 
 # Re-create the HomeSetup log file
-echo -e "HomeSetup loaded at $(date)" > "${HHS_LOGFILE}"
+echo -e "HomeSetup loaded at $(date)\n" > "${HHS_LOGFILE}"
 
-# Load all HomeSetup dotfiles
-for file in ${DOTFILES[*]}; do
-  if [[ -s "${HOME}/.${file}" ]]; then
-    echo -e "Loading dotfile: ${HOME}/.${file}" >> "${HHS_LOGFILE}"
-    \. "${HOME}/.${file}"
+# @function: Log a message to the HomeSetup log file.
+# @param $1 [Req] : The log level.
+# @param $* [Req] : The log message.
+function __hhs_log() {
+  local level="${1}" message="${2}"
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <log_level> <log_message>"
+    return 1
   fi
+  case "${level}" in
+    'DEBUG' | 'INFO' | 'WARN' | 'ERROR')
+      printf "%s %s\t%s\n" "$(date +'%m-%d-%y')" "${level}" "${message}" >> "${HHS_LOGFILE}"
+      ;;
+    *)
+      echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
+      ;;
+  esac
+}
+
+# @function: Replacement for the source bash command
+# @param $1 [Req] : Path to the file to be source'd
+function __hhs_source() {
+  local filepath="$1"
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <filepath>"
+    return 1
+  fi
+  if [[ ! -f ${filepath} ]]; then
+    echo "${FUNCNAME[0]}: file \"${filepath}\" not found !" 2>&1
+  else
+    \. "${filepath}" 2>> "${HHS_LOGFILE}"
+  fi
+}
+
+# Load all HomeSetup dotfiles.
+for file in ${DOTFILES[*]}; do
+  __hhs_log "INFO" "Loading dotfile: ${HOME}/.${file}"
+  __hhs_source "${HOME}/.${file}"
 done
 
 unset file DOTFILES
