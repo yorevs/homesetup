@@ -177,6 +177,8 @@ if [[ ! -f "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}
   hhs updater execute --check
 fi
 
+export IFS="${RESET_IFS}"
+
 # Print HomeSetup MOTD
 echo ''
 echo -e "${HHS_MOTD}${NC}"

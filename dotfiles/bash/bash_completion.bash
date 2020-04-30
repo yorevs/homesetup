@@ -22,7 +22,7 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_completion"
 AUTO_CPL_D="${HHS_DIR}/bin"
 
 # Represents all loaded auto-completions
-BASH_COMPLETIONS=()
+BASH_COMPLETIONS=
 
 # All HomeSetup available auto-completions
 ALL_BASH_CPL_TYPES=(
@@ -47,7 +47,7 @@ case "${HHS_MY_SHELL}" in
         if [[ -f "${AUTO_CPL_D}/${completion}-completion.bash" ]]; then
           __hhs_log "INFO" "Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash"
           __hhs_source "${AUTO_CPL_D}/${completion}-completion.bash"
-          IFS=' ' BASH_COMPLETIONS+=("${completion}")
+          BASH_COMPLETIONS+="${completion} "
         fi
       else
         __hhs_log "INFO" "Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash"
@@ -57,7 +57,6 @@ case "${HHS_MY_SHELL}" in
   *)
     __hhs_log "WARN" "\"${HHS_MY_SHELL}\" shell does not include any completions"
     ;;
-
 esac
 
 __hhs_log "INFO" "Loaded bash completions: ${BASH_COMPLETIONS[*]}"
