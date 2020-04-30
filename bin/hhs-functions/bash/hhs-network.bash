@@ -87,7 +87,7 @@ function __hhs_ip() {
       [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]*'
       for next in ${if_list}; do
         if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
-          if_ip="$(ifconfig "${next}" | grep -E "^\tinet " | awk '{print $2}')"
+          if_ip="$(ifconfig "${next}" | grep -E "inet " | awk '{print $2}')"
           [[ -n "${if_ip}" ]] && echo "IP-${ip_kind//all/${next}} : ${if_ip}" && ret_val=0
         else
           echo "IP-${ip_kind//all/${next}} : unavailable"
