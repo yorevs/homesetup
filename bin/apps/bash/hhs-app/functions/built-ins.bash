@@ -82,7 +82,7 @@ function man() {
   if [[ $# -ne 1 ]]; then
     echo "Usage: ${FUNCNAME[0]} <bash_command>"
   else
-    open "${ss63_url//\{\}/${1}}"
+    __hhs_open "${ss63_url//\{\}/${1}}"
   fi
 }
 
@@ -92,7 +92,7 @@ function board() {
   local repo_url="https://github.com/yorevs/homesetup/projects/1"
 
   echo "${GREEN}Opening HomeSetup board from: ${repo_url} ${NC}"
-  open "${repo_url}" && quit 0 ' '
+  __hhs_open "${repo_url}" && quit 0 ' '
 
   quit 1 "Failed to open url \"${repo_url}\" !"
 }
