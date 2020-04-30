@@ -15,7 +15,6 @@ import getopt
 import getpass
 import base64
 import subprocess
-import datetime
 import traceback
 
 from datetime import datetime
@@ -327,7 +326,7 @@ class Vault(object):
             self.key = key
             self.password = password
             self.hint = hint
-            self.modified = modified if modified is not None else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.modified = modified if modified is not None else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         def __str__(self):
             return LINE_FORMAT.format(self.key, self.password, self.hint, self.modified)
