@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+function about() {
+  echo "This is the default recipe and it will be used when no recipe is found for a certain tool"
+}
+
+function depends() {
+  
+  if ! command -v 'apt-get' > /dev/null && ! command -v 'yum' > /dev/null; then
+    __hhs_errcho "hspm.bash: no suitable tool found to install default software on this machine"
+    return 1
+  fi
+
+  return 0
+}
+
+function install() {
+  command -v 'apt-get' && apt-get install "$@"
+  command -v 'yum' && yum install "$@"
+  return $?
+}
+
+function uninstall() {
+  command -v 'apt-get' && apt-get uninstall "$@"
+  command -v 'yum' && yum uninstall "$@"
+  return $?
+}

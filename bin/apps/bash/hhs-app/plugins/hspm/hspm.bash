@@ -60,8 +60,9 @@ cleanup_recipes() {
 # purpose: shellcheck disable=2155,SC2059,SC2183
 list_recipes() {
 
-  local index=0 recipe pad_len=20
-  local pad=$(printf '%0.1s' "."{1..60})
+  local index=0 recipe pad_len=20 pad
+  
+  pad=$(printf '%0.1s' "."{1..60})
 
   for app in ${DEV_TOOLS[*]}; do
     recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
@@ -92,7 +93,7 @@ list_recipes() {
 # purpose: Install the specified app using the installation recipe
 install_recipe() {
 
-  local recipe recipe_name
+  local recipe recipe_name default_recipe
 
   recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
 
@@ -109,9 +110,13 @@ install_recipe() {
     fi
   else
     recipe_name=$(basename "${recipe%\.*}")
-    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use brew to install it ...${NC}"
-    if ! brew install "${recipe_name}"; then
-      quit 1 "Unable to install \"${recipe_name}\" !"
+    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to install it ...${NC}"
+    default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
+    \. "${default_recipe}"
+    if install "${1}"; then
+      echo -e "${GREEN}Installation successful !${NC}"
+    else
+      quit 1 "${PLUGIN_NAME}: Failed to install \"${1}\" using the default recipe !"
     fi
   fi
 }
@@ -129,16 +134,20 @@ uninstall_recipe() {
       echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}" && return 1
     fi
     echo -e "${YELLOW}Uninstalling $1, please wait ... "
-    if uninstall && brew deps asciinema | xargs brew remove --ignore-dependencies; then
+    if uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
     else
       quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !"
     fi
   else
     recipe_name=$(basename "${recipe%\.*}")
-    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use brew to uninstall it ...${NC}"
-    if ! brew uninstall "${recipe_name}"; then
-      quit 1 "Unable to uninstall \"${recipe_name}\" !"
+    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to uninstall it ...${NC}"
+    default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
+    \. "${default_recipe}"
+    if uninstall "${1}"; then
+      echo -e "${GREEN}Uninstallation successful !${NC}"
+    else
+      quit 1 "${PLUGIN_NAME}: Failed to uninstallation \"${1}\" using the default recipe !"
     fi
   fi
 }
