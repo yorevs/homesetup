@@ -143,12 +143,6 @@ alias less='\less -r'
 # @alias: Make `mount' command output pretty and human readable format
 alias mount='\mount | column -t'
 
-# @alias: `top' shortcut ordered by cpu
-alias cpu='\top -o cpu'
-
-# @alias: `top' shortcut ordered by Memory
-alias mem='\top -o rsize'
-
 # @alias: Date&Time - Display current week number
 alias week='\date +%V'
 
@@ -216,6 +210,12 @@ __hhs_has "base64" && alias encode="base64"
 case "${HHS_MY_OS}" in
 
   Linux)
+  # @alias: `top' shortcut ordered by cpu
+    alias cpu='\top -o %CPU'
+
+    # @alias: `top' shortcut ordered by Memory
+    alias mem='\top -o %MEM'
+    
     # @alias: Same as sed -i'' -r (Linux)
     alias ised="sed -i'' -r"
     
@@ -230,6 +230,13 @@ case "${HHS_MY_OS}" in
     ;;
 
   Darwin)
+  
+    # @alias: `top' shortcut ordered by cpu
+    alias cpu='\top -o cpu'
+
+    # @alias: `top' shortcut ordered by Memory
+    alias mem='\top -o rsize'
+
     # @alias: Same as sed -i '' -E (Darwin)
     alias ised="sed -i '' -E"
     

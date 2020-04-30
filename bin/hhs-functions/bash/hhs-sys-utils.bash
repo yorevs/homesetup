@@ -198,7 +198,7 @@ function __hhs_partitions() {
     echo "Usage: ${FUNCNAME[0]} "
     return 1
   else
-    all_parts="$(df -Ha | tail -n +2)"
+    all_parts="$(df -H | tail -n +2)"
     (
       IFS=$'\n'
       echo "${WHITE}"
@@ -210,7 +210,8 @@ function __hhs_partitions() {
         avail="$(awk '{ print $3 }' <<< "${str_text}")"
         used="$(awk '{ print $2 }' <<< "${str_text}")"
         cap="$(awk '{ print $4 }' <<< "${str_text}")"
-        mounted="$(awk '{ print $8 }' <<< "${str_text}")"
+        [[ "Darwin" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $8 }' <<< "${str_text}")"
+        [[ "Linux" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $5 }' <<< "${str_text}")"
         printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' "${size:0:4}" "${avail:0:4}" "${used:0:4}" "${cap:0:4}" "${mounted:0:40}"
       done
       echo "${NC}"
