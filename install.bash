@@ -48,8 +48,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=('python' 'pcregrep' 'ifconfig' 'gpg' 'tree' 'figlet' 'vim' 'curl')
-  [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew')
-  [[ "${MY_OS}" == "Linux" ]] && HHS_REQUIRED_TOOLS+=('net-tools')
+  [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew' 'xcode-select')
   
   # Missing HomeSetup required tools
   HHS_MISSING_TOOLS=()

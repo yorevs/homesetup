@@ -98,12 +98,15 @@ command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Reposit
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ~/.env
 DEFAULT_DEV_TOOLS=(
-  'hexdump' 'vim' 'xcode-select' 'brew' 'bats' 'tree'
-  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'ruby'
-  'gcc' 'make' 'qmake' 'doxygen' 'ant' 'mvn' 'gradle'
-  'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 'md5'
-  'shasum' 'htop' 'dialog' 'telnet' 'figlet' 'asciinema' 'base64'
-  'git' 'go' 'python' 'jq' 'jenv' 'perl' 'ifconfig' 'groovy'
+  'hexdump' 'vim'  'bats' 'tree' 'perl' 'groovy'
+  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'jq'
+  'gcc' 'make' 'ant' 'mvn' 'gradle' 'ruby' 'md5'
+  'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 
+  'shasum' 'figlet' 'base64' 'git' 'go' 'python'
 )
+
+if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
+  DEFAULT_DEV_TOOLS+=('brew' 'xcode-select')
+fi
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<< "${DEFAULT_DEV_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}
