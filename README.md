@@ -115,30 +115,35 @@ $ sudo chsh -s /usr/local/bin/bash
 
 The following software are required either to clone the repository, execute the tests and install packages:
 
-- **git** v2.20+ : To clone and maintain the code
-- **brew** v2.0+ : To install the required tools
+###### Darwin and Linux
+
+- **git** v2.20+ : To clone and maintain the code.
+- **curl** v7.64+ : To make http(s) requests.
+- **python** v2.7+ or v3.0+ : To run python based scripts.
+- **pip** v18+ : To install python packages.
+- **gpg** v2.2+: : To enable encryption based functions.
+
+##### Darwin only
+
+- **brew** v2.0+ : To install the required tools.
 
 #### Recommended software
 
 HomeSetup relies on a series of tools. To use most of the features of HomeSetup, the following packages are required:
 
-- **bats** v0.4+ : To run the automated tests
-- **python** v2.7+ or v3.0+
-- **curl** v7.64+
-- **perl** v5.0+
-- **pcregrep** v8.43+
-- **dig** v9.10+
-- **tree** v1.8+
-- **vim** v8.0+
-- **figlet** v2.2.5+
+- **bats** v0.4+ : To run the automated tests.
+- **perl** v5.0+ : To enable perl based functions.
+- **pcregrep** v8.43+ : To enable networking functions.
+- **dig** v9.10+ : To enable networking functions.
+- **tree** v1.8+ : To enable directory visualization functions.
 
 #### Optional software
 
 There are some tools that are also good to have  if you are a developer. HomeSetup provides some features to help using
 those tools:
 
-- **docker** 19.03+
-- **gradle** 4+
+- **docker** 19.03+ : To enable docker functions.
+- **gradle** 4+ : To enable gradle functions.
 
 ### Remote installation
 

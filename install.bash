@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools
-  HHS_REQUIRED_TOOLS=('python' 'pcregrep' 'ifconfig' 'gpg' 'tree' 'figlet' 'vim' 'curl')
+  HHS_REQUIRED_TOOLS=('python' 'pip' 'curl' 'gpg' 'curl')
   [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools
@@ -449,7 +449,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
 
     pad=$(printf '%0.1s' "."{1..60})
-    pad_len=10
+    pad_len=20
 
     for tool_name in "${HHS_REQUIRED_TOOLS[@]}"; do
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
@@ -469,7 +469,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install missing tools
   install_missing_tools() {
     echo -e "${ORANGE}"
-    [[ -z ${QUIET} ]] && read -rn 1 -p 'Would you like to install missing required tools y/[n] ? ' ANS
+    [[ -z ${QUIET} ]] && read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
     if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
@@ -485,6 +485,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
+    else
+      quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
     fi
   }
 
