@@ -431,6 +431,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       rm -f "${HOME}/.bash_completions"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
     fi
+    
+    # Removing the old python lib directories and links
+    [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] && \
+      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
+    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] && \
+      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
+    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] && \
+      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
   }
 
   # Check installed tools
