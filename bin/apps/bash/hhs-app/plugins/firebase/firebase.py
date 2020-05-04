@@ -20,8 +20,8 @@ import uuid
 from datetime import datetime
 from os import path
 
-from lib.commons import *
-from lib.fetch import *
+from hhslib.commons import *
+from hhslib.fetch import *
 
 # Application name, read from it's own file path
 APP_NAME = os.path.basename(__file__)

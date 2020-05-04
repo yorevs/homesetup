@@ -9,6 +9,7 @@
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
 import atexit
+import os
 import signal
 import re
 import getopt
@@ -18,7 +19,7 @@ import subprocess
 import traceback
 
 from datetime import datetime
-from lib.commons import *
+from hhslib.commons import *
 
 
 # Application name, read from it's own file path

@@ -52,8 +52,8 @@ def fetch(url, method='GET', headers=None, body=None, silent=True):
         response = subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
         return json.dumps(response).strip()
     except subprocess.CalledProcessError as err:
-        print("Failed to fetch {}"
-              .format(method, headers if headers else '[]', body if body else '{}', url))
+        print("Failed to fetch: method={} headers={} body={} url={} \t => {}"
+              .format(method, headers if headers else '[]', body if body else '', url, err.message))
         return None
 
 

@@ -27,7 +27,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Define the user HOME
   HOME=${HOME:-~}
-  
+
   # Option to allow install to be interactive
   OPT='all'
 
@@ -42,14 +42,14 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
-  
+
   # User's operating system
   MY_OS=$(uname -s)
-  
+
   # HomeSetup required tools
   HHS_REQUIRED_TOOLS=('python' 'pcregrep' 'ifconfig' 'gpg' 'tree' 'figlet' 'vim' 'curl')
   [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew' 'xcode-select')
-  
+
   # Missing HomeSetup required tools
   HHS_MISSING_TOOLS=()
 
@@ -90,7 +90,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   has() {
     type "$1" >/dev/null 2>&1
   }
-  
+
   # shellcheck disable=SC2199,SC2076
   # Check current active User shell type
   check_current_shell() {
@@ -109,10 +109,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Dotfiles source location.
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
-    
+
     # HHS applications location.
     APPS_DIR="${HHS_HOME}/bin/apps"
-    
+
     # Auto-completions location.
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
 
@@ -235,7 +235,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Install all dotfiles.
   install_dotfiles() {
-    
+
     # Create all user custom files.
     [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
     [[ -f "${HOME}/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
@@ -245,7 +245,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
     [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
     [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
-    
+
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
@@ -354,7 +354,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Linking HomeSetup git hooks into place
-    echo -en "\n${WHITE}Linking git hooks into place ${BLUE}"
+    echo -en "\n${WHITE}Linking git hooks into place"
     rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
       -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
@@ -362,6 +362,17 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
     fi
+
+    # Install HomeSetup python library
+    echo -en "\n${WHITE}Installing HomeSetup python library"
+    \pushd "${HHS_HOME}"/bin/apps/py/lib/ &>/dev/null || quit 2 "Unable to find HomeSetup python library !"
+    [[ -f install.sh || -d hhslib ]] || quit 2 "Unable to find HomeSetup python library !"
+    if install.sh &>/dev/null; then
+      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+    else
+      quit 2 "Unable to install HomeSetup python library !"
+    fi
+    \popd &>/dev/null || quit 2 "Unable to install HomeSetup python library !"
 
     compatibility_check
   }
@@ -372,9 +383,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # Removing the old .profile if exists
     if [[ -L "${HOME}/.profile" ]]; then
-      [[ -f "${HOME}/.profile" ]] \
-        && cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" \
-        && echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
+      [[ -f "${HOME}/.profile" ]] &&
+        cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" &&
+        echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving old hhs files into the proper directory
@@ -442,10 +453,10 @@ Usage: $APP_NAME [OPTIONS] <args>
         HHS_MISSING_TOOLS+=("${tool_name}")
       fi
     done
-    
+
     [[ ${#HHS_MISSING_TOOLS[@]} -ne 0 ]] && install_missing_tools
   }
-  
+
   # shellcheck disable=SC2086
   # Install missing tools
   install_missing_tools() {
@@ -457,12 +468,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo ''
       echo -en "${WHITE}Installing [${HHS_MISSING_TOOLS[*]}] (${MY_OS}) ..."
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        brew install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+        brew install ${HHS_MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          sudo apt-get install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+          sudo apt-get install ${HHS_MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
         elif has "yum"; then
-          sudo yum install ${HHS_MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+          sudo yum install ${HHS_MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -471,14 +482,14 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
-    
+
     echo ''
     echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
     echo -e "${BLUE}"
-    
+
     echo -e "${BLUE}"
     if has figlet &>/dev/null; then
-      figlet -f colossal -ck "Welcome" 2> /dev/null || figlet "Welcome"
+      figlet -f colossal -ck "Welcome" 2>/dev/null || figlet "Welcome"
     else
       echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
       echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
@@ -496,7 +507,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
-    
+
     if [[ "Darwin" == "${MY_OS}" ]]; then
       date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
     else
