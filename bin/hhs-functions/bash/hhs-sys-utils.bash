@@ -34,7 +34,7 @@ function __hhs_sysinfo() {
     echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  Hostname..... : $(hostname)"
-    if __hhs_has "ifconfig"; then
+    if __hhs_has __hhs_ip; then
       ip_gw=$(__hhs_ip gateway | awk '{print $2}')
       ip_local=$(__hhs_ip local | awk '{print $2}' | tr '\n' ' ')
       ip_ext=$(__hhs_ip external | awk '{print $2}')

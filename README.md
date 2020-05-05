@@ -4,15 +4,14 @@
 
 [![Tests](images/tests-badge.svg)](images/tests-badge.svg)
 [![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.3.30/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.3.41/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
 HomeSetup is a bundle os scripts and dotfiles that will elevate your bash shell experience to another level. There are 
 many improvements and facilities, especially for developers that will ease the usage and highly improve your productivity. 
-Currently we only support Bash (v3.4+) for Darwin (MacOS). We have plans to adapt all of the code to be able to run under 
-Linux and also, add support for Zsh.
+Currently we support Bash (v3.4+) for Darwin (MacOS) and Linux. We have plans to add support for Zsh as well.
 
 **THIS IT NOT JUST ANOTHER DOTFILES FRAMEWORK**
 
@@ -102,14 +101,19 @@ $ sudo chsh -s /usr/local/bin/bash
 
 <!-- tocstop -->
 
-
 ## Installation
 
 ### Requirements
 
-#### Supported Bash versions
+#### Operating Systems
 
-- Everything from 3.2.57(1) and higher (macOS's highest version)
+- Darwin (Catalina and higher)
+- Linux (Ubuntu, CentOS)
+
+#### Supported Shells
+
+- Bash: Everything from 3.2.57(1) and higher.
+- Zsh: Zsh is not supported yet.
 
 #### Required software
 
@@ -126,21 +130,22 @@ The following software are required either to clone the repository, execute the 
 ##### Darwin only
 
 - **brew** v2.0+ : To install the required tools.
+- **xcode-select** v2373+: To install command line tools.
 
 #### Recommended software
 
-HomeSetup relies on a series of tools. To use most of the features of HomeSetup, the following packages are required:
+HomeSetup depends on a series of tools. To use some of the features of HomeSetup, the following packages are required:
 
 - **bats** v0.4+ : To run the automated tests.
 - **perl** v5.0+ : To enable perl based functions.
-- **pcregrep** v8.43+ : To enable networking functions.
 - **dig** v9.10+ : To enable networking functions.
 - **tree** v1.8+ : To enable directory visualization functions.
+- **ifconfig** v8.43+ : To enable networking functions.
 
 #### Optional software
 
-There are some tools that are also good to have  if you are a developer. HomeSetup provides some features to help using
-those tools:
+There are some tools that are also good to have if you are a developer, HomeSetup provides features to improve using
+the following tools:
 
 - **docker** 19.03+ : To enable docker functions.
 - **gradle** 4+ : To enable gradle functions.
