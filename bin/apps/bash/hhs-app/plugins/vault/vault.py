@@ -5,22 +5,19 @@
     @created: Thu 21, 2019
     @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
     @mailto: yorevs@hotmail.com
-        @site: https://github.com/yorevs/homesetup
+    @site: https://github.com/yorevs/homesetup
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
 import atexit
-import os
-import signal
-import re
 import getopt
 import getpass
-import base64
-import subprocess
+import re
+import signal
 import traceback
-
 from datetime import datetime
-from hhslib.commons import *
 
+from hhslib.commons import *
+from hhslib.security import *
 
 # Application name, read from it's own file path
 APP_NAME = os.path.basename(__file__)
@@ -112,22 +109,6 @@ class Vault(object):
             vault_str += str(self.data[entry_key])
         return str(vault_str)
 
-    # @purpose: Encode the vault file into base64
-    @staticmethod
-    def encode():
-        with open(VAULT_GPG_FILE, 'r') as vault_file:
-            with open(VAULT_FILE, 'w') as enc_vault_file:
-                enc_vault_file.write(str(base64.b64encode(vault_file.read())))
-                LOG.debug("Vault is encoded !")
-
-    # @purpose: Decode the vault file from base64
-    @staticmethod
-    def decode():
-        with open(VAULT_FILE, 'r') as vault_file:
-            with open(VAULT_GPG_FILE, 'w') as dec_vault_file:
-                dec_vault_file.write(str(base64.b64decode(vault_file.read())))
-                LOG.debug("Vault is decoded !")
-
     # @purpose: Handle interruptions to shutdown gracefully
     def exit_handler(self, signum=0, frame=None):
         if signum != 0 and frame is not None:
@@ -181,7 +162,7 @@ class Vault(object):
         else:
             LOG.error("Attempt to open from Vault failed")
             raise TypeError("### Unable to open from Vault file '{}' ".format(VAULT_FILE))
-        LOG.debug("Vault is open !")
+        LOG.debug("Vault open modified={} open={}".format(self.is_modified, self.is_open))
 
     # @purpose: Close the Vault file and cleanup temporary files
     def close(self):
@@ -191,38 +172,30 @@ class Vault(object):
             self.encrypt()
         if os.path.exists(VAULT_GPG_FILE):
             os.remove(VAULT_GPG_FILE)
-        LOG.debug("Vault is closed modified={} open={}".format(self.is_modified, self.is_open))
+        LOG.debug("Vault closed modified={} open={}".format(self.is_modified, self.is_open))
 
     # @purpose: Encrypt and then, encode the vault file
     def encrypt(self):
-        cmd_args = [
-            'gpg', '--quiet', '--yes', '--batch', '--symmetric',
-            '--passphrase={}'.format(self.passphrase),
-            '--output', VAULT_GPG_FILE, VAULT_FILE
-        ]
-        subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
-        LOG.debug("Vault is encrypted !")
+        encrypt(VAULT_FILE, VAULT_GPG_FILE, self.passphrase)
+        LOG.debug("Vault file encrypted !")
         self.is_open = False
-        Vault.encode()
+        encode(VAULT_GPG_FILE, VAULT_FILE)
+        LOG.debug("Vault file encoded !")
 
     # @purpose: Decode and then, decrypt the vault file
     def decrypt(self):
-        Vault.decode()
-        cmd_args = [
-            'gpg', '--quiet', '--yes', '--batch', '--digest-algo', 'SHA512',
-            '--passphrase={}'.format(self.passphrase),
-            '--output', VAULT_FILE, VAULT_GPG_FILE
-        ]
-        subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
+        decode(VAULT_FILE, VAULT_GPG_FILE)
+        LOG.debug("Vault file decoded !")
+        decrypt(VAULT_GPG_FILE, VAULT_FILE, self.passphrase)
         self.is_open = True
-        LOG.debug("Vault is decrypted !")
+        LOG.debug("Vault file decrypted !")
 
-    # @purpose: Save all vault payload
+    # @purpose: Save all vault entries
     def save(self):
         with open(VAULT_FILE, 'w') as f_vault:
             for entry in self.data:
                 f_vault.write(str(self.data[entry]))
-            LOG.debug("Vault payload is saved")
+            LOG.debug("Vault entries saved")
 
     # @purpose: Read all existing vault payload
     def read(self):
@@ -244,13 +217,13 @@ class Vault(object):
     def fetch_data(self, filter_expr):
         if filter_expr:
             data = list(filter(lambda x: filter_expr in x, self.data))
-            header = """\n=== Listing vault payload containing '{}' ===\n""".format(filter_expr)
+            header = "\n=== Listing vault payload containing '{}' ===\n".format(filter_expr)
         else:
             data = list(self.data)
             header = "\n=== Listing all vault payload ===\n"
         data.sort()
-        LOG.debug(
-            "Vault payload fetched. Returned payload={} filtered={}".format(len(self.data), len(self.data) - len(data)))
+        LOG.debug("Vault payload fetched. Returned payload={} filtered={}"
+                  .format(len(self.data), len(self.data) - len(data)))
 
         return data, header
 
@@ -355,6 +328,7 @@ def exec_operation(op, vault):
         else:
             cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
             usage(1)
+    vault.close()
 
 
 # @purpose: Execute the app business logic

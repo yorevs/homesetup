@@ -2,5 +2,5 @@
 #
 # Package: base
 
-__all__ = ["colors", "commons", "fetch"]
+__all__ = ["colors", "commons", "fetch", "security"]
 
