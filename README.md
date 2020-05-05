@@ -1,19 +1,21 @@
 # HomeSetup
 
-## Your shell, good as hell !
+## Your shell, good as hell ! 
 
 [![Tests](images/tests-badge.svg)](images/tests-badge.svg)
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.3.41/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.4.000/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
 HomeSetup is a bundle os scripts and dotfiles that will elevate your bash shell experience to another level. There are 
 many improvements and facilities, especially for developers that will ease the usage and highly improve your productivity. 
-Currently we support Bash (v3.4+) for Darwin (MacOS) and Linux. We have plans to add support for Zsh as well.
+Currently we support **Bash** (v3.4+) for **Darwin** (MacOS) and **Linux**. We have plans to add support for _Zsh_ as well.
 
 **THIS IT NOT JUST ANOTHER DOTFILES FRAMEWORK**
+
+**LINUX IS HERE**
 
 ## Highlights
 
@@ -31,6 +33,8 @@ gradle, docker, etc...
 - Highly customizable aliases, so, you dictate what mnemonics you want to use (use your own syntax).
 - All code is licensed under [The MIT License](LICENSE.md), so, you can modify and use freely.
 - Small learning curve and a complete [user's handbook](docs/handbook/USER_HANDBOOK.md).
+
+- **NEW** HomeSetup now works on Linux as well.
 
 ## Catalina moved from bash to zsh
 
