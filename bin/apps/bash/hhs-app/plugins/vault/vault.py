@@ -328,7 +328,6 @@ def exec_operation(op, vault):
         else:
             cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
             usage(1)
-    vault.close()
 
 
 # @purpose: Execute the app business logic
