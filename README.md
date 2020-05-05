@@ -54,8 +54,11 @@ $ sudo chsh -s /usr/local/bin/bash
 
 - [1. Installation](#installation)
   * [1.1. Requirements](#requirements)
-    + [1.1.1. Supported Bash versions](#supported-bash-versions)
+    + [1.1.1. Operating systems](#operating-systems)
+    + [1.1.1. Supported Bash versions](#supported-shells)
     + [1.1.2. Required software](#required-software)
+      - [1.1.2.1. Darwin and Linux](#darwin-and-linux)
+      - [1.1.2.2. Darwin only](#darwin-only)
     + [1.1.3. Recommended software](#recommended-software)
     + [1.1.4. Optional software](#optional-software)
   * [1.2. Remote installation](#remote-installation)
@@ -107,8 +110,11 @@ $ sudo chsh -s /usr/local/bin/bash
 
 #### Operating Systems
 
-- Darwin (Catalina and higher)
-- Linux (Ubuntu, CentOS)
+- Darwin 
+    + High Sierra and higher
+- Linux 
+    + Ubuntu 16.04 and higher
+    + CentOS 
 
 #### Supported Shells
 
@@ -190,7 +196,7 @@ If you have a Google account but do not have a Firebase one, you can do that usi
 Access: https://console.firebase.google.com/
 
 1. Create a *new Project* (HomeSetup).
-2. Create Database (as **testing mode**).
+2. Create Database (as **production mode**).
     * Click on Develop -> Database -> Create Database
     * Click on **Realtime Database**
     * Click on the **Rules** tab.
@@ -321,6 +327,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_reload   | Reload HomeSetup                              |
 | __hhs_clear    | Clear and reset all cursor attributes and IFS |
 | __hhs_reset    | Clear the screen and reset the terminal       |
+| __hhs_open     | Use the assigned app to open a file           |
 
 ### Tool aliases
 
@@ -334,19 +341,24 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 #### Linux
 
-| ALIAS  | Description                        |
-| ------ | ---------------------------------- |
-| ised   | Same as sed -i'' -r (Linux)        |
-| esed   | Same as sed -r (Linux)             |
-| decode | Shortcut for base64 decode (Linux) |
+| ALIAS  | Description                      |
+| ------ | -------------------------------- |
+| cpu    | `top' shortcut ordered by CPU%   |
+| mem    | `top' shortcut ordered by MEM%   |
+| ised   | Same as sed -i'' -r              |
+| esed   | Same as sed -r                   |
+| decode | Shortcut for base64 decode       |
+| apt    | Same as apt-get                  |
 
 #### Darwin
 
 | ALIAS          | Description                                                              |
 | -------------- | ------------------------------------------------------------------------ |
-| ised           | Same as sed -i '' -E (Darwin)                                            |
-| esed           | Same as sed -E (Darwin)                                                  |
-| decode         | Shortcut for **base64** decode (Darwin)                                  |
+| cpu            | `top' shortcut ordered by CPU%                                           |
+| mem            | `top' shortcut ordered by MEM%                                           |
+| ised           | Same as sed -i '' -E                                                     |
+| esed           | Same as sed -E                                                           |
+| decode         | Shortcut for **base64** decode                                           |
 | cleanup-ds     | Delete all _.DS_store_ files recursively                                 |
 | flush          | Flush Directory Service cache                                            |
 | cleanup-reg    | Clean up LaunchServices to remove duplicates in the **"Open With"** menu |
@@ -373,7 +385,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | disable-echo       | Disable terminal echo                |
 | reset-cursor-attrs | Reset all terminal cursor attributes |
 | save-screen        | Save the current terminal screen     |
-| restore-screen     | Load the saved terminal screen       |
+| restore-screen     | Restore the saved terminal screen    |
 
 ### Python aliases
 
@@ -446,7 +458,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 
 ### Standard tools
 
-The complete handbook of standard tools can be found [here](docs/handbook/pages/functions.md#standard-tools)
+The complete handbook of standard tools can be found on the [functions handbook](docs/handbook/pages/functions.md#standard-tools)
 
 | File                   | Function               | Purpose                                                                     |
 | ---------------------- | ---------------------- | --------------------------------------------------------------------------- |
@@ -471,15 +483,11 @@ The complete handbook of standard tools can be found [here](docs/handbook/pages/
 | hhs-minput.bash        | __hhs_minput_curpos    | Retrieve the current cursor position on screen                              |
 |                        | __hhs_minput           | Provide a terminal form input with validation checking                      |
 | hhs-mselect.bash       | __hhs_mselect          | Select an option from a list using a navigable menu                         |
-| hhs-network.bash       | __hhs_my_ip            | Find external IP by performing a **DNS lookup**                             |
-|                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP                       |
-|                        | __hhs_all_ips          | Display a list of all assigned IPs                                          |
-|                        | __hhs_local_ip         | Display local IP's of active interfaces                                     |
-|                        | __hhs_active_ifaces    | Display a list of active network interfaces                                 |
-|                        | __hhs_vpn_ip           | Get the IP associated to the active **VPN connection**                      |
-|                        | __hhs_gateway_ip       | Get IP or hostname of the **default gateway**                               |
+| hhs-network.bash       | __hhs_active_ifaces    | Display a list of active network interfaces                                 |
+|                        | __hhs_ip               | Display the associated machine IP of the given kind                         |
 |                        | __hhs_ip_info          | Get information about the specified IP                                      |
 |                        | __hhs_ip_lookup        | Lookup DNS entries to determine the IP address                              |
+|                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP                       |
 |                        | __hhs_port_check       | Check the state of local port(s)                                            |
 | hhs-paths.bash         | __hhs_paths            | Print each PATH entry on a separate line                                    |
 | hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper to activate **NVM** for the terminal                       |

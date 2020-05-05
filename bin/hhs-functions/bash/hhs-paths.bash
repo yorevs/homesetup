@@ -9,7 +9,7 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # shellcheck disable=SC2155
-# @function: Manage your PATH payload.
+# @function: Manage your custom PATH entries.
 # @param $1 [Con] : The path to be added or removed.
 function __hhs_paths() {
 

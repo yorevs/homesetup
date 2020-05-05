@@ -52,55 +52,59 @@ if __hhs_has ifconfig; then
     return 1
   }
   
-  # @function: Display the associated machine IP of the given kind.
-  # @param $1 [Opt] : The kind of IP to get.
-  function __hhs_ip() {
+  if __hhs_has route; then
   
-    local ret_val=1 ip_kind if_list if_ip if_prefix ip_srv_url='ifconfig.me'
-  
-    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [kind]"
-      echo ''
-      echo '    Arguments:'
-      echo '      type : The kind of IP to get. One of [local|external|gateway|vpn]'
-      echo ''
-      echo '    Types:'
-      echo '         local : Get your local network IPv4'
-      echo '      external : Get your external network IPv4'
-      echo '       gateway : Get the IPv4 of your gateway'
-      echo '           vpn : Get your IPv4 assigned by your VPN'
-      echo ''
-      echo '  Notes: '
-      echo '    - If no kind is specified, all ips assigned to the machine will be retrieved'
-      return 1
-    else
-      ip_kind=${1:-all}
-      if [[ "external" == "${ip_kind}" ]]; then
-        if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2> /dev/null)"
-        [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
+    # @function: Display the associated machine IP of the given kind.
+    # @param $1 [Opt] : The kind of IP to get.
+    function __hhs_ip() {
+    
+      local ret_val=1 ip_kind if_list if_ip if_prefix ip_srv_url='ifconfig.me'
+    
+      if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+        echo "Usage: ${FUNCNAME[0]} [kind]"
+        echo ''
+        echo '    Arguments:'
+        echo '      type : The kind of IP to get. One of [local|external|gateway|vpn]'
+        echo ''
+        echo '    Types:'
+        echo '         local : Get your local network IPv4'
+        echo '      external : Get your external network IPv4'
+        echo '       gateway : Get the IPv4 of your gateway'
+        echo '           vpn : Get your IPv4 assigned by your VPN'
+        echo ''
+        echo '  Notes: '
+        echo '    - If no kind is specified, all ips assigned to the machine will be retrieved'
+        return 1
+      else
+        ip_kind=${1:-all}
+        if [[ "external" == "${ip_kind}" ]]; then
+          if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2> /dev/null)"
+          [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
+        fi
+        if [[ "gateway" == "${ip_kind}" ]]; then
+          [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2> /dev/null | grep 'gateway' | cut -b 14- | uniq)"
+          [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
+          [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
+        fi
+        if [[ "all" == "${ip_kind}" || "vpn" == "${ip_kind}" || "local" == "${ip_kind}" ]]; then
+          if_list="$(__hhs_active_ifaces)"
+          IFS=' '
+          [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]*'
+          [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]*'
+          for next in ${if_list}; do
+            if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
+              if_ip="$(ifconfig "${next}" | grep -E "inet " | awk '{print $2}')"
+              [[ -n "${if_ip}" ]] && echo "IP-${next}: ${if_ip}" && ret_val=0
+            fi
+          done
+          IFS="${RESET_IFS}"
+        fi
       fi
-      if [[ "gateway" == "${ip_kind}" ]]; then
-        [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2> /dev/null | grep 'gateway' | cut -b 14- | uniq)"
-        [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
-        [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
-      fi
-      if [[ "all" == "${ip_kind}" || "vpn" == "${ip_kind}" || "local" == "${ip_kind}" ]]; then
-        if_list="$(__hhs_active_ifaces)"
-        IFS=' '
-        [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]*'
-        [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]*'
-        for next in ${if_list}; do
-          if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
-            if_ip="$(ifconfig "${next}" | grep -E "inet " | awk '{print $2}')"
-            [[ -n "${if_ip}" ]] && echo "IP-${next}: ${if_ip}" && ret_val=0
-          fi
-        done
-        IFS="${RESET_IFS}"
-      fi
-    fi
-  
-    return ${ret_val}
-  }
+    
+      return ${ret_val}
+    }
+    
+  fi
 
 fi
 

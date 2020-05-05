@@ -9,12 +9,10 @@
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
 import base64
-
-
-# @purpose: Encode file into base64
 import subprocess
 
 
+# @purpose: Encode file into base64
 def encode(filepath, outfile):
     with open(filepath, 'r') as in_file:
         with open(outfile, 'w') as out_file:

@@ -28,24 +28,26 @@ install HomeSetup this file will be created automatically for you, so you just n
 
 **All HomeSetup variable are prefixed with HHS_**
 
-- **HHS_MY_OS** : Your OS name.
-- **HHS_MY_SHELL** : Your login shell name.
-- **HHS_TERM_OPTS** : Active terminal options.
-- **HHS_HOME** : HomeSetup installation directory.
-- **HHS_DIR** : This is where HomeSetup stores it's configuration files.
-- **HHS_VERSION** : Currently installed HomeSetup version.
+- **HHS_ACTIVE_DOTFILES** : Dotfiles that are actually active and the load order.
 - **HHS_BASH_COMPLETIONS** : Bash-completions that are actually active.
-- **HHS_MOTD** : Message of the day, to be displayed when HomeSetup is loaded.
-- **HHS_DEFAULT_EDITOR** : This is the default editor used by all functions or apps that require text editting.
-- **HHS_SAVED_DIRS_FILE** : This file holds the saved directories issued by __hhs_save_dir function.
 - **HHS_CMD_FILE** : This file holds the saved commands issued by __hhs_command function.
-- **HHS_PATHS_FILE** : This file holds the adittional PATH's to be added to your shell, and used by __hhs_paths function.
+- **HHS_DEFAULT_EDITOR** : This is the default editor used by all functions or apps that require text editing.
+- **HHS_DEV_TOOLS** : Tools that HomeSetup will keep an eye on, to check is they are installed or not.
+- **HHS_DIR** : This is where HomeSetup stores it's configuration files.
+- **HHS_HIGHLIGHT_COLOR** : Color to be used to highlight text on some functions.
+- **HHS_HOME** : HomeSetup installation directory.
+- **HHS_LOGFILE** : File containing all HomeSetup logs.
+- **HHS_MENU_MAXROWS** : This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed.
+- **HHS_MOTD** : Message Of The Day: to be displayed when HomeSetup is loaded.
+- **HHS_MY_OS** : Your OS name.
+- **HHS_MY_SHELL** : Your login shell base name.
+- **HHS_PATHS_FILE** : This file holds the additional PATH's to be added to your shell and used by __hhs_paths function.
 - **HHS_PUNCH_FILE** : This file holds the saved punches issued by __hhs_punch function.
+- **HHS_SAVED_DIRS_FILE** : This file holds the saved directories issued by __hhs_save_dir function.
+- **HHS_TERM_OPTS** : Active terminal options.
 - **HHS_VAULT_FILE** : This file holds the user vault, used to store secure information.
 - **HHS_VAULT_USER** : This is the user that hhs vault plugin will use to store your vault data.
-- **HHS_MENU_MAXROWS** : This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed.
-- **HHS_HIGHLIGHT_COLOR** : Color to use to highlight text on some functions.
-- **HHS_DEV_TOOLS** : Tools that HomeSetup will keep an eye on, to check is they are installed or not.
+- **HHS_VERSION** : Currently installed HomeSetup version.
 
 ## Aliases
 

@@ -60,16 +60,12 @@ function __hhs_alias() {
 
 # @alias: Change-back two previous directories
 alias ...='.. 2'
-
 # @alias: Change-back three previous directories
 alias ....='.. 3'
-
 # @alias: Change-back four previous directories
 alias .....='.. 4'
-
 # @alias: Change the current directory to HOME dir
 alias ~='cd ~'
-
 # @alias: Change the current directory to the previous dir
 alias -- -='cd -'
 
@@ -82,116 +78,89 @@ alias ?='pwd'
 
 # @alias: Short for `exit 0' from terminal
 alias q="exit 0"
-
 # @alias: Enable aliases to be sudo’ed
 alias sudo='sudo '
 
 # @alias: Always use color output for `ls`
 alias ls='\ls ${COLOR_FLAG} -F'
-
 # @alias: List all files colorized in long format
 alias l='ls -lh'
-
 # @alias: List all directories in long format
 alias lsd="ls -d */"
-
 # @alias: List all files colorized in long format, including dot files
 alias ll='ls -lah'
-
 # @alias: List all .dotfiles colorized in long format
 alias lll='ls -lhd .??* | grep "^-"'
-
 # @alias: List all .dotfolders colorized in long format
 alias lld='ls -lhd .??*/'
 
 # @alias: Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
 alias grep='\grep --color=auto'
-
 # @alias: Always enable colored `fgrep` output
 alias fgrep='\fgrep --color=auto'
-
 # @alias: Always enable colored `egrep` output
 alias egrep='\egrep --color=auto'
 
 # @alias: By default `rm' will prompt for confirmation and will be verbose
 alias rm='\rm -iv'
-
 # @alias: By default `cp' will prompt for confirmation and will be verbose
 alias cp='\cp -iv'
-
 # @alias: By default `mv' will prompt for confirmation and will be verbose
 alias mv='\mv -iv'
-
 # @alias: Make `df' command output pretty and human readable format
 alias df='\df -H'
-
 # @alias: Make `du' command output pretty and human readable format
 alias du='\du -hcd 1'
-
 # @alias: Make `ps' command output pretty and human readable format
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 
 # @alias: Use `vim' instead of `vi' if installed
-__hhs_has "vim" && alias vi='\vim'
-
+__hhs_has "vim" && alias vi='vim'
 # @alias: `more' will interpret escape sequences
 alias more='\more -r'
 # @alias: `less' will interpret escape sequences
 alias less='\less -r'
-
 # @alias: Make `mount' command output pretty and human readable format
 alias mount='\mount | column -t'
 
 # @alias: Date&Time - Display current week number
 alias week='\date +%V'
-
 # @alias: Date&Time - Display current date and time
 alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
-
 # @alias: Date&Time - Display current timestamp
 alias ts='\date "+%s%S"'
-
 # @alias: Date&Time - Display current time in millis
 alias time-ms='python -c "import time; print(int(round(time.time() * 1000)))"'
 
 # @alias: If `wget' is not available, use `curl' instead
 __hhs_has "wget" || alias wget='\curl -O'
+# @alias: Execute the previous command again, but this time running with sudo.
+alias please='sudo !!'
 
 # @alias: Make PS1 prompt active
 alias ps1='export PS1=$PS1_STYLE'
-
 # @alias: Make PS2 prompt active
 alias ps2='export PS1=$PS2_STYLE'
-
-# @alias: Execute the previous command again, but this time running with sudo.
-alias please='sudo !!'
 
 # -----------------------------------------------------------------------------------
 # @category: HomeSetup
 
 # @alias: Shortcut for hhs vault plug-in
 alias __hhs_vault='hhs vault execute'
-
 # @alias: Shortcut for hhs hspm plug-in
 alias __hhs_hspm='hhs hspm execute'
-
 # @alias: Shortcut for hhs firebase plug-in
 alias __hhs_dotfiles='hhs firebase execute'
-
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='hhs updater execute'
-
 # @alias: Reload HomeSetup
 alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
-
 # @alias: Clear and reset all cursor attributes and IFS
 alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
-
 # @alias: Clear the screen and reset the terminal
 alias __hhs_reset="__hhs_clear; \reset"
-    
-# @alias: Replacing open to test which app to open stuff
+# @alias: Use the assigned app to open a file
 alias open="__hhs_open"
 
 # -----------------------------------------------------------------------------------
@@ -213,69 +182,52 @@ __hhs_has "base64" && alias encode="base64"
 case "${HHS_MY_OS}" in
 
   Linux)
-  # @alias: `top' shortcut ordered by cpu
+    # @alias: `top' shortcut ordered by CPU%
     alias cpu='\top -o %CPU'
-
-    # @alias: `top' shortcut ordered by Memory
+    # @alias: `top' shortcut ordered by MEM%
     alias mem='\top -o %MEM'
-    
-    # @alias: Same as sed -i'' -r (Linux)
+    # @alias: Same as sed -i'' -r
     alias ised="sed -i'' -r"
-    
-    # @alias: Same as sed -r (Linux)
+    # @alias: Same as sed -r
     alias esed="sed -r"
-    
-    # @alias: Shortcut for base64 decode (Linux)
+    # @alias: Shortcut for base64 decode
     __hhs_has "base64" && alias decode='base64 -d'
-    ;;
+    # @alias: Shortcut for base64 decode
+    __hhs_has "apt-get" && alias apt='apt-get'
+  ;;
 
   Darwin)
-  
-    # @alias: `top' shortcut ordered by cpu
+    # @alias: `top' shortcut ordered by CPU%
     alias cpu='\top -o cpu'
-
-    # @alias: `top' shortcut ordered by Memory
+    # @alias: `top' shortcut ordered by MEM%
     alias mem='\top -o rsize'
-
-    # @alias: Same as sed -i '' -E (Darwin)
+    # @alias: Same as sed -i '' -E
     alias ised="sed -i '' -E"
-    
-    # @alias: Same as sed -E (Darwin)
+    # @alias: Same as sed -E
     alias esed="sed -E"
-    
-    # @alias: Shortcut for base64 decode (Darwin)
+    # @alias: Shortcut for base64 decode
     __hhs_has "base64" && alias decode='base64 -D'
-
     # @alias: Delete all .DS_store files recursively
     alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
-
     # @alias: Flush Directory Service cache
     __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
-
     # @alias: Clean up LaunchServices to remove duplicates in the "Open With" menu
     alias cleanup-reg="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-
     # @alias: Show hidden files in Finder
     alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-    
     # @alias: Hide hidden files in Finder
     alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-
     # @alias: Show all desktop icons
     alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-    
     # @alias: Hide all desktop icons
     alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-
     # @alias: Canonical hex dump; some systems have this symlinked
     __hhs_has "hd" || alias hd='\hexdump -C'
-
     # @alias: If `md5sum' is not available, use `md5' instead`
     __hhs_has "md5sum" || alias md5sum='\md5'
-
     # @alias: If `sha1' is not available, use `shasum' instead`
     __hhs_has "sha1" || alias sha1='\shasum'
-    ;;
+  ;;
 esac
 
 # -----------------------------------------------------------------------------------
@@ -337,7 +289,6 @@ esac
 # @category: Python aliases
 
 if __hhs_has "python"; then
-
   # @alias: Evaluate mathematical expressions
   alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings
@@ -352,7 +303,6 @@ fi
 # @category: Perl aliases
 
 if __hhs_has "perl"; then
-
   # @alias: Remove escape (\EscXX) codes from text
   alias clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
   # @alias: Copy to clipboard removing any escape sequences. pbcopy is required
