@@ -3,7 +3,7 @@
 ## Your shell, good as hell !
 
 [![Tests](images/tests-badge.svg)](images/tests-badge.svg)
-[![License](https://badgen.net/badge/license/the-unlicense/gray)](LICENSE.md)
+[![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
 [![Release](https://badgen.net/badge/release/v1.3.41/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
