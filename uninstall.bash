@@ -91,6 +91,7 @@ check_installation() {
 
 uninstall_dotfiles() {
 
+  # Remove dotfiles
   echo -e "Removing installed dotfiles ..."
   for next in ${ALL_DOTFILES[*]}; do
     dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
@@ -103,6 +104,7 @@ uninstall_dotfiles() {
   [[ -L "${HHS_DIR}/bin" ]] && \rm -rf "${HHS_DIR:?}/bin"
   echo ''
 
+  # Restore backups
   if [[ -d "${HHS_DIR}" ]]; then
     BACKUPS=("$(find "${HHS_DIR}" -iname "*.orig")")
     echo "Restoring backups ..."
@@ -118,6 +120,11 @@ uninstall_dotfiles() {
 
   cd "${HOME}" || cd ..
 
+  # Uninstall HomeSetup python library
+  echo "${WHITE}Removing HomeSetup python library"
+  pip uninstall -y hhslib &> /dev/null
+
+  # Remove .hhs folder
   echo -e "${ORANGE}"
   [[ -z ${QUIET} ]] && read -rn 1 -p 'Also delete HomeSetup config (.hhs) files y/[n] ? ' ANS
   echo -e "${NC}"
@@ -126,7 +133,8 @@ uninstall_dotfiles() {
     [[ -d "${HHS_DIR}" ]] && \rm -fv "${HHS_DIR}"
     \rm -fv .prompt .aliasdef .functions .env .aliases 2> /dev/null
   fi
-  
+
+  # Unset aliases and envs
   echo "Unsetting aliases and variables ..."
   unalias -a
   unset "${!HHS_@}"

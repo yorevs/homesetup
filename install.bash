@@ -350,7 +350,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
-
+    
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Linking HomeSetup git hooks into place
@@ -365,14 +365,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Install HomeSetup python library
     echo -en "\n${WHITE}Installing HomeSetup python library"
-    \pushd "${HHS_HOME}"/bin/apps/py/lib/ &>/dev/null || quit 2 "Unable to find HomeSetup python library !"
-    [[ -f install.sh || -d hhslib ]] || quit 2 "Unable to find HomeSetup python library !"
-    if install.sh &>/dev/null; then
+    \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
+    if pip install --user hhslib &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to install HomeSetup python library !"
     fi
-    \popd &>/dev/null || quit 2 "Unable to install HomeSetup python library !"
+    \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
 
     compatibility_check
   }
