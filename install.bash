@@ -366,7 +366,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Install HomeSetup python library
     echo -en "\n${WHITE}Installing HomeSetup python library"
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    if pip install --user hhslib &>/dev/null; then
+    if pip install --user . &>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to install HomeSetup python library !"
