@@ -86,12 +86,14 @@ function __hhs_log() {
 # @function: Replacement for the source bash command
 # @param $1 [Req] : Path to the file to be source'd
 function __hhs_source() {
-  local file_path="$1"
+
+  local filepath="$1"
+  
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <filepath>"
     return 1
   fi
-  if [[ ! -f ${filepath} ]]; then
+  if [[ ! -f "${filepath}" ]]; then
     echo "${FUNCNAME[0]}: file \"${filepath}\" not found !" 2>&1
   else
     source "${filepath}" 2>> "${HHS_LOGFILE}"
