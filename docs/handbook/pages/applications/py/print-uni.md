@@ -1,4 +1,4 @@
-# HomeSetup Print-Uni Application
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

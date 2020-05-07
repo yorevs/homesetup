@@ -1,4 +1,4 @@
-# HomeSetup TCalc Application
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

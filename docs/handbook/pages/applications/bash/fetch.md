@@ -1,4 +1,4 @@
-# HomeSetup Fetch Application
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

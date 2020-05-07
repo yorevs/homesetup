@@ -1,4 +1,4 @@
-# HomeSetup Json-Find Application
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

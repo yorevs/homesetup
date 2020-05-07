@@ -1,9 +1,8 @@
 # HHS TODOs
 
 ## Release 1.4.0
-    [ ] 1. Fill developer tools handbook.
-    [ ] 2. Fill applications handbook.
-    [ ] 3. Verify compatibility with CentoOS.
+    [ ] 1. Fill applications handbook.
+    [ ] 2. Verify compatibility with CentoOS.
 
 ## Next Release
     [ ] 1. Record HHS movies.

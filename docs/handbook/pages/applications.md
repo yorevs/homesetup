@@ -19,11 +19,15 @@
 
 ## Bash Apps
 
-TODO
+Bundled set of Bash applications.
+
+A list of available bash applications can be found on the **README.md** section [Bash Apps](../../../README.md#bash-apps)
 
 ## Python Apps
 
-TODO
+Bundled set of Python applications.
+
+A list of available python applications can be found on the **README.md** section [Bash Apps](../../../README.md#python-apps)
 
 
 [Back to User Handbook](../USER_HANDBOOK.md)

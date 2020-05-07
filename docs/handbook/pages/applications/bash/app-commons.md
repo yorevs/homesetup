@@ -1,4 +1,4 @@
-# HomeSetup Application Commons
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

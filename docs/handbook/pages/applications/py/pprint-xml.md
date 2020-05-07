@@ -1,4 +1,4 @@
-# HomeSetup PPrint-Xml Application
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

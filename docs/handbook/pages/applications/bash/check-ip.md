@@ -1,4 +1,4 @@
-# HomeSetup Check-IP Application
+# HomeSetup Applications Handbook
 
 ## Table of contents
 

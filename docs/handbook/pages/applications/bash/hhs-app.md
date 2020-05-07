@@ -1,4 +1,4 @@
-# HomeSetup Application (HHS-App)
+# HomeSetup Applications Handbook
 
 ## Table of contents
 
