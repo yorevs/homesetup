@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034
 
 #  Script: fetch.bash
-# Purpose: Fetch REST APIs payload easily.
+# Purpose: Fetch URL resource using the most commons ways.
 # Created: Oct 24, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -12,7 +12,7 @@
 # Current script version.
 VERSION=1.0.0
 
-# Help message to be displayed by the script.
+# Help message to be displayed by the application.
 USAGE="
 Usage: ${APP_NAME} <method> [options] <url>
 
@@ -24,11 +24,12 @@ Usage: ${APP_NAME} <method> [options] <url>
         --body    <json_body>       : The http request body (payload).
         --format                    : Format the json responseonse.
         --silent                    : Omits all informational messages.
+
 "
 
 # Functions to be unset after quit
 UNSETS=(
-  format_json fetch_with_curl parse_args
+  'format_json' 'fetch_with_curl' 'parse_args' 'do_fetch'
 )
 
 # shellcheck disable=SC1090
@@ -120,19 +121,29 @@ parse_args() {
   done
 }
 
+# @purpose: Fetch the url using the most common ways.
+do_fetch() {
+  fetch_with_curl
+  return $?
+}
+
 # @purpose: Program entry point
 main() {
 
   parse_args "${@}"
 
   case "${METHOD}" in
-    'GET' | 'DELETE') [[ -n "${BODY}" ]] && quit 2 "${METHOD} does not accept any body" ;;
-    'PUT' | 'POST' | 'PATCH') [[ -z "${BODY}" ]] && quit 2 "${METHOD} requires a body" ;;
+    'GET' | 'DELETE')
+      [[ -n "${BODY}" ]] && quit 1 "${METHOD} does not accept a body"
+      ;;
+    'PUT' | 'POST' | 'PATCH') 
+      [[ -z "${BODY}" ]] && quit 1 "${METHOD} requires a body" 
+      ;;
   esac
 
   [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."
 
-  if fetch_with_curl; then
+  if do_fetch; then
     quit 0
   else
     if [[ -z "${SILENT}" ]]; then
@@ -146,4 +157,4 @@ main() {
 }
 
 main "${@}"
-quit 0
+quit 1

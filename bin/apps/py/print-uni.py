@@ -15,16 +15,17 @@ import os
 import sys
 import re
 
+# This application name.
 APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
 VERSION = (0, 9, 0)
 
-# Usage message
+# Help message to be displayed by the application.
 USAGE = """
 Print a backslash 4 digits unicode character E.g:. \\uf118 => \\uf118
 
-Usage: python {} <4-digit-unicode-escape>
+Usage: {} <4-digit-unicode-escape>
 """.format(APP_NAME)
 
 

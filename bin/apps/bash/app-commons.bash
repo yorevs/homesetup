@@ -28,7 +28,7 @@ UNSETS=('quit' 'usage' 'version' 'trim')
 [[ -f ~/.bash_aliases ]] && \. ~/.bash_aliases
 [[ -f ~/.bash_functions ]] && \. ~/.bash_functions
 
-# @purpose: Quit the application and exhibits an exit message if specified.
+# @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
@@ -43,8 +43,9 @@ quit() {
   exit ${exit_code}
 }
 
-# @purpose: Display the usage message and exit with the specified code ( or zero as default ).
+# @purpose: Display the usage message and exit with the provided code ( or zero as default ).
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE .
+# @param $2 [Opt] : The exit message to be displayed.
 usage() {
   exit_code=${1:-0}
   shift
@@ -62,7 +63,8 @@ version() {
 [[ "$1" = '-h' || "$1" = '--help' ]] && usage 0
 [[ "$1" = '-v' || "$1" = '--version' ]] && version
 
-# @purpose: Trim whitespaces.
+# @purpose: Trim whitespaces from the provided text.
+# @param $1..$N [Req] : The text to be trimmed.
 trim() {
 
   local var="$*"
@@ -72,4 +74,6 @@ trim() {
   # remove trailing whitespace characters
   var="${var%"${var##*[![:space:]]}"}"
   echo -en "$var"
+  
+  return 0
 }

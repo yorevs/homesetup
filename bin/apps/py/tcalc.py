@@ -18,17 +18,18 @@ import os
 import re
 import sys
 
-PROC_NAME = os.path.basename(__file__)
+# This application name.
+APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
 VERSION = (0, 9, 0)
 
-# Usage message
+# Help message to be displayed by the application.
 USAGE = """
 Calculate time based operations
 
-Usage: python {} [-d|--decimal] <HH1:MM1[:SS1]> <+|-> <HH2:MM2[:SS2]>
-""".format(PROC_NAME)
+Usage: {} [-d|--decimal] <HH1:MM1[:SS1]> <+|-> <HH2:MM2[:SS2]>
+""".format(APP_NAME)
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
@@ -39,7 +40,7 @@ def usage(exit_code=0):
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME, VERSION[0], VERSION[1], VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
 
 

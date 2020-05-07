@@ -272,6 +272,8 @@ if __hhs_has "git"; then
     echo ''
     echo "${GREEN}Done ! ${NC}"
     echo ''
+    
+    return 0
   }
 
 fi

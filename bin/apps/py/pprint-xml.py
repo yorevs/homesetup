@@ -18,6 +18,7 @@ import os
 import re
 import xml.dom.minidom
 
+# This application name.
 APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
@@ -27,7 +28,7 @@ VERSION = (0, 9, 0)
 USAGE = """
 Format an XML file or scans a directory and walk though all subdirectories and format all found xml files.
 
-Usage: python {} <filename>/<dirname> ...
+Usage: {} <filename>/<dirname> ...
 """.format(APP_NAME)
 
 INDENT = '  '

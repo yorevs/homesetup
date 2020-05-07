@@ -8,16 +8,16 @@
 #  Mailto: yorevs@hotmail.com
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
-# Functions to be unset after quit
+# Functions to be unset after quit.
 UNSETS+=(
   'main' 'parse_args' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
   'register_plugins' 'register_local_functions' 'parse_args' 'invoke_command' 'register_hhs_functions'
 )
 
-# Program version
+# Program version.
 VERSION=1.0.0
 
-# Usage message
+# Help message to be displayed by the application.
 USAGE="
 Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
@@ -42,13 +42,14 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
   
   Notes: 
     - To discover which plugins and functions are available type: hhs list
+
 "
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
 __hhs_has "python" || quit 1 "Python is required to execute ${APP_NAME}"
 
-# Directory containing all HHS plug-ins
+# Directory containing all HHS plug-ins.
 PLUGINS_DIR="$(dirname "${0//${HHS_DIR}/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/plugins"
 
 # Directory containing all local HHS functions.
@@ -63,10 +64,10 @@ HHS_FUNCTIONS=()
 # List of required functions a plugin must have.
 PLUGINS_FUNCS=('help' 'version' 'execute')
 
-# List of valid plugins
+# List of valid plugins.
 PLUGINS_LIST=()
 
-# List plugin commands
+# List plugin commands.
 PLUGINS=()
 
 # @purpose: Checks whether a plugin is registered or not.
@@ -141,7 +142,7 @@ register_plugins() {
       PLUGINS_LIST+=("${plugin}")
     fi
   done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
-  
+
   return 0
 }
 
@@ -190,7 +191,7 @@ register_local_functions() {
     # Register the functions to be unset when program quits
     UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
   done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
-  
+
   return 0
 }
 
@@ -249,9 +250,9 @@ parse_args() {
 
 # @purpose: Program entry point.
 main() {
-  
+
   local fname
-  
+
   parse_args "${@}"
   register_local_functions
   register_plugins
@@ -267,4 +268,4 @@ main() {
 }
 
 main "${@}"
-quit 0
+quit 1

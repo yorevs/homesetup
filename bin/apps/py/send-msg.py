@@ -24,16 +24,16 @@ import getopt
 import threading
 import signal
 
-PROC_NAME       = os.path.basename(__file__)
-VERSION         = (1, 0, 1)
-MIN_PYTHON      = (2, 6, 6)
-MAX_PYTHON      = (2, 7, 15)
-CUR_PYTHON      = sys.version_info
-MAX_THREADS     = 1000
-NET_TYPE_UDP    = 'UDP'
-NET_TYPE_TCP    = 'TCP'
-MAX_DISP_LEN    = 500
+# This application name.
+APP_NAME       = os.path.basename(__file__)
 
+# Version tuple: (major,minor,build)
+VERSION         = (1, 0, 1)
+
+# TOD
+MAX_THREADS     = 1000
+
+# Help message to be displayed by the application.
 USAGE = """
 IP Message Sender v{}
 
@@ -51,7 +51,14 @@ Usage: {} [opts]
         -n, --net_type    <network_type>     : The network type to be used. Either UDP or TCP ( default is TCP ).
     
     E.g:. send-msg.py -m "Hello" -p 12345 -a 0.0.0.0 -k 100 -i 500 -t 2
-""".format(str(VERSION), PROC_NAME, MAX_THREADS)
+""".format(str(VERSION), APP_NAME, MAX_THREADS)
+
+MIN_PYTHON      = (2, 6, 6)
+MAX_PYTHON      = (2, 7, 15)
+CUR_PYTHON      = sys.version_info
+NET_TYPE_UDP    = 'UDP'
+NET_TYPE_TCP    = 'TCP'
+MAX_DISP_LEN    = 500
 
 
 # @purpose: Display the usage message and exit with the specified code ( or zero as default )
@@ -62,7 +69,7 @@ def usage(exit_code=0):
 
 # @purpose: Display the current program version and exit
 def version():
-    print('{} v{}.{}.{}'.format(PROC_NAME, VERSION[0], VERSION[1], VERSION[2]))
+    print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
 
 

@@ -18,8 +18,9 @@ import os
 import getopt
 import json
 
-from jsonutils.JsonUtils import JsonUtils
+from jsonutils import JsonUtils
 
+# This application name.
 APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
@@ -29,7 +30,7 @@ APP_VERSION = (0, 9, 0)
 USAGE = """
 Find a json path from a json string
 
-Usage: python {} -f <filename> -a <alias_to_find>
+Usage: {} -f <filename> -a <alias_to_find>
 """.format(APP_NAME)
 
 

@@ -19,4 +19,24 @@
 
 ## Free application
 
-TODO
+```bash
+Report system memory usage.
+
+Usage: python free.py
+```
+
+##### **Purpose**:
+
+Report system memory usage.
+
+##### **Returns**:
+
+**0** if the command executed successfully; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ free.py
+```

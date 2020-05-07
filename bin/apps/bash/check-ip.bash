@@ -2,7 +2,7 @@
 # shellcheck disable=SC1117,SC2034
 
 #  Script: check-ip.bash
-# Purpose: Validate and check information about a specified IP.
+# Purpose: Validate and check information about a provided IP address.
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: yorevs@hotmail.com
@@ -11,31 +11,40 @@
 # Current script version.
 VERSION=2.0.0
 
-# Help message to be displayed by the script.
+# Help message to be displayed by the application.
 USAGE="
 Usage: ${APP_NAME} [Options] <ip_address>
 
     Options:
       -q | --quiet  : Silent mode. Do not check for IP details.
       -i | --info   : Fetch additional information from the web.
+
 "
 
 # Functions to be unset after quit
-UNSETS=(main check_class check_scope check_valid parse_args)
+UNSETS=('main' 'check_class' 'check_scope' 'check_valid' 'parse_args')
 
 # shellcheck disable=SC1090
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
 
+# Whether the IP is valid or not.
+IP_VALID=1
+
 # The IP to be validated.
 IP_OCTETS=()
+
+# The provided IP address
 IP_ADDRESS=
-IP_VALID=
+
+# The IP class
 IP_CLASS=
+
+# The IP scope
 IP_SCOPE=
 
 # Modes
-SILENT=0     # Not set
-EXTRA_INFO=0 # Not set
+SILENT=0     # 0 == Not set; 1 otherwise
+EXTRA_INFO=0 # 0 == Not set; 1 otherwise
 
 # – Class A addresses: Large numbers of nodes – Intended for a LARGE organisation
 #     IP = Net.Node.Node.Node
@@ -48,8 +57,8 @@ EXTRA_INFO=0 # Not set
 # IP<private>   Class A addresses: [     0.0.0.0 - 127.255.255.255 ] => 0XXXXXXX
 # IP<private>   Class B addresses: [   128.0.0.0 - 191.255.255.255 ] => 10XXXXXX
 # IP<private>   Class C addresses: [   192.0.0.0 - 223.255.255.255 ] => 110xxxxx
-# IP<multicast> Class D addresses: [   224.0.0.1 - 239.255.255.255 ] =>
-# IP<reserved>  Class E addresses: [   240.0.0.1 - 255.255.255.254 ] =>
+# IP<multicast> Class D addresses: [   224.0.0.1 - 239.255.255.255 ] => 
+# IP<reserved>  Class E addresses: [   240.0.0.1 - 255.255.255.254 ] => 
 
 # @purpose: Find the IP class.
 check_class() {
@@ -93,33 +102,33 @@ check_scope() {
   if [[ ${IP_OCTETS[0]} -eq 0 ]]; then
     IP_SCOPE="'This' Network"
   elif [[ ${IP_OCTETS[0]} -eq 10 ]]; then
-    IP_SCOPE="Private" # Private Use Networks
+    IP_SCOPE="Private" # Private Use Networks.
   elif [[ ${IP_OCTETS[0]} -eq 100 ]] && [[ ${IP_OCTETS[1]} -ge 64 ]] && [[ ${IP_OCTETS[1]} -le 127 ]]; then
-    IP_SCOPE="Private" # Private Networks
+    IP_SCOPE="Private" # Private Networks.
   elif [[ ${IP_OCTETS[0]} -eq 127 ]]; then
-    IP_SCOPE="Loopback" # Host -> Loopback
+    IP_SCOPE="Loopback" # Host -> Loopback.
   elif [[ ${IP_OCTETS[0]} -eq 169 ]] && [[ ${IP_OCTETS[1]} -eq 254 ]]; then
-    IP_SCOPE="Link Local" # Subnet -> Link Local : Auto-Assigned IP for no DHCP
+    IP_SCOPE="Link Local" # Subnet -> Link Local : Auto-Assigned IP for no DHCP.
   elif [[ ${IP_OCTETS[0]} -eq 172 ]] && [[ ${IP_OCTETS[1]} -le 31 ]]; then
-    IP_SCOPE="Private" # Private Use Networks
+    IP_SCOPE="Private" # Private Use Networks.
   elif [[ "${IP_ADDRESS%\.*}" == "192.0.0" ]]; then
-    IP_SCOPE="Private" # IETF Protocol Assignments
+    IP_SCOPE="Private" # IETF Protocol Assignments.
   elif [[ "${IP_ADDRESS%\.*}" == "192.0.2" ]]; then
-    IP_SCOPE="TEST-NET-1" # Documentation -> TEST-NET-1
+    IP_SCOPE="TEST-NET-1" # Documentation -> TEST-NET-1.
   elif [[ "${IP_ADDRESS%\.*}" == "192.88.99" ]]; then
-    IP_SCOPE="Anycast" # Internet -> 6to4 Relay Anycast
+    IP_SCOPE="Anycast" # Internet -> 6to4 Relay Anycast.
   elif [[ ${IP_OCTETS[0]} -eq 192 && ${IP_OCTETS[1]} -eq 168 ]]; then
-    IP_SCOPE="Private" # Private Use Networks
+    IP_SCOPE="Private" # Private Use Networks.
   elif [[ ${IP_OCTETS[0]} -eq 198 && ${IP_OCTETS[1]} -ge 18 && ${IP_OCTETS[1]} -le 19 ]]; then
-    IP_SCOPE="Private" # Private Use Networks
+    IP_SCOPE="Private" # Private Use Networks.
   elif [[ "${IP_ADDRESS%\.*}" == "198.51.100" ]]; then
-    IP_SCOPE="TEST-NET-2" # Documentation -> TEST-NET-2
+    IP_SCOPE="TEST-NET-2" # Documentation -> TEST-NET-2.
   elif [[ "${IP_ADDRESS%\.*}" == "203.0.113" ]]; then
-    IP_SCOPE="TEST-NET-3" # Documentation -> TEST-NET-3
+    IP_SCOPE="TEST-NET-3" # Documentation -> TEST-NET-3.
   elif [[ ${IP_OCTETS[0]} -ge 224 && ${IP_OCTETS[0]} -le 239 ]]; then
-    IP_SCOPE="Multicast" # Internet -> Multicast
+    IP_SCOPE="Multicast" # Internet -> Multicast.
   elif [[ ${IP_OCTETS[0]} -ge 240 && ${IP_OCTETS[0]} -le 255 && "${IP_ADDRESS##*\.}" == "254" ]]; then
-    IP_SCOPE="Reserved" # n/a -> Reserved
+    IP_SCOPE="Reserved" # n/a -> Reserved.
   elif [[ "${IP_ADDRESS}" == "255.255.255.255" ]]; then
     IP_SCOPE="Limited Broadcast"
   else
@@ -132,15 +141,13 @@ check_valid() {
 
   ip_regex="((2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))\.){3}(2((5[0-5])|[0-4][0-9])|(1([0-9]{2}))|(0|([1-9][0-9]))|([0-9]))"
 
-  # On Mac option -r does not exist, -E on linux option does not exist
+  # On Mac option -r does not exist, -E on linux option does not exist.
   [[ "$(uname -s)" == "Linux" ]] && sflag='-r'
   [[ "$(uname -s)" == "Darwin" ]] && sflag='-E'
   is_valid=$(echo "${IP_ADDRESS}" | sed ${sflag} "s/${ip_regex}/VALID_IP/")
 
-  # Inverted because we will use it as exit code
-  if [[ "${is_valid}" != "VALID_IP" ]]; then
-    IP_VALID=1
-  else
+  # Inverted because we will use it as exit code.
+  if [[ "${is_valid}" == "VALID_IP" ]]; then
     IP_VALID=0
   fi
 }
@@ -148,16 +155,16 @@ check_valid() {
 # ------------------------------------------
 # Basics
 
-# @purpose: Parse command line arguments
+# @purpose: Parse command line arguments.
 parse_args() {
 
-  # If no argument is passed, just enter HomeSetup directory
+  # If no argument is passed, just enter HomeSetup directory.
   if [[ ${#} -eq 0 ]]; then
     usage 0
   fi
 
   # Loop through the command line options.
-  # Short opts: -<C>, Long opts: --<Word>
+  # Short opts: -<C>, Long opts: --<Word>.
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
       -h | --help)
@@ -172,6 +179,9 @@ parse_args() {
       -i | --info)
         EXTRA_INFO=1
         ;;
+      -[.*])
+        quit 1 "## Invalid option: ${1}"
+        ;;
 
       *)
         break
@@ -184,7 +194,7 @@ parse_args() {
   IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
 }
 
-# @purpose: Program entry point
+# @purpose: Program entry point.
 main() {
 
   parse_args "${@}"
@@ -195,11 +205,11 @@ main() {
     if [[ ${SILENT} -eq 0 ]]; then
       check_class
       check_scope
-      echo "Valid IP: ${IP_ADDRESS}, Class: $IP_CLASS, Scope: $IP_SCOPE"
+      echo "Valid IP: ${IP_ADDRESS}, Class: ${IP_CLASS}, Scope: ${IP_SCOPE}"
       [[ ${EXTRA_INFO} -eq 0 ]] || __hhs_ip_info "${IP_ADDRESS}"
     fi
   else
-    [[ ${SILENT} -eq 0 ]] && echo "## Invalid IP: ${IP_ADDRESS} ##"
+    [[ ${SILENT} -eq 0 ]] && echo "${RED}## Invalid IP: ${IP_ADDRESS} ##${NC}"
   fi
 }
 

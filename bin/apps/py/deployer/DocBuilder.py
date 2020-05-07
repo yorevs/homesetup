@@ -22,7 +22,7 @@ class Readme:
     def __init__(self):
         self.top_level_dir = GitUtils.top_level_dir()
         # self.file = '{}/README.md'.format(self.top_level_dir)
-        self.file = '../samples/README.md'
+        self.file = '../sample-data/README.md'
         with open(self.file, 'r') as fh:
             regex = re.compile(r'(^%.*%$)')
             self.lines = fh.readlines()

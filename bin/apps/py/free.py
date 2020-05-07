@@ -17,6 +17,9 @@ import re
 import subprocess
 import sys
 
+# This application name.
+from hhslib.commons import human_readable_bytes
+
 APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
@@ -26,7 +29,7 @@ VERSION = (0, 9, 0)
 USAGE = """
 Report system memory usage.
 
-Usage: python {}
+Usage: {}
 """.format(APP_NAME)
 
 
@@ -40,28 +43,6 @@ def usage(exit_code=0):
 def version():
     print('{} v{}.{}.{}'.format(APP_NAME, VERSION[0], VERSION[1], VERSION[2]))
     sys.exit(0)
-
-
-def human_readable(str_size):
-    byte_size = float(str_size)
-    kb, mb, gb, tb = 2 ** 10, 2 ** 20, 2 ** 30, 2 ** 40
-    if 0 <= byte_size <= kb:
-        ret_val = '%3.2f' % byte_size
-        ret_unit = '[B]'
-    elif kb < byte_size <= mb:
-        ret_val = '%3.2f' % (byte_size / kb)
-        ret_unit = '[Kb]'
-    elif mb < byte_size <= gb:
-        ret_val = '%3.2f' % (byte_size / mb)
-        ret_unit = '[Mb]'
-    elif gb < byte_size <= tb:
-        ret_val = '%3.2f' % (byte_size / gb)
-        ret_unit = '[Gb]'
-    else:
-        ret_val = '%3.2f' % (byte_size / tb)
-        ret_unit = '[Tb]'
-
-    return ret_val, ret_unit
 
 
 # @purpose: Parse the command line arguments and execute the program accordingly.
@@ -98,11 +79,11 @@ def main():
         row_elements = sep.split(row_text)
         vm_stats[(row_elements[0])] = int(row_elements[1].strip('\\.')) * 4096
 
-    wired, wu = human_readable(vm_stats["Pages wired down"])
-    active, au = human_readable(vm_stats["Pages active"])
-    inactive, iu = human_readable(vm_stats["Pages inactive"])
-    free, fu = human_readable(vm_stats["Pages free"])
-    real, ru = human_readable(rss_total)  # Total memory
+    wired, wu = human_readable_bytes(vm_stats["Pages wired down"])
+    active, au = human_readable_bytes(vm_stats["Pages active"])
+    inactive, iu = human_readable_bytes(vm_stats["Pages inactive"])
+    free, fu = human_readable_bytes(vm_stats["Pages free"])
+    real, ru = human_readable_bytes(rss_total)  # Total memory
 
     print(' ')
     print('    Wired Memory: %06s %s' % (wired, wu))
