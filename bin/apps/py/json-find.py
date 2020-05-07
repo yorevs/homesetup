@@ -30,7 +30,7 @@ APP_VERSION = (0, 9, 0)
 USAGE = """
 Find a json path from a json string
 
-Usage: {} -f <filename> -a <alias_to_find>
+Usage: {} -f <filename> -a <search_path>
 """.format(APP_NAME)
 
 

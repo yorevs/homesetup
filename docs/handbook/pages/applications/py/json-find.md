@@ -19,12 +19,10 @@
 
 ## Json-Find application
 
-## Free application
-
 ```bash
-Report system memory usage.
+Find a json path from a json string
 
-Usage: python free.py
+Usage: json-find.py -f <filename> -a <search_path>
 ```
 
 ##### **Purpose**:
@@ -35,10 +33,13 @@ Find an object from the json string or json file.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: -
+##### **Parameters**: 
+
+  - $1 _Required_ : The json filename.
+  - $2 _Required_ : The search_path to be found.
 
 ##### **Examples:**
 
 ```bash
-  $ free.py
+  $ json-find.py -f lib/hhslib/jsonutils/tests/resources/json_utils_sample.json -a elem3
 ```

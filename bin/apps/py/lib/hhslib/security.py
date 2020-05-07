@@ -27,20 +27,24 @@ def decode(file_path, outfile):
 
 
 # @purpose: Encrypt file using gpg
-def encrypt(file_path, outfile, pass_phrase):
+def encrypt(file_path, outfile, passphrase, cipher_algo='AES256', digest_algo='SHA512'):
     cmd_args = [
-        'gpg', '--quiet', '--yes', '--batch', '--symmetric',
-        '--passphrase={}'.format(pass_phrase),
+        'gpg', '--quiet', '--yes', '--batch', '--symmetric', 
+        '--cipher-algo', cipher_algo,
+        '--digest-algo', digest_algo,
+        '--passphrase={}'.format(passphrase),
         '--output', outfile, file_path
     ]
     subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
 
 
-# @purpose: Decode and then, decrypt the vault file
-def decrypt(filepath, outfile, pass_phrase, digest_algo='SHA512'):
+# @purpose: Decrypt file using gpg
+def decrypt(filepath, outfile, passphrase, cipher_algo='AES256', digest_algo='SHA512'):
     cmd_args = [
-        'gpg', '--quiet', '--yes', '--batch', '--digest-algo', digest_algo,
-        '--passphrase={}'.format(pass_phrase),
+        'gpg', '--quiet', '--yes', '--batch', '--symmetric', 
+        '--cipher-algo', cipher_algo,
+        '--digest-algo', digest_algo,
+        '--passphrase={}'.format(passphrase),
         '--output', outfile, filepath
     ]
     subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
