@@ -8,8 +8,16 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 [kac]: https://keepachangelog.com/en/1.0.0/
 [semver]: https://semver.org/
 
-
 ## Unreleased
+
+### Added
+
+### Changed
+
+### Fixed
+
+
+## 1.4.0 - 2020-01-21
 
 ### Added
 
@@ -20,6 +28,9 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 * New __hhs_ascof function.
 * New commit_msg git hook.
 * Deployer tool scratch.
+* Added Linux compatibility.
+* Added hhs python library.
+* Added a user handbook.
 
 ### Changed
 
@@ -37,6 +48,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 * Prompt style PS1 from $> to $
 * Changed auto-completions: reformatting with 2 spaces.
 * Changed improved alias documentations. Added a tag @alias to be found later by the deployer tool.
+* Improved firebase plugin: it's now python instead of bash.
 
 ### Fixed
 
@@ -50,6 +62,8 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 * Fixed installation when git clone was not called before the dotfiles search and font copy.
 * Fixed prepared_commit_message git hook
 * Fixed __hhs_docker_kill_all stopping at first error.
+* Fixed all non-Linux compatible scripts, functions and aliases.
+* Fixes various bugfixes and improvements.
 
 
 ## 1.3.0 - 2020-01-21
