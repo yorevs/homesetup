@@ -33,4 +33,26 @@
 
 ### Gradle functions
 
-TODO
+#### __hhs_gradle
+
+```bash
+Usage: __hhs_gradle <gradle_task>
+```
+
+##### **Purpose**:
+
+Prefer using the wrapper instead of the installed command itself.
+
+##### **Returns**:
+
+**0** if the command executed successfully; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1..$N _Required_ : The gradle tasks to call.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_gradle clean build
+```

@@ -119,7 +119,7 @@ fi
 
 # Gradle shortcuts
 if __hhs_has "gradle"; then
-  __hhs_alias gw='__hhs_gradlew'
+  __hhs_alias gw='__hhs_gradle'
   __hhs_alias gwb='__hhs_gradle_build'
   __hhs_alias gwr='__hhs_gradle_run'
   __hhs_alias gwi='__hhs_gradle_init'

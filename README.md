@@ -318,7 +318,6 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | wget      | If **wget** is not available, use **curl** instead                    |
 | ps1       | Make _PS1_ prompt active                                              |
 | ps2       | Make _PS2_ prompt active                                              |
-| please    | Execute the previous command again, but this time running with sudo   |
 
 ### HomeSetup (HHS)
 
@@ -446,7 +445,6 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | ------------------------- | -------------------------------------------- |
 | __hhs_docker_images       | Docker - Enhancement for docker images       |
 | __hhs_docker_service      | Docker - Shortcut for docker service         |
-| __hhs_docker_logs         | Docker - Shortcut for docker logs            |
 | __hhs_docker_remove       | Docker - Shortcut for docker container rm    |
 | __hhs_docker_remove_image | Docker - Shortcut for docker rmi             |
 | __hhs_docker_ps           | Docker - Enhancement for docker ps           |
@@ -543,7 +541,7 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 |                       | __hhs_git_show_changes       | List all changed files from a commit ID                                            |
 |                       | __hhs_git_branch_select      | Select and checkout a local or remote branch                                       |
 |                       | __hhs_git_pull_all           | Search and pull projects from the specified path using the given repository/branch |
-| hhs-gradle-tools.bash | __hhs_gradlew                | Prefer using the wrapper instead of the command itself                             |
+| hhs-gradle-tools.bash | __hhs_gradle                | Prefer using the wrapper instead of the command itself                             |
 
 ## Applications
 

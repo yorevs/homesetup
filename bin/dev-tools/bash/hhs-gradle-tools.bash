@@ -10,14 +10,17 @@
 
 if __hhs_has "gradle"; then
 
-  # @function: Prefer using the wrapper instead of the command itself.
-  function __hhs_gradlew() {
+  # @function: Prefer using the wrapper instead of the installed command itself.
+  # @param $1..$N [Req] : The gradle tasks to call.
+  function __hhs_gradle() {
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <gradle_task>"
       return 1
     elif [[ -f "./gradlew" ]]; then
+      echo "./gradlew ${*}"
       ./gradlew "$@"
     else
+      echo "gradle ${*}"
       \gradle "$@"
     fi
 

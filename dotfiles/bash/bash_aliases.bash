@@ -135,8 +135,6 @@ alias time-ms='python -c "import time; print(int(round(time.time() * 1000)))"'
 
 # @alias: If `wget' is not available, use `curl' instead
 __hhs_has "wget" || alias wget='\curl -O'
-# @alias: Execute the previous command again, but this time running with sudo.
-alias please='sudo !!'
 
 # @alias: Make PS1 prompt active
 alias ps1='export PS1=$PS1_STYLE'
@@ -379,8 +377,6 @@ if __hhs_has "docker" && docker info &> /dev/null; then
   alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'
   # @alias: Docker - Shortcut for `docker service'
   alias __hhs_docker_service='docker service'
-  # @alias: Docker - Shortcut for `docker logs'
-  alias __hhs_docker_logs='docker logs'
   # @alias: Docker - Shortcut for `docker container rm'
   alias __hhs_docker_remove='docker container rm'
   # @alias: Docker - Shortcut for `docker rmi'
