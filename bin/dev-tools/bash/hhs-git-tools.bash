@@ -145,7 +145,7 @@ if __hhs_has "git"; then
   # @function: Display a file diff comparing the version between the first and second commit IDs.
   # @param $1 [Req] : The first commit ID.
   # @param $2 [Req] : The second commit ID.
-  # @param $3 [Req] : The filename to be compared.
+  # @param $3 [Req] : The file to be compared.
   function __hhs_git_show_file_diff() {
     if [[ $# -ne 3 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <first_commit_id> <second_commit_id> <filename>"
@@ -172,7 +172,7 @@ if __hhs_has "git"; then
   }
 
   # @function: List all changed files from a commit ID.
-  # @param $1 [Req] : The commit ID
+  # @param $1 [Req] : The commit ID.
   function __hhs_git_show_changes() {
     if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} <commit_id>"
