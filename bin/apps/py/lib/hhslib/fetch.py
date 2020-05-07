@@ -11,6 +11,8 @@
 import json
 import subprocess
 
+from hhslib.commons import syserr
+
 from colors import cprint, Colors
 
 
@@ -55,8 +57,8 @@ def fetch(url, method='GET', headers=None, body=None, silent=True):
         response = subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
         return json.dumps(response).strip()
     except subprocess.CalledProcessError as err:
-        print("Failed to fetch: method={} headers={} body={} url={} \t => {}"
-              .format(method, headers if headers else '[]', body if body else '', url, err.message))
+        syserr("Failed to fetch: method={} headers={} body={} url={} \t => {}"
+               .format(method, headers if headers else '[]', body if body else '', url, err.message))
         return None
 
 
@@ -83,4 +85,3 @@ def put(url, body, headers=None, silent=False):
 # @purpose: TODO
 def patch(url, body, headers=None, silent=False):
     return fetch(url, 'PATCH', headers, body, silent)
-

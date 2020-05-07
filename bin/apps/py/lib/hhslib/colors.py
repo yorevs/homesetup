@@ -9,7 +9,11 @@
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
 
+
 # @purpose: Terminal colors
+from hhslib.commons import sysout
+
+
 class Colors:
     def __init__(self):
         pass
@@ -24,6 +28,6 @@ class Colors:
 
 # @purpose: Colored print
 def cprint(color, message):
-    print("{}{}{}".format(color, message, Colors.NC))
+    sysout("{}{}{}".format(color, message, Colors.NC))
 
 

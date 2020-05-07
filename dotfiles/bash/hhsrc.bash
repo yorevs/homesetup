@@ -86,7 +86,7 @@ function __hhs_log() {
 # @function: Replacement for the source bash command
 # @param $1 [Req] : Path to the file to be source'd
 function __hhs_source() {
-  local filepath="$1"
+  local file_path="$1"
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <filepath>"
     return 1

@@ -9,8 +9,8 @@
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
 
-import os
 import logging as log
+import os
 import sys
 
 from colors import cprint, Colors
@@ -33,7 +33,7 @@ def log_init(log_file, level=log.DEBUG, log_fmt=DEFAULT_LOG_FMT, max_log_size=MA
         format=log_fmt,
         level=level,
         filemode=f_mode)
-    
+
     return log
 
 
@@ -56,7 +56,7 @@ def check_arguments(args, args_num=0):
 def exit_handler(signum=0, frame=None):
     if signum != 0 and frame is not None:
         log.warn('Signal handler hooked signum={} frame={}'.format(signum, frame))
-        print('')
+        sysout('')
         ret_val = 1
     else:
         log.info('Exit handler called')
@@ -92,3 +92,15 @@ def human_readable_bytes(str_size):
         ret_unit = '[Tb]'
 
     return ret_val, ret_unit
+
+
+# @purpose: Print the unicode string
+def sysout(string):
+    sys.stdout.write(string.encode('utf-8').decode('unicode-escape'))
+
+
+# @purpose: Print the unicode string
+def syserr(string):
+    sys.stderr.write(string.encode('utf-8').decode('unicode-escape'))
+
+

@@ -15,6 +15,8 @@ import os
 import sys
 import re
 
+from hhslib.commons import sysout
+
 # This application name.
 APP_NAME = os.path.basename(__file__)
 
@@ -41,11 +43,6 @@ def version():
     sys.exit(0)
 
 
-# @purpose: Print the unicode string
-def sysout(string):
-    sys.stdout.write(string.encode('utf-8').decode('unicode-escape'))
-
-
 args = sys.argv[1:]
 str_code = ''.join(args)
 
@@ -55,4 +52,4 @@ if str_code == '-v':
 if not re.match(r"^[a-fA-F0-9]{4}$", str_code):
     usage()
 else:
-    sysout('\\u%s' % str_code)
+    sysout('\\u{}'.format(str_code))

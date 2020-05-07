@@ -13,34 +13,34 @@ import subprocess
 
 
 # @purpose: Encode file into base64
-def encode(filepath, outfile):
-    with open(filepath, 'r') as in_file:
+def encode(file_path, outfile):
+    with open(file_path, 'r') as in_file:
         with open(outfile, 'w') as out_file:
             out_file.write(str(base64.b64encode(in_file.read())))
 
 
 # @purpose: Decode file from base64
-def decode(filepath, outfile):
-    with open(filepath, 'r') as in_file:
+def decode(file_path, outfile):
+    with open(file_path, 'r') as in_file:
         with open(outfile, 'w') as out_file:
             out_file.write(str(base64.b64decode(in_file.read())))
 
 
 # @purpose: Encrypt file using gpg
-def encrypt(filepath, outfile, passphrase):
+def encrypt(file_path, outfile, pass_phrase):
     cmd_args = [
         'gpg', '--quiet', '--yes', '--batch', '--symmetric',
-        '--passphrase={}'.format(passphrase),
-        '--output', outfile, filepath
+        '--passphrase={}'.format(pass_phrase),
+        '--output', outfile, file_path
     ]
     subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
 
 
 # @purpose: Decode and then, decrypt the vault file
-def decrypt(filepath, outfile, passphrase):
+def decrypt(filepath, outfile, pass_phrase, digest_algo='SHA512'):
     cmd_args = [
-        'gpg', '--quiet', '--yes', '--batch', '--digest-algo', 'SHA512',
-        '--passphrase={}'.format(passphrase),
+        'gpg', '--quiet', '--yes', '--batch', '--digest-algo', digest_algo,
+        '--passphrase={}'.format(pass_phrase),
         '--output', outfile, filepath
     ]
     subprocess.check_output(cmd_args, stderr=subprocess.STDOUT)
