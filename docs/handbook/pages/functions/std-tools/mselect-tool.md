@@ -1,4 +1,4 @@
-# HomeSetup MSelect Tool Handbook
+# HomeSetup Standard-Tools Functions Handbook
 
 ## Table of contents
 

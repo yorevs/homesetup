@@ -167,7 +167,7 @@ if __hhs_has netstat; then
 
   # @function: Check the state of local port(s).
   # @param $1 [Req] : The port number regex.
-  # @param $2 [Opt] : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ].
+  # @param $2 [Opt] : The port state to match.
   function __hhs_port_check() {
   
     local state port states

@@ -1,4 +1,4 @@
-# HomeSetup Shell Utilities Functions Handbook
+# HomeSetup Standard-Tools Functions Handbook
 
 ## Table of contents
 

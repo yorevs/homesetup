@@ -1,4 +1,4 @@
-# HomeSetup Tool Checks Functions Handbook
+# HomeSetup Standard-Tools Functions Handbook
 
 ## Table of contents
 

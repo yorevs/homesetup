@@ -1,4 +1,4 @@
-# HomeSetup File Related Functions Handbook
+# HomeSetup Standard-Tools Functions Handbook
 
 ## Table of contents
 

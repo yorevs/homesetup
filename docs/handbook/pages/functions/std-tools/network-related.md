@@ -1,4 +1,4 @@
-# HomeSetup Network Related Functions Handbook
+# HomeSetup Standard-Tools Functions Handbook
 
 ## Table of contents
 
@@ -174,15 +174,15 @@ $ __hhs_ip_lookup www.google.com
 ### __hhs_port_check
 
 ```bash
-Usage: 
+Usage: __hhs_port_check <port_number> [port_state]
+
+  Notes: 
+    States: One of [CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT]
 ```
 
 ##### **Purpose**:
 
-Usage: __hhs_port_check <port_number> [port_state]
-
-  Notes:
-    States: One of [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ]
+Check the state of local port(s).
 
 ##### **Returns**:
 
@@ -191,7 +191,7 @@ Usage: __hhs_port_check <port_number> [port_state]
 ##### **Parameters**: 
 
   - $1 _Required_ : The port number regex.
-  - $2 _Optional_ : The port state to match. One of: [ CLOSE_WAIT, ESTABLISHED, FIN_WAIT_2, TIME_WAIT, LISTEN ].
+  - $2 _Optional_ : The port state to match.
 
 ##### **Examples:**
 

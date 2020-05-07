@@ -1,4 +1,4 @@
-# HomeSetup Docker Functions Handbook
+# HomeSetup Developer-Tools Functions Handbook
 
 ## Table of contents
 

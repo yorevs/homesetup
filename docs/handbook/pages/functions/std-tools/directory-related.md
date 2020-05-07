@@ -46,7 +46,7 @@ Usage: __hhs_change_dir [-L|-P] [dir]
 
 ##### **Purpose**:
 
-Change the current working directory to a specific Folder.
+# HomeSetup Standard-Tools Functions Handbook
 
 ##### **Returns**:
 
