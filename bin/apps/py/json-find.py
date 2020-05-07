@@ -3,7 +3,7 @@
 """
   @package: -
    @script: json-find.py
-  @purpose: Find a object from the json string or file.
+  @purpose: Find an object from the json string or json file.
   @created: Jan 20, 2017
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
    @mailto: yorevs@hotmail.com
@@ -18,7 +18,7 @@ import os
 import getopt
 import json
 
-from jsonutils import JsonUtils
+from hhslib.jsonutils.JsonUtils import JsonUtils
 
 # This application name.
 APP_NAME = os.path.basename(__file__)
@@ -49,7 +49,7 @@ def version():
 # @purpose: Parse the command line arguments and execute the program accordingly.
 def main(argv):
 
-    if len(argv) < 1 or argv[1] in ['-h', '--help']:
+    if len(argv) < 1 or argv[0] in ['-h', '--help']:
         usage()
 
     f_json = None
@@ -58,7 +58,7 @@ def main(argv):
     index = 1
     j_utils = JsonUtils()
 
-    opts, args = getopt.getopt(sys.argv[1:], 'f:a:', ['file', 'alias'])
+    opts, args = getopt.getopt(argv[0:], 'f:a:', ['file', 'alias'])
 
     for opt, args in opts:
         if opt in ('-f', '--file'):

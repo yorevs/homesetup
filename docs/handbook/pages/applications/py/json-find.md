@@ -19,4 +19,26 @@
 
 ## Json-Find application
 
-TODO
+## Free application
+
+```bash
+Report system memory usage.
+
+Usage: python free.py
+```
+
+##### **Purpose**:
+
+Find an object from the json string or json file.
+
+##### **Returns**:
+
+**0** if the command executed successfully; **non-zero** otherwise.
+
+##### **Parameters**: -
+
+##### **Examples:**
+
+```bash
+  $ free.py
+```

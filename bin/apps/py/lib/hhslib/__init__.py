@@ -1,6 +1,6 @@
 # _*_ coding: utf-8 _*_
 #
-# Package: base
+# Package: hhslib
 
-__all__ = ["colors", "commons", "fetch", "security"]
+__all__ = ["colors", "commons", "fetch", "security", "jsonutils"]
 
