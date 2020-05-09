@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl' 'python' 'pip' 'gpg')
+  REQUIRED_TOOLS=('git' 'curl' 'python3' 'gpg')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools
@@ -223,17 +223,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}Checking required tools ..."
     echo ''
-    
-    # shellcheck disable=SC2206
-    # YUM doesn't have the package python and pip.
-    if has "yum"; then
-      tools="${REQUIRED_TOOLS[*]//python/python3}"
-      tools="${tools//pip/python-pip3}"
-      REQUIRED_TOOLS=(${tools})
-    elif has "apt-get"; then
-      tools="${REQUIRED_TOOLS[*]//pip/python-pip}"
-      REQUIRED_TOOLS=(${tools})
-    fi
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
