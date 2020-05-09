@@ -452,8 +452,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # Removing the old .profile if exists
     if [[ -f "${HOME}/.profile" ]]; then
-      [[ -f "${HOME}/.profile" ]] &&
-        \cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" &&
+        \mv -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig"
         echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
     fi
 
