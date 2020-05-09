@@ -223,6 +223,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}Checking required tools ..."
     echo ''
+    
+    # shellcheck disable=SC2206
+    # YUM doesn't have the package python and pip.
+    if has "yum"; then
+      tools="${REQUIRED_TOOLS[*]//python/python3}"
+      tools="${tools//pip/pip3}"
+      REQUIRED_TOOLS=(${tools})
+    fi
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
@@ -244,14 +252,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   # shellcheck disable=SC2086
   # Install missing tools
   install_missing_tools() {
-    
-    # shellcheck disable=SC2206
-    # YUM doesn't have the package python and pip.
-    if has "yum"; then
-      tools="${REQUIRED_TOOLS[*]//python/python3}"
-      tools="${tools//pip/pip3}"
-      REQUIRED_TOOLS=(${tools})
-    fi
     
     echo -e "${ORANGE}"
     read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
@@ -541,7 +541,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  clear
+  has "yum" && clear
   check_current_shell
   check_inst_method "$@"
 }
