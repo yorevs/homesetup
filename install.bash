@@ -201,14 +201,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     remote)
       clone_repository
       install_dotfiles
-      check_installed
       compatibility_check
+      check_installed
       activate_dotfiles
       ;;
     local | repair)
       install_dotfiles
-      check_installed
       compatibility_check
+      check_installed
       activate_dotfiles
       ;;
     *)
@@ -437,12 +437,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       tools="${tools//pip/pip3}"
       REQUIRED_TOOLS=(${tools})
     fi
-    
-    # Link whatever python is available on the system
-    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sfv '/usr/bin/python3' '/usr/bin/python'
-    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sfv '/usr/bin/python2' '/usr/bin/python'
-    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sfv '/usr/bin/pip3' '/usr/bin/pip'
-    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sfv '/usr/bin/pip2' '/usr/bin/pip'
   }
 
   # Check installed tools
@@ -493,6 +487,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
     fi
+    
+    # Link whatever python is available on the system
+    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sfv '/usr/bin/python3' '/usr/bin/python'
+    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sfv '/usr/bin/python2' '/usr/bin/python'
+    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sfv '/usr/bin/pip3' '/usr/bin/pip'
+    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sfv '/usr/bin/pip2' '/usr/bin/pip'
     
     # Install HomeSetup python library
     echo -en "\n${WHITE}Installing HomeSetup python library"
