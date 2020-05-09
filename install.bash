@@ -47,8 +47,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl' 'python3-pip' 'gpg')
-  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
+  REQUIRED_TOOLS=('git' 'curl' 'gpg')
+  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3')
+  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python3-pip')
 
   # Missing HomeSetup required tools
   MISSING_TOOLS=()
@@ -219,10 +220,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   
   # Check installed tools
   check_installed_tools() {
-
-    echo ''
-    echo -e "${WHITE}Checking required tools ...${NC}"
-    echo ''
     
     if has 'apt-get'; then
       echo -e '[Debian] based detected, using apt-get'
@@ -233,6 +230,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
+
+    echo ''
+    echo -e "${WHITE}Checking required tools ...${NC}"
+    echo ''
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
@@ -264,12 +265,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo ''
       echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        ${SUDO} brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        ${SUDO} brew install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -307,15 +308,15 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_dotfiles() {
 
     # Create all user custom files.
-    [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
-    [[ -f "${HOME}/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-    [[ -f "${HOME}/.aliases" ]] || touch "${HOME}/.aliases"
-    [[ -f "${HOME}/.colors" ]] || touch "${HOME}/.colors"
-    [[ -f "${HOME}/.env" ]] || touch "${HOME}/.env"
-    [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
-    [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
-    [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
-    [[ -f "${HHS_DIR}/.path" ]] || touch "${HHS_DIR}/.path"
+    [[ -f "${HOME}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+    [[ -f "${HOME}/.inputrc" ]] || \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    [[ -f "${HOME}/.aliases" ]] || \touch "${HOME}/.aliases"
+    [[ -f "${HOME}/.colors" ]] || \touch "${HOME}/.colors"
+    [[ -f "${HOME}/.env" ]] || \touch "${HOME}/.env"
+    [[ -f "${HOME}/.functions" ]] || \touch "${HOME}/.functions"
+    [[ -f "${HOME}/.profile" ]] || \touch "${HOME}/.profile"
+    [[ -f "${HOME}/.prompt" ]] || \touch "${HOME}/.prompt"
+    [[ -f "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
@@ -355,9 +356,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dotfile into ${HOME}/.hhs
-        [[ -s "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
+        [[ -s "${dotfile}" ]] && \mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
+        echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
         [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
         [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
@@ -372,9 +373,9 @@ Usage: $APP_NAME [OPTIONS] <args>
         [[ "$ANS" != 'y' && "$ANS" != 'Y' ]] && continue
         echo ''
         # Backup existing dotfile into ${DOTFILES_DIR}
-        [[ -s "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
+        [[ -s "${dotfile}" ]] && \mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
+        echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
         [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
         [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
@@ -393,7 +394,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking apps from ${APPS_DIR} to ${BIN_DIR} ${BLUE}"
     if find "${APPS_DIR}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
-      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec \ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
@@ -404,7 +405,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking auto-completes from ${COMPLETIONS_DIR} to ${BIN_DIR} ${BLUE}"
     if find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" \) \
-      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec \ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
@@ -416,7 +417,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
       \( -iname "**.otf" -o -iname "**.ttf" \) \
-      -exec cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
+      -exec \cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -426,9 +427,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place"
-    rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
+    \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
-      -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
+      -exec \ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
@@ -450,9 +451,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # Removing the old .profile if exists
-    if [[ -L "${HOME}/.profile" ]]; then
+    if [[ -f "${HOME}/.profile" ]]; then
       [[ -f "${HOME}/.profile" ]] &&
-        cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" &&
+        \cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" &&
         echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
     fi
 
@@ -463,34 +464,34 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HOME}/.firebase" ]] && mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
 
     # Removing the old ${HOME}/bin folder
-    if [[ -L "${HOME}/bin" || -d "${HOME}/bin" ]]; then
-      rm -f "${HOME:?}/bin"
+    if [[ -L "${HOME}/bin" ]]; then
+      \rm -f "${HOME:?}/bin"
       echo -e "\n${ORANGE}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     if [[ -L "${HOME}/.bash_aliasdef" ]]; then
-      rm -f "${HOME}/.bash_aliasdef"
+      \rm -f "${HOME}/.bash_aliasdef"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.aliasdef" ]]; then
-      cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
-      cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+      \cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
+      \cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .inputrc Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.inputrc" ]]; then
-      cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
-      cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+      \cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
+      \cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving .path file to .hhs
     if [[ -f "${HOME}/.path" ]]; then
-      mv -f "${HOME}/.path" "${HHS_DIR}/.path"
+      \mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
 
@@ -502,11 +503,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     
     # Removing the old python lib directories and links
     [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] && \
-      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
+      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] && \
-      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
+      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] && \
-      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
+      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
   }
 
   # Reload the terminal and apply installed files.
@@ -539,13 +540,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ "Darwin" == "${MY_OS}" ]]; then
-      date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
+      \date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
     else
-      date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
+      \date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
     fi
   }
 
-  has "yum" && clear
   check_current_shell
   check_inst_method "$@"
 }
