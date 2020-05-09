@@ -480,7 +480,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         if has "apt-get"; then
           sudo apt-get install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          sudo yum install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          #sudo yum install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          sudo yum install python3
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
