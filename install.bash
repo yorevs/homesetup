@@ -231,7 +231,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       tools="${tools//pip/python-pip3}"
       REQUIRED_TOOLS=(${tools})
     elif has "apt-get"; then
-      tools="${tools//pip/python-pip}"
+      tools="${REQUIRED_TOOLS[*]//pip/python-pip}"
       REQUIRED_TOOLS=(${tools})
     fi
 
