@@ -435,8 +435,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       tools="${REQUIRED_TOOLS[*]//python/python3}"
       tools="${tools//pip/pip3}"
       REQUIRED_TOOLS=(${tools})
-      [[ ! -f "/usr/bin/python" ]] && ln -sf /usr/bin/python3 /usr/bin/python
-      [[ ! -f "/usr/bin/pip" ]] && ln -sf /usr/bin/pip3 /usr/bin/pip
+      [[ ! -f '/usr/bin/python' ]] && ln -sf '/usr/bin/python3' '/usr/bin/python'
+      [[ ! -f '/usr/bin/pip' ]] && ln -sf '/usr/bin/pip3' '/usr/bin/pip'
     fi
   }
 
@@ -478,9 +478,9 @@ Usage: $APP_NAME [OPTIONS] <args>
         brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          sudo apt-get -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          sudo apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          sudo yum -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          sudo yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
