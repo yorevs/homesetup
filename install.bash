@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools
-  REQUIRED_TOOLS=('python' 'curl' 'gpg' 'curl')
+  REQUIRED_TOOLS=('git' 'curl' 'python' 'gpg')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools
@@ -477,10 +477,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       if [[ "Darwin" == "${MY_OS}" ]]; then
         brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
+        command -v sudo && SUDO=sudo
         if has "apt-get"; then
-          sudo apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          sudo yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
