@@ -202,11 +202,13 @@ Usage: $APP_NAME [OPTIONS] <args>
       clone_repository
       install_dotfiles
       check_installed
+      compatibility_check
       activate_dotfiles
       ;;
     local | repair)
       install_dotfiles
       check_installed
+      compatibility_check
       activate_dotfiles
       ;;
     *)
@@ -363,8 +365,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
     fi
-
-    compatibility_check
   }
 
   # Check for backward HHS compatibility
@@ -437,11 +437,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       tools="${tools//pip/pip3}"
       REQUIRED_TOOLS=(${tools})
     fi
+    
     # Link whatever python is available on the system
-    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sf '/usr/bin/python3' '/usr/bin/python'
-    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sf '/usr/bin/python2' '/usr/bin/python'
-    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sf '/usr/bin/pip3' '/usr/bin/pip'
-    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sf '/usr/bin/pip2' '/usr/bin/pip'
+    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sfv '/usr/bin/python3' '/usr/bin/python'
+    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sfv '/usr/bin/python2' '/usr/bin/python'
+    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sfv '/usr/bin/pip3' '/usr/bin/pip'
+    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sfv '/usr/bin/pip2' '/usr/bin/pip'
   }
 
   # Check installed tools
