@@ -471,7 +471,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
-    if [[ -n ${QUIET} || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+    if [[ -z "${QUIET}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
       echo ''
       echo -en "${WHITE}Installing [${MISSING_TOOLS[*]}] (${MY_OS}) ..."
       if [[ "Darwin" == "${MY_OS}" ]]; then
