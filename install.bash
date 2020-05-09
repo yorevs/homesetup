@@ -439,9 +439,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
     # Link whatever python is available on the system
     [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sf '/usr/bin/python3' '/usr/bin/python'
-    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sf '/usr/bin/python2' '/usr/bin/python'
+    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sf '/usr/bin/python2' '/usr/bin/python'
     [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sf '/usr/bin/pip3' '/usr/bin/pip'
-    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sf '/usr/bin/pip2' '/usr/bin/pip'
+    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sf '/usr/bin/pip2' '/usr/bin/pip'
   }
 
   # Check installed tools
