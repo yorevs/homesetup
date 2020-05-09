@@ -260,7 +260,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
       command -v sudo && SUDO=sudo
       echo ''
-      echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) ..."
+      echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
         ${SUDO} brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
@@ -529,8 +529,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles open a new terminal window"
-    echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles ${GREEN}type: #> exec bash"
+    echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup type: ${GREEN}#> __hhs_reload"
+    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu"
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
