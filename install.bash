@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl' 'python3' 'gpg')
+  REQUIRED_TOOLS=('git' 'curl' 'python3-pip' 'gpg')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools
@@ -221,8 +221,18 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_installed_tools() {
 
     echo ''
-    echo -e "${WHITE}Checking required tools ..."
+    echo -e "${WHITE}Checking required tools ...${NC}"
     echo ''
+    
+    if has 'apt-get'; then
+      echo -e '[Debian] based detected, using apt-get'
+    elif has 'yum'; then
+      echo -e '[RedHat] based detected, using yum'
+    elif has 'brew'; then
+      echo -e '[MacOs] based detected, using brew'
+    else
+      quit 1 "Unable to find package manager for $(uname -s)"
+    fi
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
