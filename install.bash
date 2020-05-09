@@ -245,6 +245,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
     [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
     [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
+    [[ -f "${HHS_DIR}/.path" ]] || touch "${HHS_DIR}/.path"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
