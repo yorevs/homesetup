@@ -468,7 +468,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install missing tools
   install_missing_tools() {
     echo -e "${ORANGE}"
-    [[ -z ${QUIET} ]] && read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
+    read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
     if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
