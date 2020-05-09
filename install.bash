@@ -150,7 +150,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       \mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
+      \touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
       \rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
     fi
 
@@ -162,7 +162,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       # Trying to write at the HomeSetup directory to check the permissions
-      touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
+      \touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
       \rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
     fi
 
@@ -221,18 +221,20 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check installed tools
   check_installed_tools() {
     
+    local os_type pad pad_len
+    
     if has 'apt-get'; then
-      echo -e '[Debian] based detected, using apt-get'
+      os_type='Debian'
     elif has 'yum'; then
-      echo -e '[RedHat] based detected, using yum'
+      os_type='RedHat'
     elif has 'brew'; then
-      echo -e '[MacOs] based detected, using brew'
+      os_type='MacOs'
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
 
     echo ''
-    echo -e "${WHITE}Checking required tools ...${NC}"
+    echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
     echo ''
 
     pad=$(printf '%0.1s' "."{1..60})
@@ -260,6 +262,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
+    
     if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
       command -v sudo && SUDO=sudo
       echo ''
@@ -306,6 +309,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Install all dotfiles.
   install_dotfiles() {
+  
+    local dotfile
 
     # Create all user custom files.
     [[ -f "${HOME}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
@@ -394,7 +399,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking apps from ${APPS_DIR} to ${BIN_DIR} ${BLUE}"
     if find "${APPS_DIR}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
-      -exec \ln -sfv {} "${BIN_DIR}" \; \
+      -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
@@ -405,7 +410,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking auto-completes from ${COMPLETIONS_DIR} to ${BIN_DIR} ${BLUE}"
     if find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
       \( -iname "**.${SHELL_TYPE}" \) \
-      -exec \ln -sfv {} "${BIN_DIR}" \; \
+      -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
@@ -417,7 +422,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
       \( -iname "**.otf" -o -iname "**.ttf" \) \
-      -exec \cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
+      -exec cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -429,7 +434,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Linking git hooks into place"
     \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
-      -exec \ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
+      -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
@@ -453,14 +458,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Removing the old .profile if exists
     if [[ -f "${HOME}/.profile" ]]; then
         \mv -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig"
+        \touch "${HOME}/.profile"
         echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving old hhs files into the proper directory
-    [[ -f "${HOME}/.cmd_file" ]] && mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
-    [[ -f "${HOME}/.saved_dir" ]] && mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
-    [[ -f "${HOME}/.punches" ]] && mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
-    [[ -f "${HOME}/.firebase" ]] && mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
+    [[ -f "${HOME}/.cmd_file" ]] && \mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
+    [[ -f "${HOME}/.saved_dir" ]] && \mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
+    [[ -f "${HOME}/.punches" ]] && \mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
+    [[ -f "${HOME}/.firebase" ]] && \mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
 
     # Removing the old ${HOME}/bin folder
     if [[ -L "${HOME}/bin" ]]; then
