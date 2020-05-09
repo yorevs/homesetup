@@ -117,8 +117,8 @@ $ sudo chsh -s /usr/local/bin/bash
 - Darwin 
     + High Sierra and higher
 - Linux 
-    + Ubuntu 16.04 and higher
-    + CentOS 
+    + Ubuntu 16 and higher
+    + CentOS 7 and higher
 
 #### Supported Shells
 
@@ -133,8 +133,8 @@ The following software are required either to clone the repository, execute the 
 
 - **git** v2.20+ : To clone and maintain the code.
 - **curl** v7.64+ : To make http(s) requests.
-- **python** v2.7+ or v3.0+ : To run python based scripts.
-- **pip** v18+ : To install python packages.
+- **python** v3.0+ : To run python based scripts.
+- **pip3** : To install python packages.
 - **gpg** v2.2+: : To enable encryption based functions.
 
 ##### Darwin only

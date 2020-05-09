@@ -25,32 +25,33 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup GitHub repository URL.
   REPO_URL='https://github.com/yorevs/homesetup.git'
 
-  # Define the user HOME
+  # Define the user HOME.
   HOME=${HOME:-~}
 
-  # Option to allow install to be interactive
+  # Option to allow install to be interactive.
   OPT='all'
 
-  # Shell type
+  # Shell type.
   SHELL_TYPE="${SHELL##*/}"
 
-  # .dotfiles we will handle
+  # .dotfiles we will handle.
   ALL_DOTFILES=()
 
-  # Supported shell types. For now, only bash is supported
+  # Supported shell types. For now, only bash is supported.
   SUPP_SHELL_TYPES=('bash')
 
-  # Timestamp used to backup files
+  # Timestamp used to backup files.
   TIMESTAMP=$(\date "+%s%S")
 
-  # User's operating system
+  # User's operating system.
   MY_OS=$(uname -s)
 
-  # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl' 'python' 'gpg')
+  # HomeSetup required tools.
+  REQUIRED_TOOLS=('git' 'curl' 'gpg' 'python')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
+  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=()
 
-  # Missing HomeSetup required tools
+  # Missing HomeSetup required tools.
   MISSING_TOOLS=()
 
   # ICONS
@@ -59,14 +60,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
 
-  # Functions to be unset after quit
+  # Functions to be unset after quit.
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_installed_tools
     activate_dotfiles compatibility_check install_missing_tools
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
-  # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
+  # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
   # @param $2 [Opt] : The exit message to be displayed.
   quit() {
 
@@ -92,7 +93,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   }
 
   # shellcheck disable=SC2199,SC2076
-  # Check current active User shell type
+  # Check current active User shell type.
   check_current_shell() {
 
     if [[ ! " ${SUPP_SHELL_TYPES[@]} " =~ " ${SHELL##*/} " ]]; then
@@ -149,7 +150,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       \mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
-      touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
+      \touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
       \rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
     fi
 
@@ -161,7 +162,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       # Trying to write at the HomeSetup directory to check the permissions
-      touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
+      \touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
       \rm -f "${HHS_DIR:?}/tmpfile" &>/dev/null
     fi
 
@@ -217,20 +218,24 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
   
-  # Check installed tools
+  # Check installed tools.
   check_installed_tools() {
+    
+    local os_type pad pad_len
+    
+    if has 'apt-get'; then
+      os_type='Debian'
+    elif has 'yum'; then
+      os_type='RedHat'
+    elif has 'brew'; then
+      os_type='MacOs'
+    else
+      quit 1 "Unable to find package manager for $(uname -s)"
+    fi
 
     echo ''
-    echo -e "${WHITE}Checking required tools ..."
+    echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
     echo ''
-    
-    # shellcheck disable=SC2206
-    # YUM doesn't have the package python and pip.
-    if has "yum"; then
-      tools="${REQUIRED_TOOLS[*]//python/python3}"
-      tools="${tools//pip/pip3}"
-      REQUIRED_TOOLS=(${tools})
-    fi
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
@@ -257,17 +262,19 @@ Usage: $APP_NAME [OPTIONS] <args>
     read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
+    
     if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-      command -v sudo && SUDO=sudo
+      command -v sudo &>/dev/null && SUDO='sudo'
+      [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
       echo ''
-      echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) ..."
+      echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        ${SUDO} brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        ${SUDO} brew install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -275,11 +282,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
     fi
     
-    # Link whatever python is available on the system
-    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sf '/usr/bin/python3' '/usr/bin/python'
-    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sf '/usr/bin/python2' '/usr/bin/python'
-    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sf '/usr/bin/pip3' '/usr/bin/pip'
-    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sf '/usr/bin/pip2' '/usr/bin/pip'
+    # Link whatever python is available on the system.
+    if [[ -f '/usr/bin/python3' ]]; then PYTHON='/usr/bin/python3'; PIP='/usr/bin/pip3'
+    elif [[ -f '/usr/bin/python2' ]]; then PYTHON='/usr/bin/python2'; PIP='/usr/bin/pip3'; fi
+    [[ ! -f '/usr/bin/python' ]] && ${SUDO} ln -sf "${PYTHON}" '/usr/bin/python' &>/dev/null
+    [[ ! -f '/usr/bin/pip' ]] && ${SUDO} ln -sf "${PIP}" '/usr/bin/pip' &>/dev/null
     [[ -f '/usr/bin/python' && -f '/usr/bin/pip' ]] || quit 1 "${YELLOW}Unable to link python and pip to /usr/bin${NC}"
   }
 
@@ -303,17 +310,19 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Install all dotfiles.
   install_dotfiles() {
+  
+    local dotfile
 
     # Create all user custom files.
-    [[ -f "${HOME}/.aliasdef" ]] || cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
-    [[ -f "${HOME}/.inputrc" ]] || cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-    [[ -f "${HOME}/.aliases" ]] || touch "${HOME}/.aliases"
-    [[ -f "${HOME}/.colors" ]] || touch "${HOME}/.colors"
-    [[ -f "${HOME}/.env" ]] || touch "${HOME}/.env"
-    [[ -f "${HOME}/.functions" ]] || touch "${HOME}/.functions"
-    [[ -f "${HOME}/.profile" ]] || touch "${HOME}/.profile"
-    [[ -f "${HOME}/.prompt" ]] || touch "${HOME}/.prompt"
-    [[ -f "${HHS_DIR}/.path" ]] || touch "${HHS_DIR}/.path"
+    [[ -f "${HOME}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+    [[ -f "${HOME}/.inputrc" ]] || \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    [[ -f "${HOME}/.aliases" ]] || \touch "${HOME}/.aliases"
+    [[ -f "${HOME}/.colors" ]] || \touch "${HOME}/.colors"
+    [[ -f "${HOME}/.env" ]] || \touch "${HOME}/.env"
+    [[ -f "${HOME}/.functions" ]] || \touch "${HOME}/.functions"
+    [[ -f "${HOME}/.profile" ]] || \touch "${HOME}/.profile"
+    [[ -f "${HOME}/.prompt" ]] || \touch "${HOME}/.prompt"
+    [[ -f "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
@@ -353,9 +362,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dotfile into ${HOME}/.hhs
-        [[ -s "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
+        [[ -s "${dotfile}" ]] && \mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "\n${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
+        echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
         [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
         [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
@@ -370,9 +379,9 @@ Usage: $APP_NAME [OPTIONS] <args>
         [[ "$ANS" != 'y' && "$ANS" != 'Y' ]] && continue
         echo ''
         # Backup existing dotfile into ${DOTFILES_DIR}
-        [[ -s "${dotfile}" ]] && mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
+        [[ -s "${dotfile}" ]] && \mv "${dotfile}" "${HHS_DIR}/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
-        echo -en "$(ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
+        echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
         [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
         [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
@@ -424,7 +433,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place"
-    rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
+    \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
       -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
       echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
@@ -443,52 +452,52 @@ Usage: $APP_NAME [OPTIONS] <args>
     \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
   }
 
-  # Check for backward HHS compatibility
+  # Check for backward HHS compatibility.
   compatibility_check() {
 
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # Removing the old .profile if exists
-    if [[ -L "${HOME}/.profile" ]]; then
-      [[ -f "${HOME}/.profile" ]] &&
-        cp -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig" &&
+    if [[ -f "${HOME}/.profile" ]]; then
+        \mv -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig"
+        \touch "${HOME}/.profile"
         echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving old hhs files into the proper directory
-    [[ -f "${HOME}/.cmd_file" ]] && mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
-    [[ -f "${HOME}/.saved_dir" ]] && mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
-    [[ -f "${HOME}/.punches" ]] && mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
-    [[ -f "${HOME}/.firebase" ]] && mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
+    [[ -f "${HOME}/.cmd_file" ]] && \mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
+    [[ -f "${HOME}/.saved_dir" ]] && \mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
+    [[ -f "${HOME}/.punches" ]] && \mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
+    [[ -f "${HOME}/.firebase" ]] && \mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
 
     # Removing the old ${HOME}/bin folder
-    if [[ -L "${HOME}/bin" || -d "${HOME}/bin" ]]; then
-      rm -f "${HOME:?}/bin"
+    if [[ -L "${HOME}/bin" ]]; then
+      \rm -f "${HOME:?}/bin"
       echo -e "\n${ORANGE}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     if [[ -L "${HOME}/.bash_aliasdef" ]]; then
-      rm -f "${HOME}/.bash_aliasdef"
+      \rm -f "${HOME}/.bash_aliasdef"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.aliasdef" ]]; then
-      cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
-      cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
+      \cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
+      \cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .inputrc Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.inputrc" ]]; then
-      cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
-      cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+      \cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
+      \cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving .path file to .hhs
     if [[ -f "${HOME}/.path" ]]; then
-      mv -f "${HOME}/.path" "${HHS_DIR}/.path"
+      \mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
 
@@ -500,11 +509,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     
     # Removing the old python lib directories and links
     [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] && \
-      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
+      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] && \
-      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
+      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] && \
-      rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
+      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
   }
 
   # Reload the terminal and apply installed files.
@@ -529,20 +538,20 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles open a new terminal window"
-    echo -e "${YELLOW}${STAR_ICN} To check for updates type: #> ${GREEN}hhu"
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles ${GREEN}type: #> exec bash"
+    echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup type: ${GREEN}#> __hhs_reload"
+    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu"
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}README.md${WHITE} for full details about your new Terminal"
     echo -e "${NC}"
 
     if [[ "Darwin" == "${MY_OS}" ]]; then
-      date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
+      \date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
     else
-      date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
+      \date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
     fi
   }
 
-  has "yum" && clear
   check_current_shell
   check_inst_method "$@"
 }
