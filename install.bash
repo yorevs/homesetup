@@ -453,7 +453,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     for tool_name in "${REQUIRED_TOOLS[@]}"; do
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-      if has "$tool_name"; then
+      if has "${tool_name}"; then
         echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
       else
         echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
@@ -471,7 +471,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
-    if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+    if [[ -n ${QUIET} || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
       echo ''
       echo -en "${WHITE}Installing [${MISSING_TOOLS[*]}] (${MY_OS}) ..."
       if [[ "Darwin" == "${MY_OS}" ]]; then
