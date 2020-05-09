@@ -47,8 +47,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools
-  HHS_REQUIRED_TOOLS=('python' 'pip' 'curl' 'gpg' 'curl')
-  [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew' 'xcode-select')
+  REQUIRED_TOOLS=('python' 'curl' 'gpg' 'curl')
+  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools
   MISSING_TOOLS=()
@@ -432,11 +432,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     # shellcheck disable=SC2206
     # YUM doesn't have the package python and pip.
     if has "yum"; then
-      tools="${MISSING_TOOLS[*]//python/python3}"
+      tools="${REQUIRED_TOOLS[*]//python/python3}"
       tools="${tools//pip/pip3}"
-      MISSING_TOOLS=(${tools})
-      [[ ! -s "/usr/bin/python" ]] && ln -s /usr/bin/python3 /usr/bin/python
-      [[ ! -s "/usr/bin/pip" ]] && ln -s /usr/bin/pip3 /usr/bin/pip
+      REQUIRED_TOOLS=(${tools})
+      [[ ! -f "/usr/bin/python" ]] && ln -sf /usr/bin/python3 /usr/bin/python
+      [[ ! -f "/usr/bin/pip" ]] && ln -sf /usr/bin/pip3 /usr/bin/pip
     fi
   }
 
@@ -450,7 +450,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
-    for tool_name in "${HHS_REQUIRED_TOOLS[@]}"; do
+    for tool_name in "${REQUIRED_TOOLS[@]}"; do
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "$tool_name"; then
