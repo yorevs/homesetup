@@ -276,20 +276,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
     
     # Link whatever python is available on the system
-    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sfv '/usr/bin/python3' '/usr/bin/python'
-    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sfv '/usr/bin/python2' '/usr/bin/python'
-    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sfv '/usr/bin/pip3' '/usr/bin/pip'
-    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sfv '/usr/bin/pip2' '/usr/bin/pip'
-    
-    # Install HomeSetup python library
-    echo -en "\n${WHITE}Installing HomeSetup python library"
-    \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    if pip install --user . &>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-    else
-      quit 2 "Unable to install HomeSetup python library !"
-    fi
-    \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
+    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ln -sf '/usr/bin/python3' '/usr/bin/python'
+    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ln -sf '/usr/bin/python2' '/usr/bin/python'
+    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ln -sf '/usr/bin/pip3' '/usr/bin/pip'
+    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ln -sf '/usr/bin/pip2' '/usr/bin/pip'
+    [[ -f '/usr/bin/python' && -f '/usr/bin/pip' ]] || quit 1 "${YELLOW}Unable to link python and pip to /usr/bin${NC}"
   }
 
   # Clone the repository and install dotfiles.
@@ -440,6 +431,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
     fi
+    
+    # Install HomeSetup python library
+    echo -en "\n${WHITE}Installing HomeSetup python library"
+    \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
+    if pip install --user . &>/dev/null; then
+      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+    else
+      quit 2 "Unable to install HomeSetup python library !"
+    fi
+    \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
   }
 
   # Check for backward HHS compatibility
