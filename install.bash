@@ -473,16 +473,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
     if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+      command -v sudo && SUDO=sudo
       echo ''
       echo -en "${WHITE}Installing [${MISSING_TOOLS[*]}] (${MY_OS}) ..."
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        ${SUDO} brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
-        command -v sudo && SUDO=sudo
         if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
