@@ -51,7 +51,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   [[ "${MY_OS}" == "Darwin" ]] && HHS_REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools
-  HHS_MISSING_TOOLS=()
+  MISSING_TOOLS=()
 
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
@@ -363,16 +363,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
     fi
 
-    # Install HomeSetup python library
-    echo -en "\n${WHITE}Installing HomeSetup python library"
-    \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    if pip install --user . &>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-    else
-      quit 2 "Unable to install HomeSetup python library !"
-    fi
-    \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
-
     compatibility_check
   }
 
@@ -438,6 +428,16 @@ Usage: $APP_NAME [OPTIONS] <args>
       rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] && \
       rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
+      
+    # shellcheck disable=SC2206
+    # YUM doesn't have the package python and pip.
+    if has "yum"; then
+      tools="${MISSING_TOOLS[*]//python/python3}"
+      tools="${tools//pip/pip3}"
+      MISSING_TOOLS=(${tools})
+      [[ ! -s "/usr/bin/python" ]] && ln -s /usr/bin/python3 /usr/bin/python
+      [[ ! -s "/usr/bin/pip" ]] && ln -s /usr/bin/pip3 /usr/bin/pip
+    fi
   }
 
   # Check installed tools
@@ -457,11 +457,11 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
       else
         echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
-        HHS_MISSING_TOOLS+=("${tool_name}")
+        MISSING_TOOLS+=("${tool_name}")
       fi
     done
 
-    [[ ${#HHS_MISSING_TOOLS[@]} -ne 0 ]] && install_missing_tools
+    [[ ${#MISSING_TOOLS[@]} -ne 0 ]] && install_missing_tools
   }
 
   # shellcheck disable=SC2086
@@ -473,20 +473,30 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -n "$ANS" ]] && echo ''
     if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
       echo ''
-      echo -en "${WHITE}Installing [${HHS_MISSING_TOOLS[*]}] (${MY_OS}) ..."
+      echo -en "${WHITE}Installing [${MISSING_TOOLS[*]}] (${MY_OS}) ..."
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        brew install ${HHS_MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+        brew install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          sudo apt-get install ${HHS_MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+          sudo apt-get install ${MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          sudo yum install ${HHS_MISSING_TOOLS[*]} &>/dev/null || quit 2 "Failed to install: ${HHS_MISSING_TOOLS[*]}"
+          sudo yum install tools &>/dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     else
       quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
     fi
+    
+    # Install HomeSetup python library
+    echo -en "\n${WHITE}Installing HomeSetup python library"
+    \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
+    if pip install --user . &>/dev/null; then
+      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+    else
+      quit 2 "Unable to install HomeSetup python library !"
+    fi
+    \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
   }
 
   # Reload the terminal and apply installed files.

@@ -18,7 +18,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
 
     local count
 
-    if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
       return 1
     fi
