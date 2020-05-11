@@ -48,12 +48,15 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools.
   REQUIRED_TOOLS=('git' 'curl' 'gpg')
-  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
   
-  if [[ "${MY_OS}" == "Linux" ]] && has 'apt-get'; then
-    REQUIRED_TOOLS+=('python2' 'python-pip')
-  elif [[ "${MY_OS}" == "Linux" ]] && has 'yum'; then
-    REQUIRED_TOOLS+=('python2' 'python-pip2')
+  # Darwing required tools
+  if [[ "${MY_OS}" == "Darwin" ]]; then
+    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
+  elif [[ "${MY_OS}" == "Linux" ]]; then
+    # Debian required tools
+    has 'apt-get' && REQUIRED_TOOLS+=('python2' 'python-pip')
+    # RedHat required tools
+    has 'yum' && REQUIRED_TOOLS+=('python2' 'python-pip2')
   fi
 
   # Missing HomeSetup required tools.
