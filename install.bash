@@ -47,9 +47,17 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools.
-  REQUIRED_TOOLS=('git' 'curl' 'gpg' 'python')
-  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
-  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=()
+  REQUIRED_TOOLS=('git' 'curl' 'gpg')
+  
+  # Darwing required tools
+  if [[ "${MY_OS}" == "Darwin" ]]; then
+    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
+  elif [[ "${MY_OS}" == "Linux" ]]; then
+    # Debian required tools
+    has 'apt-get' && REQUIRED_TOOLS+=('python2' 'python-pip')
+    # RedHat required tools
+    has 'yum' && REQUIRED_TOOLS+=('python2' 'python-pip2')
+  fi
 
   # Missing HomeSetup required tools.
   MISSING_TOOLS=()
@@ -63,7 +71,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit.
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_installed_tools
-    activate_dotfiles compatibility_check install_missing_tools
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
@@ -201,15 +209,19 @@ Usage: $APP_NAME [OPTIONS] <args>
     case "$METHOD" in
     remote)
       check_installed_tools
+      install_missing_tools
       clone_repository
       install_dotfiles
+      configure_python
       compatibility_check
       activate_dotfiles
       ;;
     local | repair)
-      install_dotfiles
-      compatibility_check
       check_installed_tools
+      install_missing_tools
+      install_dotfiles
+      configure_python
+      compatibility_check
       activate_dotfiles
       ;;
     *)
@@ -217,12 +229,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       ;;
     esac
   }
-  
+
   # Check installed tools.
   check_installed_tools() {
-    
+
     local os_type pad pad_len
-    
+
+    has sudo &>/dev/null && SUDO='sudo'
+
     if has 'apt-get'; then
       os_type='Debian'
     elif has 'yum'; then
@@ -250,44 +264,27 @@ Usage: $APP_NAME [OPTIONS] <args>
         MISSING_TOOLS+=("${tool_name}")
       fi
     done
-
-    [[ ${#MISSING_TOOLS[@]} -ne 0 ]] && install_missing_tools
   }
 
   # shellcheck disable=SC2086
   # Install missing tools
   install_missing_tools() {
-    
-    echo -e "${ORANGE}"
-    read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
-    echo -e "${NC}"
-    [[ -n "$ANS" ]] && echo ''
-    
-    if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-      command -v sudo &>/dev/null && SUDO='sudo'
+
+    if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
       echo ''
-      echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
+      echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${MY_OS}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        ${SUDO} brew install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
-    else
-      quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
     fi
-    
-    # Link whatever python is available on the system.
-    if [[ -f '/usr/bin/python3' ]]; then PYTHON='/usr/bin/python3'; PIP='/usr/bin/pip3'
-    elif [[ -f '/usr/bin/python2' ]]; then PYTHON='/usr/bin/python2'; PIP='/usr/bin/pip3'; fi
-    [[ ! -f '/usr/bin/python' ]] && ${SUDO} ln -sf "${PYTHON}" '/usr/bin/python' &>/dev/null
-    [[ ! -f '/usr/bin/pip' ]] && ${SUDO} ln -sf "${PIP}" '/usr/bin/pip' &>/dev/null
-    [[ -f '/usr/bin/python' && -f '/usr/bin/pip' ]] || quit 1 "${YELLOW}Unable to link python and pip to /usr/bin${NC}"
   }
 
   # Clone the repository and install dotfiles.
@@ -310,7 +307,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Install all dotfiles.
   install_dotfiles() {
-  
+
     local dotfile
 
     # Create all user custom files.
@@ -428,7 +425,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
-    
+
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
 
     # Linking HomeSetup git hooks into place
@@ -440,12 +437,37 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
     fi
-    
-    # Install HomeSetup python library
-    echo -en "\n${WHITE}Installing HomeSetup python library"
+  }
+
+  # Configure python and HHS python library
+  configure_python() {
+    # Detecting system python and pip versions.
+    PYTHON=$(command -v python 2>/dev/null)
+    if [[ -n "${PYTHON}" ]]; then
+      install_hhslib "${PYTHON}"
+    else
+      if has python2; then 
+        prefix=$(dirname "$(command -v python2 2> /dev/null)")
+        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sfv "${prefix}/python2" "${prefix}/python"
+        PYTHON=$(command -v python2 2>/dev/null)
+        [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
+        install_hhslib "${PYTHON}"
+      fi
+    fi
+  }
+
+  # Install HomeSetup python libraries
+  install_hhslib() {
+    PYTHON="${1}";
+    echo -en "\n${WHITE}Installing HomeSetup python library using ${PYTHON} ..."
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    if pip install --user . &>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+    if ${PYTHON} -m pip install --user . &>/dev/null; then
+      if ${PYTHON} -c "from hhslib.colors import cprint"; then
+        echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      else
+        echo -e "${WHITE} [   ${RED}FAIL${NC}   ]"
+        quit 2 "Unable to install HomeSetup python library !"
+      fi
     else
       quit 2 "Unable to install HomeSetup python library !"
     fi
@@ -458,9 +480,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # Removing the old .profile if exists
     if [[ -f "${HOME}/.profile" ]]; then
-        \mv -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig"
-        \touch "${HOME}/.profile"
-        echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
+      \mv -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig"
+      \touch "${HOME}/.profile"
+      echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving old hhs files into the proper directory
@@ -506,13 +528,13 @@ Usage: $APP_NAME [OPTIONS] <args>
       rm -f "${HOME}/.bash_completions"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
     fi
-    
+
     # Removing the old python lib directories and links
-    [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] && \
+    [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] &&
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
-    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] && \
+    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
-    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] && \
+    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
   }
 

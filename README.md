@@ -325,7 +325,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | -------------- | --------------------------------------------- |
 | __hhs_vault    | Shortcut for hhs vault plug-in                |
 | __hhs_hspm     | Shortcut for hhs hspm plug-in                 |
-| __hhs_dotfiles | Shortcut for hhs firebase plug-in             |
+| __hhs_firebase | Shortcut for hhs firebase plug-in             |
 | __hhs_hhu      | Shortcut for hhs updater plug-in              |
 | __hhs_reload   | Reload HomeSetup                              |
 | __hhs_clear    | Clear and reset all cursor attributes and IFS |

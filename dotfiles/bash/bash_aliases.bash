@@ -149,7 +149,7 @@ alias __hhs_vault='hhs vault execute'
 # @alias: Shortcut for hhs hspm plug-in
 alias __hhs_hspm='hhs hspm execute'
 # @alias: Shortcut for hhs firebase plug-in
-alias __hhs_dotfiles='hhs firebase execute'
+alias __hhs_firebase='hhs firebase execute'
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='hhs updater execute'
 # @alias: Reload HomeSetup

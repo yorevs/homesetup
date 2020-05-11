@@ -11,9 +11,8 @@
 import json
 import subprocess
 
+from hhslib.colors import cprint, Colors
 from hhslib.commons import syserr
-
-from colors import cprint, Colors
 
 
 # @purpose: TODO

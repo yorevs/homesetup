@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='hhslib',
-    version='0.9.2',
+    version='0.9.3',
     description='HomeSetup python library',
     author='Hugo Saporetti Junior',
     author_email='yorevs@hotmail.com',
