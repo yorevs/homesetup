@@ -440,7 +440,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       if has python2; then 
         PYTHON=$(command -v python2 2>/dev/null)
-        [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
+        [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
         install_hhslib "${PYTHON}"
       fi
     fi
