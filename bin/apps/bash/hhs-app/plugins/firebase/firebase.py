@@ -16,17 +16,13 @@ import getpass
 import signal
 import traceback
 import uuid
-
 from datetime import datetime
 from os import path
 
-from hhslib.colors import cprint, Colors
 from hhslib.commons import *
 from hhslib.fetch import *
 
 # Application name, read from it's own file path
-from pip._vendor.distlib.compat import raw_input
-
 APP_NAME = path.basename(__file__)
 
 # Version tuple: (major,minor,build)
@@ -156,10 +152,10 @@ class FirebaseConfig:
         config = FirebaseConfig()
         print("### Firebase setup")
         print('-' * 31)
-        config.project_id = raw_input('Please type you Project ID: ')
+        config.project_id = read('Please type you Project ID: ')
         config.username = FIREBASE_USER
         config.passprase = base64.b32encode(getpass.getpass('Please type a password to encrypt you payload: '))
-        config.project_uuid = raw_input('Please type a UUID to use or press enter to generate a new one: ')
+        config.project_uuid = read('Please type a UUID to use or press enter to generate a new one: ')
         config.project_uuid = str(uuid.uuid4()) if not config.project_uuid else config.project_uuid
         config.firebase_url = FB_URL_TPL.format(config.project_id)
 
@@ -294,8 +290,9 @@ def exec_operation(op, firebase):
     elif firebase.is_setup() and "download" == op:
         firebase.download(options[0])
     else:
-        cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
-        usage(1)
+        if "setup" != op:
+            cprint(Colors.RED, '### Unhandled operation: {}'.format(op))
+            usage(1)
 
 
 # @purpose: Execute the app business logic
