@@ -49,11 +49,11 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup required tools.
   REQUIRED_TOOLS=('git' 'curl' 'gpg')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
-  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python2' 'python-pip')
+  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python-pip')
 
   # Missing HomeSetup required tools.
   MISSING_TOOLS=()
-  
+
   # ICONS
   APPLE_ICN="\xef\x85\xb9"
   STAR_ICN="\xef\x80\x85"
@@ -226,7 +226,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_installed_tools() {
 
     local os_type pad pad_len
-    
+
     has sudo &>/dev/null && SUDO='sudo'
 
     if has 'apt-get'; then
@@ -263,28 +263,19 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_missing_tools() {
 
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
-      echo -e "${ORANGE}"
-      read -rn 1 -p 'Would you like to install missing required tools now y/[n] ? ' ANS
-      echo -e "${NC}"
-      [[ -n "$ANS" ]] && echo ''
-
-      if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-        [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
-        echo ''
-        echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
-        if [[ "Darwin" == "${MY_OS}" ]]; then
-          ${SUDO} brew install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
-        else
-          if has "apt-get"; then
-            ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
-          elif has "yum"; then
-            ${SUDO} yum -y install ${MISSING_TOOLS[*]} || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
-          fi
-        fi
-        echo -e " ... [   ${GREEN}OK${NC}   ]"
+      [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
+      echo ''
+      echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${MY_OS}) "
+      if [[ "Darwin" == "${MY_OS}" ]]; then
+        ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
-        quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
+        if has "apt-get"; then
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        elif has "yum"; then
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        fi
       fi
+      echo -e " ... [   ${GREEN}OK${NC}   ]"
     fi
   }
 
@@ -443,23 +434,31 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Configure python and HHS python library
   configure_python() {
     # Detecting system python and pip versions.
-    PYTHON=$(command -v python 2> /dev/null)
-    PIP=$(command -v pip 2> /dev/null)
-    if [[ -n "${PYTHON}" ]]; then
+    PYTHON=$(command -v python 2>/dev/null)
+    PIP=$(command -v pip 2>/dev/null)
+    if [[ -n "${PYTHON}" && -n "${PIP}" ]]; then
       install_hhslib "${PYTHON}" "${PIP}"
     else
-      quit 2 "Unable to find a proper python[${PYTHON}]/pip[${PIP}] installation."
+      if has python2; then 
+        PYTHON=$(command -v python2 2>/dev/null)
+        PIP=$(command -v python-pip 2>/dev/null)
+        install_hhslib "${PYTHON}" "${PIP}"
+      elif has python3; then
+        PYTHON=$(command -v python3 3>/dev/null)
+        PIP=$(command -v python3-pip 2>/dev/null)
+        install_hhslib "${PYTHON}" "${PIP}"
+      fi
     fi
   }
 
   # Install HomeSetup python libraries
   install_hhslib() {
-    PYTHON="${1}"
-    PIP="${2}"
+    PYTHON="${1}"; PIP="${2}"
+    [[ -n "${PYTHON}" && -n "${PIP}" ]] || quit 2 "Unable to find a proper python(${PYTHON}) or pip(${PIP}) installation."
     echo -en "\n${WHITE}Installing HomeSetup python library to ${PYTHON} => ${PIP}"
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
     if ${PIP} install --user . &>/dev/null; then
-      if ${PYTHON}  -c "from hhslib.colors import cprint"; then
+      if ${PYTHON} -c "from hhslib.colors import cprint"; then
         echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
       else
         echo -e "${WHITE} ... [   ${RED}FAIL${NC}   ]"
