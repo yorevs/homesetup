@@ -14,13 +14,15 @@ import getpass
 import re
 import signal
 import traceback
+
 from datetime import datetime
+from os import path
 
 from hhslib.commons import *
 from hhslib.security import *
 
 # Application name, read from it's own file path
-APP_NAME = os.path.basename(__file__)
+APP_NAME = path.basename(__file__)
 
 # Version tuple: (major,minor,build)
 VERSION = (1, 0, 0)

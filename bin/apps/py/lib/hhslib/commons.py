@@ -13,7 +13,6 @@ import logging as log
 import os
 import sys
 
-from colors import cprint, Colors
 
 # Default log file format
 DEFAULT_LOG_FMT = '%(asctime)s [%(threadName)-10.10s] %(levelname)-5.5s ::%(funcName)s(@line-%(lineno)d) %(message)s '
@@ -46,7 +45,7 @@ def get_argument(options, index, fallback=None):
 # @purpose: Execute the app business logic.
 def check_arguments(args, args_num=0):
     if len(args) < args_num:
-        cprint(Colors.RED, "### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
+        print("### Invalid number of arguments: {} , expecting: {}".format(len(args), args_num))
         return False
     else:
         return True
