@@ -94,12 +94,12 @@ def human_readable_bytes(str_size):
 
 
 # @purpose: Print the unicode string
-def sysout(string):
-    sys.stdout.write(string.encode('utf-8').decode('unicode-escape'))
+def sysout(string, end='\n'):
+    sys.stdout.write(string.encode('utf-8').decode('unicode-escape')+end)
 
 
 # @purpose: Print the unicode string
-def syserr(string):
-    sys.stderr.write(string.encode('utf-8').decode('unicode-escape'))
+def syserr(string, end='\n'):
+    sys.stderr.write(string.encode('utf-8').decode('unicode-escape')+end)
 
 
