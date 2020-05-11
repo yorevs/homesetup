@@ -442,10 +442,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       if has python2; then 
         PYTHON=$(command -v python2 2>/dev/null)
         PIP=$(command -v python-pip 2>/dev/null)
+        [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Unable to find python(${PYTHON}) or pip(${PIP}) installation."
         install_hhslib "${PYTHON}" "${PIP}"
       elif has python3; then
-        PYTHON=$(command -v python3 3>/dev/null)
+        PYTHON=$(command -v python3 2>/dev/null)
         PIP=$(command -v python3-pip 2>/dev/null)
+        [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Unable to find python(${PYTHON}) or pip(${PIP}) installation."
         install_hhslib "${PYTHON}" "${PIP}"
       fi
     fi
@@ -454,7 +456,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install HomeSetup python libraries
   install_hhslib() {
     PYTHON="${1}"; PIP="${2}"
-    [[ -n "${PYTHON}" && -n "${PIP}" ]] || quit 2 "Unable to find a proper python(${PYTHON}) or pip(${PIP}) installation."
     echo -en "\n${WHITE}Installing HomeSetup python library to ${PYTHON} => ${PIP}"
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
     if ${PIP} install --user . &>/dev/null; then
