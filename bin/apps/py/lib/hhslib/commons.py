@@ -93,6 +93,14 @@ def human_readable_bytes(str_size):
     return ret_val, ret_unit
 
 
+# @purpose: Read from keyboard
+def read(prompt=''):
+    if sys.version_info[0] < 3:
+        raw_input(prompt)
+    else:
+        input(prompt)
+
+
 # @purpose: Print the unicode string
 def sysout(string, end='\n'):
     sys.stdout.write(string.encode('utf-8').decode('unicode-escape')+end)

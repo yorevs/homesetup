@@ -18,6 +18,7 @@ import traceback
 from datetime import datetime
 from os import path
 
+from hhslib.colors import *
 from hhslib.commons import *
 from hhslib.security import *
 
