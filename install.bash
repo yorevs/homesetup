@@ -47,9 +47,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools.
-  REQUIRED_TOOLS=('git' 'curl' 'gpg')
-  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3')
-  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python3-pip')
+  REQUIRED_TOOLS=('git' 'curl' 'gpg' 'python' 'pip')
+  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
 
   # Missing HomeSetup required tools.
   MISSING_TOOLS=()
@@ -226,6 +225,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_installed_tools() {
 
     local os_type pad pad_len
+    
+    has sudo &>/dev/null && SUDO='sudo'
 
     if has 'apt-get'; then
       os_type='Debian'
@@ -267,7 +268,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -n "$ANS" ]] && echo ''
 
       if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-        command -v sudo &>/dev/null && SUDO='sudo'
         [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
         echo ''
         echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
@@ -444,10 +444,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python 2> /dev/null)
     PIP=$(command -v pip 2> /dev/null)
-    if [[ -n ${PYTHON} ]]; then
+    if [[ -n "${PYTHON}" ]]; then
       install_hhslib "${PYTHON}" "${PIP}"
     else
-      quit 2 "Unable to find a proper python/pip installation."
+      quit 2 "Unable to find a proper python[${PYTHON}]/pip[${PIP}] installation."
     fi
   }
 
