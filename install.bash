@@ -48,8 +48,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools.
   REQUIRED_TOOLS=('git' 'curl' 'gpg')
-  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
-  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python-pip')
+  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python')
+  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python2')
 
   # Missing HomeSetup required tools.
   MISSING_TOOLS=()
@@ -435,34 +435,27 @@ Usage: $APP_NAME [OPTIONS] <args>
   configure_python() {
     # Detecting system python and pip versions.
     PYTHON=$(command -v python 2>/dev/null)
-    PIP=$(command -v pip 2>/dev/null)
-    if [[ -n "${PYTHON}" && -n "${PIP}" ]]; then
-      install_hhslib "${PYTHON}" "${PIP}"
+    if [[ -n "${PYTHON}" ]]; then
+      install_hhslib "${PYTHON}"
     else
       if has python2; then 
         PYTHON=$(command -v python2 2>/dev/null)
-        PIP=$(command -v python-pip 2>/dev/null)
-        [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Unable to find python(${PYTHON}) or pip(${PIP}) installation."
-        install_hhslib "${PYTHON}" "${PIP}"
-      elif has python3; then
-        PYTHON=$(command -v python3 2>/dev/null)
-        PIP=$(command -v python3-pip 2>/dev/null)
-        [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Unable to find python(${PYTHON}) or pip(${PIP}) installation."
-        install_hhslib "${PYTHON}" "${PIP}"
+        [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
+        install_hhslib "${PYTHON}"
       fi
     fi
   }
 
   # Install HomeSetup python libraries
   install_hhslib() {
-    PYTHON="${1}"; PIP="${2}"
-    echo -en "\n${WHITE}Installing HomeSetup python library to ${PYTHON} => ${PIP}"
+    PYTHON="${1}";
+    echo -en "\n${WHITE}Installing HomeSetup python library using ${PYTHON} ..."
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    if ${PIP} install --user . &>/dev/null; then
+    if ${PYTHON} -m pip install --user . &>/dev/null; then
       if ${PYTHON} -c "from hhslib.colors import cprint"; then
-        echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+        echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
       else
-        echo -e "${WHITE} ... [   ${RED}FAIL${NC}   ]"
+        echo -e "${WHITE} [   ${RED}FAIL${NC}   ]"
         quit 2 "Unable to install HomeSetup python library !"
       fi
     else
