@@ -47,9 +47,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools.
-  REQUIRED_TOOLS=('git' 'curl' 'gpg')
-  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3')
-  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python3-pip')
+  REQUIRED_TOOLS=('git' 'curl' 'gpg' 'python')
+  [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select')
+  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=()
 
   # Missing HomeSetup required tools.
   MISSING_TOOLS=()
