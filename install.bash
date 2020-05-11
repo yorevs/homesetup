@@ -25,33 +25,33 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup GitHub repository URL.
   REPO_URL='https://github.com/yorevs/homesetup.git'
 
-  # Define the user HOME
+  # Define the user HOME.
   HOME=${HOME:-~}
 
-  # Option to allow install to be interactive
+  # Option to allow install to be interactive.
   OPT='all'
 
-  # Shell type
+  # Shell type.
   SHELL_TYPE="${SHELL##*/}"
 
-  # .dotfiles we will handle
+  # .dotfiles we will handle.
   ALL_DOTFILES=()
 
-  # Supported shell types. For now, only bash is supported
+  # Supported shell types. For now, only bash is supported.
   SUPP_SHELL_TYPES=('bash')
 
-  # Timestamp used to backup files
+  # Timestamp used to backup files.
   TIMESTAMP=$(\date "+%s%S")
 
-  # User's operating system
+  # User's operating system.
   MY_OS=$(uname -s)
 
-  # HomeSetup required tools
+  # HomeSetup required tools.
   REQUIRED_TOOLS=('git' 'curl' 'gpg')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3')
   [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python3-pip')
 
-  # Missing HomeSetup required tools
+  # Missing HomeSetup required tools.
   MISSING_TOOLS=()
 
   # ICONS
@@ -60,14 +60,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
 
-  # Functions to be unset after quit
+  # Functions to be unset after quit.
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_installed_tools
     activate_dotfiles compatibility_check install_missing_tools
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
-  # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}
+  # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
   # @param $2 [Opt] : The exit message to be displayed.
   quit() {
 
@@ -93,7 +93,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   }
 
   # shellcheck disable=SC2199,SC2076
-  # Check current active User shell type
+  # Check current active User shell type.
   check_current_shell() {
 
     if [[ ! " ${SUPP_SHELL_TYPES[@]} " =~ " ${SHELL##*/} " ]]; then
@@ -218,7 +218,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
   
-  # Check installed tools
+  # Check installed tools.
   check_installed_tools() {
     
     local os_type pad pad_len
@@ -264,7 +264,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -n "$ANS" ]] && echo ''
     
     if [[ "remote" == "${METHOD}" || "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-      command -v sudo && SUDO=sudo
+      command -v sudo &>/dev/null && SUDO='sudo'
+      [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
       echo ''
       echo -en "${WHITE}Installing HomeSetup missing required tools [${MISSING_TOOLS[*]}] (${MY_OS}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
@@ -281,11 +282,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 1 "${YELLOW}Please install all required tools and run the installer again${NC}"
     fi
     
-    # Link whatever python is available on the system
-    [[ ! -f '/usr/bin/python' && -f '/usr/bin/python3' ]] && ${SUDO} ln -sf '/usr/bin/python3' '/usr/bin/python' &>/dev/null
-    [[ ! -L '/usr/bin/python' && -f '/usr/bin/python2' ]] && ${SUDO} ln -sf '/usr/bin/python2' '/usr/bin/python' &>/dev/null
-    [[ ! -f '/usr/bin/pip' && -f '/usr/bin/pip3' ]] && ${SUDO} ln -sf '/usr/bin/pip3' '/usr/bin/pip' &>/dev/null
-    [[ ! -L '/usr/bin/pip' && -f '/usr/bin/pip2' ]] && ${SUDO} ln -sf '/usr/bin/pip2' '/usr/bin/pip' &>/dev/null
+    # Link whatever python is available on the system.
+    if [[ -f '/usr/bin/python3' ]]; then PYTHON='/usr/bin/python3'; PIP='/usr/bin/pip3'
+    elif [[ -f '/usr/bin/python2' ]]; then PYTHON='/usr/bin/python2'; PIP='/usr/bin/pip3'; fi
+    [[ ! -f '/usr/bin/python' ]] && ${SUDO} ln -sf "${PYTHON}" '/usr/bin/python' &>/dev/null
+    [[ ! -f '/usr/bin/pip' ]] && ${SUDO} ln -sf "${PIP}" '/usr/bin/pip' &>/dev/null
     [[ -f '/usr/bin/python' && -f '/usr/bin/pip' ]] || quit 1 "${YELLOW}Unable to link python and pip to /usr/bin${NC}"
   }
 
@@ -451,7 +452,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
   }
 
-  # Check for backward HHS compatibility
+  # Check for backward HHS compatibility.
   compatibility_check() {
 
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
