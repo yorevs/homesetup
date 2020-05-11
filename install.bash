@@ -439,6 +439,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       install_hhslib "${PYTHON}"
     else
       if has python2; then 
+        prefix=$(dirname "$(command -v python2 2> /dev/null)")
+        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sfv "${prefix}/python2" "${prefix}/python"
         PYTHON=$(command -v python2 2>/dev/null)
         [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
         install_hhslib "${PYTHON}"
