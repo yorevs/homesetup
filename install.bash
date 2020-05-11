@@ -49,7 +49,12 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup required tools.
   REQUIRED_TOOLS=('git' 'curl' 'gpg')
   [[ "${MY_OS}" == "Darwin" ]] && REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
-  [[ "${MY_OS}" == "Linux" ]] && REQUIRED_TOOLS+=('python2' 'python-pip')
+  
+  if [[ "${MY_OS}" == "Linux" ]] && has 'apt-get'; then
+    REQUIRED_TOOLS+=('python2' 'python-pip')
+  elif [[ "${MY_OS}" == "Linux" ]] && has 'yum'; then
+    REQUIRED_TOOLS+=('python2' 'python-pip2')
+  fi
 
   # Missing HomeSetup required tools.
   MISSING_TOOLS=()

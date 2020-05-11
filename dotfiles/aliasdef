@@ -25,7 +25,7 @@ alias dirs='__hhs_dirs'
 # HHS-App Aliases
 __hhs_alias vault='__hhs_vault'
 __hhs_alias hspm='__hhs_hspm'
-__hhs_alias dotfiles='__hhs_dotfiles'
+__hhs_alias firebase='__hhs_firebase'
 __hhs_alias hhu='__hhs_hhu'
 __hhs_alias errcho='__hhs_errcho'
 __hhs_alias fetch='fetch.bash'
