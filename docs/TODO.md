@@ -2,7 +2,6 @@
 
 ## Release 1.4.0
     [ ] 1. Fill applications handbook.
-    [ ] 2. Verify compatibility with CentoOS.
 
 ## Next Release
     [ ] 1. Record HHS movies.
