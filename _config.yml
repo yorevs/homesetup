@@ -1,1 +1,6 @@
 theme: jekyll-theme-leap-day
+blank_issues_enabled: false
+contact_links:
+  - name: HomeSetup Support
+    url: https://gitter.im/yorevs-homesetup/community/
+    about: Please ask and answer questions here.
