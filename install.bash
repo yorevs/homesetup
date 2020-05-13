@@ -53,10 +53,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   if [[ "${MY_OS}" == "Darwin" ]]; then
     REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
   elif [[ "${MY_OS}" == "Linux" ]]; then
-    # Debian required tools
-    command -v 'apt-get' &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip')
-    # RedHat required tools
-    command -v 'yum'  &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip2')
+    REQUIRED_TOOLS+=('python3' 'python3-pip')
   fi
 
   # Missing HomeSetup required tools.
@@ -209,7 +206,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     case "$METHOD" in
     remote)
       check_installed_tools
-      install_missing_tools
       clone_repository
       install_dotfiles
       configure_python
@@ -218,7 +214,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       ;;
     local | repair)
       check_installed_tools
-      install_missing_tools
       install_dotfiles
       configure_python
       compatibility_check
@@ -264,23 +259,29 @@ Usage: $APP_NAME [OPTIONS] <args>
         MISSING_TOOLS+=("${tool_name}")
       fi
     done
+    
+    install_missing_tools "${os_type}"
   }
 
   # shellcheck disable=SC2086
   # Install missing tools
   install_missing_tools() {
-
+  
+    local os_type="$1"
+    
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
       echo ''
-      echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${MY_OS}) "
+      echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${os_type}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
         ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null \
+            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please install them and try again."
         elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null \
+            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please install them and try again."
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -448,11 +449,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       if has python2; then 
         prefix=$(dirname "$(command -v python2 2> /dev/null)")
-        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sfv "${prefix}/python2" "${prefix}/python"
+        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python2" "${prefix}/python"
         PYTHON=$(command -v python2 2>/dev/null)
-        [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
-        install_hhslib "${PYTHON}"
+      elif has python3; then 
+        prefix=$(dirname "$(command -v python3 2> /dev/null)")
+        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python3" "${prefix}/python"
+        PYTHON=$(command -v python3 2>/dev/null)
       fi
+      [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
+      install_hhslib "${PYTHON}"
     fi
   }
 
