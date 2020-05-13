@@ -24,9 +24,10 @@ Usage: ${APP_NAME} <arguments> [options]
 UNSETS=('quit' 'usage' 'version' 'trim')
 
 # Import pre-defined HomeSetup bash files
-[[ -f ~/.bash_colors ]] && \. ~/.bash_colors
-[[ -f ~/.bash_aliases ]] && \. ~/.bash_aliases
-[[ -f ~/.bash_functions ]] && \. ~/.bash_functions
+[[ -f "${HOME}"/.bash_env ]] && \. "${HOME}"/.bash_env
+[[ -f "${HOME}"/.bash_colors ]] && \. "${HOME}"/.bash_colors
+[[ -f "${HOME}"/.bash_aliases ]] && \. "${HOME}"/.bash_aliases
+[[ -f "${HOME}"/.bash_functions ]] && \. "${HOME}"/.bash_functions
 
 # @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR

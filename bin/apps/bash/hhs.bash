@@ -45,7 +45,9 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
 "
 
-[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
+[[ -f "${HHS_DIR}"/bin/app-commons.bash ]] || quit 1 "Failed to load '${HHS_DIR}/bin/app-commons.bash'" 
+
+\. "${HHS_DIR}"/bin/app-commons.bash
 
 __hhs_has "python" || quit 1 "Python is required to execute ${APP_NAME}"
 

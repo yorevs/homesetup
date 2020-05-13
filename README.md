@@ -4,12 +4,12 @@
 
 [![Tests](images/tests-badge.svg)](images/tests-badge.svg)
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.4.012/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.4.013/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
-HomeSetup is a bundle os scripts and dotfiles that will elevate your bash shell experience to another level. There are 
+HomeSetup is a bundle of scripts and dotfiles that will elevate your bash shell experience to another level. There are 
 many improvements and facilities, especially for developers that will ease the usage and highly improve your productivity. 
 Currently we support **Bash** (v3.4+) for **Darwin** (MacOS) and **Linux**. We have plans to add support for _Zsh_ as well.
 
@@ -25,7 +25,7 @@ gradle, docker, etc...
 
 - Setup most common used configurations automatically.
 - New <tab+shift> complete (using menu-complete) that will cycle though options.
-- Prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/cheatsheet?from=io) icons.
+- Prompt with a mono-spaced font that supports [Font-Awesome](https://fontawesome.com/cheatsheet?from=io) icons.
 - Package manager helper to help installing application using recipes (**not only brew installs**).
 - Save your custom dotfiles on a [Firebase](https://console.firebase.google.com) and download it wherever you go.
 - New visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
@@ -44,7 +44,7 @@ Latest version of MacOS comes with **zsh** as the _default shell_, but you can c
 $ sudo chsh -s /bin/bash
 ```
 
-If apple decides to remove from next MacOS releases, you can always use HomeBrew's version. In this case, the path is 
+If apple decides to remove from next MacOS releases, you can always use Home-Brew's version. In this case, the path is 
 different:
 
 ```bash
@@ -96,7 +96,7 @@ $ sudo chsh -s /usr/local/bin/bash
   * [7.2. Python apps](#python-apps)
 - [8. Alias Definitions](#alias-definitions)
 - [9. HomeSetup application](#homesetup-application)
-  * [9.1. Plugins](#hhs-plugins)
+  * [9.1. Plug-ins](#hhs-plugins)
   * [9.2. Functions](#hhs-functions)
 - [10. Auto completions](#auto-completions)
   * [10.1. Bash completions](#bash-completions)
@@ -166,7 +166,7 @@ the following tools:
 
 ### Try-it first
 
-You run HomeSetup from a docker ontainer and then decide whether to install it on your machine. To do that, you need to pull the image you want to try:
+You can run HomeSetup from a docker container and then decide whether to install it on your machine. To do that, you need to pull the image you want to try:
 
 `$ docker run --rm -it yorevs/hhs-centos`
 
@@ -207,7 +207,7 @@ Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/
 ### Firebase setup
 
 HomeSetup allows you to use your Firebase account to upload and download your custom files
-(dotfiles files synchronization) to your *Realtime Database*. To be able to use this feature, you need first 
+(dotfiles files synchronization) to your *Real-time Database*. To be able to use this feature, you need first 
 to configure your Google Firebase account.
 
 #### Create new account
@@ -219,7 +219,7 @@ Access: https://console.firebase.google.com/
 1. Create a *new Project* (HomeSetup).
 2. Create Database (as **production mode**).
     * Click on Develop -> Database -> Create Database
-    * Click on **Realtime Database**
+    * Click on **Real-time Database**
     * Click on the **Rules** tab.
         - Change the line from: `".read": false,` to `".read": true,`.
         - Change the line from: `".write": false,` to `".write": true,`.
@@ -242,7 +242,7 @@ Type: `$ dotfiles.bash help fb` for further information about using it.
 
 ## Uninstallation
 
-If you decide to, you can uninstall al HomeSetup files and restore your old dotfiles. To do that issue the command 
+If you decide to, you can uninstall all HomeSetup files and restore your old dotfiles. To do that issue the command 
 in a shell: `# HomeSetup> ./uninstall.bash`
 
 The uninstaller will remove all files and folders related to HomeSetup for good. The only folder that will stay is
@@ -273,7 +273,7 @@ The following directory will be linked to your HOME folder:
 
 If this folder already exists, the install script will copy all files into it.
 
-To override or add customised stuff, you need to create a custom file as follows:
+To override or add customized stuff, you need to create a custom file as follows:
 
 ```
 ~/.colors           : To customize your colors
