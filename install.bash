@@ -237,7 +237,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     elif has 'yum'; then
       os_type='RedHat'
     elif has 'brew'; then
-      os_type='MacOs'
+      os_type='MacOS'
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
