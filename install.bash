@@ -54,9 +54,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     # Debian required tools
-    has 'apt-get' && REQUIRED_TOOLS+=('python2' 'python-pip')
+    command -v 'apt-get' &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip')
     # RedHat required tools
-    has 'yum' && REQUIRED_TOOLS+=('python2' 'python-pip2')
+    command -v 'yum'  &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip2')
   fi
 
   # Missing HomeSetup required tools.
