@@ -65,6 +65,9 @@ $ sudo chsh -s /usr/local/bin/bash
       - [1.1.2.2. Darwin only](#darwin-only)
     + [1.1.3. Recommended software](#recommended-software)
     + [1.1.4. Optional software](#optional-software)
+    + [1.1.5. Terminal setup](#terminal-setup)
+      + [1.1.5.1. Terminal App](#terminal-app-darwin)
+      + [1.1.5.2. iTerm2 App](#iterm2-app-darwin)
   * [1.1. Try-it first](#try-it-first)
   * [1.2. Remote installation](#remote-installation)
   * [1.3. Local installation](#local-installation)
@@ -100,9 +103,6 @@ $ sudo chsh -s /usr/local/bin/bash
   * [9.2. Functions](#hhs-functions)
 - [10. Auto completions](#auto-completions)
   * [10.1. Bash completions](#bash-completions)
-- [11. Terminal setup](#terminal-setup)
-  * [11.1. Terminal App](#terminal-app)
-  * [11.2. iTerm2 App](#iterm2-app)
 - [12. Contact](#contact)
 - [13. Support HomeSetup](#support-homesetup)
 - [14. Final notes](#final-notes)
@@ -163,6 +163,28 @@ the following tools:
 
 - **docker** 19.03+ : To enable docker functions.
 - **gradle** 4+ : To enable gradle functions.
+
+#### Terminal setup
+
+HomeSetup requires a font that supports Font-Awesome icons. We suggest you to use the one we provide:
+
+* [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
+
+You need to install it on your machine before installing or trying HomeSetup, otherwise, you will see a question mark icon instead of the real icons.
+
+**Mac users**: We suggest a terminal profile to use (see the below topics).
+
+**Linux users**: We have checked that some terminals already support icons, if not, you can install it manually.
+
+##### Terminal App (Darwin)
+
+* Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
+* Set HomeSetup as the default profile.
+
+##### iTerm2 App (Darwin)
+
+* Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
+* Set HomeSetup as the default profile.
 
 ### Try-it first
 
@@ -637,22 +659,6 @@ over the options provided by the complete function instead of just displaying th
 | hhs-completion.bash               | Bash completion for HomeSetup.                    |
 | kubectl-completion.bash           | Bash completion for kubectl.                      |
 | pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
-
-## Terminal setup
-
-HomeSetup suggests a terminal profile to use. If you want to, you will need to do the following steps:
-
-    [x] Install the terminal [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
-
-### Terminal App
-
-    [x] Import the HomeSetup-(14|15)-inch.terminal from "$HHS_HOME/misc" to your Terminal App.
-    [x] Set HomeSetup as the default profile.
-
-### iTerm2 App
-
-    [x] Import the iterm2-terminal-(14|15)-inch.json from "$HHS_HOME/misc" to your iTerm2 App.
-    [x] Set HomeSetup as the default profile.
 
 ## Contact
 
