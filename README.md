@@ -65,7 +65,7 @@ $ sudo chsh -s /usr/local/bin/bash
       - [1.1.2.2. Darwin only](#darwin-only)
     + [1.1.3. Recommended software](#recommended-software)
     + [1.1.4. Optional software](#optional-software)
-    [1.1. Try-it first](#try-it-first)
+  * [1.1. Try-it first](#try-it-first)
   * [1.2. Remote installation](#remote-installation)
   * [1.3. Local installation](#local-installation)
   * [1.4. Firebase setup](#firebase-setup)
