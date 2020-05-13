@@ -15,7 +15,7 @@ function depends() {
 }
 
 function install() {
-  command -v sudo && SUDO=sudo
+  command -v sudo &> /dev/null && SUDO=sudo
   if command -v 'apt-get' && ${SUDO} apt-get -y install "$@"; then
     return $?
   elif command -v 'yum' && ${SUDO} yum -y install "$@"; then
@@ -26,7 +26,7 @@ function install() {
 }
 
 function uninstall() {
-  command -v sudo && SUDO=sudo
+  command -v sudo &> /dev/null && SUDO=sudo
   if command -v 'apt-get' && ${SUDO} apt-get -y remove "$@"; then
     return $?
   elif command -v 'yum' && ${SUDO} yum -y remove "$@"; then
