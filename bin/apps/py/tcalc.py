@@ -66,11 +66,15 @@ for tm in args:
     if re.match(r"[+-]", tm):
         OP = tm
     elif re.match(r"^([0-9]{1,2}:?)+", tm):
-        parts = [int(math.floor(float(s))) for s in tm.split(':')]
+        try:
+            parts = [int(math.floor(float(s))) for s in tm.split(':')]
+        except ValueError:
+            parts = [0, 0, 0]
         f_hours = parts[0] if len(parts) > 0 else 0
         f_minutes = parts[1] if len(parts) > 1 else 0
         f_secs = parts[2] if len(parts) > 2 else 0
         tm_amount = ((f_hours * 60 + f_minutes) * 60 + f_secs)
+        
         if OP == '+':
             TOTAL_SECONDS += tm_amount
         elif OP == '-':

@@ -15,12 +15,11 @@ function depends() {
 }
 
 function install() {
-  command -v sudo && SUDO=sudo
-  ${SUDO} \brew install "$@"
+  \brew install "$@"
   return $?
 }
 
 function uninstall() {
-  ${SUDO} \brew uninstall "$@" && \brew deps "$@" | xargs brew remove --ignore-dependencies
+  \brew uninstall "$@" && \brew deps "$@" | xargs brew remove --ignore-dependencies
   return $?
 }
