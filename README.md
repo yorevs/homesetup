@@ -4,7 +4,7 @@
 
 [![Tests](images/tests-badge.svg)](images/tests-badge.svg)
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.4.010/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.4.012/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
@@ -25,16 +25,16 @@ gradle, docker, etc...
 
 - Setup most common used configurations automatically.
 - New <tab+shift> complete (using menu-complete) that will cycle though options.
-- Prompt with a monospaced font that supports [font-awesome](https://fontawesome.com/cheatsheet?from=io) icons.
+- Prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/cheatsheet?from=io) icons.
 - Package manager helper to help installing application using recipes (**not only brew installs**).
 - Save your custom dotfiles on a [Firebase](https://console.firebase.google.com) and download it wherever you go.
 - New visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
 - Dozens of functions to help you configure your terminal and deal with your daily tasks.
 - Highly customizable aliases, so, you dictate what mnemonics you want to use (use your own syntax).
 - All code is licensed under [The MIT License](LICENSE.md), so, you can modify and use freely.
-- Small learning curve and a complete [user's handbook](docs/handbook/USER_HANDBOOK.md).
-
+- Small learning curve and a complete [User's Handbook](docs/handbook/USER_HANDBOOK.md).
 - **NEW** HomeSetup now works on Linux as well.
+- **NEW** Try HomeSetup on a docker container before installing on your machine.
 
 ## Catalina moved from bash to zsh
 
@@ -59,7 +59,7 @@ $ sudo chsh -s /usr/local/bin/bash
 - [1. Installation](#installation)
   * [1.1. Requirements](#requirements)
     + [1.1.1. Operating systems](#operating-systems)
-    + [1.1.1. Supported Bash versions](#supported-shells)
+    + [1.1.1. Supported Shells](#supported-shells)
     + [1.1.2. Required software](#required-software)
       - [1.1.2.1. Darwin and Linux](#darwin-and-linux)
       - [1.1.2.2. Darwin only](#darwin-only)
@@ -119,6 +119,10 @@ $ sudo chsh -s /usr/local/bin/bash
 - Linux 
     + Ubuntu 16 and higher
     + CentOS 7 and higher
+    + Fedora 31 and higher
+
+You may want to install HomeSetup on other linux distributions and it will probably work, but there are no guarantees 
+that it **WILL ACTUALLY WORK** .
 
 #### Supported Shells
 
@@ -159,6 +163,17 @@ the following tools:
 
 - **docker** 19.03+ : To enable docker functions.
 - **gradle** 4+ : To enable gradle functions.
+
+### Try-it first
+
+You can install docker on a container and then decide to install it on your machine. 
+To do that, you need to build the docker container with the image you want to install to:
+
+``
+
+or
+
+``
 
 ### Remote installation
 
@@ -646,7 +661,7 @@ You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/communi
 
 You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) 
 or coding. Fell free to contact me for details. When contributing with code change please take a look at our 
-[guidelines](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
+[guidelines](docs/CONTRIBUTING.md) and [code of conduct](docs/CODE_OF_CONDUCT.md).
 
 ## Final notes
 
