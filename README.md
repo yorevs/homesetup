@@ -65,6 +65,7 @@ $ sudo chsh -s /usr/local/bin/bash
       - [1.1.2.2. Darwin only](#darwin-only)
     + [1.1.3. Recommended software](#recommended-software)
     + [1.1.4. Optional software](#optional-software)
+    [1.1. Try-it first](#try-it-first)
   * [1.2. Remote installation](#remote-installation)
   * [1.3. Local installation](#local-installation)
   * [1.4. Firebase setup](#firebase-setup)
@@ -137,8 +138,7 @@ The following software are required either to clone the repository, execute the 
 
 - **git** v2.20+ : To clone and maintain the code.
 - **curl** v7.64+ : To make http(s) requests.
-- **python** v3.0+ : To run python based scripts.
-- **pip3** : To install python packages.
+- **python** v2.7+ or v3.0+ : To run python based scripts.
 - **gpg** v2.2+: : To enable encryption based functions.
 
 ##### Darwin only
@@ -166,19 +166,21 @@ the following tools:
 
 ### Try-it first
 
-You can install docker on a container and then decide to install it on your machine. 
-To do that, you need to build the docker container with the image you want to install to:
+You run HomeSetup from a docker ontainer and then decide whether to install it on your machine. To do that, you need to pull the image you want to try:
 
-``
+`$ docker run --rm -it yorevs/hhs-centos`
 
 or
 
-``
+`$ docker run --rm -it yorevs/hhs-ubuntu`
+
+or
+
+`$ docker run --rm -it yorevs/hhs-fedora`
 
 ### Remote installation
 
-_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the following 
-command to clone and install:
+_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
 
 `$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
