@@ -53,10 +53,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   if [[ "${MY_OS}" == "Darwin" ]]; then
     REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
   elif [[ "${MY_OS}" == "Linux" ]]; then
-    # Debian required tools
-    command -v 'apt-get' &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip')
-    # RedHat required tools
-    command -v 'yum'  &>/dev/null && REQUIRED_TOOLS+=('python2' 'python2-pip')
+    REQUIRED_TOOLS+=('python2')
   fi
 
   # Missing HomeSetup required tools.
