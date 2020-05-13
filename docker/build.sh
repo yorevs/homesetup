@@ -10,8 +10,9 @@ else
   containers="${containers//\.\//}"
   for next_container in "${@}"; do
     if [[ "${containers}" == *"${next_container}"* ]]; then
-      [[ -d "${next_container}/" ]] && docker build -t "yorevs/hhs-${next_container}" "${next_container}/"
       [[ -d "${next_container}/" ]] || echo -e "${RED}Unable to find directory: ${next_container}/${NC}"
+      echo -e "Building '${next_container}' ... "
+      [[ -d "${next_container}/" ]] && docker build -t "yorevs/hhs-${next_container}" "${next_container}/"
     else
       echo "${RED}Invalid container type: \"${next_container}\". Please use one of [${containers}] ! ${NC}"
     fi
