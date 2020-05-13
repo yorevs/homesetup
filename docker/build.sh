@@ -1,17 +1,19 @@
 #!/bin/bash
 
-if [[ $# -ne 1 || "${1}" == -h || "${1}" == --help ]]; then
-  echo 'Usage: build.bash <container_type>'
+if [[ $# -lt 1 || "${1}" == -h || "${1}" == --help ]]; then
+  echo 'Usage: build.bash <container_type...>'
   echo ''
   echo '  Arguments'
-  echo '    - container_type  : The OS to be installed. One of [ubuntu|centos]'
+  echo '    - container_type  : The OS to be installed. One of [ubuntu|centos|fedora]'
 else
   containers="$(find . -type d -mindepth 1 | tr '\n' ' ')"
   containers="${containers//\.\//}"
-  if [[ "${containers}" == *"${1}"* ]]; then
-    [[ -d "${1}/" ]] && docker build -t "yorevs/hhs-${1}" "${1}/"
-    [[ -d "${1}/" ]] || echo -e "${RED}Unable to find directory: ${1}/${NC}"
-  else
-    echo "Invalid container type: \"${1}\". Please use one of [${containers}]"
-  fi
+  for next_container in "${@}"; do
+    if [[ "${containers}" == *"${next_container}"* ]]; then
+      [[ -d "${next_container}/" ]] && docker build -t "yorevs/hhs-${next_container}" "${next_container}/"
+      [[ -d "${next_container}/" ]] || echo -e "${RED}Unable to find directory: ${next_container}/${NC}"
+    else
+      echo "${RED}Invalid container type: \"${next_container}\". Please use one of [${containers}] ! ${NC}"
+    fi
+  done
 fi
