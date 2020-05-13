@@ -451,9 +451,13 @@ Usage: $APP_NAME [OPTIONS] <args>
         prefix=$(dirname "$(command -v python2 2> /dev/null)")
         [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python2" "${prefix}/python"
         PYTHON=$(command -v python2 2>/dev/null)
-        [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
-        install_hhslib "${PYTHON}"
+      elif has python3; then 
+        prefix=$(dirname "$(command -v python3 2> /dev/null)")
+        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python3" "${prefix}/python"
+        PYTHON=$(command -v python3 2>/dev/null)
       fi
+      [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
+      install_hhslib "${PYTHON}"
     fi
   }
 
