@@ -56,7 +56,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Debian required tools
     command -v 'apt-get' &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip')
     # RedHat required tools
-    command -v 'yum'  &>/dev/null && REQUIRED_TOOLS+=('python2' 'python-pip2')
+    command -v 'yum'  &>/dev/null && REQUIRED_TOOLS+=('python2' 'python2-pip')
   fi
 
   # Missing HomeSetup required tools.
@@ -275,12 +275,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo ''
       echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${MY_OS}) "
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        ${SUDO} brew install ${MISSING_TOOLS[*]} 1> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
         if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} 1> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+          ${SUDO} yum -y install ${MISSING_TOOLS[*]} 1> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
         fi
       fi
       echo -e " ... [   ${GREEN}OK${NC}   ]"
