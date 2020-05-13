@@ -272,7 +272,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
       echo ''
-      echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${os_type}) "
+      echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${os_type}) ... "
       if [[ "Darwin" == "${MY_OS}" ]]; then
         ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
       else
@@ -284,7 +284,7 @@ Usage: $APP_NAME [OPTIONS] <args>
             || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please install them and try again."
         fi
       fi
-      echo -e " ... [   ${GREEN}OK${NC}   ]"
+      echo -e "[   ${GREEN}OK${NC}   ]"
     fi
   }
 
