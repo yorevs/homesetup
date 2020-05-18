@@ -278,10 +278,10 @@ Usage: $APP_NAME [OPTIONS] <args>
       else
         if has "apt-get"; then
           ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null \
-            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please install them and try again."
+            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install them and try again."
         elif has "yum"; then
           ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null \
-            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please install them and try again."
+            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install them and try again."
         fi
       fi
       echo -e "[   ${GREEN}OK${NC}   ]"
@@ -466,15 +466,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON="${1}";
     echo -en "\n${WHITE}Installing HomeSetup python library using ${PYTHON} ..."
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    if ${PYTHON} -m pip install --user . &>/dev/null; then
+    # First try to install using the module pip, if failed, try to use the pip command (python2)
+    if ${PYTHON} -m pip install --user . &>/dev/null || pip installl --user . &>/dev/null; then
       if ${PYTHON} -c "from hhslib.colors import cprint"; then
         echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
       else
         echo -e "${WHITE} [   ${RED}FAIL${NC}   ]"
-        quit 2 "Unable to install HomeSetup python library !"
+        quit 2 "HomeSetup python (${PYTHON}) library failed to install !"
       fi
     else
-      quit 2 "Unable to install HomeSetup python library !"
+      quit 2 "Unable to install HomeSetup python (${PYTHON}) library !"
     fi
     \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
   }
