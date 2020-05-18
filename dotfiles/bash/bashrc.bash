@@ -22,17 +22,17 @@
 # Unset all HHS_ variables
 unset "${!HHS_@}"
 
-# If not running interactively, don't load anything.
-[[ -z "$PS1" && -z "$PS2" ]] && return
+# If not running interactively skip it.
+[[ -z "${PS1}" && -z "${PS2}" ]] && return
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 
-# Set path so it includes user's private bin if it exists
+# Set path so it includes user's private bin if it exists.
 if [[ -d "${HOME}/bin" ]]; then
   PATH="${PATH}:${HOME}/bin"
 fi
 
-# Set path so it includes user's private bin if it exists
+# Set path so it includes user's private bin if it exists.
 if [[ -d "${HOME}/.local/bin" ]]; then
   PATH="${PATH}:${HOME}/.local/bin"
 fi
@@ -40,7 +40,7 @@ fi
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
   'bash')
-    # Source the user profile
+    # Source the HomeSEtup profile
     # shellcheck disable=1090
     [[ -s "${HOME}/.hhsrc" ]] && \. "${HOME}/.hhsrc"
     ;;

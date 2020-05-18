@@ -494,58 +494,63 @@ Usage: $APP_NAME [OPTIONS] <args>
   compatibility_check() {
 
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
-    # Removing the old .profile if exists
+    # .profile Needs to be renamed, so, we guarantee that no dead lock occurs.
     if [[ -f "${HOME}/.profile" ]]; then
-      \mv -f "${HOME}/.profile" "${HHS_DIR}/profile-${TIMESTAMP}.orig"
-      \touch "${HOME}/.profile"
-      echo -e "\n${ORANGE}Your old .profile had to be replaced by a new version. Your old file it located at ${HHS_DIR}/profile-${TIMESTAMP}.bak ${NC}"
+      \mv -f "${HOME}/.profile" "${HOME}/profile.bak"
+      echo ''
+      echo -e "\n${YELLOW}Your old ${HOME}/.profile had to be renamed to ${HOME}/profile.bak "
+      echo -e "This is to avoid invoking dotfiles multiple times. If you are sure that your .profile don't source either"
+      echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
+      echo -e "$ mv ${HOME}/profile.bak ${HOME}/.profile"
+      echo ''
+      read -rn 1 -p "Press any key to continue...${NC}"
     fi
 
-    # Moving old hhs files into the proper directory
+    # Moving old hhs files into the proper directory.
     [[ -f "${HOME}/.cmd_file" ]] && \mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
     [[ -f "${HOME}/.saved_dir" ]] && \mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
     [[ -f "${HOME}/.punches" ]] && \mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
     [[ -f "${HOME}/.firebase" ]] && \mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
 
-    # Removing the old ${HOME}/bin folder
+    # Removing the old ${HOME}/bin folder.
     if [[ -L "${HOME}/bin" ]]; then
       \rm -f "${HOME:?}/bin"
       echo -e "\n${ORANGE}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
-    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
+    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0 .
     if [[ -L "${HOME}/.bash_aliasdef" ]]; then
       \rm -f "${HOME}/.bash_aliasdef"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
     fi
 
-    # .aliasdef Needs to be updated, so, we need to replace it
+    # .aliasdef Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.aliasdef" ]]; then
       \cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
       \cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
-    # .inputrc Needs to be updated, so, we need to replace it
+    # .inputrc Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.inputrc" ]]; then
       \cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
       \cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
-    # Moving .path file to .hhs
+    # Moving .path file to .hhs .
     if [[ -f "${HOME}/.path" ]]; then
       \mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
 
-    # .bash_completions was renamed to .bash_completion. #e6ce231
+    # .bash_completions was renamed to .bash_completion. #e6ce231 .
     if [[ -L "${HOME}/.bash_completions" ]]; then
       rm -f "${HOME}/.bash_completions"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
     fi
 
-    # Removing the old python lib directories and links
+    # Removing the old python lib directories and links.
     [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] &&
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
