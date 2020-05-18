@@ -270,11 +270,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     local os_type="$1"
     
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
-      [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps"
+      [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps. You may be prompted for the password."
       echo ''
       echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${os_type}) ... "
       if [[ "Darwin" == "${MY_OS}" ]]; then
-        ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null || quit 2 "Failed to install: ${MISSING_TOOLS[*]}"
+        ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null \
+          || quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install them and try again."
       else
         if has "apt-get"; then
           ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null \
@@ -442,32 +443,40 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Configure python and HHS python library
   configure_python() {
+    echo ''
+    echo -n "Detecting local python environment ... "
     # Detecting system python and pip versions.
     PYTHON=$(command -v python 2>/dev/null)
-    if [[ -n "${PYTHON}" ]]; then
-      install_hhslib "${PYTHON}"
-    else
+    PIP=$(command -v pip 2>/dev/null)
+    if [[ -z "${PYTHON}" || -z "${PIP}" ]]; then
       if has python2; then 
         prefix=$(dirname "$(command -v python2 2> /dev/null)")
         [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python2" "${prefix}/python"
         PYTHON=$(command -v python2 2>/dev/null)
+        PIP=$(python2 -m pip)
       elif has python3; then 
         prefix=$(dirname "$(command -v python3 2> /dev/null)")
         [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python3" "${prefix}/python"
         PYTHON=$(command -v python3 2>/dev/null)
+        PIP=$(python3 -m pip)
       fi
-      [[ -z "${PYTHON}" ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
-      install_hhslib "${PYTHON}"
+    else
+      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      echo -e "=> ${PYTHON} and ${PIP}"
     fi
+    [[ -z "${PYTHON}" || -z ${PIP} ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
+    "${PYTHON}" -m pip &> /dev/null || pip &> /dev/null || quit 2 "Unable to find a valid pip(${PYTHON}) installation."
+    install_hhslib "${PYTHON}" "${PIP}"
   }
 
   # Install HomeSetup python libraries
   install_hhslib() {
-    PYTHON="${1}";
-    echo -en "\n${WHITE}Installing HomeSetup python library using ${PYTHON} ..."
+    PYTHON="${1:-python}"
+    PIP="${2:-pip}"
+    echo -en "\n${WHITE}Installing HomeSetup python library using ${PYTHON} and ${PIP} ..."
     \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
     # First try to install using the module pip, if failed, try to use the pip command (python2)
-    if ${PYTHON} -m pip install --user . &>/dev/null || pip installl --user . &>/dev/null; then
+    if ${PIP} install --user . &>/dev/null || pip installl --user . &>/dev/null; then
       if ${PYTHON} -c "from hhslib.colors import cprint"; then
         echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
       else
@@ -475,6 +484,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         quit 2 "HomeSetup python (${PYTHON}) library failed to install !"
       fi
     else
+      echo -e "${WHITE} [   ${RED}FAIL${NC}   ]"
       quit 2 "Unable to install HomeSetup python (${PYTHON}) library !"
     fi
     \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
