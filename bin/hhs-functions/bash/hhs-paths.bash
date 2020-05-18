@@ -62,7 +62,7 @@ function __hhs_paths() {
             echo -en "${ORANGE} ${CROSS_ICN} => "
           fi
         fi
-        [[ -n "$custom" ]] && echo -n "at ${HHS_PATHS_FILE}"
+        [[ -n "$custom" ]] && echo -n "from ${HHS_PATHS_FILE}"
         [[ -n "$path_dir" ]] && echo -n "from $PATHS_D"
         [[ -n "$private" ]] && echo -n "from $PVT_PATHS_D"
         if [[ -z "$custom" && -z "$path_dir" && -z "$private" ]]; then

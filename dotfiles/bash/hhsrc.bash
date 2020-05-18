@@ -29,7 +29,7 @@ unalias -a
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HHS_HOME="${HOME}/HomeSetup"
 export HHS_DIR="${HOME}/.hhs"
-export HHS_LOGFILE="${HHS_DIR}/.warnings.log"
+export HHS_LOGFILE="${HHS_DIR}/hhsrc.log"
 export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
 
@@ -52,13 +52,13 @@ export IFS='
 # Load all dotfiles following the order. Custom dotfiles comes after the default one, so they can be overriden.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
-  'profile'
   'bash_env' 'env'
   'bash_colors' 'colors'
   'bash_prompt' 'prompt'
   'bash_aliases' 'aliases' 'aliasdef'
   'bash_functions' 'functions'
   'bash_completion'
+  'profile'
 )
 
 # Re-create the HomeSetup log file
@@ -94,9 +94,17 @@ function __hhs_source() {
     return 1
   fi
   if [[ ! -f "${filepath}" ]]; then
-    echo "${FUNCNAME[0]}: file \"${filepath}\" not found !" 2>&1
+    __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found !"
   else
-    source "${filepath}" 2>> "${HHS_LOGFILE}"
+    if ! grep "File \"${filepath}\" was loaded !" "${HHS_LOGFILE}"; then
+      if source "${filepath}" 2>> "${HHS_LOGFILE}"; then
+        __hhs_log "INFO" "File \"${filepath}\" was loaded !"
+      else
+        __hhs_log "ERROR" "File \"${filepath}\" was not loaded !"
+      fi
+    else
+      __hhs_log "WARN" "File \"${filepath}\" was already loaded !"
+    fi
   fi
 }
 
