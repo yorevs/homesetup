@@ -2,4 +2,4 @@
 #
 # Package: jsonutils
 
-__all__ = ["JsonUtils"]
+__all__ = ["json_utils"]

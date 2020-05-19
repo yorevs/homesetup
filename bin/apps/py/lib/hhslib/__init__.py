@@ -2,5 +2,5 @@
 #
 # Package: hhslib
 
-__all__ = ["colors", "commons", "fetch", "security", "jsonutils"]
+__all__ = ["colors", "commons", "fetch", "security"]
 
