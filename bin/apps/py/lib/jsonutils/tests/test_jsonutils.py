@@ -13,7 +13,7 @@ import json
 import unittest
 from os import path
 
-from hhslib.jsonutils.JsonUtils import JsonUtils
+from jsonutils.JsonUtils import JsonUtils
 
 SAMPLE_FILE_NAME = "resources/json_utils_sample.json"
 

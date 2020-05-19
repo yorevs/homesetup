@@ -181,17 +181,17 @@ class Vault(object):
     def encrypt(self):
         encrypt(VAULT_FILE, VAULT_GPG_FILE, self.passphrase)
         LOG.debug("Vault file encrypted !")
-        self.is_open = False
         encode(VAULT_GPG_FILE, VAULT_FILE)
         LOG.debug("Vault file encoded !")
+        self.is_open = False
 
     # @purpose: Decode and then, decrypt the vault file
     def decrypt(self):
         decode(VAULT_FILE, VAULT_GPG_FILE)
         LOG.debug("Vault file decoded !")
         decrypt(VAULT_GPG_FILE, VAULT_FILE, self.passphrase)
-        self.is_open = True
         LOG.debug("Vault file decrypted !")
+        self.is_open = True
 
     # @purpose: Save all vault entries
     def save(self):
