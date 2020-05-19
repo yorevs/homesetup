@@ -51,7 +51,7 @@ Usage: {} <option> [arguments]
 
 OPTIONS_MAP = {}
 
-FIREBASE_USER = getpass.getuser()
+FIREBASE_USER = os.environ.get("HHS_VAULT_USER", getpass.getuser())
 
 HOME_DIR = os.environ.get("HOME", "/Users/{}".format(FIREBASE_USER))
 
@@ -158,7 +158,10 @@ class FirebaseConfig:
         print('-' * 31)
         config.project_id = read('Please type you Project ID: ')
         config.username = FIREBASE_USER
-        config.passprase = base64.b32encode(getpass.getpass('Please type a password to encrypt you payload: '))
+        config.passphrase = base64.b32encode('{}:{}'.format(
+            config.username,
+            getpass.getpass('Please type a password to encrypt your data: '))
+        )
         config.project_uuid = read('Please type a UUID to use or press enter to generate a new one: ')
         config.project_uuid = str(uuid.uuid4()) if not config.project_uuid else config.project_uuid
         config.firebase_url = FB_URL_TPL.format(config.project_id)
@@ -169,12 +172,12 @@ class FirebaseConfig:
         self.project_id = project_id
         self.username = username
         self.firebase_url = firebase_url
-        self.passprase = passphrase
+        self.passphrase = passphrase
         self.project_uuid = project_uuid
 
     def __str__(self):
         return FB_CONFIG_FMT.format(
-            self.project_id, self.username, self.firebase_url, self.passprase, self.project_uuid
+            self.project_id, self.username, self.firebase_url, self.passphrase, self.project_uuid
         )
 
     # @purpose: Save the current config
