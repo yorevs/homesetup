@@ -8,6 +8,9 @@
         @site: https://github.com/yorevs/homesetup
     @license: Please refer to <https://opensource.org/licenses/MIT>
 """
+import json
+import os
+import sys
 import ast
 import atexit
 import base64
@@ -16,14 +19,15 @@ import getpass
 import signal
 import traceback
 import uuid
-from datetime import datetime
-from os import path
+import subprocess
 
-from hhslib.commons import *
-from hhslib.fetch import *
+from datetime import datetime
+from hhslib.colors import cprint, Colors
+from hhslib.commons import log_init, check_arguments, exit_handler, read, create_file
+from hhslib.fetch import patch, get
 
 # Application name, read from it's own file path
-APP_NAME = path.basename(__file__)
+APP_NAME = os.path.basename(__file__)
 
 # Version tuple: (major,minor,build)
 VERSION = (1, 1, 0)
@@ -131,7 +135,7 @@ class FirebaseConfig:
     # @purpose: Create a config loading the config file
     @staticmethod
     def from_file():
-        if path.exists(FB_CFG_FILE):
+        if os.path.exists(FB_CFG_FILE):
             LOG.info("Config file exists, reading payload")
             with open(FB_CFG_FILE, 'r') as f_config:
                 cfg = {}
@@ -178,7 +182,7 @@ class FirebaseConfig:
         with open(FB_CFG_FILE, 'w') as f_config:
             f_config.write(str(self))
             LOG.info("Firebase configuration saved !")
-        
+
         return self
 
 
@@ -204,7 +208,7 @@ class DotfilesPayload:
 
     def load_all(self):
         for name, dotfile in DOTFILES.iteritems():
-            if path.exists(dotfile):
+            if os.path.exists(dotfile):
                 LOG.debug("Reading name={} dotfile={}".format(name, dotfile))
                 with open(dotfile, 'r') as f_dotfile:
                     self.data[name] = str(base64.b64encode(f_dotfile.read()))
@@ -254,7 +258,7 @@ class Firebase(object):
             cprint(Colors.GREEN, 'Dotfiles \"{}\" successfully uploaded !'.format(db_alias))
         else:
             cprint(Colors.RED, 'Failed to upload \"{}\" to firebase'.format(db_alias))
-    
+
     @staticmethod
     def validate_upload(entry, url):
         LOG.debug('Validating upload to {} at {}'.format(url, entry.data['lastUpdate']))
@@ -264,7 +268,7 @@ class Firebase(object):
         except subprocess.CalledProcessError as err:
             LOG.error('Failed to upload \"{}\" to firebase'.format(err))
             return False
-        
+
     def download(self, db_alias):
         url = FB_DOTFILES_URL_TPL.format(self.config.firebase_url, self.config.project_uuid, db_alias)
         entry = DotfilesPayload(db_alias, self.config.username)

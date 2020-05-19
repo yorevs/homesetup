@@ -281,7 +281,7 @@ function __hhs_load_dir() {
 # @param $2 [Req] : The directory name to search and cd into.
 function __hhs_godir() {
 
-  local dir len mselect_file results=() search_path search_name sel_index ret_val=1
+  local dir len mselect_file found_dirs=() search_path search_name sel_index ret_val=1
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
@@ -294,25 +294,27 @@ function __hhs_godir() {
       search_path="$(pwd)"
     fi
     search_name="$(basename "${2:-$1}")"
-    IFS=$'\n' read -d '' -r -a results <<<"$(find -L "${search_path%/}" -type d -iname "*""${search_name}" 2>/dev/null)"
-    len=${#results[@]}
+    pushd "${search_path%/}" &>/dev/null || echo 
+    IFS=$'\n' read -d '' -r -a found_dirs <<<"$(find -L . -type d -iname "*""${search_name}" 2>/dev/null)"
+    popd &>/dev/null || echo 
+    len=${#found_dirs[@]}
     # If no directory is found under the specified name
     if [[ ${len} -eq 0 ]]; then
       echo "${YELLOW}No matches for directory with name \"${search_name}\" found in \"${search_path}\" !${NC}"
     # If there was only one directory found, CD into it
     elif [[ ${len} -eq 1 ]]; then
-      dir=${results[0]}
+      dir=${found_dirs[0]}
     # If multiple directories were found with the same name, query the user
     else
       clear
       echo "${YELLOW}@@ Multiple directories (${len}) found. Please choose one to go into:"
-      echo "Base dir: $search_path"
+      echo "Base dir: ${search_path}"
       echo "-------------------------------------------------------------"
       echo -en "${NC}"
       mselect_file=$(mktemp)
-      if __hhs_mselect "${mselect_file}" "${results[@]//$search_path\//}"; then
+      if __hhs_mselect "${mselect_file}" "${found_dirs[@]}"; then
         sel_index=$(grep . "${mselect_file}")
-        dir=${results[$sel_index]}
+        dir=${found_dirs[$sel_index]}
         \rm -f "${mselect_file}"
       else
         [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
