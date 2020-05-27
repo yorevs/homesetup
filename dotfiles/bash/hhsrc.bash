@@ -176,8 +176,8 @@ fi
 __hhs_paths -q -a "${HHS_DIR}/bin"
 
 # Add custom paths to the system `$PATH`
-if [[ -f "${HOME}/.path" ]]; then
-  PATH="$(grep . "${HOME}/.path" | tr '\n' ':'):${PATH}"
+if [[ -f "${HHS_DIR}/.path" ]]; then
+  PATH="$(grep . "${HHS_DIR}/.path" | tr '\n' ':'):${PATH}"
   export PATH
 fi
 
