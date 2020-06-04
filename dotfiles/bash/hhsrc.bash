@@ -178,6 +178,8 @@ __hhs_paths -q -a "${HHS_DIR}/bin"
 # Add custom paths to the system `$PATH`
 if [[ -f "${HHS_DIR}/.path" ]]; then
   PATH="$(grep . "${HHS_DIR}/.path" | tr '\n' ':'):${PATH}"
+  # Remove duplicates
+  PATH=$(awk -v RS=: -v ORS=: '!arr[$0]++' <<< "$PATH")
   export PATH
 fi
 
