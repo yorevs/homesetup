@@ -55,7 +55,8 @@ function __hhs_aliases() {
 
     alias_name="$1"
     shift
-    alias_expr="$*"
+    alias_expr="${*}"
+    alias_expr="${alias_expr//$'\n'/ }"
 
     if [[ -z "${alias_expr}" ]]; then
       # List all aliases; if sorted, skips comments
