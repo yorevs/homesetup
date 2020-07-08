@@ -69,13 +69,10 @@ fetch_with_curl() {
   if [[ ${RET} -eq 0 && -n "${response}" ]]; then
     echo -en "${response}" | format_json
   elif [[ ${RET} -ne 0 && -n "${response}" ]]; then
-    echo "1: $RET"
     if [[ ${response} -ge 400 && ${response} -lt 600 ]]; then
       RET="${response}"
-      echo "2: $RET"
     fi
   fi
-  echo "3: $response"
 
   return ${RET}
 }
