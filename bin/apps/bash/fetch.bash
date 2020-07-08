@@ -16,7 +16,7 @@ VERSION=1.0.0
 USAGE="
 Usage: ${APP_NAME} <method> [options] <url>
 
-        method                      : The http method to be used [ GET, POST, PUT, PATCH, DELETE ].
+        method                      : The http method to be used [ GET, HEAD, POST, PUT, PATCH, DELETE ].
         url                         : The url to make the request.
 
     Options:
@@ -68,11 +68,14 @@ fetch_with_curl() {
   RET=$?
   if [[ ${RET} -eq 0 && -n "${response}" ]]; then
     echo -en "${response}" | format_json
-  elif [[ ${RET} -ne 0 && "${response}" ]]; then
+  elif [[ ${RET} -ne 0 && -n "${response}" ]]; then
+    echo "1: $RET"
     if [[ ${response} -ge 400 && ${response} -lt 600 ]]; then
       RET="${response}"
+      echo "2: $RET"
     fi
   fi
+  echo "3: $response"
 
   return ${RET}
 }
@@ -87,7 +90,7 @@ parse_args() {
 
   shopt -s nocasematch
   case "${1}" in
-    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
+    'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
       METHOD="$(tr '[:lower:]' '[:upper:]' <<< "${1}")"
       shift
       ;;
@@ -133,7 +136,7 @@ main() {
   parse_args "${@}"
 
   case "${METHOD}" in
-    'GET' | 'DELETE')
+    'GET' | 'HEAD'| 'DELETE')
       [[ -n "${BODY}" ]] && quit 1 "${METHOD} does not accept a body"
       ;;
     'PUT' | 'POST' | 'PATCH') 
