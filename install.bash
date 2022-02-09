@@ -47,11 +47,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools.
-  REQUIRED_TOOLS=('git' 'curl' 'gpg')
+  REQUIRED_TOOLS=('git' 'curl')
+  
+  # OS Application manager
+  OS_APP_MAN=
   
   # Darwing required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
-    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python' 'pip')
+    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3' 'pip3')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     REQUIRED_TOOLS+=('python3' 'python3-pip')
   fi
@@ -67,8 +70,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Functions to be unset after quit.
   UNSETS=(
-    quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_installed_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib
+    quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib install_brew
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified.
@@ -203,9 +206,10 @@ Usage: $APP_NAME [OPTIONS] <args>
       METHOD='remote'
     fi
 
+    # Select the installation method and call the underlying functions.
     case "$METHOD" in
     remote)
-      check_installed_tools
+      check_required_tools
       clone_repository
       install_dotfiles
       configure_python
@@ -213,7 +217,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       activate_dotfiles
       ;;
     local | repair)
-      check_installed_tools
+      check_required_tools
       install_dotfiles
       configure_python
       compatibility_check
@@ -225,22 +229,31 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
 
-  # Check installed tools.
-  check_installed_tools() {
+  # Check HomeSetup required tools.
+  check_required_tools() {
 
     local os_type pad pad_len
 
     has sudo &>/dev/null && SUDO='sudo'
 
-    if has 'apt-get'; then
+    if has 'apt-get' || has 'apt'; then
       os_type='Debian'
+      OS_APP_MAN=apt
     elif has 'yum'; then
       os_type='RedHat'
+      OS_APP_MAN=yum
     elif has 'brew'; then
       os_type='MacOS'
+      OS_APP_MAN=brew
     else
+      if [[ 'Darwin' == "$(uname -s)" ]]; then
+        install_brew
+      fi
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
+    
+    echo ''
+    echo "Using ${OS_APP_MAN} application manager"
 
     echo ''
     echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
@@ -253,14 +266,22 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
-        echo -e " [   ${GREEN}INSTALLED${NC}   ] \n"
+        echo -e " [   ${GREEN}INSTALLED${NC}   ] "
       else
-        echo -e " [ ${RED}NOT INSTALLED${NC} ] \n"
+        echo -e " [ ${RED}NOT INSTALLED${NC} ] "
         MISSING_TOOLS+=("${tool_name}")
       fi
     done
     
     install_missing_tools "${os_type}"
+  }
+  
+  # Install brew for Darwin based system.
+  install_brew() {
+    echo -n 'Darwin detected. Attempting to install HomeBrew... '
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &> /dev/null \
+      || quit 2 "# FAILED! Unable to install HomeBrew !"
+    echo -e "${GREEN}SUCCESS${NC} !"
   }
 
   # shellcheck disable=SC2086
@@ -273,17 +294,17 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps. You may be prompted for the password."
       echo ''
       echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${os_type}) ... "
-      if [[ "Darwin" == "${MY_OS}" ]]; then
-        ${SUDO} brew install ${MISSING_TOOLS[*]} &> /dev/null \
-          || quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install them and try again."
-      else
-        if has "apt-get"; then
-          ${SUDO} apt-get -y install ${MISSING_TOOLS[*]} &> /dev/null \
-            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install them and try again."
-        elif has "yum"; then
-          ${SUDO} yum -y install ${MISSING_TOOLS[*]} &> /dev/null \
-            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install them and try again."
-        fi
+      if [[ "MacOS" == "${MY_OS}" ]]; then
+        ${SUDO} brew install "${MISSING_TOOLS[@]}" &> /dev/null \
+          || quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+      elif [[ "Debian" == "${MY_OS}" ]]; then
+          ${SUDO} apt-get -y install "${MISSING_TOOLS[@]}" &> /dev/null \
+            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+      elif [[ "RedHat" == "${MY_OS}" ]]; then
+          ${SUDO} yum -y install "${MISSING_TOOLS[@]}" &> /dev/null \
+            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+      else 
+        quit 2 "Unable to identify Linux distribution: ${MY_OS}. Please manually install the missing tools and try again."
       fi
       echo -e "[   ${GREEN}OK${NC}   ]"
     fi
@@ -358,6 +379,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # If `all' option is used, copy all files
     if [[ "$OPT" == 'all' ]]; then
       # Copy all dotfiles
+      # shellcheck disable=2048
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         # Backup existing dotfile into ${HOME}/.hhs
@@ -371,6 +393,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # If `all' option is NOT used, prompt for confirmation
     else
       # Copy all dotfiles
+      # shellcheck disable=2048
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
@@ -444,50 +467,22 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Configure python and HHS python library
   configure_python() {
     echo ''
-    echo -n "Detecting local python environment ... "
+    echo -n 'Detecting local python environment ... '
     # Detecting system python and pip versions.
-    PYTHON=$(command -v python 2>/dev/null)
-    PIP=$(command -v pip 2>/dev/null)
-    if [[ -z "${PYTHON}" || -z "${PIP}" ]]; then
-      if has python2; then 
-        prefix=$(dirname "$(command -v python2 2> /dev/null)")
-        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python2" "${prefix}/python"
-        PYTHON=$(command -v python2 2>/dev/null)
-        PIP=$(python2 -m pip)
-      elif has python3; then 
-        prefix=$(dirname "$(command -v python3 2> /dev/null)")
-        [[ -f "${prefix}/python" ]] || ${SUDO} ln -sf "${prefix}/python3" "${prefix}/python"
-        PYTHON=$(command -v python3 2>/dev/null)
-        PIP=$(python3 -m pip)
-      fi
-    else
-      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
-      echo -e "=> ${PYTHON} and ${PIP}"
-    fi
-    [[ -z "${PYTHON}" || -z ${PIP} ]] && quit 2 "Unable to find a valid python(${PYTHON}) installation."
-    "${PYTHON}" -m pip &> /dev/null || pip &> /dev/null || quit 2 "Unable to find a valid pip(${PYTHON}) installation."
+    PYTHON=$(command -v python3 2>/dev/null)
+    PIP=$(command -v pip3 2>/dev/null)
+    [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Python3 is required by HomeSetup and was not found!"
+    echo "Found installed Python version $(python3 -V) at ${PYTHON}"
     install_hhslib "${PYTHON}" "${PIP}"
   }
 
   # Install HomeSetup python libraries
   install_hhslib() {
-    PYTHON="${1:-python}"
-    PIP="${2:-pip}"
-    echo -en "\n${WHITE}Installing HomeSetup python library using ${PYTHON} and ${PIP} ..."
-    \pushd "${HHS_HOME}/bin/apps/py/lib" &>/dev/null || quit 1 "Unable to enter hhslib directory !"
-    # First try to install using the module pip, if failed, try to use the pip command (python2)
-    if ${PIP} install --user . &>/dev/null || pip installl --user . &>/dev/null; then
-      if ${PYTHON} -c "from hhslib.colors import cprint"; then
-        echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
-      else
-        echo -e "${WHITE} [   ${RED}FAIL${NC}   ]"
-        quit 2 "HomeSetup python (${PYTHON}) library failed to install !"
-      fi
-    else
-      echo -e "${WHITE} [   ${RED}FAIL${NC}   ]"
-      quit 2 "Unable to install HomeSetup python (${PYTHON}) library !"
-    fi
-    \popd &>/dev/null || quit 1 "Unable to leave hhslib directory !"
+    PYTHON="${1:-python3}"
+    PIP="${2:-pip3}"
+    echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
+    ${PYTHON} -m pip install --user hspylib \
+      || quit 2 "Unable to install required HomeSetup python library HsPyLib !"
   }
 
   # Check for backward HHS compatibility.
