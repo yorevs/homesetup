@@ -17,13 +17,13 @@ USAGE="
 Usage: $APP_NAME
 "
 
-# Import pre-defined Bash Colors
+# Import pre-defined Bash Colors.
 [[ -f ~/.bash_colors ]] && \. ~/.bash_colors
 
-# Define the user HOME
+# Define the user HOME.
 HOME=${HOME:-~}
 
-# Shell type
+# Shell type.
 SHELL_TYPE="${SHELL##*/}"
 
 # Define the HomeSetup directory.
@@ -32,10 +32,15 @@ HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 # Dotfiles source location
 DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
 
+# Backup prefix
+BAK_PREFIX="orig"
+
+HHS_DIR=${HHS_DIR:-"$(basename "$(dirname /Users/hjunior/.hhs/hhsrc.log)")"}
+
 # .dotfiles we will handle
 ALL_DOTFILES=()
 
-# Find all dotfiles used by HomeSetup according to the current shell type
+# Find all dotfiles used by HomeSetup according to the current shell type.
 while IFS='' read -r dotfile; do
   ALL_DOTFILES+=("${dotfile}")
 done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
@@ -89,50 +94,57 @@ check_installation() {
   fi
 }
 
+# Remove dotfiles
 uninstall_dotfiles() {
-
-  # Remove dotfiles
-  echo -e "Removing installed dotfiles ..."
+  
+  echo "${ORANGE}Removing installed dotfiles ...${NC}"
+  # shellcheck disable=SC2048
   for next in ${ALL_DOTFILES[*]}; do
     dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
     [[ -f "${dotfile}" ]] && \rm -fv "${dotfile}"
   done
 
   # shellcheck disable=SC2164
-  cd "${HOME}"
   [[ -d "${HHS_HOME}" ]] && \rm -rfv "${HHS_HOME:?}"
   [[ -L "${HHS_DIR}/bin" ]] && \rm -rf "${HHS_DIR:?}/bin"
   echo ''
 
   # Restore backups
   if [[ -d "${HHS_DIR}" ]]; then
-    BACKUPS=("$(find "${HHS_DIR}" -iname "*.orig")")
-    echo "Restoring backups ..."
+    echo -e "${GREEN}Restoring backups ...${NC}"
+    BACKUPS=("$(find "${HHS_DIR}" -iname "*.${BAK_PREFIX}")")
+    # shellcheck disable=SC2048
     for next in ${BACKUPS[*]}; do
       [[ -f "${next}" ]] && \cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
     done
-    echo ''
   fi
-  echo ''
 
   export PS1='\[\h:\W \u \$ '
   export PS2="$PS1"
 
-  cd "${HOME}" || cd ..
-
   # Uninstall HomeSetup python library
-  echo "${WHITE}Removing HomeSetup python library"
-  pip uninstall -y hhslib &> /dev/null
+  [[ -z ${QUIET} ]] && read -rn 1 -p "Also uninstall HomeSetup python library (hhslib) y/[n] ? " ANS
+  [[ -n "$ANS" ]] && echo ''
+  if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+    echo -e "${WHITE}Removing HomeSetup python library${NC}"
+    python3 -m pip uninstall -y hhslib &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup python library !\n${NC}"
+  fi
 
-  # Remove .hhs folder
+  # Remove HomeSetup config folder
   echo -e "${ORANGE}"
-  [[ -z ${QUIET} ]] && read -rn 1 -p 'Also delete HomeSetup config (.hhs) files y/[n] ? ' ANS
+  [[ -z ${QUIET} ]] && read -rn 1 -p "Also delete HomeSetup config (${HHS_DIR}) files y/[n] ? " ANS
   echo -e "${NC}"
   [[ -n "$ANS" ]] && echo ''
   if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-    [[ -d "${HHS_DIR}" ]] && \rm -fv "${HHS_DIR}"
-    \rm -fv .prompt .aliasdef .functions .env .aliases 2> /dev/null
+    [[ -d "${HHS_DIR}" ]] && \rm -rf "${HHS_DIR}" &> /dev/null
   fi
+  
+  \rm -fv .prompt .aliasdef .functions .env .aliases &> /dev/null
+  
+  # Removing HomeSetup folder
+  [[ -d "${HHS_HOME}" ]]\
+    && quit 2 "Failed to uninstall HomeSetup !"
 
   # Unset aliases and envs
   echo "Unsetting aliases and variables ..."
@@ -148,4 +160,4 @@ uninstall_dotfiles() {
 
 check_installation
 
-echo '@@@ HomeSetup needs to close this terminal to finish the removal.'
+echo '@@@ HomeSetup will be removed after you open a new terminal.'
