@@ -8,18 +8,15 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
-# Vault python application location
-FIREBASE_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase"
-
 # @purpose: HHS plugin required function
 function help() {
-  python "${FIREBASE_DIR}/firebase.py" -h
+  python3 -m firebase -h
   exit $?
 }
 
 # @purpose: HHS plugin required function
 function version() {
-  python "${FIREBASE_DIR}/firebase.py" -v
+  python3 -m firebase -v
   exit $?
 }
 
@@ -30,6 +27,6 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  python "${FIREBASE_DIR}/firebase.py" "${@}"
+  python3 -m firebase "${@}"
   exit $?
 }

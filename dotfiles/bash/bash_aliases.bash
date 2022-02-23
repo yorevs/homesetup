@@ -130,8 +130,6 @@ alias week='\date +%V'
 alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
 # @alias: Date&Time - Display current timestamp
 alias ts='\date "+%s%S"'
-# @alias: Date&Time - Display current time in millis
-alias time-ms='python -c "import time; print(int(round(time.time() * 1000)))"'
 
 # @alias: If `wget' is not available, use `curl' instead
 __hhs_has "wget" || alias wget='\curl -O'
@@ -286,15 +284,17 @@ esac
 # -----------------------------------------------------------------------------------
 # @category: Python aliases
 
-if __hhs_has "python"; then
+if __hhs_has "python3"; then
   # @alias: Evaluate mathematical expressions
-  alias calc='python -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+  alias calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings
-  alias urle='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  alias urle='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
   # @alias: URL-decode strings
-  alias urld='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+  alias urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
   # @alias: Generate a UUID
-  alias uuid='python -c "import uuid as ul; print(ul.uuid4())"'
+  alias uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
+  # @alias: Date&Time - Display current time in millis
+  alias time-ms='python3 -c "import time; print(int(round(time.time() * 1000)))"'
 fi
 
 # -----------------------------------------------------------------------------------

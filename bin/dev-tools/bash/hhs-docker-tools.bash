@@ -127,7 +127,7 @@ if __hhs_has "docker" && docker info &> /dev/null; then
       echo "Usage: ${FUNCNAME[0]} [-a]"
       echo ''
       echo '    Options: '
-      echo '      -a : Remove active and inactive volumes; othewise it will only remove inactive'
+      echo '      -a : Remove active and inactive volumes; otherwise it will only remove inactive ones'
     else
       
       [[ "${1}" == '-a' ]] && all="-a" && shift

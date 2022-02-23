@@ -23,7 +23,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Shellscript (please complete the following information):**
+**Shell script (please complete the following information):**
  - OS: [e.g. MacOs, Ubuntu, CentOs]
  - Version [e.g. 22]
 

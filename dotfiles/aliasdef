@@ -21,6 +21,7 @@
 alias ..='__hhs_changeback_ndirs'
 alias cd='__hhs_change_dir'
 alias dirs='__hhs_dirs'
+alias aa='__hhs_aliases'
 
 # HHS-App Aliases
 __hhs_alias vault='__hhs_vault'

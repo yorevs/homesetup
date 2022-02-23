@@ -8,7 +8,7 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-if __hhs_has "python"; then
+if __hhs_has "python3"; then
 
   # @function: Search for files and links to files recursively.
   # @param $1 [Req] : The base search path.

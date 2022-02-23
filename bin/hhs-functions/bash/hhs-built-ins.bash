@@ -45,7 +45,7 @@ function __hhs_open() {
 
 # @function: Convert unicode to hexadecimal
 # @param $1..$N [Req] : The unicode values to convert
-if __hhs_has "python"; then
+if __hhs_has "python3"; then
 
   function __hhs_utoh() {
 
@@ -54,8 +54,8 @@ if __hhs_has "python"; then
     if [[ $# -gt 0 ]]; then
       for x in "$@"; do
         uni="${x:0:4}" # More digits will be ignored
-        echo -e "\n[Uni-${uni}]: "
-        converted=$(print-uni.py "${uni}" | hexdump -Cb)
+        echo "[Unicode-'\u${uni}']"
+        converted=$(python3 -c "import struct; print(bytes.decode(struct.pack('<I', int('f118', 16)), 'utf_32_le'))" | hexdump -Cb)
         result=$(awk '
         NR == 1 {printf "  Hex => "; print $2" "$3" "$4}
         NR == 2 {printf "  Oct => "; print $2" "$3" "$4}

@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools.
-  REQUIRED_TOOLS=('git' 'curl')
+  REQUIRED_TOOLS=('git' 'curl' 'md5sum')
   
   # OS Application manager
   OS_APP_MAN=

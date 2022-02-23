@@ -102,7 +102,7 @@ DEFAULT_DEV_TOOLS=(
   'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'jq'
   'gcc' 'make' 'ant' 'mvn' 'gradle' 'ruby' 'md5'
   'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 
-  'shasum' 'figlet' 'base64' 'git' 'go' 'python'
+  'shasum' 'figlet' 'base64' 'git' 'go' 'python' 'python3'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
