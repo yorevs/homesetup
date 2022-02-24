@@ -186,16 +186,14 @@ else
   esac
 fi
 
-# Add `$HHS_DIR/bin` to the system `$PATH`
-__hhs_paths -q -a "${HHS_DIR}/bin"
-
 # Add custom paths to the system `$PATH`
 if [[ -f "${HHS_DIR}/.path" ]]; then
-  PATH="$(grep . "${HHS_DIR}/.path" | tr '\n' ':'):${PATH}"
-  # Remove duplicates
-  PATH=$(awk -v RS=: -v ORS=: '!arr[$0]++' <<< "$PATH")
+  PATH="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$' | tr '\n' ':')${PATH}"
   export PATH
 fi
+
+# Add `$HHS_DIR/bin` to the system `$PATH`
+__hhs_paths -q -a "${HHS_DIR}/bin"
 
 # Check for updates
 if [[ ! -f "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then

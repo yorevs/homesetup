@@ -31,7 +31,7 @@ function __hhs_aliases() {
     echo ''
     return 1
   else
-    alias_file="${HOME}/.aliases"
+    alias_file="${HHS_DIR}/.aliases"
     touch "${alias_file}"
 
     if [[ "$1" == '-e' || "$1" == "--edit" ]]; then

@@ -15,9 +15,9 @@ function __hhs_paths() {
 
   local pad pad_len path_dir custom private quiet
 
-  HHS_PATHS_FILE=${HHS_PATHS_FILE:-${HOME}/.path} # Custom paths
-  PATHS_D="/etc/paths.d"                          # Private system paths
-  PVT_PATHS_D="/private/etc/paths"                # General system path dir
+  HHS_PATHS_FILE=${HHS_PATHS_FILE:-${HHS_DIR}/.path}  # Custom paths
+  PATHS_D="/etc/paths.d"                              # Private system paths
+  PVT_PATHS_D="/private/etc/paths"                    # General system path dir
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -46,8 +46,8 @@ function __hhs_paths() {
       for path in $(echo -e "${PATH//:/\\n}"); do
         path="${path:0:$columns}"
         [[ -f "${HHS_PATHS_FILE}" ]] && custom="$(grep ^"$path"$ "${HHS_PATHS_FILE}")"
-        [[ -d "$PVT_PATHS_D" ]] && private="$(grep ^"$path"$ ${PVT_PATHS_D})"
-        [[ -d "$PATHS_D" ]] && path_dir="$(grep ^"$path"$ ${PATHS_D}/*)"
+        [[ -d "${PVT_PATHS_D}" ]] && private="$(find ${PVT_PATHS_D} -type f -exec cat {} \; | grep ^"${path}"$)"
+        [[ -d "${PATHS_D}" ]] && path_dir="$(find ${PATHS_D} -type f -exec cat {} \; | grep ^"${path}"$)"
         echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
         printf '%*.*s' 0 $((pad_len - ${#path})) "${pad}"
         [[ "${#path}" -ge "$columns" ]] && echo -en "${NC}" || echo -en "${NC}"
@@ -62,10 +62,10 @@ function __hhs_paths() {
             echo -en "${ORANGE} ${CROSS_ICN} => "
           fi
         fi
-        [[ -n "$custom" ]] && echo -n "from ${HHS_PATHS_FILE}"
-        [[ -n "$path_dir" ]] && echo -n "from $PATHS_D"
-        [[ -n "$private" ]] && echo -n "from $PVT_PATHS_D"
-        if [[ -z "$custom" && -z "$path_dir" && -z "$private" ]]; then
+        [[ -n "${custom}" ]] && echo -n "from ${HHS_PATHS_FILE}"
+        [[ -n "${path_dir}" ]] && echo -n "from ${PATHS_D}"
+        [[ -n "${private}" ]] && echo -n "from ${PVT_PATHS_D}"
+        if [[ -z "${custom}" && -z "${path_dir}" && -z "${private}" ]]; then
           echo -n "Shell export"
         fi
         echo -e "${NC}"
@@ -77,10 +77,11 @@ function __hhs_paths() {
       return 0
     elif [[ "-a" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
+      grep -q "$2" "${HHS_PATHS_FILE}" && return 0
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"
       if [[ -d "$2" ]]; then
         echo "$2" >> "${HHS_PATHS_FILE}"
-        export PATH="$2:$PATH"
+        export PATH="$2:${PATH}"
         [[ -z "${quiet}" ]] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
       else
         __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" does not exist" && return 1
@@ -97,9 +98,6 @@ function __hhs_paths() {
       fi
     fi
   fi
-
-  # Remove all $PATH duplicated payload
-  export PATH=$(awk -v RS=: -v ORS=: '!arr[$0]++' <<< "$PATH")
 
   return 0
 }
