@@ -27,6 +27,7 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  python3 -m firebase "${@}"
+  # python3 -m firebase "${@}"
+  echo "python3 -m firebase ${*}"
   exit $?
 }

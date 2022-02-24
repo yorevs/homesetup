@@ -334,14 +334,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     local dotfile
 
     # Create all user custom files.
-    [[ -f "${HOME}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
-    [[ -f "${HOME}/.inputrc" ]] || \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-    [[ -f "${HOME}/.aliases" ]] || \touch "${HOME}/.aliases"
-    [[ -f "${HOME}/.colors" ]] || \touch "${HOME}/.colors"
-    [[ -f "${HOME}/.env" ]] || \touch "${HOME}/.env"
-    [[ -f "${HOME}/.functions" ]] || \touch "${HOME}/.functions"
-    [[ -f "${HOME}/.profile" ]] || \touch "${HOME}/.profile"
-    [[ -f "${HOME}/.prompt" ]] || \touch "${HOME}/.prompt"
+    [[ -f "${HHS_DIR}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
+    [[ -f "${HHS_DIR}/.inputrc" ]] || \cp "${HHS_HOME}/dotfiles/inputrc" "${HHS_DIR}/.inputrc"
+    [[ -f "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
+    [[ -f "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
+    [[ -f "${HHS_DIR}/.env" ]] || \touch "${HHS_DIR}/.env"
+    [[ -f "${HHS_DIR}/.functions" ]] || \touch "${HHS_DIR}/.functions"
+    [[ -f "${HHS_DIR}/.profile" ]] || \touch "${HHS_DIR}/.profile"
+    [[ -f "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
     [[ -f "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
@@ -491,12 +491,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
     # .profile Needs to be renamed, so, we guarantee that no dead lock occurs.
     if [[ -f "${HOME}/.profile" ]]; then
-      \mv -f "${HOME}/.profile" "${HOME}/profile.bak"
+      \mv -f "${HOME}/.profile" "${HOME}/.profile.bak"
       echo ''
-      echo -e "\n${YELLOW}Your old ${HOME}/.profile had to be renamed to ${HOME}/profile.bak "
+      echo -e "\n${YELLOW}Your old ${HOME}/.profile had to be renamed to ${HOME}/.profile.bak "
       echo -e "This is to avoid invoking dotfiles multiple times. If you are sure that your .profile don't source either"
       echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
-      echo -e "$ mv ${HOME}/profile.bak ${HOME}/.profile"
+      echo -e "$ mv ${HOME}/.profile.bak ${HOME}/.profile"
       echo ''
       read -rn 1 -p "Press any key to continue...${NC}"
     fi
@@ -506,6 +506,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HOME}/.saved_dir" ]] && \mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
     [[ -f "${HOME}/.punches" ]] && \mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
     [[ -f "${HOME}/.firebase" ]] && \mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
+    
+    # From hspylib integration on
+    [[ -f "${HOME}/.aliases" ]] && \mv -f "${HOME}/.aliases" "${HHS_DIR}/.aliases"
+    [[ -f "${HOME}/.aliasdef" ]] && \mv -f "${HOME}/.aliasdef" "${HHS_DIR}/.aliasdef"
+    [[ -f "${HOME}/.colors" ]] && \mv -f "${HOME}/.colors" "${HHS_DIR}/.colors"
+    [[ -f "${HOME}/.env" ]] && \mv -f "${HOME}/.env" "${HHS_DIR}/.env"
+    [[ -f "${HOME}/.functions" ]] && \mv -f "${HOME}/.functions" "${HHS_DIR}/.functions"
+    [[ -f "${HOME}/.profile" ]] && \mv -f "${HOME}/.profile" "${HHS_DIR}/.profile"
+    [[ -f "${HOME}/.prompt" ]] && \mv -f "${HOME}/.prompt" "${HHS_DIR}/.prompt"
 
     # Removing the old ${HOME}/bin folder.
     if [[ -L "${HOME}/bin" ]]; then

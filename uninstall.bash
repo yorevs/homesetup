@@ -140,8 +140,6 @@ uninstall_dotfiles() {
     [[ -d "${HHS_DIR}" ]] && \rm -rf "${HHS_DIR}" &> /dev/null
   fi
   
-  \rm -fv .prompt .aliasdef .functions .env .aliases &> /dev/null
-  
   # Removing HomeSetup folder
   [[ -d "${HHS_HOME}" ]]\
     && quit 2 "Failed to uninstall HomeSetup !"

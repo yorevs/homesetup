@@ -12,14 +12,14 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
 # !NOTICE: Do not change this file. To customize your shell create/change the following files:
-#   ~/.colors     : To customize your colors
-#   ~/.env        : To customize your environment variables
-#   ~/.aliases    : To customize your aliases
-#   ~/.aliasdef   : To customize your aliases definitions
-#   ~/.prompt     : To customize your prompt
-#   ~/.functions  : To customize your functions
-#   ~/.profile    : To customize your profile
-#   ~/.path       : To customize your paths
+#   ~/.hhs/.colors     : To customize your colors
+#   ~/.hhs/.env        : To customize your environment variables
+#   ~/.hhs/.aliases    : To customize your aliases
+#   ~/.hhs/.aliasdef   : To customize your aliases definitions
+#   ~/.hhs/.prompt     : To customize your prompt
+#   ~/.hhs/.functions  : To customize your functions
+#   ~/.hhs/.profile    : To customize your profile
+#   ~/.hhs/.path       : To customize your paths
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
@@ -40,26 +40,32 @@ export IFS='
 # Do not change this formatting, it is required to proper reset IFS to it's defaults
 
 # Load all dotfiles:
-#   source -> ~/.path can be used to extend `$PATH`
-#   source -> ~/.prompt can be used to extend/override .bash_prompt
-#   source -> ~/.aliases can be used to extend/override .bash_aliases
-#   source -> ~/.aliasesdef can be used to customize your alias definitions
-#   source -> ~/.profile can be used to extend/override .bash_profile/.hhsrc
-#   source -> ~/.env can be used to extend/override .bash_env
-#   source -> ~/.colors can be used to extend/override .bash_colors
-#   source -> ~/.functions can be used to extend/override .bash_functions
+#   source -> ~/.hhs/.path can be used to extend `$PATH`
+#   source -> ~/.hhs/.prompt can be used to extend/override .bash_prompt
+#   source -> ~/.hhs/.aliases can be used to extend/override .bash_aliases
+#   source -> ~/.hhs/.aliasesdef can be used to customize your alias definitions
+#   source -> ~/.hhs/.profile can be used to extend/override .bash_profile/.hhsrc
+#   source -> ~/.hhs/.env can be used to extend/override .bash_env
+#   source -> ~/.hhs/.colors can be used to extend/override .bash_colors
+#   source -> ~/.hhs/.functions can be used to extend/override .bash_functions
 
-# Load all dotfiles following the order. Custom dotfiles comes after the default one, so they can be overriden.
+# Load all dotfiles following the order.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
-  'bash_env' 'env'
-  'bash_colors' 'colors'
-  'bash_prompt' 'prompt'
-  'bash_aliases' 'aliases' 'aliasdef'
-  'bash_functions' 'functions'
+  'bash_env'
+  'bash_colors' 
+  'bash_prompt'
+  'bash_aliases'
+  'bash_functions'
   'bash_completion'
   'profile'
 )
+
+# Custom dotfiles comes after the default one, so they can be overriden.
+CUSTOM_DOTFILES=(
+   'env' 'colors' 'prompt' 'aliases' 'aliasdef' 'functions'
+)
+
 
 # Re-create the HomeSetup log file
 echo -e "HomeSetup loaded at $(date)\n" > "${HHS_LOGFILE}"
@@ -109,9 +115,17 @@ function __hhs_source() {
 }
 
 # Load all HomeSetup dotfiles.
+# shellcheck disable=SC2048
 for file in ${DOTFILES[*]}; do
   __hhs_log "INFO" "Loading dotfile: ${HOME}/.${file}"
   __hhs_source "${HOME}/.${file}"
+done
+
+# Load all Custom dotfiles.
+# shellcheck disable=SC2048
+for file in ${CUSTOM_DOTFILES[*]}; do
+  __hhs_log "INFO" "Loading custom dotfile: ${HHS_DIR}/.${file}"
+  __hhs_source "${HHS_DIR}/.${file}"
 done
 
 unset file DOTFILES
