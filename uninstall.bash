@@ -123,11 +123,12 @@ uninstall_dotfiles() {
   export PS2="$PS1"
 
   # Uninstall HomeSetup python library
-  [[ -z ${QUIET} ]] && read -rn 1 -p "Also uninstall HomeSetup python library (hhslib) y/[n] ? " ANS
+  echo -e "${ORANGE}"
+  [[ -z ${QUIET} ]] && read -rn 1 -p "Also uninstall HomeSetup python library (hspylib) y/[n] ? " ANS
   [[ -n "$ANS" ]] && echo ''
   if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
     echo -e "${WHITE}Removing HomeSetup python library${NC}"
-    python3 -m pip uninstall -y hhslib &> /dev/null \
+    python3 -m pip uninstall -y hspylib &> /dev/null \
       || echo -e "${RED}# Unable to uninstall HomeSetup python library !\n${NC}"
   fi
 

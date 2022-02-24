@@ -472,6 +472,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON=$(command -v python3 2>/dev/null)
     PIP=$(command -v pip3 2>/dev/null)
     [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Python3 is required by HomeSetup and was not found!"
+    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
     echo "Found installed Python version $(python3 -V) at ${PYTHON}"
     install_hhslib "${PYTHON}" "${PIP}"
   }
@@ -481,8 +482,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON="${1:-python3}"
     PIP="${2:-pip3}"
     echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
-    ${PYTHON} -m pip install --user hspylib \
+    ${PYTHON} -m pip install --upgrade --user hspylib &> /dev/null \
       || quit 2 "Unable to install required HomeSetup python library HsPyLib !"
+    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
   }
 
   # Check for backward HHS compatibility.
