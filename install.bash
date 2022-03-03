@@ -489,13 +489,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
     
     # HsPyLib-Vault installation
-    echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
+    echo -en "\n${WHITE}Installing HsPyLib-Vault using ${PYTHON} ..."
     ${PYTHON} -m pip install --upgrade --user hspylib-vault &> /dev/null \
       || quit 2 "Unable to install HomeSetup Vault !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
     
     # HsPyLib-Firebase installation
-    echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
+    echo -en "\n${WHITE}Installing HsPyLib-Firebase using ${PYTHON} ..."
     ${PYTHON} -m pip install --upgrade --user hspylib-firebase &> /dev/null \
       || quit 2 "Unable to install HomeSetup Firebase !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"

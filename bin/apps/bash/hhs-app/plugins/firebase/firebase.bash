@@ -27,9 +27,13 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  ARGS=(${@})
-  fb_args=(${ARGS[@]:2})
-  python3 -m firebase "${ARGS[0]}" dotfiles."${ARGS[1]}" "${fb_args[@]}"
+  dotfiles=(
+    '.aliases' '.aliasdef' 'cmd_file' 'colors' '.env' 
+    'firebase' '.inputrc' '.path' 'profile' 'prompt' 'saved_dirs'
+  )
+  pushd "${HHS_DIR}" || exit 1
+  python3 -m firebase "${ARGS[0]}" dotfiles."${ARGS[1]}" "${dotfiles[@]}"
+  popd || exit 1
 
   exit $?
 }
