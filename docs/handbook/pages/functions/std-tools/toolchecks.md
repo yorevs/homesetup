@@ -110,7 +110,7 @@ Check whether a list of development tools are installed or not.
 ##### **Examples:**
 
 ```bash
-  $ __hhs_tools 'git' 'svn' 'java' 'python'
+  $ __hhs_tools 'git' 'svn' 'java' 'python3'
 ```
 
 ------

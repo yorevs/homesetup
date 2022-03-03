@@ -47,7 +47,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   MY_OS=$(uname -s)
 
   # HomeSetup required tools.
-  REQUIRED_TOOLS=('git' 'curl' 'md5sum')
+  REQUIRED_TOOLS=('git' 'curl')
   
   # OS Application manager
   OS_APP_MAN=
@@ -481,9 +481,23 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_hhslib() {
     PYTHON="${1:-python3}"
     PIP="${2:-pip3}"
+    
+    # HsPyLib installation
     echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
     ${PYTHON} -m pip install --upgrade --user hspylib &> /dev/null \
       || quit 2 "Unable to install required HomeSetup python library HsPyLib !"
+    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
+    
+    # HsPyLib-Vault installation
+    echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
+    ${PYTHON} -m pip install --upgrade --user hspylib-vault &> /dev/null \
+      || quit 2 "Unable to install HomeSetup Vault !"
+    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
+    
+    # HsPyLib-Firebase installation
+    echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
+    ${PYTHON} -m pip install --upgrade --user hspylib-firebase &> /dev/null \
+      || quit 2 "Unable to install HomeSetup Firebase !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
   }
 
@@ -573,16 +587,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}"
 
     echo -e "${BLUE}"
-    if has figlet &>/dev/null; then
-      figlet -f colossal -ck "Welcome" 2>/dev/null || figlet "Welcome"
-    else
-      echo 'ww      ww   eEEEEEEEEe   LL           cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
-      echo 'WW      WW   EE           LL          Cc          OO      Oo   MM M  M MM   EE        '
-      echo 'WW  ww  WW   EEEEEEEE     LL          Cc          OO      OO   MM  mm  MM   EEEEEEEE  '
-      echo 'WW W  W WW   EE           LL     ll   Cc          OO      Oo   MM      MM   EE        '
-      echo 'ww      ww   eEEEEEEEEe   LLLLLLLll    cCCCCCCc    oOOOOOOo    mm      mm   eEEEEEEEEe'
-      echo ''
-    fi
+    echo '888       888          888                                          '
+    echo '888   o   888          888                                          '
+    echo '888  d8b  888          888                                          '
+    echo '888 d888b 888  .d88b.  888  .d8888b  .d88b.  88888b.d88b.   .d88b.  '
+    echo '888d88888b888 d8P  Y8b 888 d88P"    d88""88b 888 "888 "88b d8P  Y8b '
+    echo '88888P Y88888 88888888 888 888      888  888 888  888  888 88888888 '
+    echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
+    echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
+    echo ''
     echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
     echo ''
     echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"

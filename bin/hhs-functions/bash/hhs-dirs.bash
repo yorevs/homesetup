@@ -56,6 +56,7 @@ function __hhs_changeback_ndirs() {
 
   if [[ -z "$1" ]]; then
     \cd ..
+    echo "${GREEN}Changed current directory: ${WHITE}\"$(pwd)\"${NC}"
   elif [[ -n "$1" ]]; then
     for x in $(seq 1 "$1"); do
       \cd .. || return 1

@@ -10,7 +10,7 @@
 
 # @purpose: HHS plugin required function
 function help() {
-  python3 -m firebase -h
+  echo "Usage: hhs firebase execute {setup,upload,download} {db_alias}"
   exit $?
 }
 
@@ -27,7 +27,9 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  # python3 -m firebase "${@}"
-  echo "python3 -m firebase ${*}"
+  ARGS=(${@})
+  fb_args=(${ARGS[@]:2})
+  python3 -m firebase "${ARGS[0]}" dotfiles."${ARGS[1]}" "${fb_args[@]}"
+
   exit $?
 }

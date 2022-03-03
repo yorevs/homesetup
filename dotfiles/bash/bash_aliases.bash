@@ -143,7 +143,7 @@ alias ps2='export PS1=$PS2_STYLE'
 # @category: HomeSetup
 
 # @alias: Shortcut for hhs vault plug-in
-alias __hhs_vault='hhs vault execute'
+alias __hhs_vault='python3 -m vault'
 # @alias: Shortcut for hhs hspm plug-in
 alias __hhs_hspm='hhs hspm execute'
 # @alias: Shortcut for hhs firebase plug-in

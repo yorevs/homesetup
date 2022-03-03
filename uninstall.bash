@@ -124,12 +124,21 @@ uninstall_dotfiles() {
 
   # Uninstall HomeSetup python library
   echo -e "${ORANGE}"
-  [[ -z ${QUIET} ]] && read -rn 1 -p "Also uninstall HomeSetup python library (hspylib) y/[n] ? " ANS
+  [[ -z ${QUIET} ]] && read -rn 1 -p "Also uninstall HomeSetup python library and apps (hspylib, vault and firebase) y/[n] ? " ANS
   [[ -n "$ANS" ]] && echo ''
   if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
+    # HsPyLib
     echo -e "${WHITE}Removing HomeSetup python library${NC}"
     python3 -m pip uninstall -y hspylib &> /dev/null \
       || echo -e "${RED}# Unable to uninstall HomeSetup python library !\n${NC}"
+    # HsPyLib-Vault
+    echo -e "${WHITE}Removing HomeSetup Vault${NC}"
+    python3 -m pip uninstall -y hspylib-vault &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup vault !\n${NC}"
+    # HsPyLib-Firebase
+    echo -e "${WHITE}Removing HomeSetup Firebase${NC}"
+    python3 -m pip uninstall -y hspylib-firebase &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup firebase !\n${NC}"
   fi
 
   # Remove HomeSetup config folder
