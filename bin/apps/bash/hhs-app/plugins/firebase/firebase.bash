@@ -28,12 +28,15 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
   ARGS=(${@})
+  action="${ARGS[0]}"
+  db_alias="${ARGS[1]}"
   dotfiles=(
-    '.aliases' '.aliasdef' 'cmd_file' 'colors' '.env' 
-    'firebase' '.inputrc' '.path' 'profile' 'prompt' 'saved_dirs'
+    '.aliases' '.aliasdef' '.cmd_file' '.colors' '.env' '.path' 
+    '.firebase' '.inputrc' '.profile' '.prompt' '.saved_dirs'
   )
   pushd "${HHS_DIR}" || exit 1
-  python3 -m firebase "${ARGS[0]}" dotfiles."${ARGS[1]}" "${dotfiles[@]}"
+  [[ 'upload' == "${action}" ]] && python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
+  [[ 'download' == "${action}" ]] && python3 -m firebase download dotfiles."${db_alias}"
   popd || exit 1
 
   exit $?
