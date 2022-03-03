@@ -35,10 +35,15 @@ function execute() {
     '.firebase' '.inputrc' '.profile' '.prompt' '.saved_dirs'
   )
   pushd "${HHS_DIR}" &>/dev/null || exit 1
-  [[ 'upload' == "${action}" ]] && python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
-  [[ 'download' == "${action}" ]] && python3 -m firebase download dotfiles."${db_alias}"
-  [[ 'setup' == "${action}" ]] && python3 -m firebase setup 
-  python3 -m firebase "${ARGS[@]}"
+  if [[ 'upload' == "${action}" ]]; then 
+    python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
+  elif [[ 'download' == "${action}" ]]; then
+    python3 -m firebase download dotfiles."${db_alias}"
+  elif [[ 'setup' == "${action}" ]]; then 
+    python3 -m firebase setup 
+  else
+    python3 -m firebase "${ARGS[@]}"
+  fi
   popd &>/dev/null || exit 1
 
   exit $?
