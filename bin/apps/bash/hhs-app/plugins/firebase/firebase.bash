@@ -27,6 +27,7 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
+  ARGS=(${@})
   dotfiles=(
     '.aliases' '.aliasdef' 'cmd_file' 'colors' '.env' 
     'firebase' '.inputrc' '.path' 'profile' 'prompt' 'saved_dirs'
