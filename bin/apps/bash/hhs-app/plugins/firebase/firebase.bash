@@ -37,6 +37,8 @@ function execute() {
   pushd "${HHS_DIR}" &>/dev/null || exit 1
   [[ 'upload' == "${action}" ]] && python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
   [[ 'download' == "${action}" ]] && python3 -m firebase download dotfiles."${db_alias}"
+  [[ 'setup' == "${action}" ]] && python3 -m firebase setup 
+  python3 -m firebase "${ARGS[@]}"
   popd &>/dev/null || exit 1
 
   exit $?
