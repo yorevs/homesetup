@@ -34,10 +34,10 @@ function execute() {
     '.aliases' '.aliasdef' '.cmd_file' '.colors' '.env' '.path' 
     '.firebase' '.inputrc' '.profile' '.prompt' '.saved_dirs'
   )
-  pushd "${HHS_DIR}" || exit 1
+  pushd "${HHS_DIR}" &>/dev/null || exit 1
   [[ 'upload' == "${action}" ]] && python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
   [[ 'download' == "${action}" ]] && python3 -m firebase download dotfiles."${db_alias}"
-  popd || exit 1
+  popd &>/dev/null || exit 1
 
   exit $?
 }
