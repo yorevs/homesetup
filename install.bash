@@ -334,8 +334,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     local dotfile
 
     # Create all user custom files.
+    [[ -f "${HOME}/.inputrc" ]] || \cp "${HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     [[ -f "${HHS_DIR}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
-    [[ -f "${HHS_DIR}/.inputrc" ]] || \cp "${HHS_HOME}/dotfiles/inputrc" "${HHS_DIR}/.inputrc"
     [[ -f "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
     [[ -f "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
     [[ -f "${HHS_DIR}/.env" ]] || \touch "${HHS_DIR}/.env"
@@ -553,9 +553,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # .inputrc Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.inputrc" ]]; then
-      \cp -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc.bak"
+      \mv -f "${HOME}/.inputrc" "${HHS_DIR}/inputrc-${TIMESTAMP}.bak"
       \cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-      echo -e "\n${ORANGE}Your old .inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${ORANGE}Your old ${HOME}/.inputrc had to be replaced by a new version. Your old file it located at ${HHS_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving .path file to .hhs .

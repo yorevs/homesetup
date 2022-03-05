@@ -1,0 +1,24 @@
+/*
+    Gradle root build file
+    Project: HomeSetup
+    Created: 5th March, 2022
+*/
+
+tasks.withType(Exec) {
+  doFirst {
+    println commandLine
+  }
+}
+
+ext {
+  app_version =""
+  bash = "bash${bashVersion}"
+  versionFile = "$rootDir/.VERSION"
+  startTime = System.currentTimeMillis()
+  verbose = project.hasProperty('verbose') ? verbose : false
+}
+
+apply from: "$projectDir/gradle.properties"
+apply from: "$projectDir/gradle/bash.gradle"
+apply from: "$projectDir/gradle/version.gradle"
+

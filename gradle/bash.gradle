@@ -1,0 +1,35 @@
+/*
+    Gradle Bash extension
+    Project: HomeSetup
+    Created: 5th March, 2022
+*/
+
+/* Helper Functions -------------------------------------------------------- */
+
+String dirName(File file) {
+  file.getParentFile().getPath()
+}
+
+/***** Verification Group */
+
+/* Run all Bats tests */
+task bats(type: Task) {
+  group = 'Verification'
+  description = "Run all Bats test"
+  doLast {
+    println "Performing bats tests from $rootDir/tests"
+    fileTree("$rootDir/tests").matching {
+      include "**/*.bats"
+    }.each { File file ->
+      if (verbose) {
+          println ""
+          println "Executing bats tests from -> $file.name"
+          println ""
+        }
+        exec {
+          workingDir = dirName(file)
+          commandLine 'bats', '--tap', file.path
+        }
+      }
+  }
+}
