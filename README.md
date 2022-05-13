@@ -1,4 +1,4 @@
-# HomeSetup
+# ![images/hs-logo-x32.png](images/hs-logo-x32.png) HomeSetup
 
 ## Your shell, good as hell ! 
 
@@ -96,7 +96,6 @@ $ sudo chsh -s /usr/local/bin/bash
   * [6.2. Development tools](#development-tools)
 - [7. Applications](#applications)
   * [7.1. Bash apps](#bash-apps)
-  * [7.2. Python apps](#python-apps)
 - [8. Alias Definitions](#alias-definitions)
 - [9. HomeSetup application](#homesetup-application)
   * [9.1. Plug-ins](#hhs-plugins)
@@ -315,7 +314,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Navigational
 
 | ALIAS | Equivalent | Description                                      |
-| ----- | ---------- | ------------------------------------------------ |
+|-------|------------|--------------------------------------------------|
 | ...   | cd ...     | Change-back two previous directories             |
 | ....  | cd ....    | Change-back three previous directories           |
 | ..... | cd .....   | Change-back four previous directories            |
@@ -325,43 +324,43 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### General
 
-| ALIAS     | Description                                                           |
-| --------- | --------------------------------------------------------------------- |
-| q         | Short for `exit 0' from terminal                                      |
-| sudo      | Enable aliases to be sudo’ed                                          |
-| ls        | Always use color output for **ls**                                    |
-| l         | List _all files_ colorized in long format                             |
-| lsd       | List _all directories_ in long format                                 |
-| ll        | List _all files_ colorized in long format, **including dot files**    |
-| lll       | List _all **.dotfiles**_ colorized in long format                     |
-| lld       | List _all **.dotfolders**_ colorized in long format                   |
-| grep      | Always enable colored **grep** output                                 |
-| egrep     | Always enable colored **fgrep** output                                |
-| fgrep     | Always enable colored **egrep** output                                |
-| rm        | By default **rm** will prompt for confirmation and will be verbose    |
-| cp        | By default **cp** will prompt for confirmation and will be verbose    |
-| mv        | By default **mv** will prompt for confirmation and will be verbose    |
-| df        | Make **df** command output pretty and human readable format           |
-| du        | Make **du** command output pretty and human readable format           |
-| psg       | Make **ps** command output pretty and human readable format           |
-| vi        | Use **vim** instead of **vi** if installed                            |
-| more      | **more** will interpret escape sequences                              |
-| less      | **less** will interpret escape sequences                              |
-| mount     | Make `mount' command output pretty and human readable format          |
-| cpu       | **top** shortcut ordered by _cpu_                                     |
-| mem       | **top** shortcut ordered by _Memory_                                  |
-| week      | Date&Time - Display current **week number**                           |
-| now       | Date&Time - Display current **date and time**                         |
-| ts        | Date&Time - Display current **timestamp**                             |
-| time-ms   | Date&Time - Display current **time in millis**                        |
-| wget      | If **wget** is not available, use **curl** instead                    |
-| ps1       | Make _PS1_ prompt active                                              |
-| ps2       | Make _PS2_ prompt active                                              |
+| ALIAS   | Description                                                        |
+|---------|--------------------------------------------------------------------|
+| q       | Short for `exit 0' from terminal                                   |
+| sudo    | Enable aliases to be sudo’ed                                       |
+| ls      | Always use color output for **ls**                                 |
+| l       | List _all files_ colorized in long format                          |
+| lsd     | List _all directories_ in long format                              |
+| ll      | List _all files_ colorized in long format, **including dot files** |
+| lll     | List _all **.dotfiles**_ colorized in long format                  |
+| lld     | List _all **.dotfolders**_ colorized in long format                |
+| grep    | Always enable colored **grep** output                              |
+| egrep   | Always enable colored **fgrep** output                             |
+| fgrep   | Always enable colored **egrep** output                             |
+| rm      | By default **rm** will prompt for confirmation and will be verbose |
+| cp      | By default **cp** will prompt for confirmation and will be verbose |
+| mv      | By default **mv** will prompt for confirmation and will be verbose |
+| df      | Make **df** command output pretty and human readable format        |
+| du      | Make **du** command output pretty and human readable format        |
+| psg     | Make **ps** command output pretty and human readable format        |
+| vi      | Use **vim** instead of **vi** if installed                         |
+| more    | **more** will interpret escape sequences                           |
+| less    | **less** will interpret escape sequences                           |
+| mount   | Make `mount' command output pretty and human readable format       |
+| cpu     | **top** shortcut ordered by _cpu_                                  |
+| mem     | **top** shortcut ordered by _Memory_                               |
+| week    | Date&Time - Display current **week number**                        |
+| now     | Date&Time - Display current **date and time**                      |
+| ts      | Date&Time - Display current **timestamp**                          |
+| time-ms | Date&Time - Display current **time in millis**                     |
+| wget    | If **wget** is not available, use **curl** instead                 |
+| ps1     | Make _PS1_ prompt active                                           |
+| ps2     | Make _PS2_ prompt active                                           |
 
 ### HomeSetup (HHS)
 
 | ALIAS          | Description                                   |
-| -------------- | --------------------------------------------- |
+|----------------|-----------------------------------------------|
 | __hhs_vault    | Shortcut for hhs vault plug-in                |
 | __hhs_hspm     | Shortcut for hhs hspm plug-in                 |
 | __hhs_firebase | Shortcut for hhs firebase plug-in             |
@@ -374,7 +373,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Tool aliases
 
 | ALIAS              | Description                                                                      |
-| ------------------ | -------------------------------------------------------------------------------- |
+|--------------------|----------------------------------------------------------------------------------|
 | jenv_set_java_home | Jenv - Set JAVA_HOME using jenv                                                  |
 | cleanup-db         | Dropbox - Recursively delete Dropbox conflicted files from the current directory |
 | encode             | Shortcut for base64 encode                                                       |
@@ -384,7 +383,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 #### Linux
 
 | ALIAS  | Description                      |
-| ------ | -------------------------------- |
+|--------|----------------------------------|
 | cpu    | `top' shortcut ordered by CPU%   |
 | mem    | `top' shortcut ordered by MEM%   |
 | ised   | Same as sed -i'' -r              |
@@ -395,7 +394,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 #### Darwin
 
 | ALIAS          | Description                                                              |
-| -------------- | ------------------------------------------------------------------------ |
+|----------------|--------------------------------------------------------------------------|
 | cpu            | `top' shortcut ordered by CPU%                                           |
 | mem            | `top' shortcut ordered by MEM%                                           |
 | ised           | Same as sed -i '' -E                                                     |
@@ -416,7 +415,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Handy Terminal Shortcuts
 
 | ALIAS              | Description                          |
-| ------------------ | ------------------------------------ |
+|--------------------|--------------------------------------|
 | show-cursor        | Make terminal cursor visible         |
 | hide-cursor        | Make terminal cursor invisible       |
 | save-cursor-pos    | Save terminal cursor position        |
@@ -432,7 +431,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Python aliases
 
 | ALIAS | Description                       |
-| ----- | --------------------------------- |
+|-------|-----------------------------------|
 | calc  | Evaluate mathematical expressions |
 | urle  | URL-encode strings                |
 | urld  | URL-decode strings                |
@@ -441,14 +440,14 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Perl aliases
 
 | ALIAS         | Description                            |
-| ------------- | -------------------------------------- |
+|---------------|----------------------------------------|
 | clean_escapes | Remove escape (\EscXX) codes from text |
 | clipboard     | Copy to clipboard **pbcopy required**  |
 
 ### Git aliases
 
 | ALIAS                 | Description                             |
-| --------------------- | --------------------------------------- |
+|-----------------------|-----------------------------------------|
 | __hhs_git_status      | Git - Enhancement for **git status**    |
 | __hhs_git_fetch       | Git - Shortcut for **git fetch**        |
 | __hhs_git_history     | Git - Shortcut for **git log**          |
@@ -468,7 +467,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Gradle aliases
 
 | ALIAS                 | Description                                          |
-| --------------------- | ---------------------------------------------------- |
+|-----------------------|------------------------------------------------------|
 | __hhs_gradle_build    | Gradle - Enhancement for **gradle build**            |
 | __hhs_gradle_run      | Gradle - Enhancement for **gradle bootRun**          |
 | __hhs_gradle_test     | Gradle - Shortcut for **gradle Test**                |
@@ -481,7 +480,7 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 ### Docker aliases
 
 | ALIAS                     | Description                                  |
-| ------------------------- | -------------------------------------------- |
+|---------------------------|----------------------------------------------|
 | __hhs_docker_images       | Docker - Enhancement for docker images       |
 | __hhs_docker_service      | Docker - Shortcut for docker service         |
 | __hhs_docker_remove       | Docker - Shortcut for docker container rm    |
@@ -502,7 +501,7 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 The complete handbook of standard tools can be found on the [functions handbook](docs/handbook/pages/functions.md#standard-tools)
 
 | File                   | Function               | Purpose                                                                     |
-| ---------------------- | ---------------------- | --------------------------------------------------------------------------- |
+|------------------------|------------------------|-----------------------------------------------------------------------------|
 | bash_aliases.bash      | __hhs_has              | Check if a command is available on the current shell session.               |
 |                        | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it        |
 | hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list)                            |
@@ -552,7 +551,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on **.tailor** file          |
 | hhs-text.bash          | __hhs_errcho           | Echo a message in red color and to stderr                                   |
 |                        | __hhs_highlight        | Highlight words from the piped stream                                       |
-|                        | __hhs_json_print       | Pretty print **(format) JSON** string                                           |
+|                        | __hhs_json_print       | Pretty print **(format) JSON** string                                       |
 |                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |
 | hhs-toolcheck.bash     | __hhs_toolcheck        | Check whether a tool is installed on the system                             |
 |                        | __hhs_version          | Check the version of the app using the most common ways                     |
@@ -564,7 +563,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 The complete handbook of development tools can be found [here](docs/handbook/pages/functions.md#development-tools)
 
 | File                  | Function                     | Purpose                                                                            |
-| --------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
+|-----------------------|------------------------------|------------------------------------------------------------------------------------|
 | hhs-docker-tools.bash | __hhs_docker_count           | Return the number of active docker containers                                      |
 |                       | __hhs_docker_exec            | Run a command or bash in a running container                                       |
 |                       | __hhs_docker_compose_exec    | This is the equivalent of docker exec, but for docker-compose                      |
@@ -580,7 +579,7 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 |                       | __hhs_git_show_changes       | List all changed files from a commit ID                                            |
 |                       | __hhs_git_branch_select      | Select and checkout a local or remote branch                                       |
 |                       | __hhs_git_pull_all           | Search and pull projects from the specified path using the given repository/branch |
-| hhs-gradle-tools.bash | __hhs_gradle                | Prefer using the wrapper instead of the command itself                             |
+| hhs-gradle-tools.bash | __hhs_gradle                 | Prefer using the wrapper instead of the command itself                             |
 
 ## Applications
 
@@ -590,22 +589,11 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 ### Bash apps
 
 | Application      | Purpose                                                                                       |
-| ---------------- | --------------------------------------------------------------------------------------------- |
+|------------------|-----------------------------------------------------------------------------------------------|
 | app-commons.bash | Commonly used bash code functions and variables that you may include it on your bash scripts. |
 | check-ip.bash    | Validate and check information about a specified IP.                                          |
 | fetch.bash       | Fetch REST APIs data easily.                                                                  |
 | hhs.bash         | HomeSetup application.                                                                        |
-
-### Python apps
-
-| Function         | Purpose                                                       |
-| ---------------- | ------------------------------------------------------------- |
-| free.py          | Report system memory usage.                                   |
-| json-find.py     | Find an object from the Json string or file.                  |
-| pprint-xml.py    | Pretty print (format) an xml file.                            |
-| print-uni.py     | Print a backslash (4 digits) unicode character E.g:. \\uf118. |
-| send-msg.py      | IP Message Sender. Sends TCP/UDP messages (multi-threaded).   |
-| tcalc.py         | Simple app to do mathematical calculations with time.         |
 
 ## Alias definitions
 
@@ -623,7 +611,7 @@ and functions to be incorporated into the app.
 ### HHS plugins
 
 | Plug-in  | Purpose                                                                  |
-| -------- | ------------------------------------------------------------------------ |
+|----------|--------------------------------------------------------------------------|
 | updater  | Update manager for HomeSetup.                                            |
 | firebase | Manager for HomeSetup Firebase integration.                              |
 | hspm     | Manage your development tools using installation/uninstallation recipes. |
@@ -632,7 +620,7 @@ and functions to be incorporated into the app.
 ### HHS functions
 
 | Function  | Purpose                                                                                   |
-| --------- | ----------------------------------------------------------------------------------------- |
+|-----------|-------------------------------------------------------------------------------------------|
 | help      | Provide a **help** for __hhs functions.                                                   |
 | list      | List all HHS App **Plug-ins** and **Functions**.                                          |
 | tests     | Execute all HomeSetup **automated tests**.                                                |
@@ -648,7 +636,7 @@ over the options provided by the complete function instead of just displaying th
 ### Bash completions
 
 | File                              | Purpose                                           |
-| --------------------------------- | ------------------------------------------------- |
+|-----------------------------------|---------------------------------------------------|
 | brew-completion.bash              | Bash completion file for HomeBrew commands        |
 | docker-completion.bash            | Bash completion file for core docker commands.    |
 | docker-compose-completion.bash    | Bash completion for docker-compose commands.      |

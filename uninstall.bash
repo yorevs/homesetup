@@ -20,13 +20,13 @@ Usage: $APP_NAME
 # Import pre-defined Bash Colors.
 [[ -f ~/.bash_colors ]] && \. ~/.bash_colors
 
-# Define the user HOME.
+# Define the user HOME
 HOME=${HOME:-~}
 
-# Shell type.
+# Shell type
 SHELL_TYPE="${SHELL##*/}"
 
-# Define the HomeSetup directory.
+# Define the HomeSetup directory
 HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 
 # Dotfiles source location
@@ -35,17 +35,18 @@ DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
 # Backup prefix
 BAK_PREFIX="orig"
 
+# HomeSetup configuration directory
 HHS_DIR=${HHS_DIR:-"$(basename "$(dirname /Users/hjunior/.hhs/hhsrc.log)")"}
 
 # .dotfiles we will handle
 ALL_DOTFILES=()
 
-# Find all dotfiles used by HomeSetup according to the current shell type.
+# Find all dotfiles used by HomeSetup according to the current shell type
 while IFS='' read -r dotfile; do
   ALL_DOTFILES+=("${dotfile}")
 done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
-# Purpose: Quit the program and exhibits an exit message if specified.
+# Purpose: Quit the program and exhibits an exit message if specified
 # @param $1 [Req] : The exit return code.
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
@@ -62,7 +63,7 @@ quit() {
   exit "$1"
 }
 
-# Usage message.
+# Usage message
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE
 usage() {
   quit "$1" "$USAGE"
@@ -81,7 +82,7 @@ check_installation() {
     echo -e "${NC}"
 
     echo -e "${ORANGE}"
-    read -rn 1 -p "HomeSetup will be completely removed and backups restored. Continue y/[n] ?" ANS
+    read -rn 1 -p "HomeSetup will be completely removed and all backups restored. Continue y/[n] ?" ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
     if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
@@ -151,8 +152,7 @@ uninstall_dotfiles() {
   fi
   
   # Removing HomeSetup folder
-  [[ -d "${HHS_HOME}" ]]\
-    && quit 2 "Failed to uninstall HomeSetup !"
+  [[ -d "${HHS_HOME}" ]] && quit 2 "Failed to uninstall HomeSetup !"   
 
   # Unset aliases and envs
   echo "Unsetting aliases and variables ..."
@@ -168,4 +168,4 @@ uninstall_dotfiles() {
 
 check_installation
 
-echo '@@@ HomeSetup will be removed after you open a new terminal.'
+echo '!!! HomeSetup will be removed after you open a new terminal. !!!'

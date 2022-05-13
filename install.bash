@@ -11,10 +11,10 @@
 
 {
 
-  # This script name.
+  # This script name
   APP_NAME="${0##*/}"
 
-  # Help message to be displayed by the script.
+  # Help message to be displayed by the script
   USAGE="
 Usage: $APP_NAME [OPTIONS] <args>
 
@@ -22,13 +22,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   -q | --quiet              : Do not prompt for questions, use all defaults.
 "
 
-  # HomeSetup GitHub repository URL.
+  # HomeSetup GitHub repository URL
   REPO_URL='https://github.com/yorevs/homesetup.git'
 
-  # Define the user HOME.
+  # Define the user HOME
   HOME=${HOME:-~}
 
-  # Option to allow install to be interactive.
+  # Option to allow install to be interactive or not
   OPT='all'
 
   # Shell type.
@@ -37,29 +37,29 @@ Usage: $APP_NAME [OPTIONS] <args>
   # .dotfiles we will handle.
   ALL_DOTFILES=()
 
-  # Supported shell types. For now, only bash is supported.
+  # Supported shell types. For now, only bash is supported
   SUPP_SHELL_TYPES=('bash')
 
-  # Timestamp used to backup files.
+  # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
 
-  # User's operating system.
+  # User's operating system
   MY_OS=$(uname -s)
 
-  # HomeSetup required tools.
+  # HomeSetup required tools
   REQUIRED_TOOLS=('git' 'curl')
-  
+
   # OS Application manager
   OS_APP_MAN=
-  
-  # Darwing required tools
+
+  # Darwin required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
     REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3' 'pip3')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     REQUIRED_TOOLS+=('python3' 'python3-pip')
   fi
 
-  # Missing HomeSetup required tools.
+  # Missing HomeSetup required tools
   MISSING_TOOLS=()
 
   # ICONS
@@ -68,13 +68,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
 
-  # Functions to be unset after quit.
+  # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib install_brew
   )
 
-  # Purpose: Quit the program and exhibits an exit message if specified.
+  # Purpose: Quit the program and exhibits an exit message if specified
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
   # @param $2 [Opt] : The exit message to be displayed.
   quit() {
@@ -89,19 +89,19 @@ Usage: $APP_NAME [OPTIONS] <args>
     exit "$1"
   }
 
-  # Usage message.
+  # Usage message
   usage() {
     quit 2 "$USAGE"
   }
 
-  # @function: Check if a command exists.
-  # @param $1 [Req] : The command to check.
+  # @function: Check if a command exists
+  # @param $1 [Req] : The command to check
   has() {
     type "$1" >/dev/null 2>&1
   }
 
   # shellcheck disable=SC2199,SC2076
-  # Check current active User shell type.
+  # Check current active User shell type
   check_current_shell() {
 
     if [[ ! " ${SUPP_SHELL_TYPES[@]} " =~ " ${SHELL##*/} " ]]; then
@@ -110,30 +110,30 @@ Usage: $APP_NAME [OPTIONS] <args>
   }
 
   # shellcheck disable=SC1091
-  # Check which installation method should be used.
+  # Check which installation method should be used
   check_inst_method() {
 
-    # Define the HomeSetup location.
+    # Define the HomeSetup location
     HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 
-    # Dotfiles source location.
+    # Dotfiles source location
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
 
-    # HHS applications location.
+    # HHS applications location
     APPS_DIR="${HHS_HOME}/bin/apps"
 
-    # Auto-completions location.
+    # Auto-completions location
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
 
-    # Enable install script to use colors.
+    # Enable install script to use colors
     [[ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -f "${HHS_HOME}/.VERSION" ]] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
 
-    # Check if the user passed the help or version parameters.
+    # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "$USAGE"
     [[ "$1" == '-v' || "$1" == '--version' ]] && version
 
-    # Loop through the command line options.
+    # Loop through the command line options
     # Short opts: -w, Long opts: --Word
     while test -n "$1"; do
       case "$1" in
@@ -193,11 +193,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
     if [[ ! -L "${FONTS_DIR}" && ! -d "${FONTS_DIR}" ]]; then
       echo -en "\nCreating ${FONTS_DIR} directory: "
-      \mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create directory ${FONTS_DIR}"
+      \mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create fonts directory \"${FONTS_DIR}\""
       echo -e " ... [   ${GREEN}OK${NC}   ]"
     fi
 
-    # Check the installation method.
+    # Check the installation method
     if [[ -n "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
       METHOD='repair'
     elif [[ -z "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
@@ -206,7 +206,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       METHOD='remote'
     fi
 
-    # Select the installation method and call the underlying functions.
+    # Select the installation method and call the underlying functions
     case "$METHOD" in
     remote)
       check_required_tools
@@ -229,7 +229,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     esac
   }
 
-  # Check HomeSetup required tools.
+  # Check HomeSetup required tools
   check_required_tools() {
 
     local os_type pad pad_len
@@ -251,7 +251,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
-    
+
     echo ''
     echo "Using ${OS_APP_MAN} application manager"
 
@@ -272,38 +272,38 @@ Usage: $APP_NAME [OPTIONS] <args>
         MISSING_TOOLS+=("${tool_name}")
       fi
     done
-    
+
     install_missing_tools "${os_type}"
   }
-  
-  # Install brew for Darwin based system.
+
+  # Install brew for Darwin based system
   install_brew() {
     echo -n 'Darwin detected. Attempting to install HomeBrew... '
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &> /dev/null \
-      || quit 2 "# FAILED! Unable to install HomeBrew !"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>/dev/null ||
+      quit 2 "# FAILED! Unable to install HomeBrew !"
     echo -e "${GREEN}SUCCESS${NC} !"
   }
 
   # shellcheck disable=SC2086
   # Install missing tools
   install_missing_tools() {
-  
+
     local os_type="$1"
-    
+
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps. You may be prompted for the password."
       echo ''
       echo -en "${WHITE}Installing HomeSetup required packages [${MISSING_TOOLS[*]}] (${os_type}) ... "
       if [[ "MacOS" == "${MY_OS}" ]]; then
-        ${SUDO} brew install "${MISSING_TOOLS[@]}" &> /dev/null \
-          || quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+        ${SUDO} brew install "${MISSING_TOOLS[@]}" &>/dev/null ||
+          quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
       elif [[ "Debian" == "${MY_OS}" ]]; then
-          ${SUDO} apt-get -y install "${MISSING_TOOLS[@]}" &> /dev/null \
-            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+        ${SUDO} apt-get -y install "${MISSING_TOOLS[@]}" &>/dev/null ||
+          quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
       elif [[ "RedHat" == "${MY_OS}" ]]; then
-          ${SUDO} yum -y install "${MISSING_TOOLS[@]}" &> /dev/null \
-            || quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
-      else 
+        ${SUDO} yum -y install "${MISSING_TOOLS[@]}" &>/dev/null ||
+          quit 2 "Unable to install required packages: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+      else
         quit 2 "Unable to identify Linux distribution: ${MY_OS}. Please manually install the missing tools and try again."
       fi
       echo -e "[   ${GREEN}OK${NC}   ]"
@@ -481,23 +481,23 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_hhslib() {
     PYTHON="${1:-python3}"
     PIP="${2:-pip3}"
-    
+
     # HsPyLib installation
     echo -en "\n${WHITE}Installing HsPyLib using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade --user hspylib &> /dev/null \
-      || quit 2 "Unable to install required HomeSetup python library HsPyLib !"
+    ${PYTHON} -m pip install --upgrade --user hspylib &>/dev/null ||
+      quit 2 "Unable to install required HomeSetup python library HsPyLib !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
-    
+
     # HsPyLib-Vault installation
     echo -en "\n${WHITE}Installing HsPyLib-Vault using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade --user hspylib-vault &> /dev/null \
-      || quit 2 "Unable to install HomeSetup Vault !"
+    ${PYTHON} -m pip install --upgrade --user hspylib-vault &>/dev/null ||
+      quit 2 "Unable to install HomeSetup Vault !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
-    
+
     # HsPyLib-Firebase installation
     echo -en "\n${WHITE}Installing HsPyLib-Firebase using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade --user hspylib-firebase &> /dev/null \
-      || quit 2 "Unable to install HomeSetup Firebase !"
+    ${PYTHON} -m pip install --upgrade --user hspylib-firebase &>/dev/null ||
+      quit 2 "Unable to install HomeSetup Firebase !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
   }
 
@@ -522,7 +522,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HOME}/.saved_dir" ]] && \mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
     [[ -f "${HOME}/.punches" ]] && \mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
     [[ -f "${HOME}/.firebase" ]] && \mv -f "${HOME}/.firebase" "${HHS_DIR}/.firebase"
-    
+
     # From hspylib integration on
     [[ -f "${HOME}/.aliases" ]] && \mv -f "${HOME}/.aliases" "${HHS_DIR}/.aliases"
     [[ -f "${HOME}/.aliasdef" ]] && \mv -f "${HOME}/.aliasdef" "${HHS_DIR}/.aliasdef"
