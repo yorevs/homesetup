@@ -45,8 +45,8 @@ function __hhs_envs() {
     IFS=$'\n'
     shopt -s nocasematch
     for v in $(env | sort); do
-      name=${v%=*}
-      value=${v##*=}
+      name=${v%%=*}
+      value=${v#*=}
       if [[ ${name} =~ ${filter} ]]; then
         echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
         printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
