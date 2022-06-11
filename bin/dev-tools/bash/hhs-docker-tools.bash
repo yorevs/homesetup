@@ -11,7 +11,7 @@
 # Docker documentation can be found at:
 #   https://docs.docker.com/v17.09/engine/reference/commandline/exec/
 
-if __hhs_has "docker" && docker info &> /dev/null; then
+if __hhs_has "docker" && docker info &>/dev/null; then
 
   # @function: Count the number of active docker containers.
   function __hhs_docker_count() {
@@ -102,10 +102,10 @@ if __hhs_has "docker" && docker info &> /dev/null; then
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
     else
-      IFS=$'\n' read -d '' -r -a volumes <<< "$(docker volume ls -qf dangling=true)"
+      IFS=$'\n' read -d '' -r -a volumes <<<"$(docker volume ls -qf dangling=true)"
       for container in "${volumes[@]}"; do
         echo -en "Removing dangling docker volume: ${container} ... "
-        if docker volume rm "${container}" &> /dev/null; then
+        if docker volume rm "${container}" &>/dev/null; then
           echo -e "[   ${GREEN}OK${NC}   ]"
         else
           echo -e "[ ${GREEN}FAILED${NC} ]"
@@ -129,16 +129,16 @@ if __hhs_has "docker" && docker info &> /dev/null; then
       echo '    Options: '
       echo '      -a : Remove active and inactive volumes; otherwise it will only remove inactive ones'
     else
-      
+
       [[ "${1}" == '-a' ]] && all="-a" && shift
-      read -r -d '' -a all_containers <<< "$(docker ps ${all} --format "{{.ID}}")"
-      
+      read -r -d '' -a all_containers <<<"$(docker ps ${all} --format "{{.ID}}")"
+
       for container in "${all_containers[@]}"; do
         echo -en "Stopping Docker container: ${container} ... "
-        if docker stop "${container}" &> /dev/null; then
+        if docker stop "${container}" &>/dev/null; then
           echo -e "[   ${GREEN}OK${NC}   ]"
           echo -en "Removing Docker container: ${container} ... "
-          if docker rm "${container}" &> /dev/null; then
+          if docker rm "${container}" &>/dev/null; then
             echo -e "[   ${GREEN}OK${NC}   ]"
           else
             echo -e "[ ${RED}FAILED${NC} ]"

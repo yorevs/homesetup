@@ -54,7 +54,7 @@ function __hhs_activate_jenv() {
 
   echo -en "Activating JENV app ..... "
   # JENV setup
-  if eval "$(jenv init -)" &> /dev/null; then
+  if eval "$(jenv init -)" &>/dev/null; then
     echo "${GREEN}[  OK  ] ${NC}"
   else
     echo "${RED}[ FAIL ] => JENV is not installed ! ${NC}" && return 1
@@ -69,7 +69,7 @@ function __hhs_activate_docker() {
   echo -en "Activating Docker app ... "
   DK_LOC='/Applications/Docker.app'
   # Docker daemon setup
-  if open "${DK_LOC}" &> /dev/null; then
+  if open "${DK_LOC}" &>/dev/null; then
     echo "${GREEN}[  OK  ] ${NC}"
   else
     echo "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at ! ${NC}" && return 1

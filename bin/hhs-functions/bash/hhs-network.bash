@@ -8,32 +8,31 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-
 # Requires ifconfig to work.
 if __hhs_has ifconfig; then
 
   # shellcheck disable=2120
   # @function: Display a list of active network interfaces.
   function __hhs_active_ifaces() {
-  
+
     local if_all if_name if_flags if_mtu if_list
-  
+
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} [--info]"
       return 1
     fi
-  
+
     if_all=$(ifconfig -a | grep '^[a-z0-9]*: ')
-  
+
     if [[ -n "${if_all}" && "--info" == "${1}" ]]; then
       echo ' '
       echo "${YELLOW}Listing all network interfaces:${NC}"
       echo ' '
       IFS=$'\n'
       for next in ${if_all}; do
-        if_name=$(awk '{ print $1 }' <<< "${next%%:*}")
-        if_mtu=$(awk '{ print $4 }' <<< "${next}")
-        if_flags=$(awk '{ print $2 }' <<< "${next}")
+        if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
+        if_mtu=$(awk '{ print $4 }' <<<"${next}")
+        if_flags=$(awk '{ print $2 }' <<<"${next}")
         printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU=%-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
       done
       IFS="${RESET_IFS}"
@@ -42,24 +41,24 @@ if __hhs_has ifconfig; then
     elif [[ -n "${if_all}" && -z "${1}" ]]; then
       IFS=$'\n'
       for next in ${if_all}; do
-        if_name=$(awk '{ print $1 }' <<< "${next%%:*}")
+        if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
         if_list="${if_name} ${if_list}"
       done
       IFS="${RESET_IFS}"
       echo "${if_list}"
     fi
-  
+
     return 1
   }
-  
+
   if __hhs_has route; then
-  
+
     # @function: Display the associated machine IP of the given kind.
     # @param $1 [Opt] : The kind of IP to get.
     function __hhs_ip() {
-    
+
       local ret_val=1 ip_kind if_list if_ip if_prefix ip_srv_url='ifconfig.me'
-    
+
       if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: ${FUNCNAME[0]} [kind]"
         echo ''
@@ -78,11 +77,11 @@ if __hhs_has ifconfig; then
       else
         ip_kind=${1:-all}
         if [[ "external" == "${ip_kind}" ]]; then
-          if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2> /dev/null)"
+          if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null)"
           [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
         fi
         if [[ "gateway" == "${ip_kind}" ]]; then
-          [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2> /dev/null | grep 'gateway' | cut -b 14- | uniq)"
+          [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | cut -b 14- | uniq)"
           [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
           [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
         fi
@@ -100,10 +99,10 @@ if __hhs_has ifconfig; then
           IFS="${RESET_IFS}"
         fi
       fi
-    
+
       return ${ret_val}
     }
-    
+
   fi
 
 fi
@@ -118,7 +117,7 @@ function __hhs_ip_info() {
     echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
     return 1
   else
-    ipinfo=$(curl -s --fail -m 3 "${ip_srv_url}" 2> /dev/null)
+    ipinfo=$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null)
     [[ -n "$ipinfo" ]] && __hhs_json_print "$ipinfo" && return 0
   fi
 
@@ -131,14 +130,14 @@ if __hhs_has host; then
   # @function: Lookup DNS payload to determine the IP address.
   # @param $1 [Req] : The domain name to lookup.
   function __hhs_ip_lookup() {
-  
+
     if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <domain_name>"
       return 1
     else
       host "$1"
     fi
-  
+
     return 0
   }
 
@@ -150,13 +149,13 @@ if __hhs_has host; then
   # @function: Resolve domain names associated with the specified IP.
   # @param $1 [Req] : The IP address to resolve.
   function __hhs_ip_resolve() {
-  
+
     if [[ "$1" == "-h" || "$1" == "--help" || "$#" -ne 1 ]]; then
       echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
       return 1
     fi
     dig +short -x "$1"
-  
+
     return $?
   }
 
@@ -169,11 +168,11 @@ if __hhs_has netstat; then
   # @param $1 [Req] : The port number regex.
   # @param $2 [Opt] : The port state to match.
   function __hhs_port_check() {
-  
+
     local state port states
-  
+
     states='CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT'
-  
+
     if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <port_number> [port_state]"
       echo ''
@@ -199,7 +198,7 @@ if __hhs_has netstat; then
       return $?
     fi
     echo ''
-  
+
     return 0
   }
 

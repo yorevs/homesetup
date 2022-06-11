@@ -30,7 +30,7 @@ if __hhs_has "python3"; then
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching for files matching: \"$filter\" in \"$dir\" ${NC}"
       eval "find -L $dir -type f \( ${inames} \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
-      
+
       return $?
     fi
   }
@@ -49,13 +49,13 @@ if __hhs_has "python3"; then
       echo '  ** <dir_names...>: Comma separated directories. E.g:. "dir1,dir2,dir2"'
       return 1
     else
-      dir="${1}" 
+      dir="${1}"
       filter="${2}"
       expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "$expr")
       echo "${YELLOW}Searching for folders matching: [${filter}] in \"${dir}\" ${NC}"
       eval "find -L ${dir} -type d \( ${inames} \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
-      
+
       return $?
     fi
   }
@@ -87,40 +87,40 @@ if __hhs_has "python3"; then
     else
       while [[ -n "$1" ]]; do
         case "$1" in
-          -w | --words)
-            gflags="${gflags//E/Fw}"
-            filter_type=${filter_type//regex/string}
-            ;;
-          -i | --ignore-case)
-            gflags="${gflags}i"
-            filter_type="${filter_type}+ignore-case"
-            ;;
-          -b | --binary)
-            gflags="${gflags//I/}"
-            filter_type="${filter_type}+binary"
-            ;;
-          -r | --replace)
-            replace=1
-            shift
-            [[ -z "$1" ]] && __hhs_errcho "${FUNCNAME[0]}: Missing replacement string !" && return 1
-            repl_str="$1"
-            extra_str=", replacement: \"${repl_str}\""
-            ;;
-          *)
-            [[ ! "$1" =~ ^-[wibr] && ! "$1" =~ ^--(words|ignore-case|binary|replace) ]] && break
-            ;;
+        -w | --words)
+          gflags="${gflags//E/Fw}"
+          filter_type=${filter_type//regex/string}
+          ;;
+        -i | --ignore-case)
+          gflags="${gflags}i"
+          filter_type="${filter_type}+ignore-case"
+          ;;
+        -b | --binary)
+          gflags="${gflags//I/}"
+          filter_type="${filter_type}+binary"
+          ;;
+        -r | --replace)
+          replace=1
+          shift
+          [[ -z "$1" ]] && __hhs_errcho "${FUNCNAME[0]}: Missing replacement string !" && return 1
+          repl_str="$1"
+          extra_str=", replacement: \"${repl_str}\""
+          ;;
+        *)
+          [[ ! "$1" =~ ^-[wibr] && ! "$1" =~ ^--(words|ignore-case|binary|replace) ]] && break
+          ;;
         esac
         shift
       done
-      
+
       dir="${1}"
       search_str="${2}"
       names_expr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       inames=$(python -c "${names_expr}")
       base_cmd="find -L ${dir} -type f \( ${inames} \) -exec grep $gflags \"${search_str}\" {}"
-      
+
       echo "${YELLOW}Searching for \"${filter_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${3}] ${extra_str} ${NC}"
-      
+
       if [[ -n "$replace" ]]; then
         if [[ "$filter_type" = 'string' ]]; then
           __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"

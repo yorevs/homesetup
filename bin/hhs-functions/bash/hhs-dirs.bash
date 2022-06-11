@@ -209,9 +209,9 @@ function __hhs_load_dir() {
   else
 
     IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
-  
+
     if [ ${#all_dirs[@]} -ne 0 ]; then
-  
+
       case "$1" in
       -l)
         pad=$(printf '%0.1s' "."{1..60})
@@ -260,7 +260,7 @@ function __hhs_load_dir() {
         return 1
         ;;
       esac
-  
+
       if [[ -z "${dir}" || ! -d "${dir}" ]]; then
         __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"$dir_alias\" was not found !"
       else
@@ -295,9 +295,9 @@ function __hhs_godir() {
       search_path="$(pwd)"
     fi
     search_name="$(basename "${2:-$1}")"
-    pushd "${search_path%/}" &>/dev/null || echo 
+    pushd "${search_path%/}" &>/dev/null || echo
     IFS=$'\n' read -d '' -r -a found_dirs <<<"$(find -L . -type d -iname "*""${search_name}" 2>/dev/null)"
-    popd &>/dev/null || echo 
+    popd &>/dev/null || echo
     len=${#found_dirs[@]}
     # If no directory is found under the specified name
     if [[ ${len} -eq 0 ]]; then

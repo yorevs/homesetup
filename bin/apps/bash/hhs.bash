@@ -45,7 +45,7 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
 "
 
-[[ -f "${HHS_DIR}"/bin/app-commons.bash ]] || quit 1 "Failed to load '${HHS_DIR}/bin/app-commons.bash'" 
+[[ -f "${HHS_DIR}"/bin/app-commons.bash ]] || quit 1 "Failed to load '${HHS_DIR}/bin/app-commons.bash'"
 
 \. "${HHS_DIR}"/bin/app-commons.bash
 
@@ -135,7 +135,7 @@ register_plugins() {
       f_name="${fnc##function }"
       f_name="${f_name%\(\) \{}"
       plg_funcs+=("${f_name}")
-    done < <(grep '^function .*()' < "${plugin}")
+    done < <(grep '^function .*()' <"${plugin}")
     if ! validate_plugin "${plg_funcs[@]}"; then
       INVALID+=("$(basename "${plugin}")")
     else
@@ -189,7 +189,7 @@ register_local_functions() {
       f_name="${fnc##function }"
       f_name="${f_name%\(\) \{}"
       HHS_APP_FUNCTIONS+=("${f_name}")
-    done < <(grep '^function .*()' < "${fnc_file}")
+    done < <(grep '^function .*()' <"${fnc_file}")
     # Register the functions to be unset when program quits
     UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
   done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
@@ -213,7 +213,7 @@ register_hhs_functions() {
   for fn in ${all_hhs_fn}; do
     filename=$(basename "$fn" | awk -F ':function' '{print $1}')
     filename=$(printf '%-30.30s' "${filename}")
-    fn_name=$(awk -F ':function' '{print $2}' <<< "$fn")
+    fn_name=$(awk -F ':function' '{print $2}' <<<"$fn")
     HHS_FUNCTIONS+=("${filename// /.} => ${fn_name}")
   done
 
@@ -235,16 +235,16 @@ parse_args() {
   # Short opts: -<C>, Long opts: --<Word>
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
-      -h | --help)
-        usage 0
-        ;;
-      -v | --version)
-        version
-        ;;
+    -h | --help)
+      usage 0
+      ;;
+    -v | --version)
+      version
+      ;;
 
-      *)
-        break
-        ;;
+    *)
+      break
+      ;;
     esac
     shift
   done

@@ -27,8 +27,12 @@ function __hhs_history() {
 # @function: Display all environment variables using filters.
 # @param $1 [Opt] : The case-insensitive filter to be used when listing.
 function __hhs_envs() {
-
+  
+  HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
+  
   local pad pad_len filter name value columns
+  
+  touch "${HHS_ENV_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [regex_filter]"
@@ -79,7 +83,7 @@ function __hhs_shell_select() {
     echo "${YELLOW}@@ Please select your new default shell:"
     echo "-------------------------------------------------------------"
     echo -en "${NC}"
-    IFS=$'\n' read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
+    IFS=$'\n' read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
     # Add the brew bash and zsh as options
     [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
     [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')

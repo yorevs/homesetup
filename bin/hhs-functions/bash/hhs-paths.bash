@@ -15,9 +15,9 @@ function __hhs_paths() {
 
   local pad pad_len path_dir custom private quiet
 
-  HHS_PATHS_FILE=${HHS_PATHS_FILE:-${HHS_DIR}/.path}  # Custom paths
-  PATHS_D="/etc/paths.d"                              # Private system paths
-  PVT_PATHS_D="/private/etc/paths"                    # General system path dir
+  HHS_PATHS_FILE=${HHS_PATHS_FILE:-${HHS_DIR}/.path} # Custom paths
+  PATHS_D="/etc/paths.d"                             # Private system paths
+  PVT_PATHS_D="/private/etc/paths"                   # General system path dir
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
@@ -80,7 +80,7 @@ function __hhs_paths() {
       grep -q "$2" "${HHS_PATHS_FILE}" && return 0
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"
       if [[ -d "$2" ]]; then
-        echo "$2" >> "${HHS_PATHS_FILE}"
+        echo "$2" >>"${HHS_PATHS_FILE}"
         export PATH="$2:${PATH}"
         [[ -z "${quiet}" ]] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
       else

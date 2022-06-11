@@ -37,7 +37,7 @@ if __hhs_has "git"; then
       echo '    Options:'
       echo '      -l | --local : List only local branches. Do not fetch remote branches.'
       return 1
-    elif [[ "$(git rev-parse --is-inside-work-tree &> /dev/null && echo "${?}")" != '0' ]]; then
+    elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
       return 1
     else
@@ -62,7 +62,7 @@ if __hhs_has "git"; then
       if __hhs_mselect "${mchoose_file}" "${all_branches[@]}"; then
         if ! git diff-index --quiet HEAD --; then
           echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
-          if ! git stash &> /dev/null; then
+          if ! git stash &>/dev/null; then
             __hhs_errcho "${FUNCNAME[0]}: Unable to stash your changes"
             return 1
           fi
@@ -77,7 +77,7 @@ if __hhs_has "git"; then
           ret_val=$?
           if [[ -n "$stash_flag" ]]; then
             echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-            if ! git stash pop &> /dev/null; then
+            if ! git stash pop &>/dev/null; then
               __hhs_errcho "${FUNCNAME[0]}: Unable to retrieve stash changes"
               return 1
             fi
@@ -107,10 +107,10 @@ if __hhs_has "git"; then
     else
       git_repos_path=${1:-.}
       for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git"); do
-        pushd "${repo//\/\.git/}" &> /dev/null || continue
+        pushd "${repo//\/\.git/}" &>/dev/null || continue
         echo -e "\n${BLUE}Fetching status of $(basename "$(pwd)") ...${NC}\n"
         git status | head -n 1 || continue
-        popd &> /dev/null || continue
+        popd &>/dev/null || continue
         sleep 1
       done
     fi
@@ -131,10 +131,10 @@ if __hhs_has "git"; then
     else
       git_repos_path=${1:-.}
       for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname "*.git"); do
-        pushd "${repo//\/\.git/}" &> /dev/null || continue
+        pushd "${repo//\/\.git/}" &>/dev/null || continue
         echo -e "\n${BLUE}Fetching status of $(basename "$(pwd)") ...${NC}\n"
         git status || continue
-        popd &> /dev/null || continue
+        popd &>/dev/null || continue
         sleep 1
       done
     fi
@@ -203,7 +203,7 @@ if __hhs_has "git"; then
     # Find all git repositories
     git_repos_path="${1:-.}"
     [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
-    IFS=$'\n' read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git")"
+    IFS=$'\n' read -r -d '' -a all_repos <<<"$(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
     repository="${1:-origin}"
@@ -214,7 +214,7 @@ if __hhs_has "git"; then
 
     mchoose_file=$(mktemp)
     if __hhs_mchoose -c "${mchoose_file}" "${all_repos[@]}"; then
-      IFS=$'\n' read -r -d ' ' -a sel_indexes <<< "$(grep . "${mchoose_file}")"
+      IFS=$'\n' read -r -d ' ' -a sel_indexes <<<"$(grep . "${mchoose_file}")"
     else
       return 1
     fi
@@ -223,9 +223,9 @@ if __hhs_has "git"; then
       repo_dir=$(dirname "${all_repos[$idx]}")
       if [[ "${sel_indexes[$idx]}" == '1' ]]; then
         if [[ -d "${repo_dir}" ]]; then
-          pushd "${repo_dir}" &> /dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
-          branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-          if git rev-parse --abbrev-ref "${branch}@{u}" &> /dev/null; then
+          pushd "${repo_dir}" &>/dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
+          branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+          if git rev-parse --abbrev-ref "${branch}@{u}" &>/dev/null; then
             stash_flag=0
             echo ''
             printf '%0.1s' "-"{1..80}
@@ -235,7 +235,7 @@ if __hhs_has "git"; then
             if git fetch; then
               if ! git diff-index --quiet HEAD --; then
                 echo -en "\n${YELLOW}=> Stashing your changes prior to change ... ${NC}"
-                if ! git stash &> /dev/null; then
+                if ! git stash &>/dev/null; then
                   echo -e " [ ${RED}FAILED${NC} ] => Unable to stash changes. Skipping ... \n"
                 else
                   stash_flag=1
@@ -247,7 +247,7 @@ if __hhs_has "git"; then
               if git pull "${repository}" "${gitbranch}"; then
                 if [[ ${stash_flag} -ne 0 ]]; then
                   echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-                  if ! git stash pop &> /dev/null; then
+                  if ! git stash pop &>/dev/null; then
                     echo -e " [ ${RED}FAILED${NC} ] => Unable to retrieve stash changes. Skipping ... \n"
                   else
                     echo -e " [   ${GREEN}OK${NC}   ] \n"
@@ -263,10 +263,10 @@ if __hhs_has "git"; then
             echo ''
             echo -e "${ORANGE}@@@ The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
           fi
-          popd &> /dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
+          popd &>/dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
         else
           echo ''
-        echo -e "${YELLOW}>>> Skipping: repository not found \"${repo_dir}\" ${NC}"
+          echo -e "${YELLOW}>>> Skipping: repository not found \"${repo_dir}\" ${NC}"
         fi
       else
         echo ''
@@ -277,7 +277,7 @@ if __hhs_has "git"; then
     echo ''
     echo "${GREEN}Done ! ${NC}"
     echo ''
-    
+
     return 0
   }
 

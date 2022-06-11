@@ -57,8 +57,8 @@ EXTRA_INFO=0 # 0 == Not set; 1 otherwise
 # IP<private>   Class A addresses: [     0.0.0.0 - 127.255.255.255 ] => 0XXXXXXX
 # IP<private>   Class B addresses: [   128.0.0.0 - 191.255.255.255 ] => 10XXXXXX
 # IP<private>   Class C addresses: [   192.0.0.0 - 223.255.255.255 ] => 110xxxxx
-# IP<multicast> Class D addresses: [   224.0.0.1 - 239.255.255.255 ] => 
-# IP<reserved>  Class E addresses: [   240.0.0.1 - 255.255.255.254 ] => 
+# IP<multicast> Class D addresses: [   224.0.0.1 - 239.255.255.255 ] =>
+# IP<reserved>  Class E addresses: [   240.0.0.1 - 255.255.255.254 ] =>
 
 # @purpose: Find the IP class.
 check_class() {
@@ -167,31 +167,31 @@ parse_args() {
   # Short opts: -<C>, Long opts: --<Word>.
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
-      -h | --help)
-        usage 0
-        ;;
-      -v | --version)
-        version
-        ;;
-      -q | --quiet)
-        SILENT=1
-        ;;
-      -i | --info)
-        EXTRA_INFO=1
-        ;;
-      -[.*])
-        quit 1 "## Invalid option: ${1}"
-        ;;
+    -h | --help)
+      usage 0
+      ;;
+    -v | --version)
+      version
+      ;;
+    -q | --quiet)
+      SILENT=1
+      ;;
+    -i | --info)
+      EXTRA_INFO=1
+      ;;
+    -[.*])
+      quit 1 "## Invalid option: ${1}"
+      ;;
 
-      *)
-        break
-        ;;
+    *)
+      break
+      ;;
     esac
     shift
   done
 
   IP_ADDRESS="${1}"
-  IFS='.' read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
+  IFS='.' read -r -a IP_OCTETS <<<"${IP_ADDRESS}"
 }
 
 # @purpose: Program entry point.

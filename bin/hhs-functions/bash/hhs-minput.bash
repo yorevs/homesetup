@@ -17,10 +17,10 @@ function __hhs_minput_curpos() {
   # Sometimes the cursor position is empty, so make sure we have enough payload to return.
   while
     [[ -z "$row" || -z "$col" ]]
-    exec < /dev/tty
+    exec </dev/tty
     disable-echo
     # Query for the cursor position.
-    echo -en "\033[6n" > /dev/tty
+    echo -en "\033[6n" >/dev/tty
     IFS=';' read -r -d 'R' -a pos
     enable-echo
     if [[ ${#pos} -gt 0 ]]; then
@@ -51,7 +51,7 @@ function __hhs_minput() {
   local outfile ret_val=1 label_size=10 value_size=30 form_title all_fields=() cur_field=() field_parts=() all_pos=()
   local f_label f_mode f_type f_max_min_len f_perm f_value f_row f_col f_pos err_msg dismiss_timeout re_render=1
   local len minlen offset margin maxlen idx tab_index cur_row cur_col val_regex mi_modes=() mi_types=() file_contents
-  
+
   # Form icons and colors
   UNSELECTED_BG='\033[40m'
   SELECTED_BG='\033[44m'
@@ -104,7 +104,7 @@ function __hhs_minput() {
   all_fields=("${@}")
   for idx in "${!all_fields[@]}"; do
     field="${all_fields[${idx}]}"
-    IFS='|' read -rsa field_parts <<< "${field}"
+    IFS='|' read -rsa field_parts <<<"${field}"
     f_label="${field_parts[0]}"
     [[ ! ${f_label} =~ ^[a-zA-Z0-9_]+$ ]] && __hhs_errcho "${FUNCNAME[0]}: Invalid label \"${f_mode}\". Must contain only [a-zA-Z0-9_] characters " && return 1
     f_mode="${field_parts[1]}"
@@ -148,7 +148,7 @@ function __hhs_minput() {
       enable-echo
       for idx in "${!all_fields[@]}"; do
         field="${all_fields[${idx}]}"
-        IFS='|' read -rsa field_parts <<< "${field}"
+        IFS='|' read -rsa field_parts <<<"${field}"
         f_label="${field_parts[0]}"
         f_mode="${field_parts[1]}"
         f_type="${field_parts[2]}"
@@ -172,7 +172,7 @@ function __hhs_minput() {
           printf "%-${value_size}s" "${f_value}"
         elif [[ "password" == "${f_mode}" ]]; then
           icon="${PASSWORD_ICN}"
-          printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<< "${f_value}")"
+          printf "%-${value_size}s" "$(sed -E 's/./\*/g' <<<"${f_value}")"
         elif [[ "checkbox" == "${f_mode}" ]]; then
           icon="${EDIT_ICN}"
           if [[ -n "${f_value}" ]]; then
@@ -193,7 +193,7 @@ function __hhs_minput() {
           printf "${RED} ${ERROR_ICN}  %s" "${err_msg}"
           disable-echo
           # Discard any garbage typed by the user while showing the error
-          IFS= read -rsn1000 -t ${dismiss_timeout} err_msg < "/dev/tty"
+          IFS= read -rsn1000 -t ${dismiss_timeout} err_msg <"/dev/tty"
           enable-echo
           # Remove the message after the timeout
           echo -en "\033[$((${#err_msg} + 4))D\033[0K${NC}"
@@ -202,7 +202,7 @@ function __hhs_minput() {
         echo -e '\n'
         # Keep the selected field on hand
         if [[ ${tab_index} -eq ${idx} ]]; then
-          IFS='|' read -rsa cur_field <<< "${all_fields[${idx}]}"
+          IFS='|' read -rsa cur_field <<<"${all_fields[${idx}]}"
           cur_row="${f_row}"
           cur_col="${f_col}"
         fi
@@ -222,106 +222,106 @@ function __hhs_minput() {
     IFS= read -rsn1 keypress
     disable-echo
     case "${keypress}" in
-      $'\011') # Handle TAB => Validate and move next. First case statement because next one also captures it
-        minlen=${cur_field[3]%/*}
-        if [[ ${minlen} -le ${#cur_field[5]} ]]; then
-          if [[ $((tab_index + 1)) -lt ${len} ]]; then
-            tab_index=$((tab_index + 1))
-          else
-            tab_index=0
-          fi
+    $'\011') # Handle TAB => Validate and move next. First case statement because next one also captures it
+      minlen=${cur_field[3]%/*}
+      if [[ ${minlen} -le ${#cur_field[5]} ]]; then
+        if [[ $((tab_index + 1)) -lt ${len} ]]; then
+          tab_index=$((tab_index + 1))
         else
-          err_msg="This field does not match the minimum length of ${minlen}"
+          tab_index=0
         fi
-        ;;
-      $'\177') # Handle backspace
-        if [[ "rw" == "${cur_field[4]}" ]] && [[ ${#cur_field[5]} -ge 1 ]]; then
-          cur_field[5]="${cur_field[5]::${#cur_field[5]}-1}"
-          all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
-        elif [[ "r" == "${cur_field[4]}" ]]; then
-          err_msg="This field is read only !"
+      else
+        err_msg="This field does not match the minimum length of ${minlen}"
+      fi
+      ;;
+    $'\177') # Handle backspace
+      if [[ "rw" == "${cur_field[4]}" ]] && [[ ${#cur_field[5]} -ge 1 ]]; then
+        cur_field[5]="${cur_field[5]::${#cur_field[5]}-1}"
+        all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
+      elif [[ "r" == "${cur_field[4]}" ]]; then
+        err_msg="This field is read only !"
+      fi
+      ;;
+    [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]]) # Handle an input
+      f_mode="${cur_field[1]}"
+      f_type="${cur_field[2]}"
+      maxlen=${cur_field[3]##*/}
+      if [[ "rw" == "${cur_field[4]}" && "${f_mode}" == "checkbox" ]]; then
+        if [[ "${#cur_field[5]}" -eq 0 ]]; then
+          cur_field[5]=1
+        else
+          cur_field[5]=''
         fi
-        ;;
-      [[:alpha:]] | [[:digit:]] | [[:space:]] | [[:punct:]]) # Handle an input
-        f_mode="${cur_field[1]}"
-        f_type="${cur_field[2]}"
-        maxlen=${cur_field[3]##*/}
-        if [[ "rw" == "${cur_field[4]}" && "${f_mode}" == "checkbox" ]]; then
-          if [[ "${#cur_field[5]}" -eq 0 ]]; then
-            cur_field[5]=1
-          else
-            cur_field[5]=''
-          fi
-          all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
-        elif [[ "rw" == "${cur_field[4]}" && ${#cur_field[5]} -lt maxlen ]]; then
-          case "${f_type}" in
-            'letter') val_regex='^[a-zA-Z ]*$' ;;
-            'number') val_regex='^[0-9]*$' ;;
-            'alphanumeric') val_regex='^[a-zA-Z0-9 ]*$' ;;
-            *) val_regex='.*' ;; # FIXME This expression is rejecting á, ç and similar.
-          esac
-          if [[ "${keypress}" =~ ${val_regex} ]]; then
-            # Append value to the current field if the value matches the input type
-            cur_field[5]="${cur_field[5]}${keypress}"
-            all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
-          else
-            err_msg="This field only accept ${f_type}s !"
-          fi
-        elif [[ "r" == "${cur_field[4]}" ]]; then
-          err_msg="This field is read only !"
-        fi
-        ;;
-      $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 -t 1 keypress
-        case "${keypress}" in
-          [A) # Cursor up
-            if [[ $((tab_index - 1)) -ge 0 ]]; then
-              tab_index=$((tab_index - 1))
-            else
-              continue
-            fi
-            ;;
-          [B) # Cursor down
-            if [[ $((tab_index + 1)) -lt ${len} ]]; then
-              tab_index=$((tab_index + 1))
-            else
-              continue
-            fi
-            ;;
-          *) # Escape pressed
-            if [[ "${#keypress}" -eq 1 ]]; then
-              ret_val=127
-              break
-            fi
-            ;;
+        all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
+      elif [[ "rw" == "${cur_field[4]}" && ${#cur_field[5]} -lt maxlen ]]; then
+        case "${f_type}" in
+        'letter') val_regex='^[a-zA-Z ]*$' ;;
+        'number') val_regex='^[0-9]*$' ;;
+        'alphanumeric') val_regex='^[a-zA-Z0-9 ]*$' ;;
+        *) val_regex='.*' ;; # FIXME This expression is rejecting á, ç and similar.
         esac
+        if [[ "${keypress}" =~ ${val_regex} ]]; then
+          # Append value to the current field if the value matches the input type
+          cur_field[5]="${cur_field[5]}${keypress}"
+          all_fields[${tab_index}]="${cur_field[0]}|${cur_field[1]}|${cur_field[2]}|${cur_field[3]}|${cur_field[4]}|${cur_field[5]}"
+        else
+          err_msg="This field only accept ${f_type}s !"
+        fi
+      elif [[ "r" == "${cur_field[4]}" ]]; then
+        err_msg="This field is read only !"
+      fi
+      ;;
+    $'\033') # Handle escape '\e[nX' codes
+      IFS= read -rsn2 -t 1 keypress
+      case "${keypress}" in
+      [A) # Cursor up
+        if [[ $((tab_index - 1)) -ge 0 ]]; then
+          tab_index=$((tab_index - 1))
+        else
+          continue
+        fi
         ;;
-      $'') # Validate & Save the form and exit
-        file_contents=''
-        for idx in ${!all_fields[*]}; do
-          f_max_min_len=$(cut -d '|' -f4 <<< "${all_fields[${idx}]}")
-          minlen="${f_max_min_len%/*}"
-          f_label=$(tr '[:lower:]' '[:upper:]' <<< "${all_fields[${idx}]%%|*}")
-          f_value="${all_fields[${idx}]##*|}"
-          if [[ ${#f_value} -lt ${minlen} ]]; then
-            err_msg="Field \"${f_label}\" doesn't meet the required length of ${minlen} !"
-            tab_index=${idx}
-            unset file_contents
-            break
-          else
-            file_contents+="${f_label}=${f_value}\n"
-          fi
-        done
-        # Having content on file_contents means that the form was accepted and validated
-        if [[ -n "${file_contents}" ]]; then
-          echo -en "${file_contents}" > "${outfile}"
-          ret_val=0
+      [B) # Cursor down
+        if [[ $((tab_index + 1)) -lt ${len} ]]; then
+          tab_index=$((tab_index + 1))
+        else
+          continue
+        fi
+        ;;
+      *) # Escape pressed
+        if [[ "${#keypress}" -eq 1 ]]; then
+          ret_val=127
           break
         fi
         ;;
-      *)
-        unset keypress
-        ;;
+      esac
+      ;;
+    $'') # Validate & Save the form and exit
+      file_contents=''
+      for idx in ${!all_fields[*]}; do
+        f_max_min_len=$(cut -d '|' -f4 <<<"${all_fields[${idx}]}")
+        minlen="${f_max_min_len%/*}"
+        f_label=$(tr '[:lower:]' '[:upper:]' <<<"${all_fields[${idx}]%%|*}")
+        f_value="${all_fields[${idx}]##*|}"
+        if [[ ${#f_value} -lt ${minlen} ]]; then
+          err_msg="Field \"${f_label}\" doesn't meet the required length of ${minlen} !"
+          tab_index=${idx}
+          unset file_contents
+          break
+        else
+          file_contents+="${f_label}=${f_value}\n"
+        fi
+      done
+      # Having content on file_contents means that the form was accepted and validated
+      if [[ -n "${file_contents}" ]]; then
+        echo -en "${file_contents}" >"${outfile}"
+        ret_val=0
+        break
+      fi
+      ;;
+    *)
+      unset keypress
+      ;;
     esac
     # } Navigation input
     re_render=1

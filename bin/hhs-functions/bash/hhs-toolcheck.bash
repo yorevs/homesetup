@@ -28,7 +28,7 @@ function __hhs_toolcheck() {
     fi
     tool_name="$1"
     check=$(command -v "${tool_name}")
-    is_alias=$(alias "${tool_name}" > /dev/null 2>&1 && echo "OK")
+    is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
     [[ -z "$quiet" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
     [[ -z "$quiet" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
     [[ -z "$quiet" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
@@ -65,7 +65,7 @@ function __hhs_version() {
       __hhs_errcho "${FUNCNAME[0]}: Can't check version. \"${APP}\" is not installed on the system! ${NC}"
       return 2
     fi
-
+    # I know that this is ugly, but it has to be that way ;(
     if ! version=$(${APP} --version 2>&1); then
       if ! version=$(${APP} -v 2>&1); then
         if ! version=$(${APP} -version 2>&1); then
@@ -124,12 +124,12 @@ function __hhs_about_command() {
   else
     (
       cmd=${1}
-      cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
+      cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
       if [[ -n "${cmd_ret}" ]]; then
         echo ''
         printf "${GREEN}%12s ${cmd_ret//\%/%%} ${NC} \n" "Current:"
-        if unalias "${cmd}" 2> /dev/null; then
-          cmd_ret=$(type "${cmd}" 2> /dev/null | head -n 1)
+        if unalias "${cmd}" 2>/dev/null; then
+          cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
           if [[ -n "${cmd_ret}" ]]; then
             printf "${BLUE}%12s ${cmd_ret} ${NC} \n" "Unaliased:"
           fi
@@ -138,6 +138,6 @@ function __hhs_about_command() {
       fi
     )
   fi
-  
+
   return 0
 }

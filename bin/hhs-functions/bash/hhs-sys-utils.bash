@@ -90,21 +90,21 @@ function __hhs_process_list() {
   else
     while [[ -n "$1" ]]; do
       case "$1" in
-        -w | --words)
-          gflags="${gflags//E/Fw}"
-          ;;
-        -i | --ignore-case)
-          gflags="${gflags}i"
-          ;;
-        -f | --force)
-          force=1
-          ;;
-        -q | --quiet)
-          quiet=1
-          ;;
-        *)
-          [[ ! "$1" =~ ^-[wifq] ]] && break
-          ;;
+      -w | --words)
+        gflags="${gflags//E/Fw}"
+        ;;
+      -i | --ignore-case)
+        gflags="${gflags}i"
+        ;;
+      -f | --force)
+        force=1
+        ;;
+      -q | --quiet)
+        quiet=1
+        ;;
+      *)
+        [[ ! "$1" =~ ^-[wifq] ]] && break
+        ;;
       esac
       shift
     done
@@ -119,10 +119,10 @@ function __hhs_process_list() {
       [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
       IFS=$'\n'
       for next in ${all_pids}; do
-        uid=$(awk '{ print $1 }' <<< "${next}")
-        pid=$(awk '{ print $2 }' <<< "${next}")
-        ppid=$(awk '{ print $3 }' <<< "${next}")
-        cmd=$(awk '{for(i=4;i<=NF;i++) printf $i" "; print ""}' <<< "${next}")
+        uid=$(awk '{ print $1 }' <<<"${next}")
+        pid=$(awk '{ print $2 }' <<<"${next}")
+        ppid=$(awk '{ print $3 }' <<<"${next}")
+        cmd=$(awk '{for(i=4;i<=NF;i++) printf $i" "; print ""}' <<<"${next}")
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%5s\t%5s\t%5s\t%s" "${uid}" "${pid}" "${ppid}" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
@@ -133,7 +133,7 @@ function __hhs_process_list() {
           fi
           if [[ -n "${force}" || "$ANS" == "y" || "$ANS" == "Y" ]]; then
             restore-cursor-pos
-            if kill -9 "${pid}" &> /dev/null; then 
+            if kill -9 "${pid}" &>/dev/null; then
               echo -en "${GREEN}=> Killed \"${pid}\" with SIGKILL(-9)\033[K"
             else
               echo -en "${ORANGE}=> Skipped \"${pid}\" (INACTIVE)\033[K"
@@ -142,7 +142,7 @@ function __hhs_process_list() {
           if [[ -n "$ANS" || -n "${force}" ]]; then echo -e "${NC}"; fi
         else
           # Check for ghost processes
-          if ps -p "${pid}" &> /dev/null; then
+          if ps -p "${pid}" &>/dev/null; then
             echo -e "${GREEN} ${CHECK_ICN}  active process"
           else
             echo -e "${RED} ${CROSS_ICN}  ghost process"
@@ -165,7 +165,7 @@ function __hhs_process_list() {
 function __hhs_process_kill() {
 
   local ret_val=1 force_flag=
-  
+
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <process_name>"
     echo ''
@@ -173,7 +173,7 @@ function __hhs_process_kill() {
     echo '        -f | --force : Do not prompt for confirmation when killing a process'
     return 1
   fi
-  
+
   if [[ "$1" == "-f" || "$1" == "--force" ]]; then
     shift
     force_flag='-f'
@@ -202,16 +202,16 @@ function __hhs_partitions() {
     (
       IFS=$'\n'
       echo "${WHITE}"
-      printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' 'Size' 'Avail' 'Used' 'Capacity' 'Mounted-ON'   
+      printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' 'Size' 'Avail' 'Used' 'Capacity' 'Mounted-ON'
       echo -e "----------------------------------------------------------------${HHS_HIGHLIGHT_COLOR}"
       for next in $all_parts; do
         str_text=${next:16}
-        size="$(awk '{ print $1 }' <<< "${str_text}")"
-        avail="$(awk '{ print $3 }' <<< "${str_text}")"
-        used="$(awk '{ print $2 }' <<< "${str_text}")"
-        cap="$(awk '{ print $4 }' <<< "${str_text}")"
-        [[ "Darwin" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $8 }' <<< "${str_text}")"
-        [[ "Linux" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $5 }' <<< "${str_text}")"
+        size="$(awk '{ print $1 }' <<<"${str_text}")"
+        avail="$(awk '{ print $3 }' <<<"${str_text}")"
+        used="$(awk '{ print $2 }' <<<"${str_text}")"
+        cap="$(awk '{ print $4 }' <<<"${str_text}")"
+        [[ "Darwin" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $8 }' <<<"${str_text}")"
+        [[ "Linux" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $5 }' <<<"${str_text}")"
         printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' "${size:0:4}" "${avail:0:4}" "${used:0:4}" "${cap:0:4}" "${mounted:0:40}"
       done
       echo "${NC}"

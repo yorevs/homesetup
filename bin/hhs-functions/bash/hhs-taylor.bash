@@ -37,7 +37,7 @@ function __hhs_tailor() {
     DATE_FMT_STYLE=\"${DIM}\"
     URI_FMT_RE=\"((https?|ftp|file):\/)?\/[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*\.*[-A-Za-z0-9\+&@#/%=~_|]\"
     URI_FMT_STYLE=\"${ORANGE}\"
-    " > "${HHS_DIR}/.tailor"
+    " >"${HHS_DIR}/.tailor"
 
     [[ -f "${HHS_DIR}/.tailor" ]] && \. "${HHS_DIR}/.tailor"
     file="${1:-/dev/stdin}"
@@ -52,7 +52,7 @@ function __hhs_tailor() {
           -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/g" \
           -e "s/ (${FQDN_RE}) / ${FQDN_STYLE}\1${NC} /g" \
           -e "s/(${URI_FMT_RE})/${URI_FMT_STYLE}\1${NC}/g"
-      done < "${file}"
+      done <"${file}"
     else
       [[ -d "${file}" ]] || touch "${file}"
       tail -n 25 -F "${file}" | esed \

@@ -75,6 +75,6 @@ trim() {
   # remove trailing whitespace characters
   var="${var%"${var##*[![:space:]]}"}"
   echo -en "$var"
-  
+
   return 0
 }

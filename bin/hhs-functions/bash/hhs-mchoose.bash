@@ -96,75 +96,75 @@ function __hhs_mchoose() {
     # Navigation input {
     IFS= read -rsn 1 keypress
     case "${keypress}" in
-      [[:space:]]) # Mark option
-        if [[ 0 -eq sel_options["${cur_index}"] ]]; then
-          sel_options["${cur_index}"]=1
-        else
-          sel_options["${cur_index}"]=0
+    [[:space:]]) # Mark option
+      if [[ 0 -eq sel_options["${cur_index}"] ]]; then
+        sel_options["${cur_index}"]=1
+      else
+        sel_options["${cur_index}"]=0
+      fi
+      re_render=1 && continue
+      ;;
+    'q' | 'Q') # Exit requested
+      echo -e "\n${NC}"
+      ret_val=127
+      break
+      ;;
+    [[:digit:]]) # An index was typed
+      typed_index="${keypress}"
+      echo -en "${keypress}" && index_len=1
+      while [[ ${#typed_index} -lt ${#len} ]]; do
+        IFS= read -rsn1 num_press
+        [[ -z "${num_press}" ]] && break
+        [[ ! "${num_press}" =~ ^[0-9]*$ ]] && unset typed_index && break
+        typed_index="${typed_index}${num_press}"
+        echo -en "${num_press}" && index_len=$((index_len + 1))
+      done
+      echo -ne "\033[${index_len}D\033[K"
+      if [[ ${typed_index} -ge 1 ]] && [[ ${typed_index} -le ${len} ]]; then
+        show_to=$((typed_index - 1))
+        [[ "${show_to}" -le "${diff_index}" ]] && show_to=${diff_index}
+        show_from=$((show_to - diff_index))
+        cur_index=$((typed_index - 1)) && re_render=1
+      fi
+      ;;
+    $'\033') # Handle escape '\e[nX' codes
+      IFS= read -rsn2 -t 1 keypress
+      case "${keypress}" in
+      [A) # Cursor up
+        if [[ ${cur_index} -eq ${show_from} ]] && [[ ${show_from} -gt 0 ]]; then
+          show_from=$((show_from - 1))
+          show_to=$((show_to - 1))
+        elif [[ ${cur_index} -eq 0 ]]; then
+          continue
         fi
-        re_render=1 && continue
-        ;;
-      'q' | 'Q') # Exit requested
-        echo -e "\n${NC}"
-        ret_val=127
-        break
-        ;;
-      [[:digit:]]) # An index was typed
-        typed_index="${keypress}"
-        echo -en "${keypress}" && index_len=1
-        while [[ ${#typed_index} -lt ${#len} ]]; do
-          IFS= read -rsn1 num_press
-          [[ -z "${num_press}" ]] && break
-          [[ ! "${num_press}" =~ ^[0-9]*$ ]] && unset typed_index && break
-          typed_index="${typed_index}${num_press}"
-          echo -en "${num_press}" && index_len=$((index_len + 1))
-        done
-        echo -ne "\033[${index_len}D\033[K"
-        if [[ ${typed_index} -ge 1 ]] && [[ ${typed_index} -le ${len} ]]; then
-          show_to=$((typed_index - 1))
-          [[ "${show_to}" -le "${diff_index}" ]] && show_to=${diff_index}
-          show_from=$((show_to - diff_index))
-          cur_index=$((typed_index - 1)) && re_render=1
+        if [[ $((cur_index - 1)) -ge 0 ]]; then
+          cur_index=$((cur_index - 1)) && re_render=1
         fi
         ;;
-      $'\033') # Handle escape '\e[nX' codes
-        IFS= read -rsn2 -t 1 keypress
-        case "${keypress}" in
-          [A) # Cursor up
-            if [[ ${cur_index} -eq ${show_from} ]] && [[ ${show_from} -gt 0 ]]; then
-              show_from=$((show_from - 1))
-              show_to=$((show_to - 1))
-            elif [[ ${cur_index} -eq 0 ]]; then
-              continue
-            fi
-            if [[ $((cur_index - 1)) -ge 0 ]]; then
-              cur_index=$((cur_index - 1)) && re_render=1
-            fi
-            ;;
-          [B) # Cursor down
-            if [[ ${cur_index} -eq ${show_to} ]] && [[ $((show_to + 1)) -lt ${len} ]]; then
-              show_from=$((show_from + 1))
-              show_to=$((show_to + 1))
-            elif [[ $((cur_index + 1)) -ge ${len} ]]; then
-              continue
-            fi
-            if [[ $((cur_index + 1)) -lt ${len} ]]; then
-              cur_index=$((cur_index + 1)) && re_render=1
-            fi
-            ;;
-        esac
+      [B) # Cursor down
+        if [[ ${cur_index} -eq ${show_to} ]] && [[ $((show_to + 1)) -lt ${len} ]]; then
+          show_from=$((show_from + 1))
+          show_to=$((show_to + 1))
+        elif [[ $((cur_index + 1)) -ge ${len} ]]; then
+          continue
+        fi
+        if [[ $((cur_index + 1)) -lt ${len} ]]; then
+          cur_index=$((cur_index + 1)) && re_render=1
+        fi
         ;;
-      $'') # Keep the current index and exit
-        ret_val=0
-        echo ''
-        break
-        ;;
+      esac
+      ;;
+    $'') # Keep the current index and exit
+      ret_val=0
+      echo ''
+      break
+      ;;
     esac
     # } Navigation input
 
   done
 
-  [[ ${ret_val} -eq 0 ]] && echo "${sel_options[*]}" > "$outfile"
+  [[ ${ret_val} -eq 0 ]] && echo "${sel_options[*]}" >"$outfile"
   __hhs_clear && echo -e "${NC}"
 
   return ${ret_val}

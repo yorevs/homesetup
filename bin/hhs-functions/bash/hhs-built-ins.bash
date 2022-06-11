@@ -26,7 +26,7 @@ function __hhs_random_number() {
 # @function: Display the decimal ASCII representation of a character.
 # @param $1 [Req] : The character to display.
 function __hhs_ascof() {
-  
+
   [[ $# -eq 0 || '-h' == "$1" ]] && echo "Usage: ${FUNCNAME[0]} <character>" && return 1
   echo -n "${1}" | od -A n -t d1 | head -n 1 | awk '{print $1}' && return $?
 }
@@ -39,7 +39,7 @@ function __hhs_open() {
   elif [[ "Linux" == "${HHS_MY_OS}" ]]; then
     __hhs_has 'xdg-open' && \xdg-open "$@" && return 0
   fi
-  
+
   return 1
 }
 
@@ -60,7 +60,7 @@ if __hhs_has "python3"; then
         NR == 1 {printf "  Hex => "; print $2" "$3" "$4}
         NR == 2 {printf "  Oct => "; print $2" "$3" "$4}
         NR == 1 {printf "  Icn => "; print "\\x"$2"\\x"$3"\\x"$4}
-      ' <<< "${converted}")
+      ' <<<"${converted}")
         echo -e "${result}"
         echo ''
       done

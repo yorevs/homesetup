@@ -87,35 +87,35 @@ parse_args() {
 
   shopt -s nocasematch
   case "${1}" in
-    'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
-      METHOD="$(tr '[:lower:]' '[:upper:]' <<< "${1}")"
-      shift
-      ;;
-    *) quit 2 "Method \"${1}\" is not not valid!" ;;
+  'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
+    METHOD="$(tr '[:lower:]' '[:upper:]' <<<"${1}")"
+    shift
+    ;;
+  *) quit 2 "Method \"${1}\" is not not valid!" ;;
   esac
   shopt -u nocasematch
 
   # Loop through the command line options.
   while test -n "$1"; do
     case "$1" in
-      --headers)
-        shift
-        HEADERS=" -H ${1//,/ -H }"
-        ;;
-      --body)
-        shift
-        BODY="$1"
-        ;;
-      --format)
-        FORMAT=1
-        ;;
-      --silent)
-        SILENT=1
-        ;;
-      *)
-        URL="$*"
-        break
-        ;;
+    --headers)
+      shift
+      HEADERS=" -H ${1//,/ -H }"
+      ;;
+    --body)
+      shift
+      BODY="$1"
+      ;;
+    --format)
+      FORMAT=1
+      ;;
+    --silent)
+      SILENT=1
+      ;;
+    *)
+      URL="$*"
+      break
+      ;;
     esac
     shift
   done
@@ -133,12 +133,12 @@ main() {
   parse_args "${@}"
 
   case "${METHOD}" in
-    'GET' | 'HEAD'| 'DELETE')
-      [[ -n "${BODY}" ]] && quit 1 "${METHOD} does not accept a body"
-      ;;
-    'PUT' | 'POST' | 'PATCH') 
-      [[ -z "${BODY}" ]] && quit 1 "${METHOD} requires a body" 
-      ;;
+  'GET' | 'HEAD' | 'DELETE')
+    [[ -n "${BODY}" ]] && quit 1 "${METHOD} does not accept a body"
+    ;;
+  'PUT' | 'POST' | 'PATCH')
+    [[ -z "${BODY}" ]] && quit 1 "${METHOD} requires a body"
+    ;;
   esac
 
   [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."

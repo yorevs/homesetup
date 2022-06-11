@@ -38,14 +38,14 @@ function __hhs_del_tree() {
   else
 
     case "$1" in
-      '-f' | '--force')
-        dry_run='N'
-        shift
-        ;;
-      '-n' | '--dry-run')
-        dry_run='Y'
-        shift
-        ;;
+    '-f' | '--force')
+      dry_run='N'
+      shift
+      ;;
+    '-n' | '--dry-run')
+      dry_run='Y'
+      shift
+      ;;
     esac
 
     if [[ "$1" == '/' ]] || [[ "$(pwd)" == '/' && "$1" == '.' ]]; then
@@ -55,7 +55,7 @@ function __hhs_del_tree() {
 
     search_path="$1"
     glob="$2"
-    all=$(find -L "${search_path}" -name "${glob}" 2> /dev/null)
+    all=$(find -L "${search_path}" -name "${glob}" 2>/dev/null)
 
     if [[ -n "${all}" ]]; then
       if [[ "$dry_run" == 'N' ]]; then
@@ -64,7 +64,7 @@ function __hhs_del_tree() {
           while [[ -e "${TRASH}/${trash_dest}" ]]; do
             trash_dest="${next##*/}-$(ts)"
           done
-          if \mv "${next}" "${TRASH}/${trash_dest}" &> /dev/null; then
+          if \mv "${next}" "${TRASH}/${trash_dest}" &>/dev/null; then
             echo -e "${ORANGE}Deleted: ${WHITE}${next} -> ${TRASH}/${trash_dest}${NC}"
           else
             __hhs_errcho "${FUNCNAME[0]}: Could not move \"${next}\" to ${TRASH}/${trash_dest}"
