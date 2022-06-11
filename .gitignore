@@ -58,7 +58,6 @@ nbdist/
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -86,11 +85,6 @@ Desktop.ini
 .gitconfig
 .gitignore
 .viminfo
-interview.sh
-feedback.sh
-
-# Ignore Gradle project-specific cache directory
-.gradle
 
 # Ignore Gradle build output directory
 build
