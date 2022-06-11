@@ -25,12 +25,12 @@ function __hhs_history() {
 }
 
 # @function: Display all environment variables using filters.
-# @param $1 [Opt] : The case-insensitive filter to be used when listing.
+# @param $1 [Opt] : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_envs() {
   
   HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
   
-  local pad pad_len filter name value columns
+  local pad pad_len filter name value columns ret_val=0
   
   touch "${HHS_ENV_FILE}"
 
@@ -38,36 +38,41 @@ function __hhs_envs() {
     echo "Usage: ${FUNCNAME[0]} [regex_filter]"
     return 1
   else
-    pad=$(printf '%0.1s' "."{1..60})
-    pad_len=40
-    columns="$(($(tput cols) - pad_len - 10))"
-    filter="$*"
-    [[ -z "${filter}" ]] && filter=".*"
-    echo ' '
-    echo "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:"
-    echo ' '
-    IFS=$'\n'
-    shopt -s nocasematch
-    for v in $(env | sort); do
-      name=${v%%=*}
-      value=${v#*=}
-      if [[ ${name} =~ ${filter} ]]; then
-        echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
-        printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
-        echo -en " ${GREEN}=> ${NC}"
-        echo -n "${value:0:${columns}}"
-        if [[ ${#value} -ge ${columns} ]]; then
-          echo -n "..."
+    if [[ "$1" == '-e' ]]; then
+      __hhs_edit "${HHS_ENV_FILE}"
+      ret_val=$?
+    else
+      pad=$(printf '%0.1s' "."{1..60})
+      pad_len=40
+      columns="$(($(tput cols) - pad_len - 10))"
+      filter="$*"
+      [[ -z "${filter}" ]] && filter=".*"
+      echo ' '
+      echo "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:"
+      echo ' '
+      IFS=$'\n'
+      shopt -s nocasematch
+      for v in $(env | sort); do
+        name=${v%%=*}
+        value=${v#*=}
+        if [[ ${name} =~ ${filter} ]]; then
+          echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
+          printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
+          echo -en " ${GREEN}=> ${NC}"
+          echo -n "${value:0:${columns}}"
+          if [[ ${#value} -ge ${columns} ]]; then
+            echo -n "..."
+          fi
+          echo "${NC}"
         fi
-        echo "${NC}"
-      fi
-    done
-    shopt -u nocasematch
-    IFS="$RESET_IFS"
-    echo ' '
+      done
+      shopt -u nocasematch
+      IFS="$RESET_IFS"
+      echo ' '
+    fi
   fi
 
-  return 0
+  return ${ret_val}
 }
 
 # @function: Select a shell from the existing shell list.
