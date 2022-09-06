@@ -4,6 +4,24 @@
     Created: 5th March, 2022
 */
 
+plugins {
+  id 'idea'
+  id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.4"
+}
+
+idea {
+  module {
+    settings {
+      rootModuleType = 'PYTHON_MODULE'
+    }
+    excludeDirs += file('.idea')
+    excludeDirs += file('.gradle')
+    excludeDirs += file('.vscode')
+    excludeDirs += file('.github')
+    excludeDirs += file('run-configs')
+  }
+}
+
 tasks.withType(Exec) {
   doFirst {
     println commandLine
@@ -15,10 +33,37 @@ ext {
   bash = "bash${bashVersion}"
   versionFile = "$rootDir/.VERSION"
   startTime = System.currentTimeMillis()
-  verbose = project.hasProperty('verbose') ? verbose : false
+  verbose = findProperty('verbose') ?: false
 }
 
 apply from: "$projectDir/gradle.properties"
 apply from: "$projectDir/gradle/bash.gradle"
 apply from: "$projectDir/gradle/version.gradle"
 
+/* Run Configurations */
+task exportRunConfigurations(type: Copy) {
+  group = 'Idea'
+  description = "Export run configurations"
+  from("${rootDir}/.idea/runConfigurations") {
+    include '*.xml'
+  }
+  into "${rootDir}/run-configs/idea"
+}
+
+task importRunConfigurations(type: Copy) {
+  group = 'Idea'
+  description = "Import run configurations"
+  from("${rootDir}/run-configs/idea") {
+    include '*.xml'
+  }
+  into "${rootDir}/.idea/runConfigurations"
+}
+
+task clearRunConfigurations(type: Delete) {
+  group = 'Idea'
+  description = "Delete all run configurations"
+  delete fileTree("${rootDir}/.idea/runConfigurations") {
+    include "**/*.xml"
+  }
+  followSymlinks = true
+}

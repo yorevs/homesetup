@@ -9,7 +9,7 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheets.
+# @function: PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheet.
 # @param $1 [Con] : The week list punches from.
 function __hhs_punch() {
 
@@ -83,22 +83,23 @@ function __hhs_punch() {
           success='1'
           break
         # List week or current punches
-        elif [[ "-l" == "$opt" || "-w" == "$opt" ]]; then
+        elif [[ "-l" == "${opt}" || "-w" == "${opt}" ]]; then
           echo -en "${line//${date_stamp}/${HHS_HIGHLIGHT_COLOR}${date_stamp}}"
           # Read all timestamps and append them into an array.
           IFS=' ' read -r -a line_totals <<<"$(awk -F '=> ' '{ print $2 }' <<<"${line}")"
-          # If we have an even number of timestamps, display subtotals; **:** otherwise
+          # If we have an even number of timestamps, display subtotals; --:-- otherwise
           if [[ ${#line_totals[@]} -gt 0 && "$(echo "${#line_totals[@]} % 2" | bc)" -eq 0 ]]; then
-            daily_total="$(tcalc.py ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})"        # Up to 3 pairs of timestamps.
-            daily_total_dec="$(tcalc.py -d ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})" # Up to 3 pairs of timestamps.
+            # Up to 3 pairs of timestamps.
+            daily_total="$(tcalc ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})"
+            daily_total_dec="$(tcalc +d ${line_totals[5]} - ${line_totals[4]} + ${line_totals[3]} - ${line_totals[2]} + ${line_totals[1]} - ${line_totals[0]})"
             printf ' %*.*s' 0 $((pad_len - ${#line_totals[@]} * 6)) "${pad}"
             # If the daily subtotal is greater or equal to the nominal 8 hours, color it green; red otherwise.
             if [[ "$daily_total" =~ ^([12][0-9]|0[89]):..:.. ]]; then
-              echo -e " : Subtotal = ${GREEN}${daily_total:0:5} -> ${daily_total_dec:0:5} ${NC}"
+              echo -e " : Subtotal = ${GREEN}${daily_total:0:5} > ${daily_total_dec:0:5} ${NC}"
             else
-              echo -e " : Subtotal = ${RED}${daily_total:0:5} -> ${daily_total_dec:0:5} ${NC}"
+              echo -e " : Subtotal = ${RED}${daily_total:0:5} > ${daily_total_dec:0:5} ${NC}"
             fi
-            totals+=("$daily_total")
+            totals+=("${daily_total}")
           else
             echo -e "${RED} --:-- ${NC}"
           fi
@@ -106,17 +107,17 @@ function __hhs_punch() {
       done
 
       # Display totals of the week when listing - Footer
-      if [[ "-l" == "$opt" || "-w" == "$opt" ]]; then
-        weekly_total="$(tcalc.py ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]})"
-        weekly_total_dec="$(tcalc.py -d ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]})"
+      if [[ "-l" == "${opt}" || "-w" == "${opt}" ]]; then
+        weekly_total="$(tcalc ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]})"
+        weekly_total_dec="$(tcalc +d ${totals[0]} + ${totals[1]} + ${totals[2]} + ${totals[3]} + ${totals[4]} + ${totals[5]} + ${totals[6]})"
         printf "${YELLOW}%0.1s" "-"{1..82}
         # If the weekly subtotal is greater or equal to the nominal 40 hours, color it green; red otherwise.
-        if [[ "$weekly_total" =~ ^([4-9][0-9]):..:.. ]]; then
-          balance=$(tcalc.py ${weekly_total} - 40:00)
-          printf "${WHITE}\nTotal = ${GREEN}%s\n\n${NC}" "${weekly_total:0:5} -> ${weekly_total_dec:0:5}  (+${balance:0:5})"
+        if [[ "${weekly_total}" =~ ^([4-9][0-9]):..:.. ]]; then
+          balance="$(tcalc ${weekly_total} - '40:00')"
+          printf "${WHITE}\nTotal = %s\n\n" "${weekly_total:0:5} -> ${weekly_total_dec:0:5}  ${GREEN}(+${balance:0:5})${NC}"
         else
-          balance=$(tcalc.py 40:00 - ${weekly_total})
-          printf "${WHITE}\nTotal = ${RED}%s\n\n${NC}" "${weekly_total:0:5} -> ${weekly_total_dec:0:5}  (-${balance:0:5})"
+          balance="$(tcalc '40:00' - ${weekly_total})"
+          printf "${WHITE}\nTotal = %s\n\n" "${weekly_total:0:5} -> ${weekly_total_dec:0:5}  ${RED}(-${balance:0:5})${NC}"
         fi
       else
         # Create a new time_stamp if it's the first punch for the day

@@ -158,6 +158,8 @@ alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS
 alias __hhs_reset="__hhs_clear; \reset"
 # @alias: Use the assigned app to open a file
 alias open="__hhs_open"
+# @alias: Use the HomeSetup TimeCalc widget
+alias tcalc="hspylib widgets TimeCalc"
 
 # -----------------------------------------------------------------------------------
 # @category: Tool aliases
