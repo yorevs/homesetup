@@ -4,29 +4,11 @@
     Created: 5th March, 2022
 */
 
-/* Update the version file to match the build.gradle version */
-task updateVersion {
-  group = 'Versioning'
-  description = 'Update the version file to match the build.gradle version'
-  outputs.upToDateWhen { false }
-  doLast {
-    def new_ver = project.ext.app_version
-    def v_file = new File("${versionFile}")
-    def old_ver = v_file.text
-    assert v_file.exists()
-    println "Updating version from $old_ver to $new_ver"
-    v_file.text = "$new_ver"
-    ant.replaceregexp(file: "$v_file", match:'^([0-9]{1,2}\\.)[0-9]{1,3}$', replace:"$new_ver", flags:'g', byline:true)
-    println "Project: [$project.ext.app_name] Version: " + file("$v_file").text
-  }
-}
-
 /* Change build number */
 task changeVersion(type: Task) {
   group = 'Versioning'
   description = 'Increment the build number for publishing'
   outputs.upToDateWhen { false }
-  finalizedBy updateVersion
   doLast {
     def ver = project.ext.app_version
     def part = hasProperty('part') ? project.getProperty('part') : 'patch'

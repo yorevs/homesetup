@@ -142,12 +142,8 @@ alias ps2='export PS1=$PS2_STYLE'
 # -----------------------------------------------------------------------------------
 # @category: HomeSetup
 
-# @alias: Shortcut for hhs vault plug-in
-alias __hhs_vault='python3 -m vault'
 # @alias: Shortcut for hhs hspm plug-in
 alias __hhs_hspm='hhs hspm execute'
-# @alias: Shortcut for hhs firebase plug-in
-alias __hhs_firebase='hhs firebase execute'
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='hhs updater execute'
 # @alias: Reload HomeSetup
@@ -287,6 +283,14 @@ esac
 # @category: Python aliases
 
 if __hhs_has "python3"; then
+  # @alias: Shortcut for hhs vault plug-in
+  alias __hhs_hspylib='python3 -m hspylib'
+  # @alias: Shortcut for vault plug-in
+  alias __hhs_vault='python3 -m vault'
+    # @alias: Shortcut for cfman plug-in
+  alias __hhs_cfman='python3 -m cfman'
+  # @alias: Shortcut for hhs firebase plug-in
+  alias __hhs_firebase='hhs firebase execute'
   # @alias: Evaluate mathematical expressions
   alias calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings

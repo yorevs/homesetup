@@ -81,8 +81,12 @@ if __hhs_has "python3"; then
   __hhs_alias sf='__hhs_search_file'
   __hhs_alias sd='__hhs_search_dir'
   __hhs_alias ss='__hhs_search_string'
+  __hhs_alias cfman='__hhs_cfman'
   __hhs_alias vault='__hhs_vault'
   __hhs_alias firebase='__hhs_firebase'
+  __hhs_alias hspylib='__hhs_hspylib'
+  __hhs_alias widgets='__hhs_hspylib widgets'
+  __hhs_alias appman='__hhs_hspylib appman'
 fi
 
 # GPG shortcuts

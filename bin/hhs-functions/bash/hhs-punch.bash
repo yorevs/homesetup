@@ -17,22 +17,22 @@ function __hhs_punch() {
     echo "Usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo '    Options: '
-    echo '      +l        : List all registered punches.'
-    echo '      +e        : Edit current punch file.'
-    echo '      +r        : Reset punches for the current week and save the previous one.'
-    echo '      +w <week> : Report (list) all punches of specified week using the pattern: week-N.punch.'
+    echo '      -l        : List all registered punches.'
+    echo '      -e        : Edit current punch file.'
+    echo '      -r        : Reset punches for the current week and save the previous one.'
+    echo '      -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch.'
     echo ''
     echo '  Notes: '
     echo '    When no arguments are provided it will !!PUNCH THE CLOCK!!.'
     return 1
   else
-    if [[ "+l" == "${1}" ]]; then
+    if [[ "-l" == "${1}" ]]; then
       python3 -m hspylib widgets punch list
-    elif [[ "+e" == "${1}" ]]; then
+    elif [[ "-e" == "${1}" ]]; then
       python3 -m hspylib widgets punch edit
-    elif [[ "+r" == "${1}" ]]; then
+    elif [[ "-r" == "${1}" ]]; then
       python3 -m hspylib widgets punch reset
-    elif [[ "+w" == "${1}" ]]; then
+    elif [[ "-w" == "${1}" ]]; then
       python3 -m hspylib widgets punch week ${2}
     else
       python3 -m hspylib widgets punch

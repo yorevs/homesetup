@@ -39,7 +39,6 @@ task publish(type: Task) {
   group = 'Publish'
   description = "Publish a new HomeSetup version"
   dependsOn changeVersion
-  dependsOn updateVersion
   doLast {
     def out = new ByteArrayOutputStream()
     def version = new File("$versionFile").text
@@ -48,18 +47,20 @@ task publish(type: Task) {
       commandLine 'git', 'log', '--pretty=format:%s', 'origin/master..HEAD'
       standardOutput = out
     }
-    println(out.toString().trim())
-    /*
+    def logs = out.toString().trim()
+    def prefix = logs?.trim() ? '\n  - ' : ' No commits'
+    def commits = logs.split('\n').join('\n  - ')
+    def commitMsg = "New HomeSetup version '$version':$prefix$commits"
+    println(commitMsg)
     exec {
       commandLine 'git', 'add', '-A', ':/'
     }
     exec {
-      commandLine 'git', 'commit', '-m', '++version'
+      commandLine 'git', 'commit', '-m', "$commitMsg"
     }
     exec {
       commandLine 'git', 'push', 'origin', 'HEAD'
     }
-    */
   }
 }
 
