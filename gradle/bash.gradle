@@ -38,9 +38,18 @@ task bats(type: Task) {
 task publish(type: Task) {
   group = 'Publish'
   description = "Publish a new HomeSetup version"
+  dependsOn changeVersion
   dependsOn updateVersion
   doLast {
-    println "Publishing a new HomeSetup version..."
+    def out = new ByteArrayOutputStream()
+    def version = new File("$versionFile").text
+    println "Publishing version $version of HomeSetup..."
+    exec {
+      commandLine 'git', 'log', '--pretty=format:%s', 'origin/master..HEAD'
+      standardOutput = out
+    }
+    println(out.toString().trim())
+    /*
     exec {
       commandLine 'git', 'add', '-A', ':/'
     }
@@ -50,6 +59,7 @@ task publish(type: Task) {
     exec {
       commandLine 'git', 'push', 'origin', 'HEAD'
     }
+    */
   }
 }
 

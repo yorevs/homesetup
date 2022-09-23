@@ -33,9 +33,7 @@ task changeVersion(type: Task) {
     println "Increment the ${part} number for publishing"
     // (major.minor.patch)
     exec {
-      commandLine 'python3', '-m', 'bumpversion',
-        '--allow-dirty', '--current-version', ver,
-        part, 'gradle.properties'
+      commandLine rootProject.python, '-m', 'bumpver', 'update', '--patch'
     }
   }
 }

@@ -1,0 +1,12 @@
+[bumpver]
+current_version = "1.4.30"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "++version {old_version} -> {new_version}"
+commit = false
+tag = false
+push = false
+
+[bumpver.file_patterns]
+"bumpver.toml" = ['current_version = "{version}"']
+"gradle.properties" = ["app_version = '{version}'"]
+".VERSION" = ["{version}"]
