@@ -33,3 +33,24 @@ task bats(type: Task) {
       }
   }
 }
+
+/* Publish a new HomeSetup version */
+task publish(type: Task) {
+  group = 'Publish'
+  description = "Publish a new HomeSetup version"
+  dependsOn updateVersion
+  doLast {
+    println "Publishing a new HomeSetup version..."
+    exec {
+      commandLine 'git', 'add', '-A', ':/'
+    }
+    exec {
+      commandLine 'git', 'commit', '-m', '++version'
+    }
+    exec {
+      commandLine 'git', 'push', 'origin', 'HEAD'
+    }
+  }
+}
+
+/* end */
