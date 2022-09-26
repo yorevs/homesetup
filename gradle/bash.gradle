@@ -52,6 +52,7 @@ task publish(type: Task) {
     def commits = logs.split('\n').join('\n  - ')
     def commitMsg = "New HomeSetup version '$version':$prefix$commits"
     println(commitMsg)
+    new File("master-unlock").text = 'HomeSetup Publish'
     exec {
       commandLine 'git', 'add', '-A', ':/'
     }
