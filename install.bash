@@ -545,7 +545,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
-    if [[ -f "${HOME}/.aliasdef" ]]; then
+    if [[ -f "${HOME}/.aliasdef" || -f "${HHS_HOME}/dotfiles/aliasdef" ]]; then
       \cp -f "${HOME}/.aliasdef" "${HHS_DIR}/aliasdef-${TIMESTAMP}.bak"
       \cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HOME}/.aliasdef"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
