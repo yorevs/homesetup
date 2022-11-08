@@ -31,8 +31,8 @@ function execute() {
   action="${ARGS[0]}"
   db_alias="${ARGS[1]}"
   dotfiles=(
-    '.aliases' '.aliasdef' '.cmd_file' '.colors' '.env' '.path' 
-    '.firebase' '.inputrc' '.profile' '.prompt' '.saved_dirs'
+    '.aliases' '.aliasdef' '.cmd_file' '.colors' '.env' '.path'
+    'firebase.properties' '.inputrc' '.profile' '.prompt' '.saved_dirs'
   )
   pushd "${HHS_DIR}" &>/dev/null || exit 1
   if [[ 'upload' == "${action}" ]]; then 

@@ -19,18 +19,20 @@ import getpass
 import os.path
 
 from subprocess import check_output
-from os import path, remove
+from os import path, remove, curdir
 
 commit_msg_file = sys.argv[1] if len(sys.argv) > 1 else None
 
 if commit_msg_file is None or not os.path.exists(commit_msg_file):
-    print('[ERROR] Message file "{}" does not exist'.format(commit_msg_file))
+    print('Message file "{}" does not exist'.format(commit_msg_file))
     sys.exit(1)
 
 # App arguments
-branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
+branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
+branch_name = str(branch_name, encoding='utf-8').strip()
+root_dir =  check_output(['git', 'rev-parse', '--show-toplevel'], encoding='utf-8').strip()
+master_unlock = root_dir + '/master-unlock'
 user_name = getpass.getuser()
-master_unlock = 'master_unlocked'
 
 commit_msg_filename = commit_msg_file
 commit_msg = None
@@ -74,7 +76,7 @@ elif re.match(no_card_regex, branch_name):
                 fh.seek(0, 0)
                 fh.write(formatted_msg)
         else:
-            print('[ERROR] Your message does not comply with any changelog type {}. Commit aborted !'
+            print('Your message does not comply with any changelog type {}. Commit aborted !'
                   .format(changelog))
             sys.exit(1)
 
@@ -82,10 +84,11 @@ elif re.match(no_card_regex, branch_name):
 else:
     if "master" == branch_name:
         if not path.exists(master_unlock):
-            print('[ERROR] Master not unlocked: {}. Commit aborted !'.format(master_unlock))
+            print(sys.argv)
+            print('Master not unlocked: {}. Commit aborted !'.format(master_unlock))
             sys.exit(1)
         else:
             remove(master_unlock)
     else:
-        print('[ERROR] Incorrect branch name: {}'.format(branch_name))
+        print('Incorrect branch name: {}'.format(branch_name))
         sys.exit(1)

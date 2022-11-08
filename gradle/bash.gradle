@@ -42,7 +42,7 @@ task publish(type: Task) {
   doLast {
     def out = new ByteArrayOutputStream()
     def version = new File("$versionFile").text
-    println "Publishing version $version of HomeSetup..."
+    println "Publishing version $version of HomeSetup"
     exec {
       commandLine 'git', 'log', '--pretty=format:%s', 'origin/master..HEAD'
       standardOutput = out
@@ -51,8 +51,9 @@ task publish(type: Task) {
     def prefix = logs?.trim() ? '\n  - ' : ' No commits'
     def commits = logs.split('\n').join('\n  - ')
     def commitMsg = "New HomeSetup version '$version':$prefix$commits"
-    println(commitMsg)
-    new File("master-unlock").text = 'HomeSetup Publish'
+    println("Commit: $commitMsg")
+    def master = new File("master-unlock").text = 'HomeSetup Publish'
+    println("Master-Unlock: $master")
     exec {
       commandLine 'git', 'add', '-A', ':/'
     }
