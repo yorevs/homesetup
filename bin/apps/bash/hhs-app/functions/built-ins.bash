@@ -10,7 +10,6 @@
 
 # @purpose: Provide a help for __hhs functions
 function help() {
-
   usage 0
 }
 
@@ -62,14 +61,14 @@ function funcs() {
 }
 
 # shellcheck disable=2086
-# @purpose: Retrieve HoseSetup logs
+# @purpose: Retrieve HomeSetup logs
 # @param $1 [opt] : The number of log lines to retrieve.
 function logs() {
-  nlogs=${1:-100}
+  n=${1:-100}
   echo ''
-  echo -e "${ORANGE}HomeSetup logs (last ${nlogs} lines):${NC}"
+  echo -e "${ORANGE}HomeSetup logs (last ${n} lines):${NC}"
   echo ''
-  tail -${nlogs} "${HHS_LOGFILE}"
+  tail -${n} "${HHS_LOGFILE}"
   echo ''
 }
 

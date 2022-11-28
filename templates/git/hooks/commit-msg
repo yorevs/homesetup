@@ -29,8 +29,8 @@ if commit_msg_file is None or not os.path.exists(commit_msg_file):
 
 # App arguments
 branch_name = check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
-branch_name = str(branch_name, encoding='utf-8').strip()
-root_dir =  check_output(['git', 'rev-parse', '--show-toplevel'], encoding='utf-8').strip()
+branch_name = str(branch_name).strip()
+root_dir =  check_output(['git', 'rev-parse', '--show-toplevel']).strip()
 master_unlock = root_dir + '/master-unlock'
 user_name = getpass.getuser()
 

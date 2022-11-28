@@ -45,7 +45,7 @@ update_hhs() {
 
   if [[ -n "${HHS_VERSION}" ]]; then
     clear
-    repo_ver="$(curl -s --fail -m 3 ${VERSION_URL})"
+    repo_ver="$(curl -s --fail -m 2 "${VERSION_URL}")"
     re="[0-9]+\.[0-9]+\.[0-9]+"
 
     if [[ ${repo_ver} =~ $re ]]; then
@@ -62,15 +62,11 @@ update_hhs() {
           popd &> /dev/null || quit 1
           if "${HHS_HOME}"/install.bash -q; then
             echo -e "${GREEN}Successfully updated HomeSetup !"
-            sleep 1
-            clear
-            source ~/.bashrc
+            \. ~/.bashrc
             echo -e "${HHS_MOTD}"
           else
             quit 1 "${PLUGIN_NAME}: Failed to install HomeSetup update !${NC}"
           fi
-        else
-          echo ''
         fi
       else
         echo -e "${GREEN}You version is up to date v${HHS_VERSION} !"

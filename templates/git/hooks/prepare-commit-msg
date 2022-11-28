@@ -44,7 +44,7 @@ if branch_name.lower() == 'master':
               .format(master_unlock_path))
         try:
             remove(master_unlock_path)
-            open('master_unlocked', 'a').close()
+            open(master_unlock_path, 'a').close()
         except OSError as error:
             print('[ERROR] Unable to remove master unlock file: {}. Commit to master aborted!'
                   .format(master_unlock_path))
