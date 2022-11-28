@@ -89,7 +89,7 @@ export HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:-15}
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
-export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/.firebase}"
+export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/firebase.properties}"
 export HHS_FIREBASE_CERT_FILE=$HOME/.ssh/{project_id}-firebase-credentials.json
 
 
