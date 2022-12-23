@@ -1,5 +1,5 @@
 [bumpver]
-current_version = "1.4.51"
+current_version = "1.4.52"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "++version {old_version} -> {new_version}"
 commit = false
