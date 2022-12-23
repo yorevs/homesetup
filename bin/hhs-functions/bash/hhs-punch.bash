@@ -27,15 +27,15 @@ function __hhs_punch() {
     return 1
   else
     if [[ "-l" == "${1}" ]]; then
-      python3 -m hspylib widgets punch list
+      python3 -m clitt widgets punch list
     elif [[ "-e" == "${1}" ]]; then
-      python3 -m hspylib widgets punch edit
+      python3 -m clitt widgets punch edit
     elif [[ "-r" == "${1}" ]]; then
-      python3 -m hspylib widgets punch reset
+      python3 -m clitt widgets punch reset
     elif [[ "-w" == "${1}" ]]; then
-      python3 -m hspylib widgets punch week ${2}
+      python3 -m clitt widgets punch week ${2}
     else
-      python3 -m hspylib widgets punch
+      python3 -m clitt widgets punch
     fi
   fi
 

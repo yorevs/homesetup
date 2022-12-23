@@ -203,7 +203,7 @@ if __hhs_has "git"; then
     # Find all git repositories
     git_repos_path="${1:-.}"
     [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
-    IFS=$'\n' read -r -d '' -a all_repos <<<"$(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git")"
+    IFS=$'\n' read -r -d '' -a all_repos <<<"$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
     repository="${1:-origin}"
@@ -215,6 +215,7 @@ if __hhs_has "git"; then
     mchoose_file=$(mktemp)
     if __hhs_mchoose -c "${mchoose_file}" "${all_repos[@]}"; then
       IFS=$'\n' read -r -d ' ' -a sel_indexes <<<"$(grep . "${mchoose_file}")"
+      echo "$mchoose_file"
     else
       return 1
     fi
@@ -270,7 +271,7 @@ if __hhs_has "git"; then
         fi
       else
         echo ''
-        echo -e "${YELLOW}>>> Skipping: unchecked (${sel_indexes[$idx]}) project \"${repo_dir}\" ${NC}"
+        echo -e "${YELLOW}>>> Skipping: unselected (${sel_indexes[$idx]}) project \"${repo_dir}\" ${NC}"
       fi
     done
 

@@ -499,6 +499,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     ${PYTHON} -m pip install --upgrade --user hspylib-firebase &>/dev/null ||
       quit 2 "Unable to install HomeSetup Firebase !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
+    
+    # HsPyLib-Clitt installation
+    echo -en "\n${WHITE}Installing HsPyLib-Clitt using ${PYTHON} ..."
+    ${PYTHON} -m pip install --upgrade --user hspylib-clitt &>/dev/null ||
+      quit 2 "Unable to install HomeSetup Clitt !"
+    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
   }
 
   # Check for backward HHS compatibility.
