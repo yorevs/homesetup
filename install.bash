@@ -216,11 +216,15 @@ Usage: $APP_NAME [OPTIONS] <args>
       compatibility_check
       activate_dotfiles
       ;;
-    local | repair)
+    local)
       check_required_tools
       install_dotfiles
       configure_python
       compatibility_check
+      activate_dotfiles
+      ;;
+    repair)
+      install_dotfiles
       activate_dotfiles
       ;;
     *)

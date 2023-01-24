@@ -53,12 +53,18 @@ if __hhs_has "git"; then
         sleep 1
         echo -e "\033[1J\033[H"
       fi
-      echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
+
       while read -r branch; do
         b_name=${branch//\* /}
         all_branches+=("${b_name}")
       done < <(git branch ${all_flag} | grep -v '\->')
+
+      clear
+      echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
+      echo -en "${WHITE}"
+
       mchoose_file=$(mktemp)
+
       if __hhs_mselect "${mchoose_file}" "${all_branches[@]}"; then
         if ! git diff-index --quiet HEAD --; then
           echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
@@ -69,10 +75,12 @@ if __hhs_has "git"; then
           stash_flag=1
           echo -e " ... [   ${GREEN}OK${NC}   ]\n"
         fi
+
         sel_index=$(grep . "${mchoose_file}")
         sel_branch="${all_branches["$sel_index"]}"
         b_name="${sel_branch// /}"
         b_name="${b_name##*\/}"
+
         if git checkout "$b_name"; then
           ret_val=$?
           if [[ -n "$stash_flag" ]]; then
@@ -87,6 +95,7 @@ if __hhs_has "git"; then
           __hhs_errcho "${FUNCNAME[0]}: Unable to checkout branch \"${sel_branch}\""
           return
         fi
+
       fi
     fi
     echo ''
@@ -203,24 +212,24 @@ if __hhs_has "git"; then
     # Find all git repositories
     git_repos_path="${1:-.}"
     [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
-    IFS=$'\n' read -r -d '' -a all_repos <<<"$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
+    IFS=$'\n' read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
     repository="${1:-origin}"
 
     clear
-    echo "${YELLOW}Choose the projects to pull from. Available Repositories (${#all_repos[@]}):"
+    echo -e "${YELLOW}Choose the projects to pull from. Available Repositories (${#all_repos[@]}):"
     echo -en "${WHITE}"
 
     mchoose_file=$(mktemp)
     if __hhs_mchoose -c "${mchoose_file}" "${all_repos[@]}"; then
-      IFS=$'\n' read -r -d ' ' -a sel_indexes <<<"$(grep . "${mchoose_file}")"
-      echo "$mchoose_file"
+      sel_indexes=($(grep . "${mchoose_file}"))
     else
       return 1
     fi
 
     for idx in "${!all_repos[@]}"; do
+      echo -e "${WHITE} Checking ${all_repos[$idx]} -> ${sel_indexes[$idx]}"
       repo_dir=$(dirname "${all_repos[$idx]}")
       if [[ "${sel_indexes[$idx]}" == '1' ]]; then
         if [[ -d "${repo_dir}" ]]; then

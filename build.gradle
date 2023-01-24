@@ -14,6 +14,9 @@ idea {
     settings {
       rootModuleType = 'PYTHON_MODULE'
     }
+    sourceDirs += file('bin')
+    sourceDirs += file('dotfiles')
+    testSourceDirs += file('tests')
     excludeDirs += file('.idea')
     excludeDirs += file('.gradle')
     excludeDirs += file('.vscode')
