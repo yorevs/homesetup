@@ -90,7 +90,7 @@ export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/firebase.properties}"
-export HHS_FIREBASE_CERT_FILE=$HOME/.ssh/{project_id}-firebase-credentials.json
+export HHS_FIREBASE_CREDS_FILE=$HOME/.ssh/{project_id}-firebase-credentials.json
 
 
 command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
