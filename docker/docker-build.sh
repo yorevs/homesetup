@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $# -lt 1 || "${1}" == -h || "${1}" == --help ]]; then
-  echo 'Usage: build.bash <container_type...>'
+  echo "Usage: docker-build.sh <container_type...>"
   echo ''
   echo '  Arguments'
   echo '    - container_type  : The OS to be installed. One of [ubuntu|centos|fedora]'

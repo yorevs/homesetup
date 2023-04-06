@@ -68,6 +68,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
 
+  # VT-100 Terminal colors
+  NC=${NC:-'\033[0;0;0m'}
+  GREEN=${GREEN:-'\033[0;32m'}
+  YELLOW=${YELLOW:-'\033[0;93m'}
+  RED=${RED:-'\033[0;31m'}
+  BLUE=${BLUE:-'\033[0;34m'}
+  WHITE=${WHITE:-'\033[0;97m'}
+
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools

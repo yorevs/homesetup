@@ -118,7 +118,7 @@ function __hhs_source() {
 # @function: Whether an URL is reachable
 # @param $1 [Req] : The URL to test reachability
 function __hhs_is_reachable() {
-  curl --output /dev/null --silent --head --fail "${1}"
+  curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
   return $?
 }
 
