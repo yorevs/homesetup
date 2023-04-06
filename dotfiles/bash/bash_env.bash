@@ -43,6 +43,7 @@ if command -v qmake > /dev/null || [[ -d /usr/local/opt/qt/bin ]]; then
   export QT_HOME="/usr/local/opt/qt@5/bin"
 fi
 
+# MacOs
 if [[ "Darwin" == "$HHS_MY_OS" ]]; then
   # Hide the annoying warning about zsh
   export BASH_SILENCE_DEPRECATION_WARNING=1

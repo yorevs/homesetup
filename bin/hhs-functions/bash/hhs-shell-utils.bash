@@ -30,12 +30,12 @@ function __hhs_envs() {
   
   HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
   
-  local pad pad_len filter name value columns ret_val=0
+  local pad pad_len filters name value columns ret_val=0
   
   touch "${HHS_ENV_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [regex_filter]"
+    echo "Usage: ${FUNCNAME[0]} [regex_filters]"
     return 1
   else
     if [[ "$1" == '-e' ]]; then
@@ -45,18 +45,71 @@ function __hhs_envs() {
       pad=$(printf '%0.1s' "."{1..60})
       pad_len=40
       columns="$(($(tput cols) - pad_len - 10))"
-      filter="$*"
-      [[ -z "${filter}" ]] && filter=".*"
+      filters="$*"
+      filters=${filters// /\|}
+      [[ -z "${filters}" ]] && filters=".*"
       echo ' '
-      echo "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:"
+      echo "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:"
       echo ' '
       IFS=$'\n'
       shopt -s nocasematch
       for v in $(env | sort); do
         name=${v%%=*}
         value=${v#*=}
-        if [[ ${name} =~ ${filter} ]]; then
+        if [[ ${name} =~ ${filters} ]]; then
           echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
+          printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
+          echo -en " ${GREEN}=> ${NC}"
+          echo -n "${value:0:${columns}}"
+          if [[ ${#value} -ge ${columns} ]]; then
+            echo -n "..."
+          fi
+          echo "${NC}"
+        fi
+      done
+      shopt -u nocasematch
+      IFS="$RESET_IFS"
+      echo ' '
+    fi
+  fi
+
+  return ${ret_val}
+}
+
+# @function: Display all alias definitions using filters.
+# @param $1 [Opt] : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
+function __hhs_defs() {
+
+  HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
+
+  local pad pad_len filters name value columns ret_val=0
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [regex_filters]"
+    return 1
+  else
+    if [[ "$1" == '-e' ]]; then
+      __hhs_edit "${HHS_ENV_FILE}"
+      ret_val=$?
+    else
+      pad=$(printf '%0.1s' "."{1..60})
+      pad_len=40
+      columns="$(($(tput cols) - pad_len - 10))"
+      filters="$*"
+      filters=${filters// /\|}
+      [[ -z "${filters}" ]] && filters=".*"
+      echo ' '
+      echo "${YELLOW}Listing all alias definitions matching [ ${filters} ]:"
+      echo ' '
+      IFS=$'\n'
+      shopt -s nocasematch
+      for v in $(grep '^ *__hhs_alias' ${HHS_ALIASDEF_FILE}); do
+        name=${v%%=*}
+        name=${name// /}
+        value=${v#*=}
+        value=${value//\'/}
+        if [[ ${name} =~ ${filters} ]]; then
+          echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
           echo -en " ${GREEN}=> ${NC}"
           echo -n "${value:0:${columns}}"

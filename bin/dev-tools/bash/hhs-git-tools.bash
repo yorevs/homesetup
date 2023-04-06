@@ -229,7 +229,6 @@ if __hhs_has "git"; then
     fi
 
     for idx in "${!all_repos[@]}"; do
-      echo -e "${WHITE} Checking ${all_repos[$idx]} -> ${sel_indexes[$idx]}"
       repo_dir=$(dirname "${all_repos[$idx]}")
       if [[ "${sel_indexes[$idx]}" == '1' ]]; then
         if [[ -d "${repo_dir}" ]]; then
