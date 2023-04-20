@@ -109,8 +109,7 @@ PROMPT="\[${WHITE}\] \$ "
 # Set the terminal title and prompt.
 # Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details
 
-#unset PROMPT_COMMAND
-PROMPT_COMMAND=''
+unset PROMPT_COMMAND
 
 # PS1 Style: Color and icons (default).
 PS1_STYLE=$"${HIST_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
