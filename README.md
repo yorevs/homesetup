@@ -1,4 +1,4 @@
-# ![images/hs-logo-x32.png](images/hs-logo-x32.png) HomeSetup
+# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup
 
 ## Your shell, good as hell ! 
 
