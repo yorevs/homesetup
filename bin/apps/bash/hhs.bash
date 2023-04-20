@@ -26,6 +26,7 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
     Options:
       -v  |  --version  : Display current program version.
       -h  |     --help  : Display this help message.
+      -p  |   --prefix  : Display the HomeSetup installation directory.
     
     Tasks:
       help      : Display a help about the plugin.
@@ -225,7 +226,7 @@ register_hhs_functions() {
 
 # @purpose: Parse command line arguments
 parse_args() {
-
+  
   # If not enough arguments is passed, display usage message.
   if [[ ${#} -eq 0 ]]; then
     usage 0
@@ -240,6 +241,11 @@ parse_args() {
       ;;
     -v | --version)
       version
+      ;;
+    -p | --prefix)
+        echo -e "${BLUE}Install Dir: ${WHITE}${HHS_HOME}${NC}"
+        echo -e "${BLUE}Configs Dir: ${WHITE}${HHS_DIR}${NC}"
+        quit 0
       ;;
 
     *)
@@ -258,12 +264,14 @@ main() {
   parse_args "${@}"
   register_local_functions
   register_plugins
+  
   if has_function "${1}"; then
     fname="${1}"
     shift
     ${fname} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
+  
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
   invoke_command "${@}" || quit 2

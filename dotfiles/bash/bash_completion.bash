@@ -27,7 +27,7 @@ BASH_COMPLETIONS=
 # All HomeSetup available auto-completions
 ALL_BASH_CPL_TYPES=(
   'git' 'docker-compose' 'docker-machine' 'docker' 'gradle'
-  'cf' 'brew' 'kubectl' 'helm' 'hhs' 'ssh'
+  'cf' 'kubectl' 'helm' 'hhs' 'ssh'
 )
 
 # Load all required auto-completions

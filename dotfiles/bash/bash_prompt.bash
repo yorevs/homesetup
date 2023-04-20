@@ -85,23 +85,23 @@ HIST_STYLE="\[${WHITE}\]${HIST_ICN} \!"
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-  USER_STYLE="\[${WHITE}\] ${ROOT_ICN}\[${RED}\] \u"
+  USER_STYLE="\[${WHITE}\] \[${ROOT_ICN}\]\[${RED}\] \u"
 else
-  USER_STYLE="\[${WHITE}\] ${USER_ICN}\[${GREEN}\] \u"
+  USER_STYLE="\[${WHITE}\] \[${USER_ICN}\]\[${GREEN}\] \u"
 fi
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-  HOST_STYLE="\[${WHITE}\] ${NET_ICN}\[${RED}\] \h"
+  HOST_STYLE="\[${WHITE}\] \[${NET_ICN}\]\[${RED}\] \h"
 else
-  HOST_STYLE="\[${WHITE}\] ${AT_ICN}\[${PURPLE}\] \h"
+  HOST_STYLE="\[${WHITE}\] \[${AT_ICN}\]\[${PURPLE}\] \h"
 fi
 
 # Current directory path style.
-PATH_STYLE="\[${WHITE}\] ${FOLDER_ICN}\[${ORANGE}\] \W"
+PATH_STYLE="\[${WHITE}\] \[${FOLDER_ICN}\]\[${ORANGE}\] \W"
 
 # Git style
-GIT_STYLE="\[${WHITE}\]\$(__hhs_git_prompt \" ${GIT_ICN} \[${CYAN}\]\")"
+GIT_STYLE="\[${WHITE}\]\$(__hhs_git_prompt \" \[${GIT_ICN}\] \[${CYAN}\]\")"
 
 # User prompt format
 PROMPT="\[${WHITE}\] \$\[${NC}\] "
@@ -121,4 +121,3 @@ PS1_STYLE+="${PROMPT}"     # Prompt symbol
 PS2_STYLE='\h:\u \W \$ '
 
 export PS1=${CUSTOM_PS:-$PS1_STYLE}
-export PS2=${CUSTOM_PS:-$PS2_STYLE}
