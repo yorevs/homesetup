@@ -28,29 +28,32 @@ export HHS_MY_SHELL="${SHELL//\/bin\//}"
 # Home Sweet Homes
 
 # Java
-if command -v java > /dev/null; then
+if command -v java >/dev/null; then
   export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
   export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
 fi
 
 # Python
-if command -v python > /dev/null; then
+if command -v python >/dev/null; then
   export PYTHON_HOME="/System/Library/Frameworks/Python.framework/Versions/Current"
 fi
 
 # Qt
-if command -v qmake > /dev/null || [[ -d /usr/local/opt/qt/bin ]]; then
+if command -v qmake >/dev/null || [[ -d /usr/local/opt/qt/bin ]]; then
   export QT_HOME="/usr/local/opt/qt@5/bin"
 fi
 
 # MacOs
-if [[ "Darwin" == "$HHS_MY_OS" ]]; then
+if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   # Hide the annoying warning about zsh
   export BASH_SILENCE_DEPRECATION_WARNING=1
-  # XCode
-  if command -v xcode-select > /dev/null; then
-    export XCODE_HOME="$(xcode-select -p)"
-    export MACOS_SDK="${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+  if command -v xcode-select &>/dev/null; then
+    export XCODE_HOME=$(xcode-select -p)
+    if [[ -d "${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" ]]; then
+      export MACOS_SDK="${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+    elif [[ -d "${XCODE_HOME}/SDKs/MacOSX" ]]; then
+      export MACOS_SDK="${XCODE_HOME}/SDKs/MacOSX"
+    fi
   fi
 fi
 
@@ -64,20 +67,21 @@ export EDITOR="${EDITOR:-vi}"
 # Bash History
 
 # Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
-export HISTSIZE=${HISTSIZE:-1000}
-export HISTFILESIZE=${HISTFILESIZE:-2000}
-export HISTTIMEFORMAT=${HISTTIMEFORMAT:-"[%F %T] "}
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+export HISTTIMEFORMAT="[${USER}, %F %T]  "
 
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
+export HISTIGNORE="pwd:?:-:l:q:rl:exit:gs:gl:.."
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
 
 # Fixed
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
-export HHS_MOTD="$(eval "echo -e \"$(< "${HHS_HOME}"/.MOTD)\"")"
+export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
 
 # Customizable
 export HHS_ALIASES_FILE="${HHS_DIR}/.aliases"
@@ -91,11 +95,10 @@ export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/firebase.properties}"
-export HHS_FIREBASE_CREDS_FILE=$HOME/.ssh/{project_id}-firebase-credentials.json
+export HHS_FIREBASE_CREDS_FILE="$HOME/.ssh/{project_id}-firebase-credentials.json"
 
-
-command -v git > /dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
-command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
+command -v git >/dev/null && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
+command -v svn >/dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
 
 [[ -d "${HOME}/Workspace" ]] && export WORKSPACE="${WORKSPACE:-${HOME}/Workspace}"
 [[ -d "${HOME}/Desktop" ]] && export DESKTOP="${DESKTOP:-${HOME}/Desktop}"
@@ -104,10 +107,10 @@ command -v svn > /dev/null && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Reposit
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at $HHS_ENV_FILE
 DEFAULT_DEV_TOOLS=(
-  'hexdump' 'vim'  'bats' 'tree' 'perl' 'groovy'
+  'hexdump' 'vim' 'bats' 'tree' 'perl' 'groovy'
   'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'jq'
   'gcc' 'make' 'ant' 'mvn' 'gradle' 'ruby' 'md5'
-  'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg' 
+  'svn' 'docker' 'nvm' 'node' 'vue' 'eslint' 'gpg'
   'shasum' 'figlet' 'base64' 'git' 'go' 'python' 'python3'
 )
 
@@ -115,4 +118,4 @@ if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEFAULT_DEV_TOOLS+=('brew' 'xcode-select')
 fi
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<< "${DEFAULT_DEV_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEFAULT_DEV_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}

@@ -63,7 +63,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   MISSING_TOOLS=()
 
   # ICONS
-  APPLE_ICN="\xef\x85\xb9"
   STAR_ICN="\xef\x80\x85"
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
@@ -135,7 +134,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Enable install script to use colors
     [[ -f "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
-    [[ -f "${HHS_HOME}/.VERSION" ]] && echo -e "${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") installation ${NC}"
+    [[ -f "${HHS_HOME}/.VERSION" ]] \
+      && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") ${GREEN}setup ${NC}"
 
     # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "$USAGE"
@@ -361,17 +361,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       ALL_DOTFILES+=("${dotfile}")
     done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
-    echo -e ''
+    echo ''
     echo -e "${WHITE}### Installation Settings ###"
-    echo -e "${BLUE}"
-    echo -e "  Install Type: ${METHOD}"
-    echo -e "            OS: ${MY_OS}"
-    echo -e "         Shell: ${SHELL_TYPE}"
-    echo -e "   Install Dir: ${HHS_HOME}"
-    echo -e "     Fonts Dir: ${FONTS_DIR}"
-    echo -e "  Dotfiles Dir: ${DOTFILES_DIR}"
-    echo -e "      Dotfiles: ${ALL_DOTFILES[*]}"
-    echo -e "${NC}"
+    echo ''
+    echo -e "${BLUE}  Install Type: ${METHOD}${NC}"
+    echo -e "${BLUE}         Shell: ${SHELL_TYPE} - ${MY_OS}${NC}"
+    echo -e "${BLUE}Install Prefix: ${HHS_HOME}${NC}"
+    echo -e "${BLUE}   Preferences: ${HHS_DIR}${NC}"
+    echo ''
 
     if [[ "${METHOD}" == 'repair' || "${METHOD}" == 'local' ]]; then
       echo -e "${ORANGE}"
@@ -616,14 +613,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
     echo ''
-    echo -e "${GREEN}${APPLE_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
+    echo -e "${GREEN}${STAR_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles close and re-open the terminal"
+    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu --update"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles ${GREEN}type: #> exec bash"
-    echo -e "${YELLOW}${STAR_ICN} To reload HomeSetup type: ${GREEN}#> __hhs_reload"
-    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu"
+    echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}${HHS_HOME}/README.md${WHITE} for details about your new Terminal${NC}"
     echo ''
-    echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}README.md${WHITE} for full details about your new Terminal"
-    echo -e "${NC}"
 
     if [[ "Darwin" == "${MY_OS}" ]]; then
       \date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
