@@ -81,8 +81,8 @@ function __hhs_log() {
     return 1
   fi
   case "${level}" in
-    'DEBUG' | 'INFO' | 'WARN' | 'ERROR')
-      printf "%s %s\t%s\n" "$(date +'%m-%d-%y')" "${level}" "${message}" >> "${HHS_LOGFILE}"
+    'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
+      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M-%S ')" "${level}" "${message}" >> "${HHS_LOGFILE}"
       ;;
     *)
       echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1

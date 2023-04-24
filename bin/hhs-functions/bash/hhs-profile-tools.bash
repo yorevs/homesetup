@@ -17,11 +17,10 @@ function __hhs_activate_nvm() {
   [[ ! -d "${HOME}/.nvm" ]] && echo "${RED}[ FAIL ] => Can't find NVM_DIR => \"${HOME}/.nvm\" ! ${NC}" && return 1
   export NVM_DIR="${HOME}/.nvm"
   if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-    \. "$NVM_DIR/nvm.sh"
+    __hhs_source "$NVM_DIR/nvm.sh"
     export PATH="$PATH:$NVM_DIR"
     if [[ -s "$NVM_DIR/bash_completion" ]]; then
-      \. "$NVM_DIR/bash_completion"
-      export HHS_BASH_COMPLETIONS="$HHS_BASH_COMPLETIONS NVM"
+      ln -sf "$NVM_DIR/bash_completion" "${AUTO_CPL_D}/nvm-completion.bash"
     fi
     echo "${GREEN}[  OK  ]${NC}"
   else

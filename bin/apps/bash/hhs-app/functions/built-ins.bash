@@ -63,13 +63,13 @@ function funcs() {
 
 # shellcheck disable=2086
 # @purpose: Retrieve HomeSetup logs
-# @param $1 [opt] : The number of log lines to retrieve.
+# @param $1 [opt] : The log level to retrieve.
 function logs() {
-  n=${1:-100}
+  LOG_LINES=${LOG_LINES:-100}
   echo ''
-  echo -e "${ORANGE}HomeSetup logs (last ${n} lines):${NC}"
+  echo -e "${ORANGE}HomeSetup logs (last ${LOG_LINES} lines):${NC}"
   echo ''
-  tail -${n} "${HHS_LOGFILE}"
+  tail -${LOG_LINES} "${HHS_LOGFILE}" | grep "${1}"
   echo ''
 }
 
