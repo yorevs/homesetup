@@ -11,7 +11,7 @@
 # Functions to be unset after quit.
 UNSETS+=(
   'main' 'parse_args' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
-  'register_plugins' 'register_local_functions' 'parse_args' 'invoke_command' 'register_hhs_functions'
+  'register_plugins' 'register_functions' 'parse_args' 'invoke_command' 'find_hhs_functions'
 )
 
 # Program version.
@@ -149,8 +149,29 @@ register_plugins() {
   return 0
 }
 
+# @purpose: Read all internal functions and make them available to use
+register_functions() {
+  
+  local f_name
+
+  while IFS=$'\n' read -r fnc_file; do
+    source "${fnc_file}"
+    while IFS='' read -r fnc; do
+      f_name="${fnc##function }"
+      f_name="${f_name%\(\) \{}"
+      HHS_APP_FUNCTIONS+=("${f_name}")
+    done < <(grep '^function .*()' <"${fnc_file}")
+    # Register the functions to be unset when program quits
+    UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
+  done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
+
+  return 0
+}
+
 # @purpose: Invoke the plugin command
 invoke_command() {
+  
+  local plg_cmd ret
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
   # Open a new subshell, so that we can configure the running environment properly
@@ -181,40 +202,23 @@ invoke_command() {
   return ${ret}
 }
 
-# @purpose: Read all internal functions and make them available to use
-register_local_functions() {
-
-  while IFS=$'\n' read -r fnc_file; do
-    \. "${fnc_file}"
-    while IFS='' read -r fnc; do
-      f_name="${fnc##function }"
-      f_name="${f_name%\(\) \{}"
-      HHS_APP_FUNCTIONS+=("${f_name}")
-    done < <(grep '^function .*()' <"${fnc_file}")
-    # Register the functions to be unset when program quits
-    UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
-  done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
-
-  return 0
-}
-
 # ------------------------------------------
 # Local functions
 
 # Functions MUST start with 'function' keyword and
-# MUST quit <exit)coode> with the proper exit code
+# MUST quit <exit_code> with the proper exit code
 
 # @purpose: Find all hhs-functions and make them available to use
-register_hhs_functions() {
+find_hhs_functions() {
 
-  local all_hhs_fn
+  local all_hhs_fn fn_name
 
-  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${HHS_HOME}" | sed -E 's/:  /:/' | awk "NR != 0 {print \$1 \$2}")
+  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${HHS_HOME}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}")
 
-  for fn in ${all_hhs_fn}; do
-    filename=$(basename "$fn" | awk -F ':function' '{print $1}')
+  for fn_line in ${all_hhs_fn}; do
+    filename=$(basename "$fn_line" | awk -F ':function' '{print $1}')
     filename=$(printf '%-30.30s' "${filename}")
-    fn_name=$(awk -F ':function' '{print $2}' <<<"$fn")
+    fn_name=$(awk -F ':function' '{print $2}' <<<"$fn_line")
     HHS_FUNCTIONS+=("${filename// /.} => ${fn_name}")
   done
 
@@ -259,16 +263,16 @@ parse_args() {
 # @purpose: Program entry point.
 main() {
 
-  local fname
+  local fn_name
 
   parse_args "${@}"
-  register_local_functions
+  register_functions
   register_plugins
   
   if has_function "${1}"; then
-    fname="${1}"
+    fn_name="${1}"
     shift
-    ${fname} "${@}"
+    ${fn_name} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
   

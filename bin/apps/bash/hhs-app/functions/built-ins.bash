@@ -26,19 +26,19 @@ function list() {
     echo ' '
     echo "${YELLOW}HomeSetup Application Manager"
     echo ' '
-    echo " ${YELLOW}---- Plugins"
+    echo "${YELLOW}-=- HHS Plugins -=-"
     echo ' '
     for idx in "${!PLUGINS[@]}"; do
       printf "${WHITE}%.2d. " "$((idx + 1))"
-      echo -e "Registered plug-in => ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
+      echo -e "Plug-In :: ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
     done
 
     echo ' '
-    echo " ${YELLOW}---- Functions"
+    echo "${YELLOW}-=- HHS Functions -=-"
     echo ' '
     for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
       printf "${WHITE}%.2d. " "$((idx + 1))"
-      echo -e "Registered built-in function => ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
+      echo -e "Built-In :: ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
     done
   fi
 
@@ -48,13 +48,14 @@ function list() {
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
-  register_hhs_functions
+  find_hhs_functions
 
-  echo "${YELLOW}Available HomeSetup __hhs_Functions"
+  echo ' '
+  echo "${YELLOW}-=- Available HomeSetup functions -=-"
   echo ' '
   for idx in "${!HHS_FUNCTIONS[@]}"; do
-    printf "${WHITE}%.2d. " "$((idx + 1))"
-    echo -e "Registered __hhs_<function> => ${HHS_HIGHLIGHT_COLOR}\"${HHS_FUNCTIONS[$idx]}\"${NC}"
+    printf "${WHITE}%.2d. ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
+    echo -e "HHS-Function :: ${HHS_FUNCTIONS[$idx]}${NC}"
   done
 
   quit 0 ' '

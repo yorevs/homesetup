@@ -47,7 +47,7 @@ function host-name() {
         echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 1
       fi
     else
-      quit 1 "You need 'hostname'installed to use this function !" 
+      quit 1 "You need 'hostname' installed to use this function !" 
     fi
   fi
 

@@ -13,7 +13,7 @@ load test_helper
 @test "should-print-usage-when-invoking-with-help-option" {
   run __hhs_aliases -h
   [[ ${status} -eq 1 ]]
-  [[ ${lines[0]} == "Usage: __hhs_aliases [-s|--sort] [alias] [alias_expr]" ]]
+  [[ ${lines[0]} == "Usage: __hhs_aliases [-s|--sort] <alias> <alias_expr>" ]]
 }
 
 @test "should-add-alias" {

@@ -10,8 +10,9 @@
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
 HomeSetup is a bundle of scripts and dotfiles that will elevate your bash shell experience to another level. There are 
-many improvements and facilities, especially for developers that will ease the usage and highly improve your productivity. 
-Currently we support **Bash** (v3.4+) for **Darwin** (MacOS) and **Linux**. We have plans to add support for _Zsh_ as well.
+many improvements and facilities, especially for developers that will ease the usage and highly improve your 
+productivity. Currently we support **Bash** (v3.4+) for **Darwin** (MacOS) and **Linux**. We have plans to add support 
+for _Zsh_ as well.
 
 **THIS IT NOT JUST ANOTHER DOTFILES FRAMEWORK**
 
@@ -38,7 +39,8 @@ gradle, docker, etc...
 
 ## Catalina moved from bash to zsh
 
-Latest version of MacOS comes with **zsh** as the _default shell_, but you can change it at any time with the following command:
+Latest version of MacOS comes with **zsh** as the _default shell_, but you can change it at any time with the following 
+command:
 
 ```bash
 $ sudo chsh -s /bin/bash
@@ -51,6 +53,25 @@ different:
 $ brew install bash
 $ sudo chsh -s /usr/local/bin/bash
 ```
+
+## HomeSetup Python scripts moved to pypi
+
+HomeSetup used to have some scripts using python. As the time passed, and the project grew, many python scripts have
+been incorporated. We felt the need of a new project, dedicated to handle all of the Python code. Thinking about that,
+we created the HomeSetup HsPyLib projects, available at: https://pypi.org/ . There are several modules
+dedicated to each purpose alone. Also, we have created some applications that are also very useful. Below a list of all
+HomeSetup managed applications:
+
+- [hspylib](https://pypi.org/project/hspylib/) :: HSPyLib - Core python library 
+- [hspylib-kafman](https://pypi.org/project/hspylib-kafman/) :: HSPyLib - Apache Kafka Manager 
+- [hspylib-datasource](https://pypi.org/project/hspylib-datasource/) :: HSPyLib - Datasource integration 
+- [hspylib-vault](https://pypi.org/project/hspylib-vault/) :: HSPyLib - Secrets Vault 
+- [hspylib-cfman](https://pypi.org/project/hspylib-cfman/) :: HSPyLib - CloudFoundry manager 
+- [hspylib-firebase](https://pypi.org/project/hspylib-firebase/) :: HSPyLib - Firebase integration 
+- [hspylib-hqt](https://pypi.org/project/hspylib-hqt/) :: HSPyLib - QT framework extensions 
+- [hspylib-clitt](https://pypi.org/project/hspylib-clitt/) :: HSPyLib - CLI Terminal Tools
+
+HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
 
 ## Table of contents
 
@@ -496,19 +517,63 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 HomeSetup provides many functions for the shell. All functions includes a help using the options -h or --help.
 
+
+### Dotfiles
+
+HomeSetup include some basic helper functions:
+
+| Dotfile           | Function               | Purpose                                                                        |
+|-------------------|------------------------|--------------------------------------------------------------------------------|
+| bash_prompt.bash  | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked      |
+| hhsrc.bas.bash    | __hhs_log              | Log to HomeSetup log file                                                      |
+|                   | __hhs_source           | Read/Execute commands from the filename argument in the current shell context  |
+|                   | __hhs_is_reachable     | Check whether URL/URI is reachable on the network                              |
+| bash_aliases.bash | __hhs_has              | Check if a command is available on the current shell context                   |
+|                   | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it           |
+
 ### Standard tools
 
 The complete handbook of standard tools can be found on the [functions handbook](docs/handbook/pages/functions.md#standard-tools)
 
 | File                   | Function               | Purpose                                                                     |
 |------------------------|------------------------|-----------------------------------------------------------------------------|
-| bash_aliases.bash      | __hhs_has              | Check if a command is available on the current shell session.               |
-|                        | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it        |
-| hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list)                            |
+| hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands                                 |
 | hhs-built-ins.bash     | __hhs_random_number    | Generate a random number int the range <min> <max> (all limits included)    |
 |                        | __hhs_ascof            | Display the decimal ASCII representation of a character                     |
+|                        | __hhs_open             | Open a file or URL with the default program                                 |
 |                        | __hhs_utoh             | Convert unicode to hexadecimal                                              |
-| hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands                                 |
+| hhs-network.bash       | __hhs_active_ifaces    | Display a list of active network interfaces                                 |
+|                        | __hhs_ip               | Display the associated machine IP of the given kind                         |
+|                        | __hhs_ip_info          | Get information about the specified IP                                      |
+|                        | __hhs_ip_lookup        | Lookup DNS entries to determine the IP address                              |
+|                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP                       |
+|                        | __hhs_port_check       | Check the state of local port(s)                                            |
+| hhs-mchoose.bash       | __hhs_mchoose          | Choose options from a list using a navigable menu                           |
+| hhs-shell-utils.bash   | __hhs_history          | Search for previous issued commands from history using filters              |
+|                        | __hhs_envs             | Display all environment variables using filters                             |
+|                        | __hhs_defs             | Display all bash aliases definitions                                        |
+|                        | __hhs_shell_select     | Select a shell from the existing shell list                                 |
+| hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper to activate **NVM** for the terminal                       |
+|                        | __hhs_activate_rvm     | Lazy load helper to activate **RVM** for the terminal                       |
+|                        | __hhs_activate_jenv    | Lazy load helper to activate **Jenv** for the terminal                      |
+|                        | __hhs_activate_docker  | Lazy load helper to start **Docker-Daemon** for the terminal                |
+| hhs-minput.bash        | __hhs_minput_curpos    | Retrieve the current cursor position on screen                              |
+|                        | __hhs_minput           | Provide a terminal form input with validation checking                      |
+| hhs-toolcheck.bash     | __hhs_toolcheck        | Check whether a tool is installed on the system                             |
+|                        | __hhs_version          | Check the version of the app using the most common ways                     |
+|                        | __hhs_tools            | Check whether a list of development tools are installed or not              |
+|                        | __hhs_about_command    | Display information about the given command                                 |
+| hhs-security.bash      | __hhs_encrypt_file     | Encrypt file using GPG                                                      |
+|                        | __hhs_decrypt_file     | Decrypt file using GPG                                                      |
+| hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on **.tailor** file          |
+| hhs-files.bash         | __hhs_ls_sorted        | List files and sort by the specified column                                 |
+|                        | __hhs_del_tree         | Move files recursively to the **Trash**                                     |
+| hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list)                            |
+| hhs-search.bash        | __hhs_search_file      | Search for files and links to files recursively                             |
+|                        | __hhs_search_dir       | Search for directories and links to directories recursively                 |
+|                        | __hhs_search_string    | Search for strings matching the specified criteria in files recursively     |
+| hhs-paths.bash         | __hhs_paths            | Print each PATH entry on a separate line                                    |
+| hhs-mselect.bash       | __hhs_mselect          | Select an option from a list using a navigable menu                         |
 | hhs-dirs.bash          | __hhs_change_dir       | Replace the build-in 'cd' with a more flexible one.                         |
 |                        | __hhs_changeback_ndirs | Change back the shell working directory by N directories                    |
 |                        | __hhs_dirs             | Replace the build-in 'dirs' with a more flexible one                        |
@@ -517,46 +582,15 @@ The complete handbook of standard tools can be found on the [functions handbook]
 |                        | __hhs_load_dir         | **Pushd** into a saved directory previously issued by save                  |
 |                        | __hhs_godir            | Search and **pushd** into the first match of the specified directory name   |
 |                        | __hhs_mkcd             | Create all folders using a dot notation path and immediately change into it |
-| hhs-files.bash         | __hhs_ls_sorted        | List files and sort by the specified column                                 |
-|                        | __hhs_del_tree         | Move files recursively to the **Trash**                                     |
-| hhs-mchoose.bash       | __hhs_mchoose          | Choose options from a list using a navigable menu                           |
-| hhs-minput.bash        | __hhs_minput_curpos    | Retrieve the current cursor position on screen                              |
-|                        | __hhs_minput           | Provide a terminal form input with validation checking                      |
-| hhs-mselect.bash       | __hhs_mselect          | Select an option from a list using a navigable menu                         |
-| hhs-network.bash       | __hhs_active_ifaces    | Display a list of active network interfaces                                 |
-|                        | __hhs_ip               | Display the associated machine IP of the given kind                         |
-|                        | __hhs_ip_info          | Get information about the specified IP                                      |
-|                        | __hhs_ip_lookup        | Lookup DNS entries to determine the IP address                              |
-|                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP                       |
-|                        | __hhs_port_check       | Check the state of local port(s)                                            |
-| hhs-paths.bash         | __hhs_paths            | Print each PATH entry on a separate line                                    |
-| hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper to activate **NVM** for the terminal                       |
-|                        | __hhs_activate_rvm     | Lazy load helper to activate **RVM** for the terminal                       |
-|                        | __hhs_activate_jenv    | Lazy load helper to activate **Jenv** for the terminal                      |
-|                        | __hhs_activate_docker  | Lazy load helper to start **Docker-Daemon** for the terminal                |
-| hhs-punch.bash         | __hhs_punch            | Punch the Clock. Add/Remove/Edit/List clock punches                         |
-| hhs-search.bash        | __hhs_search_file      | Search for files and links to files recursively                             |
-|                        | __hhs_search_dir       | Search for directories and links to directories recursively                 |
-|                        | __hhs_search_string    | Search for strings matching the specified criteria in files recursively     |
-| hhs-security.bash      | __hhs_encrypt_file     | Encrypt file using GPG                                                      |
-|                        | __hhs_decrypt_file     | Decrypt file using GPG                                                      |
-| hhs-shell-utils.bash   | __hhs_history          | Search for previous issued commands from history using filters              |
-|                        | __hhs_envs             | Display all environment variables using filters                             |
-|                        | __hhs_shell_select     | Select a shell from the existing shell list                                 |
-|                        | __hhs_color_palette    | Terminal color palette test                                                 |
 | hhs-sys-utils.bash     | __hhs_sysinfo          | Display relevant system information                                         |
 |                        | __hhs_process_list     | Display a process list matching the process name/expression                 |
 |                        | __hhs_process_kill     | Kills **ALL processes** specified by name                                   |
 |                        | __hhs_partitions       | Exhibit a Human readable summary about all partitions                       |
-| hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on **.tailor** file          |
+| hhs-punch.bash         | __hhs_punch            | Punch the Clock. Add/Remove/Edit/List clock punches                         |
 | hhs-text.bash          | __hhs_errcho           | Echo a message in red color and to stderr                                   |
 |                        | __hhs_highlight        | Highlight words from the piped stream                                       |
 |                        | __hhs_json_print       | Pretty print **(format) JSON** string                                       |
 |                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |
-| hhs-toolcheck.bash     | __hhs_toolcheck        | Check whether a tool is installed on the system                             |
-|                        | __hhs_version          | Check the version of the app using the most common ways                     |
-|                        | __hhs_tools            | Check whether a list of development tools are installed or not              |
-|                        | __hhs_about_command    | Display information about the given command                                 |
 
 ### Development tools
 
@@ -565,19 +599,19 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 | File                  | Function                     | Purpose                                                                            |
 |-----------------------|------------------------------|------------------------------------------------------------------------------------|
 | hhs-docker-tools.bash | __hhs_docker_count           | Return the number of active docker containers                                      |
+|                       | __hhs_docker_info            | Display information about the container                                            |
 |                       | __hhs_docker_exec            | Run a command or bash in a running container                                       |
 |                       | __hhs_docker_compose_exec    | This is the equivalent of docker exec, but for docker-compose                      |
-|                       | __hhs_docker_info            | Display information about the container                                            |
 |                       | __hhs_docker_logs            | Fetch the logs of a container                                                      |
 |                       | __hhs_docker_remove_volumes  | Remove all docker volumes not referenced by any containers (dangling)              |
 |                       | __hhs_docker_kill_all        | Stop, remove and remove dangling (active?) volumes of all docker containers        |
 | hhs-git-tools.bash    | __hhs_git_branch_previous    | Checkout the previous branch in history (skips branch-to-same-branch changes)      |
+|                       | __hhs_git_branch_select      | Select and checkout a local or remote branch                                       |
 |                       | __hhs_git_branch_all         | Get the current branch name of all repositories from the base search path          |
 |                       | __hhs_git_status_all         | Get the status of current branch of all repositories from the base search path     |
 |                       | __hhs_git_show_file_diff     | Display a file diff comparing the version between the first and second commit IDs  |
 |                       | __hhs_git_show_file_contents | Display the contents of a file from specific commit ID                             |
 |                       | __hhs_git_show_changes       | List all changed files from a commit ID                                            |
-|                       | __hhs_git_branch_select      | Select and checkout a local or remote branch                                       |
 |                       | __hhs_git_pull_all           | Search and pull projects from the specified path using the given repository/branch |
 | hhs-gradle-tools.bash | __hhs_gradle                 | Prefer using the wrapper instead of the command itself                             |
 
@@ -612,41 +646,43 @@ and functions to be incorporated into the app.
 
 | Plug-in  | Purpose                                                                  |
 |----------|--------------------------------------------------------------------------|
-| updater  | Update manager for HomeSetup.                                            |
-| firebase | Manager for HomeSetup Firebase integration.                              |
-| hspm     | Manage your development tools using installation/uninstallation recipes. |
-| vault    | This application is a vault for secrets and passwords.                   |
+| updater  | Update manager for HomeSetup                                             |
+| firebase | Manager for HomeSetup Firebase integration                               |
+| hspm     | Manage your development tools using installation/uninstallation recipes  |
 
 ### HHS functions
 
-| Function  | Purpose                                                                                   |
-|-----------|-------------------------------------------------------------------------------------------|
-| help      | Provide a **help** for __hhs functions.                                                   |
-| list      | List all HHS App **Plug-ins** and **Functions**.                                          |
-| tests     | Execute all HomeSetup **automated tests**.                                                |
-| funcs     | Search for all hhs **functions** describing it's containing file name and line number.    |
-| board     | Open the HomeSetup GitHub project **board** for the current version.                      |
-| host-name | Retrieve/Get/Set the current hostname.                                                    |
+| Function    | Purpose                                                                                 |
+|-------------|-----------------------------------------------------------------------------------------|
+| host-name   | Retrieve/Get/Set the current hostname                                                   |
+| help        | Provide a **help** for __hhs functions                                                  |
+| list        | List all HHS App **Plug-ins** and **Functions**                                         |
+| funcs       | Search for all hhs **functions** describing it's containing file name and line number   |
+| logs        | Retrieve latest HomeSetup load logs                                                     |
+| man         | Open manual for command                                                                 |
+| board       | Open the HomeSetup GitHub project **board** for the current version                     |
+| tests       | Execute all HomeSetup **automated tests**                                               |
+| color-tests | Execute all HomeSetup **terminal color tests**                                          |
 
 ## Auto completions
 
-In addition to the normal bash <tab> complete, HomeSetup comes with another <shift+tab> complete. With this, you can iterate
-over the options provided by the complete function instead of just displaying them. 
+In addition to the normal bash <tab> complete, HomeSetup comes with another <shift+tab> complete. With this, you can 
+iterate over the options provided by the complete function instead of just displaying them. 
 
 ### Bash completions
 
-| File                              | Purpose                                           |
-|-----------------------------------|---------------------------------------------------|
-| brew-completion.bash              | Bash completion file for HomeBrew commands        |
-| docker-completion.bash            | Bash completion file for core docker commands.    |
-| docker-compose-completion.bash    | Bash completion for docker-compose commands.      |
-| docker-machine-completion.bash    | Bash completion file for docker-machine commands. |
-| git-completion.bash               | Bash/zsh completion support for core Git.         |
-| gradle-completion.bash            | Bash and Zsh completion support for Gradle.       |
-| helm-completion.bash              | Bash completion for helm.                         |
-| hhs-completion.bash               | Bash completion for HomeSetup.                    |
-| kubectl-completion.bash           | Bash completion for kubectl.                      |
-| pcf-completion.bash               | Bash completion for Cloud Foundry CLI.            |
+| File                           | Purpose                                          |
+|--------------------------------|--------------------------------------------------|
+| hhs-completion.bash            | Bash completion for HomeSetup                    |
+| brew-completion.bash           | Bash completion for Home Brew                    |
+| docker-completion.bash         | Bash completion file for core docker commands    |
+| docker-compose-completion.bash | Bash completion for docker-compose commands      |
+| docker-machine-completion.bash | Bash completion file for docker-machine commands |
+| git-completion.bash            | Bash/zsh completion support for core Git         |
+| gradle-completion.bash         | Bash and Zsh completion support for Gradle       |
+| helm-completion.bash           | Bash completion for helm                         |
+| kubectl-completion.bash        | Bash completion for kubectl                      |
+| pcf-completion.bash            | Bash completion for Cloud Foundry CLI            |
 
 ## Contact
 
