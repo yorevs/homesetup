@@ -56,7 +56,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   if [[ "${MY_OS}" == "Darwin" ]]; then
     REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3' 'pip3')
   elif [[ "${MY_OS}" == "Linux" ]]; then
-    REQUIRED_TOOLS+=('python3' 'python3-pip')
+    REQUIRED_TOOLS+=('python3' 'pip3')
   fi
 
   # Missing HomeSetup required tools
