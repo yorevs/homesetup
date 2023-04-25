@@ -43,31 +43,32 @@ ext {
 apply from: "$projectDir/gradle.properties"
 apply from: "$projectDir/gradle/version.gradle"
 apply from: "$projectDir/gradle/bash.gradle"
+apply from: "$projectDir/gradle/idea.gradle"
 
-/* Run Configurations */
-task exportRunConfigurations(type: Copy) {
-  group = 'Idea'
-  description = "Export run configurations"
-  from("${rootDir}/.idea/runConfigurations") {
-    include '*.xml'
+/* Generate a changelog with the commits from last git tag */
+task changelog(type: Task) {
+  group = 'Publish'
+  description = "Generate a changelog with the commits from last git tag"
+  doLast {
+    def out = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'describe', '--tags', '--abbrev=0', 'HEAD^'
+      standardOutput = out
+    }
+    def lastTag = out.toString().trim()
+    if (!lastTag) {
+      raise new StopActionException("Unable to fetch latest tag")
+    }
+    out.reset()
+    exec {
+      commandLine 'git', 'log', '--oneline', "--pretty='%h %ad %s'", '--date=short', "${lastTag}..HEAD"
+      standardOutput = out
+      errorOutput = standardOutput
+    }
+    println("\nShowing changelog commits from: ${lastTag}")
+    println("--------------------------------------------------------------------------------")
+    out.each(s ->
+      println(s)
+    )
   }
-  into "${rootDir}/run-configs/idea"
-}
-
-task importRunConfigurations(type: Copy) {
-  group = 'Idea'
-  description = "Import run configurations"
-  from("${rootDir}/run-configs/idea") {
-    include '*.xml'
-  }
-  into "${rootDir}/.idea/runConfigurations"
-}
-
-task clearRunConfigurations(type: Delete) {
-  group = 'Idea'
-  description = "Delete all run configurations"
-  delete fileTree("${rootDir}/.idea/runConfigurations") {
-    include "**/*.xml"
-  }
-  followSymlinks = true
 }

@@ -17,6 +17,51 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 ### Fixed
 
 
+## 1.5.0 - 2020-01-21
+
+### Added
+
+* Added Dockefiles for ubuntu, centos and fedora.
+* Adding env firebase cert file.
+* Added HSPyLib to the installation.
+
+### Changed
+
+* Updated applications handbook.
+* Install improvements and hspm improvements due to sudo.
+* Updated HomeSetup documents.
+* Changed hhsrc load. Improving hhsrc load, logs and compatibility.
+* Changed installation of python libs and scripts.
+* Changes python script into HSPyLib project.
+* Removed python apps docs, add vault and firebase to install/uninstall and alias fix for them.
+* Replacing .aliasdef for every installation.
+* Change executables hspylib to clitt.
+* Update HS logo.
+* Improve bash_prompts.
+* Improve documentation and hhs app.
+* Update install script for docker build.
+* Update Dockerfiles for ubuntu, centos and fedora.
+* Finish HomeSetup README sync. Pending hhs app handbook.
+
+### Fixed
+
+* Fixed file_path problem due to pycharm refactoring.
+* Fixed CentOs install since yum does not have python and pip but pip2/3 python2/3.
+* Fixed install links.
+* Fixed install adjustments.
+* Fixed python, installation and uninstallation scripts.
+* Fixed some firebase setup problems.
+* Fixed hspm default recipes and tcalc.py error.
+* Fixed README links and toc.
+* Fixed hhs host-name and encrypt/decrypt.
+* Fixed various bugs: godir, firebase.py plugin and hhslib.
+* Fixed duplicated paths and aa.
+* Fixed .path not being exported.
+* Fix envs name=value separation.
+* Fix punch -> tcalc issue.
+* Fix default firebase config file.
+
+
 ## 1.4.0 - 2020-01-21
 
 ### Added

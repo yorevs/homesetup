@@ -1,7 +1,9 @@
 /*
     Gradle Bash extension
-    Project: HomeSetup
+
     Created: 5th March, 2022
+    License: MIT - Please refer to <https://opensource.org/licenses/MIT>
+    Copyright 2023, HomeSetup team
 */
 
 /* Helper Functions -------------------------------------------------------- */

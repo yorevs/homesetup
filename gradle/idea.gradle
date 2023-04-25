@@ -1,0 +1,37 @@
+/*
+    Gradle IDEA extension
+
+    Created: 18th April, 2023
+    License: MIT - Please refer to <https://opensource.org/licenses/MIT>
+    Copyright 2023, HomeSetup team
+*/
+
+/* Export Run Configurations */
+task exportRunConfigurations(type: Copy) {
+  group = 'Idea'
+  description = "Export run configurations"
+  from("${rootDir}/.idea/runConfigurations") {
+    include '*.xml'
+  }
+  into "${rootDir}/run-configs/idea"
+}
+
+/* Import Run Configurations */
+task importRunConfigurations(type: Copy) {
+  group = 'Idea'
+  description = "Import run configurations"
+  from("${rootDir}/run-configs/idea") {
+    include '*.xml'
+  }
+  into "${rootDir}/.idea/runConfigurations"
+}
+
+/* Clear Run Configurations */
+task clearRunConfigurations(type: Delete) {
+  group = 'Idea'
+  description = "Delete all run configurations"
+  delete fileTree("${rootDir}/.idea/runConfigurations") {
+    include "**/*.xml"
+  }
+  followSymlinks = true
+}
