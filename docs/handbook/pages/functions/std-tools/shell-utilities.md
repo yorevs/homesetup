@@ -83,6 +83,31 @@ Display all environment variables using filters.
 ```
 
 ------
+### __hhs_envs
+
+```bash
+Usage: __hhs_defs [regex_filter]
+```
+
+##### **Purpose**:
+
+Display all alias definitions using filters.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Optional_ : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
+
+##### **Examples:**
+
+```bash
+  $ defs gw && echo "That's all gradle wrapper alias definitions"
+```
+
+------
 ### __hhs_shell_select
 
 ```bash

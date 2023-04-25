@@ -3,18 +3,13 @@
 ## Table of contents
 
 <!-- toc -->
-- [Bash Apps](../../applications.md#bash-apps)
+- [Bash Applications](../../applications.md)
   * [App-Commons](app-commons.md)
   * [Check-IP](check-ip.md)
   * [Fetch](fetch.md)
   * [HHS-App](hhs-app.md)
-- [Python Apps](../../applications.md#python-apps)
-  * [Free](../py/free.md)
-  * [Json-Find](../py/json-find.md)
-  * [PPrint-xml](../py/pprint-xml.md)
-  * [Print-Uni](../py/print-uni.md)
-  * [Send-Msg](../py/send-msg.md)
-  * [TCalc](../py/tcalc.md)
+    + [Functions](hhs-app.md#functions)
+    + [Plugins](hhs-app.md#plug-ins)
 <!-- tocstop -->
 
 ## Application commons
@@ -127,3 +122,26 @@ Trim whitespaces from the provided text.
   trim " this text has spaces  "
 ```
 
+
+------
+#### list_contains
+
+##### **Purpose**:
+
+Check whether the list contains the specified string.
+
+##### **Returns**:
+
+**0** if the  provided list contains the specified string; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The list to check against.
+  - $2 _Required_ : The string to be checked.
+
+##### **Examples:**
+
+```bash
+  list_contains "one two three four" "one" && echo 'List contains one'
+  list_contains "one two three four" "five" || echo 'List does not contain five'
+```

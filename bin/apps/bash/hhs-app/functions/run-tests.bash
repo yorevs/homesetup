@@ -8,7 +8,7 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
-# @purpose: Execute all HomeSetup automated tests.
+# @purpose: Run all HomeSetup automated tests.
 function tests() {
   
   local started finished  err_log output badge
@@ -16,8 +16,8 @@ function tests() {
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 
   err_log=$(mktemp)
-  badge="${HHS_HOME}/images/tests-badge.svg"
-  started=$(python -c "import time; print(int(round(time.time() * 1000)))")
+  badge="${HHS_HOME}/check-badge.svg"
+  started=$(\date "+%s%S")
 
   pushd &>/dev/null "${HHS_HOME}"/tests/ || exit 128
   echo '' >"${err_log}"
@@ -34,18 +34,18 @@ function tests() {
       fi
       echo -e "${output}"
     elif [[ ${result} =~ ^[0-9] ]]; then
-      echo -e "Running HomeSetup automated tests from ${result//\.\./ to } ..."
+      echo -e "${ORANGE}Running HomeSetup automated tests from [${result//\.\./ to }] ...${NC}"
       echo ''
     else
       echo -e "${result}" >>"${err_log}"
     fi
   done < <(bats --tap ./*.bats 2>&1)
 
-  popd &>/dev/null || exit 255
+  popd &>/dev/null || exit 128
   echo ''
   echo 'Finished running all tests.'
   
-  finished=$(python -c "import time; print(int(round(time.time() * 1000)))")
+  finished=$(\date "+%s%S")
   diff_time=$((finished - started))
   diff_time_sec=$((diff_time/1000))
   diff_time_ms=$((diff_time-(diff_time_sec*1000)))
@@ -68,11 +68,11 @@ function tests() {
   echo ''
 }
 
-# @purpose: Terminal color palette test.
+# @purpose: Run all terminal color palette tests.
 function color-tests() {
 
   echo ''
-  echo "--- Home Setup color palette test"
+  echo -e "${ORANGE}--- Home Setup color palette test ${NC}"
   echo ''
 
   echo -en "${BLACK}  BLACK "

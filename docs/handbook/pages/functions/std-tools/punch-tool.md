@@ -38,13 +38,13 @@
 ```bash
 Usage: __hhs_punch [options] <args>
 
-    Options:
-      -l        : List all registered punches.
-      -e        : Edit current punch file.
-      -r        : Reset punches for the current week and save the previous one.
-      -w <week> : Report (list) all punches of specified week using the pattern: week-N.punch.
+    Options: 
+      -l | --list       : List all registered punches.
+      -e | --edit       : Edit current punch file.
+      -r | --reset      : Reset punches for the current week and save the previous one.
+      -w | --week <num> : Report (list) all punches of specified week using the pattern: week-N.punch.
 
-  Notes:
+  Notes: 
     When no arguments are provided it will !!PUNCH THE CLOCK!!.
 ```
 

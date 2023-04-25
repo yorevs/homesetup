@@ -23,7 +23,7 @@
   * [System Utilities](functions/std-tools/system-utilities.md)
   * [Taylor Tool](functions/std-tools/taylor-tool.md)
   * [Text Utilities](functions/std-tools/text-utilities.md)
-  * [Toolchecks](functions/std-tools/toolchecks.md)
+  * [Tool checks](functions/std-tools/toolchecks.md)
 - [Development Tools](#development-tools)
   * [Gradle](functions/dev-tools/gradle-tools.md)
   * [Docker](functions/dev-tools/docker-tools.md)

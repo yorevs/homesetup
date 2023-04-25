@@ -9,9 +9,10 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
 # @purpose: Retrieve/Get/Set the current hostname.
+# @param $1 [opt] : The new hostname. If not provided, current hostname is retrieved.
 function host-name() {
 
-  local cur_hostn new_hostn
+  local cur_hostname new_hostname
   
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo -e "Usage: ${FUNCNAME[0]} [new_hostname]"
@@ -21,20 +22,20 @@ function host-name() {
     quit $? "${NC}"
   else
     if __hhs_has hostname; then
-      cur_hostn=$(hostname)
-      new_hostn="${1}"
-      [[ -z "${new_hostn}" ]] && read -r -p "${YELLOW}Enter new hostname (ENTER to cancel): ${NC}" new_hostn
-      if [[ -n "${new_hostn}" && "${cur_hostn}" != "${new_hostn}" ]]; then
+      cur_hostname=$(hostname)
+      new_hostname="${1}"
+      [[ -z "${new_hostname}" ]] && read -r -p "${YELLOW}Enter new hostname (ENTER to cancel): ${NC}" new_hostname
+      if [[ -n "${new_hostname}" && "${cur_hostname}" != "${new_hostname}" ]]; then
         if [[ "$(uname -s)" == "Darwin" ]]; then
-          if sudo scutil --set HostName "${new_hostn}"; then
-            echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
+          if sudo scutil --set HostName "${new_hostname}"; then
+            echo "${GREEN}Your new hostname has changed from \"${cur_hostname}\" to ${PURPLE}\"${new_hostname}\" ${NC} !"
           else
             quit 2 "Failed to change your hostname !"
           fi
         else
           # Change the hostname in /etc/hosts & /etc/hostname
-          if sudo ised "s/${cur_hostn}/${new_hostn}/g" /etc/hosts && sudo ised "s/${cur_hostn}/${new_hostn}/g" /etc/hostname; then
-            echo "${GREEN}Your new hostname has changed from \"${cur_hostn}\" to ${PURPLE}\"${new_hostn}\" ${NC} !"
+          if sudo ised "s/${cur_hostname}/${new_hostname}/g" /etc/hosts && sudo ised "s/${cur_hostname}/${new_hostname}/g" /etc/hostname; then
+            echo "${GREEN}Your new hostname has changed from \"${cur_hostname}\" to ${PURPLE}\"${new_hostname}\" ${NC} !"
             read -rn 1 -p "${YELLOW}Press 'y' key to reboot now: ${NC}" ANS
             if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
               sudo reboot
