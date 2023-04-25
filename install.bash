@@ -499,19 +499,19 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # HsPyLib-Vault installation
     echo -en "\n${WHITE}Installing HsPyLib-Vault using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade --user hspylib-vault &>/dev/null ||
+    ${PYTHON} -m pip install --upgrade hspylib-vault 1>/dev/null ||
       quit 2 "Unable to install HomeSetup Vault !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
 
     # HsPyLib-Firebase installation
     echo -en "\n${WHITE}Installing HsPyLib-Firebase using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade --user hspylib-firebase &>/dev/null ||
+    ${PYTHON} -m pip install --upgrade hspylib-firebase 1>/dev/null ||
       quit 2 "Unable to install HomeSetup Firebase !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
     
     # HsPyLib-Clitt installation
     echo -en "\n${WHITE}Installing HsPyLib-Clitt using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade --user hspylib-clitt &>/dev/null ||
+    ${PYTHON} -m pip install --upgrade hspylib-clitt 1>/dev/null ||
       quit 2 "Unable to install HomeSetup Clitt !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
   }
