@@ -8,15 +8,22 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
+# Current plugin name
+PLUGIN_NAME="firebase"
+
+UNSETS=(
+  help version cleanup execute ARGS action db_alias dotfiles
+)
+
 # @purpose: HHS plugin required function
 function help() {
-  echo "Usage: hhs firebase execute {setup,upload,download} {db_alias}"
+  echo "Usage: hhs ${PLUGIN_NAME} execute {setup,upload,download} {db_alias}"
   exit $?
 }
 
 # @purpose: HHS plugin required function
 function version() {
-  python3 -m firebase -v
+  python3 -m ${PLUGIN_NAME} -v
   exit $?
 }
 
@@ -27,6 +34,9 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
+  
+  local ARGS action db_alias dotfiles
+  
   ARGS=(${@})
   action="${ARGS[0]}"
   db_alias="${ARGS[1]}"

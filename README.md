@@ -158,7 +158,8 @@ The following software are required either to clone the repository, execute the 
 
 - **git** v2.20+ : To clone and maintain the code.
 - **curl** v7.64+ : To make http(s) requests.
-- **python** v2.7+ or v3.0+ : To run python based scripts.
+- **python** v3.10+ : To run python based scripts.
+- **pip** v3.10+ : To install python modules.
 - **gpg** v2.2+: : To enable encryption based functions.
 
 ##### Darwin only
@@ -170,11 +171,12 @@ The following software are required either to clone the repository, execute the 
 
 HomeSetup depends on a series of tools. To use some of the features of HomeSetup, the following packages are required:
 
-- **bats** v0.4+ : To run the automated tests.
+- **bats-core** v0.4+ : To run the automated tests.
 - **perl** v5.0+ : To enable perl based functions.
 - **dig** v9.10+ : To enable networking functions.
 - **tree** v1.8+ : To enable directory visualization functions.
 - **ifconfig** v8.43+ : To enable networking functions.
+- **hostname** any : To enable hostname management functions.
 
 #### Optional software
 
