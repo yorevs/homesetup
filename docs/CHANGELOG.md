@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to
 
 ### Added
 
-* Added Dockefiles for ubuntu, centos and fedora.
+* Added Dockerfiles for ubuntu, centos and fedora.
 * Adding env firebase cert file.
 * Added HSPyLib to the installation.
 
