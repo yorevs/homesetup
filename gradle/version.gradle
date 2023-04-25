@@ -4,15 +4,14 @@
     Created: 5th March, 2022
 */
 
-/* Change build number */
-task changeVersion(type: Task) {
+/* Increment the build number for publishing */
+task patchVersion(type: Task) {
   group = 'Versioning'
   description = 'Increment the build number for publishing'
   outputs.upToDateWhen { false }
   doLast {
     def ver = project.ext.app_version
-    def part = hasProperty('part') ? project.getProperty('part') : 'patch'
-    println "Increment the ${part} number for publishing"
+    println "Increment the patch number for publishing"
     // (major.minor.patch)
     exec {
       commandLine rootProject.python, '-m', 'bumpver', 'update', '--patch'
@@ -20,10 +19,38 @@ task changeVersion(type: Task) {
   }
 }
 
+/* Increment the minor version number (major.minor.patch) */
+task updateMinor(type: Task) {
+  group = 'Versioning'
+  description = 'Increment the minor version number (major.minor.patch)'
+  outputs.upToDateWhen { false }
+  doLast {
+    def ver = project.ext.app_version
+    println "Increment the minor version number"
+    exec {
+      commandLine rootProject.python, '-m', 'bumpver', 'update', '--minor'
+    }
+  }
+}
+
+/* Increment the major version number (major.minor.patch) */
+task updateMajor(type: Task) {
+  group = 'Versioning'
+  description = 'Increment the major version number (major.minor.patch)'
+  outputs.upToDateWhen { false }
+  doLast {
+    def ver = project.ext.app_version
+    println "Increment the major version number"
+    exec {
+      commandLine rootProject.python, '-m', 'bumpver', 'update', '--major'
+    }
+  }
+}
+
 /* Check current program version */
 task version {
   group = 'Versioning'
-  description = 'Check current program version'
+  description = 'Display current project version'
   outputs.upToDateWhen { false }
   doLast { task ->
     println "Project: [$task.project.name] Version: $project.ext.app_version"

@@ -38,7 +38,7 @@ task bats(type: Task) {
 task publish(type: Task) {
   group = 'Publish'
   description = "Publish a new HomeSetup version"
-  dependsOn changeVersion
+  dependsOn patchVersion
   doLast {
     def out = new ByteArrayOutputStream()
     def version = new File("$versionFile").text
