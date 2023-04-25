@@ -44,7 +44,7 @@ task generateBuildBadge(type: Task) {
   dependsOn generateCheckBadge
   outputs.upToDateWhen { false }
   doLast {
-    def failure = tasks.build.state.failure
+    def failure = tasks.publish.state.failure
     badgeGen('build', failure ? 'failed' : 'success', failure ? 'red' : 'green')
   }
 }
