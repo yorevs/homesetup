@@ -15,7 +15,7 @@ String dirName(File file) {
 /***** Verification Group */
 
 /* Run all Bats tests */
-task bats(type: Task) {
+task check(type: Task) {
   group = 'Verification'
   description = "Run all Bats test"
   doLast {
@@ -33,6 +33,7 @@ task bats(type: Task) {
           commandLine 'bats', '--tap', file.path
         }
       }
+    
   }
 }
 
