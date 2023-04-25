@@ -299,8 +299,6 @@ if __hhs_has "python3"; then
   alias urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
   # @alias: Generate a UUID
   alias uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
-  # @alias: Date&Time - Display current time in millis
-  alias time-ms='python3 -c "import time; print(int(round(time.time() * 1000)))"'
 fi
 
 # -----------------------------------------------------------------------------------

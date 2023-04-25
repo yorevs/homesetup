@@ -96,13 +96,13 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
     + [1.4.1. Create account](#create-new-account)
     + [1.4.2. Configure account](#configure-account)
 - [2. Uninstallation](#uninstallation)
-- [3. Usage](#usage)
-- [4. Dotfiles in this project](#homesetup-built-in-dotfiles)
+- [3. HomeSetup usage](#homesetup-usage)
+- [4. Built-in dotfiles](#built-in-dotfiles)
 - [5. Aliases](#aliases)
   * [5.1. Navigational](#navigational)
   * [5.2. General](#general)
   * [5.3. HomeSetup](#homesetup)
-  * [5.4. Tool aliases](#tool-aliases)
+  * [5.4. External tools](#external-tools)
   * [5.5. OS Specific aliases](#os-specific-aliases)
     + [5.5.1. Linux](#linux)
     + [5.5.2. Darwin](#darwin)
@@ -116,11 +116,11 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
   * [6.1. Standard tools](#standard-tools)
   * [6.2. Development tools](#development-tools)
 - [7. Applications](#applications)
-  * [7.1. Bash apps](#bash-apps)
+  * [7.1. Built-ins](#built-ins)
 - [8. Alias Definitions](#alias-definitions)
-- [9. HomeSetup application](#homesetup-application)
-  * [9.1. Plug-ins](#hhs-plugins)
-  * [9.2. Functions](#hhs-functions)
+- [9. HomeSetup application](#homesetup-application-clitt)
+  * [9.1. HHS-Plug-ins](#hhs-plug-ins)
+  * [9.2. HHS-Built-Ins](#hhs-built-ins)
 - [10. Auto completions](#auto-completions)
   * [10.1. Bash completions](#bash-completions)
 - [12. Contact](#contact)
@@ -192,11 +192,12 @@ HomeSetup requires a font that supports Font-Awesome icons. We suggest you to us
 
 * [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
-You need to install it on your machine before installing or trying HomeSetup, otherwise, you will see a question mark icon instead of the real icons.
+You need to install it on your machine before installing or trying HomeSetup, otherwise, you will see a question mark 
+icon instead of the real icons.
 
-**Mac users**: We suggest a terminal profile to use (see the below topics).
+**Linux users**: We have checked that some terminals already support icons, if not, you can install the font manually.
 
-**Linux users**: We have checked that some terminals already support icons, if not, you can install it manually.
+**Mac users**: We suggest using one of the terminal profiles below:
 
 ##### Terminal App (Darwin)
 
@@ -210,7 +211,8 @@ You need to install it on your machine before installing or trying HomeSetup, ot
 
 ### Try-it first
 
-You can run HomeSetup from a docker container and then decide whether to install it on your machine. To do that, you need to pull the image you want to try:
+You can run HomeSetup from a docker container and then decide whether to install it on your machine. To do that, you 
+need to pull the image you want to try:
 
 `$ docker run --rm -it yorevs/hhs-centos`
 
@@ -224,7 +226,8 @@ or
 
 ### Remote installation
 
-_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the following command to clone and install:
+_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the 
+following command to clone and install:
 
 `$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
@@ -247,6 +250,12 @@ or
 `$ cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
 
 Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs folder.
+
+### Post-Installation
+
+After a successful install, you should be able to see the following message:
+
+![HomeSetup Welcome](https://iili.io/H8lOPxS.png "Welcome to HomeSetup")
 
 ### Firebase setup
 
@@ -293,26 +302,27 @@ in a shell: `# HomeSetup> ./uninstall.bash`
 The uninstaller will remove all files and folders related to HomeSetup for good. The only folder that will stay is
 the ~/.hhs where your configurations were stored. It's safe to delete this folder after the uninstallation of HomeSetup.
 
-## Usage
+## HomeSetup usage
 
-HomeSetup provides a [User Handbook](docs/handbook/USER_HANDBOOK.md) with all commands and examples of usage. There will also be a video about how to
-install, configure and all available features demo.
+HomeSetup provides a [User Handbook](docs/handbook/USER_HANDBOOK.md) with all commands and examples of usage. There 
+will also be a youtube video about how to install/use and configure, as well as, take advantage of all HomeSetup 
+features and improvements.
 
-## HomeSetup built-in dotfiles
+## Built-in dotfiles
 
-The following dotfiles will be available after installing this project:
+The following dotfiles will be available after installing HomeSetup:
 
-| HHS Dotfile         | Description                          |
-|---------------------|--------------------------------------|
-| ~/.bashrc           | # Bash resources init                |
-| ~/.bash_profile     | # Profile bash init                  |
-| ~/.bash_aliases     | # All defined aliases                |
-| ~/.bash_prompt      | # Enhanced shell prompt              |
-| ~/.bash_env         | # Environment variables              |
-| ~/.bash_colors      | # All defined color related stuff    |
-| ~/.bash_functions   | # Scripting functions                |
+| HHS Dotfile         | Description                |
+|---------------------|----------------------------|
+| ~/.bashrc           | Bash resources             |
+| ~/.bash_profile     | Profile bash               |
+| ~/.bash_aliases     | HomeSetup built-in aliases |
+| ~/.bash_prompt      | Enhanced shell prompt      |
+| ~/.bash_env         | Environment variables      |
+| ~/.bash_colors      | Terminal color definitions |
+| ~/.bash_functions   | Bash scripting functions   |
 
-The following directory will be linked to your HHS_DIR folder:
+The following directory will be linked to your <HHS_DIR> folder:
 
 - `$HHS_DIR/bin` # Includes all useful script provided by the project.
 - `$HHS_DIR/log` # Includes all HomeSetup log files.
@@ -377,25 +387,25 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | week    | Date&Time - Display current **week number**                        |
 | now     | Date&Time - Display current **date and time**                      |
 | ts      | Date&Time - Display current **timestamp**                          |
-| time-ms | Date&Time - Display current **time in millis**                     |
 | wget    | If **wget** is not available, use **curl** instead                 |
 | ps1     | Make _PS1_ prompt active                                           |
 | ps2     | Make _PS2_ prompt active (continuation prompt)                     |
 
 ### HomeSetup
 
-| ALIAS          | Description                                       |
-|----------------|---------------------------------------------------|
-| __hhs_hspm     | Shortcut for hhs hspm plug-in                     |
-| __hhs_hhu      | Shortcut for hhs updater plug-in                  |
-| __hhs_vault    | Shortcut for hspylib vault application            |
-| __hhs_firebase | Shortcut for hspylib firebase application         |
-| __hhs_reload   | Reload HomeSetup                                  |
-| __hhs_clear    | Clear and reset all cursor attributes and **IFS** |
-| __hhs_reset    | Clear the screen and reset the terminal           |
-| __hhs_open     | Use the assigned app to open a file               |
+| ALIAS          | Description                                                       |
+|----------------|-------------------------------------------------------------------|
+| __hhs_hspm     | Alias for `hhs hspm` plug-in                                      |
+| __hhs_hhu      | Alias for `hhs updater` plug-in                                   |
+| __hhs_vault    | Alias for `hspylib vault` application                             |
+| __hhs_firebase | Alias for `hspylib firebase` application                          |
+| __hhs_reload   | Alias to reload HomeSetup                                         |
+| __hhs_clear    | Alias to clear and reset cursor attributes and **IFS**            |
+| __hhs_reset    | Alias to clear screen and reset the terminal                      |
+| __hhs_open     | Alias to use the assigned application to open a file or directory |
+| __hhs_hspylib  | Alias to access HSPyLib python application                        |
 
-### Tool aliases
+### External tools
 
 | ALIAS              | Description                                                                      |
 |--------------------|----------------------------------------------------------------------------------|
@@ -407,21 +417,21 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 #### Linux
 
-| ALIAS  | Description                      |
-|--------|----------------------------------|
-| cpu    | `top' shortcut ordered by CPU%   |
-| mem    | `top' shortcut ordered by MEM%   |
-| ised   | Same as sed -i'' -r              |
-| esed   | Same as sed -r                   |
-| decode | Shortcut for base64 decode       |
-| apt    | Same as apt-get                  |
+| ALIAS  | Description                     |
+|--------|---------------------------------|
+| cpu    | `top' shortcut ordered by CPU % |
+| mem    | `top' shortcut ordered by MEM % |
+| ised   | Same as sed -i'' -r             |
+| esed   | Same as sed -r                  |
+| decode | Shortcut for base64 decode      |
+| apt    | Same as apt-get                 |
 
 #### Darwin
 
 | ALIAS          | Description                                                              |
 |----------------|--------------------------------------------------------------------------|
-| cpu            | `top' shortcut ordered by CPU%                                           |
-| mem            | `top' shortcut ordered by MEM%                                           |
+| cpu            | `top' shortcut ordered by CPU %                                          |
+| mem            | `top' shortcut ordered by MEM %                                          |
 | ised           | Same as sed -i '' -E                                                     |
 | esed           | Same as sed -E                                                           |
 | decode         | Shortcut for **base64** decode                                           |
@@ -455,12 +465,12 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### Python aliases
 
-| ALIAS | Description                       |
-|-------|-----------------------------------|
-| calc  | Evaluate mathematical expressions |
-| urle  | URL-encode strings                |
-| urld  | URL-decode strings                |
-| uuid  | Generate a random UUID            |
+| ALIAS   | Description                         |
+|---------|-------------------------------------|
+| calc    | Evaluate mathematical expressions   |
+| urle    | URL-encode strings                  |
+| urld    | URL-decode strings                  |
+| uuid    | Generate a random UUID              |
 
 ### Perl aliases
 
@@ -529,7 +539,7 @@ HomeSetup include some basic helper functions:
 | Dotfile           | Function               | Purpose                                                                        |
 |-------------------|------------------------|--------------------------------------------------------------------------------|
 | bash_prompt.bash  | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked      |
-| hhsrc.bas.bash    | __hhs_log              | Log to HomeSetup log file                                                      |
+| hhsrc.bash        | __hhs_log              | Log to HomeSetup log file                                                      |
 |                   | __hhs_source           | Read/Execute commands from the filename argument in the current shell context  |
 |                   | __hhs_is_reachable     | Check whether URL/URI is reachable on the network                              |
 | bash_aliases.bash | __hhs_has              | Check if a command is available on the current shell context                   |
@@ -624,7 +634,7 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 HomeSetup provides useful applications that can be used directly from shell. It is also added to your PATH variable.
 The complete handbook of development tools can be found [here](docs/handbook/pages/applications.md)
 
-### Bash apps
+### Built-ins
 
 | Application      | Purpose                                                                                       |
 |------------------|-----------------------------------------------------------------------------------------------|
@@ -635,18 +645,19 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 
 ## Alias definitions
 
-You can customize most of HomeSetup aliases by editing your file **~/.aliasdef**. When you first install HomeSetup,
+You can customize **most of HomeSetup aliases** by editing your file **~/.aliasdef**. When you first install HomeSetup,
 this file will be automatically generated for you. Further updates may require this file to be updated. We always keep a
 backup of this file, so, you can preserve your customizations, but this process has to be manual.
 
 The original content and aliases are defined on the original [aliasdef](dotfiles/aliasdef) file.
 
-## HomeSetup Application
+## HomeSetup Application (Clitt)
 
-HomeSetup application is a bundle of scripts and functions to extend the terminal features. There are plug-able scripts
-and functions to be incorporated into the app.
+HomeSetup application is a bundle of scripts and functions to extend the terminal features, but also, there is an 
+application and plug-able scripts and functions that can be incorporated into it. To list all functions and plug-ins 
+available the the following terminal command : `# hhs list`
 
-### HHS plugins
+### HHS-Plug-ins
 
 | Plug-in  | Purpose                                                                  |
 |----------|--------------------------------------------------------------------------|
@@ -654,7 +665,7 @@ and functions to be incorporated into the app.
 | firebase | Manager for HomeSetup Firebase integration                               |
 | hspm     | Manage your development tools using installation/uninstallation recipes  |
 
-### HHS functions
+### HHS-Built-Ins
 
 | Function    | Purpose                                                                                 |
 |-------------|-----------------------------------------------------------------------------------------|
