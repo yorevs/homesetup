@@ -97,7 +97,7 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
     + [1.4.2. Configure account](#configure-account)
 - [2. Uninstallation](#uninstallation)
 - [3. Usage](#usage)
-- [4. Dotfiles in this project](#dotfiles-in-this-project)
+- [4. Dotfiles in this project](#homesetup-built-in-dotfiles)
 - [5. Aliases](#aliases)
   * [5.1. Navigational](#navigational)
   * [5.2. General](#general)
@@ -276,13 +276,14 @@ showed on topic [1.3.1.](#create-new-account).
 
 Access your account from: https://console.firebase.google.com/
 
-Grab you *Project ID* from the settings Settings menu.
+Grab you *Project ID* and *USED UID* from the settings Settings menu.
 
-Type in a shell: `$ dotfiles --setup`
+Type in a shell: `$ firebase setup`. Fill in the setup form:
 
-Fill in the information required.
+![Firebase Setup](https://iili.io/H8ll1pa.png "Firebase Setup")
+
 You are now ready to use the Firebase features of HomeSetup.
-Type: `$ dotfiles.bash help fb` for further information about using it.
+Type: `$ firebase help` for further information about using it.
 
 ## Uninstallation
 
@@ -297,38 +298,39 @@ the ~/.hhs where your configurations were stored. It's safe to delete this folde
 HomeSetup provides a [User Handbook](docs/handbook/USER_HANDBOOK.md) with all commands and examples of usage. There will also be a video about how to
 install, configure and all available features demo.
 
-## Dotfiles in this project
+## HomeSetup built-in dotfiles
 
-The following files will be added when installing this project:
+The following dotfiles will be available after installing this project:
 
-```
-~/.bashrc # Bash resources init
-~/.bash_profile # Profile bash init
-~/.bash_aliases # All defined aliases
-~/.bash_prompt # Enhanced shell prompt
-~/.bash_env # Environment variables
-~/.bash_colors # All defined color related stuff
-~/.bash_functions # Scripting functions
-```
+| HHS Dotfile         | Description                          |
+|---------------------|--------------------------------------|
+| ~/.bashrc           | # Bash resources init                |
+| ~/.bash_profile     | # Profile bash init                  |
+| ~/.bash_aliases     | # All defined aliases                |
+| ~/.bash_prompt      | # Enhanced shell prompt              |
+| ~/.bash_env         | # Environment variables              |
+| ~/.bash_colors      | # All defined color related stuff    |
+| ~/.bash_functions   | # Scripting functions                |
 
-The following directory will be linked to your HOME folder:
+The following directory will be linked to your HHS_DIR folder:
 
-`~/bin # Includes all useful script provided by the project`
+- `$HHS_DIR/bin` # Includes all useful script provided by the project.
+- `$HHS_DIR/log` # Includes all HomeSetup log files.
 
-If this folder already exists, the install script will copy all files into it.
+If this folder already exists, the install script will replace all files, backing up, important ones.
 
 To override or add customized stuff, you need to create a custom file as follows:
 
-```
-~/.colors           : To customize your colors
-~/.env              : To customize your environment variables
-~/.aliases          : To customize your aliases
-~/.prompt           : To customize your prompt
-~/.functions        : To customize your functions
-~/.profile          : To customize your profile
-~/.path             : To customize your paths
-~/.aliasdef         : To customize your alias definitions
-```
+| Custom Dotfile     | Description                                      |
+|--------------------|--------------------------------------------------|
+| ~/.colors          | To customize your colors                         |
+| ~/.env             | To customize your environment variables          |
+| ~/.aliases         | To customize your aliases                        |
+| ~/.prompt          | To customize your prompt                         |
+| ~/.functions       | To customize your functions                      |
+| ~/.profile         | To customize your profile                        |
+| ~/.path            | To customize your paths                          |
+| ~/.aliasdef        | To customize your alias definitions              |
 
 ## Aliases
 
@@ -378,20 +380,20 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | time-ms | Date&Time - Display current **time in millis**                     |
 | wget    | If **wget** is not available, use **curl** instead                 |
 | ps1     | Make _PS1_ prompt active                                           |
-| ps2     | Make _PS2_ prompt active                                           |
+| ps2     | Make _PS2_ prompt active (continuation prompt)                     |
 
-### HomeSetup (HHS)
+### HomeSetup
 
-| ALIAS          | Description                                   |
-|----------------|-----------------------------------------------|
-| __hhs_vault    | Shortcut for hhs vault plug-in                |
-| __hhs_hspm     | Shortcut for hhs hspm plug-in                 |
-| __hhs_firebase | Shortcut for hhs firebase plug-in             |
-| __hhs_hhu      | Shortcut for hhs updater plug-in              |
-| __hhs_reload   | Reload HomeSetup                              |
-| __hhs_clear    | Clear and reset all cursor attributes and IFS |
-| __hhs_reset    | Clear the screen and reset the terminal       |
-| __hhs_open     | Use the assigned app to open a file           |
+| ALIAS          | Description                                       |
+|----------------|---------------------------------------------------|
+| __hhs_hspm     | Shortcut for hhs hspm plug-in                     |
+| __hhs_hhu      | Shortcut for hhs updater plug-in                  |
+| __hhs_vault    | Shortcut for hspylib vault application            |
+| __hhs_firebase | Shortcut for hspylib firebase application         |
+| __hhs_reload   | Reload HomeSetup                                  |
+| __hhs_clear    | Clear and reset all cursor attributes and **IFS** |
+| __hhs_reset    | Clear the screen and reset the terminal           |
+| __hhs_open     | Use the assigned app to open a file               |
 
 ### Tool aliases
 
