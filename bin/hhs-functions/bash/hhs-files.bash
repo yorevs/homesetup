@@ -14,10 +14,22 @@ function __hhs_ls_sorted() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [column_number]"
+    echo ''
+    echo '  Columns:'
+    echo '    1 : First column gives the type of the file/dir and the file permissions.'
+    echo '    2 : Second column is the number of links to the file/dir.'
+    echo '    3 : Third column is the user who owns the file.'
+    echo '    4 : Fourth column is the Unix group of users to which the file belongs.'
+    echo '    5 : Fifth column is the size of the file in bytes.'
+    echo '    6 : Sixth column is the Month at which the file was last changed.'
+    echo '    7 : Seventh column is the Day at which the file was last changed.'
+    echo '    8 : Eighth column is the Year or Time at which the file was last changed.'
+    echo '    9 : The last column is the name of the file.'
     return 1
   else
     col="${1:-9}"
-    \ls -la | sort -k "$col"
+    # shellcheck disable=SC2012
+    \ls -la | sort -k "${col}"
     return $?
   fi
 }
