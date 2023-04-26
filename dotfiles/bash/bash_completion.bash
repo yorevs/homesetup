@@ -32,7 +32,7 @@ function __hhs_check_completion() {
   completion=${completion//-completion.bash/}
   case "${completion}" in
   'docker'*)
-    docker info &>/dev/null && skip_completion='NO'
+    [[ -n "${HHS_HAS_DOCKER}" ]] && skip_completion='NO'
     ;;
   *)
     command -v "${completion}" &>/dev/null && skip_completion='NO'
@@ -49,7 +49,7 @@ function __hhs_check_completion() {
   fi
 }
 
-if [[ -z "${HHS_DISABLE_COMPLETIONS}" ]]; then
+if [[ -z "${HHS_SKIP_COMPLETIONS}" ]]; then
   # Load all required auto-completions
   case "${HHS_MY_SHELL}" in
   'bash')

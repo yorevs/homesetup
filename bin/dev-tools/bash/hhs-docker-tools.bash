@@ -11,7 +11,7 @@
 # Docker documentation can be found at:
 #   https://docs.docker.com/v17.09/engine/reference/commandline/exec/
 
-if __hhs_has "docker" && docker info &>/dev/null; then
+if [[ -n "${HHS_HAS_DOCKER}" ]]; then
 
   # @function: Count the number of active docker containers.
   function __hhs_docker_count() {

@@ -20,6 +20,9 @@ export LC_ALL=${LANG}
 # Save the original IFS
 export RESET_IFS="$IFS"
 
+# Source the common functions for everyone.
+source "${HHS_HOME}/dotfiles/bash/commons.bash"
+
 # ----------------------------------------------------------------------------
 # Home Sweet Homes
 
@@ -96,7 +99,8 @@ export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/firebase.properties}"
 export HHS_FIREBASE_CREDS_FILE="$HOME/.ssh/{project_id}-firebase-credentials.json"
-export HHS_DISABLE_COMPLETIONS=
+export HHS_SKIP_COMPLETIONS=
+export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 
 __hhs_has git && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
 __hhs_has svn && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"

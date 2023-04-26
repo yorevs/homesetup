@@ -363,7 +363,7 @@ fi
 # @category: Docker aliases
 
 # inspiRED by https://hackernoon.com/handy-docker-aliases-4bd85089a3b8
-if __hhs_has "docker" && docker info &> /dev/null; then
+if [[ -n "${HHS_HAS_DOCKER}" ]]; then
 
   # @alias: Docker - Enhancement for `docker images'
   alias __hhs_docker_images='docker images | hl "(REPOSITORY|TAG|IMAGE ID|CREATED|SIZE|$)"'

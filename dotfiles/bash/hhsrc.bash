@@ -72,74 +72,7 @@ CUSTOM_DOTFILES=(
 # Re-create the HomeSetup log file
 echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOGFILE}"
 
-# @function: Log a message to the HomeSetup log file.
-# @param $1 [Req] : The log level.
-# @param $* [Req] : The log message.
-function __hhs_log() {
-  local level="${1}" message="${2}"
-  if [[ $# -lt 2 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <log_level> <log_message>"
-    return 1
-  fi
-  case "${level}" in
-    'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
-      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M-%S ')" "${level}" "${message}" >> "${HHS_LOGFILE}"
-      ;;
-    *)
-      echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
-      return 1
-      ;;
-  esac
-  
-  return 0
-}
-
-# @function: Replacement for the source bash command
-# @param $1 [Req] : Path to the file to be source'd
-function __hhs_source() {
-
-  local filepath="$1"
-  
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <filepath>"
-    return 1
-  fi
-  if [[ ! -f "${filepath}" ]]; then
-    __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found !"
-    return 1
-  else
-    if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOGFILE}"; then
-      if source "${filepath}" 2>> "${HHS_LOGFILE}"; then
-        __hhs_log "INFO" "File \"${filepath}\" was sourced !"
-      else
-        __hhs_log "ERROR" "File \"${filepath}\" was not sourced !"
-      fi
-    else
-      __hhs_log "WARN" "File \"${filepath}\" was already sourced !"
-    fi
-  fi
-  
-  return 0
-}
-
-# @function: Check if a command is available on the current shell session.
-# @param $1 [Req] : The command to check.
-function __hhs_has() {
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <command>"
-    return 1
-  fi
-  type "$1" > /dev/null 2>&1
-  
-  return $?
-}
-
-# @function: Whether an URL is reachable
-# @param $1 [Req] : The URL to test reachability
-function __hhs_is_reachable() {
-  curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
-  return $?
-}
+source "${HHS_HOME}/dotfiles/bash/commons.bash"
 
 # Load all HomeSetup dotfiles.
 # shellcheck disable=SC2048
