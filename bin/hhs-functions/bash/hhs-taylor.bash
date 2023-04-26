@@ -40,6 +40,7 @@ function __hhs_tailor() {
     " >"${HHS_DIR}/.tailor"
 
     [[ -f "${HHS_DIR}/.tailor" ]] && \. "${HHS_DIR}/.tailor"
+    
     file="${1:-/dev/stdin}"
 
     if [[ "${file}" = '/dev/stdin' ]]; then
