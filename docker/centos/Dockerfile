@@ -13,7 +13,6 @@ WORKDIR "Python-3.10.2"
 RUN ./configure --enable-optimizations
 RUN make install
 RUN python3 -m pip install --upgrade pip
-RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
-RUN echo "Type 'reload' to activate HomeSetup"
+RUN echo 'To install HomeSetup type: curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash'
 WORKDIR "/"
 CMD ["bash", "--login"]

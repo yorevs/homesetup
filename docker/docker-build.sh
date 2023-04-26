@@ -15,7 +15,7 @@ else
       echo -e "${PURPLE}Building ${BLUE}[${next_container}] ... ${NC}"
       echo ''
       if [[ -d "${next_container}/" ]] && \
-          ! docker build --no-cache -t "yorevs/hhs-${next_container}" "${next_container}/"; then
+          ! docker build -t "yorevs/hhs-${next_container}" "${next_container}/"; then
         exit 1
       fi
       

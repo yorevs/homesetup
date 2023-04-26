@@ -37,7 +37,7 @@ export HHS_LOG_DIR=${HHS_LOG_DIR:-${HHS_DIR}/log}
 export HHS_LOG_FILE=${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}
 
 # if the log directory is not found, we have to create it.
-[[ -d "${HHS_LOG_DIR}" ]] mkdir -p "${HHS_LOG_DIR}"
+[[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
 
 # Do not change this formatting, it is required to proper reset IFS to it's defaults
 
