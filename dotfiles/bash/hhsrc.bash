@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090,SC1091
+# shellcheck disable=SC1090,SC1091,SC2155
 
 #  Script: hhsrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new
@@ -29,6 +29,8 @@ unalias -a
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
+export HHS_MY_OS="$(uname -s)"
+export HHS_MY_SHELL="${SHELL//\/bin\//}"
 export HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 export HHS_DIR=${HHS_DIR:-${HOME}/.hhs}
 export HHS_LOG_DIR=${HHS_LOG_DIR:-${HHS_DIR}/log}
@@ -103,20 +105,20 @@ unset file f_path DOTFILES
 # -----------------------------------------------------------------------------------
 # Set default shell options
 
-HHS_TERM_OPTS=''
+unset HHS_TERM_OPTS
 case "${HHS_MY_SHELL}" in
   bash)
-    # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
-    shopt -u nocaseglob && HHS_TERM_OPTS+=''
-    # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-    shopt -s extglob && HHS_TERM_OPTS+=' extglob'
-    # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-    shopt -u cdspell && HHS_TERM_OPTS+=''
-    # Make bash check its window size after a process completes
-    shopt -s checkwinsize && HHS_TERM_OPTS+=' checkwinsize'
     # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
     # executing case or [[ conditional commands.
-    shopt -u nocasematch && HHS_TERM_OPTS+=''
+    shopt -u nocasematch || __hhs_log "WARN" "Unable to unset 'cdspell'"
+    # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
+    shopt -u nocaseglob || __hhs_log "WARN" "Unable to unset 'nocaseglob'"
+    # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
+    shopt -u cdspell || __hhs_log "WARN" "Unable to unset 'cdspell'"
+    # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
+    shopt -s extglob && HHS_TERM_OPTS+='extglob ' || __hhs_log "WARN" "Unable to set 'extglob'"
+    # Make bash check its window size after a process completes.
+    shopt -s checkwinsize && HHS_TERM_OPTS+=' checkwinsize ' || __hhs_log "WARN" "Unable to set 'checkwinsize'"
     ;;
 esac
 
@@ -152,6 +154,9 @@ else
         -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
         ~/.inputrc
       ;;
+    *)
+      __hhs_log "WARN" "Can't set .inputrc for a unknown OS: ${HHS_MY_OS}"
+      ;;
   esac
 fi
 
@@ -170,13 +175,13 @@ PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<
 export PATH
 
 # Check for HomeSetup updates
-if __hhs_is_reachable 'github.com'; then
-  if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
-    __hhs_log "INFO" "Home setup is checking for updates ..."
+if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+  __hhs_log "INFO" "Home setup is checking for updates ..."
+  if __hhs_is_reachable 'github.com'; then
     hhs updater execute --check
+  else
+    __hhs_log "WARN" "Github website is not reachable !"
   fi
-else
-  __hhs_log "WARN" "Github website is not reachable !"
 fi
 
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>

@@ -146,7 +146,7 @@ alias open="__hhs_open"
 alias tcalc="hspylib widgets TimeCalc"
 
 # -----------------------------------------------------------------------------------
-# @category: Tool aliases
+# @category: External tools aliases
 
 # @alias: Jenv - Set JAVA_HOME using jenv
 __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="${HOME}/.jenv/versions/`jenv version-name`"'

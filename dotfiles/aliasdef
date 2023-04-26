@@ -26,9 +26,10 @@ alias defs='__hhs_defs'
 
 # HHS-App Aliases
 __hhs_alias hspm='__hhs_hspm'
-__hhs_alias hhu='__hhs_hhu'
+__hhs_alias hhu='__hhs_hhu --update'
 __hhs_alias errcho='__hhs_errcho'
 __hhs_alias fetch='fetch.bash'
+__hhs_alias check-ip='check-ip.bash'
 
 # General shortcuts
 __hhs_alias about='__hhs_about_command'
@@ -137,7 +138,7 @@ if __hhs_has "gradle"; then
 fi
 
 # Docker shortcuts
-if __hhs_has "docker" && docker info &> /dev/null; then
+if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   __hhs_alias dk='docker'
   __hhs_alias dkc='docker-compose'
   __hhs_alias dkr='docker run'

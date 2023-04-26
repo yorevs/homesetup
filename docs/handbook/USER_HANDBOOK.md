@@ -28,32 +28,34 @@ install HomeSetup this file will be created automatically for you, so you just n
 
 **All HomeSetup variable are prefixed with HHS_**
 
-- **HHS_ACTIVE_DOTFILES** : Dotfiles that are actually active and the load order.
-- **HHS_ALIASES_FILE** : TODO
-- **HHS_BASH_COMPLETIONS** : Bash-completions that are actually active.
-- **HHS_CMD_FILE** : This file holds the saved commands issued by __hhs_command function.
-- **HHS_DEFAULT_EDITOR** : This is the default editor used by all functions or apps that require text editing.
-- **HHS_DEV_TOOLS** : Tools that HomeSetup will keep an eye on, to check is they are installed or not.
-- **HHS_DIR** : This is where HomeSetup stores it's configuration files.
-- **HHS_ENV_FILE** : TODO
-- **HHS_FIREBASE_CONFIG_FILE**: TODO
-- **HHS_FIREBASE_CREDS_FILE** : TODO
-- **HHS_HAS_DOCKER** : TODO
-- **HHS_HIGHLIGHT_COLOR** : Color to be used to highlight text on some functions.
-- **HHS_HOME** : HomeSetup installation directory.
-- **HHS_LOG_DIR** : Directory containing all HomeSetup function logs.
-- **HHS_LOG_FILE** : File containing all HomeSetup load logs.
-- **HHS_TUI_MAX_ROWS** : This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed.
-- **HHS_MOTD** : Message Of The Day: to be displayed when HomeSetup is loaded.
-- **HHS_MY_OS** : Your OS name.
-- **HHS_MY_SHELL** : Your login shell base name.
-- **HHS_PATHS_FILE** : This file holds the additional PATH's to be added to your shell and used by __hhs_paths function.
-- **HHS_PUNCH_FILE** : This file holds the saved punches issued by __hhs_punch function.
-- **HHS_SAVED_DIRS_FILE** : This file holds the saved directories issued by __hhs_save_dir function.
-- **HHS_TERM_OPTS** : Active terminal options.
-- **HHS_VAULT_FILE** : This file holds the user vault, used to store secure information.
-- **HHS_VAULT_USER** : This is the user that hhs vault plugin will use to store your vault data.
-- **HHS_VERSION** : Currently installed HomeSetup version.
+| VARIABLE                  | Description                                                                                           |
+|---------------------------|-------------------------------------------------------------------------------------------------------|
+| HHS_ACTIVE_DOTFILES       |  Dotfiles that are actually active and the load order.                                                |
+| HHS_ALIASES_FILE          |  File containing your alias exports.                                                                  |
+| HHS_BASH_COMPLETIONS      |  Bash-completions that are actually active.                                                           |
+| HHS_CMD_FILE              |  This file holds the saved commands issued by __hhs_command function.                                 |
+| HHS_DEFAULT_EDITOR        |  This is the default editor used by all functions or apps that require text editing.                  |
+| HHS_DEV_TOOLS             |  Tools that HomeSetup will keep an eye on, to check is they are installed or not.                     |
+| HHS_DIR                   |  This is where HomeSetup stores it's configuration files.                                             |
+| HHS_ENV_FILE              |  File containing your environment exports.                                                            |
+| HHS_FIREBASE_CONFIG_FILE  |  File used to store your Firebase integration configurations.                                         |
+| HHS_FIREBASE_CREDS_FILE   |  File containing your Firebase credentials, used for authentication.                                  |
+| HHS_HAS_DOCKER            |  Whether docker is installed and active.                                                              |
+| HHS_HIGHLIGHT_COLOR       |  Color to be used to highlight text on some functions.                                                |
+| HHS_HOME                  |  HomeSetup installation directory.                                                                    |
+| HHS_LOG_DIR               |  Directory containing all HomeSetup function logs.                                                    |
+| HHS_LOG_FILE              |  File containing all HomeSetup load logs.                                                             |
+| HHS_MOTD                  |  Message Of The Day: to be displayed when HomeSetup is loaded.                                        |
+| HHS_MY_OS                 |  Your OS name.                                                                                        |
+| HHS_MY_SHELL              |  Your login shell base name.                                                                          |
+| HHS_PATHS_FILE            |  This file holds the additional PATH's to be added to your shell and used by __hhs_paths function.    |
+| HHS_PUNCH_FILE            |  This file holds the saved punches issued by __hhs_punch function.                                    |
+| HHS_SAVED_DIRS_FILE       |  This file holds the saved directories issued by __hhs_save_dir function.                             |
+| HHS_TERM_OPTS             |  Active terminal options.                                                                             |
+| HHS_TUI_MAX_ROWS          |  This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed. |
+| HHS_VAULT_FILE            |  This file holds the user vault, used to store secure information.                                    |
+| HHS_VAULT_USER            |  This is the user that hhs vault plugin will use to store your vault data.                            |
+| HHS_VERSION               |  Currently installed HomeSetup version.                                                               |
 
 ## Aliases
 
@@ -82,8 +84,8 @@ We group our aliases using the following categories:
 
 - [Navigational](../../README.md#navigational)
 - [General](../../README.md#general)
-- [HomeSetup](../../README.md#homesetup-hhs)
-- [Tool aliases](../../README.md#tool-aliases)
+- [HomeSetup](../../README.md#homesetup)
+- [External tools](../../README.md#external-tools)
 - [OS Specific aliases](../../README.md#os-specific-aliases)
 - [Handy Terminal Shortcuts](../../README.md#handy-terminal-shortcuts)
 - [Python aliases](../../README.md#python-aliases)
@@ -116,8 +118,7 @@ In addition to aliases and functions, HomeSetup also puts available some [applic
 with different purposes, such as IP information verification, fetch REST services, and more. Currently we are using two
 kinds of applications:
 
-- [Bash applications](../../README.md#bash-apps)
-- [Python applications](../../README.md#python-apps)
+- [Bash applications](../../README.md#applications)
 
 Checkout the full handbook of [applications here](pages/applications.md).
 
@@ -134,8 +135,6 @@ are provided with the latest version:
     * [gitignore](../../templates/git/gitignore) : .gitignore file template.
     * [commit-msg](../../templates/git/hooks/commit-msg) : Git hook to make sure your commit message is following our format.
     * [prepare-commit-msg](../../templates/git/hooks/prepare-commit-msg) : Make sure no one commits on master.
-- [Python templates](../../templates/py)
-    * [app.py](../../templates/py/app.py) : Create python applications using our style.
 - [Text templates](../../templates/txt)
     * [help.txt](../../templates/txt/help.txt) : Template used to create HomeSetup help messages.
     * [man.txt](../../templates/txt/man.txt) : Template used to create bash man pages.

@@ -16,13 +16,17 @@ VERSION=1.0.0
 USAGE="
 Usage: ${APP_NAME} <method> [options] <url>
 
+  Fetch URL resource using the most commons ways.
+  
+    Arguments:
+
         method                      : The http method to be used [ GET, HEAD, POST, PUT, PATCH, DELETE ].
         url                         : The url to make the request.
 
     Options:
         --headers <json_headers>    : The http request headers.
         --body    <json_body>       : The http request body (payload).
-        --format                    : Format the json responseonse.
+        --format                    : Format the json response.
         --silent                    : Omits all informational messages.
 
 "

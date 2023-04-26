@@ -73,28 +73,32 @@ export HISTIGNORE="pwd:?:-:l:q:rl:exit:gs:gl:.."
 # HomeSetup variables
 
 # Current OS and Terminal
-export HHS_MY_OS="$(uname -s)"
-export HHS_MY_SHELL="${SHELL//\/bin\//}"
+
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 
+# ----------------------------------------------------------------------------
 # Customizable
+
+export HHS_DEFAULT_EDITOR=__hhs_open
+export HHS_TUI_MAX_ROWS=15
 export HHS_ALIASES_FILE="${HHS_DIR}/.aliases"
 export HHS_ENV_FILE="${HHS_DIR}/.env"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
 export HHS_PATHS_FILE="${HHS_DIR}/.path"
-export HHS_DEFAULT_EDITOR=${HHS_DEFAULT_EDITOR:-vi}
-export HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:-15}
-export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
-export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
-export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
-export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/firebase.properties}"
-export HHS_FIREBASE_CREDS_FILE="$HOME/.ssh/{project_id}-firebase-credentials.json"
+export HHS_PUNCH_FILE="${HHS_DIR}/.punches"
+export HHS_VAULT_FILE="${HHS_DIR}/.vault"
+export HHS_VAULT_USER="${USER}"
+export HHS_FIREBASE_CONFIG_FILE="${HHS_DIR}/firebase.properties"
+export HHS_FIREBASE_CREDS_FILE="${HHS_DIR}/{project_id}-firebase-credentials.json"
 
-__hhs_has git && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
-__hhs_has svn && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
+# ----------------------------------------------------------------------------
+# Others
+
+__hhs_has git && export GIT_REPOS="${HOME}/GIT-Repository"
+__hhs_has svn && export SVN_REPOS="${HOME}/SVN-Repository"
 
 [[ -d "${HOME}/Workspace" ]] && export WORKSPACE="${WORKSPACE:-${HOME}/Workspace}"
 [[ -d "${HOME}/Desktop" ]] && export DESKTOP="${DESKTOP:-${HOME}/Desktop}"
@@ -105,7 +109,7 @@ __hhs_has svn && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"
 DEVELOPER_TOOLS=(
   'hexdump' 'vim' 'bats' 'tree' 'perl' 'groovy'
   'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'jq'
-  'gcc' 'make' 'mvn' 'gradle' 'ruby'
+  'gcc' 'make' 'mvn' 'gradle' 'ruby' 'python'
   'docker' 'nvm' 'node' 'vue' 'eslint' 'pylint' 'gpg'
   'shasum' 'base64' 'git' 'go' 'python3' 'pip3'
 )

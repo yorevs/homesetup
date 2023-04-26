@@ -21,7 +21,10 @@ VERSION=1.0.0
 USAGE="
 Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
-    HomeSetup Application Manager.
+  HomeSetup Application Manager.
+
+    Arguments:
+      args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
     
     Options:
       -v  |  --version  : Display current program version.
@@ -32,9 +35,6 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
       help      : Display a help about the plugin.
       version   : Display current plugin version.
       execute   : Execute a plugin command.
-
-    Arguments:
-      args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
     
     Exit Status:
       (0) Success.
