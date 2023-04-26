@@ -3,7 +3,7 @@
 ## Your shell, good as hell ! 
 
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.5.11/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.5.12/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
@@ -23,16 +23,16 @@ HomeSetup was created to help users with the command line. The purpose was to cr
 that speedup daily tasks such as, punching the clock, searching for strings and files, change directories, using git, 
 gradle, docker, etc...
 
-- Setup most common used configurations automatically.
-- New <tab+shift> complete (using menu-complete) that will cycle though options.
-- Prompt with a mono-spaced font that supports [Font-Awesome](https://fontawesome.com/cheatsheet?from=io) icons.
-- Package manager helper to help installing application using recipes (**not only brew installs**).
-- Save your custom dotfiles on a [Firebase](https://console.firebase.google.com) and download it wherever you go.
-- New visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
+- Setup most commonly used configurations automatically.
 - Dozens of functions to help you configure your terminal and deal with your daily tasks.
+- Prompt with a mono-spaced font that supports [Font-Awesome](https://fontawesome.com/cheatsheet?from=io) icons.
 - Highly customizable aliases, so, you dictate what mnemonics you want to use (use your own syntax).
-- All code is licensed under [The MIT License](LICENSE.md), so, you can modify and use freely.
+- Universal package manager helper to help installing application using recipes (**not only brew installs**).
+- Save your custom dotfiles on a [Firebase](https://console.firebase.google.com) and download it wherever you go.
 - Small learning curve and a complete [User's Handbook](docs/handbook/USER_HANDBOOK.md).
+- All code is licensed under [The MIT License](LICENSE.md), so, you can modify and use freely.
+- **NEW** <tab+shift> complete (using menu-complete) that will cycle though options.
+- **NEW** visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
 - **NEW** HomeSetup now works on Linux as well.
 - **NEW** Try HomeSetup on a docker container before installing on your machine.
 

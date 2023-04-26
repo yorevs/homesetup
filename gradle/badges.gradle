@@ -50,4 +50,4 @@ task generateBuildBadge(type: Task) {
 }
 
 check.finalizedBy(generateCheckBadge)
-publish.finalizedBy(generateBuildBadge)
+publish.dependsOn(generateBuildBadge)
