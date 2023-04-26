@@ -4,15 +4,15 @@
 
 <!-- toc -->
 - [Bash Applications](../../applications.md)
-  * [App-Commons](app-commons.md)
-  * [Check-IP](check-ip.md)
-  * [Fetch](fetch.md)
-  * [HHS-App](hhs-app.md)
-    + [Functions](#functions)
-    + [Plugins](#plug-ins)
+  * [App-Commons](app-commons.md#application-commons)
+  * [Check-IP](check-ip.md#check-ip-application)
+  * [Fetch](fetch.md#fetch-application)
+  * [HHS-App](hhs-app.md#homesetup-application)
+    + [Functions](hhs-app.md#functions)
+    + [Plugins](hhs-app.md#plug-ins)
 <!-- tocstop -->
 
-## HHS-App application
+## HomeSetup application
 
 ```bash
 Usage:  [option] {function | plugin {task} <command>} [args...]

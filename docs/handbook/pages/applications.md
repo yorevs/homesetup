@@ -4,10 +4,10 @@
 
 <!-- toc -->
 - [Bash Applications](#bash-applications)
-  * [App-Commons](applications/bash/app-commons.md)
-  * [Check-IP](applications/bash/check-ip.md)
-  * [Fetch](applications/bash/fetch.md)
-  * [HHS-App](applications/bash/hhs-app.md)
+  * [App-Commons](applications/bash/app-commons.md#application-commons)
+  * [Check-IP](applications/bash/check-ip.md#check-ip-application)
+  * [Fetch](applications/bash/fetch.md#fetch-application)
+  * [HHS-App](applications/bash/hhs-app.md#homesetup-application)
     + [Functions](applications/bash/hhs-app.md#functions)
     + [Plugins](applications/bash/hhs-app.md#plug-ins)
 <!-- tocstop -->

@@ -10,9 +10,21 @@
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
 
+# @function: Check if a command is available on the current shell session.
+# @param $1 [Req] : The command to check.
+function __hhs_has() {
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  fi
+  type "$1" > /dev/null 2>&1
+  
+  return $?
+}
+
 # @function: Log a message to the HomeSetup log file.
 # @param $1 [Req] : The log level.
-# @param $* [Req] : The log message.
+# @param $* [Req] : The log level. One of ["WARN", "DEBUG", "INFO", "ERROR", "ALL"].
 function __hhs_log() {
   local level="${1}" message="${2}"
   if [[ $# -lt 2 || '-h' == "$1" ]]; then
@@ -32,7 +44,7 @@ function __hhs_log() {
   return 0
 }
 
-# @function: Replacement for the source bash command
+# @function: Replacement for the original source bash command.
 # @param $1 [Req] : Path to the file to be source'd
 function __hhs_source() {
 
@@ -61,21 +73,15 @@ function __hhs_source() {
   return 0
 }
 
-# @function: Check if a command is available on the current shell session.
-# @param $1 [Req] : The command to check.
-function __hhs_has() {
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <command>"
+# @function: Check whether an URL is reachable.
+# @param $1 [Req] : The URL to test reachability.
+function __hhs_is_reachable() {
+  if [[ $# -eq 0 || '-h' == "$1" || -z "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <url>"
     return 1
   fi
-  type "$1" > /dev/null 2>&1
   
-  return $?
-}
-
-# @function: Whether an URL is reachable
-# @param $1 [Req] : The URL to test reachability
-function __hhs_is_reachable() {
   curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
+  
   return $?
 }
