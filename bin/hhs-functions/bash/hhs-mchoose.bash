@@ -40,7 +40,7 @@ function __hhs_mchoose() {
     return 1
   fi
 
-  HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
+  HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
 
   local outfile ret_val=1 all_options=() sel_options=() cur_index=0 show_from=0 re_render=1 selector
   local index_len len show_to diff_index typed_index columns option_line init_value=0 mark
@@ -48,7 +48,7 @@ function __hhs_mchoose() {
   [[ '-c' = "${1}" ]] && shift && init_value=1
 
   outfile="$1"
-  show_to="$((HHS_MENU_MAXROWS - 1))"
+  show_to="$((HHS_TUI_MAX_ROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
   all_options=("${@}")

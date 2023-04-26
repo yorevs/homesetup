@@ -29,9 +29,10 @@ unalias -a
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
-export HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
-export HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
-export HHS_LOGFILE="${LOG_DIR:-${HHS_DIR}}/hhsrc.log"
+export HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
+export HHS_DIR=${HHS_DIR:-${HOME}/.hhs}
+export HHS_LOG_DIR=${HHS_LOG_DIR:-${HHS_DIR}/log}
+export HHS_LOG_FILE=${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}
 
 # Do not change this formatting, it is required to proper reset IFS to it's defaults
 
@@ -68,11 +69,10 @@ CUSTOM_DOTFILES=(
    'functions'
 )
 
+source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 # Re-create the HomeSetup log file
-echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOGFILE}"
-
-source "${HHS_HOME}/dotfiles/bash/commons.bash"
+echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOG_FILE}"
 
 # Load all HomeSetup dotfiles.
 # shellcheck disable=SC2048
@@ -186,3 +186,5 @@ export IFS="${RESET_IFS}"
 echo ''
 echo -e "${HHS_MOTD}${NC}"
 echo ''
+
+echo -e "\nHomeSetup load finished: $(date)\n" >> "${HHS_LOG_FILE}"

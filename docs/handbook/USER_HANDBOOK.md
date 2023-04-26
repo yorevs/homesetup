@@ -29,15 +29,21 @@ install HomeSetup this file will be created automatically for you, so you just n
 **All HomeSetup variable are prefixed with HHS_**
 
 - **HHS_ACTIVE_DOTFILES** : Dotfiles that are actually active and the load order.
+- **HHS_ALIASES_FILE** : TODO
 - **HHS_BASH_COMPLETIONS** : Bash-completions that are actually active.
 - **HHS_CMD_FILE** : This file holds the saved commands issued by __hhs_command function.
 - **HHS_DEFAULT_EDITOR** : This is the default editor used by all functions or apps that require text editing.
 - **HHS_DEV_TOOLS** : Tools that HomeSetup will keep an eye on, to check is they are installed or not.
 - **HHS_DIR** : This is where HomeSetup stores it's configuration files.
+- **HHS_ENV_FILE** : TODO
+- **HHS_FIREBASE_CONFIG_FILE**: TODO
+- **HHS_FIREBASE_CREDS_FILE** : TODO
+- **HHS_HAS_DOCKER** : TODO
 - **HHS_HIGHLIGHT_COLOR** : Color to be used to highlight text on some functions.
 - **HHS_HOME** : HomeSetup installation directory.
-- **HHS_LOGFILE** : File containing all HomeSetup logs.
-- **HHS_MENU_MAXROWS** : This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed.
+- **HHS_LOG_DIR** : Directory containing all HomeSetup function logs.
+- **HHS_LOG_FILE** : File containing all HomeSetup load logs.
+- **HHS_TUI_MAX_ROWS** : This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed.
 - **HHS_MOTD** : Message Of The Day: to be displayed when HomeSetup is loaded.
 - **HHS_MY_OS** : Your OS name.
 - **HHS_MY_SHELL** : Your login shell base name.

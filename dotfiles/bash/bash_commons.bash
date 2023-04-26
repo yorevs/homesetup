@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: commons.bash
+#  Script: bash_commons.bash
 # Purpose: This file is a set of commonly used functions. Dotfiles sometimes requires the following functions
 #          to be available for use. It is sources from the first loaded dotfile.
 # Created: Apr 26, 2023
@@ -21,7 +21,7 @@ function __hhs_log() {
   fi
   case "${level}" in
     'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
-      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M-%S ')" "${level}" "${message}" >> "${HHS_LOGFILE}"
+      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M-%S ')" "${level}" "${message}" >> "${HHS_LOG_FILE}"
       ;;
     *)
       echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
@@ -46,9 +46,9 @@ function __hhs_source() {
     __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found !"
     return 1
   else
-    if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOGFILE}"; then
+    if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOG_FILE}"; then
       # shellcheck disable=SC1090
-      if source "${filepath}" 2>> "${HHS_LOGFILE}"; then
+      if source "${filepath}" 2>> "${HHS_LOG_FILE}"; then
         __hhs_log "INFO" "File \"${filepath}\" was sourced !"
       else
         __hhs_log "ERROR" "File \"${filepath}\" was not sourced !"

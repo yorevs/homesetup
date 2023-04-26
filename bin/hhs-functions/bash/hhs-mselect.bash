@@ -39,10 +39,10 @@ function __hhs_mselect() {
     return 1
   fi
 
-  HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:=15}
+  HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
 
   outfile="$1"
-  show_to="$((HHS_MENU_MAXROWS - 1))"
+  show_to="$((HHS_TUI_MAX_ROWS - 1))"
   diff_index="$((show_to - show_from))"
   shift
   all_options=("${@}")

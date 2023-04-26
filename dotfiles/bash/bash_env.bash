@@ -20,26 +20,20 @@ export LC_ALL=${LANG}
 # Save the original IFS
 export RESET_IFS="$IFS"
 
-# Source the common functions for everyone.
-source "${HHS_HOME}/dotfiles/bash/commons.bash"
+source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 # ----------------------------------------------------------------------------
 # Home Sweet Homes
 
 # Java
 if __hhs_has java; then
-  export JAVA_HOME=${JAVA_HOME:-$(dirname "$(command -v java)")}
+  export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
   export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
 fi
 
 # Python
 if __hhs_has  python3; then
-  export PYTHON_HOME=${PYTHON_HOME:-$(dirname "$(command -v python3)")}
-fi
-
-# Qt
-if __hhs_has qmake; then
-  export QT_HOME=${QT_HOME:-$(dirname "$(command -v qmake)")}
+  export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 fi
 
 # MacOs
@@ -78,13 +72,12 @@ export HISTIGNORE="pwd:?:-:l:q:rl:exit:gs:gl:.."
 # ----------------------------------------------------------------------------
 # HomeSetup variables
 
-# Fixed
-
 # Current OS and Terminal
 export HHS_MY_OS="$(uname -s)"
 export HHS_MY_SHELL="${SHELL//\/bin\//}"
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
+export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 
 # Customizable
 export HHS_ALIASES_FILE="${HHS_DIR}/.aliases"
@@ -93,14 +86,12 @@ export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
 export HHS_PATHS_FILE="${HHS_DIR}/.path"
 export HHS_DEFAULT_EDITOR=${HHS_DEFAULT_EDITOR:-vi}
-export HHS_MENU_MAXROWS=${HHS_MENU_MAXROWS:-15}
+export HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:-15}
 export HHS_PUNCH_FILE="${HHS_PUNCH_FILE:-${HHS_DIR}/.punches}"
 export HHS_VAULT_FILE="${HHS_VAULT_FILE:-${HHS_DIR}/.vault}"
 export HHS_VAULT_USER="${HHS_VAULT_USER:-${USER}}"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_FIREBASE_CONFIG_FILE:-${HHS_DIR}/firebase.properties}"
 export HHS_FIREBASE_CREDS_FILE="$HOME/.ssh/{project_id}-firebase-credentials.json"
-export HHS_SKIP_COMPLETIONS=
-export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 
 __hhs_has git && export GIT_REPOS="${GIT_REPOS:-${HOME}/GIT-Repository}"
 __hhs_has svn && export SVN_REPOS="${SVN_REPOS:-${HOME}/SVN-Repository}"

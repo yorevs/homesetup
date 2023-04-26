@@ -77,7 +77,7 @@ function logs() {
   echo ''
   echo -e "${ORANGE}HomeSetup logs (last ${HHS_LOG_LINES} lines) matching level ['${level:-ALL}'] :${NC}"
   echo ''
-  grep -m ${HHS_LOG_LINES} "${level}" "${HHS_LOGFILE}" | __hhs_highlight "${level}"
+  grep -m ${HHS_LOG_LINES} "${level}" "${HHS_LOG_FILE}" | __hhs_highlight "${level}"
   echo ''
 }
 

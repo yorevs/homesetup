@@ -49,8 +49,8 @@ function __hhs_check_completion() {
   fi
 }
 
-if [[ -z "${HHS_SKIP_COMPLETIONS}" ]]; then
-  # Load all required auto-completions
+# @function: Load all available auto-completions.
+function __hhs_load_completions() {
   case "${HHS_MY_SHELL}" in
   'bash')
     for completion in "${AUTO_CPL_D}/"*-completion.bash; do
@@ -58,9 +58,7 @@ if [[ -z "${HHS_SKIP_COMPLETIONS}" ]]; then
     done
     ;;
   esac
-else
-  __hhs_log "WARN" "Skipping completions because the disable completion flag is set"
-fi
+}
 
 # shellcheck disable=2206
 export HHS_BASH_COMPLETIONS="${BASH_COMPLETIONS[*]}"
