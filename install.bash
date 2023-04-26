@@ -78,7 +78,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib install_brew
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib install_brew copy_file
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -199,6 +199,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     elif [[ "Linux" == "${MY_OS}" ]]; then
       FONTS_DIR="${HOME}/.local/share/fonts"
     fi
+    
     if [[ ! -L "${FONTS_DIR}" && ! -d "${FONTS_DIR}" ]]; then
       echo -en "\nCreating ${FONTS_DIR} directory: "
       \mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create fonts directory \"${FONTS_DIR}\""
@@ -339,22 +340,30 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
   }
+  
+  # Copy file from source into proper destination
+  copy_file() {
+    
+    local src_file dest_file
+    
+    src_file="${1}"
+    dest_file="${2}"
+    
+    echo ''
+    if [[ -s "${dest_file}" ]]; then
+      echo -e "Skipping: ${YELLOW}${dest_file} file was not copied because it already exists. ${NC}"
+    else
+      echo -en "Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
+      \cp "${src_file}" "${dest_file}"
+      [[ -s "${dest_file}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      [[ -s "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+    fi
+  }
 
   # Install all dotfiles.
   install_dotfiles() {
 
     local dotfile
-
-    # Create all user custom files.
-    [[ -f "${HOME}/.inputrc" ]] || \cp "${HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-    [[ -f "${HHS_DIR}/.aliasdef" ]] || \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
-    [[ -f "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
-    [[ -f "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
-    [[ -f "${HHS_DIR}/.env" ]] || \touch "${HHS_DIR}/.env"
-    [[ -f "${HHS_DIR}/.functions" ]] || \touch "${HHS_DIR}/.functions"
-    [[ -f "${HHS_DIR}/.profile" ]] || \touch "${HHS_DIR}/.profile"
-    [[ -f "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
-    [[ -f "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
@@ -368,7 +377,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${BLUE}         Shell: ${SHELL_TYPE} - ${MY_OS}${NC}"
     echo -e "${BLUE}Install Prefix: ${HHS_HOME}${NC}"
     echo -e "${BLUE}   Preferences: ${HHS_DIR}${NC}"
-    echo ''
 
     if [[ "${METHOD}" == 'repair' || "${METHOD}" == 'local' ]]; then
       echo -e "${ORANGE}"
@@ -381,6 +389,19 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       read -rn 1 -p "Press any key to continue with the installation ..."
     fi
+    
+    # Create all user custom files.
+    [[ -s "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
+    [[ -s "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
+    [[ -s "${HHS_DIR}/.env" ]] || \touch "${HHS_DIR}/.env"
+    [[ -s "${HHS_DIR}/.functions" ]] || \touch "${HHS_DIR}/.functions"
+    [[ -s "${HHS_DIR}/.profile" ]] || \touch "${HHS_DIR}/.profile"
+    [[ -s "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
+    [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
+    
+    # Create alias and input definitions
+    copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
 
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
     echo -e "\n${WHITE}Installing dotfiles ...${NC}"
@@ -450,7 +471,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Copy HomeSetup fonts into place
-    echo -en "\n${WHITE}Copying HomeSetup into ${FONTS_DIR} ${BLUE}"
+    echo -en "\n${WHITE}Copying HomeSetup fonts into ${FONTS_DIR} ${BLUE}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
       \( -iname "**.otf" -o -iname "**.ttf" \) \
