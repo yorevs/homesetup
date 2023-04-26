@@ -71,17 +71,37 @@ Retrieve/Get/Set the current hostname.
   $ hhs host-name && echo 'This is the current hostname'
 ```
 
+
 ------
 ### Built-ins
 
 #### "help"
 
 ```bash
-Usage: hhs help [_hhs_<function_name>]
+Usage: hhs help <__hhs_command>
 ```
 
-TODO
+##### **Purpose**:
 
+Display any HomeSetup command help.
+
+##### **Returns**:
+
+**0** if the command was successfully executed; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The HomeSetup command to get help with.
+
+##### **Examples:**
+
+```bash
+  $ hhs help hhs
+  $ hhs help __hhs_has
+```
+
+
+------
 #### "list"
 
 ```bash
@@ -107,6 +127,8 @@ List all HHS App Plug-ins and Functions
   $ hhs list opts && echo 'This is the bash complete format'
 ```
 
+
+------
 #### "funcs"
 
 ```bash
@@ -127,6 +149,8 @@ Search for all `__hhs_` functions pointing it's source file name and line number
   $ hhs funcs && echo 'Those are all available __hhs_ functions'
 ```
 
+
+------
 #### "logs"
 
 ```bash
@@ -149,6 +173,8 @@ you can set the environment variable HHS_LOG_LINES to a greater value and issue 
   $ hhs logs warn && echo 'Those are all HomeSetup WARN logs'
 ```
 
+
+------
 #### "man"
 
 ```bash
@@ -169,6 +195,8 @@ Fetch the ss64 manual from the web for the specified bash command.
   $ hhs man grep && echo 'Open the manual page for grep command'
 ```
 
+
+------
 #### "board"
 
 ```bash
@@ -212,6 +240,8 @@ Run all HomeSetup automated tests.
   $ hhs tests && echo 'ALL TESTS PASSED'
 ```
 
+
+------
 #### "color-tests"
 
 ```bash
@@ -232,15 +262,132 @@ Run all terminal color palette tests.
   $ hhs color-tests && echo 'ALL TESTS PASSED'
 ```
 
-## Plug-ins
 
 ------
+## Plug-ins
+
 ### Firebase
 
+```bash
+usage: firebase [-h] [-v] [-d [CONFIG-DIR]] {setup,upload,download} ...
+
+ _____ _          _
+|  ___(_)_ __ ___| |__   __ _ ___  ___
+| |_  | | '__/ _ \ '_ \ / _` / __|/ _ \
+|  _| | | | |  __/ |_) | (_| \__ \  __/
+|_|   |_|_|  \___|_.__/ \__,_|___/\___|
+
+Firebase Agent v0.9.97 - Manage your firebase integration.
+
+options:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -d [CONFIG-DIR], --config-dir [CONFIG-DIR]
+                        the configuration directory. If omitted, the User's home will be used.
+
+operation:
+  {setup,upload,download}
+                        the Firebase operation to process
+    setup               setup your Firebase account
+    upload              upload files to your Firebase Realtime Database
+    download            download files from your Firebase Realtime Database
+
+### Error firebase -> the following arguments are required: operation
+```
+
+##### **Purpose**:
+
+Manager for HomeSetup Firebase integration.
+
+##### **Returns**:
+
+**0** if the command was successfully executed; **non-zero** otherwise.
+
+##### **Examples:**
+
+```bash
+  $ hhs firebase setup' && echo 'Setup Firebase'
+  $ hhs firebase upload work' && echo 'Upload dotfiles to `work\' db alias'
+  $ hhs firebase download work'  && echo 'Download dotfiles from `work\' db alias'
+```
 
 ------
 ### HSPM
 
+```bash
+ _   _ ____  ____  __  __ 
+| | | / ___||  _ \|  \/  |
+| |_| \___ \| |_) | |\/| |
+|  _  |___) |  __/| |  | |
+|_| |_|____/|_|   |_|  |_|
+
+Manage your packages using installation/uninstallation recipes.
+
+Usage: hspm <option> [arguments]
+
+    Options:
+      -v  |   --version                 : Display current program version.
+      -h  |      --help                 : Display this help message.
+      -i  |   --install   <recipe>      : Install the app using the tool recipe.
+      -u  | --uninstall   <recipe>      : Uninstall the app using the tool recipe.
+      -l  |      --list   [{-a|--all}]  : List all available tool recipes based on HomeSetup development tools.
+    
+    Arguments:
+      recipe    : The recipe name to be installed/uninstalled.
+      all       : If this option is used, displays even tools without recipes.
+```
+
+##### **Purpose**:
+
+Manage your packages using installation/uninstallation recipes.
+
+##### **Returns**:
+
+**0** if the command was successfully executed; **non-zero** otherwise.
+
+##### **Examples:**
+
+```bash
+  $ hhs hspm execute --list' && echo 'List all available recipes'
+  $ hhs hspm execute --install nvm' && echo 'Install nvm on the system'
+  $ hhs hspm execute --uninstall nvm' && echo 'Uninstall nvm on the system'
+```
 
 ------
 ### Updater
+
+```bash
+ _   _           _       _            
+| | | |_ __   __| | __ _| |_ ___ _ __ 
+| | | | '_ \ / _` |/ _` | __/ _ \ '__|
+| |_| | |_) | (_| | (_| | ||  __/ |   
+ \___/| .__/ \__,_|\__,_|\__\___|_|   
+      |_|                             
+
+HomeSetup update manager.
+
+Usage: updater updater <option>
+
+    Options:
+      -v  |     --version : Display current program version.
+      -h  |        --help : Display this help message.
+      -c  |       --check : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
+      -u  |      --update : Check the current HomeSetup installation and look for updates.
+      -s  |  --stamp-next : Stamp the next auto-update check for 7 days ahead.
+```
+
+##### **Purpose**:
+
+HomeSetup update manager.
+
+##### **Returns**:
+
+**0** if the command was successfully executed; **non-zero** otherwise.
+
+##### **Examples:**
+
+```bash
+  $ hhs updater execute --check && echo 'Fetch last updated timestamp' 
+  $ hhs updater execute --update' && echo 'Attempt to update HomeSetup'
+  $ hhs updater execute --stamp-next' && echo 'Set next update check to 7 days ahead'
+```

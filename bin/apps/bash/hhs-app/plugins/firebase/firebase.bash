@@ -17,7 +17,7 @@ UNSETS=(
 
 # @purpose: HHS plugin required function
 function help() {
-  echo "Usage: hhs ${PLUGIN_NAME} execute {setup,upload,download} {db_alias}"
+  python3 -m ${PLUGIN_NAME} -h
   exit $?
 }
 
@@ -29,6 +29,7 @@ function version() {
 
 # @purpose: HHS plugin required function
 function cleanup() {
+  unset "${UNSETS[@]}"
   echo -n ''
 }
 

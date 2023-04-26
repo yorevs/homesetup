@@ -17,9 +17,15 @@ PLUGIN_NAME="hspm"
 
 # Usage message
 USAGE="
-Usage: $PLUGIN_NAME <option> [arguments]
+ _   _ ____  ____  __  __ 
+| | | / ___||  _ \|  \/  |
+| |_| \___ \| |_) | |\/| |
+|  _  |___) |  __/| |  | |
+|_| |_|____/|_|   |_|  |_|
 
-    Manage your development tools using installation/uninstallation recipes.
+Manage your packages using installation/uninstallation recipes.
+
+Usage: $PLUGIN_NAME <option> [arguments]
 
     Options:
       -v  |   --version                 : Display current program version.
@@ -160,13 +166,14 @@ function help() {
 
 # @purpose: HHS plugin required function
 function version() {
-  echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
+  echo "${PLUGIN_NAME} v${VERSION}"
   exit 0
 }
 
 # @purpose: HHS plugin required function
 function cleanup() {
   unset "${UNSETS[@]}"
+  echo -n ''
 }
 
 # @purpose: HHS plugin required function
