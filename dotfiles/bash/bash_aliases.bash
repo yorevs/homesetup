@@ -13,18 +13,6 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 
-# @function: Check if a command is available on the current shell session.
-# @param $1 [Req] : The command to check.
-function __hhs_has() {
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <command>"
-    return 1
-  fi
-  type "$1" > /dev/null 2>&1
-  
-  return $?
-}
-
 # shellcheck disable=SC2139
 # @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression
 # @param $1 [Req] : The alias to set/check.

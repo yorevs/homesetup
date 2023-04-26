@@ -30,7 +30,6 @@ function __hhs_check_completion() {
   unset skip_completion
   completion=$(basename "${1}")
   completion=${completion//-completion.bash/}
-  __hhs_log "DEBUG" "Checking completion: ${completion}"
   case "${completion}" in
   'docker'*)
     docker info &>/dev/null && skip_completion='NO'
@@ -50,14 +49,18 @@ function __hhs_check_completion() {
   fi
 }
 
-# Load all required auto-completions
-case "${HHS_MY_SHELL}" in
-'bash')
-  for completion in "${AUTO_CPL_D}/"*-completion.bash; do
-    __hhs_check_completion "${completion}"
-  done
-  ;;
-esac
+if [[ -z "${HHS_DISABLE_COMPLETIONS}" ]]; then
+  # Load all required auto-completions
+  case "${HHS_MY_SHELL}" in
+  'bash')
+    for completion in "${AUTO_CPL_D}/"*-completion.bash; do
+      __hhs_check_completion "${completion}"
+    done
+    ;;
+  esac
+else
+  __hhs_log "WARN" "Skipping completions because the disable completion flag is set"
+fi
 
 # shellcheck disable=2206
 export HHS_BASH_COMPLETIONS="${BASH_COMPLETIONS[*]}"

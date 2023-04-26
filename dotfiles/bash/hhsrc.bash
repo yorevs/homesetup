@@ -27,11 +27,11 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 unalias -a
 
 # The following variables are not inside the bash_env because we need them in the early load process.
-export HHS_HOME="${HOME}/HomeSetup"
-export HHS_DIR="${HOME}/.hhs"
-export HHS_LOGFILE="${HHS_DIR}/hhsrc.log"
 export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
+export HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
+export HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
+export HHS_LOGFILE="${LOG_DIR:-${HHS_DIR}}/hhsrc.log"
 
 # Do not change this formatting, it is required to proper reset IFS to it's defaults
 
@@ -58,6 +58,7 @@ DOTFILES=(
 )
 
 # Custom dotfiles comes after the default one, so they can be overriden.
+# Notice that the order here is important, do not reorder it.
 CUSTOM_DOTFILES=(
    'env'
    'colors'
@@ -69,14 +70,14 @@ CUSTOM_DOTFILES=(
 
 
 # Re-create the HomeSetup log file
-echo -e "HomeSetup loaded at $(date)\n" > "${HHS_LOGFILE}"
+echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOGFILE}"
 
 # @function: Log a message to the HomeSetup log file.
 # @param $1 [Req] : The log level.
 # @param $* [Req] : The log message.
 function __hhs_log() {
   local level="${1}" message="${2}"
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+  if [[ $# -lt 2 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <log_level> <log_message>"
     return 1
   fi
@@ -86,8 +87,11 @@ function __hhs_log() {
       ;;
     *)
       echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
+      return 1
       ;;
   esac
+  
+  return 0
 }
 
 # @function: Replacement for the source bash command
@@ -102,6 +106,7 @@ function __hhs_source() {
   fi
   if [[ ! -f "${filepath}" ]]; then
     __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found !"
+    return 1
   else
     if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOGFILE}"; then
       if source "${filepath}" 2>> "${HHS_LOGFILE}"; then
@@ -113,6 +118,20 @@ function __hhs_source() {
       __hhs_log "WARN" "File \"${filepath}\" was already sourced !"
     fi
   fi
+  
+  return 0
+}
+
+# @function: Check if a command is available on the current shell session.
+# @param $1 [Req] : The command to check.
+function __hhs_has() {
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  fi
+  type "$1" > /dev/null 2>&1
+  
+  return $?
 }
 
 # @function: Whether an URL is reachable
@@ -126,7 +145,7 @@ function __hhs_is_reachable() {
 # shellcheck disable=SC2048
 for file in ${DOTFILES[*]}; do
   f_path="${HOME}/.${file}"
-  if [[ -f "${f_path}" ]]; then
+  if [[ -s "${f_path}" ]]; then
     __hhs_log "INFO" "Loading dotfile: ${f_path}"
     __hhs_source "${f_path}"
   else
@@ -138,7 +157,7 @@ done
 # shellcheck disable=SC2048
 for file in ${CUSTOM_DOTFILES[*]}; do
   f_path="${HHS_DIR}/.${file}"
-  if [[ -f "${f_path}" ]]; then
+  if [[ -s "${f_path}" ]]; then
     __hhs_log "INFO" "Loading custom dotfile: ${f_path}"
     __hhs_source "${f_path}"
   else
@@ -157,11 +176,11 @@ case "${HHS_MY_SHELL}" in
     # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
     shopt -u nocaseglob && HHS_TERM_OPTS+=''
     # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-    shopt -s extglob && HHS_TERM_OPTS+='extglob '
+    shopt -s extglob && HHS_TERM_OPTS+=' extglob'
     # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
     shopt -u cdspell && HHS_TERM_OPTS+=''
     # Make bash check its window size after a process completes
-    shopt -s checkwinsize && HHS_TERM_OPTS+='checkwinsize '
+    shopt -s checkwinsize && HHS_TERM_OPTS+=' checkwinsize'
     # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
     # executing case or [[ conditional commands.
     shopt -u nocasematch && HHS_TERM_OPTS+=''
@@ -175,7 +194,7 @@ export HHS_TERM_OPTS
 # - colored-stats: Displays possible completions using different colors to indicate their type
 # - <shift>+<tab> Will cycle forward though complete options
 
-if ! [[ -f ~/.inputrc ]]; then
+if ! [[ -s ~/.inputrc ]]; then
   {
     echo "set completion-ignore-case on"
     echo "set colored-stats on"
@@ -213,13 +232,14 @@ if [[ -f "${HHS_DIR}/.path" ]]; then
   PATH="${PATH}:${NEW_PATHS}"
 fi
 
+# Remove path duplicates
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<< "${PATH}")
 export PATH
 
-# Check for updates
+# Check for HomeSetup updates
 if __hhs_is_reachable 'github.com'; then
-  if [[ ! -f "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
-    echo -e "${GREEN}Home setup is checking for updates ...${NC}"
+  if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+    __hhs_log "INFO" "Home setup is checking for updates ..."
     hhs updater execute --check
   fi
 else

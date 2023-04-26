@@ -40,15 +40,13 @@ fi
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
   'bash')
-    # Source the HomeSEtup profile
-    # shellcheck disable=1090
-    [[ -s "${HOME}/.hhsrc" ]] && \. "${HOME}/.hhsrc"
+    [[ -s "${HOME}/.hhsrc" ]] && source "${HOME}/.hhsrc"
     ;;
   *)
     echo ''
-    echo 'Sorry ! HomeSetup is only compatible with bash for now.'
+    echo "Sorry ! HomeSetup is not compatible with ${SHELL##*\/} for now."
     echo 'You can change your default shell by typing: '
-    echo "#> sudo chsh -s $(command -v bash)"
+    echo "$ sudo chsh -s $(command -v bash)"
     echo ''
     ;;
 esac
