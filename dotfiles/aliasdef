@@ -25,6 +25,7 @@ alias aa='__hhs_aliases'
 alias defs='__hhs_defs'
 
 # HHS-App Aliases
+__hhs_alias tailor='__hhs_tailor'
 __hhs_alias hspm='__hhs_hspm'
 __hhs_alias hhu='__hhs_hhu --update'
 __hhs_alias errcho='__hhs_errcho'
