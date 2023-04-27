@@ -102,6 +102,7 @@ case "${MY_OS}" in
   ;;
   Linux)
     OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+    OS_RELEASE="${OS_RELEASE#*=}"
     case "${OS_RELEASE}" in
       ubuntu)
         MY_OS_ICN="${UBUNTU_ICN}"
