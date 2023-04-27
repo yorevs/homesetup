@@ -122,9 +122,9 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
   * [9.2. HHS-Built-Ins](#hhs-built-ins)
 - [10. Auto completions](#auto-completions)
   * [10.1. Bash completions](#bash-completions)
-- [12. Contact](#contact)
-- [13. Support HomeSetup](#support-homesetup)
-- [14. Final notes](#final-notes)
+- [11. Support HomeSetup](#support-homesetup)
+- [12. Final notes](#final-notes)
+- [13. Contacts](#contacts)
 
 <!-- tocstop -->
 
@@ -698,11 +698,6 @@ iterate over the options provided by the complete function instead of just displ
 | kubectl-completion.bash        | Bash completion for kubectl                      |
 | pcf-completion.bash            | Bash completion for Cloud Foundry CLI            |
 
-## Contact
-
-You can contact us using our [Gitter](https://gitter.im/yorevs-homesetup/community) community or using our 
-[Reddit](https://www.reddit.com/user/yorevs).
-
 ## Support HomeSetup
 
 You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) 
@@ -716,3 +711,13 @@ HomeSetup will fetch for update automatically every 7 days from the installation
 **To manually keep your HomeSetup updated**, run `$ hhs updater execute`. This will install the latest HomeSetup version.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+
+## Contacts
+
+- Documentation: [API](docs/handbook/USER_HANDBOOK.md)
+- License: [MIT](LICENSE.md)
+- Code: https://github.com/yorevs/homesetup
+- Issue tracker: https://github.com/yorevs/homesetup/issues
+- Official chat: https://gitter.im/yorevs-homesetup/community
+- Contact: https://www.reddit.com/user/yorevs
+- Mailto: [Yorevs](mailto:yorevs@hotmail.com)
