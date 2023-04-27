@@ -123,7 +123,8 @@ case "${MY_OS}" in
 esac
 
 # Terminal title
-SET_TITLE="\[\033]0;${MY_OS_ICN} HomeSetup-v${HHS_VERSION}\a\]"
+TITLE="HomeSetup-v${HHS_VERSION}"
+ESCAPED_TITLE="\[\e]2;${TITLE}\a\]"
 
 # The history number of this command.
 HIST_STYLE="${PROMPT_COLOR}${MY_OS_ICN} (\!)"
@@ -150,11 +151,10 @@ PATH_STYLE="${PROMPT_COLOR} ${FOLDER_ICN} ${DIR_COLOR} \W"
 GIT_STYLE="${PROMPT_COLOR}\$(__hhs_git_prompt \" ${GIT_ICN} ${GIT_COLOR}\")"
 
 # User prompt format.
-PROMPT="${PROMPT_COLOR}${SET_TITLE} \$ "
+PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} \$ "
 
 # Set the terminal title and prompt.
 # Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details
-
 PROMPT_COMMAND="history -a"
 
 # PS1 Style: Color and icons (default).

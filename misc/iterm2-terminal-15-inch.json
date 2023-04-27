@@ -1,10 +1,6 @@
 {
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
-  "Set Local Environment Vars" : false,
+  "Thin Strokes" : 3,
+  "Custom Directory" : "No",
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -24,6 +20,7 @@
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0.73333334922790527
   },
+  "Use Custom Window Title" : true,
   "Right Option Key Sends" : 0,
   "Show Status Bar" : false,
   "Character Encoding" : 4,
@@ -313,18 +310,18 @@
   },
   "Name" : "HomeSetup-15-inch",
   "Blinking Cursor" : true,
-  "Guid" : "7AAA6B65-7B0C-4E55-B3A2-DE99D3D48E04",
-  "Idle Code" : 0,
-  "Ansi 10 Color" : {
-    "Green Component" : 1,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
+  "Guid" : "ADDFAB51-465E-4611-B07A-478C10698414",
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408
   },
+  "Ansi 10 Color" : {
+    "Green Component" : 1,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
+  "Idle Code" : 0,
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Cursor Type" : 0,
@@ -374,7 +371,11 @@
   "Columns" : 202,
   "Unicode Normalization" : 0,
   "Visual Bell" : true,
-  "Custom Directory" : "Recycle",
-  "Thin Strokes" : 3,
-  "ASCII Ligatures" : false
+  "ASCII Ligatures" : false,
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Set Local Environment Vars" : false
 }
