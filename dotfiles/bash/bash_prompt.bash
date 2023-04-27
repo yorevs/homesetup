@@ -69,6 +69,7 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
   export TERM='xterm-256color'
 fi
 
+# Prompt colors
 PROMPT_COLOR="\[${HHS_PROMPT_COLOR:-$WHITE}\]"
 ALERT_COLOR="\[${RED}\]"
 OK_COLOR="\[${GREEN}\]"
@@ -76,30 +77,56 @@ DIR_COLOR="\[${ORANGE}\]"
 GIT_COLOR="\[${CYAN}\]"
 HOST_COLOR="\[${PURPLE}\]"
 
-SET_TITLE="\[\033]0;HomeSetup-v${HHS_VERSION}\a\]"
+# Prompt icons
+MACOS_ICN="\357\205\271"
+LINUX_ICN="\357\214\232"
+UBUNTU_ICN="\357\214\233"
+CENTOS_ICN="\357\214\204"
+FEDORA_ICN="\357\214\213"
+
+USER_ICN="\357\220\225"
+ROOT_ICN="\357\222\234"
+AT_ICN="\357\207\272"
+NET_ICN="\357\233\277"
+FOLDER_ICN="\357\201\273"
+GIT_ICN="\357\204\246"
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details.
 # Use __hhs_utoh <4digit-hex> to find out the octal value of the icon.
 
 MY_OS="$(uname -s)"
 
-if [[ "${MY_OS}" == "Darwin" ]]; then
-  MY_OS_ICN="\357\205\271"
-elif [[ "${MY_OS}" == "Linux" ]]; then
-  MY_OS_ICN="\357\214\232"
-else
-  MY_OS_ICN="\357\204\211"
-fi
+case "${MY_OS}" in
+  Darwin)
+    MY_OS_ICN="${MACOS_ICN}"
+  ;;
+  Linux)
+    OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+    case "${OS_RELEASE}" in
+      ubuntu)
+        MY_OS_ICN="${UBUNTU_ICN}"
+      ;;
+      centos)
+        MY_OS_ICN="${CENTOS_ICN}"
+      ;;
+      fedora)
+        MY_OS_ICN="${FEDORA_ICN}"
+      ;;
+      *)
+        MY_OS_ICN="${LINUX_ICN}"
+      ;;
+    esac
+  ;;
+  *)
+    MY_OS_ICN="${LINUX_ICN}"
+  ;;
+esac
 
-USER_ICN="\357\200\207"
-ROOT_ICN="\357\224\205"
-GIT_ICN="\357\204\246"
-AT_ICN="\357\207\272"
-NET_ICN="\357\233\277"
-FOLDER_ICN="\357\201\273"
+# Terminal title
+SET_TITLE="\[\033]0;${MY_OS_ICN} HomeSetup-v${HHS_VERSION}\a\]"
 
 # The history number of this command.
-OS_STYLE="${PROMPT_COLOR}${MY_OS_ICN} (\!)"
+HIST_STYLE="${PROMPT_COLOR}${MY_OS_ICN} (\!)"
 
 # Logged username. Highlight when logged in as root.
 if [[ "${USER}" == "root" ]]; then
@@ -131,7 +158,7 @@ PROMPT="${PROMPT_COLOR}${SET_TITLE} \$ "
 PROMPT_COMMAND="history -a"
 
 # PS1 Style: Color and icons (default).
-PS1_STYLE=$"${OS_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
+PS1_STYLE=$"${HIST_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
 
 # PS2 Style: Continuation prompt.
 PS2_STYLE=$'... '

@@ -31,6 +31,7 @@ export HOME=${HOME:-~/}
 export USER=${USER:-$(whoami)}
 export HHS_MY_OS="$(uname -s)"
 export HHS_MY_SHELL="${SHELL//\/bin\//}"
+export HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
 export HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 export HHS_DIR=${HHS_DIR:-${HOME}/.hhs}
 export HHS_LOG_DIR=${HHS_LOG_DIR:-${HHS_DIR}/log}
