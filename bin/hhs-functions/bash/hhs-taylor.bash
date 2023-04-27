@@ -18,7 +18,7 @@ function __hhs_tailor() {
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flag="-E"
   else
-    sed_flag="r"
+    sed_flag="-r"
   fi
   
   HHS_TAILOR_CONFIG_FILE="${HHS_TAILOR_CONFIG_FILE:-${HHS_DIR}/.tailor}"
