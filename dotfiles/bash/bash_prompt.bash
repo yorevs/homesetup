@@ -87,7 +87,7 @@ FEDORA_ICN="\357\214\213"
 USER_ICN="\357\220\225"
 ROOT_ICN="\357\222\234"
 AT_ICN="\357\207\272"
-NET_ICN="\357\233\277"
+NET_ICN="\357\203\250"
 FOLDER_ICN="\357\201\273"
 GIT_ICN="\357\204\246"
 
@@ -101,8 +101,10 @@ case "${MY_OS}" in
     MY_OS_ICN="${MACOS_ICN}"
   ;;
   Linux)
+    # Most of linux distros have this file to detect the releases.
     OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
-    OS_RELEASE="${OS_RELEASE#*=}"
+    OS_RELEASE="${OS_RELEASE#*=}"    # Extracting ID=
+    OS_RELEASE="${OS_RELEASE//\"/}"  # Removing quotes
     case "${OS_RELEASE}" in
       ubuntu)
         MY_OS_ICN="${UBUNTU_ICN}"

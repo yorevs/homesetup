@@ -51,7 +51,8 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
   fi
 else
   HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
-  export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
+  HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
+  export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"
 fi
 
 # ----------------------------------------------------------------------------
