@@ -1,1 +1,1 @@
-${ORANGE}[${HHS_MY_OS}/${HHS_MY_SHELL}] ${GREEN} Welcome to HomeSetup ${BLUE}v${HHS_VERSION}${NC}
+${ORANGE}[${HHS_MY_OS}-${HHS_MY_OS_RELEASE}/${HHS_MY_SHELL}] ${GREEN} Welcome to HomeSetup ${BLUE}v${HHS_VERSION}${NC}

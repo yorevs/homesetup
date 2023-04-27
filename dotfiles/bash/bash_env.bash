@@ -39,6 +39,7 @@ fi
 # MacOs
 if [[ "Darwin" == "$(uname -s)" ]]; then
   # Hide the annoying warning about zsh
+  export HHS_MY_OS_RELEASE="$(sw_vers --productName)"
   export BASH_SILENCE_DEPRECATION_WARNING=1
   if command -v xcode-select &>/dev/null; then
     export XCODE_HOME=$(xcode-select -p)
@@ -48,6 +49,8 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
       export MACOS_SDK="${XCODE_HOME}/SDKs/MacOSX"
     fi
   fi
+else
+  export HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
 fi
 
 # ----------------------------------------------------------------------------
