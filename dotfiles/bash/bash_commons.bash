@@ -33,7 +33,7 @@ function __hhs_log() {
   fi
   case "${level}" in
     'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
-      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M-%S ')" "${level}" "${message}" >> "${HHS_LOG_FILE}"
+      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >> "${HHS_LOG_FILE}"
       ;;
     *)
       echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
@@ -61,7 +61,7 @@ function __hhs_source() {
     if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOG_FILE}"; then
       # shellcheck disable=SC1090
       if source "${filepath}" 2>> "${HHS_LOG_FILE}"; then
-        __hhs_log "INFO" "File \"${filepath}\" was sourced !"
+        __hhs_log "DEBUG" "File \"${filepath}\" was sourced !"
       else
         __hhs_log "ERROR" "File \"${filepath}\" was not sourced !"
       fi

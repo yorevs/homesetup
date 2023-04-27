@@ -72,12 +72,12 @@ function logs() {
     list_contains "DEBUG INFO WARN ERROR ALL" "${level}" || quit 1 "Invalid log level ${level}"
   fi
   
-  [[ "${level}" == "ALL" ]] && unset level
+  [[ "${level}" == "ALL" ]] && level='.*'
   
   echo ''
   echo -e "${ORANGE}HomeSetup logs (last ${HHS_LOG_LINES} lines) matching level ['${level:-ALL}'] :${NC}"
   echo ''
-  grep -m ${HHS_LOG_LINES} "${level}" "${HHS_LOG_FILE}" | __hhs_highlight "${level}"
+  grep "${level}" -m ${HHS_LOG_LINES} "${HHS_LOG_FILE}" | __hhs_tailor
   echo ''
 }
 

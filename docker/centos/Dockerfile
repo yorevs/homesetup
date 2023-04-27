@@ -1,6 +1,6 @@
 FROM centos
 
-MAINTAINER yorevs
+MAINTAINER Hugo Saporetti Junior<yorevs@hotmail.com>
 
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
@@ -13,6 +13,6 @@ WORKDIR "Python-3.10.2"
 RUN ./configure --enable-optimizations
 RUN make install
 RUN python3 -m pip install --upgrade pip
-RUN echo 'To install HomeSetup type: curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash'
+RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 WORKDIR "/"
 CMD ["bash", "--login"]
