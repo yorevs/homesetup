@@ -36,7 +36,7 @@ function host-name() {
           if sudo scutil --set HostName "${new_hostname}"; then
             echo "${GREEN}Your new hostname has changed from \"${cur_hostname}\" to ${PURPLE}\"${new_hostname}\" ${NC} !"
           else
-            quit 2 "Failed to change your hostname !"
+            quit 2 "Failed to change your hostname !" 
           fi
         else
           # Change the hostname in /etc/hosts & /etc/hostname
