@@ -323,18 +323,20 @@ Manager for HomeSetup Firebase integration.
 
 Manage your packages using installation/uninstallation recipes.
 
-Usage: hspm <option> [arguments]
+Usage: hspm [option] {install,uninstall,list,recover}
 
     Options:
-      -v  |   --version                 : Display current program version.
-      -h  |      --help                 : Display this help message.
-      -i  |   --install   <recipe>      : Install the app using the tool recipe.
-      -u  | --uninstall   <recipe>      : Uninstall the app using the tool recipe.
-      -l  |      --list   [{-a|--all}]  : List all available tool recipes based on HomeSetup development tools.
+      -v  |   --version     : Display current program version.
+      -h  |      --help     : Display this help message.
     
     Arguments:
-      recipe    : The recipe name to be installed/uninstalled.
-      all       : If this option is used, displays even tools without recipes.
+      install   <package>   : Install the package using a matching installation recipe.
+      uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
+      list [-a]             : List all available installation recipes specified by ${HHS_DEV_TOOLS}. If -a is provided,
+                              list even packages without any matching recipe.
+      recover [-i][-t]      : Install or list all packages previously installed by hspm. If -i is provided, then hspm
+                              will attempt to install all packages, otherwise the list is displayed. If -t is provided
+                              hspm will check ${HHS_DEV_TOOLS} instead of previously installed packages.
 ```
 
 ##### **Purpose**:
@@ -348,9 +350,9 @@ Manage your packages using installation/uninstallation recipes.
 ##### **Examples:**
 
 ```bash
-  $ hhs hspm execute --list' && echo 'List all available recipes'
-  $ hhs hspm execute --install nvm' && echo 'Install nvm on the system'
-  $ hhs hspm execute --uninstall nvm' && echo 'Uninstall nvm on the system'
+  $ hhs hspm execute list' && echo 'List all available recipes'
+  $ hhs hspm execute install nvm' && echo 'Install nvm on the system'
+  $ hhs hspm execute uninstall nvm' && echo 'Uninstall nvm on the system'
 ```
 
 ------
@@ -366,14 +368,16 @@ Manage your packages using installation/uninstallation recipes.
 
 HomeSetup update manager.
 
-Usage: updater updater <option>
+Usage: updater updater [option] {check,update,stamp}
 
     Options:
-      -v  |     --version : Display current program version.
-      -h  |        --help : Display this help message.
-      -c  |       --check : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
-      -u  |      --update : Check the current HomeSetup installation and look for updates.
-      -s  |  --stamp-next : Stamp the next auto-update check for 7 days ahead.
+      -v  |   --version : Display current program version.
+      -h  |      --help : Display this help message.
+      
+    Arguments:
+      check             : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
+      update            : Check the current HomeSetup installation and look for updates.
+      stamp             : Stamp the next auto-update check for 7 days ahead.
 ```
 
 ##### **Purpose**:
@@ -387,7 +391,7 @@ HomeSetup update manager.
 ##### **Examples:**
 
 ```bash
-  $ hhs updater execute --check && echo 'Fetch last updated timestamp' 
-  $ hhs updater execute --update' && echo 'Attempt to update HomeSetup'
-  $ hhs updater execute --stamp-next' && echo 'Set next update check to 7 days ahead'
+  $ hhs updater execute check && echo 'Fetch last updated timestamp' 
+  $ hhs updater execute update' && echo 'Attempt to update HomeSetup'
+  $ hhs updater execute stamp' && echo 'Set next update check to 7 days ahead'
 ```

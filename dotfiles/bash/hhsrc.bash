@@ -181,7 +181,7 @@ export PATH
 if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
   __hhs_log "INFO" "Home setup is checking for updates ..."
   if __hhs_is_reachable 'github.com'; then
-    hhs updater execute --check
+    hhs updater execute check
   else
     __hhs_log "WARN" "Github website is not reachable !"
   fi

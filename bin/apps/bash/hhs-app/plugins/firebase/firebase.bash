@@ -41,11 +41,13 @@ function execute() {
   ARGS=(${@})
   action="${ARGS[0]}"
   db_alias="${ARGS[1]}"
-  dotfiles=(
-    '.aliases' '.aliasdef' '.cmd_file' '.colors' '.env' '.path'
-    'firebase.properties' '.inputrc' '.profile' '.prompt' '.saved_dirs'
-  )
+  
+  dotfiles=($(find "${HHS_DIR}" -type f -name '.*' -exec basename {} \;))
+  dotfiles+=('firebase.properties')
+  
+  echo ''
   pushd "${HHS_DIR}" &>/dev/null || exit 1
+  
   if [[ 'upload' == "${action}" ]]; then 
     python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
   elif [[ 'download' == "${action}" ]]; then
@@ -55,7 +57,9 @@ function execute() {
   else
     python3 -m firebase "${ARGS[@]}"
   fi
+  
   popd &>/dev/null || exit 1
+  echo ''
 
   exit $?
 }

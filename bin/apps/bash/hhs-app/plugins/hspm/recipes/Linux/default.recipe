@@ -6,19 +6,27 @@ function about() {
 
 function depends() {
   
-  if ! command -v 'apt-get' > /dev/null && ! command -v 'yum' > /dev/null; then
-    __hhs_errcho "hspm.bash: no suitable tool found to install default software on this machine"
-    return 1
-  fi
-
-  return 0
+  local tools
+  
+  tools=('apt-get' 'apt' 'yum' 'dnf')
+  for pkg_man in "${tools[@]}"; do
+    command -v "${pkg_man}" &> /dev/null  && return 0
+  done
+  __hhs_errcho "hspm.bash: no suitable tool found to install default software on this machine. Tried: ${tools[*]}"
+  return 1
 }
 
 function install() {
+  
   command -v sudo &> /dev/null && SUDO=sudo
-  if command -v 'apt-get' && ${SUDO} apt-get -y install "$@"; then
+  
+  if command -v 'apt-get' &> /dev/null && ${SUDO} apt-get -y install "$@"; then
     return $?
-  elif command -v 'yum' && ${SUDO} yum -y install "$@"; then
+  elif command -v 'apt' &> /dev/null && ${SUDO} apt -y install "$@"; then
+    return $?
+  elif command -v 'yum' &> /dev/null && ${SUDO} yum -y install "$@"; then
+    return $?
+  elif command -v 'dnf' &> /dev/null && ${SUDO} dnf -y install "$@"; then
     return $?
   else
     return 1
@@ -27,9 +35,14 @@ function install() {
 
 function uninstall() {
   command -v sudo &> /dev/null && SUDO=sudo
-  if command -v 'apt-get' && ${SUDO} apt-get -y remove "$@"; then
+  
+  if command -v 'apt-get' &> /dev/null && ${SUDO} apt-get -y remove "$@"; then
     return $?
-  elif command -v 'yum' && ${SUDO} yum -y remove "$@"; then
+  elif command -v 'apt' &> /dev/null && ${SUDO} apt -y remove "$@"; then
+    return $?
+  elif command -v 'yum' &> /dev/null && ${SUDO} yum -y remove "$@"; then
+    return $?
+  elif command -v 'dnf' &> /dev/null && ${SUDO} dnf -y remove "$@"; then
     return $?
   else
     return 1

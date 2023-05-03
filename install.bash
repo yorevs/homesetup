@@ -164,7 +164,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ! -d "${HHS_HOME}" ]]; then
       echo -en "\nCreating ${HHS_HOME} directory: "
       \mkdir -p "${HHS_HOME}" || quit 2 "Unable to create directory ${HHS_HOME}"
-      echo -e " ... [   ${GREEN}OK${NC}   ]"
+      echo -e " [   ${GREEN}OK${NC}   ]"
     else
       \touch "${HHS_HOME}/tmpfile" &>/dev/null || quit 2 "Installation directory is not valid: ${HHS_HOME}"
       \rm -f "${HHS_HOME:?}/tmpfile" &>/dev/null
@@ -175,7 +175,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ! -d "${HHS_DIR}" ]]; then
       echo -en "\nCreating ${HHS_DIR} directory: "
       mkdir -p "${HHS_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
-      echo -e " ... [   ${GREEN}OK${NC}   ]"
+      echo -e " [   ${GREEN}OK${NC}   ]"
     else
       # Trying to write at the HomeSetup directory to check the permissions
       \touch "${HHS_DIR}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to access the HomeSetup directory: ${HHS_DIR}"
@@ -187,7 +187,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ! -L "${BIN_DIR}" && ! -d "${BIN_DIR}" ]]; then
       echo -en "\nCreating ${BIN_DIR} directory: "
       \mkdir -p "${BIN_DIR}" || quit 2 "Unable to create directory ${HHS_DIR}"
-      echo -e " ... [   ${GREEN}OK${NC}   ]"
+      echo -e " [   ${GREEN}OK${NC}   ]"
     else
       # Cleaning up old dotfiles links
       [[ -d "${BIN_DIR}" ]] && rm -f "${BIN_DIR:?}/*.*"
@@ -203,7 +203,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ! -L "${FONTS_DIR}" && ! -d "${FONTS_DIR}" ]]; then
       echo -en "\nCreating ${FONTS_DIR} directory: "
       \mkdir -p "${FONTS_DIR}" || quit 2 "Unable to create fonts directory \"${FONTS_DIR}\""
-      echo -e " ... [   ${GREEN}OK${NC}   ]"
+      echo -e " [   ${GREEN}OK${NC}   ]"
     fi
 
     # Check the installation method
@@ -417,8 +417,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
-        [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-        [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+        [[ -L "${dotfile}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
       done
     # If `all' option is NOT used, prompt for confirmation
     else
@@ -435,15 +435,15 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "${NC}"
-        [[ -L "${dotfile}" ]] && echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
-        [[ -L "${dotfile}" ]] || echo -e "${WHITE} ... [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+        [[ -L "${dotfile}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
       done
     fi
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ${BLUE}"
     if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
     fi
@@ -454,7 +454,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
     fi
@@ -465,7 +465,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       \( -iname "**.${SHELL_TYPE}" \) \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
     fi
@@ -476,7 +476,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
       \( -iname "**.otf" -o -iname "**.ttf" \) \
       -exec cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
@@ -488,7 +488,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
       -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
-      echo -e "${WHITE} ... [   ${GREEN}OK${NC}   ]"
+      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
     fi

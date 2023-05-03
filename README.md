@@ -575,7 +575,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | hhs-toolcheck.bash     | __hhs_toolcheck        | Check whether a tool is installed on the system                             |
 |                        | __hhs_version          | Check the version of the app using the most common ways                     |
 |                        | __hhs_tools            | Check whether a list of development tools are installed or not              |
-|                        | __hhs_about_command    | Display information about the given command                                 |
+|                        | __hhs_about            | Display information about the given command                                 |
 | hhs-security.bash      | __hhs_encrypt_file     | Encrypt file using GPG                                                      |
 |                        | __hhs_decrypt_file     | Decrypt file using GPG                                                      |
 | hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on **.tailor** file          |

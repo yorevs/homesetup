@@ -27,14 +27,16 @@ USAGE="
 
 HomeSetup update manager.
 
-Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} <option>
+Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
 
     Options:
-      -v  |     --version : Display current program version.
-      -h  |        --help : Display this help message.
-      -c  |       --check : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
-      -u  |      --update : Check the current HomeSetup installation and look for updates.
-      -s  |  --stamp-next : Stamp the next auto-update check for 7 days ahead.
+      -v  |   --version : Display current program version.
+      -h  |      --help : Display this help message.
+      
+    Arguments:
+      check             : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
+      update            : Check the current HomeSetup installation and look for updates.
+      stamp             : Stamp the next auto-update check for 7 days ahead.
 "
 
 UNSETS=(
@@ -56,7 +58,7 @@ is_greater() {
       return 0
     fi
   done
-  
+
   echo -e "${GREEN}Your version of HomeSetup is up-to-date v${HHS_VERSION}${NC}"
 
   return 1
@@ -160,26 +162,27 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  [[ -z "$1" ]] && usage 1
+
+  [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
+  [[ "$1" == "-v" || "$1" == "--version" ]] && version
+
   cmd="$1"
   shift
+  args=("$@")
 
   shopt -s nocasematch
   case "$cmd" in
-  -h | --help)
-    usage 0
+    check)
+      update_check
     ;;
-  -c | --check)
-    update_check
+    update)
+      update_hhs
     ;;
-  -u | --update)
-    update_hhs
+    stamp)
+      stamp_next_update
     ;;
-  -s | --stamp-next)
-    stamp_next_update
-    ;;
-  *)
-    usage 1 "Invalid ${PLUGIN_NAME} command: \"$cmd\" !"
+    *)
+      usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
     ;;
   esac
   shopt -u nocasematch

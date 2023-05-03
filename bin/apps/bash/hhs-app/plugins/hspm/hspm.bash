@@ -25,28 +25,37 @@ USAGE="
 
 Manage your packages using installation/uninstallation recipes.
 
-Usage: $PLUGIN_NAME <option> [arguments]
+Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 
     Options:
-      -v  |   --version                 : Display current program version.
-      -h  |      --help                 : Display this help message.
-      -i  |   --install   <recipe>      : Install the app using the tool recipe.
-      -u  | --uninstall   <recipe>      : Uninstall the app using the tool recipe.
-      -l  |      --list   [{-a|--all}]  : List all available tool recipes based on HomeSetup development tools.
+      -v  |   --version     : Display current program version.
+      -h  |      --help     : Display this help message.
     
     Arguments:
-      recipe    : The recipe name to be installed/uninstalled.
-      all       : If this option is used, displays even tools without recipes.
+      install   <package>   : Install the package using a matching installation recipe.
+      uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
+      list [-a]             : List all available installation recipes specified by \${HHS_DEV_TOOLS}. If -a is provided,
+                              list even packages without any matching recipe.
+      recover [-i][-t]      : Install or list all packages previously installed by hspm. If -i is provided, then hspm
+                              will attempt to install all packages, otherwise the list is displayed. If -t is provided
+                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages.
 "
 
 UNSETS=(
   help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
+  add_breadcrumb del_breadcrumb recover_packages
 )
 
-[[ -s "$HHS_DIR/bin/app-commons.bash" ]] && \. "$HHS_DIR/bin/app-commons.bash"
+[[ -s "$HHS_DIR/bin/app-commons.bash" ]] && source "$HHS_DIR/bin/app-commons.bash"
 
 # Flag to enlist even the missing recipes
 LIST_ALL=
+
+# Flag to install all recovered packages
+RECOVER_INSTALL=
+
+# Flag to recover HHS_DEV_TOOLS instead of breadcrumbs
+RECOVER_TOOLS=
 
 # Hold all hspm recipes
 ALL_RECIPES=()
@@ -57,17 +66,31 @@ DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 # Directory containing all hspm recipes
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
+# File containing all installed/uninstalled packages
+BREADCRUMB_FILE="$HHS_DIR/.hspm-breadcrumbs"
+
 # purpose: Unset all declared functions from the recipes
 cleanup_recipes() {
 
   unset -f 'about' 'depends' 'install' 'uninstall'
 }
 
-# purpose: shellcheck disable=2155,SC2059,SC2183
+# Add a package to the breadcrumb file
+add_breadcrumb() {
+  grep -qxF "${1}" "${BREADCRUMB_FILE}" || echo "${1}" >>"${BREADCRUMB_FILE}"
+}
+
+# Remove a package to the breadcrumb file
+del_breadcrumb() {
+  ised -e "/${1}/d" "${BREADCRUMB_FILE}"
+}
+
+# shellcheck disable=2155,SC2059,SC2183
+# purpose: List all available hspm recipes
 list_recipes() {
 
   local index=0 recipe pad_len=20 pad
-  
+
   pad=$(printf '%0.1s' "."{1..60})
 
   for app in ${DEV_TOOLS[*]}; do
@@ -75,7 +98,7 @@ list_recipes() {
     if [[ -n "${recipe}" && -f "${recipe}" ]]; then
       ALL_RECIPES+=("$app")
       index=$((index + 1))
-      \. "${recipe}"
+      source "${recipe}"
       if test -z "$1"; then
         printf '%3s - %s' "${index}" "${BLUE}${app} "
         printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
@@ -101,28 +124,33 @@ install_recipe() {
 
   local recipe recipe_name default_recipe
 
-  recipe="${RECIPES_DIR}/$(uname -s)/$1.recipe"
+  package="${1}"
+  recipe="${RECIPES_DIR}/$(uname -s)/${package}.recipe"
 
   if [[ -f "${recipe}" ]]; then
-    \. "${recipe}"
-    if command -v "$1" > /dev/null; then
-      echo -e "${YELLOW}\"$1\" is already installed on the system !${NC}" && return 1
+    source "${recipe}"
+    if command -v "${package}" >/dev/null; then
+      echo -e "${YELLOW}\"${package}\" is already installed on the system !${NC}"
+      add_breadcrumb "${package}"
+      return 1
     fi
-    echo -e "${YELLOW}Installing \"$1\", please wait ... "
+    echo -e "${YELLOW}Installing \"${package}\", please wait ... "
     if install; then
       echo -e "${GREEN}Installation successful !${NC}"
+      add_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to install app \"$1\" !"
+      quit 1 "${PLUGIN_NAME}: Failed to install app \"${package}\" !"
     fi
   else
     recipe_name=$(basename "${recipe%\.*}")
     echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to install it ...${NC}"
     default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
-    \. "${default_recipe}"
-    if install "${1}"; then
-      echo -e "${GREEN}Installation successful !${NC}"
+    source "${default_recipe}"
+    if depends && install "${package}"; then
+      echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
+      add_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to install \"${1}\" using the default recipe !"
+      quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" using the default recipe !"
     fi
   fi
 }
@@ -132,30 +160,83 @@ uninstall_recipe() {
 
   local recipe recipe_name
 
-  recipe="$RECIPES_DIR/$(uname -s)/$1.recipe"
+  package="${1}"
+  recipe="$RECIPES_DIR/$(uname -s)/${package}.recipe"
 
   if [[ -f "${recipe}" ]]; then
-    \. "${recipe}"
-    if ! command -v "$1" > /dev/null; then
-      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}" && return 1
+    source "${recipe}"
+    if ! command -v "${package}" >/dev/null; then
+      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}"
+      del_breadcrumb "${package}"
+      return 1
     fi
-    echo -e "${YELLOW}Uninstalling $1, please wait ... "
+    echo -e "${YELLOW}Uninstalling ${package}, please wait ... "
     if uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
+      del_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"$1\" !"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"${package}\" !"
     fi
   else
     recipe_name=$(basename "${recipe%\.*}")
     echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to uninstall it ...${NC}"
     default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
-    \. "${default_recipe}"
-    if uninstall "${1}"; then
+    source "${default_recipe}"
+    if uninstall "${package}"; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
+      del_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstallation \"${1}\" using the default recipe !"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstallation \"${package}\" using the default recipe !"
     fi
   fi
+}
+
+# shellcheck disable=SC2206,SC2207
+# @purpose: Install or list all packages previously installed by hspm.
+function recover_packages() {
+
+  local index=0 package pad_len=30 pad all_packages
+
+  pad=$(printf '%0.1s' "."{1..80})
+
+  if [[ -n "${RECOVER_INSTALL}" ]]; then
+    echo -en "\n${YELLOW}Installing "
+  else
+    echo -en "\n${YELLOW}Listing "
+  fi
+
+  if [[ -z "${RECOVER_TOOLS}" ]]; then
+    echo -e "recovered hspm packages ... "
+    all_packages=($(grep . "${BREADCRUMB_FILE}"))
+  else
+    echo -e "development tools ... "
+    all_packages=(${HHS_DEV_TOOLS[@]})
+  fi
+  echo "${NC}"
+
+  if [[ -n "${RECOVER_INSTALL}" ]]; then
+    for package in "${all_packages[@]}"; do
+      if ! command -v "${package}" &>/dev/null; then
+        printf '%3s - %s' "${index}" "${BLUE}Installing package ${package} ${NC}"
+        printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
+        if install_recipe "${package}" &> /dev/null; then
+          echo -e " [   ${GREEN}OK${NC}   ]"
+        else
+          echo -e " [ ${RED}FAILED${NC} ]"
+        fi
+        index=$((index + 1))
+      fi
+    done
+  else
+    for package in "${all_packages[@]}"; do
+      printf '%3s - %s' "${index}" "${BLUE}${package} "
+      printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
+      command -v "${package}" &>/dev/null && echo -e "${GREEN} INSTALLED${NC}" || echo -e "${RED} NOT INSTALLED${NC}"
+      index=$((index + 1))
+    done
+  fi
+  [[ $index -gt 0 ]] || echo "${YELLOW}No packages has been installed${NC}"
+  echo ''
 }
 
 # @purpose: HHS plugin required function
@@ -179,10 +260,14 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
 
-  [[ -z "$1" ]] && usage 1
+  [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
+  [[ "$1" == "-v" || "$1" == "--version" ]] && version
+
   if [[ ${#DEV_TOOLS[*]} -le 0 ]]; then
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
   fi
+
+  touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access the hspm breadcrumb file: ${BREADCRUMB_FILE}"
 
   cmd="$1"
   shift
@@ -190,36 +275,42 @@ function execute() {
 
   shopt -s nocasematch
   case "$cmd" in
-    # Install the app
-    -i | --install)
-      [[ "$#" -le 0 ]] && usage 1
-      for next_recipe in "${@}"; do
-        echo ''
-        install_recipe "$next_recipe"
-      done
+  # Install the app
+  install)
+    [[ "$#" -le 0 ]] && usage 1
+    for next_recipe in "${@}"; do
       echo ''
-      ;;
-    # Uninstall the app
-    -u | --uninstall)
-      [[ "$#" -le 0 ]] && usage 1
-      for next_recipe in "${@}"; do
-        echo ''
-        uninstall_recipe "$next_recipe"
-      done
+      install_recipe "$next_recipe"
+    done
+    echo ''
+    ;;
+  # Uninstall the app
+  uninstall)
+    [[ "$#" -le 0 ]] && usage 1
+    for next_recipe in "${@}"; do
       echo ''
-      ;;
-    # List available apps
-    -l | --list)
-      if [[ "$1" == "-a" || "$1" == "--all" ]]; then
-        LIST_ALL=1
-      fi
-      echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
-      list_recipes ""
-      echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
-      ;;
-    *)
-      usage 1 "Invalid ${PLUGIN_NAME} command: \"$cmd\" !"
-      ;;
+      uninstall_recipe "$next_recipe"
+    done
+    echo ''
+    ;;
+  # Recover installed apps
+  recover)
+    [[ "$1" == "-i" || "$2" == "-i" ]] && RECOVER_INSTALL=1
+    [[ "$1" == "-t" || "$2" == "-t" ]] && RECOVER_TOOLS=1
+    recover_packages
+    ;;
+  # List available apps
+  list)
+    if [[ "$1" == "-a" ]]; then
+      LIST_ALL=1
+    fi
+    echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
+    list_recipes ""
+    echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
+    ;;
+  *)
+    usage 1 "Invalid ${PLUGIN_NAME} command: \"$cmd\" !"
+    ;;
   esac
   shopt -u nocasematch
 

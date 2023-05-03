@@ -117,7 +117,7 @@ function __hhs_tools() {
 
 # @function: Display information about the given command.
 # @param $1 [Req] : The command to check.
-function __hhs_about_command() {
+function __hhs_about() {
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
     return 1

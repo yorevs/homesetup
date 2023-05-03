@@ -114,10 +114,10 @@ Check whether a list of development tools are installed or not.
 ```
 
 ------
-### __hhs_about_command
+### __hhs_about
 
 ```bash
-Usage: __hhs_about_command <command>
+Usage: __hhs_about <command>
 ```
 
 ##### **Purpose**:
@@ -135,5 +135,5 @@ Display information about the given command.
 ##### **Examples:**
 
 ```bash
-  $ __hhs_about_command ls
+  $ __hhs_about ls
 ```
