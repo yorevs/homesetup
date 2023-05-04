@@ -36,11 +36,11 @@ if __hhs_has  python3; then
   export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 fi
 
-# MacOs
+# My OS
 if [[ "Darwin" == "$(uname -s)" ]]; then
   # Hide the annoying warning about zsh
-  export HHS_MY_OS_RELEASE="$(sw_vers --productName)"
   export BASH_SILENCE_DEPRECATION_WARNING=1
+  export HHS_MY_OS_RELEASE="$(sw_vers -productName)"
   if command -v xcode-select &>/dev/null; then
     export XCODE_HOME=$(xcode-select -p)
     if [[ -d "${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" ]]; then

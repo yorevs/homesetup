@@ -35,7 +35,10 @@ function __hhs_envs() {
   touch "${HHS_ENV_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [regex_filters]"
+    echo "Usage: ${FUNCNAME[0]} [options] [regex_filters]"
+    echo ''
+    echo '    Options: '
+    echo '      -e : Edit current HHS_ENV_FILE.'
     return 1
   else
     if [[ "$1" == '-e' ]]; then

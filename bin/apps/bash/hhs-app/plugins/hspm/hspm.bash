@@ -36,9 +36,10 @@ Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
       uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
       list [-a]             : List all available installation recipes specified by \${HHS_DEV_TOOLS}. If -a is provided,
                               list even packages without any matching recipe.
-      recover [-i][-t]      : Install or list all packages previously installed by hspm. If -i is provided, then hspm
+      recover [-i,-t,-e]    : Install or list all packages previously installed by hspm. If -i is provided, then hspm
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
-                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages.
+                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
+                              provided, then the default editor will open the recovery file.
 "
 
 UNSETS=(
@@ -69,20 +70,22 @@ RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 # File containing all installed/uninstalled packages
 BREADCRUMB_FILE="$HHS_DIR/.hspm-breadcrumbs"
 
+# @purpose: Add a package to the breadcrumb file
+function add_breadcrumb() {
+  local package="${1}" os=${HHS_MY_OS_RELEASE}
+  grep -qxF "${os}:${package}" "${BREADCRUMB_FILE}" || echo "${1}" >>"${BREADCRUMB_FILE}"
+}
+
+# @purpose: Remove a package to the breadcrumb file
+function del_breadcrumb() {
+  local package="${1}" os=${HHS_MY_OS_RELEASE}
+  ised -e "/${os}:${package}/d" "${BREADCRUMB_FILE}"
+}
+
 # purpose: Unset all declared functions from the recipes
 cleanup_recipes() {
 
   unset -f 'about' 'depends' 'install' 'uninstall'
-}
-
-# Add a package to the breadcrumb file
-add_breadcrumb() {
-  grep -qxF "${1}" "${BREADCRUMB_FILE}" || echo "${1}" >>"${BREADCRUMB_FILE}"
-}
-
-# Remove a package to the breadcrumb file
-del_breadcrumb() {
-  ised -e "/${1}/d" "${BREADCRUMB_FILE}"
 }
 
 # shellcheck disable=2155,SC2059,SC2183
@@ -127,16 +130,16 @@ install_recipe() {
   package="${1}"
   recipe="${RECIPES_DIR}/$(uname -s)/${package}.recipe"
 
+  if command -v "${package}" >/dev/null; then
+    add_breadcrumb "${package}"
+    quit 1 "${YELLOW}\"${package}\" is already installed on the system !"
+  fi
+  
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
-    if command -v "${package}" >/dev/null; then
-      echo -e "${YELLOW}\"${package}\" is already installed on the system !${NC}"
-      add_breadcrumb "${package}"
-      return 1
-    fi
     echo -e "${YELLOW}Installing \"${package}\", please wait ... "
     if install; then
-      echo -e "${GREEN}Installation successful !${NC}"
+      echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
       add_breadcrumb "${package}"
     else
       quit 1 "${PLUGIN_NAME}: Failed to install app \"${package}\" !"
@@ -163,15 +166,15 @@ uninstall_recipe() {
   package="${1}"
   recipe="$RECIPES_DIR/$(uname -s)/${package}.recipe"
 
+  if ! command -v "${package}" >/dev/null; then
+    del_breadcrumb "${package}"
+    quit 1 "${YELLOW}\"${package}\" is not installed on the system !"
+  fi
+  
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
-    if ! command -v "${package}" >/dev/null; then
-      echo -e "${YELLOW}\"$1\" is not installed on the system !${NC}"
-      del_breadcrumb "${package}"
-      return 1
-    fi
     echo -e "${YELLOW}Uninstalling ${package}, please wait ... "
-    if uninstall; then
+    if depends && uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
       del_breadcrumb "${package}"
     else
@@ -195,7 +198,7 @@ uninstall_recipe() {
 # @purpose: Install or list all packages previously installed by hspm.
 function recover_packages() {
 
-  local index=0 package pad_len=30 pad all_packages
+  local index=0 package pad_len=30 pkg pad all_packages os=${HHS_MY_OS_RELEASE}
 
   pad=$(printf '%0.1s' "."{1..80})
 
@@ -207,7 +210,7 @@ function recover_packages() {
 
   if [[ -z "${RECOVER_TOOLS}" ]]; then
     echo -e "recovered hspm packages ... "
-    all_packages=($(grep . "${BREADCRUMB_FILE}"))
+    all_packages=($(grep "^${os}:" "${BREADCRUMB_FILE}"))
   else
     echo -e "development tools ... "
     all_packages=(${HHS_DEV_TOOLS[@]})
@@ -215,7 +218,8 @@ function recover_packages() {
   echo "${NC}"
 
   if [[ -n "${RECOVER_INSTALL}" ]]; then
-    for package in "${all_packages[@]}"; do
+    for pkg in "${all_packages[@]}"; do
+      package="${pkg#*:}"
       if ! command -v "${package}" &>/dev/null; then
         printf '%3s - %s' "${index}" "${BLUE}Installing package ${package} ${NC}"
         printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
@@ -228,14 +232,15 @@ function recover_packages() {
       fi
     done
   else
-    for package in "${all_packages[@]}"; do
+    for pkg in "${all_packages[@]}"; do
+      package="${pkg#*:}"
       printf '%3s - %s' "${index}" "${BLUE}${package} "
       printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
       command -v "${package}" &>/dev/null && echo -e "${GREEN} INSTALLED${NC}" || echo -e "${RED} NOT INSTALLED${NC}"
       index=$((index + 1))
     done
   fi
-  [[ $index -gt 0 ]] || echo "${YELLOW}No packages has been installed${NC}"
+  [[ $index -gt 0 ]] || echo "${YELLOW}No packages has been recovered ${NC}"
   echo ''
 }
 
@@ -295,6 +300,7 @@ function execute() {
     ;;
   # Recover installed apps
   recover)
+    [[ "$1" == "-e" || "$2" == "-e" || "$3" == "-e" ]] && __hhs_open "${BREADCRUMB_FILE}" && exit 0
     [[ "$1" == "-i" || "$2" == "-i" ]] && RECOVER_INSTALL=1
     [[ "$1" == "-t" || "$2" == "-t" ]] && RECOVER_TOOLS=1
     recover_packages

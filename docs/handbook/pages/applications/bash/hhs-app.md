@@ -332,11 +332,12 @@ Usage: hspm [option] {install,uninstall,list,recover}
     Arguments:
       install   <package>   : Install the package using a matching installation recipe.
       uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
-      list [-a]             : List all available installation recipes specified by ${HHS_DEV_TOOLS}. If -a is provided,
+      list [-a]             : List all available installation recipes specified by \${HHS_DEV_TOOLS}. If -a is provided,
                               list even packages without any matching recipe.
-      recover [-i][-t]      : Install or list all packages previously installed by hspm. If -i is provided, then hspm
+      recover [-i,-t,-e]    : Install or list all packages previously installed by hspm. If -i is provided, then hspm
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
-                              hspm will check ${HHS_DEV_TOOLS} instead of previously installed packages.
+                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
+                              provided, then the default editor will open the recovery file.
 ```
 
 ##### **Purpose**:

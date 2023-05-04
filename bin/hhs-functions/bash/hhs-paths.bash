@@ -26,8 +26,8 @@ function __hhs_paths() {
     echo '      -a <path> : Add to the current <path> to PATH.'
     echo '      -r <path> : Remove from the current <path> from PATH.'
     echo '      -e        : Edit current HHS_PATHS_FILE.'
-    echo '      -c        : Attempt to clears non-existing paths. System paths are not affected'
-    echo '      -q        : Quiet mode on'
+    echo '      -c        : Attempt to clear non-existing paths. System paths are not affected.'
+    echo '      -q        : Quiet mode on.'
     echo ''
     echo '  Notes: '
     echo '    When no arguments are provided it will list all PATH payload'
@@ -77,7 +77,7 @@ function __hhs_paths() {
       return 0
     elif [[ "-a" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
-      grep -q "$2" "${HHS_PATHS_FILE}" && return 0
+      grep -qxF "$2" "${HHS_PATHS_FILE}" && return 0
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"
       if [[ -d "$2" ]]; then
         echo "$2" >>"${HHS_PATHS_FILE}"
@@ -88,7 +88,7 @@ function __hhs_paths() {
       fi
     elif [[ "-r" == "$1" ]]; then
       [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
-      if grep -q "$2" "${HHS_PATHS_FILE}" && [[ -z ${quiet} ]]; then
+      if grep -qxF "$2" "${HHS_PATHS_FILE}" && [[ -z ${quiet} ]]; then
         if ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"; then
           export PATH=${PATH//$2:/}
           echo "${YELLOW}Path was removed: ${WHITE}\"$2\" ${NC}"

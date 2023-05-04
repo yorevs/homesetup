@@ -42,8 +42,8 @@ Usage: __hhs_paths [options] <args>
       -a <path> : Add to the current <path> to PATH.
       -r <path> : Remove from the current <path> from PATH.
       -e        : Edit current HHS_PATHS_FILE.
-      -c        : Attempt to clears non-existing paths. System paths are not affected
-      -q        : Quiet mode on
+      -c        : Attempt to clear non-existing paths. System paths are not affected.
+      -q        : Quiet mode on.
 
   Notes:
     When no arguments are provided it will list all PATH entries

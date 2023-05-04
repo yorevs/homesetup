@@ -32,7 +32,7 @@ UNSETS=('quit' 'usage' 'version' 'trim')
 # @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR
 # @param $2 [Opt] : The exit message to be displayed.
-quit() {
+function quit() {
   # Unset all declared functions.
   unset -f quit usage version trim "${UNSETS[*]}"
   exit_code=${1:-0}
@@ -47,7 +47,7 @@ quit() {
 # @purpose: Display the usage message and exit with the provided code ( or zero as default ).
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE .
 # @param $2 [Opt] : The exit message to be displayed.
-usage() {
+function usage() {
   exit_code=${1:-0}
   shift
   echo -en "${USAGE}"
@@ -56,7 +56,7 @@ usage() {
 }
 
 # @purpose: Display the current application version and exit.
-version() {
+function version() {
   quit 0 "$APP_NAME v$VERSION"
 }
 
@@ -66,7 +66,7 @@ version() {
 
 # @purpose: Trim whitespaces from the provided text.
 # @param $1..$N [Req] : The text to be trimmed.
-trim() {
+function trim() {
 
   local var="$*"
   # remove leading whitespace characters
@@ -82,13 +82,13 @@ trim() {
 # @purpose: Check whether the list contains the specified string.
 # @param $1 [Req] : The list to check against.
 # @param $2 [Req] : The string to be checked.
-list_contains() {
+function list_contains() {
     [[ $1 =~ (^|[[:space:]])$2($|[[:space:]]) ]] && return 0 || return 1
 }
 
 # @purpose: Standardized ised.
 # @param $1..N [Req] : The sed arguments/
-ised() {
+function ised() {
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flags="-i '' -E"
   else
@@ -102,7 +102,7 @@ ised() {
 
 # @purpose: Standardized esed.
 # @param $1..N [Req] : The sed arguments/
-esed() {
+function esed() {
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flags="-E"
   else
