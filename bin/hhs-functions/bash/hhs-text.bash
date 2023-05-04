@@ -68,30 +68,3 @@ function __hhs_json_print() {
 
   return 0
 }
-
-# @function: Create and/or open a file using the default editor
-# @param $1 [Req] : The file path
-function __hhs_edit() {
-
-  if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <file_path>"
-    return 1
-  else
-    [[ -f "$1" ]] || touch "$1" >/dev/null 2>&1
-    [[ -f "$1" ]] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"$1\""
-    if [[ -n "${HHS_DEFAULT_EDITOR}" ]] && ${HHS_DEFAULT_EDITOR} "$1"; then
-      echo ''
-    elif open "$1" >/dev/null 2>&1; then
-      echo ''
-    elif vi "$1"; then
-      echo ''
-    else
-      __hhs_errcho "${FUNCNAME[0]}: Unable to find a editor for the file \"$1\""
-      return 1
-    fi
-
-    return 0
-  fi
-
-  return 1
-}

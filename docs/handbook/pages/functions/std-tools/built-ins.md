@@ -111,3 +111,54 @@ Convert unicode to hexadecimal
 ```bash
   $ __hhs_utoh f123 f321 && echo "Thats the hexadecimal representation of the unicode valus f123 and f321"
 ```
+
+------
+### __hhs_open
+
+```bash
+Usage: __hhs_open <file_path>
+```
+
+##### **Purpose**:
+
+Open a file or URL with the default program.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The url or program arguments to be passed to open.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_open http://google.com
+  $ __hhs_open /tmp/test.txt
+```
+
+------
+### __hhs_edit
+
+```bash
+Usage: __hhs_edit <file_path>
+```
+
+##### **Purpose**:
+
+Create and/or open a file using the default editor.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Required_ : The file path.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_edit /tmp/test.txt
+```

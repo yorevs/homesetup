@@ -111,28 +111,3 @@ Pretty print (format) JSON string.
 ```bash
   $ __hhs_json_print '[{"name":"my name","age":30}]'
 ```
-
-------
-### __hhs_edit
-
-```bash
-Usage: __hhs_edit <file_path>
-```
-
-##### **Purpose**:
-
-Create and/or open a file using the default editor.
-
-##### **Returns**:
-
-**0** on success; **non-zero** otherwise.
-
-##### **Parameters**: 
-
-  - $1 _Required_ : The file path.
-
-##### **Examples:**
-
-```bash
-  $ example here
-```

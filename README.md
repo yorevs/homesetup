@@ -556,6 +556,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | hhs-built-ins.bash     | __hhs_random_number    | Generate a random number int the range <min> <max> (all limits included)    |
 |                        | __hhs_ascof            | Display the decimal ASCII representation of a character                     |
 |                        | __hhs_open             | Open a file or URL with the default program                                 |
+|                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |
 |                        | __hhs_utoh             | Convert unicode to hexadecimal                                              |
 | hhs-network.bash       | __hhs_active_ifaces    | Display a list of active network interfaces                                 |
 |                        | __hhs_ip               | Display the associated machine IP of the given kind                         |
@@ -606,7 +607,6 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | hhs-text.bash          | __hhs_errcho           | Echo a message in red color and to stderr                                   |
 |                        | __hhs_highlight        | Highlight words from the piped stream                                       |
 |                        | __hhs_json_print       | Pretty print **(format) JSON** string                                       |
-|                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |
 
 ### Development tools
 

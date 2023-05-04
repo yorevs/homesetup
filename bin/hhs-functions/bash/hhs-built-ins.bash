@@ -38,6 +38,32 @@ function __hhs_open() {
     __hhs_has 'open' && \open "$@" && return 0
   elif [[ "Linux" == "${HHS_MY_OS}" ]]; then
     __hhs_has 'xdg-open' && \xdg-open "$@" && return 0
+    __hhs_has 'vi' && \vi "$@" && return 0
+  fi
+
+  return $?
+}
+
+# @function: Create and/or open a file using the default editor
+# @param $1 [Req] : The file path
+function __hhs_edit() {
+
+  local filename="$1" editor="${HHS_DEFAULT_EDITOR}"
+  
+  if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <file_path>"
+    return 1
+  else
+    [[ -f "${filename}" ]] || touch "${filename}" >/dev/null 2>&1
+    [[ -f "${filename}" ]] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"${filename}\""
+    
+    if [[ -n "${editor}" ]] && command -v "${editor}" && ${editor} "${filename}"; then
+      return $?
+    elif vi "${filename}"; then
+      return $?
+    else
+      __hhs_errcho "${FUNCNAME[0]}: Unable to find a editor for the file \"${filename}\""
+    fi
   fi
 
   return 1
