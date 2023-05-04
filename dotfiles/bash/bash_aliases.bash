@@ -131,9 +131,9 @@ alias ps2='export PS1=$PS2_STYLE'
 # @category: HomeSetup
 
 # @alias: Shortcut for hhs hspm plug-in
-alias __hhs_hspm='hhs hspm execute'
+alias __hhs_hspm='__hhs hspm execute'
 # @alias: Shortcut for hhs updater plug-in
-alias __hhs_hhu='hhs updater execute'
+alias __hhs_hhu='__hhs updater execute'
 # @alias: Reload HomeSetup
 alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
 # @alias: Clear and reset all cursor attributes and IFS
@@ -271,14 +271,16 @@ esac
 # @category: Python aliases
 
 if __hhs_has "python3"; then
-  # @alias: Shortcut for hhs vault plug-in
+  # @alias: Shortcut for clitt module
   alias __hhs_hspylib='python3 -m clitt'
-  # @alias: Shortcut for vault plug-in
+  # @alias: Shortcut for vault module
   alias __hhs_vault='python3 -m vault'
-    # @alias: Shortcut for cfman plug-in
+  # @alias: Shortcut for cfman module
   alias __hhs_cfman='python3 -m cfman'
+  # @alias: Shortcut for kafman module
+  alias __hhs_kafman='python3 -m kafman'
   # @alias: Shortcut for hhs firebase plug-in
-  alias __hhs_firebase='hhs firebase execute'
+  alias __hhs_firebase='__hhs firebase execute'
   # @alias: Evaluate mathematical expressions
   alias calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings

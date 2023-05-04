@@ -180,7 +180,7 @@ __hhs_comp_hhs() {
   if [[ ${#COMP_WORDS[@]} -eq 2 ]]; then
     # Let the user know about the search
     echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-    suggestions=($(hhs list opts))
+    suggestions=($(__hhs list opts))
     # Erase the searching text after search is done
     echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
     COMPREPLY=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[1]}"))

@@ -24,13 +24,13 @@ Usage: ${APP_NAME} <arguments> [options]
 UNSETS=('quit' 'usage' 'version' 'trim')
 
 # Import pre-defined HomeSetup bash files
-[[ -f "${HOME}"/.bash_env ]] && \. "${HOME}"/.bash_env
-[[ -f "${HOME}"/.bash_colors ]] && \. "${HOME}"/.bash_colors
-[[ -f "${HOME}"/.bash_aliases ]] && \. "${HOME}"/.bash_aliases
-[[ -f "${HOME}"/.bash_functions ]] && \. "${HOME}"/.bash_functions
+[[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_env
+[[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_colors
+[[ -f "${HOME}"/.bash_aliases ]] && source "${HOME}"/.bash_aliases
+[[ -f "${HOME}"/.bash_functions ]] && source "${HOME}"/.bash_functions
 
 # @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
-# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR .
 # @param $2 [Opt] : The exit message to be displayed.
 function quit() {
   # Unset all declared functions.
@@ -69,6 +69,7 @@ function version() {
 function trim() {
 
   local var="$*"
+  
   # remove leading whitespace characters
   var="${var#"${var%%[![:space:]]*}"}"
 
@@ -87,8 +88,10 @@ function list_contains() {
 }
 
 # @purpose: Standardized ised.
-# @param $1..N [Req] : The sed arguments/
+# @param $1..N [Req] : The sed arguments
 function ised() {
+  local sed_flags
+  
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flags="-i '' -E"
   else
@@ -101,8 +104,10 @@ function ised() {
 }
 
 # @purpose: Standardized esed.
-# @param $1..N [Req] : The sed arguments/
+# @param $1..N [Req] : The sed arguments
 function esed() {
+    local sed_flags
+  
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flags="-E"
   else

@@ -40,12 +40,12 @@ unalias hhs &> /dev/null
 
 # @function: Invoke the hhs application manager
 # @param $* [Opt] : All parameters are passed to hhs.bash
-function hhs() {
+function __hhs() {
   if [[ -z "$1" ]]; then
     cd "${HHS_HOME}" || return 1
   else
     hhs.bash "${@}" || return 1
   fi
 
-  return 0
+  return $?
 }

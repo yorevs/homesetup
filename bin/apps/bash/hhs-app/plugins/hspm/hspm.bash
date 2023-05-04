@@ -68,17 +68,17 @@ DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
 # File containing all installed/uninstalled packages
-BREADCRUMB_FILE="$HHS_DIR/.hspm-breadcrumbs"
+BREADCRUMB_FILE="$HHS_DIR/.hspm"
 
 # @purpose: Add a package to the breadcrumb file
 function add_breadcrumb() {
-  local package="${1}" os=${HHS_MY_OS_RELEASE}
-  grep -qxF "${os}:${package}" "${BREADCRUMB_FILE}" || echo "${1}" >>"${BREADCRUMB_FILE}"
+  local package="${1}" os="${HHS_MY_OS_RELEASE}"
+  grep -qxF "${os}:${package}" "${BREADCRUMB_FILE}" || echo "${os}:${package}" >>"${BREADCRUMB_FILE}"
 }
 
 # @purpose: Remove a package to the breadcrumb file
 function del_breadcrumb() {
-  local package="${1}" os=${HHS_MY_OS_RELEASE}
+  local package="${1}" os="${HHS_MY_OS_RELEASE}"
   ised -e "/${os}:${package}/d" "${BREADCRUMB_FILE}"
 }
 
@@ -194,11 +194,10 @@ uninstall_recipe() {
   fi
 }
 
-# shellcheck disable=SC2206,SC2207
 # @purpose: Install or list all packages previously installed by hspm.
 function recover_packages() {
 
-  local index=0 package pad_len=30 pkg pad all_packages os=${HHS_MY_OS_RELEASE}
+  local index=0 package pad_len=30 pkg pad all_packages=() os=${HHS_MY_OS_RELEASE}
 
   pad=$(printf '%0.1s' "."{1..80})
 
@@ -210,10 +209,13 @@ function recover_packages() {
 
   if [[ -z "${RECOVER_TOOLS}" ]]; then
     echo -e "recovered hspm packages ... "
-    all_packages=($(grep "^${os}:" "${BREADCRUMB_FILE}"))
+    while IFS='' read -r package; do
+      all_packages+=("${package}")
+    done < <(grep "^${os}:" "${BREADCRUMB_FILE}")
   else
     echo -e "development tools ... "
-    all_packages=(${HHS_DEV_TOOLS[@]})
+    # shellcheck disable=SC2206
+    all_packages+=(${HHS_DEV_TOOLS[@]})
   fi
   echo "${NC}"
 
@@ -268,7 +270,7 @@ function execute() {
   [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
   [[ "$1" == "-v" || "$1" == "--version" ]] && version
 
-  if [[ ${#DEV_TOOLS[*]} -le 0 ]]; then
+  if [[ ${#DEV_TOOLS[@]} -le 0 ]]; then
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
   fi
 
@@ -282,19 +284,19 @@ function execute() {
   case "$cmd" in
   # Install the app
   install)
-    [[ "$#" -le 0 ]] && usage 1
+    [[ "${#}" -le 0 ]] && usage 1
     for next_recipe in "${@}"; do
       echo ''
-      install_recipe "$next_recipe"
+      install_recipe "${next_recipe}"
     done
     echo ''
     ;;
   # Uninstall the app
   uninstall)
-    [[ "$#" -le 0 ]] && usage 1
+    [[ "${#}" -le 0 ]] && usage 1
     for next_recipe in "${@}"; do
       echo ''
-      uninstall_recipe "$next_recipe"
+      uninstall_recipe "${next_recipe}"
     done
     echo ''
     ;;
@@ -315,7 +317,7 @@ function execute() {
     echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
     ;;
   *)
-    usage 1 "Invalid ${PLUGIN_NAME} command: \"$cmd\" !"
+    usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
     ;;
   esac
   shopt -u nocasematch

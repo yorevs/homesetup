@@ -1,4 +1,16 @@
+#!/usr/bin/env bash
+
+#  Script: inputrc.bash
+# Purpose: This file is a configuration file for GNU Readline library
+# Created: May 04, 2018
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: yorevs@hotmail.com
+#    Site: https://github.com/yorevs/homesetup
+# License: Please refer to <https://opensource.org/licenses/MIT>
+# -----------------------------------------------------------------------------------
+
 set completion-ignore-case on
 set colored-stats on
 TAB: complete
+# Shift + TAB
 "\e[Z": menu-complete

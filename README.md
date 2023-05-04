@@ -3,7 +3,7 @@
 ## Your shell, good as hell ! 
 
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.5.22/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.5.27/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
@@ -117,7 +117,7 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
 - [7. Applications](#applications)
   * [7.1. Built-ins](#built-ins)
 - [8. Alias Definitions](#alias-definitions)
-- [9. HomeSetup application](#homesetup-application-clitt)
+- [9. HomeSetup application](#homesetup-application)
   * [9.1. HHS-Plug-ins](#hhs-plug-ins)
   * [9.2. HHS-Built-Ins](#hhs-built-ins)
 - [10. Auto completions](#auto-completions)
@@ -535,14 +535,16 @@ HomeSetup provides many functions for the shell. All functions includes a help u
 
 HomeSetup include some basic helper functions:
 
-| Dotfile           | Function               | Purpose                                                                        |
-|-------------------|------------------------|--------------------------------------------------------------------------------|
-| bash_prompt.bash  | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked      |
-| hhsrc.bash        | __hhs_log              | Log to HomeSetup log file                                                      |
-|                   | __hhs_source           | Read/Execute commands from the filename argument in the current shell context  |
-|                   | __hhs_is_reachable     | Check whether URL/URI is reachable on the network                              |
-| bash_aliases.bash | __hhs_has              | Check if a command is available on the current shell context                   |
-|                   | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it           |
+| Dotfile              | Function               | Purpose                                                                       |
+|----------------------|------------------------|-------------------------------------------------------------------------------|
+| bash_prompt.bash     | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked     |
+| bash_commons.bash    | __hhs_has              | Check if a command is available on the current shell context                  |
+|                      | __hhs_log              | Log to HomeSetup log file                                                     |
+|                      | __hhs_source           | Read/Execute commands from the filename argument in the current shell context |
+|                      | __hhs_is_reachable     | Check whether URL/URI is reachable on the network                             |
+| bash_aliases.bash    | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it          |
+| bash_completion.bash | __hhs_check_completion | Check and add completion for tool if found in HHS completions dir             |
+|                      | __hhs_load_completions | Load all available auto-completions                                           |
 
 ### Standard tools
 
@@ -576,6 +578,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 |                        | __hhs_version          | Check the version of the app using the most common ways                     |
 |                        | __hhs_tools            | Check whether a list of development tools are installed or not              |
 |                        | __hhs_about            | Display information about the given command                                 |
+|                        | __hhs_help             | Display a help for the given command                                        |
 | hhs-security.bash      | __hhs_encrypt_file     | Encrypt file using GPG                                                      |
 |                        | __hhs_decrypt_file     | Decrypt file using GPG                                                      |
 | hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on **.tailor** file          |
@@ -650,11 +653,11 @@ backup of this file, so, you can preserve your customizations, but this process 
 
 The original content and aliases are defined on the original [aliasdef](dotfiles/aliasdef) file.
 
-## HomeSetup Application (Clitt)
+## HomeSetup Application
 
 HomeSetup application is a bundle of scripts and functions to extend the terminal features, but also, there is an 
 application and plug-able scripts and functions that can be incorporated into it. To list all functions and plug-ins 
-available the the following terminal command : `# hhs list`
+available the the following terminal command : `# __hhs list`
 
 ### HHS-Plug-ins
 
@@ -669,7 +672,6 @@ available the the following terminal command : `# hhs list`
 | Function    | Purpose                                                                                 |
 |-------------|-----------------------------------------------------------------------------------------|
 | host-name   | Retrieve/Get/Set the current hostname                                                   |
-| help        | Provide a **help** for __hhs functions                                                  |
 | list        | List all HHS App **Plug-ins** and **Functions**                                         |
 | funcs       | Search for all hhs **functions** describing it's containing file name and line number   |
 | logs        | Retrieve latest HomeSetup load logs                                                     |
@@ -681,7 +683,9 @@ available the the following terminal command : `# hhs list`
 ## Auto completions
 
 In addition to the normal bash <tab> complete, HomeSetup comes with another <shift+tab> complete. With this, you can 
-iterate over the options provided by the complete function instead of just displaying them. 
+iterate over the options provided by the complete function instead of just displaying them. For the sake of terminal 
+opening performance, by default, HomeSetup does not load the completions. If you want to load them, issue the command
+`$ __hhs_load_completions`.
 
 ### Bash completions
 

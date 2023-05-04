@@ -127,41 +127,39 @@ esac
 
 export HHS_TERM_OPTS
 
+if ! [[ -s "${HOME}"/.inputrc ]]; then
+  \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}"/.inputrc
+fi
+
+if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
+  \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
+fi
+
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
 # - colored-stats: Displays possible completions using different colors to indicate their type
 # - <shift>+<tab> Will cycle forward though complete options
-
-if ! [[ -s ~/.inputrc ]]; then
-  {
-    echo "set completion-ignore-case on"
-    echo "set colored-stats on"
-    echo "TAB: complete"
-    echo "\"\e[Z\": menu-complete"
-  } > ~/.inputrc
-else
-  case "${HHS_MY_OS}" in
-    Darwin)
-      sed -i '' -E \
-        -e 's/(^set colored-stats) .*/\1 on/g' \
-        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-        -e 's/(^TAB:) .*/\1 complete/g' \
-        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
-        ~/.inputrc
-      ;;
-    Linux)
-      sed -i'' -r \
-        -e 's/(^set colored-stats) .*/\1 on/g' \
-        -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-        -e 's/(^TAB:) .*/\1 complete/g' \
-        -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
-        ~/.inputrc
-      ;;
-    *)
-      __hhs_log "WARN" "Can't set .inputrc for a unknown OS: ${HHS_MY_OS}"
-      ;;
-  esac
-fi
+case "${HHS_MY_OS}" in
+  Darwin)
+    sed -i '' -E \
+      -e 's/(^set colored-stats) .*/\1 on/g' \
+      -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+      -e 's/(^TAB:) .*/\1 complete/g' \
+      -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
+      ~/.inputrc
+    ;;
+  Linux)
+    sed -i'' -r \
+      -e 's/(^set colored-stats) .*/\1 on/g' \
+      -e 's/(^set completion-ignore-case) .*/\1 on/g' \
+      -e 's/(^TAB:) .*/\1 complete/g' \
+      -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
+      ~/.inputrc
+    ;;
+  *)
+    __hhs_log "WARN" "Can't set .inputrc for a unknown OS: ${HHS_MY_OS}"
+    ;;
+esac
 
 # Add `$HHS_DIR/bin` to the system `$PATH`
 __hhs_paths -q -a "${HHS_DIR}/bin"
@@ -183,7 +181,7 @@ if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}
   if __hhs_is_reachable 'github.com'; then
     hhs updater execute check
   else
-    __hhs_log "WARN" "Github website is not reachable !"
+    __hhs_log "WARN" "GitHub website is not reachable !"
   fi
 fi
 

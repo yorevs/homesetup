@@ -35,29 +35,33 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  
-  local ARGS action db_alias dotfiles
-  
+
+  local ARGS action db_alias dotfiles=()
+
+  # shellcheck disable=SC2206
   ARGS=(${@})
   action="${ARGS[0]}"
   db_alias="${ARGS[1]}"
-  
-  dotfiles=($(find "${HHS_DIR}" -type f -name '.*' -exec basename {} \;))
+
+  # Find all dotfiles
   dotfiles+=('firebase.properties')
-  
+  while IFS='' read -r dotfile; do
+    dotfiles+=("${dotfile}")
+  done < <(find "${HHS_DIR}" -maxdepth 1 -type f -name ".*" -exec basename {} \;)
+
   echo ''
   pushd "${HHS_DIR}" &>/dev/null || exit 1
-  
-  if [[ 'upload' == "${action}" ]]; then 
+
+  if [[ 'upload' == "${action}" ]]; then
     python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
   elif [[ 'download' == "${action}" ]]; then
     python3 -m firebase download dotfiles."${db_alias}"
-  elif [[ 'setup' == "${action}" ]]; then 
-    python3 -m firebase setup 
+  elif [[ 'setup' == "${action}" ]]; then
+    python3 -m firebase setup
   else
     python3 -m firebase "${ARGS[@]}"
   fi
-  
+
   popd &>/dev/null || exit 1
   echo ''
 

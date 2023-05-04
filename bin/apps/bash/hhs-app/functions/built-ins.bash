@@ -8,11 +8,6 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
-# @purpose: Provide a help for __hhs functions
-function help() {
-  echo TODO
-}
-
 # @purpose: List all HHS App Plug-ins and Functions
 # @param $1 [opt] : Instead of a formatted as a list, flat the commands for bash completion.
 function list() {
@@ -79,6 +74,8 @@ function logs() {
   echo ''
   grep "${level}" -m ${HHS_LOG_LINES} "${HHS_LOG_FILE}" | __hhs_tailor
   echo ''
+  
+  quit 0 ' '
 }
 
 # @purpose: Fetch the ss64 manual from the web for the specified bash command.
@@ -97,6 +94,8 @@ function man() {
     __hhs_open "${url}" && quit 0 ''
     quit 1 "Failed to open url \"${url}\" !"
   fi
+  
+  quit 0 ' '
 }
 
 # @purpose: Open the HomeSetup GitHub project board.

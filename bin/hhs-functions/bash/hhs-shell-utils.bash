@@ -92,7 +92,7 @@ function __hhs_defs() {
     return 1
   else
     if [[ "$1" == '-e' ]]; then
-      __hhs_edit "${HHS_ENV_FILE}"
+      __hhs_edit "${HHS_ALIASDEF_FILE}"
       ret_val=$?
     else
       pad=$(printf '%0.1s' "."{1..60})

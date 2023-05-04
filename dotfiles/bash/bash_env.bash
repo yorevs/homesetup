@@ -12,15 +12,20 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
+# Source the common bash functions
+source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
+
 # System locale (defaults)
-export LANG=${LANG:-en_US.UTF-8}
 export LANGUAGE=${LANGUAGE:-en_US:en}
+export LANG=${LANG:-en_US.UTF-8}
 export LC_ALL=${LANG}
 
-# Save the original IFS
-export RESET_IFS="$IFS"
+# System folders
+export TEMP="${TEMP:-$TMPDIR}"
+export TRASH="${TRASH:-${HOME}/.Trash}"
 
-source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
+# System original IFS
+export RESET_IFS="$IFS"
 
 # ----------------------------------------------------------------------------
 # Home Sweet Homes
@@ -40,6 +45,7 @@ fi
 if [[ "Darwin" == "$(uname -s)" ]]; then
   # Hide the annoying warning about zsh
   export BASH_SILENCE_DEPRECATION_WARNING=1
+  # OS Release - Darwin
   export HHS_MY_OS_RELEASE="$(sw_vers -productName)"
   if command -v xcode-select &>/dev/null; then
     export XCODE_HOME=$(xcode-select -p)
@@ -50,29 +56,23 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
     fi
   fi
 else
+  # OS Release - Linux
   HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
   HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
   export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"
 fi
 
 # ----------------------------------------------------------------------------
-# Commonly used folders
-export TEMP="${TEMP:-$TMPDIR}"
-export TRASH="${TRASH:-${HOME}/.Trash}"
-export EDITOR="${EDITOR:-vi}"
-
-# ----------------------------------------------------------------------------
 # Bash History
-
-# Setting history length ( HISTSIZE and HISTFILESIZE ) in bash
-export HISTSIZE=1000
-export HISTFILESIZE=2000
-export HISTTIMEFORMAT="[${USER}, %F %T]  "
 
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
 export HISTIGNORE="pwd:?:-:l:q:rl:exit:gs:gl:.."
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+# Setting history format: Index [user, Date Time] command
+export HISTTIMEFORMAT="[${USER}, %F %T]  "
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
@@ -84,7 +84,7 @@ export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 
 # ----------------------------------------------------------------------------
-# Customizable
+# File configs
 
 export HHS_DEFAULT_EDITOR=__hhs_open
 export HHS_TUI_MAX_ROWS=15
@@ -100,23 +100,23 @@ export HHS_FIREBASE_CONFIG_FILE="${HHS_DIR}/firebase.properties"
 export HHS_FIREBASE_CREDS_FILE="${HHS_DIR}/{project_id}-firebase-credentials.json"
 
 # ----------------------------------------------------------------------------
-# Others
+# Directories
 
-__hhs_has git && export GIT_REPOS="${HOME}/GIT-Repository"
-__hhs_has svn && export SVN_REPOS="${HOME}/SVN-Repository"
-
-[[ -d "${HOME}/Workspace" ]] && export WORKSPACE="${WORKSPACE:-${HOME}/Workspace}"
-[[ -d "${HOME}/Desktop" ]] && export DESKTOP="${DESKTOP:-${HOME}/Desktop}"
-[[ -d "${HOME}/Downloads" ]] && export DOWNLOADS="${DOWNLOADS:-${HOME}/Downloads}"
-[[ -d "${HOME}/Dropbox" ]] && export DROPBOX="${DROPBOX:-${HOME}/Dropbox}"
+[[ -d "${HOME}"/GIT-Repository ]] && __hhs_has git && export GIT_REPOS="${HOME}"/GIT-Repository
+[[ -d "${HOME}"/SVN-Repository ]] && __hhs_has svn && export SVN_REPOS="${HOME}"/SVN-Repository
+[[ -d "${HOME}"/Desktop ]] && export DESKTOP="${HOME}/Desktop"
+[[ -d "${HOME}"/Documents ]] && export DOCUMENTS="${HOME}/Documents"
+[[ -d "${HOME}"/Downloads ]] && export DOWNLOADS="${HOME}/Downloads"
+[[ -d "${HOME}"/Dropbox ]] && export DROPBOX="${HOME}/Dropbox"
+[[ -d "${HOME}"/Workspace ]] && export WORKSPACE="${HOME}/Workspace"
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at <HHS_ENV_FILE>
 DEVELOPER_TOOLS=(
   'hexdump' 'vim' 'bats' 'tree' 'perl' 'groovy'
-  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 'jq'
-  'gcc' 'make' 'mvn' 'gradle' 'ruby' 'python'
-  'docker' 'nvm' 'node' 'vue' 'eslint' 'pylint' 'gpg'
-  'shasum' 'base64' 'git' 'go' 'python3' 'pip3'
+  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 
+  'gcc' 'make' 'mvn' 'gradle' 'ruby' 'jq' 'git'
+  'docker' 'nvm' 'node' 'eslint' 'pylint' 'gpg'
+  'shasum' 'base64' 'python' 'python3' 'pip3'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

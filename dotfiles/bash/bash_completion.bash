@@ -27,37 +27,53 @@ BASH_COMPLETIONS=
 # @function: Check and add completion for tool if found in HHS completions dir.
 # @param $1 [Req] : The command to find completion script.
 function __hhs_check_completion() {
-  unset skip_completion
-  completion=$(basename "${1}")
-  completion=${completion//-completion.bash/}
+  
+  local cpl_filter skip_completion completion="$1"
+  
   case "${completion}" in
-  'docker'*)
-    [[ -n "${HHS_HAS_DOCKER}" ]] && skip_completion='NO'
+    'docker'*)
+      [[ -n "${HHS_HAS_DOCKER}" ]] && skip_completion='NO'
     ;;
-  *)
-    command -v "${completion}" &>/dev/null && skip_completion='NO'
+    *)
+      command -v "${completion}" &>/dev/null && skip_completion='NO'
     ;;
   esac
+  
   if [[ "${skip_completion}" == 'NO' ]]; then
     if [[ -f "${AUTO_CPL_D}/${completion}-completion.bash" ]]; then
-      __hhs_log "INFO" "Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash"
+      echo -e "${BLUE}Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash ${NC}"
       __hhs_source "${AUTO_CPL_D}/${completion}-completion.bash"
       BASH_COMPLETIONS+="${completion} "
+      return 0
     fi
   else
-    __hhs_log "WARN" "Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash"
+    echo -e "${YELLOW}Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash ${NC}"
   fi
+  
+  return 1
 }
 
 # @function: Load all available auto-completions.
 function __hhs_load_completions() {
+  
+  local cpl_filter completion cpl
+  
+  cpl_filter=$1
   case "${HHS_MY_SHELL}" in
-  'bash')
-    for completion in "${AUTO_CPL_D}/"*-completion.bash; do
-      __hhs_check_completion "${completion}"
-    done
+    'bash')
+      for cpl in "${AUTO_CPL_D}/"*-completion.bash; do
+        completion=$(basename "${cpl}")
+        completion=${completion//-completion.bash/}
+        if [[ -z "${cpl_filter}" || "${completion}" == "${cpl_filter}" ]]; then
+          if __hhs_check_completion "${completion}" &>/dev/null; then
+            echo -e "${GREEN}Completion ${completion} was loaded !${NC}"
+          fi
+        fi
+      done
     ;;
   esac
+  
+  return 0
 }
 
 # shellcheck disable=2206

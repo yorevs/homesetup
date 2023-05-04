@@ -13,18 +13,21 @@
 #   Using __hhs_alias instead of alias will prevent from re-aliasing any current alias
 
 # Directory Shortcuts
-[ -d "${DESKTOP}" ] && __hhs_alias desk="cd ${DESKTOP}"
-[ -d "${TEMP}" ] && __hhs_alias temp="cd ${TEMP}"
-[ -d "${DOWNLOADS}" ] && __hhs_alias dl="cd ${DOWNLOADS}"
+[[ -d "${DESKTOP}" ]] && __hhs_alias desk="cd ${DESKTOP}"
+[[ -d "${DOCUMENTS}" ]] && __hhs_alias docs="cd ${DOCUMENTS}"
+[[ -d "${DOWNLOADS}" ]] && __hhs_alias dl="cd ${DOWNLOADS}"
+[[ -d "${DROPBOX}" ]] && __hhs_alias db="cd ${DROPBOX}"
+[[ -d "${WORKSPACE}" ]] && __hhs_alias work="cd ${WORKSPACE}"
+[[ -d "${TEMP}" ]] && __hhs_alias temp="cd ${TEMP}"
 
 # Built-ins replacements
 alias ..='__hhs_changeback_ndirs'
 alias cd='__hhs_change_dir'
 alias dirs='__hhs_dirs'
-alias aa='__hhs_aliases'
-alias defs='__hhs_defs'
+alias help='__hhs_help'
 
 # HHS-App Aliases
+__hhs_alias hhs='__hhs'
 __hhs_alias tailor='__hhs_tailor'
 __hhs_alias hspm='__hhs_hspm'
 __hhs_alias hhu='__hhs_hhu update'
@@ -33,6 +36,8 @@ __hhs_alias fetch='fetch.bash'
 __hhs_alias check-ip='check-ip.bash'
 
 # General shortcuts
+__hhs_alias aa='__hhs_aliases'
+__hhs_alias defs='__hhs_defs'
 __hhs_alias about='__hhs_about'
 __hhs_alias lt='__hhs_list_tree'
 __hhs_alias lss='__hhs_ls_sorted'
@@ -85,6 +90,7 @@ if __hhs_has "python3"; then
   __hhs_alias sd='__hhs_search_dir'
   __hhs_alias ss='__hhs_search_string'
   __hhs_alias cfman='__hhs_cfman'
+  __hhs_alias cfman='__hhs_kafman'
   __hhs_alias vault='__hhs_vault'
   __hhs_alias firebase='__hhs_firebase'
   __hhs_alias hspylib='__hhs_hspylib'

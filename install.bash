@@ -368,7 +368,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
-    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
+    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
     echo ''
     echo -e "${WHITE}### Installation Settings ###"

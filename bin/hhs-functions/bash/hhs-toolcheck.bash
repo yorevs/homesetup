@@ -53,7 +53,7 @@ function __hhs_toolcheck() {
 # @param $1 [Req] : The app to check.
 function __hhs_version() {
 
-  local version
+  local version APP
 
   if [[ "$#" -ne 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <app_name>"
@@ -89,6 +89,8 @@ function __hhs_version() {
 # @function: Check whether a list of development tools are installed or not.
 # @param $1..$N [Opt] : The tool list to be checked.
 function __hhs_tools() {
+  
+  local tool_list
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [tool_list]"
@@ -118,6 +120,9 @@ function __hhs_tools() {
 # @function: Display information about the given command.
 # @param $1 [Req] : The command to check.
 function __hhs_about() {
+  
+  local cmd cmd_ret
+  
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
     return 1
@@ -127,15 +132,50 @@ function __hhs_about() {
       cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
       if [[ -n "${cmd_ret}" ]]; then
         echo ''
-        printf "${GREEN}%12s ${cmd_ret//\%/%%} ${NC} \n" "Current:"
+        cmd_ret=${cmd_ret//is aliased to \`/${WHITE}=> }
+        cmd_ret=${cmd_ret//\'/}
+        printf "${GREEN}%12s${BLUE} ${cmd_ret//\%/%%} ${NC}\n" "Aliased:"
         if unalias "${cmd}" 2>/dev/null; then
           cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
           if [[ -n "${cmd_ret}" ]]; then
-            printf "${BLUE}%12s ${cmd_ret} ${NC} \n" "Unaliased:"
+            cmd_ret=${cmd_ret//is/${WHITE}=>}
+            printf "${GREEN}%12s${BLUE} ${cmd_ret} ${NC}\n" "Unaliased:"
           fi
         fi
         echo ''
       fi
+    )
+  fi
+
+  return 0
+}
+
+# @function: Display a help for the given command.
+# @param $1 [Req] : The command to get help.
+function __hhs_help() {
+  
+  local cmd re_alias re_func
+  
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  else
+    (
+      cmd="${1}"
+      __hhs_about "${cmd}"
+      re_alias="${cmd} is aliased to \`__hhs.*"
+      re_func="${cmd} is a function"
+      if [[ ${cmd} = __hhs_* || $(type "${cmd}") =~ ${re_func} ]]; then
+        ${cmd} --help
+      elif [[ $(type "${cmd}") =~ ${re_alias} ]]; then
+        cmd="$(type "${cmd}")"
+        cmd="${cmd#* to \`}"
+        cmd="${cmd//\'/}"
+        ${cmd} --help
+      else
+        command help "${cmd}"
+      fi
+      echo ''
     )
   fi
 
