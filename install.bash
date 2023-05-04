@@ -54,8 +54,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Darwin required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
+    MY_OS_RELEASE=$(sw_vers -productName)
     REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3' 'pip3')
   elif [[ "${MY_OS}" == "Linux" ]]; then
+    MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+    MY_OS_RELEASE="${MY_OS_RELEASE#*=}"
     REQUIRED_TOOLS+=('python3' 'pip3')
   fi
 
@@ -374,7 +377,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}### Installation Settings ###"
     echo ''
     echo -e "${BLUE}  Install Type: ${METHOD}${NC}"
-    echo -e "${BLUE}         Shell: ${SHELL_TYPE} - ${MY_OS}${NC}"
+    echo -e "${BLUE}         Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}${NC}"
     echo -e "${BLUE}Install Prefix: ${HHS_HOME}${NC}"
     echo -e "${BLUE}   Preferences: ${HHS_DIR}${NC}"
 
