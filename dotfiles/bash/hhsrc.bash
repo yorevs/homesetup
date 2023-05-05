@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090,SC1091,SC2155
+# shellcheck disable=
 
 #  Script: hhsrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new
@@ -27,14 +27,15 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 unalias -a
 
 # The following variables are not inside the bash_env because we need them in the early load process.
-export HOME=${HOME:-~/}
-export USER=${USER:-$(whoami)}
-export HHS_MY_OS="$(uname -s)"
+export HOME="${HOME:-~/}"
+export USER="${USER:-$(whoami)}"
+export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL//\/bin\//}"
-export HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
-export HHS_DIR=${HHS_DIR:-${HOME}/.hhs}
-export HHS_LOG_DIR=${HHS_LOG_DIR:-${HHS_DIR}/log}
-export HHS_LOG_FILE=${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}
+export HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
+export HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
+export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
+export HHS_LOG_DIR="${HHS_LOG_DIR:-${HHS_DIR}/log}"
+export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -74,13 +75,13 @@ CUSTOM_DOTFILES=(
    'functions'
 )
 
+# Source common functions for bootstrap
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 # Re-create the HomeSetup log file
 echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOG_FILE}"
 
 # Load all HomeSetup dotfiles.
-# shellcheck disable=SC2048
 for file in ${DOTFILES[*]}; do
   f_path="${HOME}/.${file}"
   if [[ -s "${f_path}" ]]; then
@@ -92,7 +93,6 @@ for file in ${DOTFILES[*]}; do
 done
 
 # Load all Custom dotfiles.
-# shellcheck disable=SC2048
 for file in ${CUSTOM_DOTFILES[*]}; do
   f_path="${HHS_DIR}/.${file}"
   if [[ -s "${f_path}" ]]; then

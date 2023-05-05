@@ -33,13 +33,22 @@ HHS_HOME=${HHS_HOME:-${HOME}/HomeSetup}
 DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
 
 # Backup prefix
-BAK_PREFIX="orig"
+ORIG_PREFIX="orig"
 
 # HomeSetup configuration directory
 HHS_DIR=${HHS_DIR:-"$(basename "$(dirname /Users/hjunior/.hhs/hhsrc.log)")"}
 
+# Flag indicating HHS_DIR removal
+REMOVE_HHS_DIR=
+
+# Flag indicating HSPyLib removal
+REMOVE_HSPYLIB=
+
 # .dotfiles we will handle
 ALL_DOTFILES=()
+
+# Uninstallation type
+UNINSTALL_TYPE='normal'
 
 # Find all dotfiles used by HomeSetup according to the current shell type
 while IFS='' read -r dotfile; do
@@ -72,16 +81,27 @@ usage() {
 check_installation() {
 
   if [[ -n "${HHS_HOME}" && -d "${HHS_HOME}" ]]; then
-
-    echo -e ''
+    
+    echo -e "${ORANGE}"
+    [[ -z ${QUIET} ]] && read -rn 1 -p \
+      "Also delete HomeSetup config (${HHS_DIR}) files y/[n] ? " REMOVE_HHS_DIR
+    [[ -n "${REMOVE_HHS_DIR}" ]] && echo ''
+    [[ -z ${QUIET} ]] && read -rn 1 -p \
+      "Also uninstall HomeSetup python library and apps (hspylib, vault, clitt and firebase) y/[n] ? " REMOVE_HSPYLIB
+    [[ -n "${REMOVE_HSPYLIB}" ]] && echo ''
+    
+    [[ -n "${REMOVE_HHS_DIR}" ]] && UNINSTALL_TYPE+=' +hhs-dir'
+    [[ -n "${REMOVE_HSPYLIB}" ]] && UNINSTALL_TYPE+=' +lib-dir'
+    
+    echo -e "${NC}"
     echo -e "${WHITE}### Uninstallation Settings ###"
     echo -e "${BLUE}"
-    echo -e "  Uninstall Type: remove"
+    echo -e "  Uninstall Type: ${UNINSTALL_TYPE}"
     echo -e "     Install Dir: ${HHS_HOME}"
     echo -e "        Dotfiles: ${ALL_DOTFILES[*]}"
     echo -e "${NC}"
 
-    echo -e "${ORANGE}"
+    echo -e "${YELLOW}"
     read -rn 1 -p "HomeSetup will be completely removed and all backups restored. Continue y/[n] ?" ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
@@ -98,68 +118,63 @@ check_installation() {
 # Remove dotfiles
 uninstall_dotfiles() {
   
-  echo "${ORANGE}Removing installed dotfiles ...${NC}"
-  # shellcheck disable=SC2048
+  cd "${HOME}" || cd ..
+
+  # Remove installed HomeSetup dotfiles
+  echo -e "\n${BLUE}Removing installed HomeSetup dotfiles ...${NC}"
   for next in ${ALL_DOTFILES[*]}; do
     dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
     [[ -f "${dotfile}" ]] && \rm -fv "${dotfile}"
   done
 
-  # shellcheck disable=SC2164
+  # Removing HomeSetup folders
   [[ -d "${HHS_HOME}" ]] && \rm -rfv "${HHS_HOME:?}"
-  [[ -L "${HHS_DIR}/bin" ]] && \rm -rf "${HHS_DIR:?}/bin"
-  echo ''
+  [[ -L "${HHS_DIR}/bin" ]] && \rm -rfv "${HHS_DIR:?}/bin"
+  
+  # Remove HomeSetup .hhs folder
+  [[ -n "${REMOVE_HHS_DIR}" ]] && echo ''
+  if [[ "${REMOVE_HHS_DIR}" == "y" || "${REMOVE_HHS_DIR}" == 'Y' ]]; then
+    [[ -d "${HHS_DIR}" ]] && \rm -rfv "${HHS_DIR:?}" &> /dev/null
+  fi
 
-  # Restore backups
+  # Restore original dotfiles
   if [[ -d "${HHS_DIR}" ]]; then
-    echo -e "${GREEN}Restoring backups ...${NC}"
-    BACKUPS=("$(find "${HHS_DIR}" -iname "*.${BAK_PREFIX}")")
-    # shellcheck disable=SC2048
+    echo -e "\n${BLUE}Restoring original dotfiles ...${NC}"
+    BACKUPS=("$(find "${HHS_DIR}" -iname "*.${ORIG_PREFIX}")")
     for next in ${BACKUPS[*]}; do
       [[ -f "${next}" ]] && \cp -v "${next}" "${HOME}/$(basename "${next%.*}")"
     done
   fi
 
-  export PS1='\[\h:\W \u \$ '
-  export PS2="$PS1"
-
   # Uninstall HomeSetup python library
-  echo -e "${ORANGE}"
-  [[ -z ${QUIET} ]] && read -rn 1 -p "Also uninstall HomeSetup python library and apps (hspylib, vault and firebase) y/[n] ? " ANS
-  [[ -n "$ANS" ]] && echo ''
-  if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-    # HsPyLib
-    echo -e "${WHITE}Removing HomeSetup python library${NC}"
-    python3 -m pip uninstall -y hspylib &> /dev/null \
-      || echo -e "${RED}# Unable to uninstall HomeSetup python library !\n${NC}"
+  if [[ "${REMOVE_HSPYLIB}" == "y" || "${REMOVE_HSPYLIB}" == 'Y' ]]; then
     # HsPyLib-Vault
-    echo -e "${WHITE}Removing HomeSetup Vault${NC}"
+    echo -e "\n${BLUE}Removing HomeSetup Vault${NC}"
     python3 -m pip uninstall -y hspylib-vault &> /dev/null \
       || echo -e "${RED}# Unable to uninstall HomeSetup vault !\n${NC}"
     # HsPyLib-Firebase
-    echo -e "${WHITE}Removing HomeSetup Firebase${NC}"
+    echo -e "\n${BLUE}Removing HomeSetup Firebase${NC}"
     python3 -m pip uninstall -y hspylib-firebase &> /dev/null \
       || echo -e "${RED}# Unable to uninstall HomeSetup firebase !\n${NC}"
+    # HsPyLib-Clitt
+    echo -e "\n${BLUE}Removing HomeSetup Clitt${NC}"
+    python3 -m pip uninstall -y hspylib-clitt &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup clitt !\n${NC}"
   fi
-
-  # Remove HomeSetup config folder
-  echo -e "${ORANGE}"
-  [[ -z ${QUIET} ]] && read -rn 1 -p "Also delete HomeSetup config (${HHS_DIR}) files y/[n] ? " ANS
-  echo -e "${NC}"
-  [[ -n "$ANS" ]] && echo ''
-  if [[ "$ANS" == "y" || "$ANS" == 'Y' ]]; then
-    [[ -d "${HHS_DIR}" ]] && \rm -rf "${HHS_DIR}" &> /dev/null
-  fi
+    
+  # Restoring prompts
+  export PS1='\[\h:\W \u \$ '
+  export PS2="$PS1"
   
   # Removing HomeSetup folder
-  [[ -d "${HHS_HOME}" ]] && quit 2 "Failed to uninstall HomeSetup !"   
+  [[ -d "${HHS_HOME}" ]] && quit 2 "Failed to uninstall HomeSetup !"
 
   # Unset aliases and envs
   echo "Unsetting aliases and variables ..."
   unalias -a
   unset "${!HHS_@}"
 
-  echo 'HomeSetup has been uninstalled !'
+  echo 'HomeSetup has been successfully uninstalled !'
   echo ''
   echo "* Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
   echo "* Your temporary PS1 => '$PS1'"
@@ -168,4 +183,4 @@ uninstall_dotfiles() {
 
 check_installation
 
-echo '!!! HomeSetup will be removed after you open a new terminal. !!!'
+echo '!!! HomeSetup will be gone after you open a new terminal !!!'
