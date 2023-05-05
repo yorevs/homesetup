@@ -104,7 +104,7 @@ case "${MY_OS}" in
     # Most of linux distros have this file to detect the releases.
     OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     OS_RELEASE="${OS_RELEASE#*=}"    # Extracting ID=
-    OS_RELEASE="${OS_RELEASE//\"/}"  # Removing quotes
+    OS_RELEASE="${OS_RELEASE//\"/}"  # Removing leading quotes
     case "${OS_RELEASE}" in
       ubuntu)
         MY_OS_ICN="${UBUNTU_ICN}"
@@ -125,7 +125,7 @@ case "${MY_OS}" in
   ;;
 esac
 
-# Terminal title
+# Terminal title.
 TITLE="HomeSetup-v${HHS_VERSION}"
 ESCAPED_TITLE="\[\e]2;${TITLE}\a\]"
 
@@ -157,8 +157,7 @@ GIT_STYLE="${PROMPT_COLOR}\$(__hhs_git_prompt \" ${GIT_ICN} ${GIT_COLOR}\")"
 PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} \$ "
 
 # Set the terminal title and prompt.
-# Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details
-PROMPT_COMMAND="history -a"
+# Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details.
 
 # PS1 Style: Color and icons (default).
 PS1_STYLE=$"${HIST_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
@@ -168,3 +167,5 @@ PS2_STYLE=$'... '
 
 export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
 export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
+
+unset PROMPT_COMMAND
