@@ -160,6 +160,14 @@ uninstall_dotfiles() {
     echo -e "\n${BLUE}Removing HomeSetup Clitt${NC}"
     python3 -m pip uninstall -y hspylib-clitt &> /dev/null \
       || echo -e "${RED}# Unable to uninstall HomeSetup clitt !\n${NC}"
+    # HsPyLib-Datasource
+    echo -e "\n${BLUE}Removing HomeSetup Datasource${NC}"
+    python3 -m pip uninstall -y hspylib-datasource &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup datasource !\n${NC}"
+    # HsPyLib-Core
+    echo -e "\n${BLUE}Removing HomeSetup HsPyLib-Core${NC}"
+    python3 -m pip uninstall -y hspylib &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup HsPyLib-Core !\n${NC}"
   fi
     
   # Restoring prompts
@@ -176,7 +184,7 @@ uninstall_dotfiles() {
 
   echo 'HomeSetup has been successfully uninstalled !'
   echo ''
-  echo "* Your old PS1 (prompt) and aliases will be restored next time you open the terminal."
+  echo '* Your old PS1 (prompt) and aliases will be restored next time you open the terminal.'
   echo "* Your temporary PS1 => '$PS1'"
   echo ''
 }
