@@ -1,4 +1,4 @@
-# HomeSetup User Handbook
+# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup User Handbook
 
 **Thank you** for using HomeSetup. This handbook contains a collection of instructions intended to provide ready
 reference for your new terminal features. We will cover all related aliases, applications and functions, as well as 

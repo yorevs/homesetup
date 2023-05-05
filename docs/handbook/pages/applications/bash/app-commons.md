@@ -1,4 +1,4 @@
-# HomeSetup Applications Handbook
+# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Applications Handbook
 
 ## Table of contents
 

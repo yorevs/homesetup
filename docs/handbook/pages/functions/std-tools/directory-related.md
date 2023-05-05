@@ -46,7 +46,7 @@ Usage: __hhs_change_dir [-L|-P] [dir]
 
 ##### **Purpose**:
 
-# HomeSetup Standard-Tools Functions Handbook
+# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
 
 ##### **Returns**:
 

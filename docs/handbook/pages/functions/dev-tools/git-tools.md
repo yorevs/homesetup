@@ -1,4 +1,4 @@
-# HomeSetup Developer-Tools Functions Handbook
+# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Developer-Tools Functions Handbook
 
 ## Table of contents
 
