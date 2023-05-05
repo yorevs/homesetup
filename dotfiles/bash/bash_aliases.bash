@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2142,SC1090
+# shellcheck disable=SC1117,SC2142,SC1090,SC2139
 
 #  Script: bash_aliases.bash
 # Purpose: This file is used to configure some useful shell aliases
@@ -13,7 +13,6 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 
-# shellcheck disable=SC2139
 # @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression
 # @param $1 [Req] : The alias to set/check.
 # @param $* [Req] : The alias expression.
@@ -102,13 +101,15 @@ alias df='\df -H'
 alias du='\du -hcd 1'
 # @alias: Make `ps' command output pretty and human readable format
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
+# @alias: Display current value of IFS
+alias ifs='echo -en "${IFS}" | hexdump -C'
 
 # @alias: Use `vim' instead of `vi' if installed
 __hhs_has "vim" && alias vi='vim'
 # @alias: `more' will interpret escape sequences
-alias more='\more -r'
+__hhs_has "more" && alias more='\more -r'
 # @alias: `less' will interpret escape sequences
-alias less='\less -r'
+__hhs_has "less" && alias less='\less -r'
 # @alias: Make `mount' command output pretty and human readable format
 alias mount='\mount | column -t'
 

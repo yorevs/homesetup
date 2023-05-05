@@ -3,7 +3,7 @@
 ## Your shell, good as hell ! 
 
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.5.31/gray)](docs/CHANGELOG.md#unreleased)
+[![Release](https://badgen.net/badge/release/v1.5.32/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
@@ -358,37 +358,38 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### General
 
-| ALIAS   | Description                                                        |
-|---------|--------------------------------------------------------------------|
-| q       | Short for `exit 0' from terminal                                   |
-| sudo    | Enable aliases to be sudo’ed                                       |
-| ls      | Always use color output for **ls**                                 |
-| l       | List _all files_ colorized in long format                          |
-| lsd     | List _all directories_ in long format                              |
-| ll      | List _all files_ colorized in long format, **including dot files** |
-| lll     | List _all **.dotfiles**_ colorized in long format                  |
-| lld     | List _all **.dotfolders**_ colorized in long format                |
-| grep    | Always enable colored **grep** output                              |
-| egrep   | Always enable colored **fgrep** output                             |
-| fgrep   | Always enable colored **egrep** output                             |
-| rm      | By default **rm** will prompt for confirmation and will be verbose |
-| cp      | By default **cp** will prompt for confirmation and will be verbose |
-| mv      | By default **mv** will prompt for confirmation and will be verbose |
-| df      | Make **df** command output pretty and human readable format        |
-| du      | Make **du** command output pretty and human readable format        |
-| psg     | Make **ps** command output pretty and human readable format        |
-| vi      | Use **vim** instead of **vi** if installed                         |
-| more    | **more** will interpret escape sequences                           |
-| less    | **less** will interpret escape sequences                           |
-| mount   | Make `mount' command output pretty and human readable format       |
-| cpu     | **top** shortcut ordered by _cpu_                                  |
-| mem     | **top** shortcut ordered by _Memory_                               |
-| week    | Date&Time - Display current **week number**                        |
-| now     | Date&Time - Display current **date and time**                      |
-| ts      | Date&Time - Display current **timestamp**                          |
-| wget    | If **wget** is not available, use **curl** instead                 |
-| ps1     | Make _PS1_ prompt active                                           |
-| ps2     | Make _PS2_ prompt active (continuation prompt)                     |
+| ALIAS | Description                                                        |
+|-------|--------------------------------------------------------------------|
+| q     | Short for `exit 0' from terminal                                   |
+| sudo  | Enable aliases to be sudo’ed                                       |
+| ls    | Always use color output for **ls**                                 |
+| l     | List _all files_ colorized in long format                          |
+| lsd   | List _all directories_ in long format                              |
+| ll    | List _all files_ colorized in long format, **including dot files** |
+| lll   | List _all **.dotfiles**_ colorized in long format                  |
+| lld   | List _all **.dotfolders**_ colorized in long format                |
+| grep  | Always enable colored **grep** output                              |
+| egrep | Always enable colored **fgrep** output                             |
+| fgrep | Always enable colored **egrep** output                             |
+| rm    | By default **rm** will prompt for confirmation and will be verbose |
+| cp    | By default **cp** will prompt for confirmation and will be verbose |
+| mv    | By default **mv** will prompt for confirmation and will be verbose |
+| df    | Make **df** command output pretty and human readable format        |
+| du    | Make **du** command output pretty and human readable format        |
+| psg   | Make **ps** command output pretty and human readable format        |
+| ifs   | Display current value of IFS                                       |
+| vi    | Use **vim** instead of **vi** if installed                         |
+| more  | **more** will interpret escape sequences                           |
+| less  | **less** will interpret escape sequences                           |
+| mount | Make `mount' command output pretty and human readable format       |
+| cpu   | **top** shortcut ordered by _cpu_                                  |
+| mem   | **top** shortcut ordered by _Memory_                               |
+| week  | Date&Time - Display current **week number**                        |
+| now   | Date&Time - Display current **date and time**                      |
+| ts    | Date&Time - Display current **timestamp**                          |
+| wget  | If **wget** is not available, use **curl** instead                 |
+| ps1   | Make _PS1_ prompt active                                           |
+| ps2   | Make _PS2_ prompt active (continuation prompt)                     |
 
 ### HomeSetup
 
@@ -553,7 +554,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | File                   | Function               | Purpose                                                                     |
 |------------------------|------------------------|-----------------------------------------------------------------------------|
 | hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands                                 |
-| hhs-built-ins.bash     | __hhs_random    | Generate a random number int the range <min> <max> (all limits included)    |
+| hhs-built-ins.bash     | __hhs_random           | Generate a random number int the range <min> <max> (all limits included)    |
 |                        | __hhs_ascof            | Display the decimal ASCII representation of a character                     |
 |                        | __hhs_open             | Open a file or URL with the default program                                 |
 |                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |

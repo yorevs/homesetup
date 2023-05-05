@@ -23,6 +23,9 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
+# The Internal Field Separator (IFS). The default value is <space><tab><newline>
+export IFS="${RESET_IFS}"
+
 # Unset all aliases before setting them again.
 unalias -a
 
@@ -184,9 +187,6 @@ if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}
     __hhs_log "WARN" "GitHub website is not reachable !"
   fi
 fi
-
-# The Internal Field Separator (IFS). The default value is <space><tab><newline>
-export IFS="${RESET_IFS}"
 
 # Print HomeSetup MOTD
 echo ''
