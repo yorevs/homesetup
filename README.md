@@ -553,7 +553,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | File                   | Function               | Purpose                                                                     |
 |------------------------|------------------------|-----------------------------------------------------------------------------|
 | hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands                                 |
-| hhs-built-ins.bash     | __hhs_random_number    | Generate a random number int the range <min> <max> (all limits included)    |
+| hhs-built-ins.bash     | __hhs_random    | Generate a random number int the range <min> <max> (all limits included)    |
 |                        | __hhs_ascof            | Display the decimal ASCII representation of a character                     |
 |                        | __hhs_open             | Open a file or URL with the default program                                 |
 |                        | __hhs_edit             | Create and/or open a file using the default editor or vi if not set         |

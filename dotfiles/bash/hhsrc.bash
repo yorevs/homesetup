@@ -171,7 +171,7 @@ if [[ -f "${HHS_DIR}/.path" ]]; then
   PATH="${PATH}:${NEW_PATHS}"
 fi
 
-# Remove path duplicates
+# Remove PATH duplicates.
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<< "${PATH}")
 export PATH
 

@@ -33,10 +33,10 @@
 
 ### Built-ins functions
 
-#### __hhs_random_number
+#### __hhs_random
 
 ```bash
-Usage: __hhs_random_number <min-val> <max-val>
+Usage: __hhs_random <min> <max>
 ```
 
 ##### **Purpose**:
@@ -55,7 +55,7 @@ Generate a random number int the range <min> <max> (all limits included).
 ##### **Examples:**
 
 ```bash
-  $ __hhs_random_number 0 10 && echo "Random from 0 to 10"
+  $ __hhs_random 0 10 && echo "Random from 0 to 10"
 ```
 
 
@@ -63,12 +63,12 @@ Generate a random number int the range <min> <max> (all limits included).
 #### __hhs_ascof
 
 ```bash
-Usage: __hhs_ascof <character>
+Usage: __hhs_ascof <string>
 ```
 
 ##### **Purpose**:
 
-Display the decimal ASCII representation of a character.
+Convert string into it's decimal ASCII representation.
 
 ##### **Returns**:
 
@@ -76,12 +76,12 @@ Display the decimal ASCII representation of a character.
 
 ##### **Parameters**: 
 
-  - $1 _Required_ : The character to display.
+  - $1 _Required_ : The string to convert.
 
 ##### **Examples:**
 
 ```bash
-  $ __hhs_ascof H && echo "Thats the ascii representation of H"
+  $ __hhs_ascof Hello && echo "Thats the ascii representation of Hello"
 ```
 
 
