@@ -24,9 +24,6 @@ export LC_ALL=${LANG}
 export TEMP="${TEMP:-$TMPDIR}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
 
-# System original IFS
-export RESET_IFS="$IFS"
-
 # ----------------------------------------------------------------------------
 # Home Sweet Homes
 

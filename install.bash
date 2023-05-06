@@ -351,7 +351,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}Cloning HomeSetup from repository ..."
 
     if git clone "$REPO_URL" "${HHS_HOME}"; then
-      \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+      source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     else
       quit 2 "Unable to properly clone the repository !"
     fi
@@ -423,7 +423,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # If `all' option is NOT used, prompt for confirmation
     else
       # Copy all dotfiles
-      # shellcheck disable=2048
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
@@ -451,6 +450,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Link apps into place
     echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR} ..."
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
+      -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
@@ -461,6 +461,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Link auto-completes into place
     echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR} ..."
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
+      -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"

@@ -23,8 +23,10 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
+# Do not change this formatting, it is required to proper reset IFS to it's defaults
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>
-export IFS="${RESET_IFS}"
+export IFS=$'\n'
+export RESET_IFS=$'\n'
 
 # Unset all aliases before setting them again.
 unalias -a
@@ -42,8 +44,6 @@ export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
-
-# Do not change this formatting, it is required to proper reset IFS to it's defaults
 
 # Load all dotfiles:
 #   source -> ~/.hhs/.path can be used to extend `$PATH`
