@@ -18,6 +18,8 @@ PLUGIN_NAME="updater"
 
 # Usage message
 USAGE="
+Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
+
  _   _           _       _            
 | | | |_ __   __| | __ _| |_ ___ _ __ 
 | | | | '_ \ / _\` |/ _\` | __/ _ \ '__|
@@ -25,9 +27,7 @@ USAGE="
  \___/| .__/ \__,_|\__,_|\__\___|_|   
       |_|                             
 
-HomeSetup update manager.
-
-Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
+  HomeSetup update manager.
 
     Options:
       -v  |   --version : Display current program version.
@@ -37,6 +37,7 @@ Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
       check             : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
       update            : Check the current HomeSetup installation and look for updates.
       stamp             : Stamp the next auto-update check for 7 days ahead.
+
 "
 
 UNSETS=(

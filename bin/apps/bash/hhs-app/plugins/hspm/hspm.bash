@@ -17,15 +17,15 @@ PLUGIN_NAME="hspm"
 
 # Usage message
 USAGE="
+Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
+
  _   _ ____  ____  __  __ 
 | | | / ___||  _ \|  \/  |
 | |_| \___ \| |_) | |\/| |
 |  _  |___) |  __/| |  | |
 |_| |_|____/|_|   |_|  |_|
 
-Manage your packages using installation/uninstallation recipes.
-
-Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
+  HomeSetup package manager
 
     Options:
       -v  |   --version     : Display current program version.
@@ -40,6 +40,7 @@ Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
                               hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
                               provided, then the default editor will open the recovery file.
+
 "
 
 UNSETS=(

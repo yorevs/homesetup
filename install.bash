@@ -386,7 +386,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         quit 1 "Installation cancelled !"
       fi
     else
-      read -rn 1 -p "Press any key to continue with the installation ..."
+      [[ -z ${QUIET} ]] && read -rn 1 -p "Press any key to continue with the installation ..."
     fi
     
     echo -e "${GREEN}Installing HomeSetup ...${NC}"
@@ -442,7 +442,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ...${BLUE}"
-    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print &>/dev/null; then
+    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print 1>/dev/null; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
@@ -450,8 +450,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link apps into place
     echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR} ..."
-    if find "${APPS_DIR}" -maxdepth 2 -type f \
-      \( -iname "**.${SHELL_TYPE}" -o -iname "**.py" \) \
+    if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
@@ -461,8 +460,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link auto-completes into place
     echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR} ..."
-    if find "${COMPLETIONS_DIR}/${SHELL_TYPE}" -maxdepth 2 -type f \
-      \( -iname "**.${SHELL_TYPE}" \) \
+    if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; 1>/dev/null; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
@@ -486,11 +484,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ..."
     \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
-    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "*" \
+    if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "**" \
       -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
-      quit 2 "Unable to link Git hooks into repository (.git/hooks/) !"
+      quit 2 "Unable to link Git hooks into repository (${HHS_HOME}/.git/hooks) !"
     fi
   }
 

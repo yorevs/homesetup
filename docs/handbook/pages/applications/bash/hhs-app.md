@@ -17,7 +17,18 @@
 ```bash
 Usage:  [option] {function | plugin {task} <command>} [args...]
 
-    HomeSetup Application Manager.
+ _   _                      ____       _               
+| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __  
+| |_| |/ _ \| '_ ` _ \ / _ \___ \ / _ \ __| | | | '_ \ 
+|  _  | (_) | | | | | |  __/___) |  __/ |_| |_| | |_) |
+|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/ 
+                                                |_|    
+
+  HomeSetup Application Manager v1.0.0.
+
+    Arguments:
+      args              : Plugin command arguments will depend on the plugin. May be mandatory 
+                          or not.
     
     Options:
       -v  |  --version  : Display current program version.
@@ -25,12 +36,9 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
       -p  |   --prefix  : Display the HomeSetup installation directory.
     
     Tasks:
-      help      : Display a help about the plugin.
-      version   : Display current plugin version.
-      execute   : Execute a plugin command.
-
-    Arguments:
-      args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
+      help              : Display a help about the plugin.
+      version           : Display current plugin version.
+      execute           : Execute a plugin command.
     
     Exit Status:
       (0) Success.
@@ -315,15 +323,15 @@ Manager for HomeSetup Firebase integration.
 ### HSPM
 
 ```bash
+Usage: hspm [option] {install,uninstall,list,recover}
+
  _   _ ____  ____  __  __ 
 | | | / ___||  _ \|  \/  |
 | |_| \___ \| |_) | |\/| |
 |  _  |___) |  __/| |  | |
 |_| |_|____/|_|   |_|  |_|
 
-Manage your packages using installation/uninstallation recipes.
-
-Usage: hspm [option] {install,uninstall,list,recover}
+  HomeSetup package manager.
 
     Options:
       -v  |   --version     : Display current program version.
@@ -332,17 +340,17 @@ Usage: hspm [option] {install,uninstall,list,recover}
     Arguments:
       install   <package>   : Install the package using a matching installation recipe.
       uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
-      list [-a]             : List all available installation recipes specified by \${HHS_DEV_TOOLS}. If -a is provided,
+      list [-a]             : List all available installation recipes specified by ${HHS_DEV_TOOLS}. If -a is provided,
                               list even packages without any matching recipe.
       recover [-i,-t,-e]    : Install or list all packages previously installed by hspm. If -i is provided, then hspm
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
-                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
+                              hspm will check ${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
                               provided, then the default editor will open the recovery file.
 ```
 
 ##### **Purpose**:
 
-Manage your packages using installation/uninstallation recipes.
+HomeSetup package manager.
 
 ##### **Returns**:
 
@@ -360,6 +368,8 @@ Manage your packages using installation/uninstallation recipes.
 ### Updater
 
 ```bash
+Usage: updater updater [option] {check,update,stamp}
+
  _   _           _       _            
 | | | |_ __   __| | __ _| |_ ___ _ __ 
 | | | | '_ \ / _` |/ _` | __/ _ \ '__|
@@ -367,9 +377,7 @@ Manage your packages using installation/uninstallation recipes.
  \___/| .__/ \__,_|\__,_|\__\___|_|   
       |_|                             
 
-HomeSetup update manager.
-
-Usage: updater updater [option] {check,update,stamp}
+  HomeSetup update manager.
 
     Options:
       -v  |   --version : Display current program version.

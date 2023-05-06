@@ -21,10 +21,18 @@ VERSION=1.0.0
 USAGE="
 Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
-  HomeSetup Application Manager.
+ _   _                      ____       _               
+| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __  
+| |_| |/ _ \| '_ \` _ \ / _ \___ \ / _ \ __| | | | '_ \ 
+|  _  | (_) | | | | | |  __/___) |  __/ |_| |_| | |_) |
+|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/ 
+                                                |_|    
+
+  HomeSetup Application Manager v${VERSION}.
 
     Arguments:
-      args    : Plugin command arguments will depend on the plugin. May be mandatory or not.
+      args              : Plugin command arguments will depend on the plugin. May be mandatory 
+                          or not.
     
     Options:
       -v  |  --version  : Display current program version.
@@ -32,9 +40,9 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
       -p  |   --prefix  : Display the HomeSetup installation directory.
     
     Tasks:
-      help      : Display a help about the plugin.
-      version   : Display current plugin version.
-      execute   : Execute a plugin command.
+      help              : Display a help about the plugin.
+      version           : Display current plugin version.
+      execute           : Execute a plugin command.
     
     Exit Status:
       (0) Success.
