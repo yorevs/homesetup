@@ -32,7 +32,7 @@ function __hhs_command() {
     echo '  Notes: '
     echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
-
+    
     IFS=$'\n' read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
 
     case "$1" in
@@ -52,7 +52,7 @@ function __hhs_command() {
       IFS=$'\n' read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
       all_cmds+=("Command ${cmd_name}: ${cmd_expr}")
       printf "%s\n" "${all_cmds[@]}" >"${HHS_CMD_FILE}"
-      sort "${HHS_CMD_FILE}" -o "${HHS_CMD_FILE}"
+      sort -u "${HHS_CMD_FILE}" -o "${HHS_CMD_FILE}"
       echo "${GREEN}Command stored: ${WHITE}\"${cmd_name}\" as ${HHS_HIGHLIGHT_COLOR}${cmd_expr} ${NC}"
       ret_val=0
       ;;
@@ -79,7 +79,7 @@ function __hhs_command() {
     -l | --list)
       if [[ ${#all_cmds[@]} -ne 0 ]]; then
         pad=$(printf '%0.1s' "."{1..60})
-        pad_len=40
+        pad_len=35
         echo ' '
         echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
         echo ' '
@@ -88,9 +88,9 @@ function __hhs_command() {
           printf "${WHITE}(%03d) " $((index))
           cmd_name="$(echo -en "${next}" | awk -F ':' '{ print $1 }')"
           cmd_expr=$(echo -en "${next}" | awk -F ': ' '{ print $2 }')
-          echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}"
+          echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}${WHITE}"
           printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
-          echo "${YELLOW} is stored as: ${WHITE}'${cmd_expr}'"
+          echo "${GREEN} is stored as: ${WHITE}'${cmd_expr}'"
           index=$((index + 1))
         done
         IFS="${RESET_IFS}"

@@ -16,17 +16,16 @@ function __hhs_aliases() {
   
   HHS_ALIASES_FILE=${HHS_ALIASES_FILE:-$HHS_DIR/.aliases}
 
-  local filter='.+' alias_name alias_expr pad pad_len all_aliases is_sorted=0 name expr
+  local filter='.+' alias_name alias_expr pad pad_len all_aliases name expr
   local col_offset=18 columns re
   
   touch "${HHS_ALIASES_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [-s|--sort] <alias> <alias_expr>"
+    echo "Usage: ${FUNCNAME[0]} <alias> <alias_expr>"
     echo ''
     echo '    Options: '
     echo '      -e | --edit    : Open the aliases file for editing.'
-    echo '      -s | --sort    : Sort results ASC.'
     echo '      -r | --remove  : Remove an alias.'
     echo ''
     echo '  Notes: '
@@ -50,10 +49,9 @@ function __hhs_aliases() {
       fi
       return $?
     fi
-    if [[ "$1" == '-s' || "$1" == "--sort" ]]; then
-      is_sorted=1
-      shift
-    fi
+    
+    # Remove duplicate items
+    sort -u "${HHS_ALIASES_FILE}" -o "${HHS_ALIASES_FILE}"
 
     alias_name="$1"
     shift
@@ -62,14 +60,11 @@ function __hhs_aliases() {
 
     if [[ -z "${alias_expr}" ]]; then
       # List all aliases; if sorted, skips comments
-      if [[ "$is_sorted" == "0" ]]; then
-        all_aliases=$(grep -v ^\# "${HHS_ALIASES_FILE}")
-      else
-        all_aliases=$(grep -v ^\# "${HHS_ALIASES_FILE}" | sort)
-      fi
+      all_aliases=$(grep -v ^\# "${HHS_ALIASES_FILE}")
       if [[ -n "${all_aliases}" ]]; then
         pad=$(printf '%0.1s' "."{1..60})
-        pad_len=40
+        pad_len=41
+        columns="$(($(tput cols) - pad_len - 10))"
         [[ -n "${alias_name}" ]] && filter="${alias_name}"
         echo ' '
         echo "${YELLOW}Available custom aliases matching [${filter}]:"
@@ -83,11 +78,11 @@ function __hhs_aliases() {
               name=$(echo -en "${next}" | cut -d'=' -f1 | cut -d ' ' -f2)
               [[ ${name} =~ ${filter} ]] || continue
               expr=$(echo -en "${next}" | cut -d'=' -f2-)
-              printf "%s" "${HHS_HIGHLIGHT_COLOR}${name//alias /}"
+              printf "%s" "${HHS_HIGHLIGHT_COLOR}${name//alias /}${NC}"
               printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
-              echo -en "${YELLOW} is aliased to ${WHITE}${expr:0:${columns}}"
+              echo -en "${GREEN} is aliased to ${WHITE}${expr:0:${columns}}"
             else
-              echo -en "${GREEN}${next:0:${columns}}${NC}"
+              echo -en "${ORANGE}${next:0:${columns}}${NC}"
             fi
             [[ "${#expr}" -ge "${columns}" ]] && echo "..."
             echo -e "${NC}"

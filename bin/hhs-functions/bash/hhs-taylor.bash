@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC2206
 
 #  Script: hhs-taylor.bash
 # Created: Oct 5, 2019
@@ -48,9 +48,8 @@ function __hhs_tailor() {
         URI_FMT_STYLE=\"${ORANGE}\"" | sed -r 's/^ +//g'  >"${HHS_TAILOR_CONFIG_FILE}"
     fi
     
-    \. "${HHS_TAILOR_CONFIG_FILE}"
+    source "${HHS_TAILOR_CONFIG_FILE}"
     
-    # shellcheck disable=SC2124,SC2206
     if [[ $# -gt 0 ]]; then
       all_args=(${*})
       args=${all_args[*]::${#all_args[@]}-1}

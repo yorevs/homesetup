@@ -144,7 +144,7 @@ function __hhs_save_dir() {
     echo "    -r : Remove saved dir."
     return 1
   else
-
+  
     dir_alias=$(echo -en "${2:-$1}" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
     dir_alias=$(tr '[:punct:]' '_' <<<"${dir_alias}")
 
@@ -174,7 +174,7 @@ function __hhs_save_dir() {
       IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
       all_dirs+=("${dir_alias}=${dir}")
       printf "%s\n" "${all_dirs[@]}" >"${HHS_SAVED_DIRS_FILE}"
-      sort "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
+      sort -u "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
       if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
         echo "${GREEN}Directory ${WHITE}\"${dir}\" ${GREEN}saved as ${HHS_HIGHLIGHT_COLOR}${dir_alias} ${NC}"
         return 0
@@ -215,7 +215,7 @@ function __hhs_load_dir() {
       case "$1" in
       -l)
         pad=$(printf '%0.1s' "."{1..60})
-        pad_len=40
+        pad_len=41
         echo ' '
         echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
         echo ' '
@@ -223,13 +223,13 @@ function __hhs_load_dir() {
         for next in "${all_dirs[@]}"; do
           dir_alias=$(echo -en "${next}" | awk -F '=' '{ print $1 }')
           dir=$(echo -en "${next}" | awk -F '=' '{ print $2 }')
-          printf "%s" "${HHS_HIGHLIGHT_COLOR}${dir_alias}"
+          printf "%s" "${HHS_HIGHLIGHT_COLOR}${dir_alias}${WHITE}"
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "${pad}"
-          echo -e "${YELLOW} points to ${WHITE}'${dir}'"
+          echo -e "${GREEN} points to ${WHITE}'${dir}'"
         done
         IFS="${RESET_IFS}"
         echo "${NC}"
-        ret_val=0
+        return 0
         ;;
       $'')
         if [[ ${#all_dirs[@]} -ne 0 ]]; then
@@ -262,7 +262,7 @@ function __hhs_load_dir() {
       esac
 
       if [[ -z "${dir}" || ! -d "${dir}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"$dir_alias\" was not found !"
+        __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"${dir_alias}\" was not found !"
       else
         pushd "${dir}" &>/dev/null || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"

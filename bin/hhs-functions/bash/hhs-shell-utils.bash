@@ -64,9 +64,7 @@ function __hhs_envs() {
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
           echo -en " ${GREEN}=> ${NC}"
           echo -n "${value:0:${columns}}"
-          if [[ ${#value} -ge ${columns} ]]; then
-            echo -n "..."
-          fi
+          [[ ${#value} -ge ${columns} ]] && echo -n "..."
           echo "${NC}"
         fi
       done
@@ -96,7 +94,7 @@ function __hhs_defs() {
       ret_val=$?
     else
       pad=$(printf '%0.1s' "."{1..60})
-      pad_len=40
+      pad_len=51
       columns="$(($(tput cols) - pad_len - 10))"
       filters="$*"
       filters=${filters// /\|}
@@ -106,7 +104,8 @@ function __hhs_defs() {
       echo ' '
       IFS=$'\n'
       shopt -s nocasematch
-      for v in $(grep '^ *__hhs_alias' ${HHS_ALIASDEF_FILE}); do
+      # shellcheck disable=SC2013
+      for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sort | uniq); do
         name=${v%%=*}
         name=${name// /}
         value=${v#*=}
@@ -114,11 +113,9 @@ function __hhs_defs() {
         if [[ ${name} =~ ${filters} ]]; then
           echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
-          echo -en " ${GREEN}=> ${NC}"
+          echo -en " ${GREEN}is defined as ${NC}"
           echo -n "${value:0:${columns}}"
-          if [[ ${#value} -ge ${columns} ]]; then
-            echo -n "..."
-          fi
+          [[ ${#value} -ge ${columns} ]] && echo -n "..."
           echo "${NC}"
         fi
       done

@@ -33,6 +33,8 @@ function __hhs_paths() {
     echo '    When no arguments are provided it will list all PATH payload'
     return 1
   else
+    # Remove duplicate items
+    sort -u "${HHS_PATHS_FILE}" -o "${HHS_PATHS_FILE}"
     [[ "-q" == "$1" ]] && quiet=1 && shift
     if [[ -z "$1" || "-c" == "$1" ]]; then
       [[ -f "${HHS_PATHS_FILE}" ]] || touch "${HHS_PATHS_FILE}"
