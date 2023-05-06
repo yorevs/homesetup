@@ -64,7 +64,6 @@ function __hhs_aliases() {
       if [[ -n "${all_aliases}" ]]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=41
-        columns="$(($(tput cols) - pad_len - 10))"
         [[ -n "${alias_name}" ]] && filter="${alias_name}"
         echo ' '
         echo "${YELLOW}Available custom aliases matching [${filter}]:"

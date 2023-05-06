@@ -43,14 +43,19 @@ function list() {
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
-  find_hhs_functions
+  find_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash"
+  find_hhs_functions "${HHS_HOME}/dotfiles/bash"
 
   echo ' '
   echo "${YELLOW}-=- Available HomeSetup functions -=-"
   echo ' '
+  columns="$(tput cols)"
   for idx in "${!HHS_FUNCTIONS[@]}"; do
     printf "${WHITE}%.2d. ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
-    echo -e "HHS-Function :: ${HHS_FUNCTIONS[$idx]}${NC}"
+    fn_name="${HHS_FUNCTIONS[$idx]}"
+    echo -en "${fn_name:0:${columns}}${NC}"
+    [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
+    echo ''
   done
 
   quit 0 ' '

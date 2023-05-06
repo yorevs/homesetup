@@ -12,6 +12,7 @@
 UNSETS+=(
   'main' 'parse_args' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
   'register_plugins' 'register_functions' 'parse_args' 'invoke_command' 'find_hhs_functions'
+  'get_desc'
 )
 
 # Program version.
@@ -214,18 +215,36 @@ invoke_command() {
 # Functions MUST start with 'function' keyword and
 # MUST quit <exit_code> with the proper exit code
 
+get_desc() {
+  local path filename line_num i
+  path=$(awk -F ':function' '{print $1}'  <<<"$1")
+  filename=$(awk -F '.bash:' '{print $1}'  <<<"$path")
+  line_num=$(awk -F '.bash:' '{print $2}'  <<<"$path")
+  line_num=${line_num// /}
+  re='# @function: '
+  for i in $(seq "${line_num}" -1 1); do
+    line=$(sed -n "${i}p" "${filename}".bash)
+    desc="${line//# @function: /}"
+    desc=$(echo "$desc" | awk '{$1=$1};1')
+    [[ $line =~ $re ]] && echo "${desc}" && break
+  done
+}
+
 # @purpose: Find all hhs-functions and make them available to use
+# @param $1 [Req] : The directory to look search from
 find_hhs_functions() {
 
-  local all_hhs_fn fn_name
+  local all_hhs_fn fn_name line_num
 
-  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${HHS_HOME}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}")
+  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "$1" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
 
   for fn_line in ${all_hhs_fn}; do
     filename=$(basename "$fn_line" | awk -F ':function' '{print $1}')
     filename=$(printf '%-30.30s' "${filename}")
     fn_name=$(awk -F ':function' '{print $2}' <<<"$fn_line")
-    HHS_FUNCTIONS+=("${filename// /.} => ${fn_name}")
+    fn_name=$(printf '%-30.30s' "${fn_name}")
+    desc=$(get_desc "${fn_line}")
+    HHS_FUNCTIONS+=("${BLUE}${filename// /.} ${GREEN}=> ${NC}${fn_name} : ${YELLOW}${desc}")
   done
 
   return 0

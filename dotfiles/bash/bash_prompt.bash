@@ -16,7 +16,7 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_prompt"
 
-# Configure git stuff.
+# @function: Retrieve the current git branch if inside a git repository.
 function __hhs_git_prompt() {
 
   local st_flag='' branch_name=''

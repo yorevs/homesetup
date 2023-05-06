@@ -64,15 +64,14 @@ Check if an alias does not exists and create it, otherwise just ignore it. Do no
 #### __hhs_aliases
 
 ```bash
-Usage: __hhs_aliases [-s|--sort] [alias <alias_expr>]
+Usage: __hhs_aliases <alias> <alias_expr>
 
     Options: 
-      -e | --edit    : Open the aliases file for editting.
-      -s | --sort    : Sort results ASC.
+      -e | --edit    : Open the aliases file for editing.
       -r | --remove  : Remove an alias.
 
   Notes: 
-    List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter restuls using it.
+    List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter results using it.
     Add/Set an alias    : When both [alias] and [alias_expr] are provided.
 ```
 

@@ -105,7 +105,7 @@ function __hhs_defs() {
       IFS=$'\n'
       shopt -s nocasematch
       # shellcheck disable=SC2013
-      for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sort | uniq); do
+      for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}"| sed 's/^ *//g' | sort | uniq); do
         name=${v%%=*}
         name=${name// /}
         value=${v#*=}
