@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=
+# shellcheck disable=2015
 
 #  Script: hhsrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new
