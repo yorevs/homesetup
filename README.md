@@ -86,8 +86,8 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
     + [1.1.3. Recommended software](#recommended-software)
     + [1.1.4. Optional software](#optional-software)
     + [1.1.5. Terminal setup](#terminal-setup)
-      - [1.1.5.1. Terminal App](#terminal-app--darwin-)
-      - [1.1.5.2. iTerm2 App](#iterm2-app--darwin-)
+      - [1.1.5.1. Terminal App](#terminal-app-darwin)
+      - [1.1.5.2. iTerm2 App](#iterm2-app-darwin)
   * [1.1. Try-it first](#try-it-first)
   * [1.2. Remote installation](#remote-installation)
   * [1.3. Local installation](#local-installation)
@@ -273,9 +273,27 @@ Access: https://console.firebase.google.com/
     * Click on Develop -> Database -> Create Database
     * Click on **Real-time Database**
     * Click on the **Rules** tab.
-        - Change the line from: `".read": false,` to `".read": true,`.
-        - Change the line from: `".write": false,` to `".write": true,`.
-        - Click on the *Publish* button and accept changes.
+3. Add the following rule to your HomeSetup ruleset.
+
+```json
+{
+  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+  "rules": {
+    "homesetup": {
+      ...
+      "dotfiles": {
+        ".read": "false",
+        ".write": "false",
+        "$uid" : { 
+            ".read": "true",
+            ".write": "true"
+          }
+        },
+      ...
+    }
+  }
+}
+```
 
 #### Configure account
 
@@ -284,7 +302,18 @@ showed on topic [1.3.1.](#create-new-account).
 
 Access your account from: https://console.firebase.google.com/
 
-Grab you *Project ID* and *USED UID* from the settings Settings menu.
+Now it's time to create your service key to be able to read/write to/from your Firebase account:
+
+1. Click on _Authentication_ (on the left menu) -> Users.
+2. Grab you **USER UID** and Identifier (email).
+3. Click on the **cogwheel icon -> Project settings**.
+4. Select the _Service accounts_ tab. 
+5. Grab you **Project ID**.
+6. Click on _Generate new private key_.
+7. Store the generated file into **$HHS_DIR** directory (usually ~/.hhs).
+8. Rename it to _<project-id>-firebase-credentials.json_.
+
+For more details consult the [Firebase help page](https://console.firebase.google.com/u/1/project/homesetup-37970/settings/serviceaccounts/adminsdk).
 
 Type in a shell: `$ firebase setup`. Fill in the setup form:
 
