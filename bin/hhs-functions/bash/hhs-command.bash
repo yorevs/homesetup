@@ -97,7 +97,7 @@ function __hhs_command() {
         echo -e "${NC}"
         ret_val=0
       else
-        echo "${YELLOW}No commands available yet !${NC}"
+        echo "${YELLOW}No commands were found in \"${HHS_CMD_FILE}\" !${NC}"
       fi
       ;;
     $'')
@@ -117,7 +117,7 @@ function __hhs_command() {
           return 1
         fi
       else
-        echo "${ORANGE}No commands available yet !${NC}"
+        echo "${YELLOW}No commands were found in \"${HHS_CMD_FILE}\" !${NC}"
       fi
       ;;
     [[:digit:]]*)

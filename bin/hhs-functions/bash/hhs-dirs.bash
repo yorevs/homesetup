@@ -83,7 +83,7 @@ function __hhs_dirs() {
   len=${#results[@]}
 
   if [[ ${len} -eq 0 ]]; then
-    echo "${ORANGE}No currently remembered directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
+    echo "${YELLOW}No currently directories available yet in \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
   elif [[ ${len} -eq 1 ]]; then
     echo "${results[*]}"
   else
@@ -248,7 +248,7 @@ function __hhs_load_dir() {
             return 1
           fi
         else
-          echo "${ORANGE}No directories available yet !${NC}"
+          echo "${YELLOW}No saved directories were found in \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
         fi
         ;;
       [a-zA-Z0-9_]*)
@@ -269,7 +269,7 @@ function __hhs_load_dir() {
         ret_val=0
       fi
     else
-      echo "${ORANGE}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
+      echo "${YELLOW}No saved directories were found in \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
     fi
     echo ''
   fi

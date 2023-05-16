@@ -90,7 +90,7 @@ function __hhs_aliases() {
         )
         echo -e "${NC}"
       else
-        echo -e "${ORANGE}No aliases were found in \"${HHS_ALIASES_FILE}\" !${NC}"
+        echo -e "${YELLOW}No aliases were found in \"${HHS_ALIASES_FILE}\" !${NC}"
       fi
     elif [[ -n "${alias_name}" && -n "${alias_expr}" ]]; then
       # Add/Set one alias
