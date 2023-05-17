@@ -2,12 +2,13 @@
 
 function about() {
   echo "This is the default recipe and it will be used when no recipe is found for a certain tool"
+  return 0
 }
 
 function depends() {
 
-  if ! command -v brew >/dev/null; then
-    __hhs_errcho "hspm.bash: HomeBrew is required to install default software on this machine. Tried: brew"
+  if ! command -v "${HHS_MY_OS_PACKMAN}" >/dev/null; then
+    __hhs_errcho "hspm.bash: ${HHS_MY_OS_PACKMAN} is required to install default software on this machine."
     return 1
   fi
 
@@ -15,11 +16,13 @@ function depends() {
 }
 
 function install() {
-  \brew install "$@"
+  command "${HHS_MY_OS_PACKMAN}" install "$@"
   return $?
 }
 
 function uninstall() {
-  \brew uninstall "$@" && \brew deps "$@" | xargs brew remove --ignore-dependencies
+  packman="${HHS_MY_OS_PACKMAN}"
+  command "${packman}" uninstall "$@" \
+    && command "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies
   return $?
 }

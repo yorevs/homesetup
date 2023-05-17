@@ -203,13 +203,13 @@ function recover_packages() {
   pad=$(printf '%0.1s' "."{1..80})
 
   if [[ -n "${RECOVER_INSTALL}" ]]; then
-    echo -en "\n${YELLOW}Installing "
+    echo -en "\n${ORANGE}Installing "
   else
-    echo -en "\n${YELLOW}Listing "
+    echo -en "\n${ORANGE}Listing "
   fi
 
   if [[ -z "${RECOVER_TOOLS}" ]]; then
-    echo -e "recovered hspm packages ... "
+    echo -e "recovered [${HHS_MY_OS}/${HHS_MY_OS_RELEASE}] packages ... "
     while IFS='' read -r package; do
       all_packages+=("${package}")
     done < <(grep "^${os}:" "${BREADCRUMB_FILE}")
@@ -243,7 +243,7 @@ function recover_packages() {
       index=$((index + 1))
     done
   fi
-  [[ $index -gt 0 ]] || echo "${YELLOW}No packages has been recovered ${NC}"
+  [[ $index -gt 0 ]] || echo "${YELLOW}No previously installed packages were found ${NC}"
   echo ''
 }
 
@@ -275,7 +275,7 @@ function execute() {
     quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
   fi
 
-  touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access the hspm breadcrumb file: ${BREADCRUMB_FILE}"
+  touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access hspm file: ${BREADCRUMB_FILE}"
 
   cmd="$1"
   shift
@@ -313,7 +313,7 @@ function execute() {
     if [[ "$1" == "-a" ]]; then
       LIST_ALL=1
     fi
-    echo -e "\n${YELLOW}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
+    echo -e "\n${BLUE}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
     list_recipes ""
     echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
     ;;

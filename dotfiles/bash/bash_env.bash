@@ -44,6 +44,7 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
   export BASH_SILENCE_DEPRECATION_WARNING=1
   # OS Release - Darwin
   export HHS_MY_OS_RELEASE="$(sw_vers -productName)"
+  export HHS_MY_OS_PACKMAN='brew'
   if command -v xcode-select &>/dev/null; then
     export XCODE_HOME=$(xcode-select -p)
     if [[ -d "${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" ]]; then
@@ -57,6 +58,17 @@ else
   HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
   HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
   export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"
+  if command -v 'apt-get' &> /dev/null; then
+    HHS_MY_OS_PACKMAN='apt-get'
+  elif command -v 'apt' &> /dev/null; then
+    HHS_MY_OS_PACKMAN='apt'
+  elif command -v 'yum' &> /dev/null; then
+    HHS_MY_OS_PACKMAN='yum'
+  elif command -v 'dnf' &> /dev/null; then
+    HHS_MY_OS_PACKMAN='dnf'
+  else
+    return 1
+  fi
 fi
 
 # ----------------------------------------------------------------------------
