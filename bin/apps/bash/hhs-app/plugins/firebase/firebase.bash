@@ -44,9 +44,9 @@ function execute() {
   db_alias="${ARGS[1]}"
 
   # Find all dotfiles
-  dotfiles+=('firebase.properties')
+  dotfiles+=()
   while IFS='' read -r dotfile; do
-    dotfiles+=("${dotfile}")
+    [[ "${dotfile}" != *.last_update ]] && dotfiles+=("${dotfile}")
   done < <(find "${HHS_DIR}" -maxdepth 1 -type f -name ".*" -exec basename {} \;)
 
   echo ''
