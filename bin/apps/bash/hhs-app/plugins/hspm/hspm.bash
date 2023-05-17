@@ -138,7 +138,7 @@ install_recipe() {
   
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
-    echo -e "${YELLOW}Installing \"${package}\", please wait ... "
+    echo -e "${BLUE}Installing \"${package}\", please wait ... "
     if install; then
       echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
       add_breadcrumb "${package}"
@@ -174,7 +174,7 @@ uninstall_recipe() {
   
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
-    echo -e "${YELLOW}Uninstalling ${package}, please wait ... "
+    echo -e "${BLUE}Uninstalling ${package}, please wait ... "
     if depends && uninstall; then
       echo -e "${GREEN}Uninstallation successful !${NC}"
       del_breadcrumb "${package}"
