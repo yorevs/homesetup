@@ -48,6 +48,8 @@ install HomeSetup this file will be created automatically for you, so you just n
 | HHS_LOG_FILE             | File containing all HomeSetup load logs.                                                             |
 | HHS_MOTD                 | Message Of The Day: to be displayed when HomeSetup is loaded.                                        |
 | HHS_MY_OS                | Your OS name.                                                                                        |
+| HHS_MY_OS_PACKMAN        | Your OS package manager application.                                                                 |
+| HHS_MY_OS_RELEASE        | Your OR release name.                                                                                |
 | HHS_MY_SHELL             | Your login shell base name.                                                                          |
 | HHS_PATHS_FILE           | This file holds the additional PATH's to be added to your shell and used by __hhs_paths function.    |
 | HHS_PUNCH_FILE           | This file holds the saved punches issued by __hhs_punch function.                                    |

@@ -59,15 +59,16 @@ else
   HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
   export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"
   if command -v 'apt-get' &> /dev/null; then
-    HHS_MY_OS_PACKMAN='apt-get'
-  elif command -v 'apt' &> /dev/null; then
-    HHS_MY_OS_PACKMAN='apt'
-  elif command -v 'yum' &> /dev/null; then
-    HHS_MY_OS_PACKMAN='yum'
+    export HHS_MY_OS_PACKMAN='apt-get'
   elif command -v 'dnf' &> /dev/null; then
-    HHS_MY_OS_PACKMAN='dnf'
+    export HHS_MY_OS_PACKMAN='dnf'
+  elif command -v 'yum' &> /dev/null; then
+    export HHS_MY_OS_PACKMAN='yum'
+  elif command -v 'apt' &> /dev/null; then
+    export HHS_MY_OS_PACKMAN='apt'
   else
-    return 1
+    export HHS_MY_OS_PACKMAN=''
+    __hhs_log "WARN" "Unable to find a proper package manager"
   fi
 fi
 
