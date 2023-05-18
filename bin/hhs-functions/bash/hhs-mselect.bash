@@ -45,9 +45,7 @@ from clitt.core.tui.mselect.mselect import mselect
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-    TUIPreferences(
-        max_rows=${HHS_TUI_MAX_ROWS}
-    )
+    TUIPreferences(max_rows=${HHS_TUI_MAX_ROWS})
     it = [\"${all_options_str//,/\",\"}\"]
     mselect(it, \"${title}\", \"${outfile}\")
 """

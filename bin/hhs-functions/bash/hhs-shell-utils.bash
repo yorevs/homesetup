@@ -131,31 +131,27 @@ function __hhs_defs() {
 # @function: Select a shell from the existing shell list.
 function __hhs_shell_select() {
 
-  local sel_index ret_val=1 sel_shell mselect_file avail_shells=()
+  local ret_val=1 sel_shell mselect_file avail_shells=()
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
     return 1
   else
-    clear
-    echo "${YELLOW}@@ Please select your new default shell:"
-    echo "-------------------------------------------------------------"
-    echo -en "${NC}"
     IFS=$'\n' read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
     # Add the brew bash and zsh as options
     [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
     [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
-    if __hhs_mselect "${mselect_file}" "${avail_shells[@]}"; then
-      sel_index=$(grep . "${mselect_file}")
-      sel_shell=${avail_shells[$sel_index]}
+    if __hhs_mselect "${mselect_file}" "Please select your new default shell:" "${avail_shells[@]}"
+    then
+      sel_shell=$(grep . "${mselect_file}")
       if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
         if \chsh -s "${sel_shell}"; then
           ret_val=$?
           clear
           export SHELL="${sel_shell}"
-          echo "${ORANGE}Your default shell has changed to => ${GREEN}'$SHELL'"
-          echo "${ORANGE}Next time you open a terminal window you will use \"$SHELL\" as your default shell"
+          echo "${GREEN}Your default shell has changed to => '${SHELL}'"
+          echo "${ORANGE}Next time you open a terminal window you will use \"${SHELL}\" as your default shell"
           \rm -f "${mselect_file}"
         else
           __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"

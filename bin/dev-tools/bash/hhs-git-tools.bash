@@ -29,7 +29,7 @@ if __hhs_has "git"; then
   function __hhs_git_branch_select() {
 
     local all_branches=() ret_val=0 all_flag='-a' all_str='or remote'
-    local sel_index sel_branch mchoose_file stash_flag b_name
+    local sel_branch mchoose_file stash_flag branch_name
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} [options]"
@@ -53,10 +53,10 @@ if __hhs_has "git"; then
         sleep 1
         echo -e "\033[1J\033[H"
       fi
-
+      
       while read -r branch; do
-        b_name=${branch//\* /}
-        all_branches+=("${b_name}")
+        branch_name=${branch//\* /}
+        all_branches+=("${branch_name}")
       done < <(git branch ${all_flag} | grep -v '\->')
 
       clear
@@ -64,8 +64,9 @@ if __hhs_has "git"; then
       echo -en "${WHITE}"
 
       mchoose_file=$(mktemp)
-
-      if __hhs_mselect "${mchoose_file}" "${all_branches[@]}"; then
+      if __hhs_mselect "${mchoose_file}" "Select a local ${all_str} branch to checkout" "${all_branches[@]}"
+      then
+        [[ -z "${sel_branch}" ]] && echo '' && return 1
         if ! git diff-index --quiet HEAD --; then
           echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
           if ! git stash &>/dev/null; then
@@ -75,13 +76,10 @@ if __hhs_has "git"; then
           stash_flag=1
           echo -e " ... [   ${GREEN}OK${NC}   ]\n"
         fi
-
-        sel_index=$(grep . "${mchoose_file}")
-        sel_branch="${all_branches["$sel_index"]}"
-        b_name="${sel_branch// /}"
-        b_name="${b_name##*\/}"
-
-        if git checkout "$b_name"; then
+        sel_branch=$(grep . "${mchoose_file}")
+        branch_name="${sel_branch// /}"
+        branch_name="${branch_name##*\/}"
+        if git checkout "${branch_name}"; then
           ret_val=$?
           if [[ -n "$stash_flag" ]]; then
             echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"

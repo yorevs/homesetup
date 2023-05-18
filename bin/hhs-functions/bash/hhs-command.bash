@@ -15,7 +15,7 @@ function __hhs_command() {
 
   HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
-  local cmd_name cmd_alias cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_index ret_val=1
+  local cmd_name cmd_alias cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_cmd ret_val=1
 
   touch "${HHS_CMD_FILE}"
 
@@ -103,13 +103,11 @@ function __hhs_command() {
     $'')
       if [[ ${#all_cmds[@]} -ne 0 ]]; then
         clear
-        echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
-        echo -en "${WHITE}"
         mselect_file=$(mktemp)
-        if __hhs_mselect "${mselect_file}" "${all_cmds[@]}"; then
-          sel_index=$(grep . "${mselect_file}")
-          # sel_index is zero-based, so we need to increment this number
-          cmd_expr="${all_cmds[$sel_index]##*: }"
+        if __hhs_mselect "${mselect_file}" "Available commands (${#all_cmds[@]}) stored:" "${all_cmds[@]}"
+        then
+          sel_cmd=$(grep . "${mselect_file}")
+          cmd_expr="${sel_cmd##*: }"
           [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}" && ret_val=$?
           \rm -f "${mselect_file}"
         else

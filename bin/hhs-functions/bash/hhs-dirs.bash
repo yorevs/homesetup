@@ -71,7 +71,7 @@ function __hhs_changeback_ndirs() {
 # @function: Display the list of currently remembered directories.
 function __hhs_dirs() {
 
-  local mselect_file sel_index path results=() len ret_val=0
+  local mselect_file sel_dir results=() len ret_val=0
 
   # If any argument is passed, use the old style dirs
   if [[ $# -gt 0 ]]; then
@@ -87,21 +87,22 @@ function __hhs_dirs() {
   elif [[ ${len} -eq 1 ]]; then
     echo "${results[*]}"
   else
-    clear
-    echo "${YELLOW}@@ Listing currently remembered directories (${len}) found. Please choose one to cd into:"
-    echo "-------------------------------------------------------------"
-    echo -en "${NC}"
     mselect_file=$(mktemp)
-    if __hhs_mselect "${mselect_file}" "${results[@]}"; then
-      sel_index=$(grep . "${mselect_file}")
-      path="${results[$sel_index]}"
-      [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found !" && ret_val=1
+    if __hhs_mselect "${mselect_file}" "Please choose one directory to change into (${len}) found:" "${results[@]}"
+    then
+      sel_dir=$(grep . "${mselect_file}")
+      if [[ -n "${sel_dir}" ]]; then
+        [[ ! -d "${sel_dir}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${sel_dir}\" was not found !" && ret_val=1
+      else
+        ret_val=1
+      fi
     else
       ret_val=1
     fi
   fi
 
-  [[ ${ret_val} -eq 0 ]] && \cd "${path}"
+  echo ''
+  [[ ${ret_val} -eq 0 ]] && \cd "${sel_dir}" || return 1
 
   return ${ret_val}
 }
@@ -192,7 +193,7 @@ function __hhs_save_dir() {
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load_dir() {
 
-  local dir_alias all_dirs=() dir pad pad_len mselect_file sel_index ret_val=1
+  local dir_alias all_dirs=() dir pad pad_len mselect_file sel_dir ret_val=1
 
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "${HHS_SAVED_DIRS_FILE}"
@@ -233,22 +234,18 @@ function __hhs_load_dir() {
         ;;
       $'')
         if [[ ${#all_dirs[@]} -ne 0 ]]; then
-          clear
-          echo "${YELLOW}Available saved directories (${#all_dirs[@]}):"
-          echo -en "${WHITE}"
           mselect_file=$(mktemp)
-          if __hhs_mselect "${mselect_file}" "${all_dirs[@]}"; then
-            sel_index=$(grep . "${mselect_file}")
-            dir_alias="${all_dirs[$sel_index]%=*}"
-            dir="${all_dirs[$sel_index]##*=}"
-            ret_val=0
-            \rm -f "${mselect_file}"
+          if __hhs_mselect "${mselect_file}" "Available saved directories (${#all_dirs[@]}):" "${all_dirs[@]}"
+          then
+            sel_dir=$(grep . "${mselect_file}")
+            dir_alias="${sel_dir%=*}"
+            dir="${sel_dir##*=}"
+            [[ -n "${dir}" ]] && ret_val=0
           else
-            [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
-            return 1
+            ret_val=1
           fi
         else
-          echo "${YELLOW}No saved directories were found in \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
+          echo "${YELLOW}No directories available yet !${NC}"
         fi
         ;;
       [a-zA-Z0-9_]*)
@@ -257,19 +254,19 @@ function __hhs_load_dir() {
         ;;
       *)
         __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\""
-        return 1
+        ret_val=1
         ;;
       esac
-
-      if [[ -z "${dir}" || ! -d "${dir}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: Directory aliased by \"${dir_alias}\" was not found !"
-      else
+      
+      [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
+      
+      if [[ ${ret_val} -eq 0 && -d "${dir}" ]]; then
         pushd "${dir}" &>/dev/null || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
         ret_val=0
       fi
     else
-      echo "${YELLOW}No saved directories were found in \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
+      echo "${YELLOW}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
     fi
     echo ''
   fi
@@ -282,7 +279,7 @@ function __hhs_load_dir() {
 # @param $2 [Req] : The directory name to search and cd into.
 function __hhs_godir() {
 
-  local dir len mselect_file found_dirs=() search_path search_name sel_index ret_val=1
+  local dir len mselect_file found_dirs=() search_path search_name ret_val=1 title
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
@@ -307,27 +304,24 @@ function __hhs_godir() {
       dir=${found_dirs[0]}
     # If multiple directories were found with the same name, query the user
     else
-      clear
-      echo "${YELLOW}@@ Multiple directories (${len}) found. Please choose one to go into:"
-      echo "Base dir: ${search_path}"
-      echo "-------------------------------------------------------------"
-      echo -en "${NC}"
       mselect_file=$(mktemp)
-      if __hhs_mselect "${mselect_file}" "${found_dirs[@]}"; then
-        sel_index=$(grep . "${mselect_file}")
-        dir=${found_dirs[$sel_index]}
-        \rm -f "${mselect_file}"
-      else
-        [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
-        return 1
+      title="Multiple directories (${len}) found. Please select one to go:\n${WHITE}Base dir: ${GREEN}${search_path}"
+      if __hhs_mselect "${mselect_file}" "${title}${NC}" "${found_dirs[@]}"
+      then
+        dir=$(grep . "${mselect_file}")
+        ret_val=0
       fi
     fi
   fi
+  
+  [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
+  
   # If a valid directory was selected, change to it.
-  if [[ -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &>/dev/null; then
+  if [[ ${ret_val} -eq 0 && -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &>/dev/null; then
     echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
     ret_val=0
   fi
+  
   echo ''
 
   return ${ret_val}

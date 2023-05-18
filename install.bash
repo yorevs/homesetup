@@ -18,8 +18,9 @@
   USAGE="
 Usage: $APP_NAME [OPTIONS] <args>
 
-  -i | --interactive        : Install all scripts into the user HomeSetup directory interactively.
-  -q | --quiet              : Do not prompt for questions, use all defaults.
+  -l | --local          : Local re-installation (dotfiles only).
+  -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
+  -q | --quiet          : Do not prompt for questions, use all defaults.
 "
 
   # HomeSetup GitHub repository URL
@@ -197,6 +198,9 @@ Usage: $APP_NAME [OPTIONS] <args>
         ANS='Y'
         QUIET=1
         ;;
+      -l | --local)
+        METHOD='local'
+        ;;
       *)
         quit 2 "Invalid option: \"$1\""
         ;;
@@ -229,16 +233,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     create_directory "${FONTS_DIR}"
 
     # Check the installation method
-    if [[ -n "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
-      METHOD='repair'
-    elif [[ -z "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
+    if [[ -n "${METHOD}" ]]; then
       METHOD='local'
+    elif [[ -n "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
+      METHOD='repair'
     else
       METHOD='remote'
     fi
 
     # Select the installation method and call the underlying functions
-    case "$METHOD" in
+    case "${METHOD}" in
     remote)
       check_required_tools
       clone_repository
@@ -247,14 +251,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       compatibility_check
       activate_dotfiles
       ;;
-    local)
+    repair)
       check_required_tools
       install_dotfiles
       configure_python
       compatibility_check
       activate_dotfiles
       ;;
-    repair)
+    local)
       install_dotfiles
       activate_dotfiles
       ;;
