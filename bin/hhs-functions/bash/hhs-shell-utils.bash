@@ -135,7 +135,6 @@ function __hhs_shell_select() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
-    return 1
   else
     IFS=$'\n' read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
     # Add the brew bash and zsh as options

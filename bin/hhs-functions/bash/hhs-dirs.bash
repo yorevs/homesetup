@@ -132,7 +132,7 @@ function __hhs_list_tree() {
 # @param $2 [Con] : The alias to name the saved path.
 function __hhs_save_dir() {
 
-  local dir dir_alias all_dirs=()
+  local dir dir_alias all_dirs=() ret_val=1
 
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "${HHS_SAVED_DIRS_FILE}"
@@ -143,7 +143,6 @@ function __hhs_save_dir() {
     echo 'Options: '
     echo "    -e : Edit the saved dirs file."
     echo "    -r : Remove saved dir."
-    return 1
   else
   
     dir_alias=$(echo -en "${2:-$1}" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
@@ -157,7 +156,7 @@ function __hhs_save_dir() {
       if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
         ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
         echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
-        return 0
+        ret_val=0
       fi
     elif [[ -n "$2" && -n "${dir_alias}" ]]; then
       dir="$1"
@@ -168,7 +167,6 @@ function __hhs_save_dir() {
       if [[ -n "${dir}" && "${dir}" == "-" ]]; then dir=${dir//-/$OLDPWD}; fi
       if [[ -n "${dir}" && ! -d "${dir}" ]]; then
         __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist !"
-        return 1
       fi
       # Remove the old saved directory aliased
       ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
@@ -178,15 +176,14 @@ function __hhs_save_dir() {
       sort -u "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
       if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
         echo "${GREEN}Directory ${WHITE}\"${dir}\" ${GREEN}saved as ${HHS_HIGHLIGHT_COLOR}${dir_alias} ${NC}"
-        return 0
+        ret_val=0
       fi
     else
       __hhs_errcho "${FUNCNAME[0]}: Invalid alias \"${2}\" !"
-      return 1
     fi
   fi
 
-  return 1
+  return ${ret_val}
 }
 
 # @function: Change the current working directory to pre-saved entry from __hhs_save.
@@ -230,7 +227,6 @@ function __hhs_load_dir() {
         done
         IFS="${RESET_IFS}"
         echo "${NC}"
-        return 0
         ;;
       $'')
         if [[ ${#all_dirs[@]} -ne 0 ]]; then
@@ -330,24 +326,29 @@ function __hhs_godir() {
 # @function: Create all folders using a slash or dot notation path and immediately change into it.
 # @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path.
 function __hhs_mkcd() {
-  __hhs_ascof "${IFS}"
-  if [[ -n "$1" && ! -d "$1" ]] || [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    dir="${1//.//}"
-    mkdir -p "${dir}" || return 1
-    last_pwd=$(pwd)
-    IFS='/'
-    for d in ${dir}; do
-      cd "$d" || return 1
-    done
-    IFS="$RESET_IFS"
-    export OLDPWD=${last_pwd}
-    echo "${GREEN}${dir}${NC}"
-  else
+  
+  local ret_val=1
+  
+  if [[ $# -lt 1 && "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
     echo ''
     echo "E.g:. ${FUNCNAME[0]} dir1/dir2/dir3 (dirtree)"
     echo "E.g:. ${FUNCNAME[0]} dir1.dir2.dir3 (FQDN)"
+  elif [[ -n "$1" && ! -d "$1" ]]; then
+    dir_tree="${1//.//}"
+    dir_tree="${dir_tree//-//}"
+    \mkdir -p "${dir_tree}" || return 1
+    last_pwd=$(pwd)
+    IFS='/'
+    for dir in ${dir_tree}; do
+      cd "${dir}" || return 1
+    done
+    IFS="${RESET_IFS}"
+    export OLDPWD=${last_pwd}
+    echo "${GREEN}   Directories created: ${WHITE}${dir_tree}"
+    echo "${GREEN}  Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+    ret_val=0
   fi
 
-  return 0
+  return ${ret_val}
 }
