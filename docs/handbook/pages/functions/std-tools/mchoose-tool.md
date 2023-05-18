@@ -36,22 +36,23 @@
 #### __hhs_mchoose
 
 ```bash
-Usage: __hhs_mchoose [options] <output_file> <items...>
+Usage: __hhs_mchoose [options] <output_file> <title> <items...>
 
-    Options:
+    Options: 
       -c  : All options are initially checked instead of unchecked.
 
-    Arguments:
+    Arguments: 
       output_file : The output file where the results will be stored.
-      items       : The items to be displayed for choosing.
+      title       : The text to be displayed before rendering the items.
+      items       : The items to be displayed for choosing. Must be greater than 1.
 
-    Examples:
+    Examples: 
       Choose numbers from 1 to 20 (start with all options checked):
-        => __hhs_mchoose /tmp/out.txt {1..20} && cat /tmp/out.txt
+        => __hhs_mchoose /tmp/out.txt 'Mark the desired options' {1..20} && cat /tmp/out.txt
       Choose numbers from 1 to 20 (start with all options unchecked):
-        => __hhs_mchoose -c /tmp/out.txt {1..20} && cat /tmp/out.txt
+        => __hhs_mchoose -c /tmp/out.txt 'Mark the desired options' {1..20} && cat /tmp/out.txt
 
-  Notes:
+  Notes: 
     - A temporary file is suggested to used with this command: $ mktemp.
     - The outfile must not exist or it be an empty file.
 ```
@@ -74,6 +75,6 @@ Choose options from a list using a navigable menu.
 ##### **Examples:**
 
 ```bash
-  $ __hhs_mchoose /tmp/out.txt {1..20} && echo "All options initially unchecked" && cat /tmp/out.txt
-  $ __hhs_mchoose -c /tmp/out.txt {1..20} && echo "All options initially checked" && cat /tmp/out.txt
+  $ __hhs_mchoose /tmp/out.txt 'Mark the desired options' {1..20} && echo -n "These options were checked: " && cat /tmp/out.txt
+  $ __hhs_mchoose -c /tmp/out.txt 'Unmark the undesired options' {1..20} && echo -n "These options were checked: " && cat /tmp/out.txt
 ```

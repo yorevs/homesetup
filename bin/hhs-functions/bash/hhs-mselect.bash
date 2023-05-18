@@ -42,9 +42,9 @@ function __hhs_mselect() {
   all_options=("${@}")
   printf -v all_options_str '%s,' "${all_options[@]}"
   all_options_str="${all_options_str%,}"
-  len=${#all_options_str[@]}
-  
-  [[ "${len}" -eq 1 ]] && echo "0" >"$outfile" && return 0
+  len=${#all_options[@]}
+
+  [[ "${len}" -le 1 ]] && echo "${all_options[0]}" >"${outfile}" && return 0
   
   python3 -c """
 from clitt.core.tui.mselect.mselect import mselect

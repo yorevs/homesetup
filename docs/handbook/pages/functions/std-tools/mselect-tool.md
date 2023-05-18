@@ -36,17 +36,18 @@
 #### __hhs_mselect
 
 ```bash
-Usage: __hhs_mselect <output_file> <items...>
+Usage: __hhs_mselect <output_file> <title> <items...>
 
-    Arguments:
+    Arguments: 
       output_file : The output file where the result will be stored.
+      title       : The text to be displayed before rendering the items.
       items       : The items to be displayed for selecting.
 
-    Examples:
+    Examples: 
       Select a number from 1 to 100:
-        => __hhs_mselect /tmp/out.txt {1..100} && cat /tmp/out.txt
+        => __hhs_mselect /tmp/out.txt 'Please select one option' {1..100} && cat /tmp/out.txt
 
-  Notes:
+  Notes: 
     - If only one option is available, mselect will select it and return.
     - A temporary file is suggested to used with this command: $ mktemp.
     - The outfile must not exist or it be an empty file.
@@ -65,10 +66,11 @@ Select an option from a list using a navigable menu.
 ##### **Parameters**: 
 
   - $1 _Required_     : The output file where the result will be stored.
-  - $2..$N _Required_ : The items to be displayed for selecting.
+  - $2 _Required_     : The text to be displayed before rendering the items.
+  - $3..$N _Required_ : The items to be displayed for selecting.
 
 ##### **Examples:**
 
 ```bash
-  $ __hhs_mselect /tmp/out.txt {1..100} && echo "One item has been selected" && cat /tmp/out.txt
+  $ __hhs_mselect /tmp/out.txt 'Please select one option' {1..100} && echo -n "This item has been selected => " && cat /tmp/out.txt
 ```
