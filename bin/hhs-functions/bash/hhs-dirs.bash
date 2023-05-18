@@ -237,8 +237,6 @@ function __hhs_load_dir() {
             dir_alias="${sel_dir%=*}"
             dir="${sel_dir##*=}"
             [[ -n "${dir}" ]] && ret_val=0
-          else
-            ret_val=1
           fi
         else
           echo "${YELLOW}No directories available yet !${NC}"
@@ -247,10 +245,10 @@ function __hhs_load_dir() {
       [a-zA-Z0-9_]*)
         dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
         dir=$(grep "^${dir_alias}=" "${HHS_SAVED_DIRS_FILE}" | awk -F '=' '{ print $2 }')
+        ret_val=0
         ;;
       *)
         __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\""
-        ret_val=1
         ;;
       esac
       

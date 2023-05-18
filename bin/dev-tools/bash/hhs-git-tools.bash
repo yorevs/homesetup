@@ -196,7 +196,7 @@ if __hhs_has "git"; then
   # @param $2 [Opt] : The remote repository to pull from. Default is "origin"
   function __hhs_git_pull_all() {
 
-    local git_repos_path all_repos=() sel_indexes=() repository branch repo_dir stash_flag mchoose_file
+    local cur_pwd git_repos_path all_repos=() sel_repos=() repository branch repo_dir stash_flag mchoose_file
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]} [base_search_path] [repository]"
@@ -206,7 +206,8 @@ if __hhs_has "git"; then
       echo '      repository          : The remote repository to pull from. Default is \"origin\".'
       return 1
     fi
-
+    
+    cur_pwd=$(pwd)
     # Find all git repositories
     git_repos_path="${1:-.}"
     [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
@@ -215,20 +216,17 @@ if __hhs_has "git"; then
     shift
     repository="${1:-origin}"
 
-    clear
-    echo -e "${YELLOW}Choose the projects to pull from. Available Repositories (${#all_repos[@]}):"
-    echo -en "${WHITE}"
-
     mchoose_file=$(mktemp)
-    if __hhs_mchoose -c "${mchoose_file}" "${all_repos[@]}"; then
-      sel_indexes=($(grep . "${mchoose_file}"))
+    if __hhs_mchoose -c "${mchoose_file}" "Choose the projects to pull from. Available Repositories (${#all_repos[@]}):" "${all_repos[@]}"
+    then
+      sel_repos=($(grep . "${mchoose_file}"))
     else
       return 1
     fi
 
-    for idx in "${!all_repos[@]}"; do
-      repo_dir=$(dirname "${all_repos[$idx]}")
-      if [[ "${sel_indexes[$idx]}" == '1' ]]; then
+    for repo in "${all_repos[@]}"; do
+      repo_dir=$(dirname "${repo}")
+      if [[ "${sel_repos[*]}" =~ ${repo} ]]; then
         if [[ -d "${repo_dir}" ]]; then
           pushd "${repo_dir}" &>/dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
           branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
@@ -277,13 +275,15 @@ if __hhs_has "git"; then
         fi
       else
         echo ''
-        echo -e "${YELLOW}>>> Skipping: unselected (${sel_indexes[$idx]}) project \"${repo_dir}\" ${NC}"
+        echo -e "${YELLOW}>>> Skipping: unselected project \"${repo_dir}\" ${NC}"
       fi
     done
 
     echo ''
     echo "${GREEN}Done ! ${NC}"
     echo ''
+    
+    \cd "${cur_pwd}" || return 1
 
     return 0
   }
