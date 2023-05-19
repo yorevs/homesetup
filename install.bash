@@ -18,7 +18,7 @@
   USAGE="
 Usage: $APP_NAME [OPTIONS] <args>
 
-  -l | --local          : Local re-installation (dotfiles only).
+  -r | --repair         : Repair current installation.
   -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
@@ -198,8 +198,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         ANS='Y'
         QUIET=1
         ;;
-      -l | --local)
-        METHOD='local'
+      -r | --repair)
+        METHOD='repair'
         ;;
       *)
         quit 2 "Invalid option: \"$1\""
@@ -234,9 +234,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Check the installation method
     if [[ -n "${METHOD}" ]]; then
-      METHOD='local'
-    elif [[ -n "${HHS_VERSION}" && -f "${HHS_HOME}/.VERSION" ]]; then
       METHOD='repair'
+    elif [[ -z "${METHOD}" && -n "${HHS_VERSION}" || -f "${HHS_HOME}/.VERSION" ]]; then
+      METHOD='local'
     else
       METHOD='remote'
     fi
@@ -263,7 +263,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       activate_dotfiles
       ;;
     *)
-      quit 2 "Installation method is not valid: ${METHOD}"
+      quit 2 "Installation method \"${METHOD}\" is not valid!"
       ;;
     esac
   }

@@ -70,7 +70,8 @@ Choose options from a list using a navigable menu.
 ##### **Parameters**: 
 
   - $1 _Required_     : The output file where the results will be stored.
-  - $2..$N _Required_ : The items to be displayed for choosing.
+  - $2 _Required_     : The text to be displayed before rendering the items.
+  - $3..$N _Required_ : The items to be displayed for choosing.
 
 ##### **Examples:**
 

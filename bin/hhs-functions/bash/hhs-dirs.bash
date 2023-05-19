@@ -239,7 +239,7 @@ function __hhs_load_dir() {
             [[ -n "${dir}" ]] && ret_val=0
           fi
         else
-          echo "${YELLOW}No directories available yet !${NC}"
+          echo "${YELLOW}No directories available yet !"
         fi
         ;;
       [a-zA-Z0-9_]*)
@@ -256,13 +256,16 @@ function __hhs_load_dir() {
       
       if [[ ${ret_val} -eq 0 && -d "${dir}" ]]; then
         pushd "${dir}" &>/dev/null || return 1
-        echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+        echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\""
         ret_val=0
+      elif [[ -n "${dir}" && ! -d "${dir}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist!"
+        echo -e "${YELLOW}Hint: Type '$ save -r ${dir_alias}' to remove it."
       fi
     else
-      echo "${YELLOW}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !${NC}"
+      echo "${YELLOW}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !"
     fi
-    echo ''
+    echo "${NC}"
   fi
 
   return ${ret_val}

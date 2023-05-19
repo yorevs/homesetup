@@ -85,9 +85,9 @@ update_hhs() {
           pushd "${HHS_HOME}" &>/dev/null || quit 1
           git pull || quit 1
           popd &>/dev/null || quit 1
-          if "${HHS_HOME}"/install.bash -q; then
+          if "${HHS_HOME}"/install.bash -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !"
-            source ~/.bashrc
+            __hhs_reload
             echo -e "${HHS_MOTD}"
           else
             quit 1 "${PLUGIN_NAME}: Failed to install HomeSetup update !${NC}"

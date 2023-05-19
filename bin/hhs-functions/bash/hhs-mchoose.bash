@@ -48,14 +48,17 @@ function __hhs_mchoose() {
   title="$1"
   shift
   all_options=("${@}")
-  printf -v all_options_str '%s,' "${all_options[@]}"
-  all_options_str="${all_options_str%,}"
   len=${#all_options[@]}
   
   if [[ ${len} -le 1 ]] ; then
     __hhs_errcho "${FUNCNAME[0]}: Invalid number of items: \"${len}\""
     return 1
   fi
+  
+  printf -v all_options_str '%s,' "${all_options[@]}"
+  all_options_str="${all_options_str%,}"
+  
+  echo ''>"${outfile}"
 
   python3 -c """
 from clitt.core.tui.mchoose.mchoose import mchoose
