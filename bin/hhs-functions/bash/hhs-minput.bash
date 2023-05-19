@@ -13,7 +13,7 @@
 # @param $2 [Req] : The form fields.
 function __hhs_minput() {
 
-  local outfile ret_val=1 title all_fields=() len mi_modes=() mi_types=()
+  local outfile ret_val=1 title all_fields=() len
 
   if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"
@@ -33,7 +33,7 @@ function __hhs_minput() {
     echo ''
     echo '    Examples: '
     echo '      Form with 4 fields (Name,Age,Password,Role,Accept Conditions): '
-    echo "        => ${FUNCNAME[0]} /tmp/out.txt 'Please fill the form:' 'Name|||5/30|rw|' 'Age||numbers|1/3||' 'Password|password||5|rw|' 'Role||||r|Admin' 'Accept Conditions|checkbox||||' "
+    echo "        => ${FUNCNAME[0]} /tmp/out.txt 'Please fill the form below:'     'Name|||5/30|rw|'     'Age|masked|masked|1/3|| ;###'     'Password|password||5|rw|'     'Role|select||4/5|rw|Admin;<User>;Guest'     'Locked||||r|locked value'     'Accept Conditions|checkbox||||' && cat /tmp/out.txt "
     echo ''
     echo '  Notes: '
     echo '    - Optional fields will assume a default value if they are not specified.'

@@ -81,8 +81,9 @@ Provide a terminal form input with simple validation.
 ```bash
   $ __hhs_minput /tmp/out.txt 'Please fill the form below:' \
     'Name|||5/30|rw|' \
-    'Age||numbers|1/3||' \
+    'Age|masked|masked|1/3|| ;###' \
     'Password|password||5|rw|' \
-    'Role||||r|Admin' \
+    'Role|select||4/5|rw|Admin;<User>;Guest' \
+    'Locked||||r|locked value' \
     'Accept Conditions|checkbox||||' && cat /tmp/out.txt
 ```
