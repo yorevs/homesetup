@@ -8,10 +8,12 @@
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
-HomeSetup is a bundle of scripts and dotfiles that will elevate your bash shell experience to another level. There are 
-many improvements and facilities, especially for developers that will ease the usage and highly improve your 
-productivity. Currently we support **Bash** (v3.4+) for **Darwin** (MacOS) and **Linux**. We have plans to add support 
-for _Zsh_ as well.
+HomeSetup, created in **August 17, 2018**, is a comprehensive bundle of scripts and dotfiles designed to elevate your 
+**bash shell** experience to new heights. Packed with numerous enhancements and developer-friendly features, HomeSetup 
+is geared towards streamlining your workflow and significantly boosting productivity. Currently, it offers robust 
+support for Bash (version 3.4+) on both _macOS_ and _Linux_ platforms. Moreover, we have exciting plans to extend 
+support for [Zsh](https://www.zsh.org/) in the near future, catering to a wider range of users. If you're seeking a 
+more powerful and efficient shell experience, HomeSetup is the perfect solution.
 
 **THIS IT NOT JUST ANOTHER DOTFILES FRAMEWORK**
 
@@ -19,34 +21,34 @@ for _Zsh_ as well.
 
 ## Highlights
 
-HomeSetup was created to help users with the command line. The purpose was to create useful and easy-to-use features 
-that speedup daily tasks such as, punching the clock, searching for strings and files, change directories, using git, 
-gradle, docker, etc...
+HomeSetup was specifically developed to enhance the command line experience for users. Its primary objective is to provide useful and user-friendly features that expedite daily tasks, such as time tracking, string and file searching, directory navigation, and seamless integration with popular tools like Git, Gradle, Docker, and more.
 
-- Setup most commonly used configurations automatically.
-- Dozens of functions to help you configure your terminal and deal with your daily tasks.
-- Prompt with a mono-spaced font that supports [Font-Awesome](https://fontawesome.com/cheatsheet?from=io) icons.
-- Highly customizable aliases, so, you dictate what mnemonics you want to use (use your own syntax).
-- Universal package manager helper to help installing application using recipes (**not only brew installs**).
-- Save your custom dotfiles on a [Firebase](https://console.firebase.google.com) and download it wherever you go.
-- Small learning curve and a complete [User's Handbook](docs/handbook/USER_HANDBOOK.md).
-- All code is licensed under [The MIT License](LICENSE.md), so, you can modify and use freely.
-- **NEW** <tab+shift> complete (using menu-complete) that will cycle though options.
-- **NEW** visual way to **select**, **choose** and **input** data for your scripts (pure bash code).
-- **NEW** HomeSetup now works on Linux as well.
-- **NEW** Try HomeSetup on a docker container before installing on your machine.
+Key features of HomeSetup include:
+
+- Automated setup for commonly used configurations, ensuring a hassle-free initial setup.
+- A wide range of functions to simplify terminal configuration and streamline daily tasks.
+- A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons.
+- Highly customizable **aliases**, allowing users to define their preferred syntax and mnemonics.
+- A **universal package manager** helper that facilitates the installation of applications using recipes, catering to various package managers _beyond normal package managers_.
+- The ability to save custom dotfiles on [Firebase](https://firebase.google.com/) and easily download them across different environments.
+- Offers a short learning curve and provides a comprehensive [User's Handbook](docs/handbook/USER_HANDBOOK.md) for reference.
+- All code is licensed under The [MIT License](https://opensource.org/license/mit/), granting users the freedom to modify and use it as desired.
+- New Tab completion with Shift key (using menu-complete) to cycle through options conveniently.
+- Intuitive visual interfaces for selecting, choosing, and inputting data within scripts.
+- Now supports Linux, expanding its compatibility to a wider range of operating systems.
+- Can be tried on a [Docker](https://www.docker.com/) container before installing it on your local machine, ensuring a **risk-free trial**.
 
 ## Catalina moved from bash to zsh
 
-Latest version of MacOS comes with **zsh** as the _default shell_, but you can change it at any time with the following 
-command:
+Starting with the _Catalina_ version of macOS, the default shell has been switched to **Zsh**. Nonetheless, you retain 
+the flexibility to change the default shell back to bash. To accomplish this, you can utilize the following command:
 
 ```bash
 $ sudo chsh -s /bin/bash
 ```
 
-If apple decides to remove from next MacOS releases, you can always use Home-Brew's version. In this case, the path is 
-different:
+If Apple decides to remove **Bash** from future macOS releases, you can always rely on Homebrew's version. In such cases, 
+the path to the shell may differ. Here's an alternative approach:
 
 ```bash
 $ brew install bash
@@ -55,11 +57,13 @@ $ sudo chsh -s /usr/local/bin/bash
 
 ## HomeSetup Python scripts moved to pypi
 
-HomeSetup used to have some scripts using python. As the time passed, and the project grew, many python scripts have
-been incorporated. We felt the need of a new project, dedicated to handle all of the Python code. Thinking about that,
-we created the HomeSetup HsPyLib projects, available at: https://pypi.org/ . There are several modules
-dedicated to each purpose alone. Also, we have created some applications that are also very useful. Below a list of all
-HomeSetup managed applications:
+As HomeSetup evolved over time and expanded, the inclusion of Python scripts became essential. To streamline the 
+management of the growing [Python](https://www.python.org/) codebase, we recognized the need for a dedicated project. 
+Introducing **HomeSetup HsPyLib**, a separate project designed specifically for handling all **Python-related 
+functionality**. You can find the HomeSetup HsPyLib project on PyPI (Python Package Index) at: https://pypi.org/. 
+HsPyLib comprises _several modules_, each dedicated to a specific purpose, ensuring modular and focused functionality. 
+Additionally, we have developed a range of highly useful applications as part of the HomeSetup ecosystem. Here is a 
+list of all the applications managed by HomeSetup:
 
 - [hspylib](https://pypi.org/project/hspylib/) :: HSPyLib - Core python library 
 - [hspylib-kafman](https://pypi.org/project/hspylib-kafman/) :: HSPyLib - Apache Kafka Manager 
@@ -70,7 +74,7 @@ HomeSetup managed applications:
 - [hspylib-hqt](https://pypi.org/project/hspylib-hqt/) :: HSPyLib - QT framework extensions 
 - [hspylib-clitt](https://pypi.org/project/hspylib-clitt/) :: HSPyLib - CLI Terminal Tools
 
-HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
+The HsPyLib project is also licensed under the MIT license and is hosted on GitHub at: https://github.com/yorevs/hspylib.
 
 ## Table of contents
 
@@ -141,8 +145,8 @@ HSPyLib project is also held on GitHub https://github.com/yorevs/hspylib
     + CentOS 7 and higher
     + Fedora 31 and higher
 
-You may want to install HomeSetup on other linux distributions and it will probably work, but there are no guarantees 
-that it **WILL ACTUALLY WORK** .
+While it's possible to install HomeSetup on **other Linux** distributions and it might work, it's important to note that
+**there are no guarantees** of its _full functionality or compatibility_.
 
 #### Supported Shells
 
@@ -151,20 +155,45 @@ that it **WILL ACTUALLY WORK** .
 
 #### Required software
 
-The following software are required either to clone the repository, execute the tests and install packages:
+The following software are required either to clone the repository, execute tests and install all of the packages:
 
-###### Darwin and Linux
+##### Darwin and Linux
 
 - **git** v2.20+ : To clone and maintain the code.
+- **sudo** v1.5+ : To enable sudo commands.
 - **curl** v7.64+ : To make http(s) requests.
+- **vim** v5.0+ : To edit your dotfiles.
 - **python** v3.10+ : To run python based scripts.
+- **python3-pip** : To install required python packages.
 - **pip** v3.10+ : To install python modules.
-- **gpg** v2.2+: : To enable encryption based functions.
+- **gpg** v2.2+ : To enable encryption based functions.
 
 ##### Darwin only
 
 - **brew** v2.0+ : To install the required tools.
 - **xcode-select** v2373+: To install command line tools.
+
+##### Ubuntu required packages
+
+- locales 
+- libpq-dev 
+
+##### Fedora required packages
+
+- findutils 
+- procps 
+- uptimed 
+- glibc-common
+- net-tools
+
+##### Centos required packages
+
+- wget 
+- glibc-common 
+- libpq-devel 
+- openssl-devel 
+- bzip2-devel 
+- libffi-devel
 
 #### Recommended software
 
@@ -179,24 +208,25 @@ HomeSetup depends on a series of tools. To use some of the features of HomeSetup
 
 #### Optional software
 
-There are some tools that are also good to have if you are a developer, HomeSetup provides features to improve using
-the following tools:
+If you're a developer, there are several tools that can greatly enhance your workflow. HomeSetup offers a range of 
+features specifically designed to improve the usage of the following tools:
 
 - **docker** 19.03+ : To enable docker functions.
 - **gradle** 4+ : To enable gradle functions.
 
 #### Terminal setup
 
-HomeSetup requires a font that supports Font-Awesome icons. We suggest you to use the one we provide:
+To fully utilize the Font-Awesome icons in HomeSetup, you'll need a compatible font. We recommend using the font we 
+provide:
 
 * [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
-You need to install it on your machine before installing or trying HomeSetup, otherwise, you will see a question mark 
-icon instead of the real icons.
+Before installing or trying HomeSetup, make sure to install this font on your machine. Otherwise, you may see **question 
+mark icons** instead of the **actual ones**.
 
-**Linux users**: We have checked that some terminals already support icons, if not, you can install the font manually.
+**Linux users**: Some terminals already support icons, but if not, you can manually install the font.
 
-**Mac users**: We suggest using one of the terminal profiles below:
+**Mac users**: We suggest using one of the terminal profiles listed below to ensure optimal icon display:
 
 ##### Terminal App (Darwin)
 
@@ -210,23 +240,25 @@ icon instead of the real icons.
 
 ### Try-it first
 
-You can run HomeSetup from a docker container and then decide whether to install it on your machine. To do that, you 
-need to pull the image you want to try:
+You have the option to run HomeSetup from a [Docker container](https://www.docker.com/), allowing you to evaluate its 
+functionality before deciding to install it on your machine. To do this, follow these steps:
 
-`$ docker run --rm -it yorevs/hhs-centos`
+1. Start by pulling the Docker image you wish to try by executing one of the following commands:
+    ```bash
+    $ docker run --rm -it yorevs/hhs-centos
+    $ docker run --rm -it yorevs/hhs-ubuntu
+    $ docker run --rm -it yorevs/hhs-fedora
+    ```
 
-or
+2. Once the image is successfully pulled, you can proceed to run HomeSetup within the Docker container, explore its features, and evaluate its suitability for your needs.
 
-`$ docker run --rm -it yorevs/hhs-ubuntu`
-
-or
-
-`$ docker run --rm -it yorevs/hhs-fedora`
+Running HomeSetup in a Docker container offers a convenient and isolated environment for testing purposes, ensuring 
+that your machine remains unaffected during the evaluation process.
 
 ### Remote installation
 
-_This is the recommended installation type_. You can install HomeSetup directly from GitHub. To do that use the 
-following command to clone and install:
+This is the recommended installation method. You can install HomeSetup directly from GitHub by executing onr of the
+following commands:
 
 `$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
@@ -236,44 +268,46 @@ or
 
 ### Local installation
 
-Clone the repository using the following command:
+Clone the HomeSetup repository:
 
 `$ git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
 
-And then install dotfiles using the following command:
+And then install all dotfiles using the following command:
 
-`$ cd ~/HomeSetup && ./install.bash` => **To install all files**
+`$ cd ~/HomeSetup && ./install.bash` => **To install all files at once**
 
 or
 
 `$ cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
 
-Your old dotfiles (.bash*) will be backed up using '.orig' suffix and sent to ~/.hhs/backup folder.
+Your existing dotfiles (such as .bashrc, .bash_profile, etc.) will be backed up with the **'.orig'** suffix and stored 
+in the **~/.hhs/backup** folder. This ensures that your original dotfiles are safely preserved during the installation
+process.
 
 ### Post-Installation
 
-After a successful install, you should be able to see the following message:
+Once the installation is completed successfully, you should see the following welcome message:
 
 ![HomeSetup Welcome](https://iili.io/H8lOPxS.png "Welcome to HomeSetup")
 
 ### Firebase setup
 
-HomeSetup allows you to use your Firebase account to upload and download your custom files
-(dotfiles files synchronization) to your *Real-time Database*. To be able to use this feature, you need first 
-to configure your Google Firebase account.
+HomeSetup provides the capability to utilize your Firebase account for uploading and downloading your custom files
+(dotfiles file synchronization) to your *Real-time Database*. To utilize this feature, you must first configure your 
+Google Firebase account.
 
 #### Create new account
 
-If you have a Google account but do not have a Firebase one, you can do that using your Google credentials.
+If you have a Google account but don't have a Firebase account yet, you can create one using your Google credentials.
 
-Access: https://console.firebase.google.com/
+Access: [https://console.firebase.google.com/](https://console.firebase.google.com/)
 
 1. Create a *new Project* (HomeSetup).
-2. Create Database (as **production mode**).
-    * Click on Develop -> Database -> Create Database
-    * Click on **Real-time Database**
-    * Click on the **Rules** tab.
-3. Add the following rule to your HomeSetup ruleset.
+2. Create a Database (in **production mode**):
+   - Go to Develop -> Database -> Create Database.
+   - Select **Real-time Database**.
+   - Navigate to the **Rules** tab.
+3. Add the following rule to your HomeSetup **ruleset**.
 
 ```json
 {
@@ -297,44 +331,52 @@ Access: https://console.firebase.google.com/
 
 #### Configure account
 
-In order to use your Firebase account with HomeSetup, you will need to configure the read and write permissions as 
-showed on topic [1.3.1.](#create-new-account).
+To configure your Firebase account for use with HomeSetup, follow these steps:
 
-Access your account from: https://console.firebase.google.com/
+1. Configure the read and write permissions as shown in section [1.3.1.](#create-new-account) of the documentation.
+2. Access your account from: [https://console.firebase.google.com/](https://console.firebase.google.com/)
+3. Create a service key to **enable read/write access** to your Firebase account:
 
-Now it's time to create your service key to be able to read/write to/from your Firebase account:
+   - Click on *Authentication* in the left menu, then select *Users*.
+   - Obtain your **USER UID** and Identifier (email).
+   - Click on the *cogwheel icon* and choose *Project settings*.
+   - Go to the *Service accounts* tab.
+   - Obtain your **Project ID**.
+   - Click on *Generate new private key*.
+   - Save the generated file into the **$HHS_DIR** directory (usually ~/.hhs).
+   - Rename the file to *<project-id>-firebase-credentials.json*.
 
-1. Click on _Authentication_ (on the left menu) -> Users.
-2. Grab you **USER UID** and Identifier (email).
-3. Click on the **cogwheel icon -> Project settings**.
-4. Select the _Service accounts_ tab. 
-5. Grab you **Project ID**.
-6. Click on _Generate new private key_.
-7. Store the generated file into **$HHS_DIR** directory (usually ~/.hhs).
-8. Rename it to _<project-id>-firebase-credentials.json_.
+   For more details, consult the [Firebase help page](https://console.firebase.google.com/u/1/project/homesetup-37970/settings/serviceaccounts/adminsdk).
 
-For more details consult the [Firebase help page](https://console.firebase.google.com/u/1/project/homesetup-37970/settings/serviceaccounts/adminsdk).
+4. In a shell, run the command `$ firebase setup` and fill in the setup form as follows:
 
-Type in a shell: `$ firebase setup`. Fill in the setup form:
+   ![Firebase Setup](https://iili.io/H8ll1pa.png "Firebase Setup")
 
-![Firebase Setup](https://iili.io/H8ll1pa.png "Firebase Setup")
+You have now successfully configured Firebase for use with HomeSetup. To learn more about using Firebase features, 
+type in your shell: 
 
-You are now ready to use the Firebase features of HomeSetup.
-Type: `$ firebase help` for further information about using it.
+`$ firebase help`
 
 ## Uninstallation
 
-If you decide to, you can uninstall all HomeSetup files and restore your old dotfiles. To do that issue the command 
-in a shell: `# HomeSetup> ./uninstall.bash`
+If you choose to uninstall HomeSetup and restore your old dotfiles, you can do so by issuing the following command 
+in a shell: 
 
-The uninstaller will remove all files and folders related to HomeSetup for good. The only folder that will stay is
-the ~/.hhs where your configurations were stored. It's safe to delete this folder after the uninstallation of HomeSetup.
+`# HomeSetup> ./uninstall.bash`
+
+The uninstaller will remove all files and folders associated with HomeSetup. The only folder that will remain is 
+the $HHS_DIR (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is safe
+to delete this folder if you no longer need it, **HOWEVER ALL CUSTOM DOTFILES WILL BE GONE**.
 
 ## HomeSetup usage
 
-HomeSetup provides a [User Handbook](docs/handbook/USER_HANDBOOK.md) with all commands and examples of usage. There 
-will also be a youtube video about how to install/use and configure, as well as, take advantage of all HomeSetup 
-features and improvements.
+HomeSetup offers a comprehensive [User Handbook](docs/handbook/USER_HANDBOOK.md) that contains detailed documentation
+on all commands and examples of their usage. Additionally, there will soon be a _YouTube video_ available that guides
+you through the installation, usage, configuration, and utilization of all the features and enhancements provided.
+
+The User Handbook serves as a valuable resource for understanding and making the most of HomeSetup's capabilities, 
+while the accompanying YouTube and [asciinema](https://asciinema.org/~yorevs) videos provides a visual demonstration of 
+its usage.
 
 ## Built-in dotfiles
 
@@ -350,14 +392,14 @@ The following dotfiles will be available after installing HomeSetup:
 | ~/.bash_colors      | Terminal color definitions |
 | ~/.bash_functions   | Bash scripting functions   |
 
-The following directory will be linked to your <HHS_DIR> folder:
+The following directories will be created in your <$HHS_DIR> folder:
 
-- `$HHS_DIR/bin` # Includes all useful script provided by the project.
+- `$HHS_DIR/bin` # Includes all useful scripts provided by the project.
 - `$HHS_DIR/log` # Includes all HomeSetup log files.
+- `$HHS_DIR/backup` # Includes all HomeSetup backup files.
 
-If this folder already exists, the install script will replace all files, backing up, important ones.
-
-To override or add customized stuff, you need to create a custom file as follows:
+If the installation folder already exists, the install script will replace all files, taking care to back up the 
+important ones. To override or add customized configurations, you can create a custom file using the following:
 
 | Custom Dotfile     | Description                                      |
 |--------------------|--------------------------------------------------|
@@ -663,8 +705,11 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 
 ## Applications
 
-HomeSetup provides useful applications that can be used directly from shell. It is also added to your PATH variable.
-The complete handbook of development tools can be found [here](docs/handbook/pages/applications.md)
+HomeSetup includes a collection of useful applications that can be accessed directly from the shell. These applications
+are also automatically added to your **$PATH** variable for easy execution.
+
+For a comprehensive list and detailed information about the development tools available with HomeSetup, please refer 
+to the [Applications](docs/handbook/pages/applications.md) section in the complete handbook.
 
 ### Built-ins
 
@@ -677,17 +722,27 @@ The complete handbook of development tools can be found [here](docs/handbook/pag
 
 ## Alias definitions
 
-You can customize **most of HomeSetup aliases** by editing your file **~/.aliasdef**. When you first install HomeSetup,
-this file will be automatically generated for you. Further updates may require this file to be updated. We always keep a
-backup of this file, so, you can preserve your customizations, but this process has to be manual.
+You have the flexibility to customize **most of the HomeSetup aliases** by editing the `~/.aliasdef` file. When you 
+initially install HomeSetup, this file will be automatically generated for you. However, future updates may require 
+you to update this file. We always keep a backup of this file, allowing you to preserve your customizations. Please 
+note that the backup process needs to be done manually in this case.
 
-The original content and aliases are defined on the original [aliasdef](dotfiles/aliasdef) file.
+The original content and aliases are defined in the original [aliasdef](dotfiles/aliasdef) file. If you remove your 
+`~/.aliasdef` file, the HomeSetup's original definitions file will be copied to your "$HHS_DIR" folder next time you
+start you terminal.
 
 ## HomeSetup Application
 
-HomeSetup application is a bundle of scripts and functions to extend the terminal features, but also, there is an 
-application and plug-able scripts and functions that can be incorporated into it. To list all functions and plug-ins 
-available the the following terminal command : `# __hhs list`
+HomeSetup is more than just a collection of scripts and functions to enhance your terminal experience. It also includes
+an application framework and a variety of **plug-able scripts and functions** that can be seamlessly integrated into it. 
+To view a comprehensive list of all available functions and plug-ins, you can simply run the following command in your 
+terminal: `# __hhs list`. 
+
+If you want to explore and check all the existing functions within HomeSetup, you can simply run the following command
+in your terminal: `# __hhs funcs`.
+
+Those commands will provide you with an overview of all the functions and plug-ins that HomeSetup offers, allowing you 
+to explore and leverage their capabilities.
 
 ### HHS-Plug-ins
 
@@ -712,10 +767,15 @@ available the the following terminal command : `# __hhs list`
 
 ## Auto completions
 
-In addition to the normal bash <tab> complete, HomeSetup comes with another <shift+tab> complete. With this, you can 
-iterate over the options provided by the complete function instead of just displaying them. For the sake of terminal 
-opening performance, by default, HomeSetup does not load the completions. If you want to load them, issue the command
-`$ __hhs_load_completions`.
+In addition to the standard bash <tab> complete feature, HomeSetup introduces an enhanced completion functionality 
+accessed through **<shift+tab>**. This feature allows you to iterate over the available options provided by the 
+completion function, providing a more interactive experience.
+
+By default, HomeSetup _does not load the completions_ during terminal startup to optimize performance. However, if you 
+wish to load the completions and utilize this enhanced feature, you can issue the following command in your terminal: 
+`$ __hhs_load_completions`
+
+Executing this command will load the completions and enable the <shift+tab> complete functionality within HomeSetup.
 
 ### Bash completions
 
@@ -735,16 +795,22 @@ opening performance, by default, HomeSetup does not load the completions. If you
 ## Support HomeSetup
 
 You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) 
-or coding. Fell free to contact me for details. When contributing with code change please take a look at our 
-[guidelines](docs/CONTRIBUTING.md) and [code of conduct](docs/CODE_OF_CONDUCT.md).
+or contributing code. Feel free to contact me for further details. When making code contributions, please make sure to 
+review our [guidelines](docs/CONTRIBUTING.md) and adhere to our [code of conduct](docs/CODE_OF_CONDUCT.md).
+
+Your support and contributions are greatly appreciated in helping us improve and enhance HomeSetup. Together, we can 
+make it even better!
 
 ## Final notes
 
-HomeSetup will fetch for update automatically every 7 days from the installation on.
+HomeSetup is designed to automatically fetch updates **every 7 days** from the time of installation. However, if you 
+want to manually ensure that your HomeSetup is up to date, you can run the following command in your terminal: 
 
-**To manually keep your HomeSetup updated**, run `$ hhs updater execute`. This will install the latest HomeSetup version.
+`$ hhs updater execute update`. 
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+This will install the latest version of HomeSetup, keeping your setup current and incorporating any new features and 
+improvements. Keeping HomeSetup updated is essential to benefit from the latest enhancements and bug fixes. If you have 
+any questions or encounter any issues during the update process, feel free to reach out for assistance.
 
 ## Contacts
 
@@ -755,3 +821,6 @@ HomeSetup will fetch for update automatically every 7 days from the installation
 - Official chat: https://gitter.im/yorevs-homesetup/community
 - Contact: https://www.reddit.com/user/yorevs
 - Mailto: [Yorevs](mailto:yorevs@hotmail.com)
+
+
+Happy scripting with HomeSetup!

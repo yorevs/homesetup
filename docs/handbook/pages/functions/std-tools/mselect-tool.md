@@ -72,5 +72,7 @@ Select an option from a list using a navigable menu.
 ##### **Examples:**
 
 ```bash
-  $ __hhs_mselect /tmp/out.txt 'Please select one option' {1..100} && echo -n "This item has been selected => " && cat /tmp/out.txt
+  $ __hhs_mselect \
+    /tmp/out.txt 'Please select one option' {1..100} \
+    && echo -n "This item has been selected => " && cat /tmp/out.txt
 ```

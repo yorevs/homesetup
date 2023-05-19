@@ -10,6 +10,9 @@
   * [HHS-App](hhs-app.md#homesetup-application)
     + [Functions](hhs-app.md#functions)
     + [Plugins](hhs-app.md#plug-ins)
+      - [Firebase](hhs-app.md#firebase)
+      - [HSPM](hhs-app.md#hspm)
+      - [Updater](hhs-app.md#updater)
 <!-- tocstop -->
 
 ## HomeSetup application

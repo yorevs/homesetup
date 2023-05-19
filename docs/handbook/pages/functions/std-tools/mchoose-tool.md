@@ -76,6 +76,10 @@ Choose options from a list using a navigable menu.
 ##### **Examples:**
 
 ```bash
-  $ __hhs_mchoose /tmp/out.txt 'Mark the desired options' {1..20} && echo -n "These options were checked: " && cat /tmp/out.txt
-  $ __hhs_mchoose -c /tmp/out.txt 'Unmark the undesired options' {1..20} && echo -n "These options were checked: " && cat /tmp/out.txt
+  $ __hhs_mchoose /tmp/out.txt \
+    'Mark the desired options' {1..20} \
+    && echo -n "These options were checked: " && cat /tmp/out.txt
+  $ __hhs_mchoose -c /tmp/out.txt \
+    'Unmark the undesired options' {1..20} \
+    && echo -n "These options were checked: " && cat /tmp/out.txt
 ```
