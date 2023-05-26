@@ -230,21 +230,21 @@ get_desc() {
   done
 }
 
-# @purpose: Find all hhs-functions and make them available to use
-# @param $1 [Req] : The directory to look search from
+# @purpose: Find all hhs-functions and make them available to use.
+# @param $1..$N [Req] : The directories to search from.
 find_hhs_functions() {
 
   local all_hhs_fn fn_name line_num
 
-  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "$1" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
+  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
 
   for fn_line in ${all_hhs_fn}; do
-    filename=$(basename "$fn_line" | awk -F ':function' '{print $1}')
+    filename=$(basename "${fn_line}" | awk -F ':function' '{print $1}')
     filename=$(printf '%-30.30s' "${filename}")
-    fn_name=$(awk -F ':function' '{print $2}' <<<"$fn_line")
+    fn_name=$(awk -F ':function' '{print $2}' <<<"${fn_line}")
     fn_name=$(printf '%-30.30s' "${fn_name}")
     desc=$(get_desc "${fn_line}")
-    HHS_FUNCTIONS+=("${BLUE}${filename// /.} ${GREEN}=> ${NC}${fn_name} : ${YELLOW}${desc}")
+    HHS_FUNCTIONS+=("${BLUE}${filename// /.} ${GREEN}=> ${NC}${fn_name// /.} : ${YELLOW}${desc}")
   done
 
   return 0

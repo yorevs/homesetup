@@ -42,9 +42,10 @@ function list() {
 
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
+  
+  local idx columns fn_name
 
-  find_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash"
-  find_hhs_functions "${HHS_HOME}/dotfiles/bash"
+  find_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
 
   echo ' '
   echo "${YELLOW}-=- Available HomeSetup functions -=-"
@@ -65,6 +66,9 @@ function funcs() {
 # @purpose: Retrieve HomeSetup logs
 # @param $1 [opt] : The log level to retrieve.
 function logs() {
+  
+  local level 
+  
   HHS_LOG_LINES=${HHS_LOG_LINES:-100}
   level=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
   

@@ -248,23 +248,23 @@ case "${HHS_MY_SHELL}" in
     # @alias: Make terminal cursor invisible (Zsh)
     alias hide-cursor='echo -e "\033[?25l"'
     # @alias: Save terminal cursor position (Zsh)
-    alias save-cursor-pos='' # TODO Check how to do
+    alias save-cursor-pos='' # TODO Not supported yet
     # @alias: Restore terminal cursor position (Zsh)
-    alias restore-cursor-pos='' # TODO Check how to do
+    alias restore-cursor-pos='' # TODO Not supported yet
     # @alias: Enable terminal line wrap (Zsh)
-    alias enable-line-wrap='' # TODO Check how to do
+    alias enable-line-wrap='' # TODO Not supported yet
     # @alias: Disable terminal line wrap (Zsh)
-    alias disable-line-wrap='' # TODO Check how to do
+    alias disable-line-wrap='' # TODO Not supported yet
     # @alias: Enable terminal echo (Zsh)
-    alias enable-echo='' # TODO Check how to do
+    alias enable-echo='' # TODO Not supported yet
     # @alias: Disable terminal echo (Zsh)
-    alias disable-echo='' # TODO Check how to do
+    alias disable-echo='' # TODO Not supported yet
     # @alias: Reset all terminal cursor attributes (Zsh)
-    alias reset-cursor-attrs='' # TODO Check how to do
+    alias reset-cursor-attrs='' # TODO Not supported yet
     # @alias: Save the current terminal screen
-    alias save-screen='' # TODO Check how to do
+    alias save-screen='' # TODO Not supported yet
     # @alias: Load the saved terminal screen
-    alias restore-screen='' # TODO Check how to do
+    alias restore-screen='' # TODO Not supported yet
     ;;
 esac
 
