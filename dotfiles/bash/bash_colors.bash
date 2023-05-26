@@ -34,8 +34,6 @@ else # macOS `ls`
   export LSCOLORS='ExGxfxdxCxegedabagacad'
 fi
 
-# Setting grep color: Default is RED
-export GREP_COLOR=${GREP_COLOR:-'1;31'}
 # Color used to highlight text: Default is BLUE
 export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-$BLUE}
 
