@@ -3,7 +3,7 @@
 #  Script: hhs-built-ins.bash
 # Created: Oct 6, 2019
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
+#  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions

@@ -1,6 +1,6 @@
 FROM ubuntu
 
-MAINTAINER Hugo Saporetti Junior<yorevs@hotmail.com>
+MAINTAINER Hugo Saporetti Junior<homesetup@gmail.com>
 
 RUN apt-get update
 RUN apt-get install -y sudo curl vim git locales libpq-dev python3  python3-pip

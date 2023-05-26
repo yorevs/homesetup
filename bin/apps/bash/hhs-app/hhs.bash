@@ -5,7 +5,7 @@
 # Purpose: HomeSetup application
 # Created: Jan 06, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
+#  Mailto: homesetup@gmail.com
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
 # Functions to be unset after quit.

@@ -1,6 +1,6 @@
 FROM fedora
 
-MAINTAINER Hugo Saporetti Junior<yorevs@hotmail.com>
+MAINTAINER Hugo Saporetti Junior<homesetup@gmail.com>
 
 RUN dnf -y update
 RUN dnf install -y sudo curl vim git findutils procps hostname uptimed glibc-common net-tools python3-pip

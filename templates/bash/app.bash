@@ -4,7 +4,7 @@
 # Purpose: ${purpose}
 # Created: Mon DD, YYYY
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
+#  Mailto: homesetup@gmail.com
 
 # shellcheck disable=SC1090
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"

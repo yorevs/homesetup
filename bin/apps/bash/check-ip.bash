@@ -5,7 +5,7 @@
 # Purpose: Validate and check information about a provided IP address.
 # Created: Mar 20, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
+#  Mailto: homesetup@gmail.com
 # License: Please refer to <https://opensource.org/licenses/MIT>
 
 # Current script version.

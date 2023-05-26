@@ -820,7 +820,7 @@ any questions or encounter any issues during the update process, feel free to re
 - Issue tracker: https://github.com/yorevs/homesetup/issues
 - Official chat: https://gitter.im/yorevs-homesetup/community
 - Contact: https://www.reddit.com/user/yorevs
-- Mailto: [Yorevs](mailto:yorevs@hotmail.com)
+- Mailto: [Yorevs](mailto:homesetup@gmail.com)
 
 
 Happy scripting with HomeSetup!

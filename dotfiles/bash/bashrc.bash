@@ -5,7 +5,7 @@
 #          shell. It simply loads the required HomeSetup dotfiles and set some required paths.
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: yorevs@hotmail.com
+#  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
