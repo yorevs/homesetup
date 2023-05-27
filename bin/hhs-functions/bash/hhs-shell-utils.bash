@@ -24,14 +24,46 @@ function __hhs_history() {
   return $?
 }
 
+# inspiRED by https://superuser.com/questions/250227/how-do-i-see-what-my-most-used-linux-command-are
+# @function: Display statistics about commands in history.
+# @param $1 [Opt] : Limit to the top N commands.
+function __hhs_hist_stats() {
+
+  local top_n=${1:-10} i=1
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [top_N]"
+    return 1
+  fi
+  
+  pad=$(printf '%0.1s' "."{1..60})
+  pad_len=30
+      
+  echo -e "\n${ORANGE}Top '${top_n}' used commands in bash history ...\n"
+  for cmd in $(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}" |
+    perl -lane 'printf "%s %03d %s \n", $F[1], $F[0], "▄" x ($F[0] / 5)'); do
+    cmd_name=$(echo "${cmd}" | cut -d ' ' -f1)
+    cmd_qty=$(echo "${cmd}" | cut -d ' ' -f2)
+    cmd_chart=$(echo "${cmd}" | cut -d ' ' -f3-)
+    printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} " $i
+    echo -n "${cmd_name} "
+    printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
+    printf "${GREEN}%s ${CYAN}|%s \n" " ${cmd_qty}" "${cmd_chart}"
+    i=$((i+1))
+  done
+  echo "${NC}"
+
+  return $?
+}
+
 # @function: Display all environment variables using filters.
 # @param $1 [Opt] : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_envs() {
-  
+
   HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
-  
+
   local pad pad_len filters name value columns ret_val=0
-  
+
   touch "${HHS_ENV_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
@@ -105,7 +137,7 @@ function __hhs_defs() {
       IFS=$'\n'
       shopt -s nocasematch
       # shellcheck disable=SC2013
-      for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}"| sed 's/^ *//g' | sort | uniq); do
+      for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
         name=${v%%=*}
         name=${name// /}
         value=${v#*=}
@@ -141,8 +173,7 @@ function __hhs_shell_select() {
     [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
     [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
-    if __hhs_mselect "${mselect_file}" "Please select your new default shell:" "${avail_shells[@]}"
-    then
+    if __hhs_mselect "${mselect_file}" "Please select your new default shell:" "${avail_shells[@]}"; then
       sel_shell=$(grep . "${mselect_file}")
       if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
         if \chsh -s "${sel_shell}"; then

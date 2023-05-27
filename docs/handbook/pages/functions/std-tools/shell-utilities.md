@@ -57,6 +57,30 @@ Search for previously issued commands from history using filters.
   $ hist ls && echo "List previously type `ls' commands"
 ```
 
+### __hhs_hist_stats
+
+```bash
+Usage: __hhs_hist_stats [top_N]
+```
+
+##### **Purpose**:
+
+Display statistics about commands in history.
+
+##### **Returns**:
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**: 
+
+  - $1 _Optional_ : Limit to the top N commands.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_hist_stats 10 && echo "Top 10 used commands"
+```
+
 ------
 ### __hhs_envs
 
