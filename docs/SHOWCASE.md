@@ -1,17 +1,4 @@
-# Your shell, good as hell !
-    
-Are you passionate about the terminal? If so, you've come to the right place, especially if you're a command 
-line enthusiast. Terminal dotfiles are well-known for improving productivity and streamlining everyday tasks. While 
-there are numerous frameworks available to assist with this, many of them come with a steep learning curve and are 
-primarily targeted towards individuals with strong programming skills. Additionally, these frameworks often employ 
-esoteric syntax, requiring an additional effort to fully utilize their features. 
-
-Wouldn't it be fantastic if we could effortlessly upload and download our configurations, dotfiles, packages, and 
-customizations to the cloud? This is where HomeSetup comes in. It provides a solution that simplifies the process, 
-allowing you to leverage the power of the cloud seamlessly.
-
-With HomeSetup, you can enhance your terminal experience, boost productivity, and customize your setup to suit your 
-preferences all without the complexities often associated with other frameworks.
+# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup showcase
 
 # How can I try it ?
 
@@ -39,6 +26,13 @@ $ docker run --rm -it yorevs/hhs-fedora
 ![HomeSetup Welcome](https://iili.io/H8ry3vI.png "Welcome to HomeSetup")
 
 # HomeSetup's purpose
+
+HomeSetup, created in **August 17, 2018**, is a comprehensive bundle of scripts and dotfiles designed to elevate your 
+**bash shell** experience to new heights. Packed with numerous enhancements and developer-friendly features, HomeSetup 
+is geared towards streamlining your workflow and significantly boosting productivity. Currently, it offers robust 
+support for Bash (version 3.4+) on both _macOS_ and _Linux_ platforms. Moreover, we have exciting plans to extend 
+support for [Zsh](https://www.zsh.org/) in the near future, catering to a wider range of users. If you're seeking a 
+more powerful and efficient shell experience, HomeSetup is the perfect solution.
 
 ## Create your own syntax
 
