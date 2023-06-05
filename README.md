@@ -21,6 +21,8 @@ allowing you to leverage the power of the cloud seamlessly.
 With HomeSetup, you can enhance your terminal experience, boost productivity, and customize your setup to suit your 
 preferences all without the complexities often associated with other frameworks.
 
+For a full list of features, you can access the [HomeSetup usage manual](docs/USAGE.md).
+
 **THIS IT NOT JUST ANOTHER DOTFILES FRAMEWORK**
 
 Please access the [Showcase document](docs/SHOWCASE.md) for demonstrations of usage and features of HomeSetup.
@@ -359,7 +361,6 @@ make it even better!
 
 ## Final notes
 
-For a full list of features, you can access the [HomeSetup usage document](docs/USAGE.md)
 HomeSetup is designed to automatically fetch updates **every 7 days** from the time of installation. However, if you 
 want to manually ensure that your HomeSetup is up to date, you can run the following command in your terminal: 
 
