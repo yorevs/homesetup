@@ -8,7 +8,8 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
-# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
+#
+# Copyright (c) 2023, HomeSetup team
 
 # Current script version.
 VERSION=0.9.0

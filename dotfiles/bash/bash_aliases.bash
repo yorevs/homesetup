@@ -8,6 +8,9 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
+
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.aliases
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 

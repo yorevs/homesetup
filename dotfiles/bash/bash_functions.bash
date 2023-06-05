@@ -8,6 +8,9 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
+
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"

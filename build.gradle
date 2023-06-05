@@ -2,6 +2,7 @@
     Gradle root build file
     Project: HomeSetup
     Created: 5th March, 2022
+    Copyright (c) 2023, HomeSetup team
 */
 
 plugins {

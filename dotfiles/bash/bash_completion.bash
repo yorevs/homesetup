@@ -8,7 +8,10 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
-# !NOTICE: Do not change this file
+#
+# Copyright (c) 2023, HomeSetup team
+
+# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 #
 # Thanks to: https://github.com/git/git/tree/master/contrib/completion
 # Thanks to: Built-in docker scripts. *Requires bash_complete

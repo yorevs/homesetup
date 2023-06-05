@@ -7,6 +7,8 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
 
 @test "check-hhs-dirs-exist-test" {
   [[ -d "${HHS_HOME}" && -d "${HHS_DIR}" ]]

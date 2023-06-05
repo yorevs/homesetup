@@ -7,6 +7,8 @@
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
 # License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
 
 # Functions to be unset after quit.
 UNSETS+=(

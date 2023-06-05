@@ -9,7 +9,10 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
 
+# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.

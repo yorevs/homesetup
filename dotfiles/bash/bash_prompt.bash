@@ -8,8 +8,10 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
-# !NOTICE: Do not change this file. To customize your prompt edit the file ~/.prompt
+#
+# Copyright (c) 2023, HomeSetup team
 
+# !NOTICE: Do not change this file. To customize your prompt edit the file ~/.prompt
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 # Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
 # Improved with: http://ezprompt.net

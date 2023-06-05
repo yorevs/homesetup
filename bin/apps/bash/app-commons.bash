@@ -8,6 +8,8 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
 
 # Current application version.
 VERSION=${VERSION:-0.9.0}

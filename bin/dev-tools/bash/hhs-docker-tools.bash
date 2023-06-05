@@ -6,8 +6,11 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
-# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 #
+# Copyright (c) 2023, HomeSetup team
+
+# !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
+
 # Docker documentation can be found at:
 #   https://docs.docker.com/v17.09/engine/reference/commandline/exec/
 
