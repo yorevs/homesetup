@@ -291,9 +291,10 @@ Access: [https://console.firebase.google.com/](https://console.firebase.google.c
    - Navigate to the **Rules** tab.
 3. Add the following rule to your HomeSetup **ruleset**.
 
+Visit https://firebase.google.com/docs/database/security to learn more about security rules.
+
 ```json
 {
-  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
   "rules": {
     "homesetup": {
       ...
@@ -358,6 +359,16 @@ review our [guidelines](docs/CONTRIBUTING.md) and adhere to our [code of conduct
 
 Your support and contributions are greatly appreciated in helping us improve and enhance HomeSetup. Together, we can 
 make it even better!
+
+## Sponsors
+
+This project is supported by:
+
+<a href="https://www.jetbrains.com/community/opensource/?utm_campaign=opensource&utm_content=approved&utm_medium=email&utm_source=newsletter&utm_term=jblogo#support">
+  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="120" height="120">
+</a>
+
+Thank you for your support <3 !!
 
 ## Final notes
 
