@@ -124,7 +124,7 @@ function __hhs_tools() {
 # @param $1 [Req] : The command to check.
 function __hhs_about() {
   
-  local cmd cmd_ret
+  local cmd cmd_ret cmd_details="Command:"
   
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
@@ -135,9 +135,14 @@ function __hhs_about() {
       cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
       if [[ -n "${cmd_ret}" ]]; then
         echo ''
-        cmd_ret=${cmd_ret//is aliased to \`/${WHITE}=> }
-        cmd_ret=${cmd_ret//\'/}
-        printf "${GREEN}%12s${BLUE} ${cmd_ret//\%/%%} ${NC}\n" "Aliased:"
+        if [[ "${cmd_ret}" == *"is aliased to"* ]]; then
+          cmd_details="Aliased:"
+          cmd_ret=${cmd_ret//is aliased to \`/${WHITE}=> }
+          cmd_ret=${cmd_ret//\'/}
+        else
+          cmd_ret=${cmd_ret//is /${WHITE}=> }
+        fi
+        printf "${GREEN}%12s${BLUE} ${cmd_ret//\%/%%} ${NC}\n" "${cmd_details}"
         if unalias "${cmd}" 2>/dev/null; then
           cmd_ret=$(type "${cmd}" 2>/dev/null | head -n 1)
           if [[ -n "${cmd_ret}" ]]; then
