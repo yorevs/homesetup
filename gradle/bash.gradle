@@ -12,7 +12,7 @@ String dirName(File file) {
   file.getParentFile().getPath()
 }
 
-/***** Verification Group */
+/***** Verification Group */ 
 
 /* Run all Bats tests */
 task check(type: Task) {
