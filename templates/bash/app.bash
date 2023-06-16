@@ -1,20 +1,51 @@
 #!/usr/bin/env bash
 
-#  Script: ${app.bash}
-# Purpose: ${purpose}
+#  Script: ${app.name}.bash
+# Purpose: ${app.purpose}
 # Created: Mon DD, YYYY
-#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: homesetup@gmail.com
-
-# shellcheck disable=SC1090
-[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
-
-# Functions to be unset after quit
-# shellcheck disable=SC2034
-UNSETS+=('main' 'parse_args')
+#  Author: ${author}
+#  Mailto: ${author.mail}
 
 # Current application version
 VERSION=0.9.0
+
+# This application name.
+APP_NAME="${0##*/}"
+
+# Help message to be displayed by the application.
+USAGE=${USAGE:-"
+Usage: ${APP_NAME} <arguments> [options]
+"}
+
+# @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR .
+# @param $2 [Opt] : The exit message to be displayed.
+quit() {
+  # Unset all declared functions.
+  exit_code=${1:-0}
+  shift
+  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
+  [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
+  [[ ${#} -gt 0 ]] && echo ''
+  # shellcheck disable=SC2086
+  exit ${exit_code}
+}
+
+# @purpose: Display the usage message and exit with the provided code ( or zero as default ).
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE .
+# @param $2 [Opt] : The exit message to be displayed.
+usage() {
+  exit_code=${1:-0}
+  shift
+  echo -en "${USAGE}"
+  [[ ${#} -gt 0 ]] && echo ''
+  quit "${exit_code}" "$@"
+}
+
+# @purpose: Display the current application version and exit.
+version() {
+  quit 0 "$APP_NAME v$VERSION"
+}
 
 # ------------------------------------------
 # Basics
@@ -48,6 +79,7 @@ parse_args() {
 
 # @purpose: Program entry point
 main() {
+  echo "Executing ${APP_NAME} ..."
   parse_args "${@}"
   echo "
   ARG_NUM: ${#}

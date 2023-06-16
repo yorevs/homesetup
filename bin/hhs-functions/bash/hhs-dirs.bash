@@ -285,6 +285,7 @@ function __hhs_godir() {
     echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
   elif [[ -d "${1}" && -z "${2}" ]]; then
     dir="${1}"
+    ret_val=0
   else
     if [[ -n "$2" ]]; then
       search_path="${1}"
@@ -317,9 +318,14 @@ function __hhs_godir() {
   [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
   
   # If a valid directory was selected, change to it.
-  if [[ ${ret_val} -eq 0 && -n "${dir}" && -d "${dir}" ]] && pushd "${dir}" &>/dev/null; then
-    echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
-    ret_val=0
+  if [[ ${ret_val} -eq 0 && -n "${dir}" && -d "${dir}" ]]; then
+    if pushd "${dir}" &>/dev/null; then
+      echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+      ret_val=0
+    else
+      echo "${RED}Unable to changed to directory: ${WHITE}\"${dir}\"${NC}"
+      ret_val=1
+    fi
   fi
   
   echo ''
