@@ -14,7 +14,7 @@
 # @function: Display relevant system information.
 function __hhs_sysinfo() {
 
-  local username containers
+  local username containers ip_gw ip_local ip_ext ip_vpn containers
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
@@ -56,8 +56,8 @@ function __hhs_sysinfo() {
 
     if __hhs_has "docker" && __hhs_has "__hhs_docker_ps"; then
       containers=$(__hhs_docker_ps -a)
-      if [[ -n "${containers}" && $(__hhs_docker_count) -gt 1 ]]; then
-        echo -e "\n${GREEN}Active Docker Containers: ${BLUE}"
+      if [[ -n "${containers}" && $(__hhs_docker_count) -ge 1 ]]; then
+        echo -e "\n${GREEN}Online Docker Containers: ${BLUE}"
         for next in ${containers}; do
           echo "${next}" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
         done
@@ -76,7 +76,7 @@ function __hhs_sysinfo() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_process_list() {
 
-  local all_pids uid pid ppid cmd force quiet pad gflags='-E'
+  local all_pids uid pid ppid cmd force quiet pad divider gflags='-E'
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
@@ -119,7 +119,7 @@ function __hhs_process_list() {
       divider="$(printf '%0.1s' "-"{1..92})"
       echo ''
       [[ -z "$quiet" ]] && printf "${WHITE}%5s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
-      [[ -z "$quiet" ]] && printf "%-154s\n\n" "$divider"
+      [[ -z "$quiet" ]] && printf "%-154s\n\n" "${divider}"
       IFS=$'\n'
       for next in ${all_pids}; do
         uid=$(awk '{ print $1 }' <<<"${next}")

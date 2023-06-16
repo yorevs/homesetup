@@ -16,7 +16,7 @@
 # @param $1 [Req] : The log file name.
 function __hhs_tailor() {
 
-  local file
+  local file sed_flag all_args args last_idx file stream
   
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flag="-E"

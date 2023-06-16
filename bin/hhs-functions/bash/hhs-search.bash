@@ -73,7 +73,7 @@ if __hhs_has "python3"; then
   function __hhs_search_string() {
 
     local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
-    local names_expr search_str base_cmd full_cmd dir
+    local names_expr search_str base_cmd full_cmd dir repl_str
 
     if [[ "$#" -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <globs>"

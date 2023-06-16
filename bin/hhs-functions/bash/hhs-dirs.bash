@@ -12,7 +12,7 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # @function: Change the current working directory to a specific Folder.
-# @param $1 [Opt] : [-L|-P] wheather to follow (-L) or not (-P) symbolic links.
+# @param $1 [Opt] : [-L|-P] whether to follow (-L) or not (-P) symbolic links.
 # @param $2 [Opt] : The directory to change. If not provided, default DIR is the value of the HOME variable.
 function __hhs_change_dir() {
 

@@ -41,14 +41,15 @@ function __hhs_ls_sorted() {
 # @param $1 [Req] : The GLOB expression of the file/directory search.
 function __hhs_del_tree() {
 
-  local all trash_dest search_path glob dry_run='Y'
+  local all trash_dest search_path glob dry_run='Y' ans
 
   if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [-n|-f] <search_path> <glob_expr>"
+    echo "Usage: ${FUNCNAME[0]} [-n|-f|-i] <search_path> <glob_expr>"
     echo ''
     echo '  Options:'
-    echo "    -n | --dry-run  : Dry run. Don't actually remove anything, just show what would be done."
-    echo '    -f | --force    : Actually delete all files/directories it finds.'
+    echo '    -n | --dry-run      : Just show what would be deleted instead of removing it.'
+    echo '    -f | --force        : Actually delete all files/directories it finds.'
+    echo '    -i | --interactive  : Interactive deleting files/directories.'
     return 1
   else
 
@@ -59,6 +60,10 @@ function __hhs_del_tree() {
       ;;
     '-n' | '--dry-run')
       dry_run='Y'
+      shift
+      ;;
+    '-i' | '--interactive')
+      dry_run='I'
       shift
       ;;
     esac
@@ -73,16 +78,20 @@ function __hhs_del_tree() {
     all=$(find -L "${search_path}" -name "${glob}" 2>/dev/null)
 
     if [[ -n "${all}" ]]; then
-      if [[ "$dry_run" == 'N' ]]; then
+      if [[ "${dry_run}" == 'N' || "${dry_run}" == 'I' ]]; then
         for next in ${all}; do
-          trash_dest="${next##*/}"
-          while [[ -e "${TRASH}/${trash_dest}" ]]; do
-            trash_dest="${next##*/}-$(ts)"
-          done
-          if \mv "${next}" "${TRASH}/${trash_dest}" &>/dev/null; then
-            echo -e "${ORANGE}Deleted: ${WHITE}${next} -> ${TRASH}/${trash_dest}${NC}"
-          else
-            __hhs_errcho "${FUNCNAME[0]}: Could not move \"${next}\" to ${TRASH}/${trash_dest}"
+          [[ "${dry_run}" == 'I' ]] && read -r -n 1 -p "Delete ${next} y/[n]? " ans && echo ''
+          [[ "${dry_run}" == 'I' ]] || ans='Y'
+          if [[ "${ans}" == 'y' || "${ans}" == 'Y' ]]; then
+            trash_dest="${next##*/}"
+            while [[ -e "${TRASH}/${trash_dest}" ]]; do
+              trash_dest="${next##*/}-$(\date '+%s%S')"
+            done
+            if \mv "${next}" "${TRASH}/${trash_dest}" &>/dev/null; then
+              echo -e "${ORANGE}Trashed => ${WHITE}${next} -> ${TRASH}/${trash_dest}${NC}"
+            else
+              __hhs_errcho "${FUNCNAME[0]}: Could not move \"${next}\" to ${TRASH}/${trash_dest}"
+            fi
           fi
         done
       else

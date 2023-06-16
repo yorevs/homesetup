@@ -16,7 +16,7 @@
 # @param $1 [Con] : The path to be added or removed.
 function __hhs_paths() {
 
-  local pad pad_len path_dir custom private quiet
+  local pad pad_len columns path_dir path custom private quiet
 
   HHS_PATHS_FILE=${HHS_PATHS_FILE:-${HHS_DIR}/.path} # Custom paths
   PATHS_D="/etc/paths.d"                             # Private system paths

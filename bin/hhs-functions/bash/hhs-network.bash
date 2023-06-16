@@ -138,7 +138,7 @@ if __hhs_has host; then
       echo "Usage: ${FUNCNAME[0]} <domain_name>"
       return 1
     else
-      host "$1"
+      \host "${1}"
     fi
 
     return 0
@@ -147,7 +147,7 @@ if __hhs_has host; then
 fi
 
 # Requires dig to work.
-if __hhs_has host; then
+if __hhs_has dig; then
 
   # @function: Resolve domain names associated with the specified IP.
   # @param $1 [Req] : The IP address to resolve.
@@ -157,7 +157,7 @@ if __hhs_has host; then
       echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
       return 1
     fi
-    dig +short -x "$1"
+    \dig +short -x "$1"
 
     return $?
   }
@@ -188,7 +188,7 @@ if __hhs_has netstat; then
       if [[ "${state}" =~ ^(${states})$ ]]; then
         echo -e "\n${YELLOW}Checking for ports \"$port\" with current state of \"${state}\" ${NC}\n"
         echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        State"
-        netstat -an | grep -E "[.:]${port} " | __hhs_highlight "${state}"
+        \netstat -an | grep -E "[.:]${port} " | __hhs_highlight "${state}"
         return $?
       else
         __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, /}]"
@@ -197,7 +197,7 @@ if __hhs_has netstat; then
       port=${1:0:5}
       echo -e "\n${YELLOW}Checking for \"ALL\" ports ($port) with any state ${NC}\n"
       echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        State"
-      netstat -an | grep -E "[.:]${port} " | __hhs_highlight "$port"
+      \netstat -an | grep -E "[.:]${port} " | __hhs_highlight "$port"
       return $?
     fi
     echo ''

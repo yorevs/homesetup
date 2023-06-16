@@ -32,7 +32,7 @@ function __hhs_history() {
 # @param $1 [Opt] : Limit to the top N commands.
 function __hhs_hist_stats() {
 
-  local top_n=${1:-10} i=1
+  local top_n=${1:-10} i=1 cmd_name cmd_qty cmd_chart
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [top_N]"
@@ -63,9 +63,9 @@ function __hhs_hist_stats() {
 # @param $1 [Opt] : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_envs() {
 
-  HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
-
   local pad pad_len filters name value columns ret_val=0
+
+  HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
 
   touch "${HHS_ENV_FILE}"
 
@@ -116,9 +116,9 @@ function __hhs_envs() {
 # @param $1 [Opt] : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_defs() {
 
-  HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
-
   local pad pad_len filters name value columns ret_val=0
+
+  HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [regex_filters]"
