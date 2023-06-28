@@ -320,6 +320,7 @@ function __hhs_godir() {
     # If there was only one directory found, CD into it
     elif [[ ${len} -eq 1 ]]; then
       dir=${found_dirs[0]}
+      ret_val=0
     # If multiple directories were found with the same name, query the user
     else
       mselect_file=$(mktemp)
@@ -343,9 +344,6 @@ function __hhs_godir() {
       echo "${RED}Unable to change to directory: ${WHITE}\"${dir}\"${NC}"
       ret_val=1
     fi
-  else
-    [[ -n "${dir}" ]] && echo "${RED}Unable to change to directory: ${WHITE}\"${dir}\"${NC}"
-    ret_val=1
   fi
   
   echo ''
