@@ -135,7 +135,7 @@ function __hhs_list_tree() {
 # @param $2 [Con] : The alias to name the saved path.
 function __hhs_save_dir() {
 
-  local dir dir_alias all_dirs=() ret_val=1
+  local dir dir_alias all_dirs=() dirs=() ret_val=1
 
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "${HHS_SAVED_DIRS_FILE}"
@@ -146,6 +146,7 @@ function __hhs_save_dir() {
     echo 'Options: '
     echo "    -e : Edit the saved dirs file."
     echo "    -r : Remove saved dir."
+    echo "    -c : Cleanup directory paths that does not exist."
   else
   
     dir_alias=$(echo -en "${2:-$1}" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
@@ -156,11 +157,20 @@ function __hhs_save_dir() {
       return $?
     elif [[ "$1" == "-r" && -n "$2" ]]; then
       # Remove the previously saved directory aliased
-      if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
-        ised -e "s#(^$dir_alias=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
-        echo "${YELLOW}Directory removed: ${WHITE}\"$dir_alias\" ${NC}"
+      if grep -q "${dir_alias}" "${HHS_SAVED_DIRS_FILE}"; then
+        ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
+        echo "${YELLOW}Directory removed: ${WHITE}\"${dir_alias}\" ${NC}"
         ret_val=0
       fi
+    elif [[ "$1" == "-c" ]]; then
+      IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+      for idx in $(seq 1 "${#all_dirs[@]}"); do
+        dir=${all_dirs[idx-1]}
+        dir_alias=${dir%%=*}
+        dir=${dir#*=}
+        [[ -d "${dir}" ]] && dirs+=("${dir_alias}=${dir}")
+        printf "%s\n" "${dirs[@]}" >"${HHS_SAVED_DIRS_FILE}"
+      done
     elif [[ -n "$2" && -n "${dir_alias}" ]]; then
       dir="$1"
       # If the path is not absolute, append the current directory to it.
@@ -193,7 +203,7 @@ function __hhs_save_dir() {
 # @param $1 [Opt] : The alias to access the directory saved.
 function __hhs_load_dir() {
 
-  local dir_alias all_dirs=() dir pad pad_len mselect_file sel_dir ret_val=1
+  local dir idx icn dir_alias all_dirs=() dir pad pad_len mselect_file sel_dir ret_val=1
 
   HHS_SAVED_DIRS_FILE=${HHS_SAVED_DIRS_FILE:-$HHS_DIR/.saved_dirs}
   touch "${HHS_SAVED_DIRS_FILE}"
@@ -233,6 +243,13 @@ function __hhs_load_dir() {
         ;;
       $'')
         if [[ ${#all_dirs[@]} -ne 0 ]]; then
+          for idx in $(seq 1 "${#all_dirs[@]}"); do
+            dir=${all_dirs[idx-1]}
+            dir=${dir#*=}
+            [[ -d "${dir}" ]] && icn="${GREEN} ${WHITE}"
+            [[ -d "${dir}" ]] || icn="${ORANGE} ${WHITE}"
+            all_dirs[idx-1]="${icn} ${all_dirs[idx-1]}"
+          done
           mselect_file=$(mktemp)
           if __hhs_mselect "${mselect_file}" "Available saved directories (${#all_dirs[@]}):" "${all_dirs[@]}"
           then
@@ -323,9 +340,12 @@ function __hhs_godir() {
       echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
       ret_val=0
     else
-      echo "${RED}Unable to changed to directory: ${WHITE}\"${dir}\"${NC}"
+      echo "${RED}Unable to change to directory: ${WHITE}\"${dir}\"${NC}"
       ret_val=1
     fi
+  else
+    [[ -n "${dir}" ]] && echo "${RED}Unable to change to directory: ${WHITE}\"${dir}\"${NC}"
+    ret_val=1
   fi
   
   echo ''

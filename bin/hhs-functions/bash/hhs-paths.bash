@@ -55,7 +55,7 @@ function __hhs_paths() {
         [[ -d "${PATHS_D}" ]] && path_dir="$(find ${PATHS_D} -type f -exec cat {} \; | grep ^"${path}"$)"
         echo -en "${HHS_HIGHLIGHT_COLOR}${path}"
         printf '%*.*s' 0 $((pad_len - ${#path})) "${pad}"
-        [[ "${#path}" -ge "$columns" ]] && echo -en "${NC}" || echo -en "${NC}"
+        [[ "${#path}" -ge "${columns}" ]] && echo -en "${NC}" || echo -en "${NC}"
         if [[ -d "$path" ]]; then
           echo -en "${GREEN} ${CHECK_ICN} => ${WHITE}"
         else
