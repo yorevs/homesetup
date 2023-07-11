@@ -6,7 +6,7 @@
   </linearGradient>
   <mask id="m"><rect width="936" height="200" rx="30" fill="#FFF"/></mask>
   <g mask="url(#m)">
-    <rect width="415" height="200" fill="#2A2A2A"/>
+    <rect width="415" height="200" fill="#555"/>
     <rect width="521" height="200" fill="#3C1" x="415"/>
     <rect width="936" height="200" fill="url(#a)"/>
   </g>
