@@ -148,6 +148,8 @@ alias __hhs_reset="__hhs_clear; \reset"
 alias open="__hhs_open"
 # @alias: Use the HomeSetup TimeCalc widget
 alias tcalc="hspylib widgets TimeCalc"
+# @alias: Shortcut for setman app
+alias __hhs_settings='python3 -m setman'
 
 # -----------------------------------------------------------------------------------
 # @category: External tools aliases

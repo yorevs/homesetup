@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: hhs-dirs.bash
+#  Script: hhs-clitt.bash
 # Created: May 26, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
@@ -39,8 +39,6 @@ function __hhs_mchoose() {
     return 1
   fi
 
-  HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
-
   local outfile title all_options=() len checked='False' ret_val
 
   [[ '-c' = "${1}" ]] && shift && checked='True'
@@ -68,7 +66,6 @@ from clitt.core.tui.mchoose.mchoose import mchoose
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-    TUIPreferences(max_rows=${HHS_TUI_MAX_ROWS})
     it = [\"${all_options_str//,/\",\"}\"]
     mchoose(it, ${checked}, \"${title}\", \"${outfile}\")
 """
@@ -105,7 +102,6 @@ function __hhs_mselect() {
     return 1
   fi
 
-  HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
   outfile="$1"
   shift
   title="$1"
@@ -125,7 +121,6 @@ from clitt.core.tui.mselect.mselect import mselect
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-    TUIPreferences(max_rows=${HHS_TUI_MAX_ROWS})
     it = [\"${all_options_str//,/\",\"}\"]
     mselect(it, \"${title}\", \"${outfile}\")
 """
