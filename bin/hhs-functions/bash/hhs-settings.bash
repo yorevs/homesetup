@@ -14,14 +14,14 @@
 # shellcheck disable=SC1090
 function __hhs_settings() {
   
-  local envs_file ret_val=0
+  local envs_file ret_val=0 re="source" args=(${@})
   
   if [[ "${#}" -eq 0 ]]; then
     python3 -m setman -h
     ret_val=1
-  elif [[ " ${*} " =~ " source " ]]; then
+  elif [[ ${args[*]//\n/} =~ ${re} ]]; then
     envs_file=$(mktemp)
-    python3 -m setman source -f "${envs_file}"
+    python3 -m setman "${args[@]}" -f "${envs_file}"
     ret_val=$?
   else
     python3 -m setman "${@}"
