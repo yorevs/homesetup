@@ -54,6 +54,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # OS Application manager
   OS_APP_MAN=
+  
+  # Docsify link for HomeSetup README.md
+  DOCSIFY_LINK='https://docsify-this.net/?basePath=https://raw.githubusercontent.com/yorevs/homesetup/master#/?sidebar=true&maxLevel=3'
 
   # Darwin required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
@@ -72,6 +75,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   STAR_ICN="\xef\x80\x85"
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
+  POINTER_ICN="\xef\x90\xb2"
 
   # VT-100 Terminal colors
   NC=${NC:-'\033[0;0;0m'}
@@ -623,7 +627,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
-
+    
     echo ''
     echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
     echo -e "${BLUE}"
@@ -644,7 +648,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles close and re-open the terminal"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu --update"
     echo ''
-    echo -e "${YELLOW}${NOTE_ICN} Open ${BLUE}${HHS_HOME}/README.md${WHITE} for details about your new Terminal${NC}"
+    echo -e "${YELLOW}${NOTE_ICN} For details about your new Terminal access: "
+    echo -e "${POINTER_ICN} ${BLUE}${DOCSIFY_LINK}${NC}"
     echo ''
 
     if [[ "Darwin" == "${MY_OS}" ]]; then

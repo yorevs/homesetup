@@ -106,6 +106,8 @@ alias du='\du -hcd 1'
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 # @alias: Display current value of IFS
 alias ifs='echo -en "${IFS}" | hexdump -C'
+# @alias: Use the assigned app to open a file.
+alias open="__hhs_open"
 
 # @alias: Use `vim' instead of `vi' if installed
 __hhs_has "vim" && alias vi='vim'
@@ -134,22 +136,16 @@ alias ps2='export PS1=$PS2_STYLE'
 # -----------------------------------------------------------------------------------
 # @category: HomeSetup
 
-# @alias: Shortcut for hhs hspm plug-in
-alias __hhs_hspm='__hhs hspm execute'
-# @alias: Shortcut for hhs updater plug-in
-alias __hhs_hhu='__hhs updater execute'
 # @alias: Reload HomeSetup
 alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
 # @alias: Clear and reset all cursor attributes and IFS
 alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
 # @alias: Clear the screen and reset the terminal
 alias __hhs_reset="__hhs_clear; \reset"
-# @alias: Use the assigned app to open a file
-alias open="__hhs_open"
-# @alias: Use the HomeSetup TimeCalc widget
-alias tcalc="hspylib widgets TimeCalc"
-# @alias: Shortcut for setman app
-alias __hhs_settings='python3 -m setman'
+# @alias: Shortcut for hhs hspm plug-in
+alias __hhs_hspm='__hhs hspm execute'
+# @alias: Shortcut for hhs updater plug-in
+alias __hhs_hhu='__hhs updater execute'
 
 # -----------------------------------------------------------------------------------
 # @category: External tools aliases
@@ -295,6 +291,8 @@ if __hhs_has "python3"; then
   alias urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
   # @alias: Generate a UUID
   alias uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
+  # @alias: Shortcut for the HomeSetup TimeCalc widget
+  alias tcalc="hspylib widgets TimeCalc"
 fi
 
 # -----------------------------------------------------------------------------------
