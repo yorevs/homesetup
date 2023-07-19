@@ -62,7 +62,7 @@ install HomeSetup this file will be created automatically for you, so you just n
 
 ## Aliases
 
-HomeSetup defines some [aliases](../../README.md#aliases) that can be used to ease common tasks and commands. We provide many functions tha are 
+HomeSetup defines some [aliases](../USAGE.md#aliases) that can be used to ease common tasks and commands. We provide many functions tha are 
 also aliased, but those can be customised using the installed **~/.aliasdef** file. You can customize most of HomeSetup 
 aliases by editing this file. 
 
@@ -85,21 +85,21 @@ changing it, so you can always get what you have inside it and move to the new f
 
 We group our aliases using the following categories:
 
-- [Navigational](../../README.md#navigational)
-- [General](../../README.md#general)
-- [HomeSetup](../../README.md#homesetup)
-- [External tools](../../README.md#external-tools)
-- [OS Specific aliases](../../README.md#os-specific-aliases)
-- [Handy Terminal Shortcuts](../../README.md#handy-terminal-shortcuts)
-- [Python aliases](../../README.md#python-aliases)
-- [Perl aliases](../../README.md#perl-aliases)
-- [Git aliases](../../README.md#git-aliases)
-- [Gradle aliases](../../README.md#gradle-aliases)
-- [Docker aliases](../../README.md#docker-aliases)
+- [Navigational](../USAGE.md#navigational)
+- [General](../USAGE.md#general)
+- [HomeSetup](../USAGE.md#homesetup)
+- [External tools](../USAGE.md#external-tools)
+- [OS Specific aliases](../USAGE.md#os-specific-aliases)
+- [Handy Terminal Shortcuts](../USAGE.md#handy-terminal-shortcuts)
+- [Python aliases](../USAGE.md#python-aliases)
+- [Perl aliases](../USAGE.md#perl-aliases)
+- [Git aliases](../USAGE.md#git-aliases)
+- [Gradle aliases](../USAGE.md#gradle-aliases)
+- [Docker aliases](../USAGE.md#docker-aliases)
 
 ## Functions
 
-HomeSetup defines a bunch of [functions](../../README.md#functions) to help with the daily tasks such as "punch the clock", 
+HomeSetup defines a bunch of [functions](../USAGE.md#functions) to help with the daily tasks such as "punch the clock", 
 calculations with time, search and cd into directories, save most used directories, aliases and commands, git stuff and more. 
 They can also be aliased using the **~/.aliasdef** file. We also define some default values for them (that you can also change later).
 
@@ -110,18 +110,18 @@ install HomeSetup this file will be created automatically for you, so you just n
 
 Functions are grouped into two categories:
 
-- [Standard tools](../../README.md#standard-tools)
-- [Development tools](../../README.md#development-tools)
+- [Standard tools](../USAGE.md#standard-tools)
+- [Development tools](../USAGE.md#development-tools)
 
 Checkout the full handbook of [functions here](pages/functions.md).
 
 ## Applications
 
-In addition to aliases and functions, HomeSetup also puts available some [applications](../../README.md#applications)
+In addition to aliases and functions, HomeSetup also puts available some [applications](../USAGE.md#applications)
 with different purposes, such as IP information verification, fetch REST services, and more. Currently we are using two
 kinds of applications:
 
-- [Bash applications](../../README.md#applications)
+- [Bash applications](../USAGE.md#applications)
 
 Checkout the full handbook of [applications here](pages/applications.md).
 

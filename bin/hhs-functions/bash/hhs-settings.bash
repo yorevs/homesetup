@@ -16,22 +16,23 @@ function __hhs_settings() {
   
   local envs_file ret_val=0 re="source" args=(${@})
   
+  # Update the settings configuration
+  echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" > "${HHS_SETMAN_CONFIG_FILE}"
+  
   if [[ "${#}" -eq 0 ]]; then
     python3 -m setman -h
-    ret_val=1
   elif [[ ${args[*]//\n/} =~ ${re} ]]; then
     envs_file=$(mktemp)
     python3 -m setman "${args[@]}" -f "${envs_file}"
-    ret_val=$?
   else
     python3 -m setman "${@}"
-    ret_val=$?
   fi
+  ret_val=$?
 
   [[ -n "${envs_file}" && -f "${envs_file}" ]] && source "${envs_file}"
   [[ -n "${envs_file}" && -f "${envs_file}" ]] && \rm -f "${envs_file}"
   
-  echo -e "${NC}"
+  echo -en "${NC}"
   
   return ${ret_val}
 }

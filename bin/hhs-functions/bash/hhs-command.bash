@@ -90,7 +90,7 @@ function __hhs_command() {
         for next in ${all_cmds[*]}; do
           printf "${WHITE}(%03d) " $((index))
           cmd_name="$(echo -en "${next}" | awk -F ':' '{ print $1 }')"
-          cmd_expr=$(echo -en "${next}" | awk -F ': ' '{ print $2 }')
+          cmd_expr="$(echo -en "${next}" | awk -F ': ' '{ print $2 }')"
           echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}${WHITE}"
           printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
           echo "${GREEN} is stored as: ${WHITE}'${cmd_expr}'"
@@ -112,7 +112,7 @@ function __hhs_command() {
           sel_cmd=$(grep . "${mselect_file}")
           cmd_expr="${sel_cmd##*: }"
           [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}" && ret_val=$?
-          \rm -f "${mselect_file}"
+          [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
         else
           [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
           return 1

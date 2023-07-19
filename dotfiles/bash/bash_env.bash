@@ -95,12 +95,12 @@ export HISTTIMEFORMAT="[${USER}, %F %T]  "
 export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
+export HHS_EXPORT_SETTINGS=1
 
 # ----------------------------------------------------------------------------
-# File configs
+# Module configs
 
 export HHS_DEFAULT_EDITOR=__hhs_open
-export HHS_TUI_MAX_ROWS=15
 export HHS_ALIASES_FILE="${HHS_DIR}/.aliases"
 export HHS_ENV_FILE="${HHS_DIR}/.env"
 export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
@@ -111,6 +111,8 @@ export HHS_VAULT_FILE="${HHS_DIR}/.vault"
 export HHS_VAULT_USER="${USER}"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_DIR}/firebase.properties"
 export HHS_FIREBASE_CREDS_FILE="${HHS_DIR}/{project_id}-firebase-credentials.json"
+export HHS_SETMAN_CONFIG_FILE="${HHS_DIR}/setman.properties"
+export HHS_SETMAN_DB_FILE="${HHS_DIR}/setman.db"
 
 # ----------------------------------------------------------------------------
 # Directories

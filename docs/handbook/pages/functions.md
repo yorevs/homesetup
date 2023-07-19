@@ -34,7 +34,7 @@
 
 This set of tool were designed to help you on daily tasks and improve productivity with the command line. Many 
 functions to help find files/directories, text and other utilities such as system information and partitions. A
-list of available functions can be found on the **README.md** section [Standard Tools](../../../README.md#standard-tools) 
+list of available functions can be found on the **README.md** section [Standard Tools](../../USAGE.md#standard-tools) 
 
 ## Development Tools
 
@@ -45,7 +45,7 @@ tools. This set is new and will be improved in the future. Currently we have sup
 - Gradle
 - Git
 
-A list of available functions can be found on the **README.md** section [Development Tools](../../../README.md#development-tools)
+A list of available functions can be found on the **README.md** section [Development Tools](../../USAGE.md#development-tools)
 
 
 [Back to User Handbook](../USER_HANDBOOK.md)

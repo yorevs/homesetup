@@ -99,6 +99,7 @@ if __hhs_has "python3"; then
   __hhs_alias hspylib='__hhs_hspylib'
   __hhs_alias widgets='__hhs_hspylib widgets'
   __hhs_alias appman='__hhs_hspylib appman'
+  __hhs_alias setman='__hhs_settings'
 fi
 
 # GPG shortcuts

@@ -195,4 +195,13 @@ echo ''
 echo -e "${HHS_MOTD}${NC}"
 echo ''
 
+# Load system preferences
+if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
+  if __hhs_settings source -n hhs; then
+    __hhs_log "INFO" "System settings loaded ..."
+  else
+    __hhs_log "ERROR" "Failed to load system settings!"
+  fi
+fi
+
 echo -e "\nHomeSetup load finished: $(date)\n" >> "${HHS_LOG_FILE}"

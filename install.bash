@@ -181,16 +181,19 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Auto-completions location
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
+    
+    # HomeSetup version
+    HHS_VERSION="${HHS_HOME}/.VERSION"
+
+    # Check if the user passed the help or version parameters
+    [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
+    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(grep . "${HHS_VERSION}")"
 
     # Enable install script to use colors
     [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] \
       && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -s "${HHS_HOME}/.VERSION" ]] \
-      && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_HOME}/.VERSION") ${GREEN}setup ${NC}"
-
-    # Check if the user passed the help or version parameters
-    [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "$USAGE"
-    [[ "$1" == '-v' || "$1" == '--version' ]] && version
+      && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION}") ${GREEN}installation ${NC}"
 
     # Loop through the command line options
     # Short opts: -w, Long opts: --Word
@@ -382,10 +385,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}### Installation Settings ###"
     echo ''
-    echo -e "${BLUE}  Install Type: ${METHOD}${NC}"
-    echo -e "${BLUE}         Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}${NC}"
-    echo -e "${BLUE}Install Prefix: ${HHS_HOME}${NC}"
-    echo -e "${BLUE}   Preferences: ${HHS_DIR}${NC}"
+    echo -e "${BLUE} Install Type: ${METHOD}"
+    echo -e "${BLUE}        Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}"
+    echo -e "${BLUE}  Install Dir: ${HHS_HOME}"
+    echo -e "${BLUE}  Configs Dir: ${HHS_DIR}"
+    echo -en "${NC}"
 
     if [[ "${METHOD}" == 'repair' || "${METHOD}" == 'local' ]]; then
       echo -e "${ORANGE}"
@@ -413,7 +417,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Create alias and input definitions
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
-
+    
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 
     # If `all' option is used, copy all files
