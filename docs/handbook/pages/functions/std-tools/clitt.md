@@ -10,9 +10,9 @@
   * [Command Tool](command-tool.md#command-tool)
   * [Directory Related](directory-related.md#directory-related-functions)
   * [File Related](file-related.md#file-related-functions)
-  * [MChoose Tool](mchoose-tool.md#mchoose-tool)
-  * [MInput Tool](minput-tool.md#minput-tool)
-  * [MSelect Tool](mselect-tool.md#mselect-tool)
+  * [MChoose Tool](clitt.md#mchoose-tool)
+  * [MInput Tool](clitt.md#minput-tool)
+  * [MSelect Tool](clitt.md#mselect-tool)
   * [Network Related](network-related.md#network-related-functions)
   * [Paths Tool](paths-tool.md#paths-tool)
   * [Profile Related](profile-related.md#profile-related-functions)
@@ -31,6 +31,107 @@
 <!-- tocstop -->
 
 
+### MChoose tool
+
+#### __hhs_mchoose
+
+```bash
+Usage: __hhs_mchoose [options] <output_file> <title> <items...>
+
+    Options: 
+      -c  : All options are initially checked instead of unchecked.
+
+    Arguments: 
+      output_file : The output file where the results will be stored.
+      title       : The text to be displayed before rendering the items.
+      items       : The items to be displayed for choosing. Must be greater than 1.
+
+    Examples: 
+      Choose numbers from 1 to 20 (start with all options checked):
+        => __hhs_mchoose /tmp/out.txt 'Mark the desired options' {1..20} && cat /tmp/out.txt
+      Choose numbers from 1 to 20 (start with all options unchecked):
+        => __hhs_mchoose -c /tmp/out.txt 'Mark the desired options' {1..20} && cat /tmp/out.txt
+
+  Notes: 
+    - A temporary file is suggested to used with this command: $ mktemp.
+    - The outfile must not exist or it be an empty file.
+```
+
+##### **Purpose**:
+
+Choose options from a list using a navigable menu.
+
+##### **Returns**:
+
+  - **0** on success and if chosen items were Accepted.
+  - **127** if the user Canceled (**Q** pressed).
+  - **non-zero** for all other cases.
+
+##### **Parameters**: 
+
+  - $1 _Required_     : The output file where the results will be stored.
+  - $2 _Required_     : The text to be displayed before rendering the items.
+  - $3..$N _Required_ : The items to be displayed for choosing.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_mchoose /tmp/out.txt \
+    'Mark the desired options' {1..20} \
+    && echo -n "These options were checked: " && cat /tmp/out.txt
+  $ __hhs_mchoose -c /tmp/out.txt \
+    'Unmark the undesired options' {1..20} \
+    && echo -n "These options were checked: " && cat /tmp/out.txt
+```
+
+------
+### MSelect tool
+
+#### __hhs_mselect
+
+```bash
+Usage: __hhs_mselect <output_file> <title> <items...>
+
+    Arguments: 
+      output_file : The output file where the result will be stored.
+      title       : The text to be displayed before rendering the items.
+      items       : The items to be displayed for selecting.
+
+    Examples: 
+      Select a number from 1 to 100:
+        => __hhs_mselect /tmp/out.txt 'Please select one option' {1..100} && cat /tmp/out.txt
+
+  Notes: 
+    - If only one option is available, mselect will select it and return.
+    - A temporary file is suggested to used with this command: $ mktemp.
+    - The outfile must not exist or it be an empty file.
+```
+
+##### **Purpose**:
+
+Select an option from a list using a navigable menu.
+
+##### **Returns**:
+
+  - **0** on success and if the selected item was Accepted.
+  - **127** if the user Canceled (**Q** pressed).
+  - **non-zero** for all other cases.
+
+##### **Parameters**: 
+
+  - $1 _Required_     : The output file where the result will be stored.
+  - $2 _Required_     : The text to be displayed before rendering the items.
+  - $3..$N _Required_ : The items to be displayed for selecting.
+
+##### **Examples:**
+
+```bash
+  $ __hhs_mselect \
+    /tmp/out.txt 'Please select one option' {1..100} \
+    && echo -n "This item has been selected => " && cat /tmp/out.txt
+```
+
+------
 ### MInput tool
 
 #### __hhs_minput
