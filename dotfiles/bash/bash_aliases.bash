@@ -274,7 +274,7 @@ esac
 
 if __hhs_has "python3"; then
   # @alias: Shortcut for clitt module
-  alias __hhs_hspylib='python3 -m clitt'
+  alias __hhs_clitt='python3 -m clitt'
   # @alias: Shortcut for vault module
   alias __hhs_vault='python3 -m vault'
   # @alias: Shortcut for cfman module

@@ -92,6 +92,7 @@ AT_ICN="\357\207\272"
 NET_ICN="\357\203\250"
 FOLDER_ICN="\357\201\273"
 GIT_ICN="\357\204\246"
+PROMPT_ICN="\357\204\205"
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details.
 # Use __hhs_utoh <4digit-hex> to find out the octal value of the icon.
@@ -156,7 +157,7 @@ PATH_STYLE="${PROMPT_COLOR} ${FOLDER_ICN} ${DIR_COLOR} \W"
 GIT_STYLE="${PROMPT_COLOR}\$(__hhs_git_prompt \" ${GIT_ICN} ${GIT_COLOR}\")"
 
 # User prompt format.
-PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} \$ "
+PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} ${PROMPT_ICN} "
 
 # Set the terminal title and prompt.
 # Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details.

@@ -55,8 +55,11 @@ Usage: $APP_NAME [OPTIONS] <args>
   # OS Application manager
   OS_APP_MAN=
   
-  # Docsify link for HomeSetup README.md
-  DOCSIFY_LINK='https://docsify-this.net/?basePath=https://raw.githubusercontent.com/yorevs/homesetup/master#/?sidebar=true&maxLevel=3'
+  # README link for HomeSetup 
+  README_LINK="${HHS_HOME}/README.MD"
+  
+  # Python modules to install
+  PYTHON_MODULES=('hspylib' 'hspylib-clitt' 'hspylib-setman' 'hspylib-vault' 'hspylib-firebase')
 
   # Darwin required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
@@ -88,8 +91,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hhslib install_brew 
-    copy_file create_directory
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib install_brew 
+    copy_file create_directory pip_install
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -384,12 +387,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo ''
     echo -e "${WHITE}### Installation Settings ###"
-    echo ''
-    echo -e "${BLUE} Install Type: ${METHOD}"
-    echo -e "${BLUE}        Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}"
-    echo -e "${BLUE}  Install Dir: ${HHS_HOME}"
-    echo -e "${BLUE}  Configs Dir: ${HHS_DIR}"
-    echo -en "${NC}"
+    echo -e "${BLUE}"
+    echo -e " Install Type: ${METHOD}"
+    echo -e "        Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}"
+    echo -e "  Install Dir: ${HHS_HOME}"
+    echo -e "  Configs Dir: ${HHS_DIR}"
+    echo -e "  Python Pkgs: ${PYTHON_MODULES[*]}"
+    echo -e "${NC}"
 
     if [[ "${METHOD}" == 'repair' || "${METHOD}" == 'local' ]]; then
       echo -e "${ORANGE}"
@@ -514,40 +518,36 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     PIP=$(command -v pip3 2>/dev/null)
-    [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Python3 is required by HomeSetup and was not found!"
+    [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Python3 and Pip3 are required by HomeSetup!"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
-    echo "Found installed Python version $(python3 -V) at ${PYTHON}"
-    install_hhslib "${PYTHON}" "${PIP}"
+    echo ''
+    echo "Using Python version $(${PYTHON} -V) at: \"${PYTHON}\""
+    install_hspylib "${PYTHON}"
   }
 
   # Install HomeSetup python libraries
-  install_hhslib() {
+  install_hspylib() {
+    # Define python tools
     PYTHON="${1:-python3}"
-    PIP="${2:-pip3}"
-
-    # HsPyLib-Vault installation
-    echo -en "\n${WHITE}Installing HsPyLib-Vault using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade hspylib-vault 1>/dev/null ||
-      quit 2 "Unable to install HomeSetup Vault !"
-    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
-
-    # HsPyLib-Firebase installation
-    echo -en "\n${WHITE}Installing HsPyLib-Firebase using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade hspylib-firebase 1>/dev/null ||
-      quit 2 "Unable to install HomeSetup Firebase !"
-    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
+    for module in "${PYTHON_MODULES[@]}"; do
+      pip_install "${module}"
+    done
+  }
+  
+  # Install Python packages using pip
+  pip_install() {
     
-    # HsPyLib-Clitt installation
-    echo -en "\n${WHITE}Installing HsPyLib-Clitt using ${PYTHON} ..."
-    ${PYTHON} -m pip install --upgrade hspylib-clitt 1>/dev/null ||
-      quit 2 "Unable to install HomeSetup Clitt !"
-    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
+    module="$1"
+    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing PyPi package ${module} ..."
+    ${PYTHON} -m pip install --upgrade "${module}" > 'install.log' 2>&1 ||
+      quit 2 "[  ${RED}FAIL${NC}  ] Unable to install ${module}!"
+    echo -e " ${WHITE}[   ${GREEN}OK${NC}   ]"
   }
 
-  # Check for backward HHS compatibility.
+  # Check for backward HomeSetup backward compatibility.
   compatibility_check() {
 
-    echo -e "\n${WHITE}Checking HHS compatibility ...${BLUE}"
+    echo -e "\n${WHITE}Checking HomeSetup backward compatibility ...${BLUE}"
     
     # Cleaning up old dotfiles links
     [[ -d "${BIN_DIR}" ]] && rm -f "${BIN_DIR:?}/*.*"
@@ -626,7 +626,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
       
     # Moving orig and bak files to backup folder.
-    
+    echo -e "\n${ORANGE}Moving \".orig\" and \".bak\" files to backup folder ... \n${NC}"
+    find "${HHS_DIR}" -maxdepth 1 -type f -name '*.bak' -print -exec mv {} "${HHS_BACKUP_DIR}" \;
   }
 
   # Reload the terminal and apply installed files.
@@ -653,7 +654,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu --update"
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} For details about your new Terminal access: "
-    echo -e "${POINTER_ICN} ${BLUE}${DOCSIFY_LINK}${NC}"
+    echo -e "${POINTER_ICN} ${BLUE}${README_LINK}${NC}"
     echo ''
 
     if [[ "Darwin" == "${MY_OS}" ]]; then
