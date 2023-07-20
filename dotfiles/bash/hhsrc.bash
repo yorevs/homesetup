@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=2015
+# shellcheck disable=2015,1090
 
 #  Script: hhsrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new
@@ -190,18 +190,21 @@ if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}
   fi
 fi
 
-# Print HomeSetup MOTD
-echo ''
-echo -e "${HHS_MOTD}${NC}"
-echo ''
-
 # Load system preferences
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
-  if __hhs_settings source -n hhs; then
-    __hhs_log "INFO" "System settings loaded ..."
+  # Update the settings configuration
+  echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" > "${HHS_SETMAN_CONFIG_FILE}"
+  tmp_file="$(mktemp)"
+  if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
+    __hhs_log "INFO" "System settings loaded !"
   else
-    __hhs_log "ERROR" "Failed to load system settings!"
+    __hhs_log "ERROR" "Failed to load system settings !"
   fi
 fi
 
 echo -e "\nHomeSetup load finished: $(date)\n" >> "${HHS_LOG_FILE}"
+
+# Print HomeSetup MOTD
+echo ''
+echo -e "${HHS_MOTD}${NC}"
+echo ''

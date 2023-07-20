@@ -92,7 +92,7 @@ AT_ICN="\357\207\272"
 NET_ICN="\357\203\250"
 FOLDER_ICN="\357\201\273"
 GIT_ICN="\357\204\246"
-PROMPT_ICN="\357\204\205"
+PROMPT_ICN="\357\232\262"
 
 # Icons to be displayed. Check https://fontawesome.com/cheatsheet?from=io for details.
 # Use __hhs_utoh <4digit-hex> to find out the octal value of the icon.

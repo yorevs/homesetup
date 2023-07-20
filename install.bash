@@ -34,10 +34,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Option to allow install to be interactive or not
   OPT='all'
 
-  # Shell type.
+  # Shell type
   SHELL_TYPE="${SHELL##*/}"
 
-  # .dotfiles we will handle.
+  # .dotfiles we will handle
   ALL_DOTFILES=()
 
   # Supported shell types. For now, only bash is supported
@@ -91,7 +91,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib install_brew 
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew 
     copy_file create_directory pip_install
   )
 
@@ -287,7 +287,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     has sudo &>/dev/null && SUDO='sudo'
 
-    if has 'apt-get' || has 'apt'; then
+    if has 'brew'; then
+      os_type='macOS'
+      OS_APP_MAN=brew
+    elif has 'apt-get'; then
       os_type='Debian'
       OS_APP_MAN=apt
     elif has 'yum'; then
@@ -296,19 +299,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     elif has 'dnf'; then
       os_type='RedHat'
       OS_APP_MAN=yum
-    elif has 'brew'; then
-      os_type='macOS'
-      OS_APP_MAN=brew
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
     
     if [[ 'macOS' == "${os_type}" ]]; then
-      install_brew
+      ensure_brew
     fi
 
     echo ''
-    echo "Using ${OS_APP_MAN} application manager"
+    echo "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
 
     echo ''
     echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
@@ -332,15 +332,20 @@ Usage: $APP_NAME [OPTIONS] <args>
   }
 
   # Install brew for Darwin based system
-  install_brew() {
-    echo -n 'Darwin detected. Attempting to install HomeBrew... '
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>/dev/null ||
-      quit 2 "# FAILED! Unable to install HomeBrew !"
-    echo -e "${GREEN}SUCCESS${NC} !"
+  ensure_brew() {
+    echo ''
+    if ! has 'brew'; then
+      echo -n "${YELLOW}Darwin detected but Homebrew is not installed. Attempting to install ...${NC}"
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>/dev/null ||
+        quit 2 "# FAILED! Unable to install HomeBrew !"
+      echo -e "${GREEN}SUCCESS${NC} !"
+    else
+      echo -e "${BLUE}Darwin detected and Homebrew is already installed !${NC}"
+    fi
   }
 
   # shellcheck disable=SC2086
-  # Install missing tools
+  # Install missing required tools
   install_missing_tools() {
 
     local os_type="$1"
@@ -395,7 +400,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  Python Pkgs: ${PYTHON_MODULES[*]}"
     echo -e "${NC}"
 
-    if [[ "${METHOD}" == 'repair' || "${METHOD}" == 'local' ]]; then
+    if [[ "${METHOD}" != 'local' ]]; then
       echo -e "${ORANGE}"
       [[ -z ${QUIET} ]] && read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
       echo -e "${NC}"
@@ -403,8 +408,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       if [[ ! "$ANS" == "y" && ! "$ANS" == 'Y' ]]; then
         quit 1 "Installation cancelled !"
       fi
-    else
-      [[ -z ${QUIET} ]] && read -rn 1 -p "Press any key to continue with the installation ..."
     fi
     
     echo -e "${GREEN}Installing HomeSetup ...${NC}"
@@ -521,7 +524,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Python3 and Pip3 are required by HomeSetup!"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
     echo ''
-    echo "Using Python version $(${PYTHON} -V) at: \"${PYTHON}\""
+    echo "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
     install_hspylib "${PYTHON}"
   }
 
@@ -538,7 +541,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   pip_install() {
     
     module="$1"
-    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing PyPi package ${module} ..."
+    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing PyPi package ${BLUE}${module} ..."
     ${PYTHON} -m pip install --upgrade "${module}" > 'install.log' 2>&1 ||
       quit 2 "[  ${RED}FAIL${NC}  ] Unable to install ${module}!"
     echo -e " ${WHITE}[   ${GREEN}OK${NC}   ]"
@@ -650,7 +653,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
     echo ''
     echo -e "${GREEN}${STAR_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles close and re-open the terminal"
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${GREEN}reset && source \"${HOME}/.bashrc\""
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu --update"
     echo ''
     echo -e "${YELLOW}${NOTE_ICN} For details about your new Terminal access: "

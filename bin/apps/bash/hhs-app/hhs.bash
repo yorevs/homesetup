@@ -278,7 +278,6 @@ parse_args() {
         echo -e "${BLUE}Configs Dir: ${WHITE}${HHS_DIR}${NC}"
         quit 0
       ;;
-
     *)
       break
       ;;
@@ -296,8 +295,9 @@ main() {
   register_functions
   register_plugins
   
-  if has_function "${1}"; then
-    fn_name="${1}"
+  fn_name="${1}"
+  
+  if has_function "${fn_name}"; then
     shift
     ${fn_name} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
@@ -309,4 +309,3 @@ main() {
 }
 
 main "${@}"
-quit 1

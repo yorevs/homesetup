@@ -269,6 +269,8 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
+  
+  local cmd args 
 
   [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
   [[ "$1" == "-v" || "$1" == "--version" ]] && version
@@ -325,5 +327,5 @@ function execute() {
   esac
   shopt -u nocasematch
 
-  exit 0
+  quit 0
 }

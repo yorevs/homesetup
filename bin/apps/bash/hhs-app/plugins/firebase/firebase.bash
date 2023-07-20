@@ -14,7 +14,7 @@
 PLUGIN_NAME="firebase"
 
 UNSETS=(
-  help version cleanup execute ARGS action db_alias dotfiles
+  help version cleanup execute args action db_alias dotfiles
 )
 
 # @purpose: HHS plugin required function
@@ -38,12 +38,12 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
 
-  local ARGS action db_alias dotfiles=()
+  local args action db_alias dotfiles=()
 
   # shellcheck disable=SC2206
-  ARGS=(${@})
-  action="${ARGS[0]}"
-  db_alias="${ARGS[1]}"
+  args=(${@})
+  action="${args[0]}"
+  db_alias="${args[1]}"
 
   # Find all dotfiles
   dotfiles+=()
@@ -61,11 +61,12 @@ function execute() {
   elif [[ 'setup' == "${action}" ]]; then
     python3 -m firebase setup
   else
-    python3 -m firebase "${ARGS[@]}"
+    python3 -m firebase "${args[@]}"
   fi
+  ret_val=$?
 
   popd &>/dev/null || exit 1
-  echo ''
+  echo -e "${NC}"
 
-  exit $?
+  quit ${ret_val}
 }
