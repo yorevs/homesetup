@@ -95,7 +95,7 @@
 	<data>
 	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
 	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGkCwwVFlUkbnVsbNQNDg8QERIT
-	FFZOU1NpemVYTlNmRmxhZ3NWTlNOYW1lViRjbGFzcyNALAAAAAAAABAQgAKAA18QHkRy
+	FFZOU1NpemVYTlNmRmxhZ3NWTlNOYW1lViRjbGFzcyNAKAAAAAAAABAQgAKAA18QHkRy
 	b2lkU2Fuc01vbm9OZXJkRm9udENvbXBsZXRlLdIXGBkaWiRjbGFzc25hbWVYJGNsYXNz
 	ZXNWTlNGb250ohkbWE5TT2JqZWN0CBEaJCkyN0lMUVNYXmdud36FjpCSlLW6xc7V2AAA
 	AAAAAAEBAAAAAAAAABwAAAAAAAAAAAAAAAAAAADh
@@ -295,7 +295,7 @@
 	<key>WindowTitle</key>
 	<string>~</string>
 	<key>columnCount</key>
-	<integer>176</integer>
+	<integer>202</integer>
 	<key>name</key>
 	<string>HomeSetup-15-inch</string>
 	<key>noWarnProcesses</key>
@@ -314,7 +314,7 @@
 		</dict>
 	</array>
 	<key>rowCount</key>
-	<integer>20</integer>
+	<integer>22</integer>
 	<key>shellExitAction</key>
 	<integer>1</integer>
 	<key>type</key>

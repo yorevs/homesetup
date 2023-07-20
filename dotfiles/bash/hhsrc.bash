@@ -86,6 +86,16 @@ source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 # Re-create the HomeSetup log file
 echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOG_FILE}"
 
+if ! [[ -s "${HOME}"/.inputrc ]]; then
+  __hhs_log "WARN" "'.inputrc' file was copied because it was not found at: ${HOME}"
+  \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}"/.inputrc
+fi
+
+if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
+  __hhs_log "WARN" "'.aliasdef' file was copied because it was not found at: ${HHS_DIR}"
+  \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
+fi
+
 # Load all HomeSetup dotfiles.
 for file in ${DOTFILES[*]}; do
   f_path="${HOME}/.${file}"
@@ -131,14 +141,6 @@ case "${HHS_MY_SHELL}" in
 esac
 
 export HHS_TERM_OPTS
-
-if ! [[ -s "${HOME}"/.inputrc ]]; then
-  \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}"/.inputrc
-fi
-
-if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
-  \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
-fi
 
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion

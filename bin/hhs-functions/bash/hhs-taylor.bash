@@ -39,8 +39,10 @@ function __hhs_tailor() {
         THREAD_NAME_STYLE=\"${PURPLE}\"
         FQDN_RE=\"(([a-zA-Z\.][a-zA-Z0-9]*[\.\$])+[a-zA-Z0-9]+)\"
         FQDN_STYLE=\"${CYAN}\"
-        LOG_LEVEL_RE=\"INFO|DEBUG|FINE\"
-        LOG_LEVEL_STYLE=\"${BLUE}\"
+        LOG_LEVEL_RE=\"INFO\"
+        LOG_LEVEL_STYLE=\"${GREEN}\"
+        LOG_LEVEL_DEBUG_RE=\"DEBUG|FINE\"
+        LOG_LEVEL_DEBUG_STYLE=\"${BLUE}\"
         LOG_LEVEL_WARN_RE=\"WARN[ING]*\"
         LOG_LEVEL_WARN_STYLE=\"${YELLOW}\"
         LOG_LEVEL_ERR_RE=\"SEVERE|FATAL|ERROR\"
@@ -67,6 +69,7 @@ function __hhs_tailor() {
         echo "${stream}" | sed ${sed_flag} \
           -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
           -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \
+          -e "s/(${LOG_LEVEL_DEBUG_RE})/${LOG_LEVEL_DEBUG_STYLE}\1${NC}/g" \
           -e "s/(${LOG_LEVEL_WARN_RE})/${LOG_LEVEL_WARN_STYLE}\1${NC}/g" \
           -e "s/(${LOG_LEVEL_ERR_RE})/${LOG_LEVEL_ERR_STYLE}\1${NC}/g" \
           -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/g" \
@@ -78,6 +81,7 @@ function __hhs_tailor() {
       tail "${args[@]}" "${file}" | sed ${sed_flag} \
         -e "s/\[(${THREAD_NAME_RE})\]/\[${THREAD_NAME_STYLE}\1${NC}\]/g" \
         -e "s/(${LOG_LEVEL_RE})/${LOG_LEVEL_STYLE}\1${NC}/g" \
+        -e "s/(${LOG_LEVEL_DEBUG_RE})/${LOG_LEVEL_DEBUG_STYLE}\1${NC}/g" \
         -e "s/(${LOG_LEVEL_WARN_RE})/${LOG_LEVEL_WARN_STYLE}\1${NC}/g" \
         -e "s/(${LOG_LEVEL_ERR_RE})/${LOG_LEVEL_ERR_STYLE}\1${NC}/g" \
         -e "s/(${DATE_FMT_RE})/${DATE_FMT_STYLE}\1${NC}/g" \

@@ -84,9 +84,8 @@ function logs() {
   echo -e "${ORANGE}HomeSetup logs (last ${HHS_LOG_LINES} lines) matching level ['${level:-ALL}'] :${NC}"
   echo ''
   grep "${level}" -m ${HHS_LOG_LINES} "${HHS_LOG_FILE}" | __hhs_tailor
-  echo ''
   
-  quit 0 ' '
+  quit 0
 }
 
 # @purpose: Fetch the ss64 manual from the web for the specified bash command.
@@ -106,7 +105,7 @@ function man() {
     quit 1 "Failed to open url \"${url}\" !"
   fi
   
-  quit 0 ' '
+  quit 0
 }
 
 # @purpose: Open the HomeSetup GitHub project board.
@@ -116,6 +115,6 @@ function board() {
 
   echo "${ORANGE}Opening HomeSetup board from: ${repo_url} ${NC}"
   sleep 2
-  __hhs_open "${repo_url}" && quit 0 ''
+  __hhs_open "${repo_url}" && quit 0
   quit 1 "Failed to open url \"${repo_url}\" !"
 }
