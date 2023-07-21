@@ -42,7 +42,7 @@ Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
 "
 
 UNSETS=(
-  help version cleanup execute update_hhs stamp_next_update stamp_next_update is_greater
+  help version cleanup execute update_hhs stamp_next_update is_greater update_check
 )
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
@@ -70,7 +70,7 @@ is_greater() {
 # @purpose: Check the current HomeSetup installation and look for updates.
 update_hhs() {
 
-  local repo_ver is_different re
+  local repo_ver re
   local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
 
   if [[ -n "${HHS_VERSION}" ]]; then
@@ -87,8 +87,9 @@ update_hhs() {
           git pull || quit 1
           popd &>/dev/null || quit 1
           if "${HHS_HOME}"/install.bash -q -r; then
-            echo -e "${GREEN}Successfully updated HomeSetup !"
-            __hhs_reload
+            echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
+            sleep 1
+            reset && source "${HOME}"/.bashrc
             echo -e "${HHS_MOTD}"
           else
             quit 1 "${PLUGIN_NAME}: Failed to install HomeSetup update !${NC}"
@@ -97,10 +98,10 @@ update_hhs() {
       fi
       stamp_next_update &>/dev/null
     else
-      quit 1 "${PLUGIN_NAME}: Unable to fetch repository version !"
+      quit 1 "${PLUGIN_NAME}: Unable to fetch '.VERSION' from git repository !"
     fi
   else
-    quit 1 "${PLUGIN_NAME}: HHS_VERSION was not defined !"
+    quit 1 "${PLUGIN_NAME}: HHS_VERSION is undefined. HomeSetup is not properly installed !"
   fi
   echo -e "${NC}"
 
@@ -110,11 +111,12 @@ update_hhs() {
 # @purpose: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
 update_check() {
 
-  local today next_check
+  local today next_check cur_check
 
   today=$(date "+%s%S")
   cur_check=$(grep . "${HHS_DIR}"/.last_update)
   next_check=$(stamp_next_update)
+  
   if [[ ${today} -ge ${cur_check} ]]; then
     update_hhs
     return $?

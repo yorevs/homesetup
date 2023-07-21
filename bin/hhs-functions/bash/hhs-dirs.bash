@@ -246,8 +246,8 @@ function __hhs_load_dir() {
           for idx in $(seq 1 "${#all_dirs[@]}"); do
             dir=${all_dirs[idx-1]}
             dir=${dir#*=}
-            [[ -d "${dir}" ]] && icn="${GREEN} ${WHITE}"
-            [[ -d "${dir}" ]] || icn="${ORANGE} ${WHITE}"
+            [[ -d "${dir}" ]] && icn=" "
+            [[ -d "${dir}" ]] || icn=" "
             all_dirs[idx-1]="${icn} ${all_dirs[idx-1]}"
           done
           mselect_file=$(mktemp)

@@ -616,7 +616,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # .bash_completions was renamed to .bash_completion. #e6ce231 .
     if [[ -L "${HOME}/.bash_completions" ]]; then
-      rm -f "${HOME}/.bash_completions"
+      \rm -f "${HOME}/.bash_completions"
       echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
     fi
 
@@ -629,17 +629,20 @@ Usage: $APP_NAME [OPTIONS] <args>
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
       
     # Moving orig and bak files to backup folder.
-    echo -e "\n${ORANGE}Moving \".orig\" and \".bak\" files to backup folder ... \n${NC}"
-    find "${HHS_DIR}" -maxdepth 1 -type f -name '*.bak' -print -exec mv {} "${HHS_BACKUP_DIR}" \;
+    find "${HHS_DIR}" -maxdepth 1 -type f \( -name '*.bak' -o -name '*.orig' \) -print -exec mv {} "${HHS_BACKUP_DIR}" \;
+    
+    # .tailor Needs to be updated, so, we need to replace it.
+    if [[ -f "${HHS_DIR}/.tailor" ]]; then
+      \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
+      echo -e "\n${ORANGE}Your old .tailor had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
+    fi
   }
 
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
     
     echo ''
-    echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ...${NC}"
-    echo -e "${BLUE}"
-
+    echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ..."
     echo -e "${BLUE}"
     echo '888       888          888                                          '
     echo '888   o   888          888                                          '
@@ -649,7 +652,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo '88888P Y88888 88888888 888 888      888  888 888  888  888 88888888 '
     echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
     echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
-    echo ''
+    echo -e "${NC}"
     echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
     echo ''
     echo -e "${GREEN}${STAR_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"

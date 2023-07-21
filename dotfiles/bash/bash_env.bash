@@ -96,6 +96,7 @@ export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 export HHS_EXPORT_SETTINGS=1
+export HHS_GITHUB_URL="https://github.com/yorevs/homesetup"
 
 # ----------------------------------------------------------------------------
 # Module configs

@@ -65,25 +65,41 @@ function funcs() {
 }
 
 # shellcheck disable=2086
-# @purpose: Retrieve HomeSetup logs
-# @param $1 [opt] : The log level to retrieve.
+# @purpose: Retrieve HomeSetup logs.
+# @param $1 [opt] : The hhs file to retrieve logs from.
+# @param $2 [opt] : The log level to retrieve.
 function logs() {
   
-  local level 
+  local level log_level logfile
   
   HHS_LOG_LINES=${HHS_LOG_LINES:-100}
   level=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
   
   if [[ -n "${level}" ]]; then
-    list_contains "DEBUG INFO WARN ERROR ALL" "${level}" || quit 1 "Invalid log level ${level}"
+    if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
+      logfile="${HHS_LOG_DIR}/${1//.log/}.log"
+      if [[ ! -f "${logfile}" ]]; then
+        quit 1 "File not found: ${logfile}"
+      fi
+      level=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
+      if [[ -n "${level}" ]]; then
+        if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
+          quit 1 "Undefined log level: ${level}"
+        fi
+      fi
+    fi
   fi
   
-  [[ "${level}" == "ALL" ]] && level='.*'
+  logfile=${logfile:="${HHS_LOG_FILE}"}
+  level=${level:='ALL'}
+  
+  [[ "${level}" == "ALL" ]] && log_level='.*'
+  [[ "${level}" != "ALL" ]] && log_level="${level}"
   
   echo ''
-  echo -e "${ORANGE}HomeSetup logs (last ${HHS_LOG_LINES} lines) matching level ['${level:-ALL}'] :${NC}"
+  echo -e "${ORANGE}Retrieving logs from ${logfile} (last ${HHS_LOG_LINES} lines) [level='${level}'] :${NC}"
   echo ''
-  grep "${level}" -m ${HHS_LOG_LINES} "${HHS_LOG_FILE}" | __hhs_tailor
+  __hhs_tailor -n ${HHS_LOG_LINES} "${logfile}" | grep "${log_level}"
   
   quit 0
 }
@@ -111,10 +127,25 @@ function man() {
 # @purpose: Open the HomeSetup GitHub project board.
 function board() {
 
-  local repo_url="https://github.com/yorevs/homesetup/projects/1"
+  local raw_content_url="${HHS_GITHUB_URL}/projects/1"
 
-  echo "${ORANGE}Opening HomeSetup board from: ${repo_url} ${NC}"
+  echo "${ORANGE}Opening HomeSetup board from: ${raw_content_url} ${NC}"
   sleep 2
-  __hhs_open "${repo_url}" && quit 0
-  quit 1 "Failed to open url \"${repo_url}\" !"
+  __hhs_open "${raw_content_url}" && quit 0
+  
+  quit 1 "Failed to open url \"${raw_content_url}\" !"
+}
+
+# @purpose: Open a docsify version of the HomeSetup README.
+function docsify() {
+  
+  local docsify_url raw_content_url url
+  
+  docsify_url='https://docsify-this.net/?basePath='
+  raw_content_url='https://raw.githubusercontent.com/yorevs/homesetup/master&sidebar=true'
+  url="${docsify_url}${raw_content_url}"
+   
+  __hhs_open "${url}" && quit 0
+  
+  quit 1 "Failed to open url \"${url}\" !"
 }

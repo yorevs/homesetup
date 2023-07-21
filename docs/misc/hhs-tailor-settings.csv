@@ -1,0 +1,9 @@
+uuid,name,value,settings type,modified
+17227c35c11a46e58cc721465831fbbc,hhs.tailor.date.fmt.color,violet,environment,2023-07-26 20:59:38
+67f057cbfb144708b119519dc7d91faf,hhs.tailor.fqdn.color,cyan,environment,2023-07-26 20:59:19
+4e6ebcffc269413387edb7d52e6802de,hhs.tailor.level.debug.color,white,environment,2023-07-26 20:58:11
+70a2232043b648ab9a21adda91872754,hhs.tailor.level.error.color,red,environment,2023-07-26 20:58:40
+f869b91ac3214247b874b1b97cb55c10,hhs.tailor.level.info.color,green,environment,2023-07-26 20:57:49
+c8e84a4182fd46ffbf288138219d8155,hhs.tailor.level.warn.color,yellow,environment,2023-07-26 20:58:24
+d5e6c65884ed4e11b9d93e8eca563868,hhs.tailor.thread.name.color,purple,environment,2023-07-26 20:58:57
+35d10e6063224057a154f7592c3050b9,hhs.tailor.uri.color,blue,environment,2023-07-26 20:59:53
