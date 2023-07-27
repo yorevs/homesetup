@@ -43,7 +43,8 @@ task publish(type: Task) {
   description = "Publish a new HomeSetup version"
   dependsOn patchVersion
   doLast {
-    def out = new ByteArrayOutputStream()
+    def out_commits = new ByteArrayOutputStream()
+    def out_logs = new ByteArrayOutputStream()
     def version = new File("${versionFile}").text
     println "Publishing HomeSetup v${version} ..."
     exec {
