@@ -21,6 +21,7 @@
 Usage: $APP_NAME [OPTIONS] <args>
 
   -r | --repair         : Repair current installation.
+  -l | --local          : Local installation. This is just going to replace the dotfiles.
   -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
@@ -33,6 +34,15 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Option to allow install to be interactive or not
   OPT='all'
+  
+  # HomeSetup installation method
+  METHOD='remote'
+  
+  # Whether to install it without prompts.
+  QUIET=
+  
+  # Installation log file.
+  INSTALL_LOG='install.log'
 
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
@@ -52,29 +62,19 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup required tools
   REQUIRED_TOOLS=('git' 'curl')
 
+  # Missing HomeSetup required tools
+  MISSING_TOOLS=()
+
   # OS Application manager
   OS_APP_MAN=
   
   # README link for HomeSetup 
   README_LINK="${HHS_HOME}/README.MD"
   
-  # Python modules to install
+  # HSPyLib python modules to install
   PYTHON_MODULES=('hspylib' 'hspylib-clitt' 'hspylib-setman' 'hspylib-vault' 'hspylib-firebase')
 
-  # Darwin required tools
-  if [[ "${MY_OS}" == "Darwin" ]]; then
-    MY_OS_RELEASE=$(sw_vers -productName)
-    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3' 'pip3')
-  elif [[ "${MY_OS}" == "Linux" ]]; then
-    MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
-    MY_OS_RELEASE="${MY_OS_RELEASE#*=}"
-    REQUIRED_TOOLS+=('python3' 'pip3')
-  fi
-
-  # Missing HomeSetup required tools
-  MISSING_TOOLS=()
-
-  # ICONS
+  # Awesome icons
   STAR_ICN="\xef\x80\x85"
   NOTE_ICN="\xef\x84\x98"
   HAND_PEACE_ICN="\xef\x89\x9b"
@@ -87,12 +87,22 @@ Usage: $APP_NAME [OPTIONS] <args>
   RED=${RED:-'\033[0;31m'}
   BLUE=${BLUE:-'\033[0;34m'}
   WHITE=${WHITE:-'\033[0;97m'}
+  
+  # Darwin required tools
+  if [[ "${MY_OS}" == "Darwin" ]]; then
+    MY_OS_RELEASE=$(sw_vers -productName)
+    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3')
+  elif [[ "${MY_OS}" == "Linux" ]]; then
+    MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+    MY_OS_RELEASE="${MY_OS_RELEASE#*=}"
+    REQUIRED_TOOLS+=('python3')
+  fi
 
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew 
-    copy_file create_directory pip_install
+    copy_file create_directory pip_install install_homesetup
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -102,7 +112,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
-
+    
     test "$1" != '0' -a "$1" != '1' && echo -e "${RED}" 1>&2
     test -n "$2" -a "$2" != "" && echo -e "${2}" 1>&2
     test "$1" != '0' -a "$1" != '1' && echo -e "${NC}" 1>&2
@@ -124,10 +134,12 @@ Usage: $APP_NAME [OPTIONS] <args>
   # @function: Create a directory and check for write permissions
   # @Param $1 [Req] : The directory name
   create_directory() {
-      dir="$1"
-      if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
+      
+    local dir="${1}"
+      
+    if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
       echo -en "\nCreating ${dir} directory: "
-      mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
+      \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
       echo -e " [   ${GREEN}OK${NC}   ]"
     else
       # Trying to write at the created directory to validate write permissions.
@@ -199,7 +211,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION}") ${GREEN}installation ${NC}"
 
     # Loop through the command line options
-    # Short opts: -w, Long opts: --Word
     while test -n "$1"; do
       case "$1" in
       -i | --interactively)
@@ -212,6 +223,9 @@ Usage: $APP_NAME [OPTIONS] <args>
         ;;
       -r | --repair)
         METHOD='repair'
+        ;;
+      -l | --local)
+        METHOD='local'
         ;;
       *)
         quit 2 "Invalid option: \"$1\""
@@ -245,39 +259,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     create_directory "${FONTS_DIR}"
 
     # Check the installation method
-    if [[ -n "${METHOD}" ]]; then
-      METHOD='repair'
-    elif [[ -z "${METHOD}" && -n "${HHS_VERSION}" || -f "${HHS_HOME}/.VERSION" ]]; then
-      METHOD='local'
-    else
-      METHOD='remote'
+    if [[ -z "${METHOD}" ]]; then
+      if [[ -z "${HHS_VERSION}" || ! -f "${HHS_HOME}/.VERSION" ]]; then
+        METHOD='remote'
+        QUIET=${QUIET:-1}
+      elif [[ -n "${HHS_VERSION}" || -f "${HHS_HOME}/.VERSION" ]]; then
+        METHOD='local'
+      else
+        METHOD='repair'
+      fi
     fi
-
-    # Select the installation method and call the underlying functions
-    case "${METHOD}" in
-    remote)
-      check_required_tools
-      clone_repository
-      install_dotfiles
-      configure_python
-      compatibility_check
-      activate_dotfiles
-      ;;
-    repair)
-      check_required_tools
-      install_dotfiles
-      configure_python
-      compatibility_check
-      activate_dotfiles
-      ;;
-    local)
-      install_dotfiles
-      activate_dotfiles
-      ;;
-    *)
-      quit 2 "Installation method \"${METHOD}\" is not valid!"
-      ;;
-    esac
   }
 
   # Check HomeSetup required tools
@@ -308,7 +299,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     echo ''
-    echo "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
+    echo -e "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
 
     echo ''
     echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
@@ -330,6 +321,39 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     install_missing_tools "${os_type}"
   }
+  
+  # Install HomeSetup
+  install_homesetup() {
+    
+    echo -e "\nUsing ${YELLOW}\"${METHOD}\"${NC} installation method!"
+    echo '' > "${INSTALL_LOG}"
+    
+    # Select the installation method and call the underlying functions
+    case "${METHOD}" in
+    remote)
+      check_required_tools
+      clone_repository
+      install_dotfiles
+      compatibility_check
+      configure_python
+      activate_dotfiles
+      ;;
+    repair)
+      check_required_tools
+      install_dotfiles
+      compatibility_check
+      configure_python
+      activate_dotfiles
+      ;;
+    local)
+      install_dotfiles
+      activate_dotfiles
+      ;;
+    *)
+      quit 2 "Installation method \"${METHOD}\" is not valid!"
+      ;;
+    esac
+  }
 
   # Install brew for Darwin based system
   ensure_brew() {
@@ -344,7 +368,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # shellcheck disable=SC2086
   # Install missing required tools
   install_missing_tools() {
 
@@ -354,7 +377,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps. You may be prompted for the password."
       echo ''
       echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${os_type}) with ${OS_APP_MAN} ... "
-      if ${SUDO} ${OS_APP_MAN} install "${MISSING_TOOLS[@]}" &>/dev/null; then
+      if ${SUDO} ${OS_APP_MAN} install -y "${MISSING_TOOLS[@]}" >> "${INSTALL_LOG}" 2>&1; then
          echo -e "[   ${GREEN}OK${NC}   ]"
       else
         quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
@@ -402,10 +425,12 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     if [[ "${METHOD}" != 'local' ]]; then
       echo -e "${ORANGE}"
-      [[ -z ${QUIET} ]] && read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
+      if [[ -z ${QUIET} ]]; then
+        read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
+      fi
       echo -e "${NC}"
       [[ -n "$ANS" ]] && echo ''
-      if [[ ! "$ANS" == "y" && ! "$ANS" == 'Y' ]]; then
+      if [[ -z ${QUIET} && ! "$ANS" == "y" && ! "$ANS" == 'Y' ]]; then
         quit 1 "Installation cancelled !"
       fi
     fi
@@ -462,7 +487,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Remove old apps
     echo -en "\n${WHITE}Removing old apps ...${BLUE}"
-    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print 1>/dev/null; then
+    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
@@ -520,11 +545,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -n 'Detecting local python environment ... '
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
+    [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
+    "${PYTHON}" -m ensurepip >> "${INSTALL_LOG}" 2>&1
     PIP=$(command -v pip3 2>/dev/null)
-    [[ -z "${PYTHON}" || -z "${PIP}" ]] && quit 2 "Python3 and Pip3 are required by HomeSetup!"
+    [[ -z "${PIP}" ]] && quit 2 "Pip is required by HomeSetup !"
     echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
+    ${PIP} install --upgrade pip install --upgrade pip >> "${INSTALL_LOG}" 2>&1
     echo ''
-    echo "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
+    echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
     install_hspylib "${PYTHON}"
   }
 
@@ -542,7 +570,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     
     module="$1"
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing PyPi package ${BLUE}${module} ..."
-    ${PYTHON} -m pip install --upgrade "${module}" > 'install.log' 2>&1 ||
+    ${PYTHON} -m pip install --upgrade "${module}" >> "${INSTALL_LOG}" 2>&1 ||
       quit 2 "[  ${RED}FAIL${NC}  ] Unable to install ${module}!"
     echo -e " ${WHITE}[   ${GREEN}OK${NC}   ]"
   }
@@ -670,6 +698,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
+  trap "quit 2 'Installation aborted !'" SIGINT
   check_current_shell
   check_inst_method "$@"
+  install_homesetup
 }
