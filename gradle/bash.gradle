@@ -43,22 +43,17 @@ task publish(type: Task) {
   description = "Publish a new HomeSetup version"
   dependsOn patchVersion
   doLast {
-    def out_commits = new ByteArrayOutputStream()
-    def out_logs = new ByteArrayOutputStream()
+    def out = new ByteArrayOutputStream()
     def version = new File("${versionFile}").text
     println "Publishing HomeSetup v${version} ..."
     exec {
       commandLine 'git', 'log', '--pretty=format:%s', 'origin/master..HEAD'
-      standardOutput = out_commits
+      standardOutput = out
     }
-    exec {
-      commandLine 'git', 'log', '--format=%B', '-n', '1', 'HEAD'
-      standardOutput = out_logs
-    }
-    def commit_logs = out_commits.toString()
-    def prefix = commit_logs?.trim() ? '\n  - ' : out_logs.toString()?.trim()
-    def commits = commit_logs.split('\n').join('\n  - ')
-    def commitMsg = "New HomeSetup version '${version}':${prefix}${commits}"
+    def commit_logs = out.toString()
+    def prefix = commit_logs?.trim() ? '\n >> ' : ' No commits'
+    def commits = commit_logs.split('\n').join('\n >> ')
+    def commitMsg = "New HomeSetup v'${version}':${prefix}${commits}"
     println("Commit: $commitMsg")
     def master = new File("master-unlock").text = 'HomeSetup Publish'
     println("Master-Unlock: $master")

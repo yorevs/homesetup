@@ -36,13 +36,16 @@ Usage: $APP_NAME [OPTIONS] <args>
   OPT='all'
   
   # HomeSetup installation method
-  METHOD='remote'
+  METHOD=
   
   # Whether to install it without prompts.
   QUIET=
   
   # Installation log file.
   INSTALL_LOG='install.log'
+  
+  # Whether the script is running from a stream
+  STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
@@ -75,18 +78,19 @@ Usage: $APP_NAME [OPTIONS] <args>
   PYTHON_MODULES=('hspylib' 'hspylib-clitt' 'hspylib-setman' 'hspylib-vault' 'hspylib-firebase')
 
   # Awesome icons
-  STAR_ICN="\xef\x80\x85"
-  NOTE_ICN="\xef\x84\x98"
-  HAND_PEACE_ICN="\xef\x89\x9b"
-  POINTER_ICN="\xef\x90\xb2"
+  STAR_ICN='\xef\x80\x85'
+  NOTE_ICN='\xef\x84\x98'
+  HAND_PEACE_ICN='\xef\x89\x9b'
+  POINTER_ICN='\xef\x90\xb2'
 
   # VT-100 Terminal colors
-  NC=${NC:-'\033[0;0;0m'}
-  GREEN=${GREEN:-'\033[0;32m'}
-  YELLOW=${YELLOW:-'\033[0;93m'}
-  RED=${RED:-'\033[0;31m'}
-  BLUE=${BLUE:-'\033[0;34m'}
-  WHITE=${WHITE:-'\033[0;97m'}
+  NC='\033[0;0;0m'
+  WHITE='\033[0;97m'
+  BLUE='\033[0;34m'
+  GREEN='\033[0;32m'
+  YELLOW='\033[0;93m'
+  RED='\033[0;31m'
+  ORANGE='\033[38;5;202m'
   
   # Darwin required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
@@ -102,7 +106,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew 
-    copy_file create_directory pip_install install_homesetup
+    copy_file create_directory pip_install install_homesetup abort_install
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -197,18 +201,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Auto-completions location
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
     
-    # HomeSetup version
-    HHS_VERSION="${HHS_HOME}/.VERSION"
+    # HomeSetup version file
+    HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
 
     # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
-    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(grep . "${HHS_VERSION}")"
+    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(grep . "${HHS_VERSION_FILE}")"
 
     # Enable install script to use colors
     [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] \
       && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -s "${HHS_HOME}/.VERSION" ]] \
-      && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION}") ${GREEN}installation ${NC}"
+      && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
 
     # Loop through the command line options
     while test -n "$1"; do
@@ -217,8 +221,6 @@ Usage: $APP_NAME [OPTIONS] <args>
         OPT=''
         ;;
       -q | --quiet)
-        OPT='all'
-        ANS='Y'
         QUIET=1
         ;;
       -r | --repair)
@@ -233,9 +235,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       esac
       shift
     done
-
-    # Create HomeSetup home directory
-    create_directory "${HHS_HOME}"
 
     # Create HomeSetup .hhs directory
     create_directory "${HHS_DIR}"
@@ -253,6 +252,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       FONTS_DIR="${HOME}/Library/Fonts"
     elif [[ "Linux" == "${MY_OS}" ]]; then
       FONTS_DIR="${HOME}/.local/share/fonts"
+      [[ -d "${FONTS_DIR}" ]] || FONTS_DIR="/usr/local/share/fonts"
+      [[ -d "${FONTS_DIR}" ]] || FONTS_DIR="/usr/share/fonts"
     fi
     
     # Create fonts directory
@@ -260,11 +261,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then
-      if [[ -z "${HHS_VERSION}" || ! -f "${HHS_HOME}/.VERSION" ]]; then
-        METHOD='remote'
-        QUIET=${QUIET:-1}
-      elif [[ -n "${HHS_VERSION}" || -f "${HHS_HOME}/.VERSION" ]]; then
+      if [[ -d "${HHS_HOME}" || -f "${HHS_HOME}/.VERSION" ]]; then
         METHOD='local'
+      elif [[ -n "${STREAMED}" ]]; then
+        METHOD='remote'
       else
         METHOD='repair'
       fi
@@ -389,15 +389,26 @@ Usage: $APP_NAME [OPTIONS] <args>
   clone_repository() {
 
     has git || quit 2 "You need git installed in order to install HomeSetup remotely !"
-    [[ ! -d "${HHS_HOME}" ]] && quit 2 "Installation directory was not created: \"${HHS_HOME}\" !"
+    [[ -d "${HHS_HOME}" ]] && echo -e "\n${ORANGE}Installation directory was already created: \"${HHS_HOME}\" !"
 
-    echo ''
-    echo -e "${WHITE}Cloning HomeSetup from repository ..."
-
-    if git clone "$REPO_URL" "${HHS_HOME}"; then
-      source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+    echo -e "${NC}"
+    
+    if [[ ! -d "${HHS_HOME}" ]]; then
+      echo -e "${WHITE}Cloning HomeSetup repository ..."
+      if git clone "${REPO_URL}" "${HHS_HOME}"; then
+        source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+      else
+        quit 2 "Unable to properly clone the repository !"
+      fi
     else
-      quit 2 "Unable to properly clone the repository !"
+      cd "${HHS_HOME}" &> /dev/null || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
+      echo -e "${WHITE}Pulling HomeSetup repository ..."
+      if git pull --rebase; then
+        source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+      else
+        quit 2 "Unable to properly pull the repository !"
+      fi
+      cd - &> /dev/null || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
     fi
 
     [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
@@ -406,13 +417,15 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install all dotfiles.
   install_dotfiles() {
 
-    local dotfile
+    local dotfile is_streamed
 
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
     done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
-
+    
+    [[ -z ${STREAMED} ]] && is_streamed='No'
+    
     echo ''
     echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
@@ -421,21 +434,24 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  Install Dir: ${HHS_HOME}"
     echo -e "  Configs Dir: ${HHS_DIR}"
     echo -e "  Python Pkgs: ${PYTHON_MODULES[*]}"
+    echo -e "     Streamed: ${is_streamed:=Yes}"
     echo -e "${NC}"
-
-    if [[ "${METHOD}" != 'local' ]]; then
+    
+    if [[ "${METHOD}" != "local" && -z "${QUIET}" && -z "${STREAMED}" ]]; then
       echo -e "${ORANGE}"
-      if [[ -z ${QUIET} ]]; then
+      if [[ -z "${ANS}" ]]; then
         read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
       fi
-      echo -e "${NC}"
-      [[ -n "$ANS" ]] && echo ''
-      if [[ -z ${QUIET} && ! "$ANS" == "y" && ! "$ANS" == 'Y' ]]; then
-        quit 1 "Installation cancelled !"
+      echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
+      if [[ "${ANS}" != "y" && "${ANS}" != 'Y' ]]; then
+        echo "Installation cancelled:  " >> "${INSTALL_LOG}"
+        echo ">> ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}  STREAM=${STREAMED}" >> "${INSTALL_LOG}"
+        quit 1 "${RED}Installation cancelled !${NC}"
       fi
+      echo -e "${BLUE}Installing HomeSetup ...${NC}"
+    else
+      echo -e "${BLUE}Installing HomeSetup ${YELLOW}quietly ${NC}"
     fi
-    
-    echo -e "${GREEN}Installing HomeSetup ...${NC}"
     
     # Create all user custom files.
     [[ -s "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
@@ -473,7 +489,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
         [[ -z ${QUIET} ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
-        [[ "$ANS" != 'y' && "$ANS" != 'Y' ]] && continue
+        [[ "${ANS}" != 'y' && "${ANS}" != 'Y' ]] && continue
         echo ''
         # Backup existing dotfile into ${HHS_BACKUP_DIR}
         [[ -s "${dotfile}" && ! -L "${dotfile}" ]] && \mv "${dotfile}" "${HHS_BACKUP_DIR}/$(basename "${dotfile}".orig)"
@@ -697,8 +713,13 @@ Usage: $APP_NAME [OPTIONS] <args>
       \date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
     fi
   }
-
-  trap "quit 2 'Installation aborted !'" SIGINT
+  
+  abort_install() {
+    echo "Installation aborted:  ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}" >> "${INSTALL_LOG}" 2>&1
+    quit 2 'Installation aborted !'
+  }
+  
+  trap abort_install SIGINT
   check_current_shell
   check_inst_method "$@"
   install_homesetup
