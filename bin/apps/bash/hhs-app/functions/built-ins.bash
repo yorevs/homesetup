@@ -70,7 +70,7 @@ function funcs() {
 # @param $2 [opt] : The log level to retrieve.
 function logs() {
   
-  local level log_level logfile
+  local level log_level logfile logs
   
   HHS_LOG_LINES=${HHS_LOG_LINES:-100}
   level=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
@@ -79,13 +79,24 @@ function logs() {
     if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
       logfile="${HHS_LOG_DIR}/${1//.log/}.log"
       if [[ ! -f "${logfile}" ]]; then
-        quit 1 "File not found: ${logfile}"
+        logs=$(find ${HHS_LOG_DIR} -type f -name '*.log' -exec basename {} \;)
+        echo -e "${RED}## Log file not found: ${logfile}."
+        echo -e "${ORANGE}\nAvailable log files: \n\n${logs}\n"
+        quit 1 
       fi
       level=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
       if [[ -n "${level}" ]]; then
         if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
           quit 1 "Undefined log level: ${level}"
         fi
+      fi
+    else
+      [[ -n $2 ]] && logfile="${HHS_LOG_DIR}/${2//.log/}.log"
+      if [[ -n "${logfile}" && ! -f "${logfile}" ]]; then
+        logs=$(find ${HHS_LOG_DIR} -type f -name '*.log' -exec basename {} \;)
+        echo -e "${RED}## Log file not found: ${logfile}."
+        echo -e "${ORANGE}\nAvailable log files: \n\n${logs}\n"
+        quit 1 
       fi
     fi
   fi
