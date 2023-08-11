@@ -38,7 +38,7 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
   
-  local args envs_file ret_val=0 num
+  local args env_file ret_val=0 num
   
   args=(${@})
   
@@ -46,9 +46,8 @@ function execute() {
     python3 -m setman -h
   # Hook the setman source command
   elif [[ $1 == 'source' ]]; then
-    envs_file="$(mktemp)"
-    args=(${args[@]:1})
-    python3 -m setman source "${args[@]}" -f "${envs_file}"
+    env_file="settings-export-$(date +'%Y%m%d%H%M%S')"
+    python3 -m setman source "${args[@]:1}" -f "${env_file}"
     echo -en "${NC}"
   # Execute the setman python app normally
   else
@@ -56,11 +55,15 @@ function execute() {
     echo -e "${NC}"
   fi
   ret_val=$?
-  # Check if envfile is not empty and count the exported settings
-  if [[ -n "${envs_file}" && -f "${envs_file}" ]]; then
-    num=$(wc -l "${envs_file}" | sed -e 's/^[[:space:]]*\([0-9]*\) \/.*/\1/')
-    echo -e "${GREEN}HomeSetup exported (${num}) settings. To export them type:${NC}"
-    echo ">> ${BLUE}source ${envs_file}${NC}"
+  # Check if env_file is not empty and count the exported settings
+  if [[ -n "${env_file}" && -f "${env_file}" ]]; then
+    num=$(wc -l "${env_file}" | sed -e 's/^[ \t]*\([0-9]*\) *\/*.*/\1/')
+    if [[ $num -gt 0 ]]; then
+      echo -e "${GREEN}Exported (${num}) settings. To source them type:${NC}"
+      echo ">> ${BLUE}source ${env_file}${NC}"
+    else
+      echo -e "${YELLOW}No settings found!${NC}"
+    fi
   fi 
   
   quit ${ret_val}
