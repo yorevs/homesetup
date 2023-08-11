@@ -42,7 +42,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   QUIET=
   
   # Installation log file.
-  INSTALL_LOG='install.log'
+  INSTALL_LOG="$(pwd)/install.log"
   
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
@@ -106,7 +106,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew 
-    copy_file create_directory pip_install install_homesetup abort_install
+    copy_file create_directory install_homesetup abort_install
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -325,8 +325,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install HomeSetup
   install_homesetup() {
     
+    echo -e "HomeSetup installation started: $(date)\n" > "${INSTALL_LOG}"
     echo -e "\nUsing ${YELLOW}\"${METHOD}\"${NC} installation method!"
-    echo '' > "${INSTALL_LOG}"
     
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
@@ -395,10 +395,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     
     if [[ ! -d "${HHS_HOME}" ]]; then
       echo -e "${WHITE}Cloning HomeSetup repository ..."
-      if git clone "${REPO_URL}" "${HHS_HOME}"; then
+      if git clone "${REPO_URL}" "${HHS_HOME}" >> "${INSTALL_LOG}" 2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
-        quit 2 "Unable to properly clone the repository !"
+        quit 2 "Unable to properly clone HomeSetup repository !"
       fi
     else
       cd "${HHS_HOME}" &> /dev/null || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
@@ -418,7 +418,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_dotfiles() {
 
     local dotfile is_streamed
-
+    
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
@@ -429,12 +429,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
-    echo -e " Install Type: ${METHOD}"
-    echo -e "        Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}"
-    echo -e "  Install Dir: ${HHS_HOME}"
-    echo -e "  Configs Dir: ${HHS_DIR}"
-    echo -e "  Python Pkgs: ${PYTHON_MODULES[*]}"
-    echo -e "     Streamed: ${is_streamed:=Yes}"
+    echo -e "   Install Type: ${METHOD}"
+    echo -e "          Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}"
+    echo -e "    Install Dir: ${HHS_HOME}"
+    echo -e "    Configs Dir: ${HHS_DIR}"
+    echo -e "  PyPi Packages: ${PYTHON_MODULES[*]}"
+    echo -e "       Streamed: ${is_streamed:=Yes}"
     echo -e "${NC}"
     
     if [[ "${METHOD}" != "local" && -z "${QUIET}" && -z "${STREAMED}" ]]; then
@@ -444,7 +444,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
       if [[ "${ANS}" != "y" && "${ANS}" != 'Y' ]]; then
-        echo "Installation cancelled:  " >> "${INSTALL_LOG}"
+        echo "Installation cancelled:  " >> "${INSTALL_LOG}" 2>&1
         echo ">> ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}  STREAM=${STREAMED}" >> "${INSTALL_LOG}"
         quit 1 "${RED}Installation cancelled !${NC}"
       fi
@@ -467,7 +467,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
     
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
-
+    
+    echo ">>> Linked dotfiles:" >> "${INSTALL_LOG}"
     # If `all' option is used, copy all files
     if [[ "$OPT" == 'all' ]]; then
       # Copy all dotfiles
@@ -480,7 +481,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
         [[ -L "${dotfile}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
-        [[ -L "${dotfile}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
+        echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
       done
     # If `all' option is NOT used, prompt for confirmation
     else
@@ -497,12 +499,14 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
         [[ -L "${dotfile}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
-        [[ -L "${dotfile}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
+        echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
       done
     fi
-
+    
     # Remove old apps
-    echo -en "\n${WHITE}Removing old apps ...${BLUE}"
+    echo -en "\n${WHITE}Removing old links ...${BLUE}"
+    echo ">>> Removed old links:" >> "${INSTALL_LOG}"
     if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
@@ -511,10 +515,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link apps into place
     echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR} ..."
+    echo ">>> Linked apps:" >> "${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
-      -exec chmod 755 {} \; 1>/dev/null; then
+      -exec chmod 755 {} \; >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
@@ -522,10 +527,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link auto-completes into place
     echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR} ..."
+    echo ">>> Linked auto-completes:" >> "${INSTALL_LOG}"
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
-      -exec chmod 755 {} \; 1>/dev/null; then
+      -exec chmod 755 {} \; >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
@@ -533,10 +539,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR} ..."
+    echo ">>> Copied HomeSetup fonts:" >> "${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \
-      \( -iname "**.otf" -o -iname "**.ttf" \) \
-      -exec cp -f {} "${FONTS_DIR}" \; 1>/dev/null; then
+    if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
+      -print \
+      -exec cp -f {} "${FONTS_DIR}" \; >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -546,9 +553,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ..."
+    echo ">>> Linked git hooks:" >> "${INSTALL_LOG}"
     \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "**" \
-      -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; 1>/dev/null; then
+      -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to link Git hooks into repository (${HHS_HOME}/.git/hooks) !"
@@ -576,19 +584,15 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_hspylib() {
     # Define python tools
     PYTHON="${1:-python3}"
-    for module in "${PYTHON_MODULES[@]}"; do
-      pip_install "${module}"
-    done
-  }
-  
-  # Install Python packages using pip
-  pip_install() {
-    
-    module="$1"
-    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing PyPi package ${BLUE}${module} ..."
-    ${PYTHON} -m pip install --upgrade "${module}" >> "${INSTALL_LOG}" 2>&1 ||
-      quit 2 "[  ${RED}FAIL${NC}  ] Unable to install ${module}!"
+    pkgs=$(mktemp)
+    echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' > "${pkgs}"
+    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing required HSPyLib packages ..."
+    ${PYTHON} -m pip install --upgrade -r "${pkgs}" >> "${INSTALL_LOG}" 2>&1 ||
+      quit 2 "[  ${RED}FAIL${NC}  ] Unable to install PyPi packages!"
     echo -e " ${WHITE}[   ${GREEN}OK${NC}   ]"
+    rm -f  "$(mktemp)"
+    echo "Installed HSPyLib python modules:" >> "${INSTALL_LOG}"
+    ${PYTHON} -m pip freeze | grep hspylib >> "${INSTALL_LOG}"
   }
 
   # Check for backward HomeSetup backward compatibility.
@@ -712,6 +716,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       \date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
     fi
+    
+    echo -e "\nHomeSetup installation finished: $(date)" >> "${INSTALL_LOG}"
   }
   
   abort_install() {
