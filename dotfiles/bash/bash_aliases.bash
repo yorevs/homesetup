@@ -283,8 +283,8 @@ if __hhs_has "python3"; then
   alias __hhs_kafman='python3 -m kafman'
   # @alias: Shortcut for hhs firebase plug-in
   alias __hhs_firebase='__hhs firebase execute'
-  # @alias: Shortcut for hhs setman plug-in
-  alias __hhs_setman='__hhs setman execute'
+  # @alias: Shortcut for hhs settings plug-in
+  alias __hhs_settings='__hhs settings execute'
   # @alias: Evaluate mathematical expressions
   alias calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: setman.bash
+#  Script: settings.bash
 # Created: Jul 18, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
@@ -10,7 +10,7 @@
 # Copyright (c) 2023, HomeSetup team
 
 # Current plugin name
-PLUGIN_NAME="setman"
+PLUGIN_NAME="settings"
 
 UNSETS=(
   help version cleanup execute
@@ -38,24 +38,30 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
   
-  local args envs_file ret_val=0 re="source"
+  local args envs_file ret_val=0 num
   
   args=(${@})
   
   if [[ "${#}" -eq 0 ]]; then
     python3 -m setman -h
-  elif [[ ${args[*]//\n/} =~ ${re} ]]; then
-    envs_file=$(mktemp)
-    python3 -m setman "${args[@]}" -f "${envs_file}"
+  # Hook the setman source command
+  elif [[ $1 == 'source' ]]; then
+    envs_file="$(mktemp)"
+    args=(${args[@]:1})
+    python3 -m setman source "${args[@]}" -f "${envs_file}"
     echo -en "${NC}"
+  # Execute the setman python app normally
   else
     python3 -m setman "${args[@]}"
     echo -e "${NC}"
   fi
   ret_val=$?
-  
-  [[ -n "${envs_file}" && -f "${envs_file}" ]] && source "${envs_file}"
-  [[ -n "${envs_file}" && -f "${envs_file}" ]] && \rm -f "${envs_file}"
+  # Check if envfile is not empty and count the exported settings
+  if [[ -n "${envs_file}" && -f "${envs_file}" ]]; then
+    num=$(wc -l "${envs_file}" | sed -e 's/^[[:space:]]*\([0-9]*\) \/.*/\1/')
+    echo -e "${GREEN}HomeSetup exported (${num}) settings. To export them type:${NC}"
+    echo ">> ${BLUE}source ${envs_file}${NC}"
+  fi 
   
   quit ${ret_val}
 }
