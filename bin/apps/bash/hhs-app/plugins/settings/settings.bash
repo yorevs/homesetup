@@ -41,13 +41,15 @@ function execute() {
   local args env_file ret_val=0 num
 
   args=()
+  arg_n=${#}
 
   if [[ "${#}" -eq 0 ]]; then
     python3 -m setman -h
   # Hook the setman source command
   elif [[ $1 == 'source' ]]; then
+    __hhs_has direnv && env_file='.envrc'
     shift
-    while getopts "f:n:" opt; do
+    while getopts ":f:n:" opt; do
       case "${opt}" in
       f)
         env_file="${OPTARG}"
@@ -61,7 +63,9 @@ function execute() {
       esac
     done
     env_file=${env_file:-"settings-export-$(date +'%Y%m%d%H%M%S')"}
-    if python3 -m setman source -f "${env_file}" "${args[@]}"; then
+    if [[ $((arg_n%2)) -eq 0 ]]; then
+      quit 1 "Invalid settings syntax: ${*}"
+    elif python3 -m setman source -f "${env_file}" "${args[@]}"; then
       # Remove duplicate entries
       sort --unique -o "${env_file}"{,}
       # Check if env_file is not empty and count the exported settings
@@ -75,6 +79,8 @@ function execute() {
           \rm -f  "${env_file}"
         fi
       fi
+    else
+      quit 1 "Settings command failed: ${*}"
     fi
   # Execute the setman python app normally
   else
