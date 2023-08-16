@@ -81,7 +81,7 @@ fi
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
-export HISTIGNORE="pwd:?:-:l:q:rl:exit:gs:gl:.."
+export HISTIGNORE="ls:cd:pwd:?:-:l:q:rl:exit:gs:gl:.."
 export HISTSIZE=1000
 export HISTFILESIZE=2000
 # Setting history format: Index [user, Date Time] command
@@ -92,28 +92,28 @@ export HISTTIMEFORMAT="[${USER}, %F %T]  "
 
 # Current OS and Terminal
 
-export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
-export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
-export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 export HHS_EXPORT_SETTINGS=1
 export HHS_GITHUB_URL="https://github.com/yorevs/homesetup"
+export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
+export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
+export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 
 # ----------------------------------------------------------------------------
 # Module configs
 
-export HHS_DEFAULT_EDITOR=__hhs_open
 export HHS_ALIASES_FILE="${HHS_DIR}/.aliases"
-export HHS_ENV_FILE="${HHS_DIR}/.env"
-export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
-export HHS_PATHS_FILE="${HHS_DIR}/.path"
-export HHS_PUNCH_FILE="${HHS_DIR}/.punches"
-export HHS_VAULT_FILE="${HHS_DIR}/.vault"
-export HHS_VAULT_USER="${USER}"
+export HHS_DEFAULT_EDITOR=__hhs_open
+export HHS_ENV_FILE="${HHS_DIR}/.env"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_DIR}/firebase.properties"
 export HHS_FIREBASE_CREDS_FILE="${HHS_DIR}/{project_id}-firebase-credentials.json"
+export HHS_PATHS_FILE="${HHS_DIR}/.path"
+export HHS_PUNCH_FILE="${HHS_DIR}/.punches"
+export HHS_SAVED_DIRS_FILE="${HHS_DIR}/.saved_dirs"
 export HHS_SETMAN_CONFIG_FILE="${HHS_DIR}/setman.properties"
 export HHS_SETMAN_DB_FILE="${HHS_DIR}/setman.db"
+export HHS_VAULT_FILE="${HHS_DIR}/.vault"
+export HHS_VAULT_USER="${USER}"
 
 # ----------------------------------------------------------------------------
 # Directories
@@ -129,10 +129,11 @@ export HHS_SETMAN_DB_FILE="${HHS_DIR}/setman.db"
 # Development tools. To override it please export HHS_DEV_TOOLS variable at <HHS_ENV_FILE>
 DEVELOPER_TOOLS=(
   'hexdump' 'vim' 'bats' 'tree' 'perl' 'groovy'
-  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm' 
+  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm'
   'gcc' 'make' 'mvn' 'gradle' 'ruby' 'jq' 'git'
   'docker' 'nvm' 'node' 'eslint' 'pylint' 'gpg'
   'shasum' 'base64' 'python' 'python3' 'pip3'
+  'direnv' 'pbcopy' 'sqlite3' 'go'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

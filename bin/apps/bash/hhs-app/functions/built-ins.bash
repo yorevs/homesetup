@@ -55,8 +55,12 @@ function funcs() {
   echo ' '
 
   if [[ ! -f "${cache_file}" ]]; then
-    find_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
-    columns="$(tput cols)"
+    search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
+  else
+    IFS=$'\n' HHS_FUNCTIONS=($(grep . "${cache_file}"))
+  fi
+
+  columns="$(tput cols)"
     for idx in "${!HHS_FUNCTIONS[@]}"; do
       printf "${YELLOW}%6d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
       fn_name="${HHS_FUNCTIONS[${idx}]}"
@@ -65,9 +69,6 @@ function funcs() {
       echo -e "${HHS_FUNCTIONS[${idx}]}" >>"${cache_file}"
       echo ''
     done
-  else
-    cat -n "${cache_file}"
-  fi
 
   quit 0 ' '
 }

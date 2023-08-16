@@ -24,35 +24,35 @@ VERSION=1.0.0
 USAGE="
 Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
- _   _                      ____       _               
-| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __  
-| |_| |/ _ \| '_ \` _ \ / _ \___ \ / _ \ __| | | | '_ \ 
+ _   _                      ____       _
+| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
+| |_| |/ _ \| '_ \` _ \ / _ \___ \ / _ \ __| | | | '_ \
 |  _  | (_) | | | | | |  __/___) |  __/ |_| |_| | |_) |
-|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/ 
-                                                |_|    
+|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/
+                                                |_|
 
   HomeSetup Application Manager v${VERSION}.
 
     Arguments:
-      args              : Plugin command arguments will depend on the plugin. May be mandatory 
+      args              : Plugin command arguments will depend on the plugin. May be mandatory
                           or not.
-    
+
     Options:
       -v  |  --version  : Display current program version.
       -h  |     --help  : Display this help message.
       -p  |   --prefix  : Display the HomeSetup installation directory.
-    
+
     Tasks:
       help              : Display a help about the plugin.
       version           : Display current plugin version.
       execute           : Execute a plugin command.
-    
+
     Exit Status:
       (0) Success.
       (1) Failure due to missing/wrong client input or similar issues.
       (2) Failure due to program/plugin execution failures.
-  
-  Notes: 
+
+  Notes:
     - To discover which plugins and functions are available type: hhs list
 
 "
@@ -160,7 +160,7 @@ register_plugins() {
 
 # @purpose: Read all internal functions and make them available to use
 register_functions() {
-  
+
   local f_name
 
   while IFS=$'\n' read -r fnc_file; do
@@ -179,7 +179,7 @@ register_functions() {
 
 # @purpose: Invoke the plugin command
 invoke_command() {
-  
+
   local plg_cmd ret
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
@@ -232,9 +232,9 @@ get_desc() {
   done
 }
 
-# @purpose: Find all hhs-functions and make them available to use.
+# @purpose: Search for all hhs-functions and make them available to use.
 # @param $1..$N [Req] : The directories to search from.
-find_hhs_functions() {
+search_hhs_functions() {
 
   local all_hhs_fn fn_name line_num
 
@@ -242,9 +242,9 @@ find_hhs_functions() {
 
   for fn_line in ${all_hhs_fn}; do
     filename=$(basename "${fn_line}" | awk -F ':function' '{print $1}')
-    filename=$(printf '%-30.30s' "${filename}")
+    filename=$(printf '%-35.35s' "${filename}")
     fn_name=$(awk -F ':function' '{print $2}' <<<"${fn_line}")
-    fn_name=$(printf '%-30.30s' "${fn_name}")
+    fn_name=$(printf '%-35.35s' "${fn_name//\(\)/}")
     desc=$(get_desc "${fn_line}")
     HHS_FUNCTIONS+=("${BLUE}${filename// /.} ${GREEN}=> ${NC}${fn_name// /.} : ${YELLOW}${desc}")
   done
@@ -257,7 +257,7 @@ find_hhs_functions() {
 
 # @purpose: Parse command line arguments
 parse_args() {
-  
+
   # If not enough arguments is passed, display usage message.
   if [[ ${#} -eq 0 ]]; then
     usage 0
@@ -294,15 +294,15 @@ main() {
   parse_args "${@}"
   register_functions
   register_plugins
-  
+
   fn_name="${1}"
-  
+
   if has_function "${fn_name}"; then
     shift
     ${fn_name} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
-  
+
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
   invoke_command "${@}" || quit 2

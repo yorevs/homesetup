@@ -30,9 +30,14 @@ BASH_COMPLETIONS=
 # @function: Check and add completion for tool if found in HHS completions dir.
 # @param $1 [Req] : The command to find completion script.
 function __hhs_check_completion() {
-  
+
   local cpl_filter skip_completion completion="$1"
-  
+
+  if [[ $# -le 0 || '-h' == "$1" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <bash_command>"
+    return 1
+  fi
+
   case "${completion}" in
     'docker'*)
       [[ -n "${HHS_HAS_DOCKER}" ]] && skip_completion='NO'
@@ -41,7 +46,7 @@ function __hhs_check_completion() {
       command -v "${completion}" &>/dev/null && skip_completion='NO'
     ;;
   esac
-  
+
   if [[ "${skip_completion}" == 'NO' ]]; then
     if [[ -f "${AUTO_CPL_D}/${completion}-completion.bash" ]]; then
       echo -e "${BLUE}Loading completion: ${AUTO_CPL_D}/${completion}-completion.bash ${NC}"
@@ -52,15 +57,15 @@ function __hhs_check_completion() {
   else
     echo -e "${YELLOW}Skipped completion: ${AUTO_CPL_D}/${completion}-completion.bash ${NC}"
   fi
-  
+
   return 1
 }
 
 # @function: Load all available auto-completions.
 function __hhs_load_completions() {
-  
+
   local cpl_filter completion cpl
-  
+
   cpl_filter=$1
   case "${HHS_MY_SHELL}" in
     'bash')
@@ -75,7 +80,7 @@ function __hhs_load_completions() {
       done
     ;;
   esac
-  
+
   return 0
 }
 

@@ -24,7 +24,7 @@ function __hhs_toolcheck() {
     echo '      -q  : Quiet mode on'
   else
     pad=$(printf '%0.1s' "."{1..60})
-    pad_len=40
+    pad_len=20
     if [[ "$1" == "-q" || "$1" == "--quiet" ]]; then
       shift
       quiet=1
@@ -32,20 +32,20 @@ function __hhs_toolcheck() {
     tool_name="$1"
     check=$(command -v "${tool_name}")
     is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
-    [[ -z "$quiet" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
-    [[ -z "$quiet" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
-    [[ -z "$quiet" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
+    [[ -z "${quiet}" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
+    [[ -z "${quiet}" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
+    [[ -z "${quiet}" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
     if __hhs_has "${tool_name}"; then
-      if [[ -z "$is_alias" && $check =~ ^(\/.*) ]]; then
-        [[ -z "$quiet" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
-      elif [[ -n "$is_alias" ]]; then
-        [[ -z "$quiet" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
+      if [[ -z "${is_alias}" && $check =~ ^(\/.*) ]]; then
+        [[ -z "${quiet}" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
+      elif [[ -n "${is_alias}" ]]; then
+        [[ -z "${quiet}" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
       else
-        [[ -z "$quiet" ]] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
+        [[ -z "${quiet}" ]] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
       fi
       return 0
     else
-      [[ -z "$quiet" ]] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
+      [[ -z "${quiet}" ]] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
     fi
   fi
 
@@ -92,7 +92,7 @@ function __hhs_version() {
 # @function: Check whether a list of development tools are installed or not.
 # @param $1..$N [Opt] : The tool list to be checked.
 function __hhs_tools() {
-  
+
   local tool_list
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
@@ -123,9 +123,9 @@ function __hhs_tools() {
 # @function: Display information about the given command.
 # @param $1 [Req] : The command to check.
 function __hhs_about() {
-  
+
   local cmd cmd_ret cmd_details="Command:"
-  
+
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
     return 1
@@ -161,9 +161,9 @@ function __hhs_about() {
 # @function: Display a help for the given command.
 # @param $1 [Req] : The command to get help.
 function __hhs_help() {
-  
+
   local cmd re_alias re_func
-  
+
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
     return 1

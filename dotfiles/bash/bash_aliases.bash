@@ -20,9 +20,9 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 # @param $1 [Req] : The alias to set/check.
 # @param $* [Req] : The alias expression.
 function __hhs_alias() {
-  
+
   local all_args alias_expr alias_name
-  
+
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>"
     return 1
@@ -245,27 +245,27 @@ case "${HHS_MY_SHELL}" in
     ;;
   zsh)
     # @alias: Make terminal cursor visible (Zsh)
-    alias show-cursor='echo -e "\033[?25h"'
+    alias show-cursor='echo "ZSH is Not supported yet"'
     # @alias: Make terminal cursor invisible (Zsh)
-    alias hide-cursor='echo -e "\033[?25l"'
+    alias hide-cursor='echo "ZSH is Not supported yet"'
     # @alias: Save terminal cursor position (Zsh)
-    alias save-cursor-pos='' # TODO Not supported yet
+    alias save-cursor-pos='echo "ZSH is Not supported yet"'
     # @alias: Restore terminal cursor position (Zsh)
-    alias restore-cursor-pos='' # TODO Not supported yet
+    alias restore-cursor-pos='echo "ZSH is Not supported yet"'
     # @alias: Enable terminal line wrap (Zsh)
-    alias enable-line-wrap='' # TODO Not supported yet
+    alias enable-line-wrap='echo "ZSH is Not supported yet"'
     # @alias: Disable terminal line wrap (Zsh)
-    alias disable-line-wrap='' # TODO Not supported yet
+    alias disable-line-wrap='echo "ZSH is Not supported yet"'
     # @alias: Enable terminal echo (Zsh)
-    alias enable-echo='' # TODO Not supported yet
+    alias enable-echo='echo "ZSH is Not supported yet"'
     # @alias: Disable terminal echo (Zsh)
-    alias disable-echo='' # TODO Not supported yet
+    alias disable-echo='echo "ZSH is Not supported yet"'
     # @alias: Reset all terminal cursor attributes (Zsh)
-    alias reset-cursor-attrs='' # TODO Not supported yet
+    alias reset-cursor-attrs='echo "ZSH is Not supported yet"'
     # @alias: Save the current terminal screen
-    alias save-screen='' # TODO Not supported yet
+    alias save-screen='echo "ZSH is Not supported yet"'
     # @alias: Load the saved terminal screen
-    alias restore-screen='' # TODO Not supported yet
+    alias restore-screen='echo "ZSH is Not supported yet"'
     ;;
 esac
 
@@ -286,15 +286,15 @@ if __hhs_has "python3"; then
   # @alias: Shortcut for hhs settings plug-in
   alias __hhs_settings='__hhs settings execute'
   # @alias: Evaluate mathematical expressions
-  alias calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+  alias __hhs_calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings
-  alias urle='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+  alias __hhs_urle='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
   # @alias: URL-decode strings
-  alias urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+  alias __hhs_urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
   # @alias: Generate a UUID
-  alias uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
+  alias __hhs_uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
   # @alias: Shortcut for the HomeSetup TimeCalc widget
-  alias tcalc="hspylib widgets TimeCalc"
+  alias __hhs_tcalc="hspylib widgets TimeCalc"
 fi
 
 # -----------------------------------------------------------------------------------
@@ -303,8 +303,10 @@ fi
 if __hhs_has "perl"; then
   # @alias: Remove escape (\EscXX) codes from text
   alias clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
-  # @alias: Copy to clipboard removing any escape sequences. pbcopy is required
-  __hhs_has "pbcopy" && alias clipboard="clean_escapes | pbcopy"
+  if __hhs_has "pbcopy"; then
+    # @alias: Copy to clipboard removing any escape sequences. pbcopy is required
+    alias clipboard="clean_escapes | pbcopy"
+  fi
 fi
 
 # -----------------------------------------------------------------------------------

@@ -98,6 +98,11 @@ if __hhs_has "python3"; then
   __hhs_alias cfman='__hhs_cfman'
   __hhs_alias vault='__hhs_vault'
   __hhs_alias firebase='__hhs_firebase'
+  __hhs_alias calc='__hhs_calc'
+  __hhs_alias urle='__hhs_urle'
+  __hhs_alias urld='__hhs_urld'
+  __hhs_alias uuid='__hhs_uuid'
+  __hhs_alias tcalc='__hhs_tcalc'
 fi
 
 # GPG shortcuts
