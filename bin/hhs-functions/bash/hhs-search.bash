@@ -18,21 +18,21 @@ if __hhs_has "python3"; then
   # @param $2 [Req] : The search glob expressions.
   function __hhs_search_file() {
 
-    local inames expr filter dir
+    local names expr file_globs dir
 
-    if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <search_path> <globs...>"
+    if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]} <search_path> [file_globs...]"
       echo ''
       echo '  Notes: '
       echo '    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
       dir="${1}"
-      filter="${2}"
-      expr="e=\"$filter\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      inames=$(python -c "$expr")
-      echo "${YELLOW}Searching for files matching: \"$filter\" in \"$dir\" ${NC}"
-      eval "find -L $dir -type f \( ${inames} \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      file_globs="${2}"
+      expr="e=\"${file_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      names=$(python -c "${expr}")
+      echo "${YELLOW}Searching for files matching: \"${file_globs}\" in \"${dir}\" ${NC}"
+      eval "find -L ${dir} -type f \( ${names} \) 2> /dev/null | __hhs_highlight \"(${file_globs//\*/.*}|$)\""
 
       return $?
     fi
@@ -40,24 +40,24 @@ if __hhs_has "python3"; then
 
   # @function: Search for directories and links to directories recursively.
   # @param $1 [Req] : The base search path.
-  # @param $2 [Req] : The search glob expressions.
+  # @param $2 [Opt] : The search glob expressions.
   function __hhs_search_dir() {
 
-    local inames expr dir filter
+    local names expr dir dir_globs
 
-    if [[ "$#" -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <search_path> <dir_names...>"
+    if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]} <search_path> [dir_globs...]"
       echo ''
       echo '  Notes: '
       echo '  ** <dir_names...>: Comma separated directories. E.g:. "dir1,dir2,dir2"'
       return 1
     else
       dir="${1}"
-      filter="${2}"
-      expr="e=\"${filter}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      inames=$(python -c "$expr")
-      echo "${YELLOW}Searching for folders matching: [${filter}] in \"${dir}\" ${NC}"
-      eval "find -L ${dir} -type d \( ${inames} \) 2> /dev/null | __hhs_highlight \"(${filter//\*/.*}|$)\""
+      dir_globs="${2}"
+      expr="e=\"${dir_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      names=$(python -c "${expr}")
+      echo "${YELLOW}Searching for folders matching: [${dir_globs}] in \"${dir}\" ${NC}"
+      eval "find -L ${dir} -type d \( ${names} \) 2> /dev/null | __hhs_highlight \"(${dir_globs//\*/.*}|$)\""
 
       return $?
     fi
@@ -72,11 +72,11 @@ if __hhs_has "python3"; then
   # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
   function __hhs_search_string() {
 
-    local gflags extra_str replace inames filter_type='regex' gflags="-HnEI"
+    local gflags extra_str replace names file_globs_type='regex' gflags="-HnEI"
     local names_expr search_str base_cmd full_cmd dir repl_str
 
-    if [[ "$#" -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> <globs>"
+    if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> [globs]"
       echo ''
       echo '    Options: '
       echo '      -i | --ignore-case            : Makes the search case INSENSITIVE.'
@@ -92,15 +92,15 @@ if __hhs_has "python3"; then
         case "$1" in
         -w | --words)
           gflags="${gflags//E/Fw}"
-          filter_type=${filter_type//regex/string}
+          file_globs_type=${file_globs_type//regex/string}
           ;;
         -i | --ignore-case)
           gflags="${gflags}i"
-          filter_type="${filter_type}+ignore-case"
+          file_globs_type="${file_globs_type}+ignore-case"
           ;;
         -b | --binary)
           gflags="${gflags//I/}"
-          filter_type="${filter_type}+binary"
+          file_globs_type="${file_globs_type}+binary"
           ;;
         -r | --replace)
           replace=1
@@ -118,14 +118,15 @@ if __hhs_has "python3"; then
 
       dir="${1}"
       search_str="${2}"
-      names_expr="e=\"${3}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      inames=$(python -c "${names_expr}")
-      base_cmd="find -L ${dir} -type f \( ${inames} \) -exec grep $gflags \"${search_str}\" {}"
+      file_globs="${3:-*.*}"
+      names_expr="e=\"${file_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
+      names=$(python -c "${names_expr}")
+      base_cmd="find -L ${dir} -type f \( ${names} \) -exec grep ${gflags} \"${search_str}\" {}"
 
-      echo "${YELLOW}Searching for \"${filter_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${3}] ${extra_str} ${NC}"
+      echo "${YELLOW}Searching for \"${file_globs_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${file_globs}] ${extra_str} ${NC}"
 
       if [[ -n "$replace" ]]; then
-        if [[ "$filter_type" = 'string' ]]; then
+        if [[ "$file_globs_type" = 'string' ]]; then
           __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"
           return 1
         fi
