@@ -41,11 +41,15 @@ export HHS_MY_SHELL="${SHELL//\/bin\//}"
 export HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
 export HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
 export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
+export HHS_CACHE_DIR="${HHS_CACHE_DIR:-${HHS_DIR}/cache}"
 export HHS_LOG_DIR="${HHS_LOG_DIR:-${HHS_DIR}/log}"
 export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
+
+# if the cache directory is not found, we have to create it.
+[[ -d "${HHS_CACHE_DIR}" ]] || mkdir -p "${HHS_CACHE_DIR}"
 
 # Load all dotfiles:
 #   source -> ~/.hhs/.path can be used to extend `$PATH`
@@ -61,7 +65,7 @@ export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
   'bash_env'
-  'bash_colors' 
+  'bash_colors'
   'bash_prompt'
   'bash_aliases'
   'bash_functions'
