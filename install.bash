@@ -34,16 +34,16 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Option to allow install to be interactive or not
   OPT='all'
-  
+
   # HomeSetup installation method
   METHOD=
-  
+
   # Whether to install it without prompts.
   QUIET=
-  
+
   # Installation log file.
   INSTALL_LOG="$(pwd)/install.log"
-  
+
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
@@ -70,10 +70,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # OS Application manager
   OS_APP_MAN=
-  
-  # README link for HomeSetup 
+
+  # README link for HomeSetup
   README_LINK="${HHS_HOME}/README.MD"
-  
+
   # HSPyLib python modules to install
   PYTHON_MODULES=('hspylib' 'hspylib-clitt' 'hspylib-setman' 'hspylib-vault' 'hspylib-firebase')
 
@@ -91,7 +91,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   YELLOW='\033[0;93m'
   RED='\033[0;31m'
   ORANGE='\033[38;5;202m'
-  
+
   # Darwin required tools
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_RELEASE=$(sw_vers -productName)
@@ -105,7 +105,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew 
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install
   )
 
@@ -116,7 +116,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
-    
+
     test "$1" != '0' -a "$1" != '1' && echo -e "${RED}" 1>&2
     test -n "$2" -a "$2" != "" && echo -e "${2}" 1>&2
     test "$1" != '0' -a "$1" != '1' && echo -e "${NC}" 1>&2
@@ -134,13 +134,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   has() {
     type "$1" >/dev/null 2>&1
   }
-  
+
   # @function: Create a directory and check for write permissions
   # @Param $1 [Req] : The directory name
   create_directory() {
-      
+
     local dir="${1}"
-      
+
     if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
       echo -en "\nCreating ${dir} directory: "
       \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
@@ -151,17 +151,17 @@ Usage: $APP_NAME [OPTIONS] <args>
       \rm -f "${dir:?}/tmpfile" &>/dev/null
     fi
   }
-  
+
   # @function: Copy file from source into proper destination
   # @Param $1 [Req] : The source file.
   # @Param $2 [Req] : The destination file.
   copy_file() {
-    
+
     local src_file dest_file
-    
+
     src_file="${1}"
     dest_file="${2}"
-    
+
     echo ''
     if [[ -f "${dest_file}" ]]; then
       echo -e "Skipping: ${YELLOW}${dest_file} file was not copied because it already exists. ${NC}"
@@ -188,7 +188,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Define the HomeSetup location
     HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
-    
+
     # Define the HomeSetup .hhs location
     HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
 
@@ -200,7 +200,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Auto-completions location
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
-    
+
     # HomeSetup version file
     HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
 
@@ -238,7 +238,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create HomeSetup .hhs directory
     create_directory "${HHS_DIR}"
-    
+
     # Define and create the HomeSetup backup directory
     HHS_BACKUP_DIR="${HHS_DIR}/backup"
     create_directory "${HHS_BACKUP_DIR}"
@@ -255,7 +255,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -d "${FONTS_DIR}" ]] || FONTS_DIR="/usr/local/share/fonts"
       [[ -d "${FONTS_DIR}" ]] || FONTS_DIR="/usr/share/fonts"
     fi
-    
+
     # Create fonts directory
     create_directory "${FONTS_DIR}"
 
@@ -293,7 +293,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
-    
+
     if [[ 'macOS' == "${os_type}" ]]; then
       ensure_brew
     fi
@@ -321,13 +321,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     install_missing_tools "${os_type}"
   }
-  
+
   # Install HomeSetup
   install_homesetup() {
-    
+
     echo -e "HomeSetup installation started: $(date)\n" > "${INSTALL_LOG}"
     echo -e "\nUsing ${YELLOW}\"${METHOD}\"${NC} installation method!"
-    
+
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
     remote)
@@ -392,7 +392,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${HHS_HOME}" ]] && echo -e "\n${ORANGE}Installation directory was already created: \"${HHS_HOME}\" !"
 
     echo -e "${NC}"
-    
+
     if [[ ! -d "${HHS_HOME}" ]]; then
       echo -e "${WHITE}Cloning HomeSetup repository ..."
       if git clone "${REPO_URL}" "${HHS_HOME}" >> "${INSTALL_LOG}" 2>&1; then
@@ -413,19 +413,19 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
   }
-  
+
   # Install all dotfiles.
   install_dotfiles() {
 
     local dotfile is_streamed
-    
+
     # Find all dotfiles used by HomeSetup according to the current shell type
     while IFS='' read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
     done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
-    
+
     [[ -z ${STREAMED} ]] && is_streamed='No'
-    
+
     echo ''
     echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
@@ -436,7 +436,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "  PyPi Packages: ${PYTHON_MODULES[*]}"
     echo -e "       Streamed: ${is_streamed:=Yes}"
     echo -e "${NC}"
-    
+
     if [[ "${METHOD}" != "local" && -z "${QUIET}" && -z "${STREAMED}" ]]; then
       echo -e "${ORANGE}"
       if [[ -z "${ANS}" ]]; then
@@ -452,7 +452,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       echo -e "${BLUE}Installing HomeSetup ${YELLOW}quietly ${NC}"
     fi
-    
+
     # Create all user custom files.
     [[ -s "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
     [[ -s "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
@@ -461,13 +461,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${HHS_DIR}/.profile" ]] || \touch "${HHS_DIR}/.profile"
     [[ -s "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
     [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
-    
+
     # Create alias and input definitions
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
-    
+
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
-    
+
     echo ">>> Linked dotfiles:" >> "${INSTALL_LOG}"
     # If `all' option is used, copy all files
     if [[ "$OPT" == 'all' ]]; then
@@ -503,7 +503,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
       done
     fi
-    
+
     # Remove old apps
     echo -en "\n${WHITE}Removing old links ...${BLUE}"
     echo ">>> Removed old links:" >> "${INSTALL_LOG}"
@@ -577,7 +577,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     ${PIP} install --upgrade pip install --upgrade pip >> "${INSTALL_LOG}" 2>&1
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
+    command -v python && ln -s "${PYTHON}" "$(dirname "${PYTHON}")/python"
     install_hspylib "${PYTHON}"
+
   }
 
   # Install HomeSetup python libraries
@@ -599,10 +601,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   compatibility_check() {
 
     echo -e "\n${WHITE}Checking HomeSetup backward compatibility ...${BLUE}"
-    
+
     # Cleaning up old dotfiles links
     [[ -d "${BIN_DIR}" ]] && rm -f "${BIN_DIR:?}/*.*"
-    
+
     # .profile Needs to be renamed, so, we guarantee that no dead lock occurs.
     if [[ -f "${HOME}/.profile" ]]; then
       \mv -f "${HOME}/.profile" "${HHS_BACKUP_DIR}/profile.orig"
@@ -675,10 +677,10 @@ Usage: $APP_NAME [OPTIONS] <args>
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
     [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
-      
+
     # Moving orig and bak files to backup folder.
     find "${HHS_DIR}" -maxdepth 1 -type f \( -name '*.bak' -o -name '*.orig' \) -print -exec mv {} "${HHS_BACKUP_DIR}" \;
-    
+
     # .tailor Needs to be updated, so, we need to replace it.
     if [[ -f "${HHS_DIR}/.tailor" ]]; then
       \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
@@ -688,7 +690,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
-    
+
     echo ''
     echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ..."
     echo -e "${BLUE}"
@@ -716,15 +718,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       \date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
     fi
-    
+
     echo -e "\nHomeSetup installation finished: $(date)" >> "${INSTALL_LOG}"
   }
-  
+
   abort_install() {
     echo "Installation aborted:  ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}" >> "${INSTALL_LOG}" 2>&1
     quit 2 'Installation aborted !'
   }
-  
+
   trap abort_install SIGINT
   check_current_shell
   check_inst_method "$@"

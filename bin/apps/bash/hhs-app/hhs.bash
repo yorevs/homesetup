@@ -59,7 +59,7 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
 [[ -f "${HHS_DIR}"/bin/app-commons.bash ]] && \. "${HHS_DIR}"/bin/app-commons.bash
 
-__hhs_has "python" || quit 1 "Python is required to execute ${APP_NAME}"
+__hhs_has "python3" || quit 1 "Python is required to execute ${APP_NAME}"
 
 # Directory containing all HHS plug-ins.
 PLUGINS_DIR="$(dirname "${0//${HHS_DIR}/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/plugins"
