@@ -1,6 +1,6 @@
 # <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup
 
-## Your shell, good as hell ! 
+## Your shell, good as hell !
 
 [![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
 [![Release](https://badgen.net/badge/release/v1.5.115/gray)](docs/CHANGELOG.md#unreleased)
@@ -8,17 +8,17 @@
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 
-Are you passionate about the terminal? If so, you've come to the right place, especially if you're a command 
-line enthusiast. Terminal dotfiles are well-known for improving productivity and streamlining everyday tasks. While 
-there are numerous frameworks available to assist with this, many of them come with a steep learning curve and are 
-primarily targeted towards individuals with strong programming skills. Additionally, these frameworks often employ 
-esoteric syntax, requiring an additional effort to fully utilize their features. 
+Are you passionate about the terminal? If so, you've come to the right place, especially if you're a command
+line enthusiast. Terminal dotfiles are well-known for improving productivity and streamlining everyday tasks. While
+there are numerous frameworks available to assist with this, many of them come with a steep learning curve and are
+primarily targeted towards individuals with strong programming skills. Additionally, these frameworks often employ
+esoteric syntax, requiring an additional effort to fully utilize their features.
 
-Wouldn't it be fantastic if we could effortlessly upload and download our configurations, dotfiles, packages, and 
-customizations to the cloud? This is where HomeSetup comes in. It provides a solution that simplifies the process, 
+Wouldn't it be fantastic if we could effortlessly upload and download our configurations, dotfiles, packages, and
+customizations to the cloud? This is where HomeSetup comes in. It provides a solution that simplifies the process,
 allowing you to leverage the power of the cloud seamlessly.
 
-With HomeSetup, you can enhance your terminal experience, boost productivity, and customize your setup to suit your 
+With HomeSetup, you can enhance your terminal experience, boost productivity, and customize your setup to suit your
 preferences all without the complexities often associated with other frameworks.
 
 For a full list of features, you can access the [HomeSetup usage manual](docs/USAGE.md).
@@ -49,14 +49,14 @@ Key features of HomeSetup include:
 
 ## Catalina moved from bash to zsh
 
-Starting with the _Catalina_ version of macOS, the default shell has been switched to **Zsh**. Nonetheless, you retain 
+Starting with the _Catalina_ version of macOS, the default shell has been switched to **Zsh**. Nonetheless, you retain
 the flexibility to change the default shell back to bash. To accomplish this, you can utilize the following command:
 
 ```bash
 $ sudo chsh -s /bin/bash
 ```
 
-If Apple decides to remove **Bash** from future macOS releases, you can always rely on Homebrew's version. In such cases, 
+If Apple decides to remove **Bash** from future macOS releases, you can always rely on Homebrew's version. In such cases,
 the path to the shell may differ. Here's an alternative approach:
 
 ```bash
@@ -66,21 +66,21 @@ $ sudo chsh -s /usr/local/bin/bash
 
 ## HomeSetup Python scripts moved to pypi
 
-As HomeSetup evolved over time and expanded, the inclusion of Python scripts became essential. To streamline the 
-management of the growing [Python](https://www.python.org/) codebase, we recognized the need for a dedicated project. 
-Introducing **HomeSetup HsPyLib**, a separate project designed specifically for handling all **Python-related 
-functionality**. You can find the HomeSetup HsPyLib project on PyPI (Python Package Index) at: https://pypi.org/. 
-HsPyLib comprises _several modules_, each dedicated to a specific purpose, ensuring modular and focused functionality. 
-Additionally, we have developed a range of highly useful applications as part of the HomeSetup ecosystem. Here is a 
+As HomeSetup evolved over time and expanded, the inclusion of Python scripts became essential. To streamline the
+management of the growing [Python](https://www.python.org/) codebase, we recognized the need for a dedicated project.
+Introducing **HomeSetup HsPyLib**, a separate project designed specifically for handling all **Python-related
+functionality**. You can find the HomeSetup HsPyLib project on PyPI (Python Package Index) at: https://pypi.org/.
+HsPyLib comprises _several modules_, each dedicated to a specific purpose, ensuring modular and focused functionality.
+Additionally, we have developed a range of highly useful applications as part of the HomeSetup ecosystem. Here is a
 list of all the applications managed by HomeSetup:
 
-- [hspylib](https://pypi.org/project/hspylib/) :: HSPyLib - Core python library 
-- [hspylib-kafman](https://pypi.org/project/hspylib-kafman/) :: HSPyLib - Apache Kafka Manager 
-- [hspylib-datasource](https://pypi.org/project/hspylib-datasource/) :: HSPyLib - Datasource integration 
-- [hspylib-vault](https://pypi.org/project/hspylib-vault/) :: HSPyLib - Secrets Vault 
-- [hspylib-cfman](https://pypi.org/project/hspylib-cfman/) :: HSPyLib - CloudFoundry manager 
-- [hspylib-firebase](https://pypi.org/project/hspylib-firebase/) :: HSPyLib - Firebase integration 
-- [hspylib-hqt](https://pypi.org/project/hspylib-hqt/) :: HSPyLib - QT framework extensions 
+- [hspylib](https://pypi.org/project/hspylib/) :: HSPyLib - Core python library
+- [hspylib-kafman](https://pypi.org/project/hspylib-kafman/) :: HSPyLib - Apache Kafka Manager
+- [hspylib-datasource](https://pypi.org/project/hspylib-datasource/) :: HSPyLib - Datasource integration
+- [hspylib-vault](https://pypi.org/project/hspylib-vault/) :: HSPyLib - Secrets Vault
+- [hspylib-cfman](https://pypi.org/project/hspylib-cfman/) :: HSPyLib - CloudFoundry manager
+- [hspylib-firebase](https://pypi.org/project/hspylib-firebase/) :: HSPyLib - Firebase integration
+- [hspylib-hqt](https://pypi.org/project/hspylib-hqt/) :: HSPyLib - QT framework extensions
 - [hspylib-clitt](https://pypi.org/project/hspylib-clitt/) :: HSPyLib - CLI Terminal Tools
 
 The HsPyLib project is also licensed under the MIT license and is hosted on GitHub at: https://github.com/yorevs/hspylib.
@@ -120,9 +120,9 @@ The HsPyLib project is also licensed under the MIT license and is hosted on GitH
 
 #### Operating Systems
 
-- Darwin 
+- Darwin
     + High Sierra and higher
-- Linux 
+- Linux
     + Ubuntu 16 and higher
     + CentOS 7 and higher
     + Fedora 31 and higher
@@ -157,24 +157,24 @@ The following software are required either to clone the repository, execute test
 
 ##### Ubuntu required packages
 
-- locales 
-- libpq-dev 
+- locales
+- libpq-dev
 
 ##### Fedora required packages
 
-- findutils 
-- procps 
-- uptimed 
+- findutils
+- procps
+- uptimed
 - glibc-common
 - net-tools
 
 ##### Centos required packages
 
-- wget 
-- glibc-common 
-- libpq-devel 
-- openssl-devel 
-- bzip2-devel 
+- wget
+- glibc-common
+- libpq-devel
+- openssl-devel
+- bzip2-devel
 - libffi-devel
 
 #### Recommended software
@@ -190,7 +190,7 @@ HomeSetup depends on a series of tools. To use some of the features of HomeSetup
 
 #### Optional software
 
-If you're a developer, there are several tools that can greatly enhance your workflow. HomeSetup offers a range of 
+If you're a developer, there are several tools that can greatly enhance your workflow. HomeSetup offers a range of
 features specifically designed to improve the usage of the following tools:
 
 - **docker** 19.03+ : To enable docker functions.
@@ -198,12 +198,12 @@ features specifically designed to improve the usage of the following tools:
 
 #### Terminal setup
 
-To fully utilize the Font-Awesome icons in HomeSetup, you'll need a compatible font. We recommend using the font we 
+To fully utilize the Font-Awesome icons in HomeSetup, you'll need a compatible font. We recommend using the font we
 provide:
 
 * [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
-Before installing or trying HomeSetup, make sure to install this font on your machine. Otherwise, you may see **question 
+Before installing or trying HomeSetup, make sure to install this font on your machine. Otherwise, you may see **question
 mark icons** instead of the **actual ones**.
 
 **Linux users**: Some terminals already support icons, but if not, you can manually install the font.
@@ -222,7 +222,7 @@ mark icons** instead of the **actual ones**.
 
 ### Try-it first
 
-You have the option to run HomeSetup from a [Docker container](https://www.docker.com/), allowing you to evaluate its 
+You have the option to run HomeSetup from a [Docker container](https://www.docker.com/), allowing you to evaluate its
 functionality before deciding to install it on your machine. To do this, follow these steps:
 
 1. Start by pulling the Docker image you wish to try by executing one of the following commands:
@@ -234,7 +234,7 @@ functionality before deciding to install it on your machine. To do this, follow 
 
 2. Once the image is successfully pulled, you can proceed to run HomeSetup within the Docker container, explore its features, and evaluate its suitability for your needs.
 
-Running HomeSetup in a Docker container offers a convenient and isolated environment for testing purposes, ensuring 
+Running HomeSetup in a Docker container offers a convenient and isolated environment for testing purposes, ensuring
 that your machine remains unaffected during the evaluation process.
 
 ### Remote installation
@@ -262,7 +262,7 @@ or
 
 `$ cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
 
-Your existing dotfiles (such as .bashrc, .bash_profile, etc.) will be backed up with the **'.orig'** suffix and stored 
+Your existing dotfiles (such as .bashrc, .bash_profile, etc.) will be backed up with the **'.orig'** suffix and stored
 in the **~/.hhs/backup** folder. This ensures that your original dotfiles are safely preserved during the installation
 process.
 
@@ -275,7 +275,7 @@ Once the installation is completed successfully, you should see the following we
 ### Firebase setup
 
 HomeSetup provides the capability to utilize your Firebase account for uploading and downloading your custom files
-(dotfiles file synchronization) to your *Real-time Database*. To utilize this feature, you must first configure your 
+(dotfiles file synchronization) to your *Real-time Database*. To utilize this feature, you must first configure your
 Google Firebase account.
 
 #### Create new account
@@ -301,7 +301,7 @@ Visit https://firebase.google.com/docs/database/security to learn more about sec
       "dotfiles": {
         ".read": "false",
         ".write": "false",
-        "$uid" : { 
+        "$uid" : {
             ".read": "true",
             ".write": "true"
           }
@@ -335,29 +335,29 @@ To configure your Firebase account for use with HomeSetup, follow these steps:
 
    ![Firebase Setup](https://iili.io/H8ll1pa.png "Firebase Setup")
 
-You have now successfully configured Firebase for use with HomeSetup. To learn more about using Firebase features, 
-type in your shell: 
+You have now successfully configured Firebase for use with HomeSetup. To learn more about using Firebase features,
+type in your shell:
 
 `$ firebase help`
 
 ## Uninstallation
 
-If you choose to uninstall HomeSetup and restore your old dotfiles, you can do so by issuing the following command 
-in a shell: 
+If you choose to uninstall HomeSetup and restore your old dotfiles, you can do so by issuing the following command
+in a shell:
 
 `# HomeSetup> ./uninstall.bash`
 
-The uninstaller will remove all files and folders associated with HomeSetup. The only folder that will remain is 
+The uninstaller will remove all files and folders associated with HomeSetup. The only folder that will remain is
 the $HHS_DIR (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is safe
 to delete this folder if you no longer need it, **HOWEVER ALL CUSTOM DOTFILES WILL BE GONE**.
 
 ## Support HomeSetup
 
-You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4) 
-or contributing code. Feel free to contact me for further details. When making code contributions, please make sure to 
+You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+or contributing code. Feel free to contact me for further details. When making code contributions, please make sure to
 review our [guidelines](docs/CONTRIBUTING.md) and adhere to our [code of conduct](docs/CODE_OF_CONDUCT.md).
 
-Your support and contributions are greatly appreciated in helping us improve and enhance HomeSetup. Together, we can 
+Your support and contributions are greatly appreciated in helping us improve and enhance HomeSetup. Together, we can
 make it even better!
 
 ## Sponsors
@@ -368,17 +368,19 @@ This project is supported by:
   <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="120" height="120">
 </a>
 
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=a46eac913a06&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+
 Thank you for your support <3 !!
 
 ## Final notes
 
-HomeSetup is designed to automatically fetch updates **every 7 days** from the time of installation. However, if you 
-want to manually ensure that your HomeSetup is up to date, you can run the following command in your terminal: 
+HomeSetup is designed to automatically fetch updates **every 7 days** from the time of installation. However, if you
+want to manually ensure that your HomeSetup is up to date, you can run the following command in your terminal:
 
-`$ hhs updater execute update`. 
+`$ hhs updater execute update`.
 
-This will install the latest version of HomeSetup, keeping your setup current and incorporating any new features and 
-improvements. Keeping HomeSetup updated is essential to benefit from the latest enhancements and bug fixes. If you have 
+This will install the latest version of HomeSetup, keeping your setup current and incorporating any new features and
+improvements. Keeping HomeSetup updated is essential to benefit from the latest enhancements and bug fixes. If you have
 any questions or encounter any issues during the update process, feel free to reach out for assistance.
 
 ## Contacts
