@@ -21,7 +21,7 @@ PLUGIN_NAME="hspm"
 USAGE="
 Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 
- _   _ ____  ____  __  __ 
+ _   _ ____  ____  __  __
 | | | / ___||  _ \|  \/  |
 | |_| \___ \| |_) | |\/| |
 |  _  |___) |  __/| |  | |
@@ -32,15 +32,14 @@ Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
     Options:
       -v  |   --version     : Display current program version.
       -h  |      --help     : Display this help message.
-    
+
     Arguments:
       install   <package>   : Install the package using a matching installation recipe.
       uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
-      list [-a]             : List all available installation recipes specified by \${HHS_DEV_TOOLS}. If -a is provided,
-                              list even packages without any matching recipe.
+      list                  : List all available, OS based, installation recipes.
       recover [-i,-t,-e]    : Install or list all packages previously installed by hspm. If -i is provided, then hspm
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
-                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
+                              hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is
                               provided, then the default editor will open the recovery file.
 
 "
@@ -51,9 +50,6 @@ UNSETS=(
 )
 
 [[ -s "$HHS_DIR/bin/app-commons.bash" ]] && source "$HHS_DIR/bin/app-commons.bash"
-
-# Flag to enlist even the missing recipes
-LIST_ALL=
 
 # Flag to install all recovered packages
 RECOVER_INSTALL=
@@ -95,32 +91,29 @@ cleanup_recipes() {
 # purpose: List all available hspm recipes
 list_recipes() {
 
-  local index=0 recipe pad_len=20 pad
+  local index=0 recipe pad_len=20 pad os app
 
   pad=$(printf '%0.1s' "."{1..60})
 
-  for app in ${DEV_TOOLS[*]}; do
-    recipe="$RECIPES_DIR/$(uname -s)/${app}.recipe"
-    if [[ -n "${recipe}" && -f "${recipe}" ]]; then
-      ALL_RECIPES+=("$app")
+  # shellcheck disable=SC2207
+  ALL_RECIPES=($(find "${RECIPES_DIR}/${HHS_MY_OS}" -type f -name "*.recipe"))
+
+  if [[ ${#ALL_RECIPES[@]} -le 0 ]]; then
+      index=$((index + 1))
+      echo -e "${ORANGE}No recipes found matching OS='${HHS_MY_OS}'${NC}"
+  fi
+
+  for recipe in "${ALL_RECIPES[@]}"; do
+    app="$(basename "${recipe//\.*/}")"
+    if [[ -n "${app}" && -f "${recipe}" ]]; then
       index=$((index + 1))
       source "${recipe}"
-      if test -z "$1"; then
-        printf '%3s - %s' "${index}" "${BLUE}${app} "
-        printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
-        echo -e "${GREEN} => ${WHITE}$(about) ${NC}"
-      fi
-      cleanup_recipes
-      [[ "$1" == "$app" ]] && return 0
-    elif [[ "${LIST_ALL}" == "1" ]]; then
-      index=$((index + 1))
-      printf '%3s - %s' "${index}" "${ORANGE}${app} "
+      printf '%3s - %s' "${index}" "${BLUE}${app} "
       printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
-      echo -e "${GREEN} => ${RED}[Recipe not found] ${NC}"
+      echo -e "${GREEN} => ${WHITE}$(about) ${NC}"
+      cleanup_recipes
     fi
   done
-
-  [[ -n "$1" ]] && return 1
 
   return 0
 }
@@ -137,7 +130,7 @@ install_recipe() {
     add_breadcrumb "${package}"
     quit 1 "${YELLOW}\"${package}\" is already installed on the system !"
   fi
-  
+
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Installing \"${package}\", please wait ... "
@@ -173,7 +166,7 @@ uninstall_recipe() {
     del_breadcrumb "${package}"
     quit 1 "${YELLOW}\"${package}\" is not installed on the system !"
   fi
-  
+
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Uninstalling ${package}, please wait ... "
@@ -269,8 +262,8 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  
-  local cmd args 
+
+  local cmd args
 
   [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
   [[ "$1" == "-v" || "$1" == "--version" ]] && version
@@ -317,9 +310,9 @@ function execute() {
     if [[ "$1" == "-a" ]]; then
       LIST_ALL=1
     fi
-    echo -e "\n${BLUE}Listing ${LIST_ALL//1/all }available hspm recipes ... ${NC}\n"
-    list_recipes ""
-    echo -e "\nFound (${#ALL_RECIPES[*]}) recipes out of (${#DEV_TOOLS[*]}) development tools"
+    echo -e "\n${BLUE}Listing ${LIST_ALL//1/all }available hspm '${HHS_MY_OS}' recipes ... ${NC}\n"
+    list_recipes
+    echo -e "\n${BLUE}Found (${#ALL_RECIPES[@]}) recipes${NC}\n"
     ;;
   *)
     usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"

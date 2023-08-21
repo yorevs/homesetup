@@ -138,6 +138,8 @@ DEVELOPER_TOOLS=(
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
+  # By default, homeSetup will disable brew's auto-update. It can be overwritten by the .env file.
+  export HOMEBREW_NO_AUTO_UPDATE=1
 fi
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}
