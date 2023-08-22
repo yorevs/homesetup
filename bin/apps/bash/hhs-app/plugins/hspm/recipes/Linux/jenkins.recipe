@@ -63,7 +63,7 @@ function _install_() {
 
   # 3. Set up jenkins repository:
   echo "3. Set up jenkins repository ..."
-  if ! echo "deb [arch=${arch} signed-by=${key}] ${download_url} binary/" >"${source_file}"; then
+  if ! ${SUDO} echo "deb [arch=${arch} signed-by=${key}] ${download_url} binary/" >"${source_file}"; then
     __hhs_errcho "hspm.bash: unable to set official Jenkins repository"
     return 1
   fi
@@ -101,8 +101,8 @@ function _uninstall_() {
     return 1
   fi
 
-  [[ -f "${key}" ]] && rm -f "${key}"
-  [[ -f "${source_file}" ]] && rm -f "${source_file}"
+  [[ -f "${key}" ]] && ${SUDO} rm -f "${key}"
+  [[ -f "${source_file}" ]] && ${SUDO} rm -f "${source_file}"
 
   if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
     return 0

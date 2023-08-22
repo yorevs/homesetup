@@ -63,7 +63,7 @@ function _install_() {
 
   # 3. Set up adoptium repository:
   echo "3. Set up adoptium repository ..."
-  if ! echo "deb [arch=${arch} signed-by=${key}] ${download_url}/deb \
+  if ! ${SUDO} echo "deb [arch=${arch} signed-by=${key}] ${download_url}/deb \
   "$(source /etc/os-release && echo "${VERSION_CODENAME}")" main" |
     ${SUDO} tee "${source_file}" >/dev/null; then
     __hhs_errcho "hspm.bash: unable to set official Adoptium repository"
@@ -101,8 +101,8 @@ function _uninstall_() {
     return 1
   fi
 
-  [[ -f "${key}" ]] && rm -f "${key}"
-  [[ -f "${source_file}" ]] && rm -f "${source_file}"
+  [[ -f "${key}" ]] && ${SUDO} rm -f "${key}"
+  [[ -f "${source_file}" ]] && ${SUDO} rm -f "${source_file}"
 
   if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
     return 0

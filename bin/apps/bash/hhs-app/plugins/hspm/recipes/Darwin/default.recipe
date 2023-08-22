@@ -5,6 +5,11 @@ function _about_() {
   return 0
 }
 
+function _which_() {
+  command -v "${1}"
+  return $?
+}
+
 function _depends_() {
 
   if ! command -v "${HHS_MY_OS_PACKMAN}" >/dev/null; then

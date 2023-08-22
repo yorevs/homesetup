@@ -70,7 +70,7 @@ function _install_() {
 
   # 4. Set up docker repository:
   echo "4. Set up docker repository ..."
-  if ! echo "deb [arch=${arch} signed-by=${key}] ${download_url} \
+  if ! ${SUDO} echo "deb [arch=${arch} signed-by=${key}] ${download_url} \
   "$(source /etc/os-release && echo "${VERSION_CODENAME}")" stable" |
     ${SUDO} tee "${source_file}" >/dev/null; then
     __hhs_errcho "hspm.bash: unable to set official Docker repository"
@@ -109,8 +109,8 @@ function _uninstall_() {
     return 1
   fi
 
-  [[ -f "${key}" ]] && rm -f "${key}"
-  [[ -f "${source_file}" ]] && rm -f "${source_file}"
+  [[ -f "${key}" ]] && ${SUDO} rm -f "${key}"
+  [[ -f "${source_file}" ]] && ${SUDO} rm -f "${source_file}"
 
   if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
     return 0
