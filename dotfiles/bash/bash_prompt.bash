@@ -61,7 +61,7 @@ function __hhs_git_prompt() {
     else
       return
     fi
-    
+
   fi
 }
 
@@ -74,6 +74,7 @@ fi
 # Prompt colors
 PROMPT_COLOR="\[${HHS_PROMPT_COLOR:-$WHITE}\]"
 ALERT_COLOR="\[${RED}\]"
+NET_COLOR="\[${YELLOW}\]"
 OK_COLOR="\[${GREEN}\]"
 DIR_COLOR="\[${ORANGE}\]"
 GIT_COLOR="\[${CYAN}\]"
@@ -143,8 +144,8 @@ else
 fi
 
 # The hostname. Highlight when connected via SSH.
-if [[ "${SSH_TTY}" ]]; then
-  HOST_STYLE="${PROMPT_COLOR} ${NET_ICN}${ALERT_COLOR} \H"
+if [[ -n "${SSH_TTY}" ]]; then
+  HOST_STYLE="${PROMPT_COLOR} ${NET_ICN}${NET_COLOR} \H"
 else
   HOST_STYLE="${PROMPT_COLOR} ${AT_ICN}${HOST_COLOR} \h"
 fi
