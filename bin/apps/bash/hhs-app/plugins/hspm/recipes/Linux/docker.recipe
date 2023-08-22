@@ -5,31 +5,38 @@ function _about_() {
   return 0
 }
 
+function _which_() {
+  app="$(basename "${0}")"
+  command -v 'docker'
+  return $?
+}
+
 function _depends_() {
 
-  local tools
+  local pk_managers
 
-  tools=('apt-get' 'apt' 'yum' 'dnf' 'install')
-  for pkg_man in "${tools[@]}"; do
+  pk_managers=('apt-get' 'apt' 'yum' 'dnf')
+  for pkg_man in "${pk_managers[@]}"; do
     command -v "${pkg_man}" &>/dev/null && return 0
   done
 
-  __hhs_errcho "hspm.bash: no suitable tool found to install default software on this machine. Tried: ${tools[*]}"
+  __hhs_errcho "hspm.bash: no suitable package manager found to install software on this machine. Tried: ${pk_managers[*]}"
 
   return 1
 }
 
 function _install_() {
 
-  local ret_val=1 https_tools=() docker_dl_url docker_pkgs=() source_dir
+  local ret_val=1 arch keyring_dir source_dir key download_url packages https_tools
 
   arch="$(dpkg --print-architecture)"
   keyring_dir='/usr/share/keyrings'
   source_dir='/etc/apt/sources.list.d'
-  docker_key="${keyring_dir}/docker.gpg"
-  docker_dl_url='https://download.docker.com/linux/ubuntu'
+  key="${keyring_dir}/docker.gpg"
+  source_file="${source_dir}/docker.list"
+  download_url='https://download.docker.com/linux/ubuntu'
+  packages=('docker-ce' 'docker-ce-cli' 'containerd.io' 'docker-buildx-plugin' 'docker-compose-plugin')
   https_tools=('ca-certificates' 'curl' 'gnupg')
-  docker_pkgs=('docker-ce' 'docker-ce-cli' 'containerd.io' 'docker-buildx-plugin' 'docker-compose-plugin')
 
   command -v sudo &>/dev/null && SUDO=sudo
 
@@ -49,8 +56,8 @@ function _install_() {
   # 3. Add Docker’s official GPG key:
   if ${SUDO} install -m 0755 -d "${keyring_dir}"; then
     echo "3. Add Docker’s official GPG key ..."
-    if curl -fsSL "${docker_dl_url}/gpg" | ${SUDO} gpg --dearmor -o "${docker_key}" >/dev/null; then
-      if ${SUDO} chmod a+r "${docker_key}"; then
+    if curl -fsSL "${download_url}/gpg" | ${SUDO} gpg --dearmor -o "${key}" >/dev/null; then
+      if ${SUDO} chmod a+r "${key}"; then
         ret_val=0
       fi
     fi
@@ -63,9 +70,9 @@ function _install_() {
 
   # 4. Set up docker repository:
   echo "4. Set up docker repository ..."
-  if ! echo "deb [arch=${arch} signed-by=${docker_key}] ${docker_dl_url} \
+  if ! echo "deb [arch=${arch} signed-by=${key}] ${download_url} \
   "$(source /etc/os-release && echo "${VERSION_CODENAME}")" stable" |
-    ${SUDO} tee "${source_dir}/docker.list" >/dev/null; then
+    ${SUDO} tee "${source_file}" >/dev/null; then
     __hhs_errcho "hspm.bash: unable to set official Docker repository"
     return 1
   fi
@@ -73,8 +80,9 @@ function _install_() {
   # 5. Update to apply the new repository:
   echo "5. Update to apply the new repository ..."
   if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
-    # 6. Install docker components
-    if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "${docker_pkgs[@]}"; then
+    # 6. Install packages:
+    echo "6. Install packages ..."
+    if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "${packages[@]}"; then
       return 0
     fi
   fi
@@ -84,10 +92,28 @@ function _install_() {
 
 function _uninstall_() {
 
+  local ret_val=1 keyring_dir source_dir key packages https_tools
+
+  keyring_dir='/usr/share/keyrings'
+  source_dir='/etc/apt/sources.list.d'
+  key="${keyring_dir}/docker.gpg"
+  source_file="${source_dir}/docker.list"
+  packages=('docker-ce' 'docker-ce-cli' 'containerd.io' 'docker-buildx-plugin' 'docker-compose-plugin')
+  https_tools=('ca-certificates' 'curl' 'gnupg')
+
   command -v sudo &>/dev/null && SUDO=sudo
 
-  if command -v "${HHS_MY_OS_PACKMAN}" &>/dev/null && ${SUDO} "${HHS_MY_OS_PACKMAN}" -y remove "${docker_pkgs[@]}"; then
-    return $?
+  echo "Removing packages ${packages[*]} ..."
+  if ! ${SUDO} "${HHS_MY_OS_PACKMAN}" -y remove "${packages[@]}"; then
+    __hhs_errcho "hspm.bash: unable to uninstall packages: ${packages[*]}"
+    return 1
+  fi
+
+  [[ -f "${key}" ]] && rm -f "${key}"
+  [[ -f "${source_file}" ]] && rm -f "${source_file}"
+
+  if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
+    return 0
   fi
 
   return 1

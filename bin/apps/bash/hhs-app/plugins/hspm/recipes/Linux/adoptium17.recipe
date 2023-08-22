@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 function _about_() {
-  echo "An open source automation server which enables developers to reliably build, test, and deploy their software."
+  echo "Prebuilt OpenJDK binaries for free!"
   return 0
 }
 
 function _which_() {
-  command -v 'jenkins'
+  command -v 'java'
   return $?
 }
 
@@ -31,10 +31,10 @@ function _install_() {
   arch="$(dpkg --print-architecture)"
   keyring_dir='/usr/share/keyrings'
   source_dir='/etc/apt/sources.list.d'
-  key="${keyring_dir}/jenkins.asc"
-  source_file="${source_dir}/jenkins.list"
-  download_url='https://pkg.jenkins.io/debian-stable'
-  packages=('jenkins' 'fontconfig' 'openjdk-11-jre')
+  key="${keyring_dir}/adoptium.gpg"
+  source_file="${source_dir}/adoptium.list"
+  download_url='https://packages.adoptium.net/artifactory'
+  packages=('temurin-17-jdk')
   https_tools=('ca-certificates' 'curl' 'gnupg')
 
   command -v sudo &>/dev/null && SUDO=sudo
@@ -47,9 +47,9 @@ function _install_() {
   fi
 
   # 2. Add Jenkins’s official GPG key:
-  echo "2. Add Jenkins’s official key ..."
+  echo "2. Add Adoptium’s official key ..."
   if ${SUDO} install -m 0755 -d "${keyring_dir}"; then
-    if curl -fsSL "${download_url}/jenkins.io-2023.key" | ${SUDO} tee "${key}" >/dev/null; then
+    if curl -fsSL "${download_url}/api/gpg/key/public" | ${SUDO} gpg --dearmor -o "${key}" >/dev/null; then
       if ${SUDO} chmod a+r "${key}"; then
         ret_val=0
       fi
@@ -57,14 +57,16 @@ function _install_() {
   fi
 
   if [[ $ret_val -ne 0 ]]; then
-    __hhs_errcho "hspm.bash: unable to set official Jenkins key"
+    __hhs_errcho "hspm.bash: unable to set official Adoptium key"
     return 1
   fi
 
-  # 3. Set up jenkins repository:
-  echo "3. Set up jenkins repository ..."
-  if ! echo "deb [arch=${arch} signed-by=${key}] ${download_url} binary/" >"${source_file}"; then
-    __hhs_errcho "hspm.bash: unable to set official Jenkins repository"
+  # 3. Set up adoptium repository:
+  echo "3. Set up adoptium repository ..."
+  if ! echo "deb [arch=${arch} signed-by=${key}] ${download_url}/deb \
+  "$(source /etc/os-release && echo "${VERSION_CODENAME}")" main" |
+    ${SUDO} tee "${source_file}" >/dev/null; then
+    __hhs_errcho "hspm.bash: unable to set official Adoptium repository"
     return 1
   fi
 
@@ -73,7 +75,7 @@ function _install_() {
   if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
     # 5. Install packages:
     echo "5. Install packages ..."
-    if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "${packages[@]}"; then
+    if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install temurin-17-jdk; then
       return 0
     fi
   fi
@@ -83,15 +85,13 @@ function _install_() {
 
 function _uninstall_() {
 
-  local ret_val=1  keyring_dir source_dir key packages
+  local ret_val=1 keyring_dir source_dir key packages
 
-  arch="$(dpkg --print-architecture)"
   keyring_dir='/usr/share/keyrings'
   source_dir='/etc/apt/sources.list.d'
-  key="${keyring_dir}/jenkins.asc"
-  source_file="${source_dir}/jenkins.list"
-  download_url='https://pkg.jenkins.io/debian-stable'
-  packages=('jenkins' 'fontconfig' 'openjdk-11-jre')
+  key="${keyring_dir}/adoptium.gpg"
+  source_file="${source_dir}/adoptium.list"
+  packages=('temurin-17-jdk')
 
   command -v sudo &>/dev/null && SUDO=sudo
 

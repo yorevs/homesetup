@@ -80,7 +80,7 @@ function del_breadcrumb() {
 
 # purpose: Unset all declared functions from the recipes
 cleanup_recipes() {
-  unset -f _install_ _uninstall_ _about_ _depends_
+  unset -f _install_ _uninstall_ _about_ _depends_ _which_
 }
 
 # shellcheck disable=2155,SC2059,SC2183
@@ -122,15 +122,10 @@ install_recipe() {
   package="${1}"
   recipe="${RECIPES_DIR}/$(uname -s)/${package}.recipe"
 
-  if command -v "${package}" >/dev/null; then
-    add_breadcrumb "${package}"
-    quit 1 "${YELLOW}\"${package}\" is already installed on the system !"
-  fi
-
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Installing \"${package}\", please wait ... "
-    if _depends_ && _install_ "${package}" && command -v "${package}"; then
+    if _depends_ && _install_ "${package}" && _which_; then
       echo -e "${GREEN}Installation successful => ${package} ${NC}"
       add_breadcrumb "${package}"
     else
@@ -141,7 +136,7 @@ install_recipe() {
     echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to install it ...${NC}"
     default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
     source "${default_recipe}"
-    if _depends_ && _install_ "${package}" && command -v "${package}" >/dev/null; then
+    if _depends_ && _install_ "${package}" && _which_; then
       echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
       add_breadcrumb "${package}"
     else
@@ -158,26 +153,21 @@ uninstall_recipe() {
   package="${1}"
   recipe="$RECIPES_DIR/$(uname -s)/${package}.recipe"
 
-  if ! command -v "${package}" >/dev/null; then
-    del_breadcrumb "${package}"
-    quit 1 "${YELLOW}\"${package}\" is not installed on the system !"
-  fi
-
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Uninstalling ${package}, please wait ... "
-    if _uninstall_ && ! command -v "${package}"; then
+    if _uninstall_ && ! _which_; then
       echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
       del_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"${package}\" !"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" !"
     fi
   else
     recipe_name=$(basename "${recipe%\.*}")
     echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to uninstall it ...${NC}"
     default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
     source "${default_recipe}"
-    if _uninstall_ && ! command -v "${package}"; then
+    if _uninstall_ && ! _which_; then
       echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
       del_breadcrumb "${package}"
     else
