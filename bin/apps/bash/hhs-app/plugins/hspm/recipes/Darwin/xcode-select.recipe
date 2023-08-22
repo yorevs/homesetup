@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
-function about() {
+function _about_() {
   echo "Gives Mac terminal users many commonly used tools, utilities, and compilers"
 }
 
-function depends() {
+function _depends_() {
 
   return 0
 }
 
-function install() {
+function _install_() {
   xcode-select --install
   return $?
 }
 
-function uninstall() {
+function _uninstall_() {
   echo "${YELLOW}### There is no automated way to uninstall this app. Consult XCode uninstallation manual${NC}"
   return $?
 }

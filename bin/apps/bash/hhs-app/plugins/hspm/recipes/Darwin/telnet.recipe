@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-function about() {
+function _about_() {
   echo "Provide a bidirectional interactive text-oriented communication facility using a virtual terminal"
 }
 
-function depends() {
+function _depends_() {
   if ! command -v brew >/dev/null; then
     __hhs_errcho "hspm.bash: HomeBrew is required to install telnet"
     return 1
@@ -13,12 +13,12 @@ function depends() {
   return 0
 }
 
-function install() {
+function _install_() {
   command brew install telnet
   return $?
 }
 
-function uninstall() {
+function _uninstall_() {
   command brew uninstall telnet
   return $?
 }

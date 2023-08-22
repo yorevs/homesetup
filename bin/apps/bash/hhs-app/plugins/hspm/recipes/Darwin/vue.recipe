@@ -3,11 +3,11 @@
 # shellcheck disable=SC1090
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-function about() {
+function _about_() {
   echo "Vuex is a state management pattern + library for Vue.js applications"
 }
 
-function depends() {
+function _depends_() {
   if ! command -v nvm >/dev/null; then
     __hhs_errcho "hspm.bash: nvm is required to install vue"
     return 1
@@ -16,12 +16,12 @@ function depends() {
   return 0
 }
 
-function install() {
+function _install_() {
   nvm install vue
   return $?
 }
 
-function uninstall() {
+function _uninstall_() {
   nvm deactivate vue
   nvm uninstall vue
   return $?

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-function about() {
+function _about_() {
   echo "The missing package manager for macOS"
 }
 
-function depends() {
+function _depends_() {
   if ! command -v xcode-select >/dev/null; then
     __hhs_errcho "hspm.bash: XCode is required to install HomeBrew"
     return 1
@@ -16,12 +16,12 @@ function depends() {
   return 0
 }
 
-function install() {
+function _install_() {
   command ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   return $?
 }
 
-function uninstall() {
+function _uninstall_() {
   command ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
   return $?
 }

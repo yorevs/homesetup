@@ -60,9 +60,6 @@ RECOVER_TOOLS=
 # Hold all hspm recipes
 ALL_RECIPES=()
 
-# shellcheck disable=2206
-DEV_TOOLS=(${HHS_DEV_TOOLS[@]})
-
 # Directory containing all hspm recipes
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
@@ -83,8 +80,7 @@ function del_breadcrumb() {
 
 # purpose: Unset all declared functions from the recipes
 cleanup_recipes() {
-
-  unset -f 'about' 'depends' 'install' 'uninstall'
+  unset -f _install_ _uninstall_ _about_ _depends_
 }
 
 # shellcheck disable=2155,SC2059,SC2183
@@ -110,7 +106,7 @@ list_recipes() {
       source "${recipe}"
       printf '%3s - %s' "${index}" "${BLUE}${app} "
       printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
-      echo -e "${GREEN} => ${WHITE}$(about) ${NC}"
+      echo -e "${GREEN} => ${WHITE}$(_about_) ${NC}"
       cleanup_recipes
     fi
   done
@@ -134,18 +130,18 @@ install_recipe() {
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Installing \"${package}\", please wait ... "
-    if install; then
-      echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
+    if _depends_ && _install_ "${package}" && command -v "${package}"; then
+      echo -e "${GREEN}Installation successful => ${package} ${NC}"
       add_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to install app \"${package}\" !"
+      quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" !"
     fi
   else
     recipe_name=$(basename "${recipe%\.*}")
     echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to install it ...${NC}"
     default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
     source "${default_recipe}"
-    if depends && install "${package}"; then
+    if _depends_ && _install_ "${package}" && command -v "${package}" >/dev/null; then
       echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
       add_breadcrumb "${package}"
     else
@@ -170,8 +166,8 @@ uninstall_recipe() {
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Uninstalling ${package}, please wait ... "
-    if depends && uninstall; then
-      echo -e "${GREEN}Uninstallation successful !${NC}"
+    if _uninstall_ && ! command -v "${package}"; then
+      echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
       del_breadcrumb "${package}"
     else
       quit 1 "${PLUGIN_NAME}: Failed to uninstall app \"${package}\" !"
@@ -181,11 +177,11 @@ uninstall_recipe() {
     echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to uninstall it ...${NC}"
     default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
     source "${default_recipe}"
-    if uninstall "${package}"; then
-      echo -e "${GREEN}Uninstallation successful !${NC}"
+    if _uninstall_ && ! command -v "${package}"; then
+      echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
       del_breadcrumb "${package}"
     else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstallation \"${package}\" using the default recipe !"
+      quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" using the default recipe !"
     fi
   fi
 }
@@ -244,7 +240,6 @@ function recover_packages() {
 
 # @purpose: HHS plugin required function
 function help() {
-
   usage 0
 }
 
@@ -267,10 +262,6 @@ function execute() {
 
   [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
   [[ "$1" == "-v" || "$1" == "--version" ]] && version
-
-  if [[ ${#DEV_TOOLS[@]} -le 0 ]]; then
-    quit 1 "\"$$HHS_DEV_TOOLS\" environment variable is undefined or empty !"
-  fi
 
   touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access hspm file: ${BREADCRUMB_FILE}"
 

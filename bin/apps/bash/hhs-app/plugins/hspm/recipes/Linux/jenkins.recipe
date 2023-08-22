@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-function about() {
+function _about_() {
   echo "An open source automation server which enables developers to reliably build, test, and deploy their software."
   return 0
 }
 
-function depends() {
+function _depends_() {
 
   local tools
 
@@ -19,27 +19,24 @@ function depends() {
   return 1
 }
 
-function install() {
+function _install_() {
 
-  local jenkins_dl_url keyring_dir jenkins_key arch
+  local jenkins_dl_url keyring_dir jenkins_key arch ret_val=1 source_dir
 
-  keyring_dir='/etc/apt/keyrings'
+  arch="$(dpkg --print-architecture)"
+  keyring_dir='/usr/share/keyrings'
+  source_dir='/etc/apt/sources.list.d'
   jenkins_key="${keyring_dir}/jenkins.asc"
   jenkins_dl_url='https://pkg.jenkins.io/debian-stable'
-  arch="$(dpkg --print-architecture)"
 
   command -v sudo &>/dev/null && SUDO=sudo
 
-  if command -v "${HHS_MY_OS_PACKMAN}" &>/dev/null && ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "$@"; then
-    return $?
-  fi
-
   # 1. Add Jenkins’s official key:
-  if [[ $ret_val -eq 0 ]] && ${SUDO} install -m 0755 -d "${keyring_dir}"; then
-    echo "1. Add Jenkins’s official key ..."
-    if curl -fsSL "${jenkins_dl_url}/jenkins.io.key" | ${SUDO} tee "${jenkins_key}" >/dev/null; then
+  echo "1. Add Jenkins’s official key ..."
+  if ${SUDO} install -m 0755 -d "${keyring_dir}"; then
+    if curl -fsSL "${jenkins_dl_url}/jenkins.io-2023.key" | ${SUDO} tee "${jenkins_key}" >/dev/null; then
       if ${SUDO} chmod a+r "${jenkins_key}"; then
-        ret_val=1
+        ret_val=0
       fi
     fi
   fi
@@ -51,16 +48,15 @@ function install() {
 
   # 2. Set up jenkins repository:
   echo "2. Set up jenkins repository ..."
-  if [[ $ret_val -eq 0 ]] && ! echo \
-    "deb [arch=${arch} signed-by=${jenkins_key}] ${jenkins_dl_url} binary/" \
-    >/etc/apt/sources.list.d/jenkins.list; then
+  if ! echo "deb [arch=${arch} signed-by=${jenkins_key}] ${jenkins_dl_url} binary/" \
+    >"${source_dir}/jenkins.list"; then
     __hhs_errcho "hspm.bash: unable to set official Jenkins repository"
     return 1
   fi
 
   # 3. Update to apply the new repository:
-  if [[ $ret_val -eq 0 ]] && ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
-    echo "3. Update to apply the new repository ..."
+  echo "3. Update to apply the new repository ..."
+  if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
     # 4. Install jenkins
     if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install jenkins; then
       return 0
@@ -70,7 +66,7 @@ function install() {
   return 1
 }
 
-function uninstall() {
+function _uninstall_() {
 
   command -v sudo &>/dev/null && SUDO=sudo
 

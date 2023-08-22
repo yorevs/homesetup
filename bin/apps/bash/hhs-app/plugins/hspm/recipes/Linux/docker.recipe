@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-function about() {
+function _about_() {
   echo "Docker makes container capabilities approachable and easy to use."
   return 0
 }
 
-function depends() {
+function _depends_() {
 
   local tools
 
@@ -19,16 +19,17 @@ function depends() {
   return 1
 }
 
-function install() {
+function _install_() {
 
-  local ret_val=0 https_tools=() docker_dl_url docker_pkgs=()
+  local ret_val=1 https_tools=() docker_dl_url docker_pkgs=() source_dir
 
+  arch="$(dpkg --print-architecture)"
+  keyring_dir='/usr/share/keyrings'
+  source_dir='/etc/apt/sources.list.d'
+  docker_key="${keyring_dir}/docker.gpg"
   docker_dl_url='https://download.docker.com/linux/ubuntu'
   https_tools=('ca-certificates' 'curl' 'gnupg')
   docker_pkgs=('docker-ce' 'docker-ce-cli' 'containerd.io' 'docker-buildx-plugin' 'docker-compose-plugin')
-  keyring_dir='/etc/apt/keyrings'
-  docker_key="${keyring_dir}/docker.gpg"
-  arch="$(dpkg --print-architecture)"
 
   command -v sudo &>/dev/null && SUDO=sudo
 
@@ -46,11 +47,11 @@ function install() {
   fi
 
   # 3. Add Docker’s official GPG key:
-  if [[ $ret_val -eq 0 ]] && ${SUDO} install -m 0755 -d "${keyring_dir}"; then
+  if ${SUDO} install -m 0755 -d "${keyring_dir}"; then
     echo "3. Add Docker’s official GPG key ..."
-    if curl -fsSL "${docker_dl_url}/gpg" | ${SUDO} gpg --dearmor -o "${docker_key}" >/dev/null ; then
+    if curl -fsSL "${docker_dl_url}/gpg" | ${SUDO} gpg --dearmor -o "${docker_key}" >/dev/null; then
       if ${SUDO} chmod a+r "${docker_key}"; then
-        ret_val=1
+        ret_val=0
       fi
     fi
   fi
@@ -62,17 +63,16 @@ function install() {
 
   # 4. Set up docker repository:
   echo "4. Set up docker repository ..."
-  if [[ $ret_val -eq 0 ]] && ! echo \
-  "deb [arch=${arch} signed-by=${docker_key}] ${docker_dl_url} \
-  "$(source /etc/os-release && echo "${VERSION_CODENAME}")" stable" | \
-  ${SUDO} tee /etc/apt/sources.list.d/docker.list > /dev/null; then
+  if ! echo "deb [arch=${arch} signed-by=${docker_key}] ${docker_dl_url} \
+  "$(source /etc/os-release && echo "${VERSION_CODENAME}")" stable" |
+    ${SUDO} tee "${source_dir}/docker.list" >/dev/null; then
     __hhs_errcho "hspm.bash: unable to set official Docker repository"
     return 1
   fi
 
   # 5. Update to apply the new repository:
-  if [[ $ret_val -eq 0 ]] && ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
-    echo "5. Update to apply the new repository ..."
+  echo "5. Update to apply the new repository ..."
+  if ${SUDO} "${HHS_MY_OS_PACKMAN}" update; then
     # 6. Install docker components
     if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "${docker_pkgs[@]}"; then
       return 0
@@ -82,7 +82,7 @@ function install() {
   return 1
 }
 
-function uninstall() {
+function _uninstall_() {
 
   command -v sudo &>/dev/null && SUDO=sudo
 

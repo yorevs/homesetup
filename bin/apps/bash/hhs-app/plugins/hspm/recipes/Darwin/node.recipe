@@ -3,11 +3,11 @@
 # shellcheck disable=SC1090
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-function about() {
+function _about_() {
   echo "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine"
 }
 
-function depends() {
+function _depends_() {
   if ! command -v nvm >/dev/null; then
     __hhs_errcho "hspm.bash: nvm is required to install node"
     return 1
@@ -16,12 +16,12 @@ function depends() {
   return 0
 }
 
-function install() {
+function _install_() {
   nvm install node
   return $?
 }
 
-function uninstall() {
+function _uninstall_() {
   nvm deactivate node
   nvm uninstall node
   return $?

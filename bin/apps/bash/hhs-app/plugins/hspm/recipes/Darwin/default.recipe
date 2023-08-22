@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-function about() {
+function _about_() {
   echo "This is the default recipe and it will be used when no recipe is found for a certain tool"
   return 0
 }
 
-function depends() {
+function _depends_() {
 
   if ! command -v "${HHS_MY_OS_PACKMAN}" >/dev/null; then
     __hhs_errcho "hspm.bash: ${HHS_MY_OS_PACKMAN} is required to install default software on this machine."
@@ -15,12 +15,12 @@ function depends() {
   return 0
 }
 
-function install() {
+function _install_() {
   command "${HHS_MY_OS_PACKMAN}" install "$@"
   return $?
 }
 
-function uninstall() {
+function _uninstall_() {
   packman="${HHS_MY_OS_PACKMAN}"
   command "${packman}" uninstall "$@" \
     && command "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies
