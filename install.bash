@@ -252,8 +252,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       FONTS_DIR="${HOME}/Library/Fonts"
     elif [[ "Linux" == "${MY_OS}" ]]; then
       FONTS_DIR="${HOME}/.local/share/fonts"
-      [[ -d "${FONTS_DIR}" ]] || FONTS_DIR="/usr/local/share/fonts"
-      [[ -d "${FONTS_DIR}" ]] || FONTS_DIR="/usr/share/fonts"
     fi
 
     # Create fonts directory
