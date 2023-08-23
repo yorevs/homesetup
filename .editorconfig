@@ -21,3 +21,8 @@ tab_width                   = 2
 indent_size     = 4
 tab_width       = 4
 
+# 4 space TAB indentation
+[*.conf]
+indent_size     = 4
+tab_width       = 4
+indent_style    = tab
