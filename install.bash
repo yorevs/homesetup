@@ -20,17 +20,21 @@
   USAGE="
 Usage: $APP_NAME [OPTIONS] <args>
 
-  -r | --repair         : Repair current installation.
   -l | --local          : Local installation. This is just going to replace the dotfiles.
+  -r | --repair         : Repair current installation.
   -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
+  -p | --prefix         : HomeSetup installation prefix. Defaults to USER's HOME directory '~/'.
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
 
   # HomeSetup GitHub repository URL
-  REPO_URL='https://github.com/yorevs/homesetup.git'
+  HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
 
   # Define the user HOME
-  HOME=${HOME:-~}
+  HOME=${HOME:-~/}
+
+  # Define the user HomeSetup installation prefix
+  HHS_PREFIX=
 
   # Option to allow install to be interactive or not
   OPT='all'
@@ -38,11 +42,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup installation method
   METHOD=
 
-  # Whether to install it without prompts.
+  # Whether to install it without prompts
   QUIET=
 
-  # Installation log file.
+  # Installation log file
   INSTALL_LOG="$(pwd)/install.log"
+
+  # HomeSetup installation prefix file
+  HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
@@ -50,7 +57,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
 
-  # .dotfiles we will handle
+  # All .dotfiles we will manage
   ALL_DOTFILES=()
 
   # Supported shell types. For now, only bash is supported
@@ -59,23 +66,33 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
 
-  # User's operating system
-  MY_OS=$(uname -s)
-
-  # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl')
-
-  # Missing HomeSetup required tools
-  MISSING_TOOLS=()
-
-  # OS Application manager
-  OS_APP_MAN=
-
   # README link for HomeSetup
   README_LINK="${HHS_HOME}/README.MD"
 
   # HSPyLib python modules to install
   PYTHON_MODULES=('hspylib' 'hspylib-clitt' 'hspylib-setman' 'hspylib-vault' 'hspylib-firebase')
+
+  # User's operating system
+  MY_OS=$(uname -s)
+
+  # OS Application manager. Defined later on the installation process
+  OS_APP_MAN=
+
+  # HomeSetup required tools
+  REQUIRED_TOOLS=('git' 'curl' 'python3')
+
+  # Missing HomeSetup required tools
+  MISSING_TOOLS=()
+
+  if [[ "${MY_OS}" == "Darwin" ]]; then
+    MY_OS_NAME=$(sw_vers -productName)
+    # Darwin required tools
+    REQUIRED_TOOLS+=('brew' 'xcode-select')
+  elif [[ "${MY_OS}" == "Linux" ]]; then
+    MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+    MY_OS_NAME="${MY_OS_NAME#*=}"
+    # Linux required tools, TODO add if any is required
+  fi
 
   # Awesome icons
   STAR_ICN='\xef\x80\x85'
@@ -92,21 +109,11 @@ Usage: $APP_NAME [OPTIONS] <args>
   RED='\033[0;31m'
   ORANGE='\033[38;5;202m'
 
-  # Darwin required tools
-  if [[ "${MY_OS}" == "Darwin" ]]; then
-    MY_OS_RELEASE=$(sw_vers -productName)
-    REQUIRED_TOOLS+=('brew' 'xcode-select' 'python3')
-  elif [[ "${MY_OS}" == "Linux" ]]; then
-    MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
-    MY_OS_RELEASE="${MY_OS_RELEASE#*=}"
-    REQUIRED_TOOLS+=('python3')
-  fi
-
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
-    copy_file create_directory install_homesetup abort_install
+    copy_file create_directory install_homesetup abort_install check_prefix
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -178,7 +185,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_current_shell() {
 
     if [[ ! " ${SUPP_SHELL_TYPES[@]} " =~ " ${SHELL##*/} " ]]; then
-      quit 2 "Your current shell type is not supported: \"${SHELL}\""
+      quit 2 "Your current shell is not supported: \"${SHELL}\""
     fi
   }
 
@@ -186,11 +193,37 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check which installation method should be used
   check_inst_method() {
 
-    # Define the HomeSetup location
-    HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
+    # Loop through the command line options
+    while test -n "$1"; do
+      case "$1" in
+      -l | --local)
+        METHOD='local'
+        ;;
+      -r | --repair)
+        METHOD='repair'
+        ;;
+      -i | --interactively)
+        OPT=''
+        ;;
+      -p | --prefix)
+        HHS_PREFIX="${2}"
+        [[ -d "${HHS_PREFIX}" && -G "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory \"${HHS_PREFIX}\""
+        ;;
+      -q | --quiet)
+        QUIET=1
+        ;;
+      *)
+        quit 2 "Invalid option: \"$1\""
+        ;;
+      esac
+      shift
+    done
 
-    # Define the HomeSetup .hhs location
-    HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
+    # Define the HomeSetup installation location
+    HHS_HOME="${HHS_PREFIX:-${HOME}}/HomeSetup"
+
+    # Define the HomeSetup files (.hhs) location
+    HHS_DIR="${HOME}/.hhs"
 
     # Dotfiles source location
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
@@ -213,28 +246,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -s "${HHS_HOME}/.VERSION" ]] \
       && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
-
-    # Loop through the command line options
-    while test -n "$1"; do
-      case "$1" in
-      -i | --interactively)
-        OPT=''
-        ;;
-      -q | --quiet)
-        QUIET=1
-        ;;
-      -r | --repair)
-        METHOD='repair'
-        ;;
-      -l | --local)
-        METHOD='local'
-        ;;
-      *)
-        quit 2 "Invalid option: \"$1\""
-        ;;
-      esac
-      shift
-    done
 
     # Create HomeSetup .hhs directory
     create_directory "${HHS_DIR}"
@@ -274,7 +285,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     local os_type pad pad_len
 
-    has sudo &>/dev/null && SUDO='sudo'
+    has sudo &>/dev/null && SUDO=sudo
 
     if has 'brew'; then
       os_type='macOS'
@@ -287,7 +298,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OS_APP_MAN=yum
     elif has 'dnf'; then
       os_type='RedHat'
-      OS_APP_MAN=yum
+      OS_APP_MAN=dnf
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
@@ -393,7 +404,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     if [[ ! -d "${HHS_HOME}" ]]; then
       echo -e "${WHITE}Cloning HomeSetup repository ..."
-      if git clone "${REPO_URL}" "${HHS_HOME}" >> "${INSTALL_LOG}" 2>&1; then
+      if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >> "${INSTALL_LOG}" 2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
@@ -401,7 +412,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       cd "${HHS_HOME}" &> /dev/null || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
       echo -e "${WHITE}Pulling HomeSetup repository ..."
-      if git pull --rebase; then
+      if git pull --rebase >> "${INSTALL_LOG}" 2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
         quit 2 "Unable to properly pull the repository !"
@@ -428,7 +439,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
     echo -e "   Install Type: ${METHOD}"
-    echo -e "          Shell: ${MY_OS}-${MY_OS_RELEASE}/${SHELL_TYPE}"
+    echo -e " Install Prefix: ${HHS_PREFIX}"
+    echo -e "          Shell: ${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "    Install Dir: ${HHS_HOME}"
     echo -e "    Configs Dir: ${HHS_DIR}"
     echo -e "  PyPi Packages: ${PYTHON_MODULES[*]}"
@@ -686,6 +698,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
+  # Check HomeSetup installation prefix
+  check_prefix() {
+    case "${METHOD}" in
+    remote)
+      [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" > "${HHS_PREFIX_FILE}"
+      [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f  "${HHS_PREFIX_FILE}"
+      ;;
+    esac
+  }
+
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
 
@@ -726,7 +748,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   }
 
   trap abort_install SIGINT
+  trap abort_install SIGABRT
+
   check_current_shell
   check_inst_method "$@"
   install_homesetup
+  check_prefix
 }

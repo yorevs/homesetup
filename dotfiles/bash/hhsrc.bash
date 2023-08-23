@@ -34,12 +34,19 @@ export RESET_IFS=$'\n'
 unalias -a
 
 # The following variables are not inside the bash_env because we need them in the early load process.
-export HOME="${HOME:-~/}"
-export USER="${USER:-$(whoami)}"
 export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL//\/bin\//}"
-export HHS_HOME="${HHS_HOME:-${HOME}/HomeSetup}"
-export HHS_DIR="${HHS_DIR:-${HOME}/.hhs}"
+
+# Detect if HomeSetup was installed using an installation prefix.
+if [[ -s "${HOME}/.hhs-prefix" ]]; then
+  prefix="$(grep . "${HOME}/.hhs-prefix")"
+  [[ -n "${prefix}" && -G "${prefix}" ]] && export HHS_PREFIX="${prefix}"
+else
+  export HHS_PREFIX=
+fi
+
+export HHS_HOME="${HHS_PREFIX:-${HOME}}/HomeSetup"
+export HHS_DIR="${HOME}/.hhs"
 export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
 export HHS_CACHE_DIR="${HHS_CACHE_DIR:-${HHS_DIR}/cache}"
 export HHS_LOG_DIR="${HHS_LOG_DIR:-${HHS_DIR}/log}"
