@@ -7,6 +7,11 @@ function _about_() {
   echo "Vuex is a state management pattern + library for Vue.js applications"
 }
 
+function _which_() {
+  command -v 'vue'
+  return $?
+}
+
 function _depends_() {
   if ! command -v nvm >/dev/null; then
     __hhs_errcho "hspm.bash: nvm is required to install vue"

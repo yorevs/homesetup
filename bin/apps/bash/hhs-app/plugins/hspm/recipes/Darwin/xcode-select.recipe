@@ -4,6 +4,11 @@ function _about_() {
   echo "Gives Mac terminal users many commonly used tools, utilities, and compilers"
 }
 
+function _which_() {
+  xcode-select -p
+  return $?
+}
+
 function _depends_() {
 
   return 0
@@ -16,5 +21,5 @@ function _install_() {
 
 function _uninstall_() {
   echo "${YELLOW}### There is no automated way to uninstall this app. Consult XCode uninstallation manual${NC}"
-  return $?
+  return 1
 }

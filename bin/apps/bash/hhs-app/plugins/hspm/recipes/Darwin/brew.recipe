@@ -4,6 +4,11 @@ function _about_() {
   echo "The missing package manager for macOS"
 }
 
+function _which_() {
+  command -v 'brew'
+  return $?
+}
+
 function _depends_() {
   if ! command -v xcode-select >/dev/null; then
     __hhs_errcho "hspm.bash: XCode is required to install HomeBrew"

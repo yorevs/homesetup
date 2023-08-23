@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 function _about_() {
-  echo "Python is a programming language that lets you work quickly and integrate systems more effectively"
+  echo "Python3 is a programming language that lets you work quickly and integrate systems more effectively"
 }
 
 function _which_() {
-  command -v 'python'
+  command -v 'python3'
   return $?
 }
 
@@ -19,11 +19,11 @@ function _depends_() {
 }
 
 function _install_() {
-  command brew install python
+  command brew install python3
   return $?
 }
 
 function _uninstall_() {
-  command brew uninstall python
+  command brew uninstall python3
   return $?
 }

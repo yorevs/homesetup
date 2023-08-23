@@ -6,7 +6,6 @@ function _about_() {
 }
 
 function _which_() {
-  app="$(basename "${0}")"
   command -v 'docker'
   return $?
 }
