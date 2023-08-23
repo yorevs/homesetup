@@ -30,8 +30,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup GitHub repository URL
   HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
 
-  # Define the user HOME
-  HOME=${HOME:-~/}
+  # Define the USER and HOME
+  USER="${SUDO_USER:-${USER}}"
+  [[ -z "${SUDO_USER}" ]] && HOME=${HOME:-~/}
+  [[ -n "${SUDO_USER}" ]] && HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
+
+  # HomeSetup installation prefix file
+  HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
   # Define the user HomeSetup installation prefix
   HHS_PREFIX=
@@ -46,10 +51,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   QUIET=
 
   # Installation log file
-  INSTALL_LOG="$(pwd)/install.log"
-
-  # HomeSetup installation prefix file
-  HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
+  INSTALL_LOG="${HOME}/hhs-install.log"
 
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
@@ -160,8 +162,8 @@ Usage: $APP_NAME [OPTIONS] <args>
   }
 
   # @function: Copy file from source into proper destination
-  # @Param $1 [Req] : The source file.
-  # @Param $2 [Req] : The destination file.
+  # @Param $1 [Req] : The source file/dir.
+  # @Param $2 [Req] : The destination file/dir.
   copy_file() {
 
     local src_file dest_file
@@ -170,11 +172,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     dest_file="${2}"
 
     echo ''
-    if [[ -f "${dest_file}" ]]; then
-      echo -e "Skipping: ${YELLOW}${dest_file} file was not copied because it already exists. ${NC}"
+    if [[ -f "${dest_file}" || -d "${dest_file}" ]]; then
+      echo -e "Skipping: ${YELLOW}${dest_file} file/dir was not copied because it already exists. ${NC}"
     else
       echo -en "Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
-      \cp "${src_file}" "${dest_file}"
+      # shellcheck disable=SC2086
+      rsync --archive --chown="${USER}":"${USER}" "${src_file}" "${dest_file}"
       [[ -f "${dest_file}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
       [[ -f "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
     fi
@@ -207,7 +210,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         ;;
       -p | --prefix)
         HHS_PREFIX="${2}"
-        [[ -d "${HHS_PREFIX}" && -G "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory \"${HHS_PREFIX}\""
+        [[ -d "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory \"${HHS_PREFIX}\""
+        shift
         ;;
       -q | --quiet)
         QUIET=1
@@ -220,7 +224,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     done
 
     # Define the HomeSetup installation location
-    HHS_HOME="${HHS_PREFIX:-${HOME}}/HomeSetup"
+    HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 
     # Define the HomeSetup files (.hhs) location
     HHS_DIR="${HOME}/.hhs"
@@ -243,7 +247,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Enable install script to use colors
     [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] \
-      && \. "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+      && source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -s "${HHS_HOME}/.VERSION" ]] \
       && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
 
@@ -553,7 +557,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
-      -exec cp -f {} "${FONTS_DIR}" \; >> "${INSTALL_LOG}" 2>&1; then
+      -exec rsync --archive --chown="${USER}":"${USER}" {} "${FONTS_DIR}" \; >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -657,14 +661,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     # .inputrc Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.inputrc" ]]; then
       \mv -f "${HOME}/.inputrc" "${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak"
-      \cp -f "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+      copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${ORANGE}Your old ${HOME}/.inputrc had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.aliasdef" || -f "${HHS_HOME}/dotfiles/aliasdef" ]]; then
-      [[ -f "${HOME}/.aliasdef" ]] && \cp -f "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
-      [[ -f "${HHS_HOME}/dotfiles/aliasdef" ]] && \cp -f "${HHS_HOME}/dotfiles/aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
+      [[ -f "${HOME}/.aliasdef" ]] && copy_file "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
+      [[ -f "${HHS_HOME}/dotfiles/aliasdef" ]] && copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
       echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
@@ -700,12 +704,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Check HomeSetup installation prefix
   check_prefix() {
-    case "${METHOD}" in
-    remote)
-      [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" > "${HHS_PREFIX_FILE}"
-      [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f  "${HHS_PREFIX_FILE}"
-      ;;
-    esac
+    [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" > "${HHS_PREFIX_FILE}"
+    [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f  "${HHS_PREFIX_FILE}"
   }
 
   # Reload the terminal and apply installed files.

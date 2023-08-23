@@ -38,14 +38,16 @@ export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL//\/bin\//}"
 
 # Detect if HomeSetup was installed using an installation prefix.
-if [[ -s "${HOME}/.hhs-prefix" ]]; then
-  prefix="$(grep . "${HOME}/.hhs-prefix")"
-  [[ -n "${prefix}" && -G "${prefix}" ]] && export HHS_PREFIX="${prefix}"
+export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
+
+if [[ -s "${HHS_PREFIX_FILE}" ]]; then
+  prefix="$(grep . "${HHS_PREFIX_FILE}")"
+  [[ -n "${prefix}" && -d "${prefix}" ]] && export HHS_PREFIX="${prefix}"
 else
   export HHS_PREFIX=
 fi
 
-export HHS_HOME="${HHS_PREFIX:-${HOME}}/HomeSetup"
+export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 export HHS_DIR="${HOME}/.hhs"
 export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
 export HHS_CACHE_DIR="${HHS_CACHE_DIR:-${HHS_DIR}/cache}"
