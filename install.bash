@@ -117,7 +117,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
-    copy_file create_directory install_homesetup abort_install check_prefix
+    copy_file create_directory install_homesetup abort_install check_prefix install_git_hooks
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -352,6 +352,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       check_required_tools
       clone_repository
       install_dotfiles
+      install_git_hooks
       compatibility_check
       configure_python
       activate_dotfiles
@@ -359,6 +360,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     repair)
       check_required_tools
       install_dotfiles
+      install_git_hooks
       compatibility_check
       configure_python
       activate_dotfiles
@@ -570,7 +572,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
+  }
 
+  # Install git hooks
+  install_git_hooks() {
     # Linking HomeSetup git hooks into place
     echo -en "\n${WHITE}Linking git hooks into place ..."
     echo ">>> Linked git hooks:" >> "${INSTALL_LOG}"
