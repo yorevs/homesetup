@@ -4,3 +4,4 @@
 4. Add os-info (/etc/os-release)
 5. Add custom widgets (services)
 6. Fix rsync for macos: --chown=xxx:xxx
+7. Change logs to /var/log/homesetup (keep link to it on .hhs)
