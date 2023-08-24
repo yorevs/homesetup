@@ -21,24 +21,23 @@ PLUGIN_NAME="updater"
 USAGE="
 Usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
 
- _   _           _       _            
-| | | |_ __   __| | __ _| |_ ___ _ __ 
+ _   _           _       _
+| | | |_ __   __| | __ _| |_ ___ _ __
 | | | | '_ \ / _\` |/ _\` | __/ _ \ '__|
-| |_| | |_) | (_| | (_| | ||  __/ |   
- \___/| .__/ \__,_|\__,_|\__\___|_|   
-      |_|                             
+| |_| | |_) | (_| | (_| | ||  __/ |
+ \___/| .__/ \__,_|\__,_|\__\___|_|
+      |_|
 
   HomeSetup update manager.
 
     Options:
       -v  |   --version : Display current program version.
       -h  |      --help : Display this help message.
-      
+
     Arguments:
       check             : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
       update            : Check the current HomeSetup installation and look for updates.
       stamp             : Stamp the next auto-update check for 7 days ahead.
-
 "
 
 UNSETS=(
@@ -46,6 +45,53 @@ UNSETS=(
 )
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
+
+# @purpose: HHS plugin required function
+function help() {
+  usage 0
+}
+
+# @purpose: HHS plugin required function
+function version() {
+  echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
+  quit 0
+}
+
+# @purpose: HHS plugin required function
+function cleanup() {
+  unset "${UNSETS[@]}"
+  echo -n ''
+}
+
+# @purpose: HHS plugin required function
+function execute() {
+
+  [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
+  [[ "$1" == "-v" || "$1" == "--version" ]] && version
+
+  cmd="$1"
+  shift
+  args=("$@")
+
+  shopt -s nocasematch
+  case "$cmd" in
+    check)
+      update_check
+    ;;
+    update)
+      update_hhs
+    ;;
+    stamp)
+      stamp_next_update
+    ;;
+    *)
+      usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
+    ;;
+  esac
+  shopt -u nocasematch
+
+  quit 0
+}
 
 # @purpose: Check whether the repository version is greater than installed version.
 is_greater() {
@@ -116,7 +162,7 @@ update_check() {
   today=$(date "+%s%S")
   cur_check=$(grep . "${HHS_DIR}"/.last_update)
   next_check=$(stamp_next_update)
-  
+
   if [[ ${today} -ge ${cur_check} ]]; then
     update_hhs
     return $?
@@ -145,51 +191,4 @@ stamp_next_update() {
   echo "${next_check}"
 
   return 0
-}
-
-# @purpose: HHS plugin required function
-function help() {
-  usage 0
-}
-
-# @purpose: HHS plugin required function
-function version() {
-  echo "HomeSetup ${PLUGIN_NAME} plugin v${VERSION}"
-  quit 0
-}
-
-# @purpose: HHS plugin required function
-function cleanup() {
-  unset "${UNSETS[@]}"
-  echo -n ''
-}
-
-# @purpose: HHS plugin required function
-function execute() {
-
-  [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
-  [[ "$1" == "-v" || "$1" == "--version" ]] && version
-
-  cmd="$1"
-  shift
-  args=("$@")
-
-  shopt -s nocasematch
-  case "$cmd" in
-    check)
-      update_check
-    ;;
-    update)
-      update_hhs
-    ;;
-    stamp)
-      stamp_next_update
-    ;;
-    *)
-      usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
-    ;;
-  esac
-  shopt -u nocasematch
-
-  quit 0
 }

@@ -21,9 +21,9 @@ function list() {
     quit 0
   else
     echo ''
-    echo "${YELLOW}HomeSetup Application Manager"
+    echo "${YELLOW}HomeSetup application command list"
     echo ''
-    echo "${YELLOW}-=- HHS Plugins -=-"
+    echo "${ORANGE}-=- HHS Plugins -=-"
     echo ''
     for idx in "${!PLUGINS[@]}"; do
       printf "${WHITE}%.2d. " "$((idx + 1))"
@@ -31,7 +31,7 @@ function list() {
     done
 
     echo ''
-    echo "${YELLOW}-=- HHS Functions -=-"
+    echo "${ORANGE}-=- HHS Functions -=-"
     echo ''
     for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
       printf "${WHITE}%.2d. " "$((idx + 1))"
@@ -39,7 +39,7 @@ function list() {
     done
   fi
 
-  quit 0 ' '
+  quit 0 ''
 }
 
 # shellcheck disable=SC2207
@@ -157,7 +157,7 @@ function board() {
 }
 
 # @purpose: Clear HomeSetup logs, backups and caches
-function clear() {
+function invalidate() {
 
   local all_files ANS
 

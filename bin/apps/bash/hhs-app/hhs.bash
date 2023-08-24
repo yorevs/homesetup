@@ -12,9 +12,9 @@
 
 # Functions to be unset after quit.
 UNSETS+=(
-  'main' 'parse_args' 'help' 'list' 'has_function' 'has_plugin' 'has_command' 'validate_plugin'
-  'register_plugins' 'register_functions' 'parse_args' 'invoke_command' 'find_hhs_functions'
-  'get_desc'
+  'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
+  'validate_plugin' 'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
+  'find_hhs_functions' 'get_desc'
 )
 
 # Program version.
@@ -26,9 +26,9 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
  _   _                      ____       _
 | | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
-| |_| |/ _ \| '_ \` _ \ / _ \___ \ / _ \ __| | | | '_ \
+| |_| |/ _ \\| '_ \` _ \\ / _ \\___ \\ / _ \ __| | | | '_ \\
 |  _  | (_) | | | | | |  __/___) |  __/ |_| |_| | |_) |
-|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/
+|_| |_|\\___/|_| |_| |_|\\___|____/ \\___|\\__|\\__,_| .__/
                                                 |_|
 
   HomeSetup Application Manager v${VERSION}.
@@ -54,7 +54,6 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
   Notes:
     - To discover which plugins and functions are available type: hhs list
-
 "
 
 [[ -f "${HHS_DIR}"/bin/app-commons.bash ]] && \. "${HHS_DIR}"/bin/app-commons.bash
@@ -74,7 +73,7 @@ HHS_APP_FUNCTIONS=()
 HHS_FUNCTIONS=()
 
 # List of required functions a plugin must have.
-PLUGINS_FUNCS=('help' 'version' 'execute')
+PLUGINS_FUNCS=('help' 'cleanup' 'version' 'execute')
 
 # List of valid plugins.
 PLUGINS_LIST=()
@@ -84,7 +83,7 @@ PLUGINS=()
 
 # @purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
-has_function() {
+function has_function() {
 
   if [[ -n "${1}" && ${HHS_APP_FUNCTIONS[*]} =~ ${1} ]]; then
     return 0
@@ -95,7 +94,7 @@ has_function() {
 
 # @purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
-has_plugin() {
+function has_plugin() {
 
   if [[ -n "${1}" && "${#PLUGINS[@]}" -gt 0 && ${PLUGINS[*]} =~ ${1} ]]; then
     return 0
@@ -106,7 +105,7 @@ has_plugin() {
 
 # @purpose: Checks whether a plugin contains the command or not
 # @param $1 [Req] : The command name.
-has_command() {
+function has_command() {
 
   if [[ -n "${1}" && "${#PLUGINS_FUNCS[@]}" -gt 0 && ${PLUGINS_FUNCS[*]} =~ ${1} ]]; then
     return 0
@@ -117,7 +116,7 @@ has_command() {
 
 # @purpose: Validates if the plugin contains the required hhs application plugin structure
 # @param $1 [Req] : Array of plugin functions.
-validate_plugin() {
+function validate_plugin() {
 
   local i=0 j=0 plg_funcs=("$@")
 
@@ -136,9 +135,9 @@ validate_plugin() {
 }
 
 # @purpose: Search and register all hhs application plugins
-register_plugins() {
+function register_plugins() {
 
-  local plg_funcs=()
+  local f_name plg_funcs=() plg_name
 
   while IFS='' read -r plugin; do
     while IFS='' read -r fnc; do
@@ -159,7 +158,7 @@ register_plugins() {
 }
 
 # @purpose: Read all internal functions and make them available to use
-register_functions() {
+function register_functions() {
 
   local f_name
 
@@ -178,7 +177,7 @@ register_functions() {
 }
 
 # @purpose: Invoke the plugin command
-invoke_command() {
+function invoke_command() {
 
   local plg_cmd ret
 
@@ -189,15 +188,15 @@ invoke_command() {
     for idx in "${!PLUGINS[@]}"; do
       if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
         [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
-        \. "${PLUGINS_LIST[idx]}"
+        source "${PLUGINS_LIST[idx]}"
         shift
         plg_cmd="${1:-help}"
         has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
         shift
+        # Execute the specified plugin
         ${plg_cmd} "${@}"
         ret=${?}
         cleanup
-        unset "${PLUGINS_FUNCS[@]}"
         exit ${ret}
       else
         [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && exit 255
@@ -217,13 +216,16 @@ invoke_command() {
 # Functions MUST start with 'function' keyword and
 # MUST quit <exit_code> with the proper exit code
 
-get_desc() {
-  local path filename line_num i
+function get_desc() {
+
+  local path filename line_num re
+
   path=$(awk -F ':function' '{print $1}'  <<<"$1")
   filename=$(awk -F '.bash:' '{print $1}'  <<<"$path")
   line_num=$(awk -F '.bash:' '{print $2}'  <<<"$path")
   line_num=${line_num// /}
   re='# @function: '
+
   for i in $(seq "${line_num}" -1 1); do
     line=$(sed -n "${i}p" "${filename}".bash)
     desc="${line//# @function: /}"
@@ -234,9 +236,9 @@ get_desc() {
 
 # @purpose: Search for all hhs-functions and make them available to use.
 # @param $1..$N [Req] : The directories to search from.
-search_hhs_functions() {
+function search_hhs_functions() {
 
-  local all_hhs_fn fn_name line_num
+  local all_hhs_fn filename fn_name desc
 
   all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
 
@@ -256,7 +258,7 @@ search_hhs_functions() {
 # Basics
 
 # @purpose: Parse command line arguments
-parse_args() {
+function parse_args() {
 
   # If not enough arguments is passed, display usage message.
   if [[ ${#} -eq 0 ]]; then
@@ -286,8 +288,13 @@ parse_args() {
   done
 }
 
+# @purpose: Cleanup plugin functions.
+function cleanup_plugins() {
+  unset -f "${PLUGINS_FUNCS[@]}"
+}
+
 # @purpose: Program entry point.
-main() {
+function main() {
 
   local fn_name
 
@@ -306,6 +313,7 @@ main() {
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
   invoke_command "${@}" || quit 2
+  cleanup_plugins
 }
 
 main "${@}"

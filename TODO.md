@@ -3,3 +3,4 @@
 3. Fix hhs-completions.bash
 4. Add os-info (/etc/os-release)
 5. Add custom widgets (services)
+6. Fix rsync for macos: --chown=xxx:xxx

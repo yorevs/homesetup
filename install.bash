@@ -88,11 +88,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
+    GROUP='staff'  # Default user group
     # Darwin required tools
     REQUIRED_TOOLS+=('brew' 'xcode-select')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
+    GROUP="${USER}"  # Default user group
     # Linux required tools, TODO add if any is required
   fi
 
@@ -176,8 +178,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "Skipping: ${YELLOW}${dest_file} file/dir was not copied because it already exists. ${NC}"
     else
       echo -en "Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
-      # shellcheck disable=SC2086
-      rsync --archive --chown="${USER}":"${USER}" "${src_file}" "${dest_file}"
+      rsync --archive "${src_file}" "${dest_file}"
+      chown "${USER}":"${GROUP}" "${dest_file}"
       [[ -f "${dest_file}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
       [[ -f "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
     fi
@@ -222,6 +224,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       esac
       shift
     done
+
+    # Define the installation prefix
+    HHS_PREFIX="${HHS_PREFIX:-$([[ -s "${HHS_PREFIX_FILE}" ]] && grep . "${HHS_PREFIX_FILE}")}"
 
     # Define the HomeSetup installation location
     HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
@@ -557,7 +562,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
-      -exec rsync --archive --chown="${USER}":"${USER}" {} "${FONTS_DIR}" \; >> "${INSTALL_LOG}" 2>&1; then
+      -exec rsync --archive {} "${FONTS_DIR}" \; \
+      -exec chown "${USER}":"${GROUP}" {} \; >> "${INSTALL_LOG}" 2>&1; then
       echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -591,7 +597,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     ${PIP} install --upgrade pip install --upgrade pip >> "${INSTALL_LOG}" 2>&1
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
-    command -v python && ln -s "${PYTHON}" "$(dirname "${PYTHON}")/python"
+    command -v python &>/dev/null || ln -s "${PYTHON}" "$(dirname "${PYTHON}")/python"
     install_hspylib "${PYTHON}"
 
   }

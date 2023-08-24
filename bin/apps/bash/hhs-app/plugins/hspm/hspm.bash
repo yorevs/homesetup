@@ -12,7 +12,7 @@
 # Copyright (c) 2023, HomeSetup team
 
 # Current script version.
-VERSION=0.9.0
+VERSION=0.9.2
 
 # Current plugin name
 PLUGIN_NAME="hspm"
@@ -66,6 +66,82 @@ RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 # File containing all installed/uninstalled packages
 BREADCRUMB_FILE="$HHS_DIR/.hspm"
 
+# @purpose: HHS plugin required function
+function help() {
+  usage 0
+}
+
+# @purpose: HHS plugin required function
+function version() {
+  echo "${PLUGIN_NAME} v${VERSION}"
+  exit 0
+}
+
+# @purpose: HHS plugin required function
+function cleanup() {
+  unset "${UNSETS[@]}"
+  echo -n ''
+}
+
+# @purpose: HHS plugin required function
+function execute() {
+
+  local cmd args
+
+  [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
+  [[ "$1" == "-v" || "$1" == "--version" ]] && version
+
+  touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access hspm file: ${BREADCRUMB_FILE}"
+
+  cmd="$1"
+  shift
+  args=("$@")
+
+  shopt -s nocasematch
+  case "$cmd" in
+  # Install the app
+  install)
+    [[ "${#}" -le 0 ]] && usage 1
+    for next_recipe in "${@}"; do
+      echo ''
+      install_recipe "${next_recipe}"
+    done
+    echo ''
+    ;;
+  # Uninstall the app
+  uninstall)
+    [[ "${#}" -le 0 ]] && usage 1
+    for next_recipe in "${@}"; do
+      echo ''
+      uninstall_recipe "${next_recipe}"
+    done
+    echo ''
+    ;;
+  # Recover installed apps
+  recover)
+    [[ "$1" == "-e" || "$2" == "-e" || "$3" == "-e" ]] && __hhs_open "${BREADCRUMB_FILE}" && exit 0
+    [[ "$1" == "-i" || "$2" == "-i" ]] && RECOVER_INSTALL=1
+    [[ "$1" == "-t" || "$2" == "-t" ]] && RECOVER_TOOLS=1
+    recover_packages
+    ;;
+  # List available apps
+  list)
+    if [[ "$1" == "-a" ]]; then
+      LIST_ALL=1
+    fi
+    echo -e "\n${BLUE}Listing ${LIST_ALL//1/all }available hspm '${HHS_MY_OS}' recipes ... ${NC}\n"
+    list_recipes
+    echo -e "\n${BLUE}Found (${#ALL_RECIPES[@]}) recipes${NC}\n"
+    ;;
+  *)
+    usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
+    ;;
+  esac
+  shopt -u nocasematch
+
+  quit 0
+}
+
 # @purpose: Add a package to the breadcrumb file
 function add_breadcrumb() {
   local package="${1}" os="${HHS_MY_OS_RELEASE}"
@@ -79,13 +155,13 @@ function del_breadcrumb() {
 }
 
 # purpose: Unset all declared functions from the recipes
-cleanup_recipes() {
+function cleanup_recipes() {
   unset -f _install_ _uninstall_ _about_ _depends_ _which_
 }
 
 # shellcheck disable=2155,SC2059,SC2183
 # purpose: List all available hspm recipes
-list_recipes() {
+function list_recipes() {
 
   local index=0 recipe pad_len=20 pad os app
 
@@ -115,7 +191,7 @@ list_recipes() {
 }
 
 # purpose: Install the specified app using the installation recipe
-install_recipe() {
+function install_recipe() {
 
   local recipe recipe_name default_recipe
 
@@ -146,7 +222,7 @@ install_recipe() {
 }
 
 # purpose: Uninstall the specified app using the uninstallation recipe
-uninstall_recipe() {
+function uninstall_recipe() {
 
   local recipe recipe_name
 
@@ -226,80 +302,4 @@ function recover_packages() {
   fi
   [[ $index -gt 0 ]] || echo "${YELLOW}No previously installed packages were found ${NC}"
   echo ''
-}
-
-# @purpose: HHS plugin required function
-function help() {
-  usage 0
-}
-
-# @purpose: HHS plugin required function
-function version() {
-  echo "${PLUGIN_NAME} v${VERSION}"
-  exit 0
-}
-
-# @purpose: HHS plugin required function
-function cleanup() {
-  unset "${UNSETS[@]}"
-  echo -n ''
-}
-
-# @purpose: HHS plugin required function
-function execute() {
-
-  local cmd args
-
-  [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
-  [[ "$1" == "-v" || "$1" == "--version" ]] && version
-
-  touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access hspm file: ${BREADCRUMB_FILE}"
-
-  cmd="$1"
-  shift
-  args=("$@")
-
-  shopt -s nocasematch
-  case "$cmd" in
-  # Install the app
-  install)
-    [[ "${#}" -le 0 ]] && usage 1
-    for next_recipe in "${@}"; do
-      echo ''
-      install_recipe "${next_recipe}"
-    done
-    echo ''
-    ;;
-  # Uninstall the app
-  uninstall)
-    [[ "${#}" -le 0 ]] && usage 1
-    for next_recipe in "${@}"; do
-      echo ''
-      uninstall_recipe "${next_recipe}"
-    done
-    echo ''
-    ;;
-  # Recover installed apps
-  recover)
-    [[ "$1" == "-e" || "$2" == "-e" || "$3" == "-e" ]] && __hhs_open "${BREADCRUMB_FILE}" && exit 0
-    [[ "$1" == "-i" || "$2" == "-i" ]] && RECOVER_INSTALL=1
-    [[ "$1" == "-t" || "$2" == "-t" ]] && RECOVER_TOOLS=1
-    recover_packages
-    ;;
-  # List available apps
-  list)
-    if [[ "$1" == "-a" ]]; then
-      LIST_ALL=1
-    fi
-    echo -e "\n${BLUE}Listing ${LIST_ALL//1/all }available hspm '${HHS_MY_OS}' recipes ... ${NC}\n"
-    list_recipes
-    echo -e "\n${BLUE}Found (${#ALL_RECIPES[@]}) recipes${NC}\n"
-    ;;
-  *)
-    usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
-    ;;
-  esac
-  shopt -u nocasematch
-
-  quit 0
 }

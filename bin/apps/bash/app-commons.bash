@@ -71,7 +71,7 @@ function version() {
 function trim() {
 
   local var="$*"
-  
+
   # remove leading whitespace characters
   var="${var#"${var%%[![:space:]]*}"}"
 
@@ -93,15 +93,15 @@ function list_contains() {
 # @param $1..N [Req] : The sed arguments
 function ised() {
   local sed_flags
-  
+
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flags="-i '' -E"
   else
     sed_flags="-i'' -r"
   fi
-  
+
   sed "${sed_flags}" "${@}"
-  
+
   return $?
 }
 
@@ -109,14 +109,14 @@ function ised() {
 # @param $1..N [Req] : The sed arguments
 function esed() {
     local sed_flags
-  
+
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flags="-E"
   else
     sed_flags="-r"
   fi
-  
+
   sed "${sed_flags}" "${@}"
-  
+
   return $?
 }
