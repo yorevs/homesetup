@@ -17,10 +17,16 @@ pipeline {
     }
   }
 
+  options {
+    ansiColor('xterm')
+  }
+
   environment {
 
     ROOT_PROJECT_NAME = "${appName}"
     DEFAULT_BRANCH = 'master'
+    SHELL = '/bin/bash'
+    USER= 'jenkins'
   }
 
   stages {
@@ -34,8 +40,23 @@ pipeline {
     stage('Install') {
       steps {
         script {
-          echo "Installing HomeSetup"
-          sh "ls"
+          sh "./install.bash -r -p ${HOME}"
+        }
+      }
+    }
+
+    stage('Activate') {
+      steps {
+        script {
+          sh "source ${HOME}/.bashrc"
+        }
+      }
+    }
+
+    stage('Test') {
+      steps {
+        script {
+          sh "__hhs tests"
         }
       }
     }
