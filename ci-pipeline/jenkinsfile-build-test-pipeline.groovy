@@ -13,7 +13,7 @@ def appName = 'homesetup'
 pipeline {
   agent {
     node {
-      label 'docker-agent-alpine'
+      label 'docker-agent-python3'
     }
   }
 
@@ -31,10 +31,11 @@ pipeline {
       }
     }
 
-    stage('Build') {
+    stage('Install') {
       steps {
         script {
-          echo "Building HomeSetup"
+          echo "Installing HomeSetup"
+          sh "ls"
         }
       }
     }
@@ -43,6 +44,7 @@ pipeline {
 
   post {
     always {
+      // Delete the workspace after build is finished.
       deleteDir()
     }
   }
