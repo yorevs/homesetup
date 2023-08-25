@@ -3,27 +3,3 @@
 function _about_() {
   echo "Python3 is a programming language that lets you work quickly and integrate systems more effectively"
 }
-
-function _which_() {
-  command -v 'python3'
-  return $?
-}
-
-function _depends_() {
-  if ! command -v brew >/dev/null; then
-    __hhs_errcho "hspm.bash: HomeBrew is required to install python"
-    return 1
-  fi
-
-  return 0
-}
-
-function _install_() {
-  command brew install python3
-  return $?
-}
-
-function _uninstall_() {
-  command brew uninstall python3
-  return $?
-}

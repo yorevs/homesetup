@@ -5,25 +5,6 @@ function _about_() {
   return 0
 }
 
-function _which_() {
-  command -v 'jenkins'
-  return $?
-}
-
-function _depends_() {
-
-  local pk_managers
-
-  pk_managers=('apt-get' 'apt' 'yum' 'dnf')
-  for pkg_man in "${pk_managers[@]}"; do
-    command -v "${pkg_man}" &>/dev/null && return 0
-  done
-
-  __hhs_errcho "hspm.bash: no suitable package manager found to install software on this machine. Tried: ${pk_managers[*]}"
-
-  return 1
-}
-
 function _install_() {
 
   local ret_val=1 arch keyring_dir source_dir key download_url packages https_tools

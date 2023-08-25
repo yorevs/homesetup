@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function _about_() {
-  echo "This is the default recipe and it will be used when no recipe is found for a certain tool"
+  echo "This is the default recipe and will be used when no recipe is found the specified package"
   return 0
 }
 
@@ -11,23 +11,27 @@ function _which_() {
 }
 
 function _depends_() {
-
-  if ! command -v "${HHS_MY_OS_PACKMAN}" >/dev/null; then
-    __hhs_errcho "hspm.bash: ${HHS_MY_OS_PACKMAN} is required to install default software on this machine."
-    return 1
-  fi
-
   return 0
 }
 
 function _install_() {
-  command "${HHS_MY_OS_PACKMAN}" install "$@"
-  return $?
+
+  if "${HHS_MY_OS_PACKMAN}" install "$@"; then
+    return $?
+  fi
+
+  return 1
 }
 
 function _uninstall_() {
+
   packman="${HHS_MY_OS_PACKMAN}"
-  command "${packman}" uninstall "$@" \
-    && command "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies
-  return $?
+
+  if "${packman}" uninstall "$@"; then
+    if "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies; then
+      return 0
+    fi
+  fi
+
+  return 1
 }

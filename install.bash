@@ -308,6 +308,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     elif has 'dnf'; then
       os_type='RedHat'
       OS_APP_MAN=dnf
+    elif has 'apk'; then
+      os_type='Alpine'
+      OS_APP_MAN=apk
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi

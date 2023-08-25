@@ -46,7 +46,7 @@ Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 
 UNSETS=(
   help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
-  add_breadcrumb del_breadcrumb recover_packages
+  add_breadcrumb del_breadcrumb recover_packages _install_ _uninstall_ _about_ _depends_ _which_
 )
 
 [[ -s "$HHS_DIR/bin/app-commons.bash" ]] && source "$HHS_DIR/bin/app-commons.bash"
@@ -65,6 +65,12 @@ RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
 # File containing all installed/uninstalled packages
 BREADCRUMB_FILE="$HHS_DIR/.hspm"
+
+# Known package managers
+KNOWN_PCG_MANAGERS=('brew' 'apt-get' 'apt' 'yum' 'dnf' 'apk')
+
+# Sudo command
+SUDO=
 
 # @purpose: HHS plugin required function
 function help() {
@@ -92,6 +98,13 @@ function execute() {
   [[ "$1" == "-v" || "$1" == "--version" ]] && version
 
   touch "${BREADCRUMB_FILE}" || quit 1 "Unable to access hspm file: ${BREADCRUMB_FILE}"
+
+  if [[ -z "${HHS_MY_OS_PACKMAN}" ]]; then
+    for pkg_man in "${KNOWN_PCG_MANAGERS[@]}"; do
+      command -v "${pkg_man}" &>/dev/null && HHS_MY_OS_PACKMAN="${HHS_MY_OS_PACKMAN:-"${pkg_man}"}"
+    done
+    [[ -z "${OS_APP_MAN}" ]] && quit 1 "hspm.bash: no suitable tool found to install software on this machine. Tried: ${KNOWN_PCG_MANAGERS[*]}"
+  fi
 
   cmd="$1"
   shift
@@ -168,11 +181,11 @@ function list_recipes() {
   pad=$(printf '%0.1s' "."{1..60})
 
   # shellcheck disable=SC2207
-  ALL_RECIPES=($(find "${RECIPES_DIR}/${HHS_MY_OS}" -type f -name "*.recipe"))
+  ALL_RECIPES=($(find "${RECIPES_DIR}/${HHS_MY_OS}" -type f -name "*.recipe" | sort))
 
   if [[ ${#ALL_RECIPES[@]} -le 0 ]]; then
-      index=$((index + 1))
-      echo -e "${ORANGE}No recipes found matching OS='${HHS_MY_OS}'${NC}"
+    index=$((index + 1))
+    echo -e "${ORANGE}No recipes found matching OS='${HHS_MY_OS}'${NC}"
   fi
 
   for recipe in "${ALL_RECIPES[@]}"; do
@@ -193,62 +206,58 @@ function list_recipes() {
 # purpose: Install the specified app using the installation recipe
 function install_recipe() {
 
-  local recipe recipe_name default_recipe
+  local recipe package
 
   package="${1}"
   recipe="${RECIPES_DIR}/$(uname -s)/${package}.recipe"
 
+  # Source the default recipe, so we can override only what we need
+  source "${RECIPES_DIR}/${HHS_MY_OS}/default.recipe"
+  package=$(basename "${recipe%\.*}")
+
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
-    echo -e "${BLUE}Installing \"${package}\", please wait ... "
-    if _depends_ && _install_ "${package}" && _which_; then
-      echo -e "${GREEN}Installation successful => ${package} ${NC}"
-      add_breadcrumb "${package}"
-    else
-      quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" !"
-    fi
+    echo -e "${BLUE}Using recipe for \"${package}\""
   else
-    recipe_name=$(basename "${recipe%\.*}")
-    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to install it ...${NC}"
-    default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
-    source "${default_recipe}"
-    if _depends_ && _install_ "${package}" && _which_; then
-      echo -e "${GREEN}Installation successful => $(command -v "${package}") ${NC}"
-      add_breadcrumb "${package}"
-    else
-      quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" using the default recipe !"
-    fi
+    echo -e "${YELLOW}Using default-recipe for \"${package}\"!"
+  fi
+
+  echo -e "${BLUE}Installing \"${package}\", please wait ..."
+
+  if _depends_ && _install_ "${package}" && _which_; then
+    echo -e "${GREEN}Installation successful => ${package} ${NC}"
+    add_breadcrumb "${package}"
+  else
+    quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" !"
   fi
 }
 
 # purpose: Uninstall the specified app using the uninstallation recipe
 function uninstall_recipe() {
 
-  local recipe recipe_name
+  local recipe package
 
   package="${1}"
-  recipe="$RECIPES_DIR/$(uname -s)/${package}.recipe"
+  recipe="${RECIPES_DIR}/$(uname -s)/${package}.recipe"
+
+  # Source the default recipe, so we can override only what we need
+  source "${RECIPES_DIR}/${HHS_MY_OS}/default.recipe"
+  package=$(basename "${recipe%\.*}")
 
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
-    echo -e "${BLUE}Uninstalling ${package}, please wait ... "
-    if _uninstall_ && ! _which_; then
-      echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
-      del_breadcrumb "${package}"
-    else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" !"
-    fi
+    echo -e "${BLUE}Using recipe for \"${package}\""
   else
-    recipe_name=$(basename "${recipe%\.*}")
-    echo -e "${ORANGE}Unable to find recipe \"${recipe_name}\" ! Trying to use a default recipe to uninstall it ...${NC}"
-    default_recipe="${RECIPES_DIR}/$(uname -s)/default.recipe"
-    source "${default_recipe}"
-    if _uninstall_ && ! _which_; then
-      echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
-      del_breadcrumb "${package}"
-    else
-      quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" using the default recipe !"
-    fi
+    echo -e "${YELLOW}Using default-recipe for \"${package}\"!"
+  fi
+
+  echo -e "${BLUE}Uninstalling \"${package}\", please wait ..."
+
+  if _uninstall_ "${package}" && ! _which_; then
+    echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
+    del_breadcrumb "${package}"
+  else
+    quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" !"
   fi
 }
 
@@ -283,7 +292,7 @@ function recover_packages() {
       if ! command -v "${package}" &>/dev/null; then
         printf '%3s - %s' "${index}" "${BLUE}Installing package ${package} ${NC}"
         printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
-        if install_recipe "${package}" &> /dev/null; then
+        if install_recipe "${package}" &>/dev/null; then
           echo -e " [   ${GREEN}OK${NC}   ]"
         else
           echo -e " [ ${RED}FAILED${NC} ]"

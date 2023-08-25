@@ -7,18 +7,11 @@ function _about_() {
   echo "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine"
 }
 
-function _which_() {
-  command -v 'node'
-  return $?
-}
-
 function _depends_() {
   if ! command -v nvm >/dev/null; then
-    __hhs_errcho "hspm.bash: nvm is required to install node"
+    __hhs_errcho "hspm.bash: NVM is required to install node"
     return 1
   fi
-
-  return 0
 }
 
 function _install_() {

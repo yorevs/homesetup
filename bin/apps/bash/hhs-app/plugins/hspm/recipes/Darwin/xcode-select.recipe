@@ -9,11 +9,6 @@ function _which_() {
   return $?
 }
 
-function _depends_() {
-
-  return 0
-}
-
 function _install_() {
   xcode-select --install
   return $?

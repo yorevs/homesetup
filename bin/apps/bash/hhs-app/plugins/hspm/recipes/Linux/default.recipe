@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function _about_() {
-  echo "This is the default recipe and it will be used when no recipe is found for a certain tool"
+  echo "This is the default recipe and will be used when no recipe is found the specified package"
   return 0
 }
 
@@ -11,24 +11,14 @@ function _which_() {
 }
 
 function _depends_() {
-
-  local tools
-
-  tools=('apt-get' 'apt' 'yum' 'dnf')
-  for pkg_man in "${tools[@]}"; do
-    command -v "${pkg_man}" &> /dev/null  && return 0
-  done
-
-  __hhs_errcho "hspm.bash: no suitable tool found to install default software on this machine. Tried: ${tools[*]}"
-
-  return 1
+  return 0
 }
 
 function _install_() {
 
   command -v sudo &> /dev/null && SUDO=sudo
 
-  if command -v "${HHS_MY_OS_PACKMAN}" &> /dev/null && ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "$@"; then
+  if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "$@"; then
     return $?
   fi
 
@@ -39,9 +29,10 @@ function _uninstall_() {
 
   command -v sudo &> /dev/null && SUDO=sudo
 
-  if command -v "${HHS_MY_OS_PACKMAN}" &> /dev/null && ${SUDO} "${HHS_MY_OS_PACKMAN}" -y remove "$@"; then
-    return $?
-  fi
+  packman="${HHS_MY_OS_PACKMAN}"
 
-  return 1
+  ${SUDO} command "${packman}" uninstall "$@" \
+    && ${SUDO} command "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies
+
+  return $?
 }
