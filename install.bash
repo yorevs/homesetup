@@ -30,10 +30,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup GitHub repository URL
   HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
 
-  # Define the USER and HOME
-  USER="${SUDO_USER:-${USER}}"
-  [[ -z "${SUDO_USER}" ]] && HOME=${HOME:-~/}
-  [[ -n "${SUDO_USER}" ]] && HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
+  # Define USER and HOME variables
+  if [[ -n "${SUDO_USER}" ]]; then
+    USER="${SUDO_USER}"
+    HOME="$(eval echo ~"${SUDO_USER}")"
+  else
+    USER="${USER:-$(whoami)}"
+    HOME="${HOME:-$(eval echo ~"${USER}")}"
+  fi
 
   # HomeSetup installation prefix file
   HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -88,13 +92,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
-    GROUP='staff'  # Default user group
+    GROUP=${GROUP:-staff}  # Default macOs user group
     # Darwin required tools
     REQUIRED_TOOLS+=('brew' 'xcode-select')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
-    GROUP="${USER}"  # Default user group
+    GROUP=${GROUP:-${USER}}  # Default user group
     # Linux required tools, TODO add if any is required
   fi
 
@@ -249,6 +253,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
     [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(grep . "${HHS_VERSION_FILE}")"
+
+    [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
 
     # Enable install script to use colors
     [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] \
@@ -452,8 +458,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${WHITE}### Installation Settings ###"
     echo -e "${BLUE}"
+    echo -e "     User/Group: ${USER}:${GROUP}"
     echo -e "   Install Type: ${METHOD}"
-    echo -e " Install Prefix: ${HHS_PREFIX}"
+    echo -e " Install Prefix: ${HHS_PREFIX:-none}"
     echo -e "          Shell: ${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "    Install Dir: ${HHS_HOME}"
     echo -e "    Configs Dir: ${HHS_DIR}"

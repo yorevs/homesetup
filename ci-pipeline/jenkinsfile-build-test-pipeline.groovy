@@ -22,12 +22,7 @@ pipeline {
   }
 
   environment {
-
     ROOT_PROJECT_NAME = "${appName}"
-    DEFAULT_BRANCH = 'master'
-    SHELL = '/bin/bash'
-    USER= 'jenkins'
-
   }
 
   stages {
@@ -40,8 +35,20 @@ pipeline {
 
     stage('Install') {
       steps {
-        script {
-          sh "./install.bash -r -p ${HOME}"
+        withEnv([
+              'SHELL=/bin/bash',
+              'USER=jenkins',
+              'GROUP=jenkins'
+        ]) {
+          script {
+            sh '''#!/bin/bash
+              set -e
+              echo "Current dir: $(pwd)"
+              export HOME=$(pwd)
+              ./install.bash -r -p ${HOME}
+              source ${HOME}/.bashrc
+            '''
+          }
         }
       }
     }
@@ -65,7 +72,7 @@ pipeline {
   }
 
   post {
-    always {
+    success {
       // Delete the workspace after build is finished.
       deleteDir()
     }
@@ -77,12 +84,12 @@ def prepareBuild() {
     // readProperties -> Ref:. https://github.com/jenkinsci/pipeline-utility-steps-plugin/blob/master/docs/STEPS.md
     def props = readProperties file: 'gradle.properties'
     props.each { p ->
-      print("WITH PROPERTY: ${p}")
+      print("info: WITH PROPERTY: ${p}")
     }
 
-    print("APP_VERSION=${props['app_version']}")
-    print("APP_NAME=${props['app_name']}")
-    print("BASH_VERSION=${props['bashVersion']}")
-    print("PYTHON_VERSION=${props['pythonVersion']}")
+    print("info: APP_VERSION=${props['app_version']}")
+    print("info: APP_NAME=${props['app_name']}")
+    print("info: BASH_VERSION=${props['bashVersion']}")
+    print("info: PYTHON_VERSION=${props['pythonVersion']}")
   }
 }
