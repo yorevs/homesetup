@@ -27,6 +27,7 @@ pipeline {
     DEFAULT_BRANCH = 'master'
     SHELL = '/bin/bash'
     USER= 'jenkins'
+
   }
 
   stages {

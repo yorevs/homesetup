@@ -81,7 +81,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   OS_APP_MAN=
 
   # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl' 'python3')
+  REQUIRED_TOOLS=('git' 'curl' 'python3' 'rsync')
 
   # Missing HomeSetup required tools
   MISSING_TOOLS=()
