@@ -24,7 +24,7 @@ export LANG=${LANG:-en_US.UTF-8}
 export LC_ALL=${LANG}
 
 # System folders
-export TEMP="${TEMP:-$TMPDIR}"
+export TEMP="${TEMP:-${TMPDIR:-$(dirname "$(mktemp)")}}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
 
 # ----------------------------------------------------------------------------
