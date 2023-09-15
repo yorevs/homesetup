@@ -126,7 +126,7 @@ update_hhs() {
 
     if [[ ${repo_ver} =~ $re ]]; then
       if is_greater "${repo_ver}"; then
-        read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n]) ?" ANS
+        read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n])? " ANS
         [[ -n "$ANS" ]] && echo "${ANS}${NC}"
         if [[ "$ANS" == 'y' || "$ANS" == 'Y' ]]; then
           pushd "${HHS_HOME}" &>/dev/null || quit 1
@@ -181,10 +181,10 @@ stamp_next_update() {
     next_check=$(date "+%s%S")
   else
     # Stamp the next update check for next week
-    if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
-      next_check=$(date -v+7d '+%s%S')
+    if [[ "Darwin" == "${MY_OS}" ]]; then
+      \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     else
-      next_check=$(date -d '+7 days' '+%s%S')
+      \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     fi
   fi
   echo "${next_check}" >"${HHS_DIR}/.last_update"

@@ -11,7 +11,7 @@
 # Copyright (c) 2023, HomeSetup team
 
 load test_helper
-load "${HHS_HOME}"/bin/hhs-functions/bash/hhs-aliases
+load "${HHS_HOME}/bin/hhs-functions/bash/hhs-aliases.bash"
 
 @test "should-print-usage-when-invoking-with-help-option" {
   run __hhs_aliases -h

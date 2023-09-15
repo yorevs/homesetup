@@ -23,9 +23,10 @@ pipeline {
 
   environment {
     ROOT_PROJECT_NAME = "${appName}"
-    SHELL = '/bin/bash'
     USER = 'jenkins'
     GROUP = 'jenkins'
+    HOME = "/home/jenkins"
+    HHS_PREFIX = "${WORKSPACE}"
   }
 
   stages {
@@ -40,35 +41,25 @@ pipeline {
       steps {
         script {
           sh '''#!/bin/bash
-            export HOME=$(pwd)
-            ./install.bash -r -p ${HOME}
+            ./install.bash -r -p ${HHS_PREFIX}
           '''
         }
       }
     }
 
-    stage('Activate') {
+    stage('Bats Tests') {
       steps {
         script {
           sh '''#!/bin/bash
-            export HOME=$(pwd)
-            reset
-            source ${HOME}/.bashrc
-          '''
-        }
-      }
-    }
-
-    stage('Test') {
-      steps {
-        script {
-          sh '''#!/bin/bash
-            export TEMP=$(pwd)
-            export HHS_HOME=$(pwd)
-            export HHS_DIR=$(pwd)/.hhs
-            source bin/apps/bash/app-commons.bash
-            source bin/apps/bash/hhs-app/functions/run-tests.bash
-            tests
+            echo "${HHS_PREFIX}" > "${HOME}/.hhs-prefix"
+            if source "${HOME}"/.hhsrc &&
+               source "${HHS_HOME}"/bin/apps/bash/app-commons.bash &&
+               source "${HHS_HOME}"/bin/apps/bash/hhs-app/functions/run-tests.bash; then
+              tests
+            else
+              echo "Unable to source required test scripts"
+              exit 1
+            fi
           '''
         }
       }

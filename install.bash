@@ -422,7 +422,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ ! -d "${HHS_HOME}" ]]; then
-      echo -e "${WHITE}Cloning HomeSetup repository ..."
+      echo -e "${WHITE}Cloning HomeSetup repository ...${NC}"
       if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >> "${INSTALL_LOG}" 2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
@@ -430,7 +430,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
     else
       cd "${HHS_HOME}" &> /dev/null || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
-      echo -e "${WHITE}Pulling HomeSetup repository ..."
+      echo -e "${WHITE}Pulling HomeSetup repository ...${NC}"
       if git pull --rebase >> "${INSTALL_LOG}" 2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
@@ -455,15 +455,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -z ${STREAMED} ]] && is_streamed='No'
 
     echo ''
-    echo -e "${WHITE}### Installation Settings ###"
+    echo -e "${WHITE}### HomeSetup Installation Settings ###"
     echo -e "${BLUE}"
-    echo -e "     User/Group: ${USER}:${GROUP}"
+    echo -e "          Shell: ${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "   Install Type: ${METHOD}"
     echo -e " Install Prefix: ${HHS_PREFIX:-none}"
-    echo -e "          Shell: ${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "    Install Dir: ${HHS_HOME}"
-    echo -e "    Configs Dir: ${HHS_DIR}"
+    echo -e " Configurations: ${HHS_DIR}"
     echo -e "  PyPi Packages: ${PYTHON_MODULES[*]}"
+    echo -e "     User/Group: ${USER}:${GROUP}"
     echo -e "       Streamed: ${is_streamed:=Yes}"
     echo -e "${NC}"
 
@@ -485,12 +485,14 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create all user custom files.
     [[ -s "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
+    [[ -s "${HHS_DIR}/.cmd_file" ]] || \touch "${HHS_DIR}/.cmd_file"
     [[ -s "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
     [[ -s "${HHS_DIR}/.env" ]] || \touch "${HHS_DIR}/.env"
     [[ -s "${HHS_DIR}/.functions" ]] || \touch "${HHS_DIR}/.functions"
+    [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
     [[ -s "${HHS_DIR}/.profile" ]] || \touch "${HHS_DIR}/.profile"
     [[ -s "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
-    [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
+    [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
     # Create alias and input definitions
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
@@ -750,9 +752,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ "Darwin" == "${MY_OS}" ]]; then
-      \date -v+7d '+%s%S' &>"${HHS_DIR}/.last_update"
+      \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     else
-      \date -d '+7 days' '+%s%S' &>"${HHS_DIR}/.last_update"
+      \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     fi
 
     echo -e "\nHomeSetup installation finished: $(date)" >> "${INSTALL_LOG}"

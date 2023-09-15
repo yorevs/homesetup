@@ -27,9 +27,17 @@ fi
 echo "==> Changing the group of HomeSetup files"
 chgrp -R "${HHS_GROUP}" "${INSTALL_DIR}"
 
+# Change the group of /temp dir
+echo "==> Changing the group of /temp dir"
+chgrp -R "${HHS_GROUP}" "${TEMP}"
+
 # Give read permissions to HomeSetup group
 echo "==> Giving read permissions to HomeSetup group"
 chmod g+r -R "${INSTALL_DIR}"
+
+# Give read permissions to HomeSetup group
+echo "==> Giving read permissions to HomeSetup group"
+chmod g+r -R "${TEMP}"
 
 # Add users to the HomeSetup group
 for usr in "${HHS_USERS[@]}"; do
