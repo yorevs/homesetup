@@ -12,16 +12,16 @@
 
 # @purpose: Run all HomeSetup automated tests.
 function tests() {
-  
-  local started finished  err_log output badge
-  
+
+  local started finished err_log output badge
+
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 
   err_log=$(mktemp)
   badge="${HHS_HOME}/check-badge.svg"
   started=$(\date "+%s%S")
 
-  pushd &>/dev/null "${HHS_HOME}"/tests/ || exit 128
+  pushd &>/dev/null "${HHS_HOME}/tests/" || exit 128
   echo '' >"${err_log}"
   echo ''
 
@@ -46,7 +46,7 @@ function tests() {
   popd &>/dev/null || exit 128
   echo ''
   echo 'Finished running all tests.'
-  
+
   finished=$(\date "+%s%S")
   diff_time=$((finished - started))
   diff_time_sec=$((diff_time/1000))
@@ -55,9 +55,8 @@ function tests() {
   if [[ "$(grep . "${err_log}")" != "" ]]; then
     echo ''
     echo '### The following errors were reported'
-    cat "${err_log}"
     echo ''
-    echo "@ To access the error report file open: \"${err_log}\" !"
+    echo "@ To access the error report file access: \"${err_log}\" !"
     echo ''
     echo "${RED}TEST FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" &>/dev/null

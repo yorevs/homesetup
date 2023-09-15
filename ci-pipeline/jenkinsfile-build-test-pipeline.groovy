@@ -23,6 +23,9 @@ pipeline {
 
   environment {
     ROOT_PROJECT_NAME = "${appName}"
+    SHELL = '/bin/bash'
+    USER = 'jenkins'
+    GROUP = 'jenkins'
   }
 
   stages {
@@ -35,20 +38,11 @@ pipeline {
 
     stage('Install') {
       steps {
-        withEnv([
-              'SHELL=/bin/bash',
-              'USER=jenkins',
-              'GROUP=jenkins'
-        ]) {
-          script {
-            sh '''#!/bin/bash
-              set -e
-              echo "Current dir: $(pwd)"
-              export HOME=$(pwd)
-              ./install.bash -r -p ${HOME}
-              source ${HOME}/.bashrc
-            '''
-          }
+        script {
+          sh '''#!/bin/bash
+            export HOME=$(pwd)
+            ./install.bash -r -p ${HOME}
+          '''
         }
       }
     }
@@ -56,7 +50,11 @@ pipeline {
     stage('Activate') {
       steps {
         script {
-          sh "source ${HOME}/.bashrc"
+          sh '''#!/bin/bash
+          export HOME=$(pwd)
+          reset
+          source ${HOME}/.bashrc
+          '''
         }
       }
     }

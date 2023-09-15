@@ -99,12 +99,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
     GROUP=${GROUP:-${USER}}  # Default user group
-    # Linux required tools, TODO add if any is required
+    # Linux required tools
   fi
 
   # Awesome icons
   STAR_ICN='\xef\x80\x85'
-  NOTE_ICN='\xef\x84\x98'
   HAND_PEACE_ICN='\xef\x89\x9b'
   POINTER_ICN='\xef\x90\xb2'
 
@@ -159,7 +158,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
       echo -en "\nCreating ${dir} directory: "
       \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
-      echo -e " [   ${GREEN}OK${NC}   ]"
+      echo -e " ${GREEN}OK${NC}"
     else
       # Trying to write at the created directory to validate write permissions.
       \touch "${dir}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to write to \"${dir}\" directory!"
@@ -184,7 +183,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
       rsync --archive "${src_file}" "${dest_file}"
       chown "${USER}":"${GROUP}" "${dest_file}"
-      [[ -f "${dest_file}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      [[ -f "${dest_file}" ]] && echo -e " ${GREEN}OK${NC}"
       [[ -f "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
     fi
   }
@@ -339,9 +338,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
-        echo -e " [   ${GREEN}INSTALLED${NC}   ] "
+        echo -e " ${GREEN}INSTALLED${NC}"
       else
-        echo -e " [ ${RED}NOT INSTALLED${NC} ] "
+        echo -e " ${RED}NOT INSTALLED${NC}"
         MISSING_TOOLS+=("${tool_name}")
       fi
     done
@@ -388,7 +387,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   ensure_brew() {
     echo ''
     if ! has 'brew'; then
-      echo -n "${YELLOW}Darwin detected but Homebrew is not installed. Attempting to install ...${NC}"
+      echo -n "${YELLOW}Darwin detected but Homebrew is not installed. Attempting to install ..."
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>/dev/null ||
         quit 2 "# FAILED! Unable to install HomeBrew !"
       echo -e "${GREEN}SUCCESS${NC} !"
@@ -511,7 +510,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
-        [[ -L "${dotfile}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+        [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
         [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
       done
@@ -521,7 +520,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       for next in ${ALL_DOTFILES[*]}; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
-        [[ -z ${QUIET} ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
+        [[ -z ${QUIET} && -z "${STREAMED}" ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [[ "${ANS}" != 'y' && "${ANS}" != 'Y' ]] && continue
         echo ''
         # Backup existing dotfile into ${HHS_BACKUP_DIR}
@@ -529,7 +528,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
-        [[ -L "${dotfile}" ]] && echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+        [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
         [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
       done
@@ -539,7 +538,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Removing old links ...${BLUE}"
     echo ">>> Removed old links:" >> "${INSTALL_LOG}"
     if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >> "${INSTALL_LOG}" 2>&1; then
-      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
     fi
@@ -551,7 +550,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; >> "${INSTALL_LOG}" 2>&1; then
-      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
     fi
@@ -563,7 +562,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; >> "${INSTALL_LOG}" 2>&1; then
-      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
     fi
@@ -576,7 +575,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       -print \
       -exec rsync --archive {} "${FONTS_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >> "${INSTALL_LOG}" 2>&1; then
-      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
@@ -592,7 +591,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     \rm -f "${HHS_HOME}"/.git/hooks/* &>/dev/null
     if find "${HHS_HOME}"/templates/git/hooks -maxdepth 1 -type f -name "**" \
       -exec ln -sfv {} "${HHS_HOME}"/.git/hooks/ \; >> "${INSTALL_LOG}" 2>&1; then
-      echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
+      echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to link Git hooks into repository (${HHS_HOME}/.git/hooks) !"
     fi
@@ -601,20 +600,18 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Configure python and HHS python library
   configure_python() {
     echo ''
-    echo -n 'Detecting local python environment ... '
+    echo -n 'Detecting local python environment ...'
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
-    "${PYTHON}" -m ensurepip >> "${INSTALL_LOG}" 2>&1
+    [[ -z "${PIP}" ]] && "${PYTHON}" -m ensurepip >> "${INSTALL_LOG}" 2>&1
     PIP=$(command -v pip3 2>/dev/null)
-    [[ -z "${PIP}" ]] && quit 2 "Pip is required by HomeSetup !"
-    echo -e "${WHITE}[   ${GREEN}OK${NC}   ]"
-    ${PIP} install --upgrade pip install --upgrade pip >> "${INSTALL_LOG}" 2>&1
+    [[ -z "${PIP}" ]] && quit 2 "Pip3 is required by HomeSetup !"
+    echo -e " ${GREEN}OK${NC}"
+    ${PYTHON} -m pip install --upgrade pip >> "${INSTALL_LOG}" 2>&1
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
-    command -v python &>/dev/null || ln -s "${PYTHON}" "$(dirname "${PYTHON}")/python"
     install_hspylib "${PYTHON}"
-
   }
 
   # Install HomeSetup python libraries
@@ -623,11 +620,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON="${1:-python3}"
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' > "${pkgs}"
-    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing required HSPyLib packages ..."
+    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
     ${PYTHON} -m pip install --upgrade -r "${pkgs}" >> "${INSTALL_LOG}" 2>&1 ||
       quit 2 "[  ${RED}FAIL${NC}  ] Unable to install PyPi packages!"
-    echo -e " ${WHITE}[   ${GREEN}OK${NC}   ]"
-    rm -f  "$(mktemp)"
+    echo -e " ${GREEN}OK${NC}"
+    \rm -f  "$(mktemp)"
     echo "Installed HSPyLib python modules:" >> "${INSTALL_LOG}"
     ${PYTHON} -m pip freeze | grep hspylib >> "${INSTALL_LOG}"
   }
@@ -649,7 +646,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
       echo -e "$ mv ${HHS_BACKUP_DIR}/profile.orig ${HOME}/.profile"
       echo ''
-      read -rn 1 -p "Press any key to continue...${NC}"
+      [[ -z "${STREAMED}" ]] && read -rn 1 -p "Press any key to continue...${NC}"
     fi
 
     # Moving old hhs files into the proper directory.
@@ -733,7 +730,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   activate_dotfiles() {
 
     echo ''
-    echo -e "${GREEN}Done installing HomeSetup files. Reloading terminal ..."
+    echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${HHS_HOME}/.VERSION") !"
     echo -e "${BLUE}"
     echo '888       888          888                                          '
     echo '888   o   888          888                                          '
@@ -746,21 +743,20 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
     echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
     echo ''
-    echo -e "${GREEN}${STAR_ICN} Dotfiles v$(cat "${HHS_HOME}/.VERSION") has been installed !"
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${GREEN}reset && source \"${HOME}/.bashrc\""
-    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${GREEN}#> hhu --update"
-    echo ''
-    echo -e "${YELLOW}${NOTE_ICN} For details about your new Terminal access: "
-    echo -e "${POINTER_ICN} ${BLUE}${README_LINK}${NC}"
-    echo ''
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${BLUE}$ reset && source ${HOME}/.bashrc"
+    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${BLUE}$ hhu --update"
+    echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${BLUE}$ cat ${INSTALL_LOG}"
+    echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${BLUE}$ cat ${README_LINK}"
+    echo -e "${NC}"
 
     if [[ "Darwin" == "${MY_OS}" ]]; then
-      \date -v+7d '+%s%S' >"${HHS_DIR}/.last_update"
+      \date -v+7d '+%s%S' &>"${HHS_DIR}/.last_update"
     else
-      \date -d '+7 days' '+%s%S' >"${HHS_DIR}/.last_update"
+      \date -d '+7 days' '+%s%S' &>"${HHS_DIR}/.last_update"
     fi
 
     echo -e "\nHomeSetup installation finished: $(date)" >> "${INSTALL_LOG}"
+    quit 0
   }
 
   abort_install() {
