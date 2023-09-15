@@ -63,12 +63,12 @@ pipeline {
       steps {
         script {
           sh '''#!/bin/bash
-            export HHS_HOME=$(pwd)
             export TEMP=$(pwd)
+            export HHS_HOME=$(pwd)
+            export HHS_DIR=$(pwd)/.hhs
             source bin/apps/bash/app-commons.bash
             source bin/apps/bash/hhs-app/functions/run-tests.bash
             tests
-            [[ -s "${TEMP}/homesetup-tests.log" ]] && cat "${TEMP}/homesetup-tests.log"
           '''
         }
       }

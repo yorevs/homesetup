@@ -1,14 +1,14 @@
 <svg width="88.9" height="20" viewBox="0 0 889 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="build: success">
   <title>build: success</title>
-  <linearGradient id="ibArH" x2="0" y2="100%">
+  <linearGradient id="BrZHM" x2="0" y2="100%">
     <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <mask id="fChFc"><rect width="889" height="200" rx="30" fill="#FFF"/></mask>
-  <g mask="url(#fChFc)">
+  <mask id="Dfanj"><rect width="889" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#Dfanj)">
     <rect width="368" height="200" fill="#555"/>
     <rect width="521" height="200" fill="#3C1" x="368"/>
-    <rect width="889" height="200" fill="url(#ibArH)"/>
+    <rect width="889" height="200" fill="url(#BrZHM)"/>
   </g>
   <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
     <text x="60" y="148" textLength="268" fill="#000" opacity="0.25">build</text>

@@ -20,7 +20,6 @@
   for next in "${HHS_HOME}"/dotfiles/bash/*.bash; do
     dotfile="${HOME}/.$(basename "${next}")"
     dotfile="${dotfile%\.*}"
-    echo "Checking dotfile: ${dotfile} ..."
     [[ -f "${dotfile}" ]] || result+=("${dotfile}")
   done
 
@@ -37,5 +36,5 @@
   [[ -f "${HHS_DIR}/.saved_dirs" ]] || result+=("${HHS_DIR}/.saved_dirs")
 
 
-  [[ ${#result} -eq 0 ]]
+  [[ ${#result[@]} -eq 0 ]]
 }

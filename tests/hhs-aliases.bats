@@ -11,11 +11,12 @@
 # Copyright (c) 2023, HomeSetup team
 
 load test_helper
+load "${HHS_HOME}"/bin/hhs-functions/bash/hhs-aliases
 
 @test "should-print-usage-when-invoking-with-help-option" {
   run __hhs_aliases -h
   [[ ${status} -eq 1 ]]
-  [[ ${lines[0]} == "Usage: __hhs_aliases [-s|--sort] <alias> <alias_expr>" ]]
+  [[ ${lines[0]} == "Usage: __hhs_aliases <alias> <alias_expr>" ]]
 }
 
 @test "should-add-alias" {

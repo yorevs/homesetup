@@ -13,7 +13,7 @@
 # @purpose: Run all HomeSetup automated tests.
 function tests() {
 
-  local started finished err_log output badge
+  local started finished err_log output badge fails=0
 
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 
@@ -21,17 +21,22 @@ function tests() {
   badge="${HHS_HOME}/check-badge.svg"
   started=$(\date "+%s%S")
 
-  echo -en "${WHITE}\nEntering dir: ${GREEN}" && pushd "${HHS_HOME}/tests/" || exit 128
+  pass_icn="\xef\x98\xab"
+  test_pass_icn="\xef\x98\xac"
+  fail_icn="\xef\x91\xa7"
+  test_fail_icn="\xef\x91\xae"
+
   echo ''
 
   # Scan and execute bats tests
-  echo '' > "${err_log}"
+  echo -n '' > "${err_log}"
   while read -r result; do
     if [[ ${result} =~ ^(ok|not) ]]; then
       if [[ ${result} =~ ^not ]]; then
-        output="${result//not ok /${RED}  FAIL ${NC}}"
+        output="${result//not ok /${RED} ${fail_icn} FAIL ${NC}}"
+        fails=$((fails + 1))
       else
-        output="${result//ok /${GREEN}  PASS ${NC}}"
+        output="${result//ok /${GREEN} ${pass_icn} PASS ${NC}}"
       fi
       echo -e "${output}"
     elif [[ ${result} =~ ^[0-9] ]]; then
@@ -40,30 +45,30 @@ function tests() {
     else
       echo -e "${result}" >>"${err_log}"
     fi
-  done < <(bats --tap ./*.bats 2>&1)
+  done < <(bats -rtT "${HHS_HOME}/tests/" 2>&1)
 
-  echo -en "${WHITE}\nLeaving dir: ${GREEN}" && popd || exit 128
-  echo ''
-  echo -e "${WHITE}Finished running all tests${NC}."
+  echo -e "\n${WHITE}Finished running all tests${NC}"
 
   finished=$(\date "+%s%S")
   diff_time=$((finished - started))
   diff_time_sec=$((diff_time/1000))
   diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
-  if [[ "$(grep . "${err_log}")" != "" ]]; then
+  if [[ $fails -gt 0 ]]; then
     echo ''
     echo -e "${RED}### There were errors reported ###${NC}"
     echo "Please access \"${err_log}\" for more details."
     echo ''
-    echo -e "==> Bats ${RED}TESTS FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
-    curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" &>/dev/null
+    cat -n "${err_log}"
+    echo ''
+    echo -e "${RED}${test_fail_icn}${NC}  Bats tests ${RED}FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
+    curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2>/dev/null
     echo ''
     quit 2
   else
     echo ''
-    echo -e "==> Bats ${GREEN}TESTS PASSED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
-    curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" &>/dev/null
+    echo -e "${GREEN}${test_pass_icn}${NC}  Bats tests ${GREEN}PASSED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
+    curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2>/dev/null
   fi
 
   echo ''

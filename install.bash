@@ -156,7 +156,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     local dir="${1}"
 
     if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
-      echo -en "\nCreating ${dir} directory: "
+      echo -en "\n${WHITE}Creating ${dir} directory: "
       \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
       echo -e " ${GREEN}OK${NC}"
     else
@@ -178,9 +178,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo ''
     if [[ -f "${dest_file}" || -d "${dest_file}" ]]; then
-      echo -e "Skipping: ${YELLOW}${dest_file} file/dir was not copied because it already exists. ${NC}"
+      echo -e "${WHITE}Skipping: ${YELLOW}${dest_file} file/dir was not copied because it already exists. ${NC}"
     else
-      echo -en "Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
+      echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
       rsync --archive "${src_file}" "${dest_file}"
       chown "${USER}":"${GROUP}" "${dest_file}"
       [[ -f "${dest_file}" ]] && echo -e " ${GREEN}OK${NC}"
@@ -618,9 +618,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_hspylib() {
     # Define python tools
     PYTHON="${1:-python3}"
+    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' > "${pkgs}"
-    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
     ${PYTHON} -m pip install --upgrade -r "${pkgs}" >> "${INSTALL_LOG}" 2>&1 ||
       quit 2 "[  ${RED}FAIL${NC}  ] Unable to install PyPi packages!"
     echo -e " ${GREEN}OK${NC}"
