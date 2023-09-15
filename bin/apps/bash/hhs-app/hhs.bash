@@ -56,7 +56,7 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
     - To discover which plugins and functions are available type: hhs list
 "
 
-[[ -f "${HHS_DIR}"/bin/app-commons.bash ]] && \. "${HHS_DIR}"/bin/app-commons.bash
+[[ -f "${HHS_DIR}"/bin/app-commons.bash ]] && source "${HHS_DIR}"/bin/app-commons.bash
 
 __hhs_has "python3" || quit 1 "Python is required to execute ${APP_NAME}"
 

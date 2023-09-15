@@ -17,22 +17,21 @@ function tests() {
 
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 
-  err_log=$(mktemp)
+  err_log="${TEMP}/homesetup-tests.log"
   badge="${HHS_HOME}/check-badge.svg"
   started=$(\date "+%s%S")
 
-  pushd &>/dev/null "${HHS_HOME}/tests/" || exit 128
-  echo '' >"${err_log}"
+  echo -en "${WHITE}\nEntering dir: ${GREEN}" && pushd "${HHS_HOME}/tests/" || exit 128
   echo ''
 
-  # TODO filter tests by category
   # Scan and execute bats tests
+  echo '' > "${err_log}"
   while read -r result; do
     if [[ ${result} =~ ^(ok|not) ]]; then
       if [[ ${result} =~ ^not ]]; then
-        output="${result//not ok /${RED}[ FAIL ] ${NC}}"
+        output="${result//not ok /${RED}  FAIL ${NC}}"
       else
-        output="${result//ok /${GREEN}[ PASS ] ${NC}}"
+        output="${result//ok /${GREEN}  PASS ${NC}}"
       fi
       echo -e "${output}"
     elif [[ ${result} =~ ^[0-9] ]]; then
@@ -43,9 +42,9 @@ function tests() {
     fi
   done < <(bats --tap ./*.bats 2>&1)
 
-  popd &>/dev/null || exit 128
+  echo -en "${WHITE}\nLeaving dir: ${GREEN}" && popd || exit 128
   echo ''
-  echo 'Finished running all tests.'
+  echo -e "${WHITE}Finished running all tests${NC}."
 
   finished=$(\date "+%s%S")
   diff_time=$((finished - started))
@@ -54,19 +53,21 @@ function tests() {
 
   if [[ "$(grep . "${err_log}")" != "" ]]; then
     echo ''
-    echo '### The following errors were reported'
+    echo -e "${RED}### There were errors reported ###${NC}"
+    echo "Please access \"${err_log}\" for more details."
     echo ''
-    echo "@ To access the error report file access: \"${err_log}\" !"
-    echo ''
-    echo "${RED}TEST FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
+    echo -e "==> Bats ${RED}TESTS FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" &>/dev/null
+    echo ''
+    quit 2
   else
     echo ''
-    echo "${GREEN}TEST SUCCESSFULL${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
+    echo -e "==> Bats ${GREEN}TESTS PASSED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" &>/dev/null
   fi
 
   echo ''
+  quit 0
 }
 
 # @purpose: Run all terminal color palette tests.

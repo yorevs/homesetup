@@ -51,9 +51,9 @@ pipeline {
       steps {
         script {
           sh '''#!/bin/bash
-          export HOME=$(pwd)
-          reset
-          source ${HOME}/.bashrc
+            export HOME=$(pwd)
+            reset
+            source ${HOME}/.bashrc
           '''
         }
       }
@@ -62,7 +62,14 @@ pipeline {
     stage('Test') {
       steps {
         script {
-          sh "__hhs tests"
+          sh '''#!/bin/bash
+            export HHS_HOME=$(pwd)
+            export TEMP=$(pwd)
+            source bin/apps/bash/app-commons.bash
+            source bin/apps/bash/hhs-app/functions/run-tests.bash
+            tests
+            [[ -s "${TEMP}/homesetup-tests.log" ]] && cat "${TEMP}/homesetup-tests.log"
+          '''
         }
       }
     }
