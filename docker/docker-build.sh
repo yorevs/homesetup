@@ -15,7 +15,7 @@ else
       echo -e "${PURPLE}Building ${BLUE}[${next_container}] ... ${NC}"
       echo ''
       if [[ -d "${next_container}/" ]] && \
-          ! docker build -t "yorevs/hhs-${next_container}" "${next_container}/"; then
+          ! docker build --no-cache -t "yorevs/hhs-${next_container}" "${next_container}/"; then
             echo "${RED}Failed to build container type: \"${next_container}\" !${NC}"
         exit 1
       fi

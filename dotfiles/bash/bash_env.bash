@@ -69,6 +69,8 @@ else
     export HHS_MY_OS_PACKMAN='yum'
   elif command -v 'apt' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='apt'
+  elif command -v 'apk' &> /dev/null; then
+    export HHS_MY_OS_PACKMAN='apk'
   else
     export HHS_MY_OS_PACKMAN=''
     __hhs_log "WARN" "Unable to find a proper package manager"
