@@ -52,7 +52,7 @@ pipeline {
         script {
           sh '''#!/bin/bash
             echo "${HHS_PREFIX}" > "${HOME}/.hhs-prefix"
-            if source "${HOME}"/.hhsrc &&
+            if source "${HOME}"/.bashrc &&
                source "${HHS_HOME}"/bin/apps/bash/app-commons.bash &&
                source "${HHS_HOME}"/bin/apps/bash/hhs-app/functions/run-tests.bash; then
               tests
@@ -68,7 +68,7 @@ pipeline {
   }
 
   post {
-    success {
+    always {
       // Delete the workspace after build is finished.
       deleteDir()
     }
@@ -83,8 +83,8 @@ def prepareBuild() {
       print("info: WITH PROPERTY: ${p}")
     }
 
-    print("info: APP_VERSION=${props['app_version']}")
     print("info: APP_NAME=${props['app_name']}")
+    print("info: APP_VERSION=${props['app_version']}")
     print("info: BASH_VERSION=${props['bashVersion']}")
     print("info: PYTHON_VERSION=${props['pythonVersion']}")
   }

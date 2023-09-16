@@ -751,8 +751,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${BLUE}$ cat ${README_LINK}"
     echo -e "${NC}"
 
-    if [[ "Darwin" == "${MY_OS}" ]]; then
+    if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
       \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
+    elif [[ "alpine" == "${MY_OS}" ]]; then
+      \date -d "@$(( $(\date +%s) - 3 * 24 * 60 * 60 ))" '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     else
       \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     fi

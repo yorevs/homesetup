@@ -181,8 +181,10 @@ stamp_next_update() {
     next_check=$(date "+%s%S")
   else
     # Stamp the next update check for next week
-    if [[ "Darwin" == "${MY_OS}" ]]; then
+    if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
       \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
+    elif [[ "alpine" == "${MY_OS}" ]]; then
+      \date -d "@$(( $(\date +%s) - 3 * 24 * 60 * 60 ))" '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     else
       \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     fi

@@ -17,16 +17,16 @@
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
 function __hhs_has() {
-  
+
   local cmd="$1"
-  
+
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
     return 1
   fi
-  
-  type "${cmd}" &> /dev/null
-  
+
+  type "${cmd}" &>/dev/null
+
   return $?
 }
 
@@ -34,24 +34,24 @@ function __hhs_has() {
 # @param $1 [Req] : The log level.
 # @param $* [Req] : The log level. One of ["WARN", "DEBUG", "INFO", "ERROR", "ALL"].
 function __hhs_log() {
-  
+
   local level="${1}" message="${2}"
-  
+
   if [[ $# -lt 2 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <log_level> <log_message>"
     return 1
   fi
-  
+
   case "${level}" in
-    'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
-      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >> "${HHS_LOG_FILE}"
-      return 0
+  'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
+    printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
+    return 0
     ;;
-    *)
-      echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
+  *)
+    echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
     ;;
   esac
-  
+
   return 1
 }
 
@@ -60,7 +60,7 @@ function __hhs_log() {
 function __hhs_source() {
 
   local filepath="$1"
-  
+
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <filepath>"
     return 1
@@ -70,7 +70,7 @@ function __hhs_source() {
     return 1
   else
     if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOG_FILE}"; then
-      if source "${filepath}" 2>> "${HHS_LOG_FILE}"; then
+      if source "${filepath}" 2>>"${HHS_LOG_FILE}"; then
         __hhs_log "DEBUG" "File \"${filepath}\" was sourced !"
       else
         __hhs_log "ERROR" "File \"${filepath}\" was not sourced !"
@@ -79,7 +79,7 @@ function __hhs_source() {
       __hhs_log "WARN" "File \"${filepath}\" was already sourced !"
     fi
   fi
-  
+
   return 0
 }
 
@@ -90,8 +90,38 @@ function __hhs_is_reachable() {
     echo "Usage: ${FUNCNAME[0]} <url>"
     return 1
   fi
-  
+
   curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
-  
+
+  return $?
+}
+
+# @function: In-place sed. Same as 'sed -i'' -r'.
+# @param $1..$N [Req] : Sed parameters.
+function ised() {
+  case "${HHS_MY_OS}" in
+    Darwin)
+      sed -i '' -E "${@}"
+      ;;
+    Linux)
+      sed -i'' -r "${@}"
+      ;;
+  esac
+
+  return $?
+}
+
+# @function: Regex sed. Same as sed -r.
+# @param $1..$N [Req] : Sed parameters.
+function esed() {
+  case "${HHS_MY_OS}" in
+    Darwin)
+      sed -E "${@}"
+      ;;
+    Linux)
+      sed -r "${@}"
+      ;;
+  esac
+
   return $?
 }

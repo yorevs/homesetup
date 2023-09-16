@@ -27,9 +27,9 @@ load "${HHS_HOME}/bin/hhs-functions/bash/hhs-aliases.bash"
 
 @test "should-remove-alias" {
   # Complaining about ised not found
-  skip
-  expected="Alias removed: .*has.*"
-  actual="$(__hhs_aliases -r has)"
+  __hhs_aliases gabits 'ls -la'
+  expected="Alias removed: .*gabits.*"
+  actual="$(__hhs_aliases -r gabits)"
   [[ ${actual} =~ ${expected} ]]
 }
 

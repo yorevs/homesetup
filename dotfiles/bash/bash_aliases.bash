@@ -166,10 +166,6 @@ __hhs_has "base64" && alias encode="base64"
 case "${HHS_MY_OS}" in
 
   Linux)
-    # @alias: Same as sed -i'' -r
-    alias ised="sed -i'' -r"
-    # @alias: Same as sed -r
-    alias esed="sed -r"
     # @alias: `top' shortcut ordered by CPU%
     alias cpu='\top -o %CPU'
     # @alias: `top' shortcut ordered by MEM%
@@ -181,10 +177,6 @@ case "${HHS_MY_OS}" in
   ;;
 
   Darwin)
-    # @alias: Same as sed -i '' -E
-    alias ised="sed -i '' -E"
-    # @alias: Same as sed -E
-    alias esed="sed -E"
     # @alias: `top' shortcut ordered by CPU%
     alias cpu='\top -o cpu'
     # @alias: `top' shortcut ordered by MEM%
