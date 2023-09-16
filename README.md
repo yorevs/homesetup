@@ -126,6 +126,7 @@ The HsPyLib project is also licensed under the MIT license and is hosted on GitH
     + Ubuntu 16 and higher
     + CentOS 7 and higher
     + Fedora 31 and higher
+    + Alpine
 
 While it's possible to install HomeSetup on **other Linux** distributions and it might work, it's important to note that
 **there are no guarantees** of its _full functionality or compatibility_.
