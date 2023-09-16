@@ -52,10 +52,8 @@ pipeline {
         script {
           sh '''#!/bin/bash
             echo "${HHS_PREFIX}" > "${HOME}/.hhs-prefix"
-            if source "${HOME}"/.bashrc &&
-               source "${HHS_HOME}"/bin/apps/bash/app-commons.bash &&
-               source "${HHS_HOME}"/bin/apps/bash/hhs-app/functions/run-tests.bash; then
-              tests
+            if source "${HOME}"/.bashrc; then
+              __hhs tests
             else
               echo "Unable to source required test scripts"
               exit 1
