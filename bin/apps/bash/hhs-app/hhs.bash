@@ -276,8 +276,11 @@ function parse_args() {
       version
       ;;
     -p | --prefix)
-        echo -e "${BLUE}Install Dir: ${WHITE}${HHS_HOME}${NC}"
-        echo -e "${BLUE}Configs Dir: ${WHITE}${HHS_DIR}${NC}"
+        echo ''
+        echo -e "${BLUE}Version: ${WHITE}${HHS_VERSION}${NC}"
+        echo -e "${BLUE} Prefix: ${WHITE}${HHS_HOME}${NC}"
+        echo -e "${BLUE}Configs: ${WHITE}${HHS_DIR}${NC}"
+        echo ''
         quit 0
       ;;
     *)

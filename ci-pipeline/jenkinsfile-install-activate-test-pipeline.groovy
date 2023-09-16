@@ -1,18 +1,9 @@
 #!/usr/bin/env groovy
 
-// App definitions
-def appName = 'homesetup'
-
-// library identifier: 'pipeUtils@master',
-//     retriever: modernSCM([
-//         $class       : 'GitSCMSource',
-//         credentialsId: 'github_token',
-//         remote       : 'https://github.com/yorevs/seedjob-jenkins-repo.git'
-//     ])
-
 pipeline {
   agent {
     node {
+      // Alpine JDK-11 and Python v3.11.5
       label 'docker-agent-python3'
     }
   }
@@ -22,7 +13,6 @@ pipeline {
   }
 
   environment {
-    ROOT_PROJECT_NAME = "${appName}"
     USER = 'jenkins'
     GROUP = 'jenkins'
     HOME = "/home/jenkins"
