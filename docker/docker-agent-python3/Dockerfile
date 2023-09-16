@@ -11,6 +11,7 @@ RUN apk add py3-pip
 RUN apk add curl
 RUN apk add bats
 RUN apk add rsync
+RUN apk add build-base
 RUN apk add --no-cache gnupg
 RUN apk add --no-cache bash
 
