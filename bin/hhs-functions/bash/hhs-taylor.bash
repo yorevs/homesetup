@@ -73,7 +73,8 @@ function __hhs_tailor() {
     else
       [[ -f "${file}" ]] && touch "${file}"
       [[ ${#args[@]} -le 1 && -z ${args[0]} ]] && unset args
-      tail "${args[@]}" "${file}" | sed ${sed_flag} \
+      # shellcheck disable=SC2068
+      tail ${args[@]} "${file}" | sed ${sed_flag} \
         -e "s/\[(${HHS_TAILOR_THREAD_NAME_RE})\]/\[${HHS_TAILOR_THREAD_NAME_COLOR}\1${NC}\]/g" \
         -e "s/(${HHS_TAILOR_LEVEL_INFO_RE})/${HHS_TAILOR_LEVEL_INFO_COLOR}\1${NC}/g" \
         -e "s/(${HHS_TAILOR_FQDN_RE})/${HHS_TAILOR_FQDN_COLOR}\1${NC}/g" \
