@@ -1,4 +1,4 @@
-name: HomeSetup Publish New Version
+name: publish-revision
 
 on:
   workflow_dispatch:
@@ -8,22 +8,34 @@ on:
         default: ''
         required: false
         type: string
+      gradle_debug_params:
+        description: 'Gradle debug parameters'
+        default: ''
+        required: false
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   publish:
-    strategy:
-      matrix:
-        os: [ "ubuntu-latest" ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
         java-version: 11
-    - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
-      
+    - uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: 7.4
+
     - name: Publish new version
-      uses: yorevs/publish-revision@master
-      run: echo "Hello ${{ inputs.name }}"
+      run: |
+        git fetch --prune --unshallow
+        echo "Publishing new HomeSetup revision"
+        echo "New HHS Revision: ${{ inputs.comment }}" > .last_revision.txt
+        echo "Changelog: " >> .last_revision.txt
+        ./gradlew changelog | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> .last_revision.txt
+        cat .last_revision.txt
+        git status
