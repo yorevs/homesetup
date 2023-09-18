@@ -44,7 +44,7 @@ if [[ -s "${HHS_PREFIX_FILE}" ]]; then
   prefix="$(grep . "${HHS_PREFIX_FILE}")"
   [[ -n "${prefix}" && -d "${prefix}" ]] && export HHS_PREFIX="${prefix}"
 else
-  export HHS_PREFIX=
+  unset HHS_PREFIX
 fi
 
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
