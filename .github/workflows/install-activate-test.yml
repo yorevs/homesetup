@@ -2,11 +2,24 @@ name: install-activate-test
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - '**'
+    paths:
+      - 'bin/**'
+      - 'dotfiles/**'
+      - 'tests/**'
+      - '*.bash'
   fork:
-    branches: [ "master" ]
+    branches:
+      - '**'
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - '**'
+    paths:
+      - 'bin/**'
+      - 'dotfiles/**'
+      - 'tests/**'
+      - '*.bash'
 
 permissions:
   contents: write
@@ -44,3 +57,4 @@ jobs:
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
         git add 'check-badge.svg'
         git commit -m "AUTO commit badges"
+        git push origin HEAD
