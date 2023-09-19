@@ -38,4 +38,9 @@ jobs:
         echo "Changelog: " >> .last_revision.txt
         ./gradlew changelog | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> .last_revision.txt
         cat .last_revision.txt
-        git status
+        git config --global user.name 'Hugo Saporetti Junior'
+        git config --global user.email 'yorevs@gmail.com'
+        git add .last_revision.txt
+        git commit -F .last_revision.txt
+        git push origin HEAD
+        ./gradlew publish

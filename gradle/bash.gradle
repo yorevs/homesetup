@@ -12,7 +12,7 @@ String dirName(File file) {
   file.getParentFile().getPath()
 }
 
-/***** Verification Group */ 
+/***** Verification Group */
 
 /* Run all Bats tests */
 task check(type: Task) {
@@ -33,7 +33,7 @@ task check(type: Task) {
           commandLine 'bats', '--tap', file.path
         }
       }
-    
+
   }
 }
 
@@ -41,7 +41,7 @@ task check(type: Task) {
 task publish(type: Task) {
   group = 'Publish'
   description = "Publish a new HomeSetup version"
-  dependsOn patchVersion
+//   dependsOn patchVersion
   doLast {
     def out = new ByteArrayOutputStream()
     def version = new File("${versionFile}").text
@@ -54,9 +54,16 @@ task publish(type: Task) {
     def prefix = commit_logs?.trim() ? '\n >> ' : ' No commits'
     def commits = commit_logs.split('\n').join('\n >> ')
     def commitMsg = "New HomeSetup v'${version}':${prefix}${commits}"
-    println("Commit: $commitMsg")
-    def master = new File("master-unlock").text = 'HomeSetup Publish'
-    println("Master-Unlock: $master")
+    def tag = Boolean.valueOf(project.hasProperty("tag")) ? project.getProperty("tag") : false;
+    println("Revision commits: $commitMsg")
+    if (tag) {
+      exec {
+        commandLine 'git', 'tag', '-a', "v${version}", -m, "New HomeSetup revision version ${version}"
+      }
+      exec {
+        commandLine 'git', 'push', 'origin', "v${version}"
+      }
+    }
     exec {
       commandLine 'git', 'add', '-A', ':/'
     }
