@@ -52,7 +52,7 @@ task publish(type: Task) {
     }
     def commit_logs = out.toString()
     def prefix = commit_logs?.trim() ? commit_logs?.split('\n').size() + ' commits' : ' No commits'
-    def commitMsg = "New HomeSetup v'${version}':${prefix}"
+    def commitMsg = "New HomeSetup revision: v'${version}' >> ${prefix}"
     def tag = Boolean.valueOf(project.hasProperty("tag")) ? project.getProperty("tag") : false;
     println("Revision commits: $commitMsg")
     if (tag) {
