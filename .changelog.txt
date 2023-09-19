@@ -1,8 +1,11 @@
-
-
-New HomeSetup Revision: New HomeSetup revision before updating minor version
+New HomeSetup Revision: New HomeSetup v1.5
 Changelog: 
 ------------------------------------------------------------
+  3b0bd06 2023-09-19 Improve the publish action to allow select tagging and updating major  
+  4eccb68 2023-09-19 Add updateMinor to the publish action  
+  07b9522 2023-09-19 Remove git hook from installation  
+  cc89e7b 2023-09-19 New HomeSetup revision: v'1.5.139' >> 1 commits  
+  383efb1 2023-09-19 New HomeSetup revision before updating minor version  
   1499fa3 2023-09-19 Clean changelog  
   a5c9706 2023-09-19 Fix publish action -> install bumpver - 3  
   1fdf00d 2023-09-19 New HomeSetup revision: v'1.5.138' >>  No commits  
