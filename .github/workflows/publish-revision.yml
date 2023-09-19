@@ -67,21 +67,19 @@ jobs:
         cat '.changelog.txt'
         git config --global user.name "$(git log -n 1 --pretty=format:%an)"
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
-        git add '.changelog.txt'
-        git commit -m "${{ inputs.comment }}"
 
     - name: Update minor number
       if: ${{ inputs.is_minor }}
       run: |
-        ./gradlew updateMinor ${gradle_debug_params}
+        echo "UPDATE MINOR"
 
     - name: Update major number
       if: |
-        ! ${{ inputs.is_minor }} &&
+        ${{ ! inputs.is_minor }} &&
         ${{ inputs.is_major }}
       run: |
-        ./gradlew updateMajor ${gradle_debug_params}
+        echo "UPDATE MAJOR"
 
     - name: Publish and tag revision
       run: |
-        ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
+        echo "PUBLISH"
