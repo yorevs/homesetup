@@ -14,12 +14,17 @@ on:
         required: false
         type: string
       tag_version:
-        description: 'Whether tho tag this version or not'
+        description: 'Tag this version ?'
+        type: boolean
+        required: true
+        default: false
+      is_minor:
+        description: 'Is this version a minor update ?'
         type: boolean
         required: true
         default: false
       is_major:
-        description: 'Whether this version is major or not'
+        description: 'Is this version a major update ?'
         type: boolean
         required: true
         default: false
@@ -46,6 +51,7 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install --upgrade bumpver
+
     - name: Fetch revision details
       run: |
         git fetch --prune --unshallow
@@ -54,6 +60,7 @@ jobs:
         echo "Changelog: " >> '.changelog.txt'
         echo "------------------------------------------------------------" >> '.changelog.txt'
         ./gradlew changelog ${gradle_debug_params} | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> '.changelog.txt'
+
     - name: Create a changelog
       run: |
         cat '.changelog.txt'
@@ -61,10 +68,19 @@ jobs:
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
         git add '.changelog.txt'
         git commit -m "${{ inputs.comment }}"
-    - name: Update major number
-      if: ${{ inputs.is_major }}
+
+    - name: Update minor number
+      if: ${{ inputs.is_minor }}
       run: |
         ./gradlew updateMinor ${gradle_debug_params}
+
+    - name: Update major number
+      if: |
+        ! ${{ inputs.is_minor }} &&
+        ${{ inputs.is_major }}
+      run: |
+        ./gradlew updateMajor ${gradle_debug_params}
+
     - name: Publish and tag revision
       run: |
         ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
