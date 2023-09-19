@@ -1,6 +1,21 @@
 New HomeSetup Revision: New HomeSetup v1.6
 Changelog: 
 ------------------------------------------------------------
+  dcbf1d0 2023-09-19 Fix the publish version action again - 7  
+  ff106bb 2023-09-19 Fix the publish version action again - 6  
+  473a860 2023-09-19 Fix the publish version action again - 5  
+  66a4cc2 2023-09-19 Fix the publish version action again - 4  
+  1606a89 2023-09-19 Fix the publish version action again - 3  
+  5e4f974 2023-09-19 Fix the publish version action again - 2  
+  6bd9887 2023-09-19 Fix the publish version action again  
+  2677fce 2023-09-19 Revert "New HomeSetup revision: v'2.0.1' >> 1 commits"  
+  7baf352 2023-09-19 Revert "New HomeSetup v1.6"  
+  7b1f26e 2023-09-19 New HomeSetup revision: v'2.0.1' >> 1 commits  
+  d730359 2023-09-19 New HomeSetup v1.6  
+  76d240f 2023-09-19 Fixed the publish action calling both minor and major version numbers  
+  76c1db7 2023-09-19 Revert "New HomeSetup revision: v'2.0.1' >> 1 commits"  
+  f082011 2023-09-19 New HomeSetup revision: v'2.0.1' >> 1 commits  
+  e902920 2023-09-19 New HomeSetup v1.6  
   bb613a4 2023-09-19 Fixed the changelogs for the new HomeSetup v1.6  
   027bb28 2023-09-19 Improve install action to consider only bash scripts  
   68d9314 2023-09-19 Improve publish and install actions  
