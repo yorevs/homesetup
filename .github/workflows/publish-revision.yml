@@ -38,8 +38,7 @@ jobs:
       run: |
         git fetch --prune --unshallow
         echo "Publishing new HomeSetup revision"
-        echo '' >> .changelog.txt
-        echo "New HomeSetup Revision: ${{ inputs.comment }}" >> .changelog.txt
+        echo "New HomeSetup Revision: ${{ inputs.comment }}" > .changelog.txt
         echo "Changelog: " >> .changelog.txt
         echo "------------------------------------------------------------" >> .changelog.txt
         ./gradlew changelog ${gradle_debug_params} | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> .changelog.txt
@@ -48,4 +47,5 @@ jobs:
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
         git add .changelog.txt
         git commit -m "${{ inputs.comment }}"
-        ./gradlew publish ${gradle_debug_params}
+        ./gradlew updateMinor ${gradle_debug_params}
+        ./gradlew publish ${gradle_debug_params} -Ptag=true
