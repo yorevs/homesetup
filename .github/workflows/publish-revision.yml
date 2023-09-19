@@ -34,13 +34,15 @@ jobs:
       run: |
         git fetch --prune --unshallow
         echo "Publishing new HomeSetup revision"
-        echo "New HHS Revision: ${{ inputs.comment }}" > .last_revision.txt
-        echo "Changelog: " >> .last_revision.txt
-        ./gradlew changelog | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> .last_revision.txt
-        cat .last_revision.txt
+        echo '' >> .changelog.txt
+        echo "New HomeSetup Revision: ${{ inputs.comment }}" >> .changelog.txt
+        echo "Changelog: " >> .changelog.txt
+        echo "------------------------------------------------------------" >> .changelog.txt
+        ./gradlew changelog | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> .changelog.txt
+        cat .changelog.txt
         git config --global user.name 'Hugo Saporetti Junior'
         git config --global user.email 'yorevs@gmail.com'
-        git add .last_revision.txt
-        git commit -F .last_revision.txt
+        git add .changelog.txt
+        git commit -F .changelog.txt
         git push origin HEAD
         ./gradlew publish
