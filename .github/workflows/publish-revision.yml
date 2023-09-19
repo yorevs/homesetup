@@ -11,7 +11,7 @@ on:
         type: string
       comment:
         description: 'Publish description'
-        default: 'No description'
+        default: 'New HomeSetup '
         required: false
         type: string
       tag_version:
@@ -19,16 +19,15 @@ on:
         type: boolean
         required: true
         default: false
-      is_minor:
-        description: 'Is this version a minor update ?'
-        type: boolean
+      release_type:
+        description: 'Major/Minor or Patch only update ?'
+        type: choice
         required: true
-        default: false
-      is_major:
-        description: 'Is this version a major update ?'
-        type: boolean
-        required: true
-        default: false
+        default: 'patch'
+        options:
+          - 'patch'
+          - 'minor'
+          - 'major'
 
 permissions:
   contents: write
@@ -62,24 +61,22 @@ jobs:
         echo "------------------------------------------------------------" >> '.changelog.txt'
         ./gradlew changelog ${gradle_debug_params} | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> '.changelog.txt'
 
-    - name: Create a changelog
+    - name: Create changelog file
       run: |
         cat '.changelog.txt'
         git config --global user.name "$(git log -n 1 --pretty=format:%an)"
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
+        git add '.changelog.txt'
+        git commit -m "${{ inputs.comment }}"
 
     - name: Update minor number
-      if: ${{ inputs.is_minor }}
-      run: |
-        echo "UPDATE MINOR"
+      if: ${{ inputs.release_type == 'minor' }}
+      run: ./gradlew updateMinor ${gradle_debug_params}
 
     - name: Update major number
-      if: |
-        ${{ ! inputs.is_minor }} &&
-        ${{ inputs.is_major }}
-      run: |
-        echo "UPDATE MAJOR"
+      if: ${{ inputs.release_type == 'major' }}
+      run: ./gradlew updateMajor ${gradle_debug_params}
 
     - name: Publish and tag revision
       run: |
-        echo "PUBLISH"
+        ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
