@@ -57,7 +57,7 @@ task publish(type: Task) {
     println("Revision commits: $commitMsg")
     if (tag) {
       exec {
-        commandLine 'git', 'tag', '-a', "v${version}", -m, "New HomeSetup revision version ${version}"
+        commandLine 'git', 'tag', '-a', "v${version}", '-m', "New HomeSetup revision version ${version}"
       }
       exec {
         commandLine 'git', 'push', 'origin', "v${version}"

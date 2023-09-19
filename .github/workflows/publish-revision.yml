@@ -3,16 +3,26 @@ name: publish-revision
 on:
   workflow_dispatch:
     inputs:
-      comment:
-        description: 'Publish description'
-        default: 'No description'
-        required: false
-        type: string
       gradle_debug_params:
         description: 'Gradle debug parameters'
         default: ''
         required: false
         type: string
+      comment:
+        description: 'Publish description'
+        default: 'No description'
+        required: false
+        type: string
+      tag_version:
+        description: 'Whether tho tag this version or not'
+        type: boolean
+        required: true
+        default: false
+      is_major:
+        description: 'Whether this version is major or not'
+        type: boolean
+        required: true
+        default: false
 
 permissions:
   contents: write
@@ -33,19 +43,28 @@ jobs:
       with:
         python-version: '3.10'
     - name: Install Python tools
-      run: pip install --upgrade bumpver
-    - name: Publish new version
+      run: |
+        pip install --upgrade pip
+        pip install --upgrade bumpver
+    - name: Fetch revision details
       run: |
         git fetch --prune --unshallow
         echo "Publishing new HomeSetup revision"
-        echo "New HomeSetup Revision: ${{ inputs.comment }}" > .changelog.txt
-        echo "Changelog: " >> .changelog.txt
-        echo "------------------------------------------------------------" >> .changelog.txt
-        ./gradlew changelog ${gradle_debug_params} | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> .changelog.txt
-        cat .changelog.txt
+        echo "New HomeSetup Revision: ${{ inputs.comment }}" > '.changelog.txt'
+        echo "Changelog: " >> '.changelog.txt'
+        echo "------------------------------------------------------------" >> '.changelog.txt'
+        ./gradlew changelog ${gradle_debug_params} | grep -E "^'[0-9a-z]{7}" | sed -r "s/^'|'$/  /g" >> '.changelog.txt'
+    - name: Create a changelog
+      run: |
+        cat '.changelog.txt'
         git config --global user.name "$(git log -n 1 --pretty=format:%an)"
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
-        git add .changelog.txt
+        git add '.changelog.txt'
         git commit -m "${{ inputs.comment }}"
+    - name: Update major number
+      if: ${{ inputs.is_major }}
+      run: |
         ./gradlew updateMinor ${gradle_debug_params}
-        ./gradlew publish ${gradle_debug_params} -Ptag=true
+    - name: Publish and tag revision
+      run: |
+        ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
