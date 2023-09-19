@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
     ### Removed
 
 
-## 1.6.0 - 2023-09-19
+## 1.6.1 - 2023-09-19
 
 ## Unreleased
 
@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
 ### Removed
 
 
-## 1.5.0 - 2020-01-21
+## 1.5.1 - 2020-01-21
 
 ### Added
 
@@ -177,7 +177,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
 * Removed unrelated font
 * Removed vault plugin and firebase init
 
-## 1.4.0 - 2020-01-21
+## 1.4.1 - 2020-01-21
 
 ### Added
 
@@ -225,7 +225,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
 * Updated improved alias documentations. Added a tag @alias to be found later by the deployer tool.
 * Updated Improved firebase plugin: it's now python instead of bash.
 
-## 1.3.0 - 2020-01-21
+## 1.3.1 - 2020-01-21
 
 ### Added
 

@@ -37,6 +37,34 @@ task check(type: Task) {
   }
 }
 
+/* Generate a changelog with the commits from last git tag */
+task changelog(type: Task) {
+  group = 'Publish'
+  description = "Generate a changelog with the commits from last git tag"
+  doLast {
+    def out = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'describe', '--tags', '--abbrev=0', 'HEAD^'
+      standardOutput = out
+    }
+    def lastTag = out.toString().trim()
+    if (!lastTag) {
+      raise new StopActionException("Unable to fetch latest tag")
+    }
+    out.reset()
+    exec {
+      commandLine 'git', 'log', '--oneline', "--pretty='%h %ad %s'", '--date=short', "${lastTag}..HEAD"
+      standardOutput = out
+      errorOutput = standardOutput
+    }
+    println("\nShowing changelog commits from: ${lastTag}")
+    println("--------------------------------------------------------------------------------")
+    out.each(s ->
+      println(s)
+    )
+  }
+}
+
 /* Publish a new HomeSetup version */
 task publish(type: Task) {
   group = 'Publish'
