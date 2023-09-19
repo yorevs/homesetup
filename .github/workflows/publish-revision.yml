@@ -47,6 +47,5 @@ jobs:
         git config --global user.name "$(git log -n 1 --pretty=format:%an)"
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
         git add .changelog.txt
-        git commit -F .changelog.txt
-        git push origin HEAD
+        git commit -m "${{ inputs.comment }}"
         ./gradlew publish ${gradle_debug_params}
