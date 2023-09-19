@@ -41,7 +41,7 @@ task check(type: Task) {
 task publish(type: Task) {
   group = 'Publish'
   description = "Publish a new HomeSetup version"
-//   dependsOn patchVersion
+  dependsOn patchVersion
   doLast {
     def out = new ByteArrayOutputStream()
     def version = new File("${versionFile}").text
@@ -51,9 +51,8 @@ task publish(type: Task) {
       standardOutput = out
     }
     def commit_logs = out.toString()
-    def prefix = commit_logs?.trim() ? '\n >> ' : ' No commits'
-    def commits = commit_logs.split('\n').join('\n >> ')
-    def commitMsg = "New HomeSetup v'${version}':${prefix}${commits}"
+    def prefix = commit_logs?.trim() ? commit_logs?.split('\n').size() + ' commits' : ' No commits'
+    def commitMsg = "New HomeSetup v'${version}':${prefix}"
     def tag = Boolean.valueOf(project.hasProperty("tag")) ? project.getProperty("tag") : false;
     println("Revision commits: $commitMsg")
     if (tag) {
