@@ -3,6 +3,8 @@ name: install-activate-test
 on:
   push:
     branches: [ "master" ]
+  fork:
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -36,4 +38,9 @@ jobs:
         echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
         source "${HOME}"/.bashrc
         __hhs tests
-    # Commit badges
+    - name: Commit badges
+      run: |
+        git config --global user.name "$(git log -n 1 --pretty=format:%an)"
+        git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
+        git add 'check-badge.svg'
+        git commit -m "AUTO commit badges"

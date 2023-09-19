@@ -1,4 +1,5 @@
 name: publish-revision
+run-name: HomeSetup publish by @${{ github.actor }}
 
 on:
   workflow_dispatch:

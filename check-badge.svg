@@ -1,20 +1,20 @@
-<svg width="93.6" height="20" viewBox="0 0 936 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="check: success">
-  <title>check: success</title>
-  <linearGradient id="lnFyG" x2="0" y2="100%">
+<svg width="85" height="20" viewBox="0 0 850 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="tests: passed">
+  <title>tests: passed</title>
+  <linearGradient id="THBYn" x2="0" y2="100%">
     <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-  <mask id="OUAmr"><rect width="936" height="200" rx="30" fill="#FFF"/></mask>
-  <g mask="url(#OUAmr)">
-    <rect width="415" height="200" fill="#555"/>
-    <rect width="521" height="200" fill="#3C1" x="415"/>
-    <rect width="936" height="200" fill="url(#lnFyG)"/>
+  <mask id="wIkZr"><rect width="850" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#wIkZr)">
+    <rect width="366" height="200" fill="#555"/>
+    <rect width="484" height="200" fill="#3C1" x="366"/>
+    <rect width="850" height="200" fill="url(#THBYn)"/>
   </g>
   <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
-    <text x="60" y="148" textLength="315" fill="#000" opacity="0.25">check</text>
-    <text x="50" y="138" textLength="315">check</text>
-    <text x="470" y="148" textLength="421" fill="#000" opacity="0.25">success</text>
-    <text x="460" y="138" textLength="421">success</text>
+    <text x="60" y="148" textLength="266" fill="#000" opacity="0.25">tests</text>
+    <text x="50" y="138" textLength="266">tests</text>
+    <text x="421" y="148" textLength="384" fill="#000" opacity="0.25">passed</text>
+    <text x="411" y="138" textLength="384">passed</text>
   </g>
   
 </svg>
