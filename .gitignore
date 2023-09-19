@@ -89,3 +89,4 @@ Desktop.ini
 # Ignore Gradle build output directory
 build
 master-unlock
+gradlew.bat
