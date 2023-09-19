@@ -1,6 +1,7 @@
 name: install-activate-test
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - '**'
@@ -55,6 +56,10 @@ jobs:
       run: |
         git config --global user.name "$(git log -n 1 --pretty=format:%an)"
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
-        git add 'check-badge.svg'
-        git commit -m "AUTO commit badges"
-        git push origin HEAD
+        if [[ -z $(git status --porcelain) ]]; then
+          echo 'Build/Check badges are the same, skipping commit.'
+        else
+          git add '*-badge.svg'
+          git commit -m "[@${{ github.actor }}] AUTO updated build & check badges"
+          git push origin HEAD
+        fi
