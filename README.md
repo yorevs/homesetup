@@ -2,11 +2,12 @@
 
 ## Your shell, good as hell !
 
-[![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
-[![Release](https://badgen.net/badge/release/v1.6.1/gray)](docs/CHANGELOG.md#unreleased)
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
 [![Gitter](https://badgen.net/badge/icon/gitter?icon=gitter&label)](https://gitter.im/yorevs-homesetup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
+[![License](https://badgen.net/badge/license/MIT/gray)](LICENSE.md)
+[![Release](https://badgen.net/badge/release/v1.6.1/gray)](docs/CHANGELOG.md#unreleased)
+[![Checks](check-badge.svg)](check-badge.svg)
 
 Are you passionate about the terminal? If so, you've come to the right place, especially if you're a command
 line enthusiast. Terminal dotfiles are well-known for improving productivity and streamlining everyday tasks. While
