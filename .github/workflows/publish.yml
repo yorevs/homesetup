@@ -1,5 +1,5 @@
-name: publish-revision
-run-name: HomeSetup publish-revision [@${{ github.actor }}]
+name: publish
+run-name: HomeSetup publish [@${{ github.actor }}]
 
 on:
   workflow_dispatch:
@@ -89,12 +89,14 @@ jobs:
       run: |
         ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
 
-  build-images:
+  build-docker-images:
     if: inputs.build_docker
     strategy:
       matrix:
         os: [ "ubuntu-latest" ]
-        docker-container: [ "ubuntu", "fedora", "centos", "alpine" ]
+        docker-container: [
+          "ubuntu", "fedora", "centos", "alpine"
+        ]
     needs: publish
     runs-on: ${{ matrix.os }}
     environment: homesetup

@@ -1,5 +1,5 @@
-name: install-activate-test
-run-name: HomeSetup install-activate-test [@${{ github.actor }}]
+name: build
+run-name: HomeSetup build [@${{ github.actor }}]
 
 on:
   workflow_dispatch:
@@ -27,7 +27,7 @@ permissions:
   contents: write
 
 env:
-  JOB_NAME: "HomeSetup-install-activate-test"
+  JOB_NAME: "HomeSetup-Build"
 
 jobs:
   build:
@@ -53,14 +53,3 @@ jobs:
         echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
         source "${HOME}"/.bashrc
         __hhs tests
-    - name: Commit badges
-      run: |
-        git config --global user.name "$(git log -n 1 --pretty=format:%an)"
-        git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
-        if [[ -z $(git status --porcelain) ]]; then
-          echo 'Build/Check badges are the same, skipping commit.'
-        else
-          git add '*-badge.svg'
-          git commit -m "[@${{ github.actor }}] AUTO updated build & check badges"
-          git push origin HEAD
-        fi
