@@ -110,4 +110,4 @@ jobs:
         context: "docker/${{ matrix.docker-container }}"
         file: "docker/${{ matrix.docker-container }}/Dockerfile"
         push: true
-        tags: "${{ DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:latest"
+        tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:latest"
