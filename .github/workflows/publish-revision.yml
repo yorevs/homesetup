@@ -19,6 +19,11 @@ on:
         type: boolean
         required: true
         default: false
+      build_docker:
+        description: 'Build/Push docker images ?'
+        type: boolean
+        required: true
+        default: true
       release_type:
         description: 'Major/Minor or Patch only update ?'
         type: choice
@@ -85,6 +90,7 @@ jobs:
         ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
 
   build-images:
+    if: inputs.build_docker
     strategy:
       matrix:
         os: [ "ubuntu-latest" ]
