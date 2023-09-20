@@ -1,6 +1,10 @@
-New HomeSetup Revision: New HomeSetup v1.6.3
+New HomeSetup Revision: New HomeSetup v1.6.4
 Changelog: 
 ------------------------------------------------------------
+  890b42a 2023-09-20 Update README.md  
+  1080af3 2023-09-20 Removing static badge generation and commits  
+  db06b3e 2023-09-20 New HomeSetup revision: v'1.6.3' >> 1 commits  
+  a3253a8 2023-09-20 [@yorevs] New HomeSetup v1.6.3  
   7592c4c 2023-09-20 [yorevs] Fix docker build images job - 8  
   990bbf6 2023-09-20 New HomeSetup revision: v'1.6.2' >> 1 commits  
   4a6e14b 2023-09-20 [@yorevs] New HomeSetup 1.7.1 actions  
