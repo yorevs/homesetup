@@ -1,12 +1,25 @@
-New HomeSetup Revision: New HomeSetup v1.6
+New HomeSetup Revision: New HomeSetup 1.7.1 actions
 Changelog: 
 ------------------------------------------------------------
-  dcbf1d0 2023-09-19 Fix the publish version action again - 7  
-  ff106bb 2023-09-19 Fix the publish version action again - 6  
-  473a860 2023-09-19 Fix the publish version action again - 5  
-  66a4cc2 2023-09-19 Fix the publish version action again - 4  
-  1606a89 2023-09-19 Fix the publish version action again - 3  
-  5e4f974 2023-09-19 Fix the publish version action again - 2  
+  3da0cdd 2023-09-20 [yorevs] Fix docker build images job - 7  
+  851d056 2023-09-20 [yorevs] Fix docker build images job - 6  
+  43d98b5 2023-09-20 [yorevs] Fix docker build images job - 5  
+  4bb7e42 2023-09-20 [yorevs] Fix docker build images job - 4  
+  adb2356 2023-09-20 [yorevs] Fix docker build images job - 3  
+  87a3157 2023-09-20 [yorevs] Fix docker build images job - 2  
+  37c7c9f 2023-09-20 Fix docker build images job  
+  755dec9 2023-09-20 [@yorevs] Fix the strategy matrix for containers  
+  ced9874 2023-09-20 Merge pull request #31 from yorevs/v1-7-1  
+  869220c 2023-09-20 [@yorevs] Added docker build image action  
+  4ef8aa6 2023-09-20 [@yorevs] Added docker build image action  
+  446d286 2023-09-20 [@yorevs] Updated action adjustments  
+  71de89a 2023-09-19 [@yorevs] Updated README.md with the tests badge  
+  5f240a7 2023-09-19 [@yorevs] AUTO updated build & check badges  
+  b26afdc 2023-09-19 Updated install action to commit the check badges  
+  35866d1 2023-09-19 Updated gradle wrapper to match the same version on Github actions  
+  b7b653d 2023-09-19 New HomeSetup revision: v'1.6.1' >> 1 commits  
+  aabaec3 2023-09-19 New HomeSetup v1.6  
+  cea32a9 2023-09-19 Fix the publish version action again - 2  
   6bd9887 2023-09-19 Fix the publish version action again  
   2677fce 2023-09-19 Revert "New HomeSetup revision: v'2.0.1' >> 1 commits"  
   7baf352 2023-09-19 Revert "New HomeSetup v1.6"  
