@@ -1,4 +1,5 @@
 name: install-activate-test
+run-name: HomeSetup install-activate-test [@${{ github.actor }}]
 
 on:
   workflow_dispatch:
@@ -26,7 +27,7 @@ permissions:
   contents: write
 
 env:
-  JOB_NAME: "HomeSetup-Actions"
+  JOB_NAME: "HomeSetup-install-activate-test"
 
 jobs:
   build:
