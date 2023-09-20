@@ -86,6 +86,7 @@ jobs:
         ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
 
   build-images:
+    needs: publish
     runs-on: ${{ matrix.os }}
     environment: homesetup
     steps:
