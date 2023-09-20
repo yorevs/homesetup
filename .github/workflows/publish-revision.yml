@@ -37,7 +37,7 @@ jobs:
     strategy:
       matrix:
         os: [ "ubuntu-latest" ]
-        docker-container: ["ubuntu" "fedora" "centos" "alpine"]
+        docker-container: ["ubuntu", "fedora", "centos", "alpine"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
