@@ -37,7 +37,6 @@ jobs:
     strategy:
       matrix:
         os: [ "ubuntu-latest" ]
-        docker-container: ["ubuntu", "fedora", "centos", "alpine"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -86,6 +85,10 @@ jobs:
         ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
 
   build-images:
+    strategy:
+      matrix:
+        os: [ "ubuntu-latest" ]
+        docker-container: [ "ubuntu", "fedora", "centos", "alpine" ]
     needs: publish
     runs-on: ${{ matrix.os }}
     environment: homesetup
@@ -104,7 +107,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        context: "docker/${{ docker-container }}"
-        file: "docker/${{ docker-container }}/Dockerfile"
+        context: "docker/${{ matrix.docker-container }}"
+        file: "docker/${{ matrix.docker-container }}/Dockerfile"
         push: true
-        tags: "${{ DOCKERHUB_USERNAME }}/hhs-${{ docker-container }}:latest"
+        tags: "${{ DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:latest"
