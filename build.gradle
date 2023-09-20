@@ -21,7 +21,6 @@ idea {
     excludeDirs += file('.idea')
     excludeDirs += file('.gradle')
     excludeDirs += file('.vscode')
-    excludeDirs += file('.github')
     excludeDirs += file('run-configs')
   }
 }
