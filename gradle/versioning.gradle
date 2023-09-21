@@ -1,48 +1,55 @@
 /*
     Gradle Versioning extension
 
-    Created: 5th March, 2022
+    Created: 4th March, 2021
     License: MIT - Please refer to <https://opensource.org/licenses/MIT>
     Copyright 2023, HomeSetup team
+    This module uses python module bumpver: https://pypi.org/project/bumpver/
+    Note: Following Semantic Versioning 2.0.0 => https://semver.org/
+    - Increment the MAJOR version when making incompatible API changes
+    - Increment the MINOR version when adding functionality in a backwards-compatible manner
+    - Increment the PATCH version when making backwards-compatible bug fixes. (Source)
 */
 
-/* Increment the build number for publishing */
+String relPath(String absPath) {
+  return absPath.replace("${project.projectDir}/", '')
+}
+
+/* Tasks ------------------------------------------------------------------- */
+
+/* Increment the build number (patch) */
 task patchVersion(type: Task) {
   group = 'Versioning'
-  description = 'Increment the build number for publishing'
+  description = 'Increment the build number for publishing (patch)'
   outputs.upToDateWhen { false }
   doLast {
-    def ver = project.ext.app_version
-    println "Increment the patch number for publishing"
-    // (major.minor.patch)
+    println "Patching the build number"
     exec {
       commandLine rootProject.python, '-m', 'bumpver', 'update', '--patch'
     }
   }
 }
 
-/* Increment the minor version number (major.minor.patch) */
+/* Increment the build number (minor) */
 task updateMinor(type: Task) {
   group = 'Versioning'
-  description = 'Increment the minor version number (major.minor.patch)'
+  description = 'Increment the build number (minor)'
   outputs.upToDateWhen { false }
   doLast {
-    def ver = project.ext.app_version
-    println "Increment the minor version number"
+    println "Updating the minor number"
     exec {
       commandLine rootProject.python, '-m', 'bumpver', 'update', '--minor'
     }
   }
 }
 
-/* Increment the major version number (major.minor.patch) */
+/* Increment the build number (major) */
 task updateMajor(type: Task) {
   group = 'Versioning'
-  description = 'Increment the major version number (major.minor.patch)'
+  description = 'Increment the build number (major)'
   outputs.upToDateWhen { false }
   doLast {
-    def ver = project.ext.app_version
-    println "Increment the major version number"
+    println "Updating the major number"
     exec {
       commandLine rootProject.python, '-m', 'bumpver', 'update', '--major'
     }
@@ -50,26 +57,25 @@ task updateMajor(type: Task) {
 }
 
 /* Check current program version */
-task version {
+task version(type: Task) {
   group = 'Versioning'
-  description = 'Display current project version'
+  description = 'Check current program version'
   outputs.upToDateWhen { false }
   doLast { task ->
-    println "Project: [$task.project.name] Version: $project.ext.app_version"
+    println "Project: [$task.project.name] Current Version: $project.ext.app_version"
   }
 }
 
 /* List all properties from properties.gradle */
-task listProperties {
+task listProperties(type: Task) {
   group = 'Versioning'
   description = 'List all properties from gradle.properties'
   outputs.upToDateWhen { false }
   doLast {
     def regex = /.*=.*$/
     File propsFile = project.file('gradle.properties')
-    File depsFile = project.file('gradle/dependencies.gradle')
     if (propsFile.exists()) {
-      println "\nChecking dependency usage at: $depsFile\n"
+      println "\n[${project.name}] Checking properties from: " + relPath("${propsFile}") + "\n"
       propsFile.eachLine { line ->
         if (line?.trim() && line ==~ regex) {
           // Extract the name and version from line: '<property> = <value>'

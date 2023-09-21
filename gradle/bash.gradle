@@ -69,7 +69,7 @@ task changelog(type: Task) {
 task publish(type: Task) {
   group = 'Publish'
   description = "Publish a new HomeSetup version"
-  if (!project.hasProperty('no-patch')) {
+  if (!project.hasProperty('no-patch') || !Boolean.valueOf(project.getProperty('no-patch'))) {
     dependsOn patchVersion
   }
   doLast {
