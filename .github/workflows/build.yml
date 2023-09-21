@@ -37,7 +37,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Setup BATS
+    - name: Setup BATS 1.10.0
       uses: mig4/setup-bats@v1
       with:
         bats-version: '1.10.0'

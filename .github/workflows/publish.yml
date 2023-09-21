@@ -74,8 +74,7 @@ jobs:
         cat '.changelog.txt'
         git config --global user.name "$(git log -n 1 --pretty=format:%an)"
         git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
-        git add '.changelog.txt'
-        git commit -m "[@${{ github.actor }}] ${{ inputs.comment }}"
+        git commit -a -m "[@${{ github.actor }}] ${{ inputs.comment }}"
 
     - name: Update patch number
       if: ${{ inputs.release_type == 'patch' }}
