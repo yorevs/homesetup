@@ -1,5 +1,5 @@
 name: publish
-run-name: HomeSetup publish [@${{ github.actor }}]
+run-name: HomeSetup publish - ${{github.run_number}} [@${{ github.actor }}]
 
 on:
   workflow_dispatch:

@@ -1,5 +1,5 @@
 name: build
-run-name: HomeSetup build [@${{ github.actor }}]
+run-name: HomeSetup build - ${{github.run_number}} [@${{ github.actor }}]
 
 on:
   workflow_dispatch:
