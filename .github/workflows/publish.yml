@@ -77,6 +77,10 @@ jobs:
         git add '.changelog.txt'
         git commit -m "[@${{ github.actor }}] ${{ inputs.comment }}"
 
+    - name: Update patch number
+      if: ${{ inputs.release_type == 'patch' }}
+      run: ./gradlew patchVersion ${gradle_debug_params}
+
     - name: Update minor number
       if: ${{ inputs.release_type == 'minor' }}
       run: ./gradlew updateMinor ${gradle_debug_params}
@@ -87,7 +91,7 @@ jobs:
 
     - name: Publish and tag revision
       run: |
-        ./gradlew publish ${gradle_debug_params} -Ptag="${{ inputs.tag_version }}"
+        ./gradlew publish ${gradle_debug_params} -Pno-patch=true -Ptag="${{ inputs.tag_version }}"
 
   build-docker-images:
     if: inputs.build_docker

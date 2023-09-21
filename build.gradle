@@ -39,6 +39,6 @@ ext {
 }
 
 apply from: "$projectDir/gradle.properties"
-apply from: "$projectDir/gradle/version.gradle"
+apply from: "$projectDir/gradle/versioning.gradle"
 apply from: "$projectDir/gradle/bash.gradle"
 apply from: "$projectDir/gradle/idea.gradle"
