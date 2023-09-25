@@ -2,3 +2,4 @@
 2. Fix hhs-completions.bash
 3. Add os-info (/etc/os-release)
 4. Add custom widgets (services)
+5. Test
