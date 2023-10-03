@@ -157,16 +157,12 @@ update_hhs() {
 # @purpose: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
 update_check() {
 
-  local today next_check cur_check
-
-  today=$(date "+%s%S")
-  cur_check=$(grep . "${HHS_DIR}"/.last_update)
-  next_check=$(stamp_next_update)
-
-  if [[ ${today} -ge ${cur_check} ]]; then
+  if [[ $(date "+%s%S") -ge $(grep . "${HHS_DIR}"/.last_update) ]]; then
     update_hhs
     return $?
   fi
+
+  stamp_next_update
 
   return 0
 }
@@ -174,23 +170,14 @@ update_check() {
 # @purpose: Stamp the next update timestamp
 stamp_next_update() {
 
-  local next_check
-
-  if [[ ! -f "${HHS_DIR}/.last_update" ]]; then
-    # Stamp the next update check for today
-    next_check=$(date "+%s%S")
+  # Stamp the next update check for next week
+  if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
+    \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
+  elif [[ "alpine" == "${MY_OS}" ]]; then
+    \date -d "@$(( $(\date +%s) - 3 * 24 * 60 * 60 ))" '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
   else
-    # Stamp the next update check for next week
-    if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
-      \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
-    elif [[ "alpine" == "${MY_OS}" ]]; then
-      \date -d "@$(( $(\date +%s) - 3 * 24 * 60 * 60 ))" '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
-    else
-      \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
-    fi
+    \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
   fi
-  echo "${next_check}" >"${HHS_DIR}/.last_update"
-  echo "${next_check}"
 
   return 0
 }

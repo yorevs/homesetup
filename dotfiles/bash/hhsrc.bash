@@ -195,16 +195,6 @@ fi
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<< "${PATH}")
 export PATH
 
-# Check for HomeSetup updates
-if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
-  __hhs_log "INFO" "Home setup is checking for updates ..."
-  if __hhs_is_reachable 'github.com'; then
-    __hhs updater execute check
-  else
-    __hhs_log "WARN" "GitHub website is not reachable !"
-  fi
-fi
-
 # Load system preferences
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   # Update the settings configuration
@@ -217,9 +207,17 @@ if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   fi
 fi
 
+# Check for HomeSetup updates
+if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+  __hhs_log "INFO" "Home setup is checking for updates ..."
+  if __hhs_is_reachable 'github.com'; then
+    __hhs updater execute check
+  else
+    __hhs_log "WARN" "GitHub website is not reachable !"
+  fi
+fi
+
 echo -e "\nHomeSetup load finished: $(date)\n" >> "${HHS_LOG_FILE}"
 
 # Print HomeSetup MOTD
-echo ''
-echo -e "${HHS_MOTD}${NC}"
-echo ''
+echo -e "\n${HHS_MOTD}${NC}\n"
