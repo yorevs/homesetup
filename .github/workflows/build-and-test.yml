@@ -1,5 +1,5 @@
-name: build
-run-name: HomeSetup build - ${{github.run_number}} [@${{ github.actor }}]
+name: build-and-test
+run-name: Build & Test [${{ github.sha }}]
 
 on:
   workflow_dispatch:
@@ -33,18 +33,19 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ "ubuntu-latest" ]
+        os:
+          - "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Setup BATS 1.10.0
+    - name: Setup BATS
       uses: mig4/setup-bats@v1
       with:
-        bats-version: '1.10.0'
-    - name: Set up Python 3.10
+        bats-version: ${{ vars.BATS_VERSION }}
+    - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.10'
+        python-version: ${{ vars.PYTHON_VERSION }}
     - name: Update PIP
       run: pip install --upgrade pip
     - name: Install HomeSetup with Prefix and Test

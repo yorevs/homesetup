@@ -1,5 +1,5 @@
 name: publish
-run-name: HomeSetup publish - ${{github.run_number}} [@${{ github.actor }}]
+run-name: Publish HomeSetup [${{ github.sha }}]
 
 on:
   workflow_dispatch:
@@ -10,22 +10,17 @@ on:
         required: false
         type: string
       comment:
-        description: 'Publish description'
+        description: 'Release description'
         default: 'New HomeSetup '
         required: false
         type: string
-      tag_version:
-        description: 'Tag this version ?'
-        type: boolean
-        required: true
-        default: false
       build_docker:
         description: 'Build/Push docker images ?'
         type: boolean
         required: true
         default: true
       release_type:
-        description: 'Major/Minor or Patch only update ?'
+        description: 'Major/Minor/Patch version ?'
         type: choice
         required: true
         default: 'patch'
@@ -41,20 +36,21 @@ jobs:
   publish:
     strategy:
       matrix:
-        os: [ "ubuntu-latest" ]
+        os:
+          - "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-java@v3
       with:
         distribution: temurin
-        java-version: 11
+        java-version: ${{ vars.JAVA_VERSION }}
     - uses: gradle/gradle-build-action@v2
       with:
-        gradle-version: '7.4'
+        gradle-version: ${{ vars.GRADLE_VERSION }}
     - uses: actions/setup-python@v3
       with:
-        python-version: '3.10'
+        python-version: ${{ vars.PYTHON_VERSION }}
     - name: Install Python tools
       run: |
         pip install --upgrade pip
@@ -90,16 +86,20 @@ jobs:
 
     - name: Publish and tag revision
       run: |
-        ./gradlew publish ${gradle_debug_params} -Pno-patch=true -Ptag="${{ inputs.tag_version }}"
+        ./gradlew publish -Pno-patch=true -Ptag=true ${gradle_debug_params}
 
   build-docker-images:
     if: inputs.build_docker
     strategy:
       matrix:
-        os: [ "ubuntu-latest" ]
-        docker-container: [
-          "ubuntu", "fedora", "centos", "alpine"
-        ]
+        os:
+          - "ubuntu-latest"
+        docker-container:
+          - "ubuntu"
+          - "fedora"
+          - "centos"
+          - "alpine"
+
     needs: publish
     runs-on: ${{ matrix.os }}
     environment: homesetup
