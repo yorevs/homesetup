@@ -25,6 +25,7 @@ on:
         required: true
         default: 'patch'
         options:
+          - 'none'
           - 'patch'
           - 'minor'
           - 'major'
