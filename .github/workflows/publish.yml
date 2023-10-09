@@ -1,5 +1,5 @@
 name: publish
-run-name: Publish HomeSetup [${{ github.sha }}]
+run-name: Publish
 
 on:
   workflow_dispatch:
@@ -68,6 +68,9 @@ jobs:
       - name: Publish
         id: publish-it
         run: |
+          git config --global user.name "$(git log -n 1 --pretty=format:%an)"
+          git config --global user.email "$(git log -n 1 --pretty=format:%ae)"
+          git config github.token "${{ secrets.GITHUB_TOKEN }}"
           gradle publish -Pno-patch=true -Ptag=false ${gradle_debug_params}
           version="$(awk '/./{line=$0} END{print line}' .VERSION)"
           echo "version=$( echo "$version" )" >> $GITHUB_OUTPUT
