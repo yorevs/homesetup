@@ -47,28 +47,24 @@ else
   unset HHS_PREFIX
 fi
 
+# Defined by the installation.
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 export HHS_DIR="${HOME}/.hhs"
+# shellcheck disable=SC2155
+export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
+
+# Overrideable.
 export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
 export HHS_CACHE_DIR="${HHS_CACHE_DIR:-${HHS_DIR}/cache}"
 export HHS_LOG_DIR="${HHS_LOG_DIR:-${HHS_DIR}/log}"
 export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
+export HHS_SETUP_FILE="${HHS_SETUP_FILE}:-${HHS_DIR}/.hhs-init"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
 
 # if the cache directory is not found, we have to create it.
 [[ -d "${HHS_CACHE_DIR}" ]] || mkdir -p "${HHS_CACHE_DIR}"
-
-# Load all dotfiles:
-#   source -> ~/.hhs/.path can be used to extend `$PATH`
-#   source -> ~/.hhs/.prompt can be used to extend/override .bash_prompt
-#   source -> ~/.hhs/.aliases can be used to extend/override .bash_aliases
-#   source -> ~/.hhs/.aliasdef can be used to customize your alias definitions
-#   source -> ~/.hhs/.profile can be used to extend/override .bash_profile/.hhsrc
-#   source -> ~/.hhs/.env can be used to extend/override .bash_env
-#   source -> ~/.hhs/.colors can be used to extend/override .bash_colors
-#   source -> ~/.hhs/.functions can be used to extend/override .bash_functions
 
 # Load all dotfiles following the order.
 # Notice that the order here is important, do not reorder it.
@@ -120,7 +116,13 @@ for file in ${DOTFILES[*]}; do
   fi
 done
 
-# Load all Custom dotfiles.
+# Load all Custom dotfiles:
+#   source -> ~/.hhs/.env can be used to extend/override .bash_env
+#   source -> ~/.hhs/.colors can be used to extend/override .bash_colors
+#   source -> ~/.hhs/.prompt can be used to extend/override .bash_prompt
+#   source -> ~/.hhs/.aliases can be used to extend/override .bash_aliases
+#   source -> ~/.hhs/.aliasdef can be used to customize your alias definitions
+#   source -> ~/.hhs/.functions can be used to extend/override .bash_functions
 for file in ${CUSTOM_DOTFILES[*]}; do
   f_path="${HHS_DIR}/.${file}"
   if [[ -s "${f_path}" ]]; then
@@ -134,8 +136,7 @@ done
 unset file f_path DOTFILES
 
 # -----------------------------------------------------------------------------------
-# Set default shell options
-
+# Set default terminal options
 unset HHS_TERM_OPTS
 case "${HHS_MY_SHELL}" in
   bash)

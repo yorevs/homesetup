@@ -10,7 +10,8 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
-# @purpose: List all HHS App Plug-ins and Functions
+
+# @purpose: List all HHS App Plug-ins and Functions.
 # @param $1 [opt] : Instead of a formatted as a list, flat the commands for bash completion.
 function list() {
 

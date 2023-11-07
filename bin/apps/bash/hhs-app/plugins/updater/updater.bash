@@ -121,7 +121,7 @@ update_hhs() {
 
   if [[ -n "${HHS_VERSION}" ]]; then
     clear
-    repo_ver="$(curl --silent --fail --connect-timeout 1 --max-time 2 "${VERSION_URL}")"
+    repo_ver="$(curl --silent --fail --connect-timeout 1 --max-time 1 "${VERSION_URL}")"
     re="[0-9]+\.[0-9]+\.[0-9]+"
 
     if [[ ${repo_ver} =~ $re ]]; then

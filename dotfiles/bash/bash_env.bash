@@ -18,10 +18,14 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 # Source the common bash functions
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
-# System locale (defaults)
-export LANGUAGE=${LANGUAGE:-en_US:en}
-export LANG=${LANG:-en_US.UTF-8}
-export LC_ALL=${LANG}
+export HHS_SET_LOCALES=${HHS_SET_LOCALES:-1}
+
+# Set system locale (defaults)
+if [[ -z ${HHS_SET_LOCALES} ]]; then
+  export LANGUAGE=${LANGUAGE:-en_US:en}
+  export LANG=${LANG:-en_US.UTF-8}
+  export LC_ALL=${LANG}
+fi
 
 # System folders
 export TEMP="${TEMP:-${TMPDIR:-$(dirname "$(mktemp)")}}"
@@ -37,7 +41,7 @@ if __hhs_has java; then
 fi
 
 # Python
-if __hhs_has  python3; then
+if __hhs_has python3; then
   export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 fi
 
@@ -82,23 +86,32 @@ fi
 
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
+# File to save all history
 export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
+# Ignored history commands
 export HISTIGNORE="ls:cd:pwd:?:-:l:q:rl:exit:gs:gl:.."
+# Max. history size
 export HISTSIZE=1000
-export HISTFILESIZE=2000
-# Setting history format: Index [user, Date Time] command
+# Max. history file size
+export HISTFILESIZE=10000
+# Setting history format: Index [<User>, <Date> <Time>] command
 export HISTTIMEFORMAT="[${USER}, %F %T]  "
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
 
+export HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
+
 # Current OS and Terminal
 
-export HHS_EXPORT_SETTINGS=1
-export HHS_GITHUB_URL="https://github.com/yorevs/homesetup"
+# By default, HomeSetup will export all settings. It can be overwritten by the .env file.
+export HHS_EXPORT_SETTINGS=${HHS_EXPORT_SETTINGS:-1}
+# By default, HomeSetup will restore last used directory.
+export HHS_RESTORE_LAST_DIR=${HHS_RESTORE_LAST_DIR:-1}
+
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
+export HHS_HAS_COLIMA=$(__hhs_has colima && colima status &>/dev/null && echo '1')
 export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
-export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
 
 # ----------------------------------------------------------------------------
 # Module configs
@@ -141,7 +154,7 @@ DEVELOPER_TOOLS=(
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
   # By default, homeSetup will disable brew's auto-update. It can be overwritten by the .env file.
-  export HOMEBREW_NO_AUTO_UPDATE=1
+  export HOMEBREW_NO_AUTO_UPDATE=${HOMEBREW_NO_AUTO_UPDATE:-1}
 fi
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}
