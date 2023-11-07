@@ -46,11 +46,17 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: ${{ vars.JAVA_VERSION }}
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: ${{ vars.GRADLE_VERSION }}
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
       - uses: actions/setup-python@v3
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
@@ -79,7 +85,6 @@ jobs:
           fi
           version="$(awk '/./{line=$0} END{print line}' .VERSION)"
           echo "version=$( echo "$version" )" >> $GITHUB_OUTPUT
-
 
   create-release:
       needs: publish
