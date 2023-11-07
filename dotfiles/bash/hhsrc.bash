@@ -58,7 +58,7 @@ export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
 export HHS_CACHE_DIR="${HHS_CACHE_DIR:-${HHS_DIR}/cache}"
 export HHS_LOG_DIR="${HHS_LOG_DIR:-${HHS_DIR}/log}"
 export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
-export HHS_SETUP_FILE="${HHS_SETUP_FILE}:-${HHS_DIR}/.hhs-init"
+export HHS_SETUP_FILE="${HHS_SETUP_FILE:-${HHS_DIR}/.hhs-init}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"

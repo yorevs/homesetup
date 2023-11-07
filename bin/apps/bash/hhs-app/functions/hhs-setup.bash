@@ -33,6 +33,7 @@ DEFAULT_SETTINGS="
 HHS_SET_LOCALES=1
 HHS_EXPORT_SETTINGS=1
 HHS_RESTORE_LAST_DIR=1
+HOMEBREW_NO_AUTO_UPDATE=1
 "
 
 # shellcheck disable=SC1090
@@ -46,15 +47,15 @@ function setup() {
   # Create the settings file if it does not exist or it's empty.
   [[ -s "${HHS_SETUP_FILE}" ]] || echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}"
 
-  # Read all settings, but first, check the file version
+  # Read all settings, but first, check the file version.
   file_ver="$(head -1 "${HHS_SETUP_FILE}")"
   if [[ -z "${file_ver}" || ${file_ver} != "${VERSION}" ]]; then
     echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}"
-    quit 1 "HomeSetup setup file has changed. Recreated it using defaults."
+    echo "${YELLOW}HomeSetup setup file has changed. Recreated it using defaults.${NC}"
   fi
 
   while read -r setting; do
-    all_settings+=(setting)
+    all_settings+=("${setting}")
     echo "S:: ${setting}"
   done <"${HHS_SETUP_FILE}"
 
