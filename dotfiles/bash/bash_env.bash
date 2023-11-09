@@ -18,6 +18,7 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 # Source the common bash functions
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
+# Whether to export terminal language and locale
 export HHS_SET_LOCALES=${HHS_SET_LOCALES:-1}
 
 # Set system locale (defaults)
@@ -27,12 +28,13 @@ if [[ -z ${HHS_SET_LOCALES} ]]; then
   export LC_ALL=${LANG}
 fi
 
+# ----------------------------------------------------------------------------
 # System folders
 export TEMP="${TEMP:-${TMPDIR:-$(dirname "$(mktemp)")}}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
 
 # ----------------------------------------------------------------------------
-# Home Sweet Homes
+# Home Sweet Home
 
 # Java
 if __hhs_has java; then
@@ -45,7 +47,10 @@ if __hhs_has python3; then
   export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 fi
 
-# My OS
+# ----------------------------------------------------------------------------
+# OS Release
+
+# Darwin
 if [[ "Darwin" == "$(uname -s)" ]]; then
   # Hide the annoying warning about zsh
   export BASH_SILENCE_DEPRECATION_WARNING=1
@@ -60,8 +65,8 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
       export MACOS_SDK="${XCODE_HOME}/SDKs/MacOSX"
     fi
   fi
+# Linux
 else
-  # OS Release - Linux
   HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
   HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
   export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"

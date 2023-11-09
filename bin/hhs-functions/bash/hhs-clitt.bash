@@ -12,12 +12,12 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 if __hhs_has python3; then
-  
+
   # @function: Choose options from a list using a navigable menu.
   # @param $1 [Req] : The response file.
   # @param $2 [Req] : The array of items.
   function __hhs_mchoose() {
-  
+
     if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} [options] <output_file> <title> <items...>"
       echo ''
@@ -40,11 +40,11 @@ if __hhs_has python3; then
       echo '    - The outfile must not exist or it be an empty file.'
       return 1
     fi
-  
+
     local outfile title all_options=() len checked='False' ret_val
-  
+
     [[ '-c' = "${1}" ]] && shift && checked='True'
-  
+
     HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
     outfile="$1"
     shift
@@ -52,39 +52,37 @@ if __hhs_has python3; then
     shift
     all_options=("${@}")
     len=${#all_options[@]}
-    
+
     if [[ ${len} -le 1 ]] ; then
       __hhs_errcho "${FUNCNAME[0]}: Invalid number of items: \"${len}\""
       return 1
     fi
-    
+
     printf -v all_options_str '%s,' "${all_options[@]}"
     all_options_str="${all_options_str%,}"
-    
+
     echo ''>"${outfile}"
-  
+
     python3 -c """
 from clitt.core.tui.mchoose.mchoose import mchoose
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
     it = [\"${all_options_str//,/\",\"}\"]
-    mchoose(it, ${checked}, \"${title}\", \"${outfile}\")
+    ret = mchoose(it, ${checked}, \"${title}\", \"${outfile}\")
+    exit(1 if ret is None else 0)
 """
-  
-    ret_val=$?
-    __hhs_clear && echo -e "${NC}"
-    
-    return ${ret_val}
+
+    return $?
   }
-  
+
   # @function: Select an option from a list using a navigable menu.
   # @param $1 [Req] : The response file.
   # @param $2 [Req] : The array of items.
   function __hhs_mselect() {
-    
+
     local outfile all_options=() all_options_str len ret_val
-    
+
     if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <output_file> <title> <items...>"
       echo ''
@@ -103,44 +101,42 @@ if __name__ == \"__main__\":
       echo '    - The outfile must not exist or it be an empty file.'
       return 1
     fi
-  
+
     outfile="$1"
     shift
     title="$1"
     shift
     all_options=("${@}")
     len=${#all_options[@]}
-  
+
     [[ "${len}" -le 1 ]] && echo "${all_options[0]}" >"${outfile}" && return 0
-    
+
     printf -v all_options_str '%s,' "${all_options[@]}"
     all_options_str="${all_options_str%,}"
-    
+
     echo ''>"${outfile}"
-    
+
     python3 -c """
 from clitt.core.tui.mselect.mselect import mselect
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
     it = [\"${all_options_str//,/\",\"}\"]
-    mselect(it, \"${title}\", \"${outfile}\")
+    ret = mselect(it, \"${title}\", \"${outfile}\")
+    exit(1 if ret is None else 0)
 """
-  
-    ret_val=$?
-    __hhs_clear && echo -e "${NC}"
-    
-    return ${ret_val}
+
+    return $?
   }
-  
-  
+
+
   # @function: Provide a terminal form input with simple validation.
   # @param $1 [Req] : The response file.
   # @param $2 [Req] : The form fields.
   function __hhs_minput() {
-  
+
     local outfile ret_val=1 title all_fields=() len
-  
+
     if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"
       echo ''
@@ -166,25 +162,23 @@ if __name__ == \"__main__\":
       echo '    - A temporary file is suggested to used with this command: $ mktemp.'
       return 1
     fi
-  
-    outfile="${1}"
-    shift
-    title="${1:-Please fill all fields of the form below}"
-    shift
-  
+
+    outfile="${1}" && shift
+    title="${1:-Please fill all fields of the form below}" && shift
+
     all_fields=("${@}")
     len=${#all_fields[*]}
-    
+
     if [[ ${len} -lt 1 ]] ; then
       __hhs_errcho "${FUNCNAME[0]}: Invalid number of fields: \"${len}\""
       return 1
     fi
-    
+
     printf -v all_fields_str '%s,' "${all_fields[@]}"
     all_fields_str="${all_fields_str%,}"
-    
+
     echo ''>"${outfile}"
-    
+
     python3 -c """
 from clitt.core.tui.minput.input_validator import InputValidator
 from clitt.core.tui.minput.minput import MenuInput, minput
@@ -194,19 +188,17 @@ if __name__ == \"__main__\":
     form_fields = MenuInput.builder() \
         .from_tokenized(it) \
         .build()
-    minput(form_fields, \"${title}\", \"${outfile}\")
+    ret=minput(form_fields, \"${title}\", \"${outfile}\")
+    exit(1 if ret is None else 0)
 """
-  
-    ret_val=$?
-    __hhs_clear && echo -e "${NC}"
-    
-    return ${ret_val}
+
+    return $?
   }
-  
+
   # @function: PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheet.
   # @param $1 [Con] : The week list punches from.
   function __hhs_punch() {
-  
+
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} [options] <args>"
       echo ''
@@ -232,7 +224,7 @@ if __name__ == \"__main__\":
         python3 -m clitt widgets punch
       fi
     fi
-  
+
     return $?
   }
 
