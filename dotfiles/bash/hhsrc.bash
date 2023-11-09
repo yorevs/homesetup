@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=2015,1090,2155
+# shellcheck disable=2015,1090,2155,2164
 
 #  Script: hhsrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new
@@ -214,6 +214,15 @@ if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   else
     __hhs_log "ERROR" "Failed to load system settings !"
   fi
+fi
+
+# Load bash completions.
+if [[ ${HHS_LOAD_COMPLETIONS} -eq 1 ]]; then
+  __hhs_log "INFO" "Loading bash completions !"
+  while read -r cpl; do
+    __hhs_source "${cpl}"
+    HHS_BASH_COMPLETIONS="${HHS_BASH_COMPLETIONS}$(basename "${cpl//\.$HHS_MY_SHELL/}") "
+  done < <(find "${HHS_HOME}/bin/completions" -type f -name '*-completion.bash')
 fi
 
 # Check for HomeSetup updates.

@@ -39,8 +39,10 @@ export HHS_SET_LOCALES=1
 export HHS_EXPORT_SETTINGS=1
 # Set to allow restoring the last used dir in terminal.
 export HHS_RESTORE_LAST_DIR=1
-# Set to disable Home Brew updates by default.
+# Set to disable Home Brew updates.
 export HOMEBREW_NO_AUTO_UPDATE=1
+# Set to enable bash completions.
+export HHS_LOAD_COMPLETIONS=
 "
 
 # Regex to match a setting.
@@ -51,7 +53,7 @@ RE_PROPERTY="([a-zA-Z0-9 ]+=.*)"
 # @purpose: Setup HomeSetup.
 function setup() {
 
-  local file_ver aux name value all_settings=() minput_file sel_settings sel_settings=() all_items=()
+  local file_ver aux name value minput_file sel_settings=() all_items=()
 
   [[ "$1" == '-h' || "$1" == '--help' ]] && echo "${USAGE}" && quit 0
 
@@ -62,7 +64,7 @@ function setup() {
   file_ver="$(grep -E '@version:' "${HHS_SETUP_FILE}")"
   if [[ -z "${file_ver}" || "${file_ver#*: v}" != "${VERSION}" ]]; then
     echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}"
-    echo "${YELLOW}HomeSetup setup file has changed. Recreated it using defaults.${NC}"
+    echo "${YELLOW}HomeSetup init file has changed. Recreated it using defaults.${NC}"
     sleep 2
   fi
 
@@ -70,7 +72,6 @@ function setup() {
     if [[ ${setting} =~ ${RE_PROPERTY} ]]; then
       name="${setting%%=*}" && value="${setting#*=}"
       name="${name//export /}"
-      all_settings+=("${name}")
       all_items+=("${name}|checkbox||||${value}")
     fi
   done <"${HHS_SETUP_FILE}"
@@ -91,6 +92,6 @@ function setup() {
     done
     clear && echo -e "\n${GREEN}HomeSetup settings (${#sel_settings[@]}) saved!${NC}\n"
   else
-    clear && echo -e "\n${YELLOW}HomeSetup settings (${#all_settings[@]}) unchanged!${NC}\n"
+    clear && echo -e "\n${YELLOW}HomeSetup settings (${#all_items[@]}) unchanged!${NC}\n"
   fi
 }

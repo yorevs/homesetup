@@ -9,7 +9,6 @@ then
     do
       # shellcheck disable=SC1090
       if [[ -r "${BREW_COMPLETION}" ]]; then
-        __hhs_log "DEBUG" "Loading brew completion: ${BREW_COMPLETION}"
         __hhs_source "${BREW_COMPLETION}"
       fi
     done

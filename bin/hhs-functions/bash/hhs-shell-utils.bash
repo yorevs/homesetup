@@ -38,10 +38,10 @@ function __hhs_hist_stats() {
     echo "Usage: ${FUNCNAME[0]} [top_N]"
     return 1
   fi
-  
+
   pad=$(printf '%0.1s' "."{1..60})
   pad_len=30
-      
+
   echo -e "\n${ORANGE}Top '${top_n}' used commands in bash history ...\n"
   for cmd in $(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}" |
     perl -lane 'printf "%s %03d %s \n", $F[1], $F[0], "▄" x ($F[0] / 5)'); do
@@ -87,7 +87,7 @@ function __hhs_envs() {
       filters=${filters// /\|}
       [[ -z "${filters}" ]] && filters=".*"
       echo ' '
-      echo "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:"
+      echo "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:${NC}"
       echo ' '
       IFS=$'\n'
       shopt -s nocasematch

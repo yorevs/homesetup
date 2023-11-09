@@ -15,7 +15,9 @@
 # @param $1 [opt] : Instead of a formatted as a list, flat the commands for bash completion.
 function list() {
 
-  if [[ "$1" == "opts" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: __hhs ${FUNCNAME[0]} [-flat]"
+  elif [[ "$1" == "-flat" ]]; then
     for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
     for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
     echo ''

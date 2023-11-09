@@ -15,7 +15,7 @@
 VERSION=${VERSION:-0.9.0}
 
 # This application name.
-APP_NAME="${0##*/}"
+APP_NAME="${APP_NAME:-${0##*/}}"
 
 # Help message to be displayed by the application.
 USAGE=${USAGE:-"

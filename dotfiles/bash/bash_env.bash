@@ -15,7 +15,7 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
-# Whether to export terminal language and locale
+# Whether to export terminal language and locale.
 export HHS_SET_LOCALES=${HHS_SET_LOCALES=1}
 # By default, HomeSetup will export all settings.
 export HHS_EXPORT_SETTINGS=${HHS_EXPORT_SETTINGS=1}
@@ -23,6 +23,8 @@ export HHS_EXPORT_SETTINGS=${HHS_EXPORT_SETTINGS=1}
 export HHS_RESTORE_LAST_DIR=${HHS_RESTORE_LAST_DIR=1}
 # By default, homeSetup will disable brew's auto-update.
 export HOMEBREW_NO_AUTO_UPDATE=${HOMEBREW_NO_AUTO_UPDATE=1}
+# By default, homeSetup will not load bash completions for best performance.
+export HHS_LOAD_COMPLETIONS=${HHS_LOAD_COMPLETIONS=}
 
 # Set system locale (defaults)
 if [[ -z ${HHS_SET_LOCALES} ]]; then

@@ -10,6 +10,8 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
+APP_NAME="__hhs"
+
 # Functions to be unset after quit.
 UNSETS+=(
   'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
