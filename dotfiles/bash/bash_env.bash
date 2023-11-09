@@ -110,8 +110,6 @@ export HISTTIMEFORMAT="[${USER}, %F %T]  "
 
 export HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
-export HHS_HAS_COLIMA=$(__hhs_has colima && colima status &>/dev/null && echo '1')
-export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
 
 # ----------------------------------------------------------------------------
 # Module configs

@@ -77,11 +77,11 @@ PLUGINS_LIST=()
 # List plugin commands.
 PLUGINS=()
 
-# @function: Replacement for the original source bash command.
+# @function: Load a HomeSetup dotfile
 # @param $1 [Req] : Path to the file to be source'd
 function load_dotfile() {
 
-  local filepath="${HOME}/.$1"
+  local filepath="$1"
 
   if [[ $# -eq 0 ]]; then
     echo -e "${RED}A valid dotfile must be provided -> '${filepath}'${NC}"
@@ -331,9 +331,9 @@ function main() {
   cleanup_plugins
 }
 
-load_dotfile "bash_commons"
-load_dotfile "bash_env"
-
-[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
+# We need to load the dotfiles below due to non-interactive shell.
+load_dotfile "${HOME}/.bash_commons"
+load_dotfile "${HOME}/.bash_env"
+load_dotfile "${HHS_DIR}/bin/app-commons.bash"
 
 main "${@}"

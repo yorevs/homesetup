@@ -123,7 +123,7 @@ alias week='\date +%V'
 # @alias: Date&Time - Display current date and time
 alias now='\date +"(Week:%V) %Y-%m-%d %T %Z"'
 # @alias: Date&Time - Display current timestamp
-alias ts='\date "+%s%S"'
+alias ts='\date "+%s"'
 
 # @alias: If `wget' is not available, use `curl' instead
 __hhs_has "wget" || alias wget='\curl -O'

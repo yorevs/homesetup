@@ -12,70 +12,79 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Lazy load helper function to initialize NVM for the terminal.
-function __hhs_activate_nvm() {
+if [[ -d "${HOME}/.nvm" ]]; then
+  # @function: Lazy load helper function to initialize NVM for the terminal.
+  function __hhs_activate_nvm() {
 
-  echo -en "Activating NVM app ...... "
-  # NVM setup
-  [[ ! -d "${HOME}/.nvm" ]] && echo "${RED}[ FAIL ] => Can't find NVM_DIR => \"${HOME}/.nvm\" ! ${NC}" && return 1
-  export NVM_DIR="${HOME}/.nvm"
-  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
-    __hhs_source "$NVM_DIR/nvm.sh"
-    export PATH="$PATH:$NVM_DIR"
-    if [[ -s "$NVM_DIR/bash_completion" ]]; then
-      ln -sf "$NVM_DIR/bash_completion" "${AUTO_CPL_D}/nvm-completion.bash"
+    echo -en "Activating NVM app ...... "
+    # NVM setup
+    export NVM_DIR="${HOME}/.nvm"
+    if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+      __hhs_source "$NVM_DIR/nvm.sh"
+      export PATH="$PATH:$NVM_DIR"
+      if [[ -s "$NVM_DIR/bash_completion" ]]; then
+        ln -sf "$NVM_DIR/bash_completion" "${AUTO_CPL_D}/nvm-completion.bash"
+      fi
+      echo "${GREEN}[  OK  ]${NC}"
+    else
+      echo "${RED}[ FAIL ] => NVM is not installed ! ${NC}" && return 1
     fi
-    echo "${GREEN}[  OK  ]${NC}"
-  else
-    echo "${RED}[ FAIL ] => NVM is not installed ! ${NC}" && return 1
-  fi
 
-  return 0
-}
+    return 0
+  }
+fi
 
-# @function: Lazy load helper function to initialize RVM for the terminal.
-function __hhs_activate_rvm() {
+if [[ -d "${HOME}/.rvm" ]]; then
+  # @function: Lazy load helper function to initialize RVM for the terminal.
+  function __hhs_activate_rvm() {
 
-  echo -en "Activating RVM app ...... "
-  # RVM setup
-  [[ ! -d "${HOME}/.rvm" ]] && echo "${RED}[ FAIL ] => Can't find RVM_HOME => \"${HOME}/.rvm\" ! ${NC}" && return 1
-  export RVM_DIR="${HOME}/.rvm"
-  if [[ -s "$RVM_DIR/scripts/rvm" ]]; then
-    \. "$RVM_DIR/scripts/rvm"
-    export PATH="$PATH:$RVM_DIR/bin"
-    echo "${GREEN}[  OK  ]${NC}"
-  else
-    echo "${RED}[ FAIL ] => RVM is not installed ! ${NC}" && return 1
-  fi
+    echo -en "Activating RVM app ...... "
+    # RVM setup
+    [[ ! -d "${HOME}/.rvm" ]] && echo "${RED}[ FAIL ] => Can't find RVM_HOME => \"${HOME}/.rvm\" ! ${NC}" && return 1
+    export RVM_DIR="${HOME}/.rvm"
+    if [[ -s "$RVM_DIR/scripts/rvm" ]]; then
+      \. "$RVM_DIR/scripts/rvm"
+      export PATH="$PATH:$RVM_DIR/bin"
+      echo "${GREEN}[  OK  ]${NC}"
+    else
+      echo "${RED}[ FAIL ] => RVM is not installed ! ${NC}" && return 1
+    fi
 
-  return 0
-}
+    return 0
+  }
+fi
 
-# @function: Lazy load helper function to initialize Jenv for the terminal.
-function __hhs_activate_jenv() {
+if __hhs_has jenv; then
 
-  echo -en "Activating JENV app ..... "
-  # JENV setup
-  if eval "$(jenv init -)" &>/dev/null; then
-    echo "${GREEN}[  OK  ] ${NC}"
-  else
-    echo "${RED}[ FAIL ] => JENV is not installed ! ${NC}" && return 1
-  fi
+  # @function: Lazy load helper function to initialize Jenv for the terminal.
+  function __hhs_activate_jenv() {
 
-  return 0
-}
+    echo -en "Activating JENV app ..... "
+    # JENV setup
+    if eval "$(jenv init -)" &>/dev/null; then
+      echo "${GREEN}[  OK  ] ${NC}"
+    else
+      echo "${RED}[ FAIL ] => JENV is not installed ! ${NC}" && return 1
+    fi
 
-# @function: Lazy load helper function to initialize Docker-Daemon for the terminal.
-function __hhs_activate_docker() {
+    return 0
+  }
+fi
 
-  echo -en "Activating Docker app ... "
-  DK_LOC='/Applications/Docker.app'
-  # Docker daemon setup
-  if open "${DK_LOC}" &>/dev/null; then
-    echo "${GREEN}[  OK  ] ${NC}"
-  else
-    echo "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at ! ${NC}" && return 1
-  fi
+if [[ -n "${HHS_HAS_DOCKER}" ]]; then
 
-  return 0
-}
+  # @function: Lazy load helper function to initialize Docker-Daemon for the terminal.
+  function __hhs_activate_docker() {
+
+    echo -en "Activating Docker app ... "
+    DK_LOC='/Applications/Docker.app'
+    # Docker daemon setup
+    if open "${DK_LOC}" &>/dev/null; then
+      echo "${GREEN}[  OK  ] ${NC}"
+    else
+      echo "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at ! ${NC}" && return 1
+    fi
+
+    return 0
+  }
+fi

@@ -30,12 +30,12 @@ unset "${!HHS_@}"
 
 export HHS_ACTIVE_DOTFILES='bash_profile'
 
-# Set path so it includes user's private bin if it exists
+# Set path so it includes user's private bin if it exists.
 if [[ -d "${HOME}/bin" ]]; then
   PATH="${PATH}:${HOME}/bin"
 fi
 
-# Set path so it includes user's private bin if it exists
+# Set path so it includes user's private bin if it exists.
 if [[ -d "${HOME}/.local/bin" ]]; then
   PATH="${PATH}:${HOME}/.local/bin"
 fi
@@ -43,9 +43,8 @@ fi
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
   bash)
-    # Source the user profile
-    # shellcheck disable=1090
-    [[ -s "${HOME}/.hhsrc" ]] && \. "${HOME}/.hhsrc"
+    # Source HomeSetup resources.
+    [[ -s "${HOME}/.hhsrc" ]] && source "${HOME}/.hhsrc"
     ;;
   *)
     echo ''

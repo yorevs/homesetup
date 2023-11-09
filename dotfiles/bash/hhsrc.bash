@@ -88,11 +88,11 @@ CUSTOM_DOTFILES=(
    'functions'
 )
 
+# Re-create the HomeSetup log file.
+echo -e "HomeSetup is starting: $(date)\n" > "${HHS_LOG_FILE}"
+
 # Source the bash common functions.
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
-
-# Re-create the HomeSetup log file
-echo -e "HomeSetup is starting: $(date)\n" > "${HHS_LOG_FILE}"
 
 if ! [[ -s "${HOME}"/.inputrc ]]; then
   __hhs_log "WARN" "'.inputrc' file was copied because it was not found at: ${HOME}"
@@ -104,11 +104,14 @@ if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
   \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
 fi
 
-# Load initialization settings
+# Load initialization settings.
 if [[ -s "${HHS_SETUP_FILE}" ]]; then
   source "${HHS_SETUP_FILE}"
-  __hhs_log "INFO" "Settings loaded: ${HHS_SETUP_FILE}"
+  __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
 fi
+
+# -----------------------------------------------------------------------------------
+# Load dotfiles
 
 # Load all HomeSetup dotfiles.
 for file in ${DOTFILES[*]}; do
@@ -223,7 +226,7 @@ if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}
   fi
 fi
 
-echo -e "\nHomeSetup load finished: $(date)\n" >> "${HHS_LOG_FILE}"
+echo -e "\nHomeSetup initialization complete: $(date)\n" >> "${HHS_LOG_FILE}"
 
 # Print HomeSetup MOTD
-echo -e "\n${HHS_MOTD}${NC}\n"
+echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
