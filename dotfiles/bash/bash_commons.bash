@@ -14,6 +14,8 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_commons"
+
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
 function __hhs_has() {

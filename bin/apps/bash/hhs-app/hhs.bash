@@ -14,7 +14,7 @@
 UNSETS+=(
   'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
   'validate_plugin' 'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
-  'find_hhs_functions' 'get_desc'
+  'find_hhs_functions' 'get_desc' 'load_dotfile'
 )
 
 # Program version.
@@ -56,10 +56,6 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
     - To discover which plugins and functions are available type: hhs list
 "
 
-[[ -f "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
-
-__hhs_has "python3" || quit 1 "Python is required to execute ${APP_NAME}"
-
 # Directory containing all HHS plug-ins.
 PLUGINS_DIR="$(dirname "${0//${HHS_DIR}/$HHS_HOME}")/apps/${HHS_MY_SHELL}/hhs-app/plugins"
 
@@ -80,6 +76,22 @@ PLUGINS_LIST=()
 
 # List plugin commands.
 PLUGINS=()
+
+# @function: Replacement for the original source bash command.
+# @param $1 [Req] : Path to the file to be source'd
+function load_dotfile() {
+
+  local filepath="${HOME}/.$1"
+
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}A valid dotfile must be provided -> '${filepath}'${NC}"
+    return 1
+  fi
+
+  source "${filepath}"
+
+  return $?
+}
 
 # @purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
@@ -318,5 +330,10 @@ function main() {
   invoke_command "${@}" || quit 2
   cleanup_plugins
 }
+
+load_dotfile "bash_commons"
+load_dotfile "bash_env"
+
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
 
 main "${@}"

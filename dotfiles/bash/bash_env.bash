@@ -15,11 +15,14 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
-# Source the common bash functions
-source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
-
 # Whether to export terminal language and locale
-export HHS_SET_LOCALES=${HHS_SET_LOCALES:-1}
+export HHS_SET_LOCALES=${HHS_SET_LOCALES=1}
+# By default, HomeSetup will export all settings.
+export HHS_EXPORT_SETTINGS=${HHS_EXPORT_SETTINGS=1}
+# By default, HomeSetup will restore last used directory.
+export HHS_RESTORE_LAST_DIR=${HHS_RESTORE_LAST_DIR=1}
+# By default, homeSetup will disable brew's auto-update.
+export HOMEBREW_NO_AUTO_UPDATE=${HOMEBREW_NO_AUTO_UPDATE=1}
 
 # Set system locale (defaults)
 if [[ -z ${HHS_SET_LOCALES} ]]; then
@@ -70,15 +73,15 @@ else
   HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
   HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
   export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"
-  if command -v 'apt-get' &> /dev/null; then
+  if command -v 'apt-get' &>/dev/null; then
     export HHS_MY_OS_PACKMAN='apt-get'
-  elif command -v 'dnf' &> /dev/null; then
+  elif command -v 'dnf' &>/dev/null; then
     export HHS_MY_OS_PACKMAN='dnf'
-  elif command -v 'yum' &> /dev/null; then
+  elif command -v 'yum' &>/dev/null; then
     export HHS_MY_OS_PACKMAN='yum'
-  elif command -v 'apt' &> /dev/null; then
+  elif command -v 'apt' &>/dev/null; then
     export HHS_MY_OS_PACKMAN='apt'
-  elif command -v 'apk' &> /dev/null; then
+  elif command -v 'apk' &>/dev/null; then
     export HHS_MY_OS_PACKMAN='apk'
   else
     export HHS_MY_OS_PACKMAN=''
@@ -106,14 +109,6 @@ export HISTTIMEFORMAT="[${USER}, %F %T]  "
 # HomeSetup variables
 
 export HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
-
-# Current OS and Terminal
-
-# By default, HomeSetup will export all settings. It can be overwritten by the .env file.
-export HHS_EXPORT_SETTINGS=${HHS_EXPORT_SETTINGS:-1}
-# By default, HomeSetup will restore last used directory.
-export HHS_RESTORE_LAST_DIR=${HHS_RESTORE_LAST_DIR:-1}
-
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 export HHS_HAS_COLIMA=$(__hhs_has colima && colima status &>/dev/null && echo '1')
 export HHS_MOTD="$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
@@ -158,8 +153,6 @@ DEVELOPER_TOOLS=(
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
-  # By default, homeSetup will disable brew's auto-update. It can be overwritten by the .env file.
-  export HOMEBREW_NO_AUTO_UPDATE=${HOMEBREW_NO_AUTO_UPDATE:-1}
 fi
 
 export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}

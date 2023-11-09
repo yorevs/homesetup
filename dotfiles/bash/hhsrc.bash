@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=2015,1090
+# shellcheck disable=2015,1090,2155
 
 #  Script: hhsrc.bash
 # Purpose: This file is user specific file that gets loaded each time user creates a new
@@ -41,7 +41,7 @@ export HHS_MY_SHELL="${SHELL//\/bin\//}"
 export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
 if [[ -s "${HHS_PREFIX_FILE}" ]]; then
-  prefix="$(grep . "${HHS_PREFIX_FILE}")"
+  prefix="$(grep -m 1 . "${HHS_PREFIX_FILE}")"
   [[ -n "${prefix}" && -d "${prefix}" ]] && export HHS_PREFIX="${prefix}"
 else
   unset HHS_PREFIX
@@ -50,8 +50,7 @@ fi
 # Defined by the installation.
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 export HHS_DIR="${HOME}/.hhs"
-# shellcheck disable=SC2155
-export HHS_VERSION="$(head -1 "${HHS_HOME}"/.VERSION)"
+export HHS_VERSION="$(grep -m 1 . "${HHS_HOME}"/.VERSION)"
 
 # Overrideable.
 export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
@@ -89,11 +88,11 @@ CUSTOM_DOTFILES=(
    'functions'
 )
 
-# Source common functions for bootstrap
+# Source the bash common functions.
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 # Re-create the HomeSetup log file
-echo -e "HomeSetup load started: $(date)\n" > "${HHS_LOG_FILE}"
+echo -e "HomeSetup is starting: $(date)\n" > "${HHS_LOG_FILE}"
 
 if ! [[ -s "${HOME}"/.inputrc ]]; then
   __hhs_log "WARN" "'.inputrc' file was copied because it was not found at: ${HOME}"
@@ -103,6 +102,12 @@ fi
 if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
   __hhs_log "WARN" "'.aliasdef' file was copied because it was not found at: ${HHS_DIR}"
   \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
+fi
+
+# Load initialization settings
+if [[ -s "${HHS_SETUP_FILE}" ]]; then
+  source "${HHS_SETUP_FILE}"
+  __hhs_log "INFO" "Settings loaded: ${HHS_SETUP_FILE}"
 fi
 
 # Load all HomeSetup dotfiles.
