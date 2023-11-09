@@ -190,10 +190,10 @@ case "${HHS_MY_OS}" in
     ;;
 esac
 
-# Add `$HHS_DIR/bin` to the system `$PATH`
+# Add `$HHS_DIR/bin` to the system `$PATH`.
 __hhs_paths -q -a "${HHS_DIR}/bin"
 
-# Add custom paths to the system `$PATH`
+# Add custom paths to the system `$PATH`.
 if [[ -f "${HHS_DIR}/.path" ]]; then
   NEW_PATHS="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
   NEW_PATHS=${NEW_PATHS//'\n'/':'/}
@@ -204,9 +204,9 @@ fi
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<< "${PATH}")
 export PATH
 
-# Load system preferences
+# Load system preferences.
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
-  # Update the settings configuration
+  # Update the settings configuration.
   echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" > "${HHS_SETMAN_CONFIG_FILE}"
   tmp_file="$(mktemp)"
   if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
@@ -216,7 +216,7 @@ if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   fi
 fi
 
-# Check for HomeSetup updates
+# Check for HomeSetup updates.
 if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
   __hhs_log "INFO" "Home setup is checking for updates ..."
   if __hhs_is_reachable 'github.com'; then
@@ -228,5 +228,10 @@ fi
 
 echo -e "\nHomeSetup initialization complete: $(date)\n" >> "${HHS_LOG_FILE}"
 
-# Print HomeSetup MOTD
+# shellcheck disable=2164
+if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
+  cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
+fi
+
+# Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"

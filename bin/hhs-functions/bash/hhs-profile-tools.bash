@@ -64,7 +64,7 @@ if __hhs_has jenv; then
     if eval "$(jenv init -)" &>/dev/null; then
       echo "${GREEN}[  OK  ] ${NC}"
     else
-      echo "${RED}[ FAIL ] => JENV is not installed ! ${NC}" && return 1
+      echo "${RED}[ FAIL ] => JENV could not be started ! ${NC}" && return 1
     fi
 
     return 0

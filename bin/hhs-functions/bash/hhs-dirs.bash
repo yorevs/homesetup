@@ -45,6 +45,7 @@ function __hhs_change_dir() {
   # shellcheck disable=SC2086
   \cd ${flags} "${path}" || return 1
   \pushd -n "$(pwd)" &>/dev/null
+  \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
 
   return 0
 }
@@ -148,7 +149,7 @@ function __hhs_save_dir() {
     echo "    -r : Remove saved dir."
     echo "    -c : Cleanup directory paths that does not exist."
   else
-  
+
     dir_alias=$(echo -en "${2:-$1}" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
     dir_alias=$(tr '[:punct:]' '_' <<<"${dir_alias}")
 
@@ -271,9 +272,9 @@ function __hhs_load_dir() {
         __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\""
         ;;
       esac
-      
+
       [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
-      
+
       if [[ ${ret_val} -eq 0 && -d "${dir}" ]]; then
         pushd "${dir}" &>/dev/null || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\""
@@ -332,9 +333,9 @@ function __hhs_godir() {
       fi
     fi
   fi
-  
+
   [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
-  
+
   # If a valid directory was selected, change to it.
   if [[ ${ret_val} -eq 0 && -n "${dir}" && -d "${dir}" ]]; then
     if pushd "${dir}" &>/dev/null; then
@@ -345,7 +346,7 @@ function __hhs_godir() {
       ret_val=1
     fi
   fi
-  
+
   echo ''
 
   return ${ret_val}
@@ -354,9 +355,9 @@ function __hhs_godir() {
 # @function: Create all folders using a slash or dot notation path and immediately change into it.
 # @param $1 [Req] : The directory tree to create, using slash (/) or dot (.) notation path.
 function __hhs_mkcd() {
-  
+
   local ret_val=1
-  
+
   if [[ $# -lt 1 && "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
     echo ''
