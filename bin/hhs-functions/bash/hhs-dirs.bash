@@ -312,7 +312,7 @@ function __hhs_godir() {
     fi
     search_name="$(basename "${2:-$1}")"
     pushd "${search_path%/}" &>/dev/null || echo
-    IFS=$'\n' read -d '' -r -a found_dirs <<<"$(find -L . -type d -iname "*""${search_name}" 2>/dev/null)"
+    read -d '' -r -a found_dirs < <(find -L . -type d -iname "*""${search_name}" 2>/dev/null)
     popd &>/dev/null || echo
     len=${#found_dirs[@]}
     # If no directory is found under the specified name
@@ -338,7 +338,7 @@ function __hhs_godir() {
 
   # If a valid directory was selected, change to it.
   if [[ ${ret_val} -eq 0 && -n "${dir}" && -d "${dir}" ]]; then
-    if pushd "${dir}" &>/dev/null; then
+    if __hhs_change_dir "${dir}" &>/dev/null; then
       echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
       ret_val=0
     else

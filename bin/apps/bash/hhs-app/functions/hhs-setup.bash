@@ -13,19 +13,7 @@
 # Current hhs-setup version
 VERSION="1.0.0"
 
-USAGE="
-Usage: ${APP_NAME}
-
- _   _                      ____       _
-| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
-| |_| |/ _ \\| '_ \` _ \\ / _ \\___ \\ / _ \ __| | | | '_ \\
-|  _  | (_) | | | | | |  __/___) |  __/ |_| |_| | |_) |
-|_| |_|\\___/|_| |_| |_|\\___|____/ \\___|\\__|\\__,_| .__/
-                                                |_|
-
-  HomeSetup Initialization Setup.
-  >> Settings version v${VERSION}.
-"
+USAGE="Usage: ${APP_NAME} setup [-restore]"
 
 # Default HomeSetup initialization settings.
 DEFAULT_SETTINGS="
@@ -55,7 +43,9 @@ function setup() {
 
   local file_ver aux name value minput_file sel_settings=() all_items=()
 
-  [[ "$1" == '-h' || "$1" == '--help' ]] && echo "${USAGE}" && quit 0
+  [[ "$1" == 'help' ]] && echo "${USAGE}" && quit 0
+  [[ "$1" == 'version' ]] && echo "v${VERSION}" && quit 0
+  [[ "$1" == '-restore' ]] && echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}" && quit 0
 
   # Create the settings file if it does not exist or it's empty.
   [[ -s "${HHS_SETUP_FILE}" ]] || echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}"
