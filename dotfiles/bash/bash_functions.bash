@@ -39,7 +39,7 @@ unalias hhs &> /dev/null
 # @param $* [Opt] : All parameters are passed to hhs.bash
 function __hhs() {
   if [[ -z "$1" ]]; then
-    cd "${HHS_HOME}" || return 1
+    __hhs_change_dir "${HHS_HOME}" || return 1
   else
     hhs.bash "${@}" || return 1
   fi

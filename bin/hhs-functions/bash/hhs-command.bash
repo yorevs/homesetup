@@ -35,8 +35,9 @@ function __hhs_command() {
     echo '  Notes: '
     echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
-    
+
     IFS=$'\n' read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
+    IFS="${OLDIFS}"
 
     case "$1" in
     -e | --edit)
@@ -58,6 +59,7 @@ function __hhs_command() {
       sort -u "${HHS_CMD_FILE}" -o "${HHS_CMD_FILE}"
       echo "${GREEN}Command stored: ${WHITE}\"${cmd_name}\" as ${HHS_HIGHLIGHT_COLOR}${cmd_expr} ${NC}"
       ret_val=0
+      IFS="${OLDIFS}"
       ;;
     -r | --remove)
       shift
