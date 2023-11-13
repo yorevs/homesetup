@@ -14,15 +14,15 @@
 # Complete command helper
 __hhs_complete() {
 
-  local all cur=$1 index suggestions=()
+  local all cur=$1 depth suggestions=()
 
   [[ ${#COMP_WORDS[@]} -gt $cur ]] && return
 
-  index=$((cur - 1))
+  depth=$((cur - 1))
   all=(${*})
   all=("${all[*]:1}")
 
-  read -r -d '' -a suggestions < <(compgen -W "${all[@]}" -- "${COMP_WORDS[$index]}")
+  read -r -d '' -a suggestions < <(compgen -W "${all[@]}" -- "${COMP_WORDS[$depth]}")
 
   if [[ ${#COMP_WORDS[@]} -eq $cur ]]; then
     COMPREPLY=("${suggestions[@]}")
@@ -108,33 +108,24 @@ __hhs_comp_punch() {
 # Bash-Complete the function for: __hhs_godir
 __hhs_comp_godir() {
 
-  local dir base suggestions=()
+  local dir name depth suggestions=()
 
-  dir="${COMP_WORDS[1]}"
-  dir=${dir:-*}
+  if [[ ${#COMP_WORDS[@]} -lt 2 ]]; then
+    read -r -d '' -a suggestions < <(find -L * -maxdepth 0 -type d 2>/dev/null)
+    __hhs_complete 2 "${suggestions[@]}"
+    return
+  fi
+
+  dir="${COMP_WORDS[1]%/*}"
+  name="${COMP_WORDS[1]##*/}"
+  [[ -d "${dir}" ]] || dir="*"
+  [[ 0 -gt $depth ]] && depth=0
 
   echo -e ' .....\b\b\b\b\b\b\c'
-  read -r -d '' -a suggestions < <(find -L ${dir%/} -maxdepth 0 -type d 2>/dev/null)
+  read -r -d '' -a suggestions < <(find -L ${dir} -type d -iname "${name}*" 2>/dev/null)
   echo -e '      \b\b\b\b\b\b\c'
 
-  [[ ${#suggestions[@]} -lt 1 ]] && echo "${suggestions[*]}" >> test.log && return
-
   __hhs_complete 2 "${suggestions[@]}"
-}
-
-# Bash-Complete the function for: __hhs_history
-__hhs_comp_hist() {
-
-  local suggestions=()
-
-  [ "${#COMP_WORDS[@]}" != "2" ] && return 0
-
-  # Let the user know about the search
-  echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-  IFS=$'\n' suggestions=($(hist "${COMP_WORDS[1]}" | cut -c30-))
-  # Erase the searching text after search is done
-  echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-  COMPREPLY=("${suggestions[@]}")
 }
 
 # Complete the app hhs
@@ -145,15 +136,13 @@ __hhs_comp_hhs() {
   [[ "${#COMP_WORDS[@]}" -gt 3 ]] && return 0
 
   if [[ ${#COMP_WORDS[@]} -eq 2 ]]; then
-    # Let the user know about the search
-    echo -e " (Searching, please wait...)\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-    suggestions=($(__hhs list opts))
-    # Erase the searching text after search is done
-    echo -e "                            \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\c"
-    COMPREPLY=($(compgen -W "${suggestions[*]}" -- "${COMP_WORDS[1]}"))
+    IFS=$' ' read -r -d '' -a suggestions < <(__hhs list -flat)
+    __hhs_complete 2 "${suggestions[@]}"
   elif [[ ${#COMP_WORDS[@]} -eq 3 ]]; then
-    COMPREPLY=($(compgen -W "help version execute" -- "${COMP_WORDS[2]}"))
+    suggestions=('help' 'version' 'execute')
+    __hhs_complete 3 "${suggestions[@]}"
   fi
+  IFS="${RESET_IFS}"
 }
 
 complete -F __hhs_comp_godir godir
@@ -163,5 +152,4 @@ complete -F __hhs_comp_aliases aa
 complete -F __hhs_comp_cmd cmd
 complete -F __hhs_comp_punch punch
 complete -F __hhs_comp_envs envs
-complete -F __hhs_comp_hist hist
 complete -F __hhs_comp_hhs hhs

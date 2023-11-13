@@ -276,7 +276,7 @@ function __hhs_load_dir() {
       [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
 
       if [[ ${ret_val} -eq 0 && -d "${dir}" ]]; then
-        pushd "${dir}" &>/dev/null || return 1
+        __hhs_change_dir "${dir}" &>/dev/null || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\""
         ret_val=0
       elif [[ -n "${dir}" && ! -d "${dir}" ]]; then
