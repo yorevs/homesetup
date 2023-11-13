@@ -64,6 +64,7 @@ function funcs() {
   echo "${YELLOW}-=- Available HomeSetup v${HHS_VERSION} functions -=-"
   echo ' '
 
+  IFS=$'\n'
   if [[ ! -f "${cache_file}" ]]; then
     search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
   else
@@ -79,6 +80,7 @@ function funcs() {
     echo -e "${HHS_FUNCTIONS[${idx}]}" >>"${cache_file}"
     echo ''
   done
+  IFS="${OLDIFS}"
 
   quit 0 ' '
 }
