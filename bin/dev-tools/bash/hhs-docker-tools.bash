@@ -105,7 +105,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
     else
-      IFS=$'\n' read -d '' -r -a volumes <<<"$(docker volume ls -qf dangling=true)"
+      read -d '' -r -a volumes <<<"$(docker volume ls -qf dangling=true)"
       for container in "${volumes[@]}"; do
         echo -en "Removing dangling docker volume: ${container} ... "
         if docker volume rm "${container}" &>/dev/null; then

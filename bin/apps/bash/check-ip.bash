@@ -193,7 +193,9 @@ parse_args() {
   done
 
   IP_ADDRESS="${1}"
-  IFS='.' read -r -a IP_OCTETS <<<"${IP_ADDRESS}"
+  IFS=$'.'
+  read -r -a IP_OCTETS <<<"${IP_ADDRESS}"
+  IFS="${OLDIFS}"
 }
 
 # @purpose: Program entry point.

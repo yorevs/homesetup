@@ -56,7 +56,7 @@ if __hhs_has "git"; then
         sleep 1
         echo -e "\033[1J\033[H"
       fi
-      
+
       while read -r branch; do
         branch_name=${branch//\* /}
         all_branches+=("${branch_name}")
@@ -209,12 +209,12 @@ if __hhs_has "git"; then
       echo '      repository          : The remote repository to pull from. Default is \"origin\".'
       return 1
     fi
-    
+
     cur_pwd=$(pwd)
     # Find all git repositories
     git_repos_path="${1:-.}"
     [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
-    IFS=$'\n' read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
+    read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
     repository="${1:-origin}"
@@ -222,7 +222,7 @@ if __hhs_has "git"; then
     mchoose_file=$(mktemp)
     if __hhs_mchoose -c "${mchoose_file}" "Choose the projects to pull from. Available Repositories (${#all_repos[@]}):" "${all_repos[@]}"
     then
-      sel_repos=($(grep . "${mchoose_file}"))
+      read -r -d '' -a sel_repos < <(grep . "${mchoose_file}")
     else
       return 1
     fi
@@ -285,7 +285,7 @@ if __hhs_has "git"; then
     echo ''
     echo "${GREEN}Done ! ${NC}"
     echo ''
-    
+
     \cd "${cur_pwd}" || return 1
 
     return 0

@@ -135,8 +135,9 @@ __hhs_comp_hhs() {
 
   [[ "${#COMP_WORDS[@]}" -gt 3 ]] && return 0
 
+  IFS=$' '
   if [[ ${#COMP_WORDS[@]} -eq 2 ]]; then
-    IFS=$' ' read -r -d '' -a suggestions < <(__hhs list -flat)
+    read -r -d '' -a suggestions < <(__hhs list -flat)
     __hhs_complete 2 "${suggestions[@]}"
   elif [[ ${#COMP_WORDS[@]} -eq 3 ]]; then
     suggestions=('help' 'version' 'execute')

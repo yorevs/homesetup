@@ -66,10 +66,12 @@ ALL_DOTFILES=()
 # Uninstallation type
 UNINSTALL_TYPE='normal'
 
-# Find all dotfiles used by HomeSetup according to the current shell type
-while IFS='' read -r dotfile; do
+# Find all dotfiles used by HomeSetup according to the current shell type.
+IFS=''
+while read -r dotfile; do
   ALL_DOTFILES+=("${dotfile}")
 done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basename {} \;)
+IFS="${OLDIFS}"
 
 # Purpose: Quit the program and exhibits an exit message if specified
 # @param $1 [Req] : The exit return code.

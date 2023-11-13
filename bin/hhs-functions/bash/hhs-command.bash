@@ -19,6 +19,7 @@ function __hhs_command() {
   HHS_CMD_FILE=${HHS_CMD_FILE:-$HHS_DIR/.cmd_file}
 
   local cmd_name cmd_alias cmd_expr pad pad_len mselect_file all_cmds=() index=1 sel_cmd ret_val=1
+  local columns col_offset=26
 
   touch "${HHS_CMD_FILE}"
 
@@ -36,7 +37,8 @@ function __hhs_command() {
     echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
 
-    IFS=$'\n' read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
+    IFS=$'\n'
+    read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
     IFS="${OLDIFS}"
 
     case "$1" in
@@ -53,13 +55,11 @@ function __hhs_command() {
         __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"${cmd_name}\"\t\"${cmd_expr}\"${NC}"
       fi
       ised -e "s#(^Command ${cmd_name}: .*)##g" -e '/^\s*$/d' "${HHS_CMD_FILE}"
-      IFS=$'\n' read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
       all_cmds+=("Command ${cmd_name}: ${cmd_expr}")
       printf "%s\n" "${all_cmds[@]}" >"${HHS_CMD_FILE}"
       sort -u "${HHS_CMD_FILE}" -o "${HHS_CMD_FILE}"
       echo "${GREEN}Command stored: ${WHITE}\"${cmd_name}\" as ${HHS_HIGHLIGHT_COLOR}${cmd_expr} ${NC}"
       ret_val=0
-      IFS="${OLDIFS}"
       ;;
     -r | --remove)
       shift
@@ -85,6 +85,7 @@ function __hhs_command() {
       if [[ ${#all_cmds[@]} -ne 0 ]]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=35
+        columns="$(($(tput cols) - pad_len - col_offset))"
         echo ' '
         echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
         echo ' '
@@ -95,7 +96,9 @@ function __hhs_command() {
           cmd_expr="$(echo -en "${next}" | awk -F ': ' '{ print $2 }')"
           echo -n "${HHS_HIGHLIGHT_COLOR}${cmd_name}${WHITE}"
           printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
-          echo "${GREEN} is stored as: ${WHITE}'${cmd_expr}'"
+          echo -n "${GREEN} is stored as: ${WHITE}'${cmd_expr:0:${columns}}'"
+          [[ ${#cmd_expr} -ge ${columns} ]] && echo -n "..."
+          echo -e "${NC}"
           index=$((index + 1))
         done
         IFS="${OLDIFS}"
@@ -109,8 +112,7 @@ function __hhs_command() {
       if [[ ${#all_cmds[@]} -ne 0 ]]; then
         clear
         mselect_file=$(mktemp)
-        if __hhs_mselect "${mselect_file}" "Available commands (${#all_cmds[@]}) stored:" "${all_cmds[@]}"
-        then
+        if __hhs_mselect "${mselect_file}" "Available commands (${#all_cmds[@]}) stored:" "${all_cmds[@]}"; then
           sel_cmd=$(grep . "${mselect_file}")
           cmd_expr="${sel_cmd##*: }"
           [[ -n "${cmd_expr}" ]] && echo "#> ${cmd_expr}" && eval "${cmd_expr}" && ret_val=$?

@@ -47,7 +47,6 @@ function __hhs_paths() {
       echo ' '
       echo "${YELLOW}Listing all PATH entries:${NC}"
       echo ' '
-      IFS=$'\n'
       for path in $(echo -e "${PATH//:/\\n}"); do
         path="${path:0:$columns}"
         [[ -f "${HHS_PATHS_FILE}" ]] && custom="$(grep ^"$path"$ "${HHS_PATHS_FILE}")"
@@ -75,7 +74,6 @@ function __hhs_paths() {
         fi
         echo -e "${NC}"
       done
-      IFS="${OLDIFS}"
       echo -e "${NC}"
     elif [[ "-e" == "$1" ]]; then
       __hhs_edit "${HHS_PATHS_FILE}"

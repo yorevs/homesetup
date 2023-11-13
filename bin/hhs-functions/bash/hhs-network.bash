@@ -31,23 +31,19 @@ if __hhs_has ifconfig; then
       echo ' '
       echo "${YELLOW}Listing all network interfaces:${NC}"
       echo ' '
-      IFS=$'\n'
       for next in ${if_all}; do
         if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
         if_mtu=$(awk '{ print $4 }' <<<"${next}")
         if_flags=$(awk '{ print $2 }' <<<"${next}")
         printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU=%-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
       done
-      IFS="${OLDIFS}"
       echo ' '
       return 0
     elif [[ -n "${if_all}" && -z "${1}" ]]; then
-      IFS=$'\n'
       for next in ${if_all}; do
         if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
         if_list="${if_name} ${if_list}"
       done
-      IFS="${OLDIFS}"
       echo "${if_list}"
     fi
 

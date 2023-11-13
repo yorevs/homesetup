@@ -87,9 +87,8 @@ function __hhs_envs() {
       filters=${filters// /\|}
       [[ -z "${filters}" ]] && filters=".*"
       echo ' '
-      echo "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:${NC}"
+      echo -e "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:${NC}"
       echo ' '
-      IFS=$'\n'
       shopt -s nocasematch
       for v in $(env | sort); do
         name=${v%%=*}
@@ -100,11 +99,10 @@ function __hhs_envs() {
           echo -en " ${GREEN}=> ${NC}"
           echo -n "${value:0:${columns}}"
           [[ ${#value} -ge ${columns} ]] && echo -n "..."
-          echo "${NC}"
+          echo -e "${NC}"
         fi
       done
       shopt -u nocasematch
-      IFS="$OLDIFS"
       echo ' '
     fi
   fi
@@ -137,9 +135,7 @@ function __hhs_defs() {
       echo ' '
       echo "${YELLOW}Listing all alias definitions matching [ ${filters} ]:"
       echo ' '
-      IFS=$'\n'
       shopt -s nocasematch
-      # shellcheck disable=SC2013
       for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
         name=${v%%=*}
         name=${name// /}
@@ -155,7 +151,6 @@ function __hhs_defs() {
         fi
       done
       shopt -u nocasematch
-      IFS="$OLDIFS"
       echo ' '
     fi
   fi
@@ -171,7 +166,7 @@ function __hhs_shell_select() {
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
-    IFS=$'\n' read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
+    read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
     # Add the brew bash and zsh as options
     [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
     [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
@@ -192,7 +187,6 @@ function __hhs_shell_select() {
         fi
       fi
     fi
-    IFS="$OLDIFS"
     echo -e "${NC}"
   fi
 

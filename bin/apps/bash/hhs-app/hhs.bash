@@ -153,8 +153,8 @@ function register_plugins() {
 
   local f_name plg_funcs=() plg_name
 
-  while IFS=$'\n' read -r plugin; do
-    while IFS=$'\n' read -r fnc; do
+  while read -r plugin; do
+    while read -r fnc; do
       f_name="${fnc##function }"
       f_name="${f_name%\(\) \{}"
       plg_funcs+=("${f_name}")
@@ -167,7 +167,6 @@ function register_plugins() {
       PLUGINS_LIST+=("${plugin}")
     fi
   done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
-  IFS="${OLDIFS}"
 
   return 0
 }
@@ -177,9 +176,9 @@ function register_functions() {
 
   local f_name
 
-  while IFS=$'\n' read -r fnc_file; do
+  while read -r fnc_file; do
     source "${fnc_file}"
-    while IFS=$'\n' read -r fnc; do
+    while read -r fnc; do
       f_name="${fnc##function }"
       f_name="${f_name%\(\) \{}"
       HHS_APP_FUNCTIONS+=("${f_name}")
@@ -187,7 +186,6 @@ function register_functions() {
     # Register the functions to be unset when program quits
     UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
   done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
-  IFS="${OLDIFS}"
 
   return 0
 }

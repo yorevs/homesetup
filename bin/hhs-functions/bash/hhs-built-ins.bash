@@ -29,15 +29,18 @@ function __hhs_random() {
 # @function: Convert string into it's decimal ASCII representation.
 # @param $1 [Req] : The string to convert.
 function __hhs_ascof() {
-  
+
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <character>"
     return 1
   fi
-  echo "${GREEN}Str:${NC} ${*}"
-  echo -n "${GREEN}Hex:${NC}"
-  echo -n "${@}" | od -A n -t d1 | head -n 1 | sed 's/ \{2,\}/ /g'
-  
+  echo -en "\n${GREEN}Dec:${NC}"
+  echo -en "${@}" | od -An -t uC | head -n 1 | sed 's/^ */ /g'
+  echo -en "${GREEN}Hex:${NC}"
+  echo -en "${@}" | od -An -t xC | head -n 1 | sed 's/^ */ /g'
+  echo -en "${GREEN}Str:${NC}"
+  echo -e " ${*}\n"
+
   return $?
 }
 
@@ -46,7 +49,7 @@ function __hhs_ascof() {
 function __hhs_utoh() {
 
   local result converted uni ret_val=1
-  
+
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <4d-unicode>"
     echo ''
@@ -77,9 +80,9 @@ function __hhs_utoh() {
 # @function: Open a file or URL with the default program.
 # @param $1 [Req] : The url or filename to open.
 function __hhs_open() {
-  
+
   local filename="$1"
-  
+
   if __hhs_has open && \open "${filename}"; then
     return $?
   elif __hhs_has xdg-open && \xdg-open "${filename}"; then
@@ -96,14 +99,14 @@ function __hhs_open() {
 function __hhs_edit() {
 
   local filename="$1" editor="${HHS_DEFAULT_EDITOR}"
-  
+
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <file_path>"
     return 1
   else
     [[ -s "${filename}" ]] || touch "${filename}" >/dev/null 2>&1
     [[ -s "${filename}" ]] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"${filename}\""
-    
+
     if [[ -n "${editor}" ]] && __hhs_has "${editor}" && ${editor} "${filename}"; then
       return $?
     elif __hhs_has gedit && \gedit "${filename}"; then

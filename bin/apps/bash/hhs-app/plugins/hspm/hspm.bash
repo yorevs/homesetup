@@ -276,9 +276,11 @@ function recover_packages() {
 
   if [[ -z "${RECOVER_TOOLS}" ]]; then
     echo -e "recovered [${HHS_MY_OS}/${HHS_MY_OS_RELEASE}] packages ... "
-    while IFS='' read -r package; do
+    IFS=''
+    while read -r package; do
       all_packages+=("${package}")
     done < <(grep "^${os}:" "${BREADCRUMB_FILE}")
+    IFS="${OLDIFS}"
   else
     echo -e "development tools ... "
     # shellcheck disable=SC2206

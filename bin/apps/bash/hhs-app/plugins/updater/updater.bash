@@ -95,8 +95,10 @@ function execute() {
 
 # @purpose: Check whether the repository version is greater than installed version.
 is_greater() {
-  IFS='.' read -r -a curr_versions <<<"${HHS_VERSION}"
-  IFS='.' read -r -a repo_versions <<<"${repo_ver}"
+  IFS='.'
+  read -r -a curr_versions <<<"${HHS_VERSION}"
+  read -r -a repo_versions <<<"${repo_ver}"
+  IFS="${OLDIFS}"
   for idx in "${!repo_versions[@]}"; do
     if [[ ${repo_versions[idx]} -gt ${curr_versions[idx]} ]]; then
       echo ''

@@ -83,7 +83,7 @@ function __hhs_dirs() {
     return $?
   fi
 
-  IFS=$'\n' read -r -d '\n' -a results <<<"$(dirs -p -l | sort | uniq)"
+  read -r -d '\n' -a results <<<"$(dirs -p -l | sort | uniq)"
   len=${#results[@]}
 
   if [[ ${len} -eq 0 ]]; then
@@ -164,7 +164,7 @@ function __hhs_save_dir() {
         ret_val=0
       fi
     elif [[ "$1" == "-c" ]]; then
-      IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+      read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
       for idx in $(seq 1 "${#all_dirs[@]}"); do
         dir=${all_dirs[idx-1]}
         dir_alias=${dir%%=*}
@@ -184,7 +184,7 @@ function __hhs_save_dir() {
       fi
       # Remove the old saved directory aliased
       ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
-      IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+      read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
       all_dirs+=("${dir_alias}=${dir}")
       printf "%s\n" "${all_dirs[@]}" >"${HHS_SAVED_DIRS_FILE}"
       sort -u "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
@@ -220,7 +220,7 @@ function __hhs_load_dir() {
     echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
 
-    IFS=$'\n' read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+    read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
 
     if [ ${#all_dirs[@]} -ne 0 ]; then
 
@@ -231,7 +231,6 @@ function __hhs_load_dir() {
         echo ' '
         echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
         echo ' '
-        IFS=$'\n'
         for next in "${all_dirs[@]}"; do
           dir_alias=$(echo -en "${next}" | awk -F '=' '{ print $1 }')
           dir=$(echo -en "${next}" | awk -F '=' '{ print $2 }')
@@ -239,7 +238,6 @@ function __hhs_load_dir() {
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "${pad}"
           echo -e "${GREEN} points to ${WHITE}'${dir}'"
         done
-        IFS="${OLDIFS}"
         echo "${NC}"
         ;;
       $'')
@@ -368,7 +366,7 @@ function __hhs_mkcd() {
     dir_tree="${dir_tree//-//}"
     \mkdir -p "${dir_tree}" || return 1
     last_pwd=$(pwd)
-    IFS='/'
+    IFS=$'/'
     for dir in ${dir_tree}; do
       cd "${dir}" || return 1
     done

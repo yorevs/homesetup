@@ -49,7 +49,6 @@ function __hhs_sysinfo() {
     fi
     echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
 
-    IFS=$'\n'
     for next in $(who); do
       echo -e "  ${next}"
     done
@@ -65,7 +64,6 @@ function __hhs_sysinfo() {
     fi
 
     echo "${NC}"
-    IFS=${OLDIFS}
   fi
 
   return 0
@@ -120,7 +118,6 @@ function __hhs_process_list() {
       echo ''
       [[ -z "$quiet" ]] && printf "${WHITE}%5s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
       [[ -z "$quiet" ]] && printf "%-154s\n\n" "${divider}"
-      IFS=$'\n'
       for next in ${all_pids}; do
         uid=$(awk '{ print $1 }' <<<"${next}")
         pid=$(awk '{ print $2 }' <<<"${next}")
@@ -152,7 +149,6 @@ function __hhs_process_list() {
           fi
         fi
       done
-      IFS="${OLDIFS}"
     else
       echo -e "\n${YELLOW}No active PIDs for process named: \"$1\""
     fi
@@ -203,7 +199,6 @@ function __hhs_partitions() {
   else
     all_parts="$(df -H | tail -n +2)"
     (
-      IFS=$'\n'
       echo "${WHITE}"
       printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' 'Size' 'Avail' 'Used' 'Capacity' 'Mounted-ON'
       echo -e "----------------------------------------------------------------${HHS_HIGHLIGHT_COLOR}"

@@ -47,9 +47,11 @@ function execute() {
 
   # Find all dotfiles
   dotfiles+=()
-  while IFS='' read -r dotfile; do
+  IFS=''
+  while read -r dotfile; do
     [[ "${dotfile}" != *.last_update ]] && dotfiles+=("${dotfile}")
   done < <(find "${HHS_DIR}" -maxdepth 1 -type f -name ".*" -exec basename {} \;)
+  IFS="${OLDIFS}"
 
   echo ''
   pushd "${HHS_DIR}" &>/dev/null || exit 1

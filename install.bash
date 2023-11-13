@@ -362,26 +362,26 @@ Usage: $APP_NAME [OPTIONS] <args>
       install_dotfiles
       compatibility_check
       configure_python
-      activate_dotfiles
       ;;
     repair)
       check_required_tools
       install_dotfiles
       compatibility_check
       configure_python
-      activate_dotfiles
       ;;
     local)
       install_dotfiles
-      activate_dotfiles
       ;;
     *)
       quit 2 "Installation method \"${METHOD}\" is not valid!"
       ;;
     esac
+
+    # Finish installation and activate HomeSetup.
+    activate_dotfiles
   }
 
-  # Install brew for Darwin based system
+  # Install brew for Darwin based system.
   ensure_brew() {
     echo ''
     if ! has 'brew'; then
@@ -394,7 +394,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Install missing required tools
+  # Install missing required tools.
   install_missing_tools() {
 
     local os_type="$1"
@@ -446,7 +446,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     local dotfile is_streamed
 
     # Find all dotfiles used by HomeSetup according to the current shell type
-    while IFS='' read -r dotfile; do
+    while read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
     done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
@@ -492,14 +492,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
     [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
-    # Create alias and input definitions
+    # Create alias and input definitions.
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
 
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 
     echo ">>> Linked dotfiles:" >> "${INSTALL_LOG}"
-    # If `all' option is used, copy all files
+    # If `all' option is used, copy all files.
     if [[ "$OPT" == 'all' ]]; then
       # Copy all dotfiles
       # shellcheck disable=2048
@@ -514,7 +514,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
       done
-    # If `all' option is NOT used, prompt for confirmation
+    # If `all' option is NOT used, prompt for confirmation.
     else
       # Copy all dotfiles
       for next in ${ALL_DOTFILES[*]}; do
@@ -523,7 +523,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         [[ -z ${QUIET} && -z "${STREAMED}" ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [[ "${ANS}" != 'y' && "${ANS}" != 'Y' ]] && continue
         echo ''
-        # Backup existing dotfile into ${HHS_BACKUP_DIR}
+        # Backup existing dotfile into ${HHS_BACKUP_DIR}.
         [[ -s "${dotfile}" && ! -L "${dotfile}" ]] && \mv "${dotfile}" "${HHS_BACKUP_DIR}/$(basename "${dotfile}".orig)"
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
@@ -534,7 +534,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       done
     fi
 
-    # Remove old apps
+    # Remove old apps.
     echo -en "\n${WHITE}Removing old links ...${BLUE}"
     echo ">>> Removed old links:" >> "${INSTALL_LOG}"
     if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >> "${INSTALL_LOG}" 2>&1; then
@@ -543,7 +543,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
     fi
 
-    # Link apps into place
+    # Link apps into place.
     echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR} ..."
     echo ">>> Linked apps:" >> "${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
@@ -555,7 +555,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
     fi
 
-    # Link auto-completes into place
+    # Link auto-completes into place.
     echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR} ..."
     echo ">>> Linked auto-completes:" >> "${INSTALL_LOG}"
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
@@ -567,7 +567,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
     fi
 
-    # Copy HomeSetup fonts into place
+    # Copy HomeSetup fonts into place.
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR} ..."
     echo ">>> Copied HomeSetup fonts:" >> "${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
@@ -583,7 +583,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }
 
-  # Configure python and HHS python library
+  # Configure python and HHS python library.
   configure_python() {
     echo ''
     echo -n 'Detecting local python environment ...'
@@ -600,7 +600,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     install_hspylib "${PYTHON}"
   }
 
-  # Install HomeSetup python libraries
+  # Install HomeSetup python libraries.
   install_hspylib() {
     # Define python tools
     PYTHON="${1:-python3}"
