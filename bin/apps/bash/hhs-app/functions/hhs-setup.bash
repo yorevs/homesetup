@@ -37,7 +37,6 @@ export HHS_LOAD_COMPLETIONS=
 RE_PROPERTY="([a-zA-Z0-9 ]+=.*)"
 
 
-# shellcheck disable=SC1090
 # @purpose: Setup HomeSetup.
 function setup() {
 

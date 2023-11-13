@@ -104,7 +104,7 @@ function __hhs_envs() {
         fi
       done
       shopt -u nocasematch
-      IFS="$RESET_IFS"
+      IFS="$OLDIFS"
       echo ' '
     fi
   fi
@@ -155,7 +155,7 @@ function __hhs_defs() {
         fi
       done
       shopt -u nocasematch
-      IFS="$RESET_IFS"
+      IFS="$OLDIFS"
       echo ' '
     fi
   fi
@@ -192,7 +192,7 @@ function __hhs_shell_select() {
         fi
       fi
     fi
-    IFS="$RESET_IFS"
+    IFS="$OLDIFS"
     echo -e "${NC}"
   fi
 

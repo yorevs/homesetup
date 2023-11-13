@@ -38,7 +38,7 @@ if __hhs_has ifconfig; then
         if_flags=$(awk '{ print $2 }' <<<"${next}")
         printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU=%-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
       done
-      IFS="${RESET_IFS}"
+      IFS="${OLDIFS}"
       echo ' '
       return 0
     elif [[ -n "${if_all}" && -z "${1}" ]]; then
@@ -47,7 +47,7 @@ if __hhs_has ifconfig; then
         if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
         if_list="${if_name} ${if_list}"
       done
-      IFS="${RESET_IFS}"
+      IFS="${OLDIFS}"
       echo "${if_list}"
     fi
 
@@ -99,7 +99,7 @@ if __hhs_has ifconfig; then
               [[ -n "${if_ip}" ]] && echo "IP-${next}: ${if_ip}" && ret_val=0
             fi
           done
-          IFS="${RESET_IFS}"
+          IFS="${OLDIFS}"
         fi
       fi
 

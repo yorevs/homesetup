@@ -108,7 +108,7 @@ function __hhs_tools() {
     for app in ${tool_list}; do
       __hhs_toolcheck "$app"
     done
-    IFS="$RESET_IFS"
+    IFS="$OLDIFS"
 
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"

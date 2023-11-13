@@ -239,7 +239,7 @@ function __hhs_load_dir() {
           printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "${pad}"
           echo -e "${GREEN} points to ${WHITE}'${dir}'"
         done
-        IFS="${RESET_IFS}"
+        IFS="${OLDIFS}"
         echo "${NC}"
         ;;
       $'')
@@ -372,7 +372,7 @@ function __hhs_mkcd() {
     for dir in ${dir_tree}; do
       cd "${dir}" || return 1
     done
-    IFS="${RESET_IFS}"
+    IFS="${OLDIFS}"
     export OLDPWD=${last_pwd}
     echo "${GREEN}   Directories created: ${WHITE}${dir_tree}"
     echo "${GREEN}  Directory changed to: ${WHITE}\"$(pwd)\"${NC}"

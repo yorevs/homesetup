@@ -142,7 +142,7 @@ __hhs_comp_hhs() {
     suggestions=('help' 'version' 'execute')
     __hhs_complete 3 "${suggestions[@]}"
   fi
-  IFS="${RESET_IFS}"
+  IFS="${OLDIFS}"
 }
 
 complete -F __hhs_comp_godir godir

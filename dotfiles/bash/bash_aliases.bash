@@ -139,7 +139,7 @@ alias ps2='export PS1=$PS2_STYLE'
 # @alias: Reload HomeSetup
 alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
 # @alias: Clear and reset all cursor attributes and IFS
-alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${RESET_IFS}"'
+alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${OLDIFS}"'
 # @alias: Clear the screen and reset the terminal
 alias __hhs_reset="__hhs_clear; \reset"
 # @alias: Shortcut for hhs hspm plug-in

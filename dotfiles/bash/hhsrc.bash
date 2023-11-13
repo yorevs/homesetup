@@ -28,7 +28,7 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 # Do not change this formatting, it is required to proper reset IFS to it's defaults
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>
 export IFS=$'\n'
-export RESET_IFS=$'\n'
+export OLDIFS=$'\n'
 
 # Unset all aliases before setting them again.
 unalias -a

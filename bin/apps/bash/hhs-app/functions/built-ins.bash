@@ -10,42 +10,49 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
-
 # @purpose: List all HHS App Plug-ins and Functions.
 # @param $1 [opt] : Instead of a formatted as a list, flat the commands for bash completion.
 function list() {
 
+  local args=("${@}")
+
   if [[ "$1" == "help" ]]; then
-    echo "Usage: __hhs ${FUNCNAME[0]} [-flat]" && quit 0
-  elif [[ "$1" == "-flat" ]]; then
-    for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
-    for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
+    echo "Usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs]" && quit 0
+  elif [[ "${args[*]}" =~ -flat ]]; then
+    args=( "${args[@]/'-flat'}" )
+    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] &&
+      for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
+    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -funcs ]] &&
+      for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
     echo ''
     quit 0
   else
     echo ''
     echo "${YELLOW}HomeSetup application command list"
-    echo ''
-    echo "${ORANGE}-=- HHS Plugins -=-"
-    echo ''
-    for idx in "${!PLUGINS[@]}"; do
-      printf "${WHITE}%.2d. " "$((idx + 1))"
-      echo -e "Plug-In :: ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
-    done
-
-    echo ''
-    echo "${ORANGE}-=- HHS Functions -=-"
-    echo ''
-    for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
-      printf "${WHITE}%.2d. " "$((idx + 1))"
-      echo -e "Function :: ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
-    done
+    if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -plugins ]]; then
+      echo ''
+      echo "${ORANGE}-=- HHS Plugins -=-"
+      echo ''
+      for idx in "${!PLUGINS[@]}"; do
+        printf "${WHITE}%.2d. " "$((idx + 1))"
+        echo -e "Plug-In :: ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
+      done
+    fi
+    if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -funcs ]]; then
+      echo ''
+      echo "${ORANGE}-=- HHS Functions -=-"
+      echo ''
+      for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
+        printf "${WHITE}%.2d. " "$((idx + 1))"
+        echo -e "Function :: ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
+      done
+    fi
   fi
 
-  quit 0 ''
+  echo ''
+  quit 0
 }
 
-# shellcheck disable=SC2207
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
@@ -60,23 +67,22 @@ function funcs() {
   if [[ ! -f "${cache_file}" ]]; then
     search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
   else
-    IFS=$'\n' HHS_FUNCTIONS=($(grep . "${cache_file}"))
+    read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
   fi
 
   columns="$(tput cols)"
-    for idx in "${!HHS_FUNCTIONS[@]}"; do
-      printf "${YELLOW}%6d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
-      fn_name="${HHS_FUNCTIONS[${idx}]}"
-      echo -en "${fn_name:0:${columns}}${NC}"
-      [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
-      echo -e "${HHS_FUNCTIONS[${idx}]}" >>"${cache_file}"
-      echo ''
-    done
+  for idx in "${!HHS_FUNCTIONS[@]}"; do
+    printf "${YELLOW}%6d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
+    fn_name="${HHS_FUNCTIONS[${idx}]}"
+    echo -en "${fn_name:0:${columns}}${NC}"
+    [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
+    echo -e "${HHS_FUNCTIONS[${idx}]}" >>"${cache_file}"
+    echo ''
+  done
 
   quit 0 ' '
 }
 
-# shellcheck disable=2086
 # @purpose: Retrieve HomeSetup logs.
 # @param $1 [opt] : The hhs file to retrieve logs from.
 # @param $2 [opt] : The log level to retrieve.
@@ -91,7 +97,7 @@ function logs() {
     if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
       logfile="${HHS_LOG_DIR}/${1//.log/}.log"
       if [[ ! -f "${logfile}" ]]; then
-        logs=$(find ${HHS_LOG_DIR} -type f -name '*.log' -exec basename {} \;)
+        logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \;)
         echo -e "${RED}## Log file not found: ${logfile}."
         echo -e "${ORANGE}\nAvailable log files: \n\n${logs}\n"
         quit 1
@@ -105,7 +111,7 @@ function logs() {
     else
       [[ -n $2 ]] && logfile="${HHS_LOG_DIR}/${2//.log/}.log"
       if [[ -n "${logfile}" && ! -f "${logfile}" ]]; then
-        logs=$(find ${HHS_LOG_DIR} -type f -name '*.log' -exec basename {} \;)
+        logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \;)
         echo -e "${RED}## Log file not found: ${logfile}."
         echo -e "${ORANGE}\nAvailable log files: \n\n${logs}\n"
         quit 1
@@ -122,7 +128,7 @@ function logs() {
   echo ''
   echo -e "${ORANGE}Retrieving logs from ${logfile} (last ${HHS_LOG_LINES} lines) [level='${level}'] :${NC}"
   echo ''
-  __hhs_tailor -n ${HHS_LOG_LINES} "${logfile}" | grep "${log_level}"
+  __hhs_tailor -n "${HHS_LOG_LINES}" "${logfile}" | grep "${log_level}"
 
   quit 0
 }

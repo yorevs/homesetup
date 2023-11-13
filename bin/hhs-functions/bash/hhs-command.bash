@@ -96,7 +96,7 @@ function __hhs_command() {
           echo "${GREEN} is stored as: ${WHITE}'${cmd_expr}'"
           index=$((index + 1))
         done
-        IFS="${RESET_IFS}"
+        IFS="${OLDIFS}"
         echo -e "${NC}"
         ret_val=0
       else
