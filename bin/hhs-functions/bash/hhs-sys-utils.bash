@@ -29,7 +29,7 @@ function __hhs_sysinfo() {
     echo -e "\n${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
     __hhs_has "sw_vers" && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
-    echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
+    echo -e "  Up-Time...... : $(uptime | cut -d ',' -f1)"
     echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
     echo -e "\n${GREEN}Storage:"
