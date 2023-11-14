@@ -258,7 +258,7 @@ function __hhs_load_dir() {
             [[ -n "${dir}" ]] && ret_val=0
           fi
         else
-          echo "${YELLOW}No directories available yet !"
+          echo "${YELLOW}No directories available yet !${NC}"
         fi
         ;;
       [a-zA-Z0-9_]*)

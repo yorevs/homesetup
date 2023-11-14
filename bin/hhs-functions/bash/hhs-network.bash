@@ -18,20 +18,22 @@ if __hhs_has ifconfig; then
   # @function: Display a list of active network interfaces.
   function __hhs_active_ifaces() {
 
-    local if_all if_name if_flags if_mtu if_list
+    local if_all=() if_name if_flags if_mtu if_list
 
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [--info]"
+      echo "Usage: ${FUNCNAME[0]} [-flat]"
       return 1
     fi
 
-    if_all=$(ifconfig -a | grep '^[a-z0-9]*: ')
+    IFS=$'\n'
+    read -r -d '' -a if_all < <(ifconfig -a | grep '^[a-z0-9]*: ')
+    IFS="${OLDIFS}"
 
-    if [[ -n "${if_all}" && "--info" == "${1}" ]]; then
+    if [[ ${#if_all[@]} -gt 0 && ! ${*} =~ -flat ]]; then
       echo ' '
       echo "${YELLOW}Listing all network interfaces:${NC}"
       echo ' '
-      for next in ${if_all}; do
+      for next in "${if_all[@]}"; do
         if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
         if_mtu=$(awk '{ print $4 }' <<<"${next}")
         if_flags=$(awk '{ print $2 }' <<<"${next}")
@@ -39,12 +41,14 @@ if __hhs_has ifconfig; then
       done
       echo ' '
       return 0
-    elif [[ -n "${if_all}" && -z "${1}" ]]; then
-      for next in ${if_all}; do
+    elif [[ ${#if_all[@]} -gt 0 && ${*} =~ -flat ]]; then
+      for next in "${if_all[@]}"; do
         if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
         if_list="${if_name} ${if_list}"
       done
       echo "${if_list}"
+    else
+      echo "${YELLOW}No active interfaces found !${NC}"
     fi
 
     return 1
@@ -62,40 +66,40 @@ if __hhs_has ifconfig; then
         echo "Usage: ${FUNCNAME[0]} [kind]"
         echo ''
         echo '    Arguments:'
-        echo '      type : The kind of IP to get. One of [local|external|gateway|vpn]'
+        echo '      type : The kind of IP to get. One of [all|local|external|gateway|vpn]'
         echo ''
         echo '    Types:'
+        echo '           all : Get all network IPv4'
         echo '         local : Get your local network IPv4'
         echo '      external : Get your external network IPv4'
-        echo '       gateway : Get the IPv4 of your gateway'
-        echo '           vpn : Get your IPv4 assigned by your VPN'
+        echo '       gateway : Get the gateway IPv4'
+        echo '           vpn : Get your IPv4 assigned by your VPN server'
         echo ''
         echo '  Notes: '
-        echo '    - If no kind is specified, all ips assigned to the machine will be retrieved'
+        echo '    - If no kind is specified, all assigned IPv4s will be retrieved'
         return 1
       else
         ip_kind=${1:-all}
-        if [[ "external" == "${ip_kind}" ]]; then
+        if [[ "all" == "${ip_kind}" || "external" == "${ip_kind}" ]]; then
           if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null)"
-          [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
+          [[ -n "${if_ip}" ]] &&  printf "%-10s: %-13s\n" "External" "${if_ip}"
         fi
-        if [[ "gateway" == "${ip_kind}" ]]; then
+        if [[ "all" == "${ip_kind}" || "gateway" == "${ip_kind}" ]]; then
           [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | cut -b 14- | uniq)"
           [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
-          [[ -n "${if_ip}" ]] && echo "IP-${ip_kind}: ${if_ip}" && return 0
+          [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "Gateway" "${if_ip}"
         fi
-        if [[ "all" == "${ip_kind}" || "vpn" == "${ip_kind}" || "local" == "${ip_kind}" ]]; then
-          if_list="$(__hhs_active_ifaces)"
-          IFS=' '
-          [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]*'
-          [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]*'
-          for next in ${if_list}; do
-            if [[ "all" == "${ip_kind}" || "${next}" =~ ${if_prefix} ]]; then
+        if [[ ${ip_kind} =~ all|vpn|local ]]; then
+          read -r -d '' -a if_list < <(__hhs_active_ifaces -flat)
+          [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]+'
+          [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]+'
+          for next in "${if_list[@]}"; do
+            if [[ "all" == "${ip_kind}" || ${next} =~ ${if_prefix} ]]; then
               if_ip="$(ifconfig "${next}" | grep -E "inet " | awk '{print $2}')"
-              [[ -n "${if_ip}" ]] && echo "IP-${next}: ${if_ip}" && ret_val=0
+              [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "${next}" "${if_ip}"
             fi
           done
-          IFS="${OLDIFS}"
+          ret_val=0
         fi
       fi
 

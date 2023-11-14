@@ -14,7 +14,7 @@
 # @function: Display relevant system information.
 function __hhs_sysinfo() {
 
-  local username containers ip_gw ip_local ip_ext ip_vpn containers
+  local username containers if_name if_ip containers all_ips
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
@@ -28,40 +28,39 @@ function __hhs_sysinfo() {
     echo -e "  GID.......... : $(id -g "$username")"
     echo -e "\n${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
-    __hhs_has "sw_vers" && echo -e "  Software......: $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
+    __hhs_has "sw_vers" && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
     echo -e "  Up-Time...... : $(uptime | cut -c 1-15)"
     echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
     echo -e "\n${GREEN}Storage:"
     printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
     echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
-    echo -e "\n${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
-    echo -e "  Hostname..... : $(hostname)"
+    echo -e "\n${GREEN}Network ($(hostname)):${HHS_HIGHLIGHT_COLOR}"
     if __hhs_has __hhs_ip; then
-      ip_gw=$(__hhs_ip gateway | awk '{print $2}')
-      ip_local=$(__hhs_ip local | awk '{print $2}' | tr '\n' ' ')
-      ip_ext=$(__hhs_ip external | awk '{print $2}')
-      ip_vpn=$(__hhs_ip vpn | awk '{print $2}')
-      echo -e "  Gateway...... : ${ip_gw:-${YELLOW}Unavailable${HHS_HIGHLIGHT_COLOR}}"
-      echo -e "  IP-Local......: ${ip_local:-${YELLOW}Unavailable${HHS_HIGHLIGHT_COLOR}}"
-      echo -e "  IP-External.. : ${ip_ext:-${YELLOW}Not connected to the internet${HHS_HIGHLIGHT_COLOR}}"
-      echo -e "  IP-VPN(tun).. : ${ip_vpn:-${YELLOW}Not connected to VPN${HHS_HIGHLIGHT_COLOR}}"
+      all_ips=$(__hhs_ip | sort)
+      IFS=$'\n'
+      for next in ${all_ips}; do
+        if_name="${next%%:*}"
+        if_ip="${next##*:}"
+        printf "%-10s :%s\n" "  ${if_name// /.}" "${if_ip}"
+      done
+      IFS="${OLDIFS}"
     fi
+    IFS=$'\n'
     echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
-
-    for next in $(who); do
-      echo -e "  ${next}"
+    for next in $(who -H); do
+      echo -e "${next}" | esed -e "s/(^NAME.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
     done
-
     if __hhs_has "docker" && __hhs_has "__hhs_docker_ps"; then
-      containers=$(__hhs_docker_ps -a)
-      if [[ -n "${containers}" && $(__hhs_docker_count) -ge 1 ]]; then
+      read -r -d '' -a containers < <(__hhs_docker_ps -a)
+      if [[ ${#containers[@]} -gt 0 && $(__hhs_docker_count) -ge 1 ]]; then
         echo -e "\n${GREEN}Online Docker Containers: ${BLUE}"
-        for next in ${containers}; do
-          echo "${next}" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
+        for next in "${containers[@]}"; do
+          echo -e "${next}" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
         done
       fi
     fi
+    IFS="${OLDIFS}"
 
     echo "${NC}"
   fi
