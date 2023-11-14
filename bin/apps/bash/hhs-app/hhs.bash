@@ -16,7 +16,7 @@ APP_NAME="__hhs"
 UNSETS+=(
   'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
   'validate_plugin' 'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
-  'find_hhs_functions' 'get_desc' 'load_dotfile'
+  'find_hhs_functions' 'get_desc' 'load_dotfile' 'search_hhs_functions'
 )
 
 # Program version.
@@ -153,6 +153,7 @@ function register_plugins() {
 
   local f_name plg_funcs=() plg_name
 
+  IFS=$'\n'
   while read -r plugin; do
     while read -r fnc; do
       f_name="${fnc##function }"
@@ -167,6 +168,7 @@ function register_plugins() {
       PLUGINS_LIST+=("${plugin}")
     fi
   done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
+  IFS="${OLDIFS}"
 
   return 0
 }
@@ -176,6 +178,7 @@ function register_functions() {
 
   local f_name
 
+  IFS=$'\n'
   while read -r fnc_file; do
     source "${fnc_file}"
     while read -r fnc; do
@@ -186,6 +189,7 @@ function register_functions() {
     # Register the functions to be unset when program quits
     UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
   done < <(find "${FUNCTIONS_DIR}" -maxdepth 1 -type f -name '*.bash')
+  IFS="${OLDIFS}"
 
   return 0
 }
@@ -252,11 +256,11 @@ function get_desc() {
 # @param $1..$N [Req] : The directories to search from.
 function search_hhs_functions() {
 
-  local all_hhs_fn filename fn_name desc
+  local all_hhs_fn=() filename fn_name desc
 
-  all_hhs_fn=$(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
-
-  for fn_line in ${all_hhs_fn}; do
+  IFS=$'\n'
+  read -r -d '' -a all_hhs_fn < <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
+  for fn_line in "${all_hhs_fn[@]}"; do
     filename=$(basename "${fn_line}" | awk -F ':function' '{print $1}')
     filename=$(printf '%-35.35s' "${filename}")
     fn_name=$(awk -F ':function' '{print $2}' <<<"${fn_line}")
@@ -264,6 +268,7 @@ function search_hhs_functions() {
     desc=$(get_desc "${fn_line}")
     HHS_FUNCTIONS+=("${BLUE}${filename// /.} ${GREEN}=> ${NC}${fn_name// /.} : ${YELLOW}${desc}")
   done
+  IFS="${OLDIFS}"
 
   return 0
 }

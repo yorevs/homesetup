@@ -57,11 +57,11 @@ function __hhs_aliases() {
     else
       alias_name="$1"
     fi
+    shift
 
     # Remove duplicate items
     sort -u "${HHS_ALIASES_FILE}" -o "${HHS_ALIASES_FILE}"
 
-    shift
     alias_expr="${*}"
     alias_expr="${alias_expr//$'\n'/ }"
 

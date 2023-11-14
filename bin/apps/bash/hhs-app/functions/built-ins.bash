@@ -67,20 +67,24 @@ function funcs() {
   if [[ ! -f "${cache_file}" ]]; then
     search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
   else
+    IFS=$'\n'
     read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
+    IFS="${OLDIFS}"
   fi
 
   columns="$(tput cols)"
+  count="${#HHS_FUNCTIONS[@]}"
   for idx in "${!HHS_FUNCTIONS[@]}"; do
-    printf "${YELLOW}%6d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
+    printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
     fn_name="${HHS_FUNCTIONS[${idx}]}"
     echo -en "${fn_name:0:${columns}}${NC}"
     [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
+    echo -e "${NC}"
     echo -e "${HHS_FUNCTIONS[${idx}]}" >>"${cache_file}"
-    echo ''
   done
 
-  quit 0 ' '
+  echo ''
+  quit 0
 }
 
 # @purpose: Retrieve HomeSetup logs.

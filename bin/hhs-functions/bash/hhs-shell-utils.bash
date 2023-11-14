@@ -63,7 +63,7 @@ function __hhs_hist_stats() {
 # @param $1 [Opt] : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_envs() {
 
-  local pad pad_len filters name value columns ret_val=0
+  local pad pad_len filters name value ret_val=0 columns col_offset=8
 
   HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
 
@@ -82,13 +82,14 @@ function __hhs_envs() {
     else
       pad=$(printf '%0.1s' "."{1..60})
       pad_len=40
-      columns="$(($(tput cols) - pad_len - 10))"
+      columns="$(($(tput cols) - pad_len - col_offset))"
       filters="$*"
       filters=${filters// /\|}
       [[ -z "${filters}" ]] && filters=".*"
       echo ' '
       echo -e "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:${NC}"
       echo ' '
+      IFS=$'\n'
       shopt -s nocasematch
       for v in $(env | sort); do
         name=${v%%=*}
@@ -103,6 +104,7 @@ function __hhs_envs() {
         fi
       done
       shopt -u nocasematch
+      IFS="${OLDIFS}"
       echo ' '
     fi
   fi

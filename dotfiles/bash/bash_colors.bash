@@ -36,9 +36,6 @@ else # macOS `ls`
   export LSCOLORS='ExGxfxdxCxegedabagacad'
 fi
 
-# Color used to highlight text: Default is BLUE
-export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-$BLUE}
-
 if tput setaf 1 &> /dev/null; then
   # Solarized colors, taken from http://git.io/solarized-colors.
   NC=$(tput sgr0)
@@ -68,3 +65,6 @@ else
   export YELLOW='\033[0;93m'
   export VIOLET='\033[0;95m'
 fi
+
+# Color used to highlight text: Default is BLUE
+export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-${BLUE}}
