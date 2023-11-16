@@ -10,8 +10,31 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
+# inspiRED by: https://www.shell-tips.com/bash/shortcuts/#gsc.tab=0
+
+# Preserve system wide settings.
+$include /etc/inputrc
+
+# Ensure all binding keeps the default Emacs behavior.
+# Most common in a Bash shell environment, even for vi users.
+set editing-mode emacs
+
+# Ignore case when doing auto-completion.
 set completion-ignore-case on
+
+# Indicate file types with different colors when doing auto-completion.
+# Uses the $LS_COLORS variable.
 set colored-stats on
+
+# Do not bell on tab-completion (use the visible bell).
+set bell-style visible
+
+# [TAB] press
 TAB: complete
-# Shift + TAB menu complete
+
+# [Shift + TAB] press -> menu complete.
 "\e[Z": menu-complete
+
+# Arrows UP & DOWN to search from history.
+"\e[A": history-search-backward
+"\e[B": history-search-forward
