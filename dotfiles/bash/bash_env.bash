@@ -96,16 +96,16 @@ fi
 
 # History control ( ignore duplicates and spaces )
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
-# File to save all history
-export HISTFILE="${HISTFILE:-${HOME}/.bash_history}"
 # Ignored history commands
-export HISTIGNORE="ls:cd:pwd:?:-:l:q:rl:exit:gs:gl:.."
+export HISTIGNORE="?:??:exit:pwd:clear"
 # Max. history size
-export HISTSIZE=1000
+export HISTSIZE=99999
 # Max. history file size
-export HISTFILESIZE=10000
+export HISTFILESIZE=99999
 # Setting history format: Index [<User>, <Date> <Time>] command
 export HISTTIMEFORMAT="[${USER}, %F %T]  "
+# Share history between concurrent Bash sessions
+export PROMPT_COMMAND="history -a; history -n"
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables
