@@ -15,6 +15,8 @@
 # Preserve system wide settings.
 $include /etc/inputrc
 
+# Preferences -----------------------------------------------------------
+
 # Ensure all binding keeps the default Emacs behavior.
 # Most common in a Bash shell environment, even for vi users.
 set editing-mode emacs
@@ -22,12 +24,14 @@ set editing-mode emacs
 # Ignore case when doing auto-completion.
 set completion-ignore-case on
 
-# Indicate file types with different colors when doing auto-completion.
-# Uses the $LS_COLORS variable.
+# Enable completion coloring.
 set colored-stats on
+set colored-completion-prefix on
 
 # Do not bell on tab-completion (use the visible bell).
 set bell-style visible
+
+# Key binds -------------------------------------------------------------
 
 # [TAB] press
 TAB: complete
@@ -38,3 +42,32 @@ TAB: complete
 # Arrows UP & DOWN to search from history.
 "\e[A": history-search-backward
 "\e[B": history-search-forward
+
+# Launch $EDITOR on the current command and execute when finished editing.
+"\ee": edit-and-execute-command
+
+# Complete Options -------------------------------------------------------
+
+# Treat hypen and underscores as equivalent.
+set completion-map-case on
+
+# The number of completions to display without prompt; when exceeded a
+# prompt-to-display will appear.
+set completion-query-items 200
+
+# Display the common prefix choices on the first completion then cycle the
+# available choices on the next completion.
+set menu-complete-display-prefix on
+
+# Turn off the completions pager.
+set page-completions off
+
+# Display the list of matches when no further completion is possible.
+set show-all-if-unmodified on
+
+# Immediately display completion matches.
+set show-all-if-ambiguous on
+
+# Smartly complete items when the cursor is not at the end of the line.
+set skip-completed-text on
+
