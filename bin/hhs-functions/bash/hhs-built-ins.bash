@@ -51,24 +51,28 @@ function __hhs_utoh() {
   local result converted uni ret_val=1
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <4d-unicode>"
+    echo "Usage: ${FUNCNAME[0]} <5d-unicode>"
     echo ''
     echo '  Notes: '
-    echo '    - unicode is a four digits hexadecimal. E.g:. FADE'
-    echo '    - digits exceeding four will be ignored.'
+    echo '    - unicode is a four digits hexadecimal number. E.g:. F205'
+    echo '    - exceeding digits will be ignored'
     return 1
   else
-    for x in "$@"; do
-      uni="${x:0:4}" # More digits will be ignored
-      echo "[Unicode:'\u${uni}']"
+    echo ''
+    for next in "$@"; do
+      hexa="${next:0:4}"
+      # More digits will be ignored
+      uni="$(printf '%04s' "${hexa}")"
+      [[ ${uni} =~ [0-9A-Fa-f]{4} ]] || continue
+      echo -e "[${HHS_HIGHLIGHT_COLOR}Unicode:'\u${uni}'${NC}]"
       converted=$(python3 -c "import struct; print(bytes.decode(struct.pack('<I', int('${uni}', 16)), 'utf_32_le'))" | hexdump -Cb)
       ret_val=$?
       result=$(awk '
       NR == 1 {printf "  Hex => "; print "\\\\x"$2"\\\\x"$3"\\\\x"$4}
       NR == 2 {printf "  Oct => "; print "\\"$2"\\"$3"\\"$4}
       NR == 1 {printf "  Icn => "; print "\\x"$2"\\x"$3"\\x"$4}
-    ' <<<"${converted}")
-      echo -e "${result}"
+      ' <<<"${converted}")
+      echo -e "${GREEN}${result}${NC}"
       echo ''
     done
   fi
@@ -98,7 +102,7 @@ function __hhs_open() {
 # @param $1 [Req] : The file path.
 function __hhs_edit() {
 
-  local filename="$1" editor="${HHS_DEFAULT_EDITOR}"
+  local filename="$1" editor="${EDITOR:-HHS_DEFAULT_EDITOR}"
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <file_path>"
@@ -116,6 +120,8 @@ function __hhs_edit() {
     elif __hhs_has vim && \vim "${filename}"; then
       return $?
     elif __hhs_has vi && \vi "${filename}"; then
+      return $?
+    elif __hhs_has cat && \cat > "${filename}"; then
       return $?
     else
       __hhs_errcho "${FUNCNAME[0]}: Unable to find a suitable editor for the file \"${filename}\" !"

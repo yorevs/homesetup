@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2009
 
 #  Script: hhs-sys-utils.bash
 # Created: Oct 5, 2019
@@ -73,19 +74,18 @@ function __hhs_sysinfo() {
 # @param $2 [Opt] : Whether to kill all found processes.
 function __hhs_process_list() {
 
-  local all_pids uid pid ppid cmd force quiet pad divider gflags='-E'
+  local all_pids uid pid ppid cmd force=0 quiet=0 kill_flag=0 pad divider gflags='-E'
 
-  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] <process_name> [kill]"
+  if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [options] <process_name>"
     echo ''
     echo '    Options: '
-    echo '        -i : Make case insensitive search'
-    echo '        -w : Match full words only'
-    echo '        -f : Do not ask questions when killing processes'
-    echo '        -q : Be less verbose as possible'
+    echo '        -k, --kill        : When specified, attempts to kill the processes it finds'
+    echo '        -i, --ignore-case : Make case insensitive search'
+    echo '        -w, --words       : Match full words only'
+    echo '        -f, --force       : Do not prompt when killing processes'
+    echo '        -q, --quiet       : Make the operation less talkative'
     echo ''
-    echo '  Notes: '
-    echo '    kill : If specified, it will kill the process it finds'
     return 1
   else
     while [[ -n "$1" ]]; do
@@ -102,22 +102,27 @@ function __hhs_process_list() {
       -q | --quiet)
         quiet=1
         ;;
+      -k | --kill)
+        kill_flag=1
+        ;;
       *)
         [[ ! "$1" =~ ^-[wifq] ]] && break
         ;;
       esac
       shift
     done
-    [[ "${HHS_MY_OS}" == "Linux" ]]
-    # shellcheck disable=SC2009,SC2086
-    [[ -n "$1" ]] && all_pids=$(ps -axco uid,pid,ppid,comm | grep ${gflags} "$1")
-    if [[ -n "${all_pids}" ]]; then
+
+    IFS=$'\n'
+    read -r -d '' -a all_pids < <(ps -axco uid,pid,ppid,comm | grep ${gflags} "${1:-.}")
+    IFS="${OLDIFS}"
+
+    if [[ ${#all_pids[@]} -gt 0 ]]; then
       pad="$(printf '%0.1s' " "{1..40})"
       divider="$(printf '%0.1s' "-"{1..92})"
       echo ''
-      [[ -z "$quiet" ]] && printf "${WHITE}%5s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
-      [[ -z "$quiet" ]] && printf "%-154s\n\n" "${divider}"
-      for next in ${all_pids}; do
+      [[ $quiet -ne 1 ]] && printf "${WHITE}%5s\t%5s\t%5s\t%-40s %s\n" "UID" "PID" "PPID" "COMMAND" "ACTIVE ?"
+      [[ $quiet -ne 1 ]] && printf "%-154s\n\n" "${divider}"
+      for next in "${all_pids[@]}"; do
         uid=$(awk '{ print $1 }' <<<"${next}")
         pid=$(awk '{ print $2 }' <<<"${next}")
         ppid=$(awk '{ print $3 }' <<<"${next}")
@@ -125,10 +130,10 @@ function __hhs_process_list() {
         [[ "${#cmd}" -ge 37 ]] && cmd="${cmd:0:37}..."
         printf "${HHS_HIGHLIGHT_COLOR}%5s\t%5s\t%5s\t%s" "${uid}" "${pid}" "${ppid}" "${cmd}"
         printf '%*.*s' 0 $((40 - ${#cmd})) "${pad}"
-        if [[ -n "${pid}" && "$2" == "kill" ]]; then
+        if [[ -n "${pid}" && $kill_flag -eq 1 ]]; then
           save-cursor-pos
-          if [[ -z "${force}" ]]; then
-            read -r -n 1 -p "${ORANGE} Kill this process y/[n]? " ANS
+          if [[ $force -ne 1 ]]; then
+            read -r -n 1 -p "${YELLOW} Kill this process y/[n]? " ANS
           fi
           if [[ -n "${force}" || "$ANS" == "y" || "$ANS" == "Y" ]]; then
             restore-cursor-pos
@@ -178,7 +183,7 @@ function __hhs_process_kill() {
   fi
 
   for nproc in "${@}"; do
-    __hhs_process_list -q ${force_flag} "${nproc}" kill
+    __hhs_process_list -q -k${force_flag} "${nproc}"
     ret_val=$?
     echo -e "\033[3A" # Move up 3 lines to beautify the output
   done
@@ -190,29 +195,29 @@ function __hhs_process_kill() {
 # @function: Exhibit a Human readable summary about all partitions.
 function __hhs_partitions() {
 
-  local all_parts str_text mounted size used avail cap
+  local all_parts=() str_text mounted size used avail cap
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
     return 1
   else
-    all_parts="$(df -H | tail -n +2)"
-    (
-      echo "${WHITE}"
-      printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' 'Size' 'Avail' 'Used' 'Capacity' 'Mounted-ON'
-      echo -e "----------------------------------------------------------------${HHS_HIGHLIGHT_COLOR}"
-      for next in $all_parts; do
-        str_text=${next:16}
-        size="$(awk '{ print $1 }' <<<"${str_text}")"
-        avail="$(awk '{ print $3 }' <<<"${str_text}")"
-        used="$(awk '{ print $2 }' <<<"${str_text}")"
-        cap="$(awk '{ print $4 }' <<<"${str_text}")"
-        [[ "Darwin" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $8 }' <<<"${str_text}")"
-        [[ "Linux" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $5 }' <<<"${str_text}")"
-        printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' "${size:0:4}" "${avail:0:4}" "${used:0:4}" "${cap:0:4}" "${mounted:0:40}"
-      done
-      echo "${NC}"
-    )
+    IFS=$'\n'
+    read -r -d '' -a all_parts < <(df -H | tail -n +2)
+    IFS="${OLDIFS}"
+    echo "${WHITE}"
+    printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' 'Size' 'Avail' 'Used' 'Capacity' 'Mounted-ON'
+    echo -e "----------------------------------------------------------------${HHS_HIGHLIGHT_COLOR}"
+    for next in "${all_parts[@]}"; do
+      str_text=${next:16}
+      size="$(awk '{ print $1 }' <<<"${str_text}")"
+      avail="$(awk '{ print $3 }' <<<"${str_text}")"
+      used="$(awk '{ print $2 }' <<<"${str_text}")"
+      cap="$(awk '{ print $4 }' <<<"${str_text}")"
+      [[ "Darwin" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $8 }' <<<"${str_text}")"
+      [[ "Linux" == "${HHS_MY_OS}" ]] && mounted="$(awk '{ print $5 }' <<<"${str_text}")"
+      printf '%-4s\t%-5s\t%-4s\t%-8s\t%-s\n' "${size:0:4}" "${avail:0:4}" "${used:0:4}" "${cap:0:4}" "${mounted:0:40}"
+    done
+    echo "${NC}"
   fi
 
   return 0
