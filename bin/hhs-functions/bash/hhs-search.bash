@@ -32,7 +32,7 @@ if __hhs_has "python3"; then
       expr="e=\"${file_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       names=$(python -c "${expr}")
       echo "${YELLOW}Searching for files matching: \"${file_globs}\" in \"${dir}\" ${NC}"
-      eval "find -L ${dir} -type f \( ${names} \) 2> /dev/null | grep -E \"(${file_globs//\*/.*}|$)\""
+      eval "find -L ${dir} -type f \( ${names} \) 2> /dev/null | __hhs_highlight \"(${file_globs//\*/.*}|$)\""
 
       return $?
     fi
@@ -57,7 +57,7 @@ if __hhs_has "python3"; then
       expr="e=\"${dir_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       names=$(python -c "${expr}")
       echo "${YELLOW}Searching for folders matching: [${dir_globs}] in \"${dir}\" ${NC}"
-      eval "find -L ${dir} -type d \( ${names} \) 2> /dev/null | grep -E \"(${dir_globs//\*/.*}|$)\""
+      eval "find -L ${dir} -type d \( ${names} \) 2> /dev/null | __hhs_highlight \"(${dir_globs//\*/.*}|$)\""
 
       return $?
     fi
@@ -132,9 +132,9 @@ if __hhs_has "python3"; then
         fi
         [[ "${HHS_MY_OS}" == "Darwin" ]] && ised="sed -i '' -E"
         [[ "${HHS_MY_OS}" == "Linux" ]] && ised="sed -i'' -r"
-        full_cmd="${base_cmd} \; -exec $ised \"s/${search_str}/${repl_str}/g\" {} + | sed \"s/${search_str}/${repl_str}/g\"  | grep -E \"${repl_str}\""
+        full_cmd="${base_cmd} \; -exec $ised \"s/${search_str}/${repl_str}/g\" {} + | sed \"s/${search_str}/${repl_str}/g\"  | __hhs_highlight \"${repl_str}\""
       else
-        full_cmd="${base_cmd} + 2> /dev/null | grep -E \"${search_str}\""
+        full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight \"${search_str}\""
       fi
       eval "${full_cmd}"
       return $?

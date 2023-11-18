@@ -43,6 +43,7 @@ function __hhs_hist_stats() {
   pad_len=30
 
   echo -e "\n${ORANGE}Top '${top_n}' used commands in bash history ...\n"
+  IFS=$'\n'
   for cmd in $(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}" |
     perl -lane 'printf "%s %03d %s \n", $F[1], $F[0], "▄" x ($F[0] / 5)'); do
     cmd_name=$(echo "${cmd}" | cut -d ' ' -f1)
@@ -54,6 +55,7 @@ function __hhs_hist_stats() {
     printf "${GREEN}%s ${CYAN}|%s \n" " ${cmd_qty}" "${cmd_chart}"
     i=$((i+1))
   done
+  IFS="${OLDIFS}"
   echo "${NC}"
 
   return $?
@@ -103,8 +105,8 @@ function __hhs_envs() {
           echo -e "${NC}"
         fi
       done
-      shopt -u nocasematch
       IFS="${OLDIFS}"
+      shopt -u nocasematch
       echo ' '
     fi
   fi
@@ -137,6 +139,7 @@ function __hhs_defs() {
       echo ' '
       echo "${YELLOW}Listing all alias definitions matching [ ${filters} ]:"
       echo ' '
+      IFS=$'\n'
       shopt -s nocasematch
       for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
         name=${v%%=*}
@@ -152,6 +155,7 @@ function __hhs_defs() {
           echo "${NC}"
         fi
       done
+      IFS="${OLDIFS}"
       shopt -u nocasematch
       echo ' '
     fi

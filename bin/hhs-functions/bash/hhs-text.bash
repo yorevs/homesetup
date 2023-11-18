@@ -31,7 +31,7 @@ function __hhs_errcho() {
 # @param $1 [Pip] : The piped input stream.
 function __hhs_highlight() {
 
-  local search file hl_color="${HHS_HIGHLIGHT_COLOR}" gflags="-Ei"
+  local search file hl_color="${HHS_HIGHLIGHT_COLOR}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <text_to_highlight> [filename]"
@@ -44,9 +44,7 @@ function __hhs_highlight() {
     file="${2:-/dev/stdin}"
     hl_color=${HHS_HIGHLIGHT_COLOR//\e[/}
     hl_color=${HHS_HIGHLIGHT_COLOR/m/}
-    while read -r stream; do
-      echo "${stream}" | GREP_COLOR="${hl_color}" grep "${gflags}" "${search}"
-    done <"${file}"
+    GREP_COLOR="${hl_color}" grep -Ei --color=always "${search}" "${file}"
   fi
 
   return 0

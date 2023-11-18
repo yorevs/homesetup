@@ -172,7 +172,7 @@ if __hhs_has netstat; then
   # @param $2 [Opt] : The port state to match.
   function __hhs_port_check() {
 
-    local states port_color state port protocol ret_val
+    local states state port protocol ret_val
 
     states='CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT'
     port=${1:0:5}
@@ -194,9 +194,9 @@ if __hhs_has netstat; then
       echo -e "\n${YELLOW}Showing ports  Proto: [${protocol}] Number: [${port//\./*}] State: [\"${state:-*}\"] ${NC}"
       echo -e "\nProto Recv-Q Send-Q  Local Address          Foreign Address        State\n"
       \netstat -an \
-        | grep -E --color=always "${protocol}" \
-        | grep -E --color=always "[.:]${port} " \
-        | grep -E --color=always "${state}"
+        | __hhs_highlight "${protocol}" \
+        | __hhs_highlight "[.:]${port} " \
+        | __hhs_highlight "${state}"
       ret_val=$?
     else
       __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, /}]"
