@@ -82,7 +82,7 @@ if __hhs_has ifconfig; then
         ip_kind=${1:-all}
         if [[ "all" == "${ip_kind}" || "external" == "${ip_kind}" ]]; then
           if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null)"
-          [[ -n "${if_ip}" ]] &&  printf "%-10s: %-13s\n" "External" "${if_ip}"
+          [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "External" "${if_ip}"
         fi
         if [[ "all" == "${ip_kind}" || "gateway" == "${ip_kind}" ]]; then
           [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | cut -b 14- | uniq)"
@@ -172,37 +172,39 @@ if __hhs_has netstat; then
   # @param $2 [Opt] : The port state to match.
   function __hhs_port_check() {
 
-    local state port states
+    local states port_color state port protocol ret_val
 
     states='CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT'
+    port=${1:0:5}
+    port=$(printf "%-.5s" "${port}")
+    protocol='^(tcp|udp)[0-9]*'
 
     if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <port_number> [port_state]"
+      echo "Usage: ${FUNCNAME[0]} <port_number> [port_state] [protocol]"
       echo ''
       echo '  Notes: '
-      echo "    States: One of [${states//|,, /}]"
+      echo "       States: One of [${states//|,, /}]"
+      echo "    Wildcards: Use dots (.) as a wildcard. E.g: 80.. will match 80[0-9][0-9]"
       return 1
-    elif [[ -n "$1" && -n "$2" ]]; then
-      port=${1:0:5}
-      state=$(echo "$2" | tr '[:lower:]' '[:upper:]')
-      if [[ "${state}" =~ ^(${states})$ ]]; then
-        echo -e "\n${YELLOW}Checking for ports \"$port\" with current state of \"${state}\" ${NC}\n"
-        echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        State"
-        \netstat -an | grep -E "[.:]${port} " | __hhs_highlight "${state}"
-        return $?
-      else
-        __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, /}]"
-      fi
-    elif [[ -n "$1" && -z "$2" ]]; then
-      port=${1:0:5}
-      echo -e "\n${YELLOW}Checking for \"ALL\" ports ($port) with any state ${NC}\n"
-      echo "Proto Recv-Q Send-Q  Local Address          Foreign Address        State"
-      \netstat -an | grep -E "[.:]${port} " | __hhs_highlight "$port"
-      return $?
     fi
+
+    state=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
+
+    if [[ -z "${state}" || "${state}" =~ ^(${states})$ ]]; then
+      echo -e "\n${YELLOW}Showing ports  Proto: [${protocol}] Number: [${port//\./*}] State: [\"${state:-*}\"] ${NC}"
+      echo -e "\nProto Recv-Q Send-Q  Local Address          Foreign Address        State\n"
+      \netstat -an \
+        | grep -E --color=always "${protocol}" \
+        | grep -E --color=always "[.:]${port} " \
+        | grep -E --color=always "${state}"
+      ret_val=$?
+    else
+      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, /}]"
+    fi
+
     echo ''
 
-    return 0
+    return $ret_val
   }
 
 fi
