@@ -1,5 +1,5 @@
 name: build-and-test
-run-name: Build & Test [${{ github.sha }}]
+run-name: Build & Test
 
 on:
   workflow_dispatch:

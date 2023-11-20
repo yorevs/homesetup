@@ -19,7 +19,7 @@ function list() {
   if [[ "$1" == "help" ]]; then
     echo "Usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs]" && quit 0
   elif [[ "${args[*]}" =~ -flat ]]; then
-    args=( "${args[@]/'-flat'}" )
+    args=("${args[@]/'-flat'/}")
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] &&
       for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -funcs ]] &&
@@ -56,16 +56,25 @@ function list() {
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
-  local idx columns fn_name cache_file
+  local idx columns fn_name cache_file usage filters count matches=0
+
+  usage="Usage: ${FUNCNAME[0]} [regex_filters]"
+
+  [[ "$1" == 'help' ]] && echo "${usage}" && quit 0
 
   cache_file="${HHS_CACHE_DIR}/hhs-funcs-${HHS_VERSION//./}.cache"
 
+  filters="$*"
+  filters=${filters// /\|}
+  [[ -z "${filters}" ]] && filters=".*"
+
   echo ' '
-  echo "${YELLOW}-=- Available HomeSetup v${HHS_VERSION} functions -=-"
+  echo "${YELLOW}-=- Available HomeSetup v${HHS_VERSION} functions matching [ ${filters} ] -=-"
   echo ' '
 
-  if [[ ! -f "${cache_file}" ]]; then
+  if [[ ! -s "${cache_file}" ]]; then
     search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
+    printf "%s\n" "${HHS_FUNCTIONS[@]}" >"${cache_file}"
   else
     IFS=$'\n'
     read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
@@ -75,13 +84,17 @@ function funcs() {
   columns="$(tput cols)"
   count="${#HHS_FUNCTIONS[@]}"
   for idx in "${!HHS_FUNCTIONS[@]}"; do
-    printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
     fn_name="${HHS_FUNCTIONS[${idx}]}"
-    echo -en "${fn_name:0:${columns}}${NC}"
-    [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
-    echo -e "${NC}"
-    echo -e "${HHS_FUNCTIONS[${idx}]}" >>"${cache_file}"
+    if [[ $fn_name =~ $filters ]]; then
+      ((matches++))
+      printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((matches))"
+      echo -en "${fn_name:0:${columns}}${NC}"
+      [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
+      echo -e "${NC}"
+    fi
   done
+
+  [[ $matches -eq 0 ]] && echo -e "${YELLOW}No functions found matching \"${filters}\"${NC}"
 
   echo ''
   quit 0
@@ -174,8 +187,16 @@ function invalidate() {
 
   local all_files ANS
 
-  all_files=("${HHS_LOG_DIR}/*.log" "${HHS_BACKUP_DIR}/*.bak" "${HHS_CACHE_DIR}/*.cache")
-  read -rn 1 -p "${YELLOW}This will remove all log, backups and cache files. Continue y/[n] ? " ANS
+  all_files=(
+    "${HHS_LOG_DIR}/*.log"
+    "${HHS_BACKUP_DIR}/*.bak"
+    "${HHS_CACHE_DIR}/*.cache"
+    "${HOME}/.inputrc"
+    "${HHS_DIR}/.aliasdef"
+  )
+  echo ''
+  read -rn 1 -p "${YELLOW}This will remove all log/*, backups/*, cache/*, .aliasdef and ~/.inputrc files. Continue y/[n] ? " ANS
+  echo ''
   if [[ "${ANS}" == "y" || "${ANS}" == 'Y' ]]; then
     echo ''
     for f_ext in ${all_files[*]}; do
@@ -187,6 +208,7 @@ function invalidate() {
       fi
     done
   fi
+  echo ''
 
   return 0
 }

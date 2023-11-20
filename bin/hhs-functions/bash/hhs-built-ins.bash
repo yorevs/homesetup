@@ -195,7 +195,11 @@ function __hhs_help() {
     cmd="${1}"
     if ! ${cmd} --help 2>/dev/null; then
       if ! ${cmd} -h 2>/dev/null; then
-        __hhs_errcho "${RED}Help not available for ${cmd}"
+        if ! ${cmd} help 2>/dev/null; then
+          if ! ${cmd} /? 2>/dev/null; then
+            __hhs_errcho "${RED}Help not available for ${cmd}"
+          fi
+        fi
         return 1
       fi
     fi

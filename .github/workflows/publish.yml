@@ -109,7 +109,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
             tag_name: "v${{ needs.publish.outputs.version }}"
-            release_name: "${{ vars.APP_NAME }}-v${{ needs.publish.outputs.version }}-r${{ github.run_number }}"
+            release_name: "${{ vars.APP_NAME }}-v${{ needs.publish.outputs.version }}-b${{ github.run_number }}"
             body: |
               # ${{ inputs.comment }}
 

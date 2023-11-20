@@ -324,7 +324,7 @@ function main() {
   register_functions
   register_plugins
 
-  fn_name="${1}"
+  fn_name="${1//help/list}"
 
   if has_function "${fn_name}"; then
     shift
