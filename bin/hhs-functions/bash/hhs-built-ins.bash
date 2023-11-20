@@ -80,7 +80,6 @@ function __hhs_utoh() {
   return ${ret_val}
 }
 
-
 # @function: Open a file or URL with the default program.
 # @param $1 [Req] : The url or filename to open.
 function __hhs_open() {
@@ -121,7 +120,7 @@ function __hhs_edit() {
       return $?
     elif __hhs_has vi && \vi "${filename}"; then
       return $?
-    elif __hhs_has cat && \cat > "${filename}"; then
+    elif __hhs_has cat && \cat >"${filename}"; then
       return $?
     else
       __hhs_errcho "${FUNCNAME[0]}: Unable to find a suitable editor for the file \"${filename}\" !"
@@ -129,4 +128,78 @@ function __hhs_edit() {
   fi
 
   return 1
+}
+
+# @function: Display information about the given command.
+# @param $1 [Req] : The command to check.
+function __hhs_about() {
+
+  local cmd type_ret=() cmd_type cmd_details i=0
+
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  else
+    cmd=${1}
+    IFS=$'\n'
+    read -r -d '' -a type_ret orig_ret < <(type "${cmd}" 2>/dev/null)
+    IFS="${OLDIFS}"
+    if [[ ${#type_ret[@]} -gt 0 ]]; then
+      echo ''
+      if [[ "${type_ret[0]}" == *"is aliased to"* ]]; then
+        cmd_details="Aliased:"
+        cmd_type=${type_ret[0]//is aliased to \`/${WHITE}=> }
+        cmd_type=${cmd_type// \`/: }
+        cmd_type=${cmd_type// \'/}
+        printf "${GREEN}%12s${BLUE} ${cmd_type//\%/%%} ${NC}\n" "${cmd_details}"
+        # To avoid unalias the command, we do that in another subshell
+        (
+          if unalias "${cmd}" 2>/dev/null; then
+            IFS=$'\n'
+            read -r -d '' -a orig_ret < <(type "${cmd}" 2>/dev/null)
+            IFS="${OLDIFS}"
+            if [[ ${#orig_ret[@]} -gt 0 ]]; then
+              cmd_type=${orig_ret//is/${WHITE}=>}
+              printf "${GREEN}%12s${BLUE} ${cmd_type} ${NC}\n" "Unaliased:"
+            fi
+          fi
+        )
+      elif [[ "${type_ret[0]}" == *"is a function"* ]]; then
+        printf "${GREEN}%12s${BLUE} ${type_ret[1]}${WHITE}=> \n" "Function:"
+        for line in "${type_ret[@]:2}"; do
+          printf "   %4d: %s\n" $((i += 1)) "${line}"
+        done
+      else
+        cmd_type=${type_ret//is /${WHITE}=> }
+        printf "${GREEN}%12s${BLUE} ${cmd_type//\%/%%} ${NC}\n" "Command:"
+      fi
+      echo -e "${NC}"
+    else
+      echo -e "${YELLOW}No matches found for: ${cmd}${NC}"
+    fi
+  fi
+
+  return 0
+}
+
+# @function: Display a help for the given command.
+# @param $1 [Req] : The command to get help.
+function __hhs_help() {
+
+  local cmd
+
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <command>"
+    return 1
+  else
+    cmd="${1}"
+    if ! ${cmd} --help 2>/dev/null; then
+      if ! ${cmd} -h 2>/dev/null; then
+        __hhs_errcho "${RED}Help not available for ${cmd}"
+        return 1
+      fi
+    fi
+  fi
+
+  return 0
 }
