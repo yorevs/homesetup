@@ -19,6 +19,11 @@ on:
         type: boolean
         required: true
         default: true
+      create_release:
+        description: 'Create a new release ?'
+        type: boolean
+        required: true
+        default: false
       release_type:
         description: 'Major/Minor/Patch version ?'
         type: choice
@@ -87,6 +92,7 @@ jobs:
           echo "version=$( echo "$version" )" >> $GITHUB_OUTPUT
 
   create-release:
+      if: inputs.create_release
       needs: publish
       name: Create Release
       runs-on: ubuntu-latest
