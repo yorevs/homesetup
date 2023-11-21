@@ -193,10 +193,13 @@ function invalidate() {
     "${HHS_CACHE_DIR}/*.cache"
     "${HOME}/.inputrc"
     "${HHS_DIR}/.aliasdef"
+    "${HHS_DIR}/starship.toml"
   )
+  echo -e "\n${YELLOW}Attention! This will remove: ${BLUE}"
+  for f in "${all_files[@]}"; do echo "  |-$f"; done
   echo ''
-  read -rn 1 -p "${YELLOW}This will remove all log/*, backups/*, cache/*, .aliasdef and ~/.inputrc files. Continue y/[n] ? " ANS
-  echo ''
+  read -rn 1 -p "${ORANGE}Continue y/[n] ? " ANS
+  echo "${NC}"
   if [[ "${ANS}" == "y" || "${ANS}" == 'Y' ]]; then
     echo ''
     for f_ext in ${all_files[*]}; do
@@ -206,6 +209,7 @@ function invalidate() {
       else
         echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
       fi
+      clear
     done
   fi
   echo ''

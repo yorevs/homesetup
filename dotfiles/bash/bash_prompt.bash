@@ -174,8 +174,10 @@ export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 
 # Initialize Starship prompt if it is set to.
 if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
-  if [[ ! -s "${STARSHIP_CONFIG}" ]]; then
-    cp  "${HHS_HOME}/misc/starship.toml" "${STARSHIP_CONFIG}" &>/dev/null
+  __hhs_log INFO "Starting starship prompt"
+  if [[ ! -s "${HHS_DIR}/starship.toml" ]]; then
+    __hhs_log DEBUG "Copying default hhs-starship config to -> ${HHS_DIR}/starship.toml"
+    cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null
   fi
   eval "$(starship init "${HHS_MY_SHELL}")"
 fi

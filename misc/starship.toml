@@ -15,18 +15,16 @@ scan_timeout = 10
 add_newline = false
 
 # Continuation prompt (PS2).
-continuation_prompt = "... "
+continuation_prompt = "… "
 
 # Set "homesetup" as custom color palette.
 palette = "homesetup"
 
-# Format the prompt
-format = "${os} ${custom.history} ${username} ${hostname} ${directory} ${git_branch} ${git_status}${character}"
-
+# Format the prompt.
+format = "${os}${custom.history}${username}${hostname}${directory}${git_branch}${git_status}${character}"
 
 [line_break]
 disabled = true
-
 
 # Define custom colors from: https://i.stack.imgur.com/KTSQa.png
 [palettes.homesetup]
@@ -37,21 +35,19 @@ green = "2"
 orange = "202"
 red = "9"
 
-
+# Print the history size.
 [custom.history]
 shell = "bash"
 command = "grep -v '^#' ${HOME}/.bash_history | wc -l | sed -r 's/ *//'"
 when = "true"
 style = "white"
-format = '[\(${output}\)](${style})'
+format = '[\(${output}\)](${style}) '
 disabled = false
-
 
 [os]
-style = "white"
-format = "[${symbol}](${style})"
+style = "bold white"
+format = "[${symbol}](${style}) "
 disabled = false
-
 
 [os.symbols]
 Linux = ""
@@ -60,46 +56,111 @@ CentOS = ""
 Fedora = ""
 Ubuntu = ""
 
-
 [username]
 style_user = "green"
 style_root = "red"
-format = "[ $user](${style})"
+format = "[[](bold white) $user](${style}) "
 show_always = true
 disabled = false
 
-
 [hostname]
 ssh_only = false
-ssh_symbol = ""
-format = "[${ssh_symbol} ${hostname}](purple)"
+ssh_symbol = " :"
+trim_at = "."
+format = "[[${ssh_symbol}](bold white) ${hostname}](purple) "
 disabled = false
-
 
 [directory]
 style = "orange"
-format = "[  ${path}](${style})"
+format = "[[](bold white) ${path}](${style}) "
+truncation_length = 100
+truncate_to_repo = false
 disabled = false
-
 
 [git_branch]
 symbol = " "
 style = "cyan"
-format = "[${symbol}${branch}](${style})"
+format = "[[${symbol}](bold white)${branch}](${style}) "
 disabled = false
-
 
 [git_status]
 style = "cyan"
+format = '[(\[$all_status\][$behind$ahead](red) )]($style)'
 
 [character]
-success_symbol = "[](white)"
-error_symbol = "[](white)"
+success_symbol = "[](bold white)"
+error_symbol = "[](bold white)"
 
+#### Disabled modules ####
 
-[gradle]
+[hg_branch]
 disabled = true
 
+[dart]
+disabled = true
+
+[dotnet]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[erlang]
+disabled = true
+
+[golang]
+disabled = true
+
+[helm]
+disabled = true
 
 [java]
+disabled = true
+
+[julia]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[nim]
+disabled = true
+
+[ocaml]
+disabled = true
+
+[php]
+disabled = true
+
+[purescript]
+disabled = true
+
+[swift]
+disabled = true
+
+[zig]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[openstack]
+disabled = true
+
+[crystal]
+disabled = true
+
+[lua]
+disabled = true
+
+[jobs]
+disabled = true
+
+[battery]
 disabled = true
