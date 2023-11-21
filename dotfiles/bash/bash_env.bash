@@ -111,8 +111,10 @@ export HISTSIZE=2000
 export HISTFILESIZE=2000
 # Setting history format: Index [<User>, <Date> <Time>] command
 export HISTTIMEFORMAT="[${USER}, %F %T]  "
-# Share history between concurrent Bash sessions
-export PROMPT_COMMAND="history -a; history -n"
+# Bash history file.
+export HISTFILE="${HOME}/.bash_history"
+# Do not share history between concurrent Bash sessions
+unset PROMPT_COMMAND
 
 # ----------------------------------------------------------------------------
 # HomeSetup variables

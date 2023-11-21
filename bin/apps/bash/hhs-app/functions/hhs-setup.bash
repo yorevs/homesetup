@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=2181
 
 #  Script: built-ins.bash
 # Purpose: Contains all HHS initialization functions
@@ -90,7 +91,7 @@ function setup() {
 # @purpose: Configure Starship prompt.
 function starship() {
 
-  if __hhs_has starship; then
+  if __hhs_has starship && [[ -s "${STARSHIP_CONFIG}" ]]; then
     __hhs_open "${STARSHIP_CONFIG}"
   fi
 }
