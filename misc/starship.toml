@@ -52,7 +52,7 @@ Macos = ""
 CentOS = ""
 Fedora = ""
 Ubuntu = ""
-Alpine = ""
+Alpine = ""
 
 [username]
 style_user = "green"

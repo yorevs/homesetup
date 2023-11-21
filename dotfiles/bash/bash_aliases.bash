@@ -61,7 +61,7 @@ alias -- -='cd -'
 
 # shellcheck disable=SC2139,SC2035
 # @alias: Display the current directory path
-alias ?='pwd'
+alias ?='echo "${GREEN}Current directory: ${NC}$(pwd -LP)"'
 
 # -----------------------------------------------------------------------------------
 # @category: General
