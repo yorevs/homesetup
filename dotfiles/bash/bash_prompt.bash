@@ -172,6 +172,10 @@ PS2_STYLE=$'... '
 export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
 export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 
+function __hhs_set_win_title() {
+    echo -ne "\033]0; ${TITLE} \007"
+}
+
 # Initialize Starship prompt if it is set to.
 if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   __hhs_log INFO "Starting starship prompt"
@@ -179,5 +183,7 @@ if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
     __hhs_log DEBUG "Copying default hhs-starship config to -> ${HHS_DIR}/starship.toml"
     cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null
   fi
+  # shellcheck disable=SC2034
+  starship_precmd_user_func="__hhs_set_win_title"
   eval "$(starship init "${HHS_MY_SHELL}")"
 fi
