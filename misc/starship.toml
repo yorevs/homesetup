@@ -73,8 +73,9 @@ disabled = false
 [directory]
 style = "orange"
 format = "[[](bold white) ${path}](${style}) "
-truncation_length = 100
-truncate_to_repo = false
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = '…/'
 disabled = false
 
 [git_branch]
