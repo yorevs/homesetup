@@ -9,7 +9,7 @@
 # See a the full starship reference at: https://starship.rs/config/#prompt
 
 # Timeout for starship to scan files (in milliseconds).
-scan_timeout = 10
+scan_timeout = 20
 
 # Disable the blank line at the start of the prompt.
 add_newline = false
@@ -22,9 +22,6 @@ palette = "homesetup"
 
 # Format the prompt.
 format = "${os}${custom.history}${username}${hostname}${directory}${git_branch}${git_status}${character}"
-
-[line_break]
-disabled = true
 
 # Define custom colors from: https://i.stack.imgur.com/KTSQa.png
 [palettes.homesetup]
@@ -55,6 +52,7 @@ Macos = ""
 CentOS = ""
 Fedora = ""
 Ubuntu = ""
+Alpine = ""
 
 [username]
 style_user = "green"
@@ -75,7 +73,7 @@ style = "orange"
 format = "[[](bold white) ${path}](${style}) "
 truncation_length = 3
 truncate_to_repo = true
-truncation_symbol = '…/'
+truncation_symbol = ' …/'
 disabled = false
 
 [git_branch]
