@@ -120,7 +120,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
-    copy_file create_directory install_homesetup abort_install check_prefix
+    copy_file create_directory install_homesetup abort_install check_prefix configure_starship
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -183,7 +183,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
       rsync --archive "${src_file}" "${dest_file}"
       chown "${USER}":"${GROUP}" "${dest_file}"
-      [[ -f "${dest_file}" ]] && echo -e " ${GREEN}OK${NC}"
+      [[ -f "${dest_file}" ]] && echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
       [[ -f "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
     fi
   }
@@ -362,15 +362,18 @@ Usage: $APP_NAME [OPTIONS] <args>
       install_dotfiles
       compatibility_check
       configure_python
+      configure_starship
       ;;
     repair)
       check_required_tools
       install_dotfiles
       compatibility_check
       configure_python
+      configure_starship
       ;;
     local)
       install_dotfiles
+      configure_starship
       ;;
     *)
       quit 2 "Installation method \"${METHOD}\" is not valid!"
@@ -703,6 +706,20 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ -f "${HHS_DIR}/.tailor" ]]; then
       \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
       echo -e "\n${ORANGE}Your old .tailor had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
+    fi
+  }
+
+  # Install Starship prompt.
+  configure_starship() {
+    if ! command -v starship &>/dev/null; then
+      echo -en "\n${WHITE}Installing Starship prompt ..."
+      if curl -sS https://starship.rs/install.sh 1> "${HHS_DIR}/install_starship.sh" 2>/dev/null; then
+        chmod +x "${HHS_DIR}"/install_starship.sh
+        "${HHS_DIR}"/install_starship.sh -y &>/dev/null
+        echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+      else
+        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+      fi
     fi
   }
 

@@ -101,31 +101,31 @@ PROMPT_ICN="\357\232\262"
 MY_OS="$(uname -s)"
 
 case "${MY_OS}" in
-  Darwin)
-    MY_OS_ICN="${MACOS_ICN}"
+Darwin)
+  MY_OS_ICN="${MACOS_ICN}"
   ;;
-  Linux)
-    # Most of linux distros have this file to detect the releases.
-    OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
-    OS_RELEASE="${OS_RELEASE#*=}"    # Extracting ID=
-    OS_RELEASE="${OS_RELEASE//\"/}"  # Removing leading quotes
-    case "${OS_RELEASE}" in
-      ubuntu)
-        MY_OS_ICN="${UBUNTU_ICN}"
-      ;;
-      centos)
-        MY_OS_ICN="${CENTOS_ICN}"
-      ;;
-      fedora)
-        MY_OS_ICN="${FEDORA_ICN}"
-      ;;
-      *)
-        MY_OS_ICN="${LINUX_ICN}"
-      ;;
-    esac
-  ;;
+Linux)
+  # Most of linux distros have this file to detect the releases.
+  OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+  OS_RELEASE="${OS_RELEASE#*=}"   # Extracting ID=
+  OS_RELEASE="${OS_RELEASE//\"/}" # Removing leading quotes
+  case "${OS_RELEASE}" in
+  ubuntu)
+    MY_OS_ICN="${UBUNTU_ICN}"
+    ;;
+  centos)
+    MY_OS_ICN="${CENTOS_ICN}"
+    ;;
+  fedora)
+    MY_OS_ICN="${FEDORA_ICN}"
+    ;;
   *)
     MY_OS_ICN="${LINUX_ICN}"
+    ;;
+  esac
+  ;;
+*)
+  MY_OS_ICN="${LINUX_ICN}"
   ;;
 esac
 
@@ -172,4 +172,10 @@ PS2_STYLE=$'... '
 export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
 export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 
-unset PROMPT_COMMAND
+# Initialize Starship prompt if it is set to.
+if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
+  if [[ ! -s "${STARSHIP_CONFIG}" ]]; then
+    cp  "${HHS_HOME}/misc/starship.toml" "${STARSHIP_CONFIG}" &>/dev/null
+  fi
+  eval "$(starship init "${HHS_MY_SHELL}")"
+fi

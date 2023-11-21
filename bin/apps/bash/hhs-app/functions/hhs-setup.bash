@@ -11,7 +11,7 @@
 # Copyright (c) 2023, HomeSetup team
 
 # Current hhs-setup version
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 USAGE="Usage: ${APP_NAME} setup [-restore]"
 
@@ -31,13 +31,15 @@ export HHS_RESTORE_LAST_DIR=1
 export HOMEBREW_NO_AUTO_UPDATE=1
 # Set to enable bash completions.
 export HHS_LOAD_COMPLETIONS=
+# Set to enable starship prompt.
+export HHS_USE_STARSHIP=
 "
 
 # Regex to match a setting.
 RE_PROPERTY="([a-zA-Z0-9 ]+=.*)"
 
 
-# @purpose: Setup HomeSetup.
+# @purpose: Setup HomeSetup initialization options.
 function setup() {
 
   local file_ver aux name value minput_file sel_settings=() all_items=()
@@ -82,5 +84,13 @@ function setup() {
     clear && echo -e "\n${GREEN}HomeSetup settings (${#sel_settings[@]}) saved!${NC}\n"
   else
     clear && echo -e "\n${YELLOW}HomeSetup settings (${#all_items[@]}) unchanged!${NC}\n"
+  fi
+}
+
+# @purpose: Configure Starship prompt.
+function starship() {
+
+  if __hhs_has starship; then
+    __hhs_open "${STARSHIP_CONFIG}"
   fi
 }

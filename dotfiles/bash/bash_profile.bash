@@ -54,4 +54,3 @@ case "${SHELL##*\/}" in
     echo ''
     ;;
 esac
-

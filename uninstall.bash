@@ -194,6 +194,9 @@ uninstall_dotfiles() {
       || echo -e "${RED}# Unable to uninstall HomeSetup HsPyLib-Core !\n${NC}"
   fi
 
+  # Remove Starship. Locate and delete the binary
+  command -v 'starship' &>/dev/null && \rm -fv "$(command -v 'starship')"
+
   # Restoring prompts
   export PS1='\[\h:\W \u \$ '
   export PS2="$PS1"

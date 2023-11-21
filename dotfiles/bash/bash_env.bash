@@ -21,10 +21,12 @@ export HHS_SET_LOCALES=${HHS_SET_LOCALES=1}
 export HHS_EXPORT_SETTINGS=${HHS_EXPORT_SETTINGS=1}
 # By default, HomeSetup will restore last used directory.
 export HHS_RESTORE_LAST_DIR=${HHS_RESTORE_LAST_DIR=1}
-# By default, homeSetup will disable brew's auto-update.
+# By default, HomeSetup will disable brew's auto-update.
 export HOMEBREW_NO_AUTO_UPDATE=${HOMEBREW_NO_AUTO_UPDATE=1}
-# By default, homeSetup will not load bash completions for best performance.
+# By default, HomeSetup will not load bash completions for best performance.
 export HHS_LOAD_COMPLETIONS=${HHS_LOAD_COMPLETIONS=}
+# By default, HomeSetup will not use starship prompt.
+export HHS_USE_STARSHIP=${HHS_USE_STARSHIP=}
 
 # Set system locale (defaults)
 if [[ -z ${HHS_SET_LOCALES} ]]; then
@@ -32,6 +34,11 @@ if [[ -z ${HHS_SET_LOCALES} ]]; then
   export LANG=${LANG:-en_US.UTF-8}
   export LC_ALL=${LANG}
 fi
+
+# ----------------------------------------------------------------------------
+# Starship variables
+export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/starship.toml}"
+export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
 
 # ----------------------------------------------------------------------------
 # System folders
@@ -99,9 +106,9 @@ export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 # Ignored history commands
 export HISTIGNORE="?:??:exit:pwd:clear"
 # Max. history size
-export HISTSIZE=99999
+export HISTSIZE=2000
 # Max. history file size
-export HISTFILESIZE=99999
+export HISTFILESIZE=2000
 # Setting history format: Index [<User>, <Date> <Time>] command
 export HISTTIMEFORMAT="[${USER}, %F %T]  "
 # Share history between concurrent Bash sessions
@@ -148,7 +155,7 @@ DEVELOPER_TOOLS=(
   'gcc' 'make' 'mvn' 'gradle' 'ruby' 'jq' 'git'
   'docker' 'nvm' 'node' 'eslint' 'pylint' 'gpg'
   'shasum' 'base64' 'python' 'python3' 'pip3'
-  'direnv' 'pbcopy' 'sqlite3' 'go'
+  'direnv' 'pbcopy' 'sqlite3' 'go' 'fig'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
