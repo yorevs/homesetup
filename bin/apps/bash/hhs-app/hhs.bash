@@ -328,6 +328,7 @@ function main() {
 
   if has_function "${fn_name}"; then
     shift
+    # Use a subshell to avoid messing with env vars
     ${fn_name} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi

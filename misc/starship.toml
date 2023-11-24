@@ -6,7 +6,8 @@
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 #
-# See a the full starship reference at: https://starship.rs/config/#prompt
+# See a the full starship reference at:
+# https://starship.rs/config/#prompt
 
 # Timeout for starship to scan files (in milliseconds).
 scan_timeout = 20
@@ -15,34 +16,34 @@ scan_timeout = 20
 add_newline = false
 
 # Continuation prompt (PS2).
-continuation_prompt = "… "
+continuation_prompt = '… '
 
 # Set "homesetup" as custom color palette.
-palette = "homesetup"
+palette = 'homesetup'
 
 # Format the prompt.
-format = "${os}${custom.history}${username}${hostname}${directory}${git_branch}${git_status}${character}"
+format = """${os}${time}${username}${hostname}${directory}${git_branch}${git_status}${character}"""
 
-# Define custom colors from: https://i.stack.imgur.com/KTSQa.png
+# Define HomeSetup custom colors.
+# Ref.: https://i.stack.imgur.com/KTSQa.png
 [palettes.homesetup]
-blue = "27"
-cyan = "14"
-purple = "56"
-green = "2"
-orange = "202"
-red = "9"
+blue = '27'
+cyan = '14'
+purple = '99'
+green = '2'
+orange = '166'
+red = '9'
+white = '231'
 
-# Print the history size.
-[custom.history]
-shell = "bash"
-command = "grep -v '^#' ${HOME}/.bash_history | wc -l | sed -r 's/ *//'"
-when = "true"
-style = "white"
-format = '[\(${output}\)](${style}) '
+# Print the current time.
+[time]
 disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "white"
+format = '[$time]($style) '
 
 [os]
-style = "bold white"
+style = "white"
 format = "[${symbol}](${style}) "
 disabled = false
 
@@ -57,7 +58,7 @@ Alpine = ""
 [username]
 style_user = "green"
 style_root = "red"
-format = "[[](bold white) $user](${style}) "
+format = "[[](white) $user](${style}) "
 show_always = true
 disabled = false
 
@@ -65,12 +66,12 @@ disabled = false
 ssh_only = false
 ssh_symbol = " :"
 trim_at = "."
-format = "[[${ssh_symbol}](bold white) ${hostname}](purple) "
+format = "[[${ssh_symbol}](white) ${hostname}](purple) "
 disabled = false
 
 [directory]
 style = "orange"
-format = "[[](bold white) ${path}](${style}) "
+format = "[[](white) ${path}](${style}) "
 truncation_length = 3
 truncate_to_repo = true
 truncation_symbol = ' …/'
@@ -79,16 +80,22 @@ disabled = false
 [git_branch]
 symbol = " "
 style = "cyan"
-format = "[[${symbol}](bold white)${branch}](${style}) "
+format = "[[${symbol}](white)${branch}](${style}) "
 disabled = false
 
 [git_status]
 style = "cyan"
-format = '[(\[$all_status\][$behind$ahead](red) )]($style)'
+format = '[(\[$all_status[$ahead_behind](red)\] )]($style)'
+untracked = '?'
+modified = '!'
+deleted = '-'
+stashed = '$'
+staged = '+'
+renamed = '^'
 
 [character]
-success_symbol = "[](bold white)"
-error_symbol = "[](bold white)"
+success_symbol = "[](white)"
+error_symbol = "[](white)"
 
 #### Disabled modules ####
 

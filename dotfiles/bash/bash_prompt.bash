@@ -36,7 +36,7 @@ function __hhs_git_prompt() {
         st_flag+='+'
       fi
 
-      # Check for unstaged changes.
+      # Check for un-staged changes.
       if ! git diff-files --quiet --ignore-submodules --; then
         st_flag+='!'
       fi
@@ -180,7 +180,7 @@ if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   __hhs_log INFO "Starting starship prompt"
   if [[ ! -s "${HHS_DIR}/starship.toml" ]]; then
     __hhs_log DEBUG "Copying default hhs-starship config to -> ${HHS_DIR}/starship.toml"
-    cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null
+    \cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null
   fi
   # shellcheck disable=SC2034
   starship_precmd_user_func="__hhs_set_win_title"
