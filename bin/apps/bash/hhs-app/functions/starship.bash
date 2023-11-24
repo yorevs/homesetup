@@ -14,10 +14,12 @@
 # @purpose: Configure Starship prompt.
 function starship() {
 
-  # Current hhs starship version
-  VERSION="1.0.0"
+  local version starship_presets usage mselect_file title preset_val
 
-  STARSHIP_PRESETS=(
+  # Current hhs starship version
+  version="1.0.0"
+
+  starship_presets=(
     'no-nerd-font'
     'bracketed-segments'
     'plain-text-symbols'
@@ -26,7 +28,7 @@ function starship() {
     'pure-prompt'
   )
 
-  USAGE="Usage: ${APP_NAME} starship <command>
+  usage="Usage: ${APP_NAME} starship <command>
 
       Commands:
         edit                  : Edit your starship configuration file.
@@ -40,21 +42,37 @@ function starship() {
   "
 
   if __hhs_has starship; then
-    [[ $# -eq 0 ]] && echo "${USAGE}" && quit 1
-    [[ $1 == "help" ]] && echo "${USAGE}" && quit 0
-    [[ $1 == "version" ]] && echo "${VERSION}" && quit 0
+    [[ $# -eq 0 ]] && echo "${usage}" && quit 1
+    [[ $1 == "help" ]] && echo "${usage}" && quit 0
+    [[ $1 == "version" ]] && echo "${version}" && quit 0
     [[ $1 == "edit" ]] && __hhs_open "${STARSHIP_CONFIG}" && quit 0
-    [[ $1 == "restore" ]] && \cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null && quit 0
+
+    if [[ $1 == "restore" ]]; then
+      if \cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null; then
+        echo -e "${GREEN}Your starship prompt changed to HomeSetup defaults${NC}" && quit 0
+      fi
+    fi
 
     if [[ $1 == "preset" ]]; then
-      if [[ "${STARSHIP_PRESETS[@]}" =~ $2 ]]; then
-        echo -e "${GREEN}Setting preset: ${2}${NC}"
-        bash -c "starship preset ${2} -o ${STARSHIP_CONFIG}" &>/dev/null
-        quit 1
+      preset_val="${2}"
+      if [[ -z ${preset_val} ]]; then
+        mselect_file=$(mktemp)
+        title="Please select one Starship preset (${#starship_presets[@]})"
+        if __hhs_mselect "${mselect_file}" "${title}${NC}" "${starship_presets[@]}"; then
+          preset_val=$(grep . "${mselect_file}")
+        fi
       else
         echo -e "${YELLOW}\nPlease choose one valid Starship preset: "
-        for f in "${STARSHIP_PRESETS[@]}"; do echo "  |-$f"; done
+        for f in "${starship_presets[@]}"; do echo "  |-$f"; done
         quit 1
+      fi
+      if [[ -n "${preset_val}" ]]; then
+        echo -e "${GREEN}Setting preset: ${preset_val}${NC}"
+        if bash -c "starship preset ${preset_val} -o ${STARSHIP_CONFIG}" &>/dev/null; then
+          echo -e "${GREEN}Your starship prompt changed to preset: ${preset_val}${NC}" && quit 0
+        else
+          echo -e "${GREEN}FAILED${NC}" && quit 1
+        fi
       fi
     fi
 
