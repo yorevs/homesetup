@@ -45,7 +45,7 @@ function __hhs_change_dir() {
   # shellcheck disable=SC2086
   \cd ${flags} "${path}" || return 1
   \pushd -n "$(pwd)" &>/dev/null
-  \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
+  \dirs -p | uniq >"${HHS_DIR}/.last_dirs"
 
   return 0
 }
@@ -92,8 +92,7 @@ function __hhs_dirs() {
     echo "${results[*]}"
   else
     mselect_file=$(mktemp)
-    if __hhs_mselect "${mselect_file}" "Please choose one directory to change into (${len}) found:" "${results[@]}"
-    then
+    if __hhs_mselect "${mselect_file}" "Please choose one directory to change into (${len}) found:" "${results[@]}"; then
       sel_dir=$(grep . "${mselect_file}")
       if [[ -n "${sel_dir}" ]]; then
         [[ ! -d "${sel_dir}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${sel_dir}\" was not found !" && ret_val=1
@@ -166,7 +165,7 @@ function __hhs_save_dir() {
     elif [[ "$1" == "-c" ]]; then
       read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
       for idx in $(seq 1 "${#all_dirs[@]}"); do
-        dir=${all_dirs[idx-1]}
+        dir=${all_dirs[idx - 1]}
         dir_alias=${dir%%=*}
         dir=${dir#*=}
         [[ -d "${dir}" ]] && dirs+=("${dir_alias}=${dir}")
@@ -225,50 +224,49 @@ function __hhs_load_dir() {
     if [ ${#all_dirs[@]} -ne 0 ]; then
 
       case "$1" in
-      -l)
-        pad=$(printf '%0.1s' "."{1..60})
-        pad_len=41
-        echo ' '
-        echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
-        echo ' '
-        for next in "${all_dirs[@]}"; do
-          dir_alias=$(echo -en "${next}" | awk -F '=' '{ print $1 }')
-          dir=$(echo -en "${next}" | awk -F '=' '{ print $2 }')
-          printf "%s" "${HHS_HIGHLIGHT_COLOR}${dir_alias}${WHITE}"
-          printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "${pad}"
-          echo -e "${GREEN} points to ${WHITE}'${dir}'"
-        done
-        echo "${NC}"
-        ;;
-      $'')
-        if [[ ${#all_dirs[@]} -ne 0 ]]; then
-          for idx in $(seq 1 "${#all_dirs[@]}"); do
-            dir=${all_dirs[idx-1]}
-            dir=${dir#*=}
-            [[ -d "${dir}" ]] && icn=" "
-            [[ -d "${dir}" ]] || icn=" "
-            all_dirs[idx-1]="${icn} ${all_dirs[idx-1]}"
+        -l)
+          pad=$(printf '%0.1s' "."{1..60})
+          pad_len=41
+          echo ' '
+          echo "${YELLOW}Available directories (${#all_dirs[@]}) saved:"
+          echo ' '
+          for next in "${all_dirs[@]}"; do
+            dir_alias=$(echo -en "${next}" | awk -F '=' '{ print $1 }')
+            dir=$(echo -en "${next}" | awk -F '=' '{ print $2 }')
+            printf "%s" "${HHS_HIGHLIGHT_COLOR}${dir_alias}${WHITE}"
+            printf '%*.*s' 0 $((pad_len - ${#dir_alias})) "${pad}"
+            echo -e "${GREEN} points to ${WHITE}'${dir}'"
           done
-          mselect_file=$(mktemp)
-          if __hhs_mselect "${mselect_file}" "Available saved directories (${#all_dirs[@]}):" "${all_dirs[@]}"
-          then
-            sel_dir=$(grep . "${mselect_file}")
-            dir_alias="${sel_dir%=*}"
-            dir="${sel_dir##*=}"
-            [[ -n "${dir}" ]] && ret_val=0
+          echo "${NC}"
+          ;;
+        $'')
+          if [[ ${#all_dirs[@]} -ne 0 ]]; then
+            for idx in $(seq 1 "${#all_dirs[@]}"); do
+              dir=${all_dirs[idx - 1]}
+              dir=${dir#*=}
+              [[ -d "${dir}" ]] && icn=" "
+              [[ -d "${dir}" ]] || icn=" "
+              all_dirs[idx - 1]="${icn} ${all_dirs[idx - 1]}"
+            done
+            mselect_file=$(mktemp)
+            if __hhs_mselect "${mselect_file}" "Available saved directories (${#all_dirs[@]}):" "${all_dirs[@]}"; then
+              sel_dir=$(grep . "${mselect_file}")
+              dir_alias="${sel_dir%=*}"
+              dir="${sel_dir##*=}"
+              [[ -n "${dir}" ]] && ret_val=0
+            fi
+          else
+            echo "${YELLOW}No directories available yet !${NC}"
           fi
-        else
-          echo "${YELLOW}No directories available yet !${NC}"
-        fi
-        ;;
-      [a-zA-Z0-9_]*)
-        dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-        dir=$(grep "^${dir_alias}=" "${HHS_SAVED_DIRS_FILE}" | awk -F '=' '{ print $2 }')
-        ret_val=0
-        ;;
-      *)
-        __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\""
-        ;;
+          ;;
+        [a-zA-Z0-9_]*)
+          dir_alias=$(echo -en "$1" | tr -s '-' '_' | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+          dir=$(grep "^${dir_alias}=" "${HHS_SAVED_DIRS_FILE}" | awk -F '=' '{ print $2 }')
+          ret_val=0
+          ;;
+        *)
+          __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\""
+          ;;
       esac
 
       [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
@@ -324,8 +322,7 @@ function __hhs_godir() {
     else
       mselect_file=$(mktemp)
       title="Multiple directories (${len}) found. Please select one to go:\n${WHITE}Base dir: ${GREEN}${search_path}"
-      if __hhs_mselect "${mselect_file}" "${title}${NC}" "${found_dirs[@]}"
-      then
+      if __hhs_mselect "${mselect_file}" "${title}${NC}" "${found_dirs[@]}"; then
         dir=$(grep . "${mselect_file}")
         ret_val=0
       fi

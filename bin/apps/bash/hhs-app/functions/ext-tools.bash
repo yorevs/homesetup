@@ -15,13 +15,13 @@
 function host-name() {
 
   local cur_hostname new_hostname
-  
+
   if [[ "$(uname -s)" == "Darwin" ]]; then
     sed_flag="-E"
   else
     sed_flag="-r"
   fi
-  
+
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo -e "Usage: ${FUNCNAME[0]} [new_hostname]"
   elif [[ -z "${1}" ]]; then
@@ -38,7 +38,7 @@ function host-name() {
           if sudo scutil --set HostName "${new_hostname}"; then
             echo "${GREEN}Your new hostname has changed from \"${cur_hostname}\" to ${PURPLE}\"${new_hostname}\" ${NC} !"
           else
-            quit 2 "Failed to change your hostname !" 
+            quit 2 "Failed to change your hostname !"
           fi
         else
           # Change the hostname in /etc/hosts & /etc/hostname
@@ -56,7 +56,7 @@ function host-name() {
         echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 1
       fi
     else
-      quit 1 "You need 'hostname' installed to use this function !" 
+      quit 1 "You need 'hostname' installed to use this function !"
     fi
   fi
 

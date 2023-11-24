@@ -2,8 +2,8 @@
 # shellcheck disable=2181,2199,2076
 
 #  Script: built-ins.bash
-# Purpose: Contains all HHS initialization functions
-# Created: Jan 06, 2020
+# Purpose: Contains all starship manipulation functions
+# Created: Wed 22, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs#homesetup
@@ -17,7 +17,7 @@ function starship() {
   local version starship_presets usage mselect_file title preset_val
 
   # Current hhs starship version
-  version="1.0.0"
+  version="1.0.1"
 
   starship_presets=(
     'no-nerd-font'

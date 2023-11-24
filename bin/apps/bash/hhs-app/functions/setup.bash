@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
 # shellcheck disable=2181
 
-#  Script: built-ins.bash
+#  Script: setup.bash
 # Purpose: Contains all HHS initialization functions
-# Created: Jan 06, 2020
+# Created: Nov 06, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
 # Copyright (c) 2023, HomeSetup team
-
-
 
 # @purpose: Setup HomeSetup initialization options.
 function setup() {
@@ -78,15 +76,15 @@ function setup() {
 
   minput_file=$(mktemp)
   if __hhs_minput "${minput_file}" "${title}" "${all_items[@]}"; then
-    read -r -d '' -a sel_settings < <(grep . "${minput_file}" )
+    read -r -d '' -a sel_settings < <(grep . "${minput_file}")
     for setting in "${sel_settings[@]}"; do
       name="${setting%%=*}" && value="${setting#*=}"
       value="${value//False/}"
       value="${value//True/1}"
       aux="$(mktemp)"
-      sed "s/^\(export ${name}\)=\(.*\)$/\1=${value}/g" "${HHS_SETUP_FILE}" > "${aux}" \
-        && mv "${aux}" "${HHS_SETUP_FILE}" \
-        && rm -f "${aux}"
+      sed "s/^\(export ${name}\)=\(.*\)$/\1=${value}/g" "${HHS_SETUP_FILE}" >"${aux}" &&
+           mv "${aux}" "${HHS_SETUP_FILE}" &&
+           rm -f "${aux}"
     done
     clear && echo -e "\n${GREEN}HomeSetup settings (${#sel_settings[@]}) saved!${NC}\n"
   else
