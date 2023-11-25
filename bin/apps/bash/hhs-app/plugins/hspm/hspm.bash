@@ -219,12 +219,12 @@ function install_recipe() {
     source "${recipe}"
     echo -e "${BLUE}Using recipe for \"${package}\""
   else
-    echo -e "${YELLOW}Using default-recipe for \"${package}\"!"
+    echo -e "${YELLOW}Using [${HHS_MY_OS_PACKMAN}] default installation for \"${package}\"!"
   fi
 
   echo -e "${BLUE}Installing \"${package}\", please wait ..."
 
-  if _depends_ && _install_ "${package}" && _which_; then
+  if _depends_ && _install_ "${package}" && _which_ "${package}"; then
     echo -e "${GREEN}Installation successful => ${package} ${NC}"
     add_breadcrumb "${package}"
   else
@@ -248,12 +248,12 @@ function uninstall_recipe() {
     source "${recipe}"
     echo -e "${BLUE}Using recipe for \"${package}\""
   else
-    echo -e "${YELLOW}Using default-recipe for \"${package}\"!"
+    echo -e "${YELLOW}Using [${HHS_MY_OS_PACKMAN}] default uninstallation recipe for \"${package}\"!"
   fi
 
   echo -e "${BLUE}Uninstalling \"${package}\", please wait ..."
 
-  if _uninstall_ "${package}" && ! _which_; then
+  if _uninstall_ "${package}" && ! _which_ "${package}"; then
     echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
     del_breadcrumb "${package}"
   else
