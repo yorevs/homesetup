@@ -46,10 +46,6 @@ function setup() {
   export HHS_USE_STARSHIP=
   ")
 
-  type trim
-
-  echo "S: ${default_settings}" && quit 0
-
   # Regex to match a setting.
   re_property="([a-zA-Z0-9 ]+=.*)"
 
@@ -87,11 +83,11 @@ function setup() {
       name="${setting%%=*}" && value="${setting#*=}"
       value="${value//False/}"
       value="${value//True/1}"
-      if ! sed "s/^ *\(export ${name}\)=\(.*\)$/\1=${value}/g" "${HHS_SETUP_FILE}" >"${aux}"; then
+      if ! sed "s/^\(export ${name}\)=\(.*\)$/\1=${value}/g" "${HHS_SETUP_FILE}" >"${aux}"; then
         quit 1 "Unable to change setting: ${setting}!"
       fi
+      \mv "${aux}" "${HHS_SETUP_FILE}"
     done
-    \mv "${aux}" "${HHS_SETUP_FILE}"
     quit 0 "${GREEN}HomeSetup settings (${#sel_settings[@]}) saved!${NC}"
   else
     quit 0 "${YELLOW}HomeSetup settings (${#all_items[@]}) unchanged!${NC}"
