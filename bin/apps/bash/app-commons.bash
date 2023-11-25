@@ -72,35 +72,3 @@ function version() {
 function list_contains() {
     [[ $1 =~ (^|[[:space:]])$2($|[[:space:]]) ]] && return 0 || return 1
 }
-
-# @purpose: Standardized ised.
-# @param $1..N [Req] : The sed arguments
-function ised() {
-  local sed_flags
-
-  if [[ "$(uname -s)" == "Darwin" ]]; then
-    sed_flags="-i '' -E"
-  else
-    sed_flags="-i'' -r"
-  fi
-
-  sed "${sed_flags}" "${@}"
-
-  return $?
-}
-
-# @purpose: Standardized esed.
-# @param $1..N [Req] : The sed arguments
-function esed() {
-    local sed_flags
-
-  if [[ "$(uname -s)" == "Darwin" ]]; then
-    sed_flags="-E"
-  else
-    sed_flags="-r"
-  fi
-
-  sed "${sed_flags}" "${@}"
-
-  return $?
-}

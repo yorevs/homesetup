@@ -88,6 +88,7 @@ function setup() {
       fi
       \mv "${aux}" "${HHS_SETUP_FILE}"
     done
+    [[ -f "${aux}" ]] && \rm -f "${aux}"
     quit 0 "${GREEN}HomeSetup settings (${#sel_settings[@]}) saved!${NC}"
   else
     quit 0 "${YELLOW}HomeSetup settings (${#all_items[@]}) unchanged!${NC}"
