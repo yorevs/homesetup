@@ -102,12 +102,12 @@ function __hhs_is_reachable() {
 # @param $1..$N [Req] : Sed parameters.
 function ised() {
   case "${HHS_MY_OS}" in
-    Darwin)
-      sed -i '' -E "${@}"
-      ;;
-    Linux)
-      sed -i'' -r "${@}"
-      ;;
+  Darwin)
+    sed -i '' -E "${@}"
+    ;;
+  Linux)
+    sed -i'' -r "${@}"
+    ;;
   esac
 
   return $?
@@ -117,13 +117,29 @@ function ised() {
 # @param $1..$N [Req] : Sed parameters.
 function esed() {
   case "${HHS_MY_OS}" in
-    Darwin)
-      sed -E "${@}"
-      ;;
-    Linux)
-      sed -r "${@}"
-      ;;
+  Darwin)
+    sed -E "${@}"
+    ;;
+  Linux)
+    sed -r "${@}"
+    ;;
   esac
 
   return $?
+}
+
+# @purpose: `trim' all leading and trailing whitespaces.
+# @param $1..$N [Req] : The text to be trimmed.
+function trim() {
+
+  file=${1:-/dev/stdin}
+  if [[ "${file}" == '/dev/stdin' ]]; then
+    while read -r stream; do
+      echo "${stream}" | esed -E 's/^[[:blank:]]*|[[:blank:]]*$//g'
+    done <"${file}"
+  else
+    esed -E 's/^[[:blank:]]*|[[:blank:]]*$//g' "${file}"
+  fi
+
+  return 0
 }

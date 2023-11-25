@@ -66,22 +66,6 @@ function version() {
 [[ "$1" = '-h' || "$1" = '--help' ]] && usage 0
 [[ "$1" = '-v' || "$1" = '--version' ]] && version
 
-# @purpose: Trim whitespaces from the provided text.
-# @param $1..$N [Req] : The text to be trimmed.
-function trim() {
-
-  local var="$*"
-
-  # remove leading whitespace characters
-  var="${var#"${var%%[![:space:]]*}"}"
-
-  # remove trailing whitespace characters
-  var="${var%"${var##*[![:space:]]}"}"
-  echo -en "$var"
-
-  return 0
-}
-
 # @purpose: Check whether the list contains the specified string.
 # @param $1 [Req] : The list to check against.
 # @param $2 [Req] : The string to be checked.
