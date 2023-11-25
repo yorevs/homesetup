@@ -175,12 +175,15 @@ export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 # Initialize Starship prompt if it is set to.
 if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   function __hhs_set_win_title() {
-      echo -ne "\033]0; ${TITLE} \007"
+    echo -ne "\033]0; ${TITLE} \007"
   }
   __hhs_log INFO "Starting starship prompt"
   if [[ ! -s "${HHS_DIR}/starship.toml" ]]; then
-    __hhs_log DEBUG "Copying default hhs-starship config to -> ${HHS_DIR}/starship.toml"
-    \cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null
+    __hhs_log DEBUG "Copying default HomeSetup starship.toml config to -> ${HHS_DIR}/starship.toml"
+    if ! \cp "${HHS_STARSHIP_PRESETS_DIR}/homesetup.toml" \
+      "${HHS_DIR}/starship.toml" &>/dev/null; then
+      __hhs_log ERROR "Unable to copy default starship config file into place!"
+    fi
   fi
   # shellcheck disable=SC2034
   starship_precmd_user_func="__hhs_set_win_title"

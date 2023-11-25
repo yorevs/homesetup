@@ -22,6 +22,9 @@ STARSHIP_PRESETS=(
   'no-runtime-versions'
   'no-empty-icons'
   'pure-prompt'
+  'tokyo-night'
+  'pastel-powerline'
+  'nerd-font-symbols'
 )
 
 # Usage message
@@ -43,16 +46,19 @@ USAGE="usage: ${APP_NAME} starship <command>
       preset <preset_name>  : Configure your starship to a preset.
 
     presets:
-      no-nerd-font          : This preset changes the symbols for several modules so that no Nerd Font symbols are used
-                              anywhere in the prompt.
+      no-runtime-versions   : This preset hides the version of language runtimes. If you work in containers or
+                              virtualized environments, this one is for you!
       bracketed-segments    : This preset changes the format of all the built-in modules to show their segment in
                               brackets instead of using the default Starship wording ('via', 'on', etc.).
       plain-text-symbols    : This preset changes the symbols for each module into plain text. Great if you don't have
                               access to Unicode.
-      no-runtime-versions   : This preset hides the version of language runtimes. If you work in containers or
-                              virtualized environments, this one is for you!
       no-empty-icons        : This preset does not show icons if the toolset is not found.
-      pure-prompt           : This preset emulates the look and behavior of Pure.
+      tokyo-night           : TODO
+      no-nerd-font          : This preset changes the symbols for several modules so that no Nerd Font symbols are used
+                              anywhere in the prompt.
+      pastel-powerline      : TODO
+      pure-preset           : This preset emulates the look and behavior of Pure.
+      nerd-font-symbols     : TODO
 "
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
@@ -80,7 +86,8 @@ function execute() {
     [[ $# -eq 0 || $1 == "edit" ]] && __hhs_open "${STARSHIP_CONFIG}" && quit 0
 
     if [[ $1 == "restore" ]]; then
-      if \cp "${HHS_HOME}/misc/starship.toml" "${HHS_DIR}/starship.toml" &>/dev/null; then
+      if \cp "${HHS_PRESETS_FOLDER}/homesetup.toml" \
+        "${HHS_DIR}/starship.toml" &>/dev/null; then
         echo -e "${GREEN}Your starship prompt changed to HomeSetup defaults${NC}" && quit 0
       fi
     fi
@@ -100,10 +107,10 @@ function execute() {
       fi
       if [[ -n "${preset_val}" ]]; then
         echo -e "${GREEN}Setting preset: ${preset_val}${NC}"
-        if bash -c "starship preset ${preset_val} -o ${STARSHIP_CONFIG}" &>/dev/null; then
+        if bash -c "starship preset \"${preset_val}\" -o ${STARSHIP_CONFIG}" &>/dev/null; then
           echo -e "${GREEN}Your starship prompt changed to preset: ${preset_val}${NC}" && quit 0
         else
-          echo -e "${GREEN}FAILED${NC}" && quit 1
+          echo -e "${RED}Unable to set starship preset: ${preset_val} ${NC}" && quit 1
         fi
       fi
     fi

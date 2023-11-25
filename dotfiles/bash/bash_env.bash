@@ -138,6 +138,7 @@ export HHS_SETMAN_CONFIG_FILE="${HHS_DIR}/setman.properties"
 export HHS_SETMAN_DB_FILE="${HHS_DIR}/setman.db"
 export HHS_VAULT_FILE="${HHS_DIR}/.vault"
 export HHS_VAULT_USER="${USER}"
+export HHS_STARSHIP_PRESETS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/starship/hhs-presets"
 
 # ----------------------------------------------------------------------------
 # Directories
