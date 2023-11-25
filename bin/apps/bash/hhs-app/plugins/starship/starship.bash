@@ -53,12 +53,13 @@ USAGE="usage: ${APP_NAME} starship <command>
       plain-text-symbols    : This preset changes the symbols for each module into plain text. Great if you don't have
                               access to Unicode.
       no-empty-icons        : This preset does not show icons if the toolset is not found.
-      tokyo-night           : TODO
+      tokyo-night           : This preset is inspired by tokyo-night-vscode-theme.
       no-nerd-font          : This preset changes the symbols for several modules so that no Nerd Font symbols are used
                               anywhere in the prompt.
-      pastel-powerline      : TODO
+      pastel-powerline      : This preset is inspired by M365Princess (opens new window). It also shows how path
+                              substitution works in starship.
       pure-preset           : This preset emulates the look and behavior of Pure.
-      nerd-font-symbols     : TODO
+      nerd-font-symbols     : This preset changes the symbols for each module to use Nerd Font symbols.
 "
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
