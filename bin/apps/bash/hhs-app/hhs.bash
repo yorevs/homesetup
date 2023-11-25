@@ -208,7 +208,7 @@ function invoke_command() {
         [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
         source "${PLUGINS_LIST[idx]}"
         shift
-        plg_cmd="${1:-help}"
+        plg_cmd="${1:-execute}"
         has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
         shift
         # Execute the specified plugin

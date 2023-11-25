@@ -19,7 +19,7 @@ PLUGIN_NAME="hspm"
 
 # Usage message
 USAGE="
-Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
+usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 
  _   _ ____  ____  __  __
 | | | / ___||  _ \|  \/  |
@@ -29,11 +29,11 @@ Usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 
   HomeSetup package manager
 
-    Options:
+    options:
       -v  |   --version     : Display current program version.
       -h  |      --help     : Display this help message.
 
-    Arguments:
+    arguments:
       install   <package>   : Install the package using a matching installation recipe.
       uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
       list                  : List all available, OS based, installation recipes.
