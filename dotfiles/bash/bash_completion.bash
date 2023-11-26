@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1090,SC1091
 
-#  Script: bash_completions.bash
+#  Script: bash_completion.bash
 # Purpose: This file is used to configure all bash auto completions
 # Created: Jan 14, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
