@@ -1,4 +1,4 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup
+# <img src="https://iili.io/HvtxC1S.png" width="34" height="34"> HomeSetup
 
 ## Your shell, good as hell !
 
@@ -30,10 +30,13 @@ Please access the [Showcase document](docs/SHOWCASE.md) for demonstrations of us
 
 ## Highlights
 
-HomeSetup was specifically developed to enhance the command line experience for users. Its primary objective is to provide useful and user-friendly features that expedite daily tasks, such as time tracking, string and file searching, directory navigation, and seamless integration with popular tools like Git, Gradle, Docker, and more.
+HomeSetup was specifically developed to enhance the command line experience for users. Its primary objective is to
+provide useful and user-friendly features that expedite daily tasks, such as time tracking,
+string and file searching, directory navigation, and seamless integration with popular tools like Git, Gradle, Docker, and more.
 
 Key features of HomeSetup include:
 
+- <img src="https://starship.rs/icon.png" width="14" height="14"> [STARSHIP](https://starship.rs/) prompt is here! HomeSetup now integrates with Starship.
 - Automated setup for commonly used configurations, ensuring a hassle-free initial setup.
 - A wide range of functions to simplify terminal configuration and streamline daily tasks.
 - A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons.

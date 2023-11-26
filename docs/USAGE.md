@@ -4,8 +4,8 @@ HomeSetup offers a comprehensive [User Handbook](handbook/USER_HANDBOOK.md) that
 on all commands and examples of their usage. Additionally, there will soon be a _YouTube video_ available that guides
 you through the installation, usage, configuration, and utilization of all the features and enhancements provided.
 
-The User Handbook serves as a valuable resource for understanding and making the most of HomeSetup's capabilities, 
-while the accompanying YouTube and [asciinema](https://asciinema.org/~yorevs) videos provides a visual demonstration of 
+The User Handbook serves as a valuable resource for understanding and making the most of HomeSetup's capabilities,
+while the accompanying YouTube and [asciinema](https://asciinema.org/~yorevs) videos provides a visual demonstration of
 its usage.
 
 ## Table of contents
@@ -46,32 +46,35 @@ The following dotfiles will be available after installing HomeSetup:
 | HHS Dotfile         | Description                |
 |---------------------|----------------------------|
 | ~/.bashrc           | Bash resources             |
-| ~/.bash_profile     | Profile bash               |
+| ~/.hhsrc            | HomeSetup resources        |
 | ~/.bash_aliases     | HomeSetup built-in aliases |
-| ~/.bash_prompt      | Enhanced shell prompt      |
-| ~/.bash_env         | Environment variables      |
 | ~/.bash_colors      | Terminal color definitions |
+| ~/.bash_commons     | Common HomeSetup functions |
+| ~/.bash_completions | Bash completion functions  |
+| ~/.bash_env         | Environment variables      |
 | ~/.bash_functions   | Bash scripting functions   |
+| ~/.bash_profile     | Profile bash               |
+| ~/.bash_prompt      | Enhanced shell prompt      |
 
 The following directories will be created in your <$HHS_DIR> folder:
 
 - `$HHS_DIR/bin` # Includes all useful scripts provided by the project.
 - `$HHS_DIR/log` # Includes all HomeSetup log files.
+- `$HHS_DIR/cache` # Includes all HomeSetup cache files.
 - `$HHS_DIR/backup` # Includes all HomeSetup backup files.
 
-If the installation folder already exists, the install script will replace all files, taking care to back up the 
+If the installation folder already exists, the install script will replace all files, taking care to back up the
 important ones. To override or add customized configurations, you can create a custom file using the following:
 
 | Custom Dotfile     | Description                                      |
 |--------------------|--------------------------------------------------|
+| ~/.aliases         | To customize your aliases                        |
 | ~/.colors          | To customize your colors                         |
 | ~/.env             | To customize your environment variables          |
-| ~/.aliases         | To customize your aliases                        |
-| ~/.prompt          | To customize your prompt                         |
 | ~/.functions       | To customize your functions                      |
-| ~/.profile         | To customize your profile                        |
 | ~/.path            | To customize your paths                          |
-| ~/.aliasdef        | To customize your alias definitions              |
+| ~/.profile         | To customize your profile                        |
+| ~/.prompt          | To customize your prompt                         |
 
 ## Aliases
 
@@ -377,7 +380,7 @@ The complete handbook of development tools can be found [here](handbook/pages/fu
 HomeSetup includes a collection of useful applications that can be accessed directly from the shell. These applications
 are also automatically added to your **$PATH** variable for easy execution.
 
-For a comprehensive list and detailed information about the development tools available with HomeSetup, please refer 
+For a comprehensive list and detailed information about the development tools available with HomeSetup, please refer
 to the [Applications](handbook/pages/applications.md) section in the complete handbook.
 
 ### Built-ins
@@ -391,26 +394,26 @@ to the [Applications](handbook/pages/applications.md) section in the complete ha
 
 ## Alias definitions
 
-You have the flexibility to customize **most of the HomeSetup aliases** by editing the `~/.aliasdef` file. When you 
-initially install HomeSetup, this file will be automatically generated for you. However, future updates may require 
-you to update this file. We always keep a backup of this file, allowing you to preserve your customizations. Please 
+You have the flexibility to customize **most of the HomeSetup aliases** by editing the `~/.aliasdef` file. When you
+initially install HomeSetup, this file will be automatically generated for you. However, future updates may require
+you to update this file. We always keep a backup of this file, allowing you to preserve your customizations. Please
 note that the backup process needs to be done manually in this case.
 
-The original content and aliases are defined in the original [aliasdef](../dotfiles/aliasdef) file. If you remove your 
+The original content and aliases are defined in the original [aliasdef](../dotfiles/aliasdef) file. If you remove your
 `~/.aliasdef` file, the HomeSetup's original definitions file will be copied to your "$HHS_DIR" folder next time you
 start you terminal.
 
 ## HomeSetup Application
 
 HomeSetup is more than just a collection of scripts and functions to enhance your terminal experience. It also includes
-an application framework and a variety of **plug-able scripts and functions** that can be seamlessly integrated into it. 
-To view a comprehensive list of all available functions and plug-ins, you can simply run the following command in your 
-terminal: `# __hhs list`. 
+an application framework and a variety of **plug-able scripts and functions** that can be seamlessly integrated into it.
+To view a comprehensive list of all available functions and plug-ins, you can simply run the following command in your
+terminal: `# __hhs list`.
 
 If you want to explore and check all the existing functions within HomeSetup, you can simply run the following command
 in your terminal: `# __hhs funcs`.
 
-Those commands will provide you with an overview of all the functions and plug-ins that HomeSetup offers, allowing you 
+Those commands will provide you with an overview of all the functions and plug-ins that HomeSetup offers, allowing you
 to explore and leverage their capabilities.
 
 ### HHS-Plug-ins
@@ -436,12 +439,12 @@ to explore and leverage their capabilities.
 
 ## Auto completions
 
-In addition to the standard bash <tab> complete feature, HomeSetup introduces an enhanced completion functionality 
-accessed through **<shift+tab>**. This feature allows you to iterate over the available options provided by the 
+In addition to the standard bash <tab> complete feature, HomeSetup introduces an enhanced completion functionality
+accessed through **<shift+tab>**. This feature allows you to iterate over the available options provided by the
 completion function, providing a more interactive experience.
 
-By default, HomeSetup _does not load the completions_ during terminal startup to optimize performance. However, if you 
-wish to load the completions and utilize this enhanced feature, you can issue the following command in your terminal: 
+By default, HomeSetup _does not load the completions_ during terminal startup to optimize performance. However, if you
+wish to load the completions and utilize this enhanced feature, you can issue the following command in your terminal:
 `$ __hhs_load_completions`
 
 Executing this command will load the completions and enable the <shift+tab> complete functionality within HomeSetup.

@@ -37,7 +37,7 @@ fi
 
 # ----------------------------------------------------------------------------
 # Starship variables
-export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/starship.toml}"
+export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
 export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
 
 # ----------------------------------------------------------------------------

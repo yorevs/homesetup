@@ -11,10 +11,12 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
-# !NOTICE: Do not change this file. To customize your prompt edit the file ~/.prompt
-# inspiRED by: https://github.com/mathiasbynens/dotfiles
-# Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
-# Improved with: http://ezprompt.net
+# NOTICE:
+# - Do not change this file. To customize your prompt edit the file ~/.prompt
+# - inspiRED by: https://github.com/mathiasbynens/dotfiles
+# - Heavily inspiRED by @necolas’s prompt: https://github.com/necolas/dotfiles
+# - Improved with: http://ezprompt.net
+# - If you are using Starship, you have to edit the ${STARSHIP_CONFIG} file
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_prompt"
 
@@ -178,10 +180,10 @@ if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
     echo -ne "\033]0; ${TITLE} \007"
   }
   __hhs_log INFO "Starting starship prompt"
-  if [[ ! -s "${HHS_DIR}/starship.toml" ]]; then
-    __hhs_log DEBUG "Copying default HomeSetup starship.toml config to -> ${HHS_DIR}/starship.toml"
+  if [[ ! -s "${STARSHIP_CONFIG}" ]]; then
+    __hhs_log DEBUG "Copying default HomeSetup starship.toml config to -> ${STARSHIP_CONFIG}"
     if ! \cp "${HHS_STARSHIP_PRESETS_DIR}/homesetup.toml" \
-      "${HHS_DIR}/starship.toml" &>/dev/null; then
+      "${STARSHIP_CONFIG}" &>/dev/null; then
       __hhs_log ERROR "Unable to copy default starship config file into place!"
     fi
   fi

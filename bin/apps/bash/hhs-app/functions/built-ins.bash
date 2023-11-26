@@ -185,7 +185,7 @@ function board() {
 # @purpose: Clear HomeSetup logs, backups and caches
 function invalidate() {
 
-  local all_files ANS
+  local all_files title mchoose_file
 
   all_files=(
     "${HHS_LOG_DIR}/*.log"
@@ -193,26 +193,30 @@ function invalidate() {
     "${HHS_CACHE_DIR}/*.cache"
     "${HOME}/.inputrc"
     "${HHS_DIR}/.aliasdef"
-    "${HHS_DIR}/starship.toml"
+    "${STARSHIP_CONFIG}"
   )
-  echo -e "\n${YELLOW}Attention! This will remove: ${BLUE}"
-  for f in "${all_files[@]}"; do echo "  |-$f"; done
-  echo ''
-  read -rn 1 -p "${ORANGE}Continue y/[n] ? " ANS
-  echo "${NC}"
-  if [[ "${ANS}" == "y" || "${ANS}" == 'Y' ]]; then
-    echo ''
-    for f_ext in ${all_files[*]}; do
-      echo -n "${BLUE}Removing ${f_ext} ... "
-      if \rm -f "${f_ext}"; then
-        echo -e "${WHITE} [   ${GREEN}OK${NC}   ]"
-      else
-        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+
+  title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"
+  mchoose_file=$(mktemp)
+  if __hhs_mchoose "${mchoose_file}" "${title}" "${all_files[@]}"; then
+    [[ $(wc -c < "$mchoose_file") -le 1 ]] && return 1
+    clear
+    echo ' ' >>"${mchoose_file}"
+    echo -e "${YELLOW}Deleting selected files ...${NC}\n"
+    while read -r -d ' ' file; do
+      if [[ -f "${file}" ]]; then
+        echo -en "${BLUE}Deleting file ${WHITE}"
+        echo -n "${file} $(printf '\056%.0s' {1..50})" | head -c 50
+        if \rm -f "${file}" &>/dev/null; then
+          echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+        else
+          echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        fi
       fi
-      clear
-    done
+    done <"${mchoose_file}"
+    echo ''
   fi
-  echo ''
+  [[ -f "${mchoose_file}" ]] && \rm -f "${mchoose_file}" &>/dev/null
 
   return 0
 }
