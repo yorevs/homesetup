@@ -6,8 +6,10 @@ function _about_() {
 }
 
 function _which_() {
-  command -v "${1}"
-  return $?
+  if command -v "${1}" &>/dev/null; then
+    return 0
+  fi
+  return 1
 }
 
 function _depends_() {

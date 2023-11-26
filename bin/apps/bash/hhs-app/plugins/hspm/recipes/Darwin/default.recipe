@@ -9,7 +9,7 @@ function _which_() {
 
   packman="${HHS_MY_OS_PACKMAN}"
 
-  if command -v "${1}" || "${packman}" list "${1}"; then
+  if command -v "${1}" &>/dev/null || "${packman}" list "${1}" &>/dev/null; then
     return 0
   fi
 
