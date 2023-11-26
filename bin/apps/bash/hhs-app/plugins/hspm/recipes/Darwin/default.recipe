@@ -6,8 +6,14 @@ function _about_() {
 }
 
 function _which_() {
-  command -v "${1}" &>/dev/null
-  return $?
+
+  packman="${HHS_MY_OS_PACKMAN}"
+
+  if command -v "${1}" || "${packman}" list "${1}"; then
+    return 0
+  fi
+
+  return 1
 }
 
 function _depends_() {
@@ -18,7 +24,7 @@ function _install_() {
 
   packman="${HHS_MY_OS_PACKMAN}"
 
-  if "${packman}" install "$@" "${1}" &>/dev/null; then
+  if "${packman}" install "$@" "${1}"; then
     return 0
   fi
 
@@ -29,8 +35,8 @@ function _uninstall_() {
 
   packman="${HHS_MY_OS_PACKMAN}"
 
-  if "${packman}" uninstall "$@" &>/dev/null; then
-    if "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies &>/dev/null; then
+  if "${packman}" uninstall "$@"; then
+    if "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies; then
       return 0
     fi
   fi

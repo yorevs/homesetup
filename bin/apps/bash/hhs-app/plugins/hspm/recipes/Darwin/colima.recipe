@@ -6,33 +6,33 @@ function _about_() {
 
 function _install_() {
 
-  local packages
+  local packages packman
 
+  packman="${HHS_MY_OS_PACKMAN}"
   packages=('colima' 'docker' 'docker-compose' 'docker-buildx' 'docker-credential-helper')
 
   # shellcheck disable=SC2154
-  if ! command brew install "${packages[@]}" 1>/dev/null; then
-    sed -i'' -e 's|"credsStore": ".*"|"credsStore": "osxkeychain"|g' ~/.docker/config.json
-    __hhs_errcho "hspm.bash: unable to install colima"
-    return 1
-  fi
-
+  ${packman} install "${packages[@]}" || __hhs_errcho "hspm.bash: unable to install colima" && return 1
+  sed -i'' -e 's|"credsStore": ".*"|"credsStore": "osxkeychain"|g' ~/.docker/config.json
   [[ -d "${HOME}/.docker/cli-plugins" ]] || mkdir "-p ~/.docker/cli-plugins"
   \rm -f "${HOME}/.docker/cli-plugins/*"
 
-  pushd ~/.docker/cli-plugins &>/dev/null || return 1
+  pushd ~/.docker/cli-plugins || return 1
   ln -s "$(which docker-compose)" .
   ln -s "$(which docker-buildx)" .
-  popd &>/dev/null || return 1
+  popd || return 1
 
   return 0
 }
 
 function _uninstall_() {
-  packman="${HHS_MY_OS_PACKMAN}"
 
-  command "${packman}" uninstall "${packages[@]}" &&
-    command "${packman}" deps "$@" |
+  local packages packman
+
+  packman="${HHS_MY_OS_PACKMAN}"
+  packages=('colima' 'docker' 'docker-compose' 'docker-buildx' 'docker-credential-helper')
+
+  ${packman} uninstall "${packages[@]}" && ${packman} deps "$@" |
     xargs "${packman}" remove --ignore-dependencies
 
   return $?

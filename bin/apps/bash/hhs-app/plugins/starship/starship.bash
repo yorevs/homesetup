@@ -87,8 +87,11 @@ function execute() {
     [[ $# -eq 0 || $1 == "edit" ]] && __hhs_open "${STARSHIP_CONFIG}" && quit 0
 
     if [[ $1 == "restore" ]]; then
-      if \cp "${HHS_PRESETS_FOLDER}/homesetup.toml" "${STARSHIP_CONFIG}" &>/dev/null; then
+      echo -e "${GREEN}Restoring HomeSetup starship preset${NC}"
+      if \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" "${STARSHIP_CONFIG}" &>/dev/null; then
         echo -e "${GREEN}Your starship prompt changed to HomeSetup defaults${NC}" && quit 0
+      else
+        echo -e "${RED}Unable to restore HomeSetup starship preset${NC}" && quit 1
       fi
     fi
 

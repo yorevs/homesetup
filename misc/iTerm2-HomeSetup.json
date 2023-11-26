@@ -1,6 +1,10 @@
 {
-  "Thin Strokes" : 3,
-  "Custom Directory" : "No",
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Set Local Environment Vars" : false,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -8,7 +12,7 @@
     "Red Component" : 0,
     "Blue Component" : 0
   },
-  "Rows" : 28,
+  "Rows" : 25,
   "Ansi 11 Color" : {
     "Green Component" : 1,
     "Red Component" : 1,
@@ -20,7 +24,7 @@
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0.73333334922790527
   },
-  "Use Custom Window Title" : true,
+  "Use Custom Window Title" : false,
   "Right Option Key Sends" : 0,
   "Show Status Bar" : false,
   "Character Encoding" : 4,
@@ -29,7 +33,7 @@
     "Red Component" : 0.70980000495910645,
     "Blue Component" : 1
   },
-  "Blend" : 0.48412330863402064,
+  "Blend" : 0.050000000000000003,
   "Mouse Reporting" : true,
   "Ansi 4 Color" : {
     "Green Component" : 0,
@@ -82,7 +86,7 @@
       "algorithm" : 0
     }
   },
-  "Flashing Bell" : false,
+  "Flashing Bell" : true,
   "BM Growl" : true,
   "Ansi 3 Color" : {
     "Green Component" : 0.73333334922790527,
@@ -100,7 +104,7 @@
   },
   "Unlimited Scrollback" : false,
   "Custom Command" : "No",
-  "Title Components" : 512,
+  "Title Components" : 544,
   "Keyboard Map" : {
     "0xf700-0x260000" : {
       "Text" : "[1;6A",
@@ -283,14 +287,16 @@
     "Red Component" : 1,
     "Blue Component" : 0.3333333432674408
   },
+  "Movement Keys Scroll Outside Interactive Apps" : true,
   "Use Bold Font" : true,
-  "Silence Bell" : false,
+  "Silence Bell" : true,
   "Ansi 12 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 1
   },
   "Window Type" : 9,
+  "Allow Title Reporting" : true,
   "Use Bright Bold" : true,
   "Cursor Text Color" : {
     "Green Component" : 1,
@@ -308,20 +314,20 @@
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0
   },
-  "Name" : "HomeSetup-15-inch",
+  "Name" : "iTerm2-HomeSetup",
   "Blinking Cursor" : true,
   "Guid" : "ADDFAB51-465E-4611-B07A-478C10698414",
-  "Ansi 8 Color" : {
-    "Green Component" : 0.3333333432674408,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
+  "Idle Code" : 0,
   "Ansi 10 Color" : {
     "Green Component" : 1,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408
   },
-  "Idle Code" : 0,
+  "Ansi 8 Color" : {
+    "Green Component" : 0.3333333432674408,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Cursor Type" : 0,
@@ -331,19 +337,21 @@
     "Blue Component" : 0
   },
   "Blur" : true,
-  "Normal Font" : "DroidSansMonoNerdFontComplete- 11",
-  "Vertical Spacing" : 1,
+  "Normal Font" : "DroidSansMonoNerdFontComplete- 14",
+  "Vertical Spacing" : 0.94999999999999996,
   "Ansi 7 Color" : {
     "Green Component" : 0.73333334922790527,
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0.73333334922790527
   },
+  "Place Prompt at First Column" : false,
   "Space" : 0,
   "Command" : "",
   "Terminal Type" : "xterm-256color",
-  "Horizontal Spacing" : 1,
+  "Horizontal Spacing" : 0.88,
   "Reduce Flicker" : true,
   "Option Key Sends" : 0,
+  "Only The Default BG Color Uses Transparency" : false,
   "Blink Allowed" : true,
   "Ansi 15 Color" : {
     "Green Component" : 1,
@@ -355,27 +363,24 @@
     "Red Component" : 0,
     "Blue Component" : 0.73333334922790527
   },
-  "Transparency" : 0.085552823604060926,
+  "Transparency" : 0.061147668716755317,
   "Background Color" : {
     "Green Component" : 0,
     "Red Component" : 0,
     "Blue Component" : 0
   },
   "Screen" : 0,
+  "Initial Use Transparency" : false,
   "Non Ascii Font" : "Monaco 12",
   "Ansi 13 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 1,
     "Blue Component" : 1
   },
-  "Columns" : 202,
+  "Columns" : 176,
   "Unicode Normalization" : 0,
   "Visual Bell" : true,
   "ASCII Ligatures" : false,
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
-  "Set Local Environment Vars" : false
+  "Thin Strokes" : 4,
+  "Custom Directory" : "No"
 }

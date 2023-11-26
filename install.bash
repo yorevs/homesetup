@@ -707,6 +707,12 @@ Usage: $APP_NAME [OPTIONS] <args>
       \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
       echo -e "\n${ORANGE}Your old .tailor had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
     fi
+
+    # Old $HHS_DIR/starship.toml changed to $HHS_DIR/.starship.toml
+    if [[ -f "${HHS_DIR}/starship.toml" ]]; then
+      \mv -f "${HHS_DIR}/starship.toml" "${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak"
+      echo -e "\n${ORANGE}Your old starship.toml had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak ${NC}"
+    fi
   }
 
   # Install Starship prompt.

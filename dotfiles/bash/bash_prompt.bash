@@ -182,7 +182,7 @@ if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   __hhs_log INFO "Starting starship prompt"
   if [[ ! -s "${STARSHIP_CONFIG}" ]]; then
     __hhs_log DEBUG "Copying default HomeSetup starship.toml config to -> ${STARSHIP_CONFIG}"
-    if ! \cp "${HHS_STARSHIP_PRESETS_DIR}/homesetup.toml" \
+    if ! \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" \
       "${STARSHIP_CONFIG}" &>/dev/null; then
       __hhs_log ERROR "Unable to copy default starship config file into place!"
     fi

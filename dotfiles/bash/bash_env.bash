@@ -39,6 +39,7 @@ fi
 # Starship variables
 export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
 export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
+export HHS_STARSHIP_PRESETS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/starship/hhs-presets"
 
 # ----------------------------------------------------------------------------
 # System folders
@@ -127,7 +128,6 @@ export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
 
 export HHS_ALIASES_FILE="${HHS_DIR}/.aliases"
 export HHS_CMD_FILE="${HHS_DIR}/.cmd_file"
-export HHS_DEFAULT_EDITOR=__hhs_open
 export HHS_ENV_FILE="${HHS_DIR}/.env"
 export HHS_FIREBASE_CONFIG_FILE="${HHS_DIR}/firebase.properties"
 export HHS_FIREBASE_CREDS_FILE="${HHS_DIR}/{project_id}-firebase-credentials.json"
@@ -138,7 +138,6 @@ export HHS_SETMAN_CONFIG_FILE="${HHS_DIR}/setman.properties"
 export HHS_SETMAN_DB_FILE="${HHS_DIR}/setman.db"
 export HHS_VAULT_FILE="${HHS_DIR}/.vault"
 export HHS_VAULT_USER="${USER}"
-export HHS_STARSHIP_PRESETS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/starship/hhs-presets"
 
 # ----------------------------------------------------------------------------
 # Directories
@@ -158,7 +157,7 @@ DEVELOPER_TOOLS=(
   'gcc' 'make' 'mvn' 'gradle' 'ruby' 'jq' 'git'
   'docker' 'nvm' 'node' 'eslint' 'pylint' 'gpg'
   'shasum' 'base64' 'python' 'python3' 'pip3'
-  'direnv' 'pbcopy' 'sqlite3' 'go' 'fig'
+  'direnv' 'pbcopy' 'sqlite3' 'go' 'fig' 'colima'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

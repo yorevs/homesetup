@@ -45,8 +45,10 @@ usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 "
 
 UNSETS=(
-  help version cleanup execute cleanup_recipes list_recipes install_recipe uninstall_recipe
-  add_breadcrumb del_breadcrumb recover_packages _install_ _uninstall_ _about_ _depends_ _which_
+  help version cleanup execute cleanup_recipes list_recipes
+  install_recipe uninstall_recipe
+  add_breadcrumb del_breadcrumb recover_packages
+  _install_ _uninstall_ _about_ _depends_ _which_
 )
 
 [[ -s "$HHS_DIR/bin/app-commons.bash" ]] && source "$HHS_DIR/bin/app-commons.bash"
@@ -64,7 +66,7 @@ ALL_RECIPES=()
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
 
 # File containing all installed/uninstalled packages
-BREADCRUMB_FILE="$HHS_DIR/.hspm"
+BREADCRUMB_FILE="${HHS_DIR}/.hspm"
 
 # Known package managers
 KNOWN_PCG_MANAGERS=('brew' 'apt-get' 'apt' 'yum' 'dnf' 'apk')
@@ -215,6 +217,9 @@ function install_recipe() {
   source "${RECIPES_DIR}/${HHS_MY_OS}/default.recipe"
   package=$(basename "${recipe%\.*}")
 
+  # Check if the package is already installed
+  if _which_ "${package}"; then echo -e "${YELLOW}Package \"${package}\" is already installed!\n"; quit 0; fi
+
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Using recipe for \"${package}\""
@@ -225,7 +230,7 @@ function install_recipe() {
   echo -e "${BLUE}Installing \"${package}\", please wait ..."
 
   if _depends_ && _install_ "${package}" && _which_ "${package}"; then
-    echo -e "${GREEN}Installation successful => ${package} ${NC}"
+    echo -e "${GREEN}Installation successful => \"${package}\" ${NC}"
     add_breadcrumb "${package}"
   else
     quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" !"
@@ -244,6 +249,9 @@ function uninstall_recipe() {
   source "${RECIPES_DIR}/${HHS_MY_OS}/default.recipe"
   package=$(basename "${recipe%\.*}")
 
+  # Check if the package is already installed
+  if ! _which_ "${package}"; then echo -e "${YELLOW}Package \"${package}\" is not installed!\n"; quit 0; fi
+
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Using recipe for \"${package}\""
@@ -254,7 +262,7 @@ function uninstall_recipe() {
   echo -e "${BLUE}Uninstalling \"${package}\", please wait ..."
 
   if _uninstall_ "${package}" && ! _which_ "${package}"; then
-    echo -e "${GREEN}Uninstallation successful => ${package} ${NC}"
+    echo -e "${GREEN}Uninstallation successful => \"${package}\" ${NC}"
     del_breadcrumb "${package}"
   else
     quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" !"
@@ -276,11 +284,9 @@ function recover_packages() {
 
   if [[ -z "${RECOVER_TOOLS}" ]]; then
     echo -e "recovered [${HHS_MY_OS}/${HHS_MY_OS_RELEASE}] packages ... "
-    IFS=''
     while read -r package; do
       all_packages+=("${package}")
     done < <(grep "^${os}:" "${BREADCRUMB_FILE}")
-    IFS="${OLDIFS}"
   else
     echo -e "development tools ... "
     # shellcheck disable=SC2206

@@ -86,9 +86,13 @@ function __hhs_open() {
 
   local filename="$1"
 
-  if __hhs_has open && \open "${filename}"; then
+  if __hhs_has open && open "${filename}"; then
     return $?
-  elif __hhs_has xdg-open && \xdg-open "${filename}"; then
+  elif __hhs_has xdg-open && xdg-open "${filename}"; then
+    return $?
+  elif __hhs_has vim && vim "${filename}"; then
+    return $?
+  elif __hhs_has vi && vi "${filename}"; then
     return $?
   else
     __hhs_errcho "${FUNCNAME[0]}: Unable to open \"${filename}\". No suitable application found !"
@@ -101,7 +105,7 @@ function __hhs_open() {
 # @param $1 [Req] : The file path.
 function __hhs_edit() {
 
-  local filename="$1" editor="${EDITOR:-HHS_DEFAULT_EDITOR}"
+  local filename="$1" editor="${EDITOR:-vi}"
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <file_path>"
