@@ -74,6 +74,9 @@ KNOWN_PCG_MANAGERS=('brew' 'apt-get' 'apt' 'yum' 'dnf' 'apk')
 # Sudo command
 SUDO=
 
+# HSPM log file
+LOGFILE="${}"
+
 # @purpose: HHS plugin required function
 function help() {
   usage 0

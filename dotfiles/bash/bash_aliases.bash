@@ -32,8 +32,8 @@ function __hhs_alias() {
   alias_expr="${all_args#*=}"
   alias_name="${all_args//=*/}"
 
-  if ! type "$alias_name" > /dev/null 2>&1; then
-    if alias "${alias_name}"="${alias_expr}" > /dev/null 2>&1; then
+  if ! type "$alias_name" >/dev/null 2>&1; then
+    if alias "${alias_name}"="${alias_expr}" >/dev/null 2>&1; then
       return 0
     else
       echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
@@ -72,17 +72,19 @@ alias q="exit 0"
 alias sudo='sudo '
 
 # @alias: Always use color output for `ls`
-alias ls='\ls ${COLOR_FLAG} -F'
+alias ls='\ls ${COLOR_FLAG}'
 # @alias: List all files colorized in long format
-alias l='ls -lh'
+alias l='ls -lhF'
 # @alias: List all directories in long format
-alias lsd="ls -d */"
-# @alias: List all files colorized in long format, including dot files
-alias ll='ls -lah'
+alias ld='ls -d -lah */ 2> /dev/null'
+# @alias: List all files in long format
+alias lf='ls -lahd ??* | grep --color=never "^-"'
+# @alias: List all files and folders colorized in long format, including dot files
+alias ll='ls -lahF'
 # @alias: List all .dotfiles colorized in long format
-alias lll='ls -lhd .??* | grep "^-"'
+alias lll='ls -lahd .??* 2> /dev/null | grep --color=never "^-"'
 # @alias: List all .dotfolders colorized in long format
-alias lld='ls -lhd .??*/'
+alias lld='ls -d -lah .??*/ 2> /dev/null'
 
 # @alias: Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
@@ -165,44 +167,44 @@ __hhs_has "base64" && alias encode="base64"
 # Linux boxes have a different syntax for some commands, so we create the alias to match the correct OS.
 case "${HHS_MY_OS}" in
 
-  Linux)
-    # @alias: `top' shortcut ordered by CPU%
-    alias cpu='\top -o %CPU'
-    # @alias: `top' shortcut ordered by MEM%
-    alias mem='\top -o %MEM'
-    # @alias: Shortcut for base64 decode
-    __hhs_has "base64" && alias decode='base64 -d'
-    # @alias: Shortcut for base64 decode
-    __hhs_has "apt-get" && alias apt='apt-get'
+Linux)
+  # @alias: `top' shortcut ordered by CPU%
+  alias cpu='\top -o %CPU'
+  # @alias: `top' shortcut ordered by MEM%
+  alias mem='\top -o %MEM'
+  # @alias: Shortcut for base64 decode
+  __hhs_has "base64" && alias decode='base64 -d'
+  # @alias: Shortcut for base64 decode
+  __hhs_has "apt-get" && alias apt='apt-get'
   ;;
 
-  Darwin)
-    # @alias: `top' shortcut ordered by CPU%
-    alias cpu='\top -o cpu'
-    # @alias: `top' shortcut ordered by MEM%
-    alias mem='\top -o rsize'
-    # @alias: Shortcut for base64 decode
-    __hhs_has "base64" && alias decode='base64 -D'
-    # @alias: Delete all .DS_store files recursively
-    alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
-    # @alias: Flush Directory Service cache
-    __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
-    # @alias: Clean up LaunchServices to remove duplicates in the "Open With" menu
-    alias cleanup-reg="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-    # @alias: Show hidden files in Finder
-    alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-    # @alias: Hide hidden files in Finder
-    alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-    # @alias: Show all desktop icons
-    alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-    # @alias: Hide all desktop icons
-    alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-    # @alias: Canonical hex dump; some systems have this symlinked
-    __hhs_has "hd" || alias hd='\hexdump -C'
-    # @alias: If `md5sum' is not available, use `md5' instead`
-    __hhs_has "md5sum" || alias md5sum='\md5'
-    # @alias: If `sha1' is not available, use `shasum' instead`
-    __hhs_has "sha1" || alias sha1='\shasum'
+Darwin)
+  # @alias: `top' shortcut ordered by CPU%
+  alias cpu='\top -o cpu'
+  # @alias: `top' shortcut ordered by MEM%
+  alias mem='\top -o rsize'
+  # @alias: Shortcut for base64 decode
+  __hhs_has "base64" && alias decode='base64 -D'
+  # @alias: Delete all .DS_store files recursively
+  alias cleanup-ds="find . -type f -name '*.DS_Store' -ls -delete"
+  # @alias: Flush Directory Service cache
+  __hhs_has "dscacheutil" && alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+  # @alias: Clean up LaunchServices to remove duplicates in the "Open With" menu
+  alias cleanup-reg="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+  # @alias: Show hidden files in Finder
+  alias show-files="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+  # @alias: Hide hidden files in Finder
+  alias hide-files="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+  # @alias: Show all desktop icons
+  alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+  # @alias: Hide all desktop icons
+  alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+  # @alias: Canonical hex dump; some systems have this symlinked
+  __hhs_has "hd" || alias hd='\hexdump -C'
+  # @alias: If `md5sum' is not available, use `md5' instead`
+  __hhs_has "md5sum" || alias md5sum='\md5'
+  # @alias: If `sha1' is not available, use `shasum' instead`
+  __hhs_has "sha1" || alias sha1='\shasum'
   ;;
 esac
 
@@ -211,54 +213,54 @@ esac
 
 case "${HHS_MY_SHELL}" in
 
-  bash)
-    # @alias: Make terminal cursor visible (Bash)
-    alias show-cursor='tput cnorm'
-    # @alias: Make terminal cursor invisible (Bash)
-    alias hide-cursor='tput civis'
-    # @alias: Save terminal cursor position (Bash)
-    alias save-cursor-pos='tput sc'
-    # @alias: Restore terminal cursor position (Bash)
-    alias restore-cursor-pos='tput rc'
-    # @alias: Enable terminal line wrap (Bash)
-    alias enable-line-wrap='tput smam'
-    # @alias: Disable terminal line wrap (Bash)
-    alias disable-line-wrap='tput rmam'
-    # @alias: Enable terminal echo (Bash)
-    alias enable-echo='stty echo -raw'
-    # @alias: Disable terminal echo (Bash)
-    alias disable-echo='stty raw -echo min 0'
-    # @alias: Reset all terminal cursor attributes (Bash)
-    alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
-    # @alias: Save the current terminal screen
-    alias save-screen='tput smcup'
-    # @alias: Load the saved terminal screen
-    alias restore-screen='tput rmcup'
-    ;;
-  zsh)
-    # @alias: Make terminal cursor visible (Zsh)
-    alias show-cursor='echo "ZSH is Not supported yet"'
-    # @alias: Make terminal cursor invisible (Zsh)
-    alias hide-cursor='echo "ZSH is Not supported yet"'
-    # @alias: Save terminal cursor position (Zsh)
-    alias save-cursor-pos='echo "ZSH is Not supported yet"'
-    # @alias: Restore terminal cursor position (Zsh)
-    alias restore-cursor-pos='echo "ZSH is Not supported yet"'
-    # @alias: Enable terminal line wrap (Zsh)
-    alias enable-line-wrap='echo "ZSH is Not supported yet"'
-    # @alias: Disable terminal line wrap (Zsh)
-    alias disable-line-wrap='echo "ZSH is Not supported yet"'
-    # @alias: Enable terminal echo (Zsh)
-    alias enable-echo='echo "ZSH is Not supported yet"'
-    # @alias: Disable terminal echo (Zsh)
-    alias disable-echo='echo "ZSH is Not supported yet"'
-    # @alias: Reset all terminal cursor attributes (Zsh)
-    alias reset-cursor-attrs='echo "ZSH is Not supported yet"'
-    # @alias: Save the current terminal screen
-    alias save-screen='echo "ZSH is Not supported yet"'
-    # @alias: Load the saved terminal screen
-    alias restore-screen='echo "ZSH is Not supported yet"'
-    ;;
+bash)
+  # @alias: Make terminal cursor visible (Bash)
+  alias show-cursor='tput cnorm'
+  # @alias: Make terminal cursor invisible (Bash)
+  alias hide-cursor='tput civis'
+  # @alias: Save terminal cursor position (Bash)
+  alias save-cursor-pos='tput sc'
+  # @alias: Restore terminal cursor position (Bash)
+  alias restore-cursor-pos='tput rc'
+  # @alias: Enable terminal line wrap (Bash)
+  alias enable-line-wrap='tput smam'
+  # @alias: Disable terminal line wrap (Bash)
+  alias disable-line-wrap='tput rmam'
+  # @alias: Enable terminal echo (Bash)
+  alias enable-echo='stty echo -raw'
+  # @alias: Disable terminal echo (Bash)
+  alias disable-echo='stty raw -echo min 0'
+  # @alias: Reset all terminal cursor attributes (Bash)
+  alias reset-cursor-attrs='show-cursor; enable-line-wrap; enable-echo'
+  # @alias: Save the current terminal screen
+  alias save-screen='tput smcup'
+  # @alias: Load the saved terminal screen
+  alias restore-screen='tput rmcup'
+  ;;
+zsh)
+  # @alias: Make terminal cursor visible (Zsh)
+  alias show-cursor='echo "ZSH is Not supported yet"'
+  # @alias: Make terminal cursor invisible (Zsh)
+  alias hide-cursor='echo "ZSH is Not supported yet"'
+  # @alias: Save terminal cursor position (Zsh)
+  alias save-cursor-pos='echo "ZSH is Not supported yet"'
+  # @alias: Restore terminal cursor position (Zsh)
+  alias restore-cursor-pos='echo "ZSH is Not supported yet"'
+  # @alias: Enable terminal line wrap (Zsh)
+  alias enable-line-wrap='echo "ZSH is Not supported yet"'
+  # @alias: Disable terminal line wrap (Zsh)
+  alias disable-line-wrap='echo "ZSH is Not supported yet"'
+  # @alias: Enable terminal echo (Zsh)
+  alias enable-echo='echo "ZSH is Not supported yet"'
+  # @alias: Disable terminal echo (Zsh)
+  alias disable-echo='echo "ZSH is Not supported yet"'
+  # @alias: Reset all terminal cursor attributes (Zsh)
+  alias reset-cursor-attrs='echo "ZSH is Not supported yet"'
+  # @alias: Save the current terminal screen
+  alias save-screen='echo "ZSH is Not supported yet"'
+  # @alias: Load the saved terminal screen
+  alias restore-screen='echo "ZSH is Not supported yet"'
+  ;;
 esac
 
 # -----------------------------------------------------------------------------------
