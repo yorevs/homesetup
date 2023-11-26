@@ -420,6 +420,9 @@ to explore and leverage their capabilities.
 
 | Plug-in  | Purpose                                                                  |
 |----------|--------------------------------------------------------------------------|
+| settings | Terminal settings manager.                                               |
+| starship | Starship prompt manager.                                                 |
+| setup    | HomeSetup initialization manager.                                        |
 | updater  | Update manager for HomeSetup.                                            |
 | firebase | Manager for HomeSetup Firebase integration.                              |
 | hspm     | Manage your development tools using installation/uninstallation recipes. |
@@ -434,6 +437,8 @@ to explore and leverage their capabilities.
 | logs        | Retrieve latest HomeSetup load logs.                                                   |
 | man         | Open manual for command.                                                               |
 | board       | Open the HomeSetup GitHub project **board** for the current version.                   |
+| invalidate  | Remove caches, logs and backup files.                                                  |
+| docsify     | Open the HomeSetup **docsify** web page.                                               |
 | tests       | Execute all HomeSetup **automated tests**.                                             |
 | color-tests | Execute all HomeSetup **terminal color tests**.                                        |
 

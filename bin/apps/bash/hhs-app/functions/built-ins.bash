@@ -211,6 +211,7 @@ function invalidate() {
           echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
         else
           echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+          return 1
         fi
       fi
     done <"${mchoose_file}"
