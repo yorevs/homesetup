@@ -55,7 +55,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   QUIET=
 
   # Installation log file
-  INSTALL_LOG="${HOME}/hhs-install.log"
+  INSTALL_LOG="${HOME}/install.log"
 
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
@@ -236,6 +236,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Define the HomeSetup files (.hhs) location
     HHS_DIR="${HOME}/.hhs"
+
+    # Define the HomeSetup log directory
+    HHS_LOG_DIR="${HHS_DIR}/log"
 
     # Dotfiles source location
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
@@ -753,9 +756,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${BLUE}$ reset && source ${HOME}/.bashrc"
-    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${BLUE}$ hhu --update"
-    echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${BLUE}$ cat ${INSTALL_LOG}"
-    echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${BLUE}$ cat ${README_LINK}"
+    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${BLUE}$ hhu update"
+    echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${BLUE}$ hhs logs install"
+    echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${BLUE}$ more ${README_LINK}"
     echo -e "${NC}"
 
     if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
@@ -767,6 +770,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     echo -e "\nHomeSetup installation finished: $(date)" >> "${INSTALL_LOG}"
+    \mv "${INSTALL_LOG}" "${HHS_LOG_DIR}"
     quit 0
   }
 

@@ -75,7 +75,7 @@ KNOWN_PCG_MANAGERS=('brew' 'apt-get' 'apt' 'yum' 'dnf' 'apk')
 SUDO=
 
 # HSPM log file
-LOGFILE="${}"
+LOGFILE="${HHS_LOG_DIR}/hspm.log"
 
 # @purpose: HHS plugin required function
 function help() {
@@ -221,7 +221,10 @@ function install_recipe() {
   package=$(basename "${recipe%\.*}")
 
   # Check if the package is already installed
-  if _which_ "${package}"; then echo -e "${YELLOW}Package \"${package}\" is already installed!\n"; quit 0; fi
+  if _which_ "${package}"; then
+    echo -e "${YELLOW}Package \"${package}\" is already installed!\n"
+    quit 0
+  fi
 
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
@@ -232,7 +235,7 @@ function install_recipe() {
 
   echo -e "${BLUE}Installing \"${package}\", please wait ..."
 
-  if _depends_ && _install_ "${package}" && _which_ "${package}"; then
+  if _depends_ && _install_ "${package}" 2>"${LOGFILE}" && _which_ "${package}"; then
     echo -e "${GREEN}Installation successful => \"${package}\" ${NC}"
     add_breadcrumb "${package}"
   else
@@ -253,7 +256,10 @@ function uninstall_recipe() {
   package=$(basename "${recipe%\.*}")
 
   # Check if the package is already installed
-  if ! _which_ "${package}"; then echo -e "${YELLOW}Package \"${package}\" is not installed!\n"; quit 0; fi
+  if ! _which_ "${package}"; then
+    echo -e "${YELLOW}Package \"${package}\" is not installed!\n"
+    quit 0
+  fi
 
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
@@ -264,7 +270,7 @@ function uninstall_recipe() {
 
   echo -e "${BLUE}Uninstalling \"${package}\", please wait ..."
 
-  if _uninstall_ "${package}" && ! _which_ "${package}"; then
+  if _uninstall_ "${package}" 2>"${LOGFILE}" && ! _which_ "${package}"; then
     echo -e "${GREEN}Uninstallation successful => \"${package}\" ${NC}"
     del_breadcrumb "${package}"
   else
