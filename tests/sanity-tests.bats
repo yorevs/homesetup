@@ -11,7 +11,13 @@
 # Copyright (c) 2023, HomeSetup team
 
 @test "test-check-hhs-dirs-exist" {
-  [[ -d "${HHS_HOME}" && -d "${HHS_DIR}" && "${HHS_LOG_DIR}" && "${HHS_BACKUP_DIR}" && "${HHS_CACHE_DIR}" ]]
+  [[ \
+    -d "${HHS_HOME}" \
+    && -d "${HHS_DIR}" \
+    && -d "${HHS_LOG_DIR}" \
+    && -d "${HHS_BACKUP_DIR}" \
+    && -d "${HHS_CACHE_DIR}" \
+  ]]
 }
 
 @test "test-check-dotfiles-exist" {
@@ -25,6 +31,7 @@
 
   [[ -f "${HOME}/.inputrc" ]] || missing+=("${HOME}/.inputrc")
   [[ -f "${HHS_DIR}/.aliasdef" ]] || missing+=("${HHS_DIR}/.aliasdef")
+  [[ -f "${HHS_DIR}/.starship.toml" ]] || missing+=("${HHS_DIR}/.starship.toml")
   [[ -f "${HHS_DIR}/.aliases" ]] || missing+=("${HHS_DIR}/.aliases")
   [[ -f "${HHS_DIR}/.cmd_file" ]] || missing+=("${HHS_DIR}/.cmd_file")
   [[ -f "${HHS_DIR}/.colors" ]] || missing+=("${HHS_DIR}/.colors")
@@ -36,7 +43,6 @@
   [[ -f "${HHS_DIR}/.saved_dirs" ]] || missing+=("${HHS_DIR}/.saved_dirs")
 
   [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: ${missing[*]}"
-
 
   [[ ${#missing[@]} -eq 0 ]]
 }

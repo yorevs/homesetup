@@ -1,5 +1,3 @@
-# shellcheck shell=bash
-
 #  Script: test_helper.bash
 # Purpose: HomeSetup test helper.
 # Created: Mar 02, 2020

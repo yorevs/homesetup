@@ -73,7 +73,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   README_LINK="${HHS_HOME}/README.MD"
 
   # HSPyLib python modules to install
-  PYTHON_MODULES=('hspylib' 'hspylib-clitt' 'hspylib-setman' 'hspylib-vault' 'hspylib-firebase')
+  PYTHON_MODULES=(
+    'hspylib'
+    'hspylib-clitt'
+    'hspylib-setman'
+    'hspylib-vault'
+    'hspylib-firebase'
+  )
 
   # User's operating system
   MY_OS=$(uname -s)
@@ -82,7 +88,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   OS_APP_MAN=
 
   # HomeSetup required tools
-  REQUIRED_TOOLS=('git' 'curl' 'python3' 'rsync')
+  REQUIRED_TOOLS=(
+    'git' 'curl' 'python3' 'rsync' 'ruby'
+  )
 
   # Missing HomeSetup required tools
   MISSING_TOOLS=()
@@ -91,12 +99,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     MY_OS_NAME=$(sw_vers -productName)
     GROUP=${GROUP:-staff}  # Default macOs user group
     # Darwin required tools
-    REQUIRED_TOOLS+=('brew' 'xcode-select')
+    REQUIRED_TOOLS+=('xcode-select')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
     GROUP=${GROUP:-${USER}}  # Default user group
     # Linux required tools
+    REQUIRED_TOOLS+=('file')
   fi
 
   # Awesome icons
@@ -117,7 +126,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
-    copy_file create_directory install_homesetup abort_install check_prefix configure_starship
+    copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
   )
 
   # Purpose: Quit the program and exhibits an exit message if specified
@@ -305,32 +314,33 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     has sudo &>/dev/null && SUDO=sudo
 
+    # macOS
     if has 'brew'; then
       os_type='macOS'
       OS_APP_MAN=brew
+      ensure_brew
+    # Debian or Ubuntu
     elif has 'apt-get'; then
       os_type='Debian'
-      OS_APP_MAN=apt
+      OS_APP_MAN='apt'
+    # Fedora, CentOS, or Red Hat
     elif has 'yum'; then
       os_type='RedHat'
-      OS_APP_MAN=yum
-    elif has 'dnf'; then
-      os_type='RedHat'
-      OS_APP_MAN=dnf
+      OS_APP_MAN='yum'
+    # Alpine (busybox)
     elif has 'apk'; then
       os_type='Alpine'
-      OS_APP_MAN=apk
+      OS_APP_MAN='apk'
+    # Arch Linux
+    elif has 'pacman'; then
+      os_type='ArchLinux'
+      OS_APP_MAN='pacman'
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
 
-    if [[ 'macOS' == "${os_type}" ]]; then
-      ensure_brew
-    fi
-
     echo ''
     echo -e "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
-
     echo ''
     echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
     echo ''
@@ -358,10 +368,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     if ! which brew &>/dev/null; then
       echo -e "${YELLOW}Installing Homebrew ...${NC}"
       BASH -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      if which brew &>/dev/null; then
+      if command -v brew &>/dev/null; then
         echo -e "${YELLOW}@@ Successfully installed Homebrew ${NC}"
+        if [[ "${MY_OS}" == "Linux" ]]; then
+          test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+          test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          eval "$("$(brew --prefix)"/bin/brew shellenv)"
+        fi
       else
         echo -e "${RED}### Failed to install Homebrew ${NC}"
+        quit 2
       fi
     fi
   }
@@ -402,16 +418,15 @@ Usage: $APP_NAME [OPTIONS] <args>
     activate_dotfiles
   }
 
-  # Install brew for Darwin based system.
+  # Make sure HomeBrew is installed.
   ensure_brew() {
     echo ''
     if ! has 'brew'; then
-      echo -n "${YELLOW}Darwin detected but Homebrew is not installed. Attempting to install ..."
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>/dev/null ||
-        quit 2 "# FAILED! Unable to install HomeBrew !"
+      echo -n "${YELLOW}Homebrew is not installed. Attempting to install ..."
+      install_brew || quit 2 "# Failed to install HomeBrew !"
       echo -e "${GREEN}SUCCESS${NC} !"
     else
-      echo -e "${BLUE}Darwin detected and Homebrew is already installed !${NC}"
+      echo -e "${BLUE}Homebrew is already installed !${NC}"
     fi
   }
 
@@ -718,7 +733,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
 
     # Moving orig and bak files to backup folder.
-    find "${HHS_DIR}" -maxdepth 1 -type f \( -name '*.bak' -o -name '*.orig' \) -print -exec mv {} "${HHS_BACKUP_DIR}" \;
+    find "${HHS_DIR}" -maxdepth 1 \
+      -type f \( -name '*.bak' -o -name '*.orig' \) \
+      -print -exec mv {} "${HHS_BACKUP_DIR}" \;
 
     # .tailor Needs to be updated, so, we need to replace it.
     if [[ -f "${HHS_DIR}/.tailor" ]]; then
