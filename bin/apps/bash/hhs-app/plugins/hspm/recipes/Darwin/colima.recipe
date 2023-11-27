@@ -4,23 +4,66 @@ function _about_() {
   echo "Container runtimes on macOS (and Linux) with minimal setup"
 }
 
+function _install_docker_() {
+
+  packman="${HHS_MY_OS_PACKMAN}"
+
+  if ! which docker &> /dev/null; then
+    echo -e "${BLUE}Installing Colima ...${NC}"
+    ${packman} install docker docker-buildx docker-compose docker-credential-helper
+    if which docker &> /dev/null; then
+      echo -e "${GREEN}m@@ Successfully installed Colima ${NC}"
+      return 0
+    else
+      echo -e "${RED}### Failed to install Colima ${NC}"
+      return 1
+    fi
+  else
+    echo -e "${YELLOW}Colima is already installed ...${NC}"
+  fi
+
+  return 0
+}
+
+function _install_colima_() {
+
+  packman="${HHS_MY_OS_PACKMAN}"
+
+  if ! which colima &> /dev/null; then
+    echo -e "${BLUE}Installing Colima ...${NC}"
+    ${packman} install colima
+    if which colima &> /dev/null; then
+      echo -e "${GREEN}@@ Successfully installed Colima ${NC}"
+    else
+      echo -e "${RED}### Failed to install Colima ${NC}"
+    fi
+  else
+    echo -e "${YELLOW}Colima is already installed ...${NC}"
+  fi
+}
+
 function _install_() {
 
   local packages packman
 
-  packman="${HHS_MY_OS_PACKMAN}"
-  packages=('colima' 'docker' 'docker-compose' 'docker-buildx' 'docker-credential-helper')
-
   # shellcheck disable=SC2154
-  ${packman} install "${packages[@]}" || __hhs_errcho "hspm.bash: unable to install colima" && return 1
+  if ! _install_docker__ || ! _install_colima_; then
+    __hhs_errcho "hspm.bash: unable to install docker/colima"
+    return 1
+  fi
+  # Configure credentials
   sed -i'' -e 's|"credsStore": ".*"|"credsStore": "osxkeychain"|g' ~/.docker/config.json
-  [[ -d "${HOME}/.docker/cli-plugins" ]] || mkdir "-p ~/.docker/cli-plugins"
+  # Configure plugins
+  [[ -d "${HOME}/.docker/cli-plugins" ]] || \mkdir "-p ${HOME}/.docker/cli-plugins"
   \rm -f "${HOME}/.docker/cli-plugins/*"
 
-  pushd ~/.docker/cli-plugins || return 1
-  ln -s "$(which docker-compose)" .
-  ln -s "$(which docker-buildx)" .
-  popd || return 1
+  unset _install_colima_ _install_docker_
+
+  # Link plugins
+  pushd ~/.docker/cli-plugins &> /dev/null || return 1
+  ln -s "$(which docker-compose)" &> /dev/null .
+  ln -s "$(which docker-buildx)" &> /dev/null .
+  popd &> /dev/null || return 1
 
   return 0
 }
@@ -30,7 +73,7 @@ function _uninstall_() {
   local packages packman
 
   packman="${HHS_MY_OS_PACKMAN}"
-  packages=('colima' 'docker' 'docker-compose' 'docker-buildx' 'docker-credential-helper')
+  packages=('docker' 'docker-compose' 'docker-buildx' 'docker-credential-helper' 'colima')
 
   ${packman} uninstall "${packages[@]}" && ${packman} deps "$@" |
     xargs "${packman}" remove --ignore-dependencies

@@ -201,26 +201,26 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Loop through the command line options
     while test -n "$1"; do
       case "$1" in
-      -l | --local)
-        METHOD='local'
-        ;;
-      -r | --repair)
-        METHOD='repair'
-        ;;
-      -i | --interactively)
-        OPT=''
-        ;;
-      -p | --prefix)
-        HHS_PREFIX="${2}"
-        [[ -d "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory \"${HHS_PREFIX}\""
-        shift
-        ;;
-      -q | --quiet)
-        QUIET=1
-        ;;
-      *)
-        quit 2 "Invalid option: \"$1\""
-        ;;
+        -l | --local)
+          METHOD='local'
+          ;;
+        -r | --repair)
+          METHOD='repair'
+          ;;
+        -i | --interactively)
+          OPT=''
+          ;;
+        -p | --prefix)
+          HHS_PREFIX="${2}"
+          [[ -d "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory \"${HHS_PREFIX}\""
+          shift
+          ;;
+        -q | --quiet)
+          QUIET=1
+          ;;
+        *)
+          quit 2 "Invalid option: \"$1\""
+          ;;
       esac
       shift
     done
@@ -256,10 +256,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
 
     # Enable install script to use colors
-    [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] \
-      && source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
-    [[ -s "${HHS_HOME}/.VERSION" ]] \
-      && echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
+    [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] &&
+         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+    [[ -s "${HHS_HOME}/.VERSION" ]] &&
+         echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
 
     # Create HomeSetup .hhs directory
     create_directory "${HHS_DIR}"
@@ -352,36 +352,50 @@ Usage: $APP_NAME [OPTIONS] <args>
     install_missing_tools "${os_type}"
   }
 
+  # Install HomeBrew
+  install_brew() {
+
+    if ! which brew &>/dev/null; then
+      echo -e "${YELLOW}Installing Homebrew ...${NC}"
+      BASH -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      if which brew &>/dev/null; then
+        echo -e "${YELLOW}@@ Successfully installed Homebrew ${NC}"
+      else
+        echo -e "${RED}### Failed to install Homebrew ${NC}"
+      fi
+    fi
+  }
+
   # Install HomeSetup
   install_homesetup() {
 
-    echo -e "HomeSetup installation started: $(date)\n" > "${INSTALL_LOG}"
+    echo -e "HomeSetup installation started: $(date)\n" >"${INSTALL_LOG}"
     echo -e "\nUsing ${YELLOW}\"${METHOD}\"${NC} installation method!"
 
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
-    remote)
-      check_required_tools
-      clone_repository
-      install_dotfiles
-      compatibility_check
-      configure_python
-      configure_starship
-      ;;
-    repair)
-      check_required_tools
-      install_dotfiles
-      compatibility_check
-      configure_python
-      configure_starship
-      ;;
-    local)
-      install_dotfiles
-      configure_starship
-      ;;
-    *)
-      quit 2 "Installation method \"${METHOD}\" is not valid!"
-      ;;
+      remote)
+        check_required_tools
+        clone_repository
+        install_dotfiles
+        compatibility_check
+        configure_python
+        configure_starship
+        ;;
+      repair)
+        check_required_tools
+        install_dotfiles
+        compatibility_check
+        configure_python
+        configure_starship
+        ;;
+      local)
+        install_dotfiles
+        configure_starship
+        ;;
+      *)
+        quit 2 "Installation method \"${METHOD}\" is not valid!"
+        ;;
     esac
 
     # Finish installation and activate HomeSetup.
@@ -410,7 +424,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps. You may be prompted for the password."
       echo ''
       echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${os_type}) with ${OS_APP_MAN} ... "
-      if ${SUDO} ${OS_APP_MAN} install -y "${MISSING_TOOLS[@]}" >> "${INSTALL_LOG}" 2>&1; then
+      if ${SUDO} ${OS_APP_MAN} install -y "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}"  2>&1; then
          echo -e "[   ${GREEN}OK${NC}   ]"
       else
         quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
@@ -428,20 +442,20 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     if [[ ! -d "${HHS_HOME}" ]]; then
       echo -e "${WHITE}Cloning HomeSetup repository ...${NC}"
-      if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >> "${INSTALL_LOG}" 2>&1; then
+      if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >>"${INSTALL_LOG}"  2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
       fi
     else
-      cd "${HHS_HOME}" &> /dev/null || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
+      cd "${HHS_HOME}" &>/dev/null  || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
       echo -e "${WHITE}Pulling HomeSetup repository ...${NC}"
-      if git pull --rebase >> "${INSTALL_LOG}" 2>&1; then
+      if git pull --rebase >>"${INSTALL_LOG}"  2>&1; then
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
         quit 2 "Unable to properly pull the repository !"
       fi
-      cd - &> /dev/null || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
+      cd - &>/dev/null  || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
     fi
 
     [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
@@ -479,8 +493,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
       if [[ "${ANS}" != "y" && "${ANS}" != 'Y' ]]; then
-        echo "Installation cancelled:  " >> "${INSTALL_LOG}" 2>&1
-        echo ">> ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}  STREAM=${STREAMED}" >> "${INSTALL_LOG}"
+        echo "Installation cancelled:  " >>"${INSTALL_LOG}"  2>&1
+        echo ">> ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}  STREAM=${STREAMED}" >>"${INSTALL_LOG}"
         quit 1 "${RED}Installation cancelled !${NC}"
       fi
       echo -e "${BLUE}Installing HomeSetup ...${NC}"
@@ -505,7 +519,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 
-    echo ">>> Linked dotfiles:" >> "${INSTALL_LOG}"
+    echo ">>> Linked dotfiles:" >>"${INSTALL_LOG}"
     # If `all' option is used, copy all files.
     if [[ "$OPT" == 'all' ]]; then
       # Copy all dotfiles
@@ -519,7 +533,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "...${NC}"
         [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
         [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
-        echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
+        echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
     # If `all' option is NOT used, prompt for confirmation.
     else
@@ -537,14 +551,14 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "...${NC}"
         [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
         [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
-        echo "${next} -> ${DOTFILES_DIR}/${next}" >> "${INSTALL_LOG}"
+        echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
     fi
 
     # Remove old apps.
     echo -en "\n${WHITE}Removing old links ...${BLUE}"
-    echo ">>> Removed old links:" >> "${INSTALL_LOG}"
-    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >> "${INSTALL_LOG}" 2>&1; then
+    echo ">>> Removed old links:" >>"${INSTALL_LOG}"
+    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}"  2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
@@ -552,11 +566,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link apps into place.
     echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR} ..."
-    echo ">>> Linked apps:" >> "${INSTALL_LOG}"
+    echo ">>> Linked apps:" >>"${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
-      -exec chmod 755 {} \; >> "${INSTALL_LOG}" 2>&1; then
+      -exec chmod 755 {} \; >>"${INSTALL_LOG}"  2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
@@ -564,11 +578,11 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Link auto-completes into place.
     echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR} ..."
-    echo ">>> Linked auto-completes:" >> "${INSTALL_LOG}"
+    echo ">>> Linked auto-completes:" >>"${INSTALL_LOG}"
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
-      -exec chmod 755 {} \; >> "${INSTALL_LOG}" 2>&1; then
+      -exec chmod 755 {} \; >>"${INSTALL_LOG}"  2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
@@ -576,12 +590,12 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Copy HomeSetup fonts into place.
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR} ..."
-    echo ">>> Copied HomeSetup fonts:" >> "${INSTALL_LOG}"
+    echo ">>> Copied HomeSetup fonts:" >>"${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
       -exec rsync --archive {} "${FONTS_DIR}" \; \
-      -exec chown "${USER}":"${GROUP}" {} \; >> "${INSTALL_LOG}" 2>&1; then
+      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
@@ -597,11 +611,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
-    [[ -z "${PIP}" ]] && "${PYTHON}" -m ensurepip >> "${INSTALL_LOG}" 2>&1
+    [[ -z "${PIP}" ]] && "${PYTHON}" -m ensurepip >>"${INSTALL_LOG}"  2>&1
     PIP=$(command -v pip3 2>/dev/null)
     [[ -z "${PIP}" ]] && quit 2 "Pip3 is required by HomeSetup !"
     echo -e " ${GREEN}OK${NC}"
-    ${PYTHON} -m pip install --upgrade pip >> "${INSTALL_LOG}" 2>&1
+    ${PYTHON} -m pip install --upgrade pip >>"${INSTALL_LOG}"  2>&1
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
     install_hspylib "${PYTHON}"
@@ -613,13 +627,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON="${1:-python3}"
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
     pkgs=$(mktemp)
-    echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' > "${pkgs}"
-    ${PYTHON} -m pip install --upgrade -r "${pkgs}" >> "${INSTALL_LOG}" 2>&1 ||
+    echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
+    ${PYTHON} -m pip install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}"  2>&1 ||
       quit 2 "[  ${RED}FAIL${NC}  ] Unable to install PyPi packages!"
     echo -e " ${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
-    echo "Installed HSPyLib python modules:" >> "${INSTALL_LOG}"
-    ${PYTHON} -m pip freeze | grep hspylib >> "${INSTALL_LOG}"
+    echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
+    ${PYTHON} -m pip freeze | grep hspylib >>"${INSTALL_LOG}"
   }
 
   # Check for backward HomeSetup backward compatibility.
@@ -723,7 +737,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   configure_starship() {
     if ! command -v starship &>/dev/null; then
       echo -en "\n${WHITE}Installing Starship prompt ..."
-      if curl -sS https://starship.rs/install.sh 1> "${HHS_DIR}/install_starship.sh" 2>/dev/null; then
+      if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"  2>/dev/null; then
         chmod +x "${HHS_DIR}"/install_starship.sh
         "${HHS_DIR}"/install_starship.sh -y &>/dev/null
         echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
@@ -735,7 +749,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Check HomeSetup installation prefix
   check_prefix() {
-    [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" > "${HHS_PREFIX_FILE}"
+    [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" >"${HHS_PREFIX_FILE}"
     [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f  "${HHS_PREFIX_FILE}"
   }
 
@@ -765,18 +779,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
       \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     elif [[ "alpine" == "${MY_OS}" ]]; then
-      \date -d "@$(( $(\date +%s) - 3 * 24 * 60 * 60 ))" '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
+      \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))"  '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     else
       \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
     fi
 
-    echo -e "\nHomeSetup installation finished: $(date)" >> "${INSTALL_LOG}"
+    echo -e "\nHomeSetup installation finished: $(date)" >>"${INSTALL_LOG}"
     \mv "${INSTALL_LOG}" "${HHS_LOG_DIR}"
     quit 0
   }
 
   abort_install() {
-    echo "Installation aborted:  ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}" >> "${INSTALL_LOG}" 2>&1
+    echo "Installation aborted:  ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}" >>"${INSTALL_LOG}"  2>&1
     quit 2 'Installation aborted !'
   }
 
