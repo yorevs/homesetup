@@ -11,6 +11,13 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
+# Current plugin name
+PLUGIN_NAME="starship"
+
+UNSETS=(
+  help version cleanup execute STARSHIP_PRESETS
+)
+
 # Current hhs starship version
 VERSION="1.0.1"
 
@@ -28,7 +35,7 @@ STARSHIP_PRESETS=(
 )
 
 # Usage message
-USAGE="usage: ${APP_NAME} starship <command>
+USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} <command>
 
  ____  _                 _     _
 / ___|| |_ __ _ _ __ ___| |__ (_)_ __
@@ -83,19 +90,23 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
-  if __hhs_has starship; then
-    [[ $# -eq 0 || $1 == "edit" ]] && __hhs_open "${STARSHIP_CONFIG}" && quit 0
 
-    if [[ $1 == "restore" ]]; then
+  local preset_val mselect_file title
+
+  if __hhs_has starship; then
+
+    [[ $# -eq 0 ]] || list_contains "$*" "edit" && __hhs_open "${STARSHIP_CONFIG}" && quit 0
+    list_contains "$*" "help" && usage 0
+    list_contains "$*" "version" && version
+
+    if list_contains "$*" "restore"; then
       echo -e "${GREEN}Restoring HomeSetup starship preset${NC}"
       if \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" "${STARSHIP_CONFIG}" &>/dev/null; then
         echo -e "${GREEN}Your starship prompt changed to HomeSetup defaults${NC}" && quit 0
       else
         echo -e "${RED}Unable to restore HomeSetup starship preset${NC}" && quit 1
       fi
-    fi
-
-    if [[ $1 == "preset" ]]; then
+    elif list_contains "$*" "preset"; then
       preset_val="${2}"
       if [[ -z ${preset_val} ]]; then
         mselect_file=$(mktemp)
@@ -116,6 +127,8 @@ function execute() {
           echo -e "${RED}Unable to set starship preset: ${preset_val} ${NC}" && quit 1
         fi
       fi
+    else
+      echo -e "${RED}Command not found: ${*} ${NC}" && quit 1
     fi
 
   else

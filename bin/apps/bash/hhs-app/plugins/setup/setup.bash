@@ -16,14 +16,13 @@ PLUGIN_NAME="setup"
 
 UNSETS=(
   help version cleanup execute DEFAULT_SETTINGS RE_PROPERTY
-  file_ver aux name title value minput_file sel_settings all_items
 )
 
 # Current hhs setup version
 VERSION="1.0.2"
 
 # Usage message
-USAGE="usage: ${APP_NAME} setup [restore]
+USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [restore]
 
  ____       _
 / ___|  ___| |_ _   _ _ __
@@ -83,7 +82,10 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
 
-  [[ $1 == "restore" ]] && echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}" && quit 0
+  local file_ver aux name title value minput_file sel_settings all_items=()
+
+  list_contains "${*}" "restore" && echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}" && quit 0
+  [[ ${#} -gt 0 ]] && echo -e "${RED}Command not found: ${*} ${NC}" && quit 1
 
   # Create the settings file if it does not exist or it's empty.
   [[ -s "${HHS_SETUP_FILE}" ]] || echo "${DEFAULT_SETTINGS}" >"${HHS_SETUP_FILE}"
@@ -106,10 +108,10 @@ function execute() {
 
   title="${BLUE}HomeSetup Initialization Settings${ORANGE}\n"
   title+="Please check the desired startup settings:"
-
   minput_file=$(mktemp)
+
   if __hhs_minput "${minput_file}" "${title}" "${all_items[@]}"; then
-    read -r -d '' -a sel_settings < <(grep . "${minput_file}")
+    read -r -d ' ' -a sel_settings < <(grep . "${minput_file}")
     aux="$(mktemp)"
     for setting in "${sel_settings[@]}"; do
       name="${setting%%=*}" && value="${setting#*=}"

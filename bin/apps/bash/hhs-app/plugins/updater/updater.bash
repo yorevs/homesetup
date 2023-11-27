@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2181,SC2034,SC1090
+#shellcheck disable=2181,2034,1090
 
 #  Script: updater.bash
 # Purpose: HomeSetup update manager

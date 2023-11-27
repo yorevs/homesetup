@@ -18,13 +18,13 @@ UNSETS=(
 
 # @purpose: HHS plugin required function
 function help() {
-  python3 -m setman -h
+  python3 -m ${PLUGIN_NAME} -h
   exit $?
 }
 
 # @purpose: HHS plugin required function
 function version() {
-  python3 -m setman -v
+  python3 -m ${PLUGIN_NAME} -v
   exit $?
 }
 

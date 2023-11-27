@@ -148,6 +148,10 @@ alias __hhs_reset="__hhs_clear; \reset"
 alias __hhs_hspm='__hhs hspm execute'
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='__hhs updater execute'
+# @alias: Shortcut for hhs starship plug-in
+alias __hhs_starship='__hhs starship execute'
+# @alias: Shortcut for hhs starship plug-in
+alias __hhs_setup='__hhs setup execute'
 
 # -----------------------------------------------------------------------------------
 # @category: External tools aliases

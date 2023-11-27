@@ -26,11 +26,13 @@ alias ..='__hhs_changeback_ndirs'
 alias cd='__hhs_change_dir'
 alias dirs='__hhs_dirs'
 alias help='__hhs_help'
+alias starship='__hhs_starship'
 
 # HHS-App Aliases
 __hhs_alias hhs='__hhs'
 __hhs_alias hhu='__hhs_hhu update'
 __hhs_alias hspm='__hhs_hspm'
+__hhs_alias setup='__hhs_setup'
 __hhs_alias errcho='__hhs_errcho'
 __hhs_alias tailor='__hhs_tailor'
 __hhs_alias fetch='fetch.bash'

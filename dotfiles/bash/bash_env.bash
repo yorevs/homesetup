@@ -45,6 +45,7 @@ export HHS_STARSHIP_PRESETS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/stars
 # System folders
 export TEMP="${TEMP:-${TMPDIR:-$(dirname "$(mktemp)")}}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
+export EDITOR="${EDITOR:-vi}"
 
 # ----------------------------------------------------------------------------
 # Home Sweet Home
