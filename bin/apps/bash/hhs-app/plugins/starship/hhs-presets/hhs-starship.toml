@@ -89,7 +89,7 @@ format = '[(\[$all_status[$ahead_behind](red)\] )]($style)'
 untracked = '?'
 modified = '!'
 deleted = '-'
-stashed = '$'
+stashed = '\$'
 staged = '+'
 renamed = '^'
 

@@ -54,9 +54,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Whether to install it without prompts
   QUIET=
 
-  # Installation log file
-  INSTALL_LOG="${HOME}/install.log"
-
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
@@ -237,8 +234,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define the HomeSetup files (.hhs) location
     HHS_DIR="${HOME}/.hhs"
 
-    # Define the HomeSetup log directory
-    HHS_LOG_DIR="${HHS_DIR}/log"
+    # Installation log file
+    INSTALL_LOG="${HOME}/install.log"
 
     # Dotfiles source location
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
@@ -274,6 +271,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define and create the HomeSetup bin directory
     BIN_DIR="${HHS_DIR}/bin"
     create_directory "${BIN_DIR}"
+
+    # Define and create the HomeSetup log directory
+    HHS_LOG_DIR="${HHS_DIR}/log"
+    create_directory "${HHS_LOG_DIR}"
 
     # Define the fonts directory
     if [[ "Darwin" == "${MY_OS}" ]]; then
