@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-function _about_() {
-  echo "Dialog allows creating text-based color dialog boxes from any shell script language"
-}

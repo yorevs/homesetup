@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-function _about_() {
-  echo "Qt | Cross-platform software development for embedded & desktop"
-}
-
 function _install_() {
   command brew install qt
   local ret=$?

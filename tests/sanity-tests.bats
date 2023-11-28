@@ -26,12 +26,11 @@
   for next in "${HHS_HOME}"/dotfiles/bash/*.bash; do
     dotfile="${HOME}/.$(basename "${next}")"
     dotfile="${dotfile%\.*}"
-    [[ -f "${dotfile}" ]] || missing+=("${dotfile}")
+    [[ -L "${dotfile}" ]] || missing+=("${dotfile}")
   done
 
   [[ -f "${HOME}/.inputrc" ]] || missing+=("${HOME}/.inputrc")
   [[ -f "${HHS_DIR}/.aliasdef" ]] || missing+=("${HHS_DIR}/.aliasdef")
-  [[ -f "${HHS_DIR}/.starship.toml" ]] || missing+=("${HHS_DIR}/.starship.toml")
   [[ -f "${HHS_DIR}/.aliases" ]] || missing+=("${HHS_DIR}/.aliases")
   [[ -f "${HHS_DIR}/.cmd_file" ]] || missing+=("${HHS_DIR}/.cmd_file")
   [[ -f "${HHS_DIR}/.colors" ]] || missing+=("${HHS_DIR}/.colors")

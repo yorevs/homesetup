@@ -39,7 +39,7 @@ function __hhs_toolcheck() {
       if [[ -z "${is_alias}" && $check =~ ^(\/.*) ]]; then
         [[ -z "${quiet}" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
       elif [[ -n "${is_alias}" ]]; then
-        [[ -z "${quiet}" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED${NC} as ${check}"
+        [[ -z "${quiet}" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED  ${NC} as ${check}"
       else
         [[ -z "${quiet}" ]] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
       fi

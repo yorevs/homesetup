@@ -15,13 +15,6 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"
 
-# Fontawesome icons
-CROSS_ICN="\xef\x81\x97"
-CHECK_ICN="\xef\x81\x98"
-STAR_ICN="\xef\x80\x85"
-ALIAS_ICN="\xef\x87\xba \xef\x81\xa1"
-FUNC_ICN="\xef\x84\xae"
-
 # Load all function files prefixed with 'hhs-`
 for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort); do
   source "$file"

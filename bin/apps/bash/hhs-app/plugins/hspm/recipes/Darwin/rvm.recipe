@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-function _about_() {
-  echo "Ruby enVironment (Version) Manager (RVM)"
-}
-
 function _install_() {
 
   local ret

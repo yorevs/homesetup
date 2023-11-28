@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-function _about_() {
-  echo "Tree is a recursive directory listing program that produces a depth-indented listing of files"
-}

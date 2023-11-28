@@ -19,40 +19,52 @@ APP_NAME="${APP_NAME:-${0##*/}}"
 
 # Help message to be displayed by the application.
 USAGE=${USAGE:-"
-Usage: ${APP_NAME} <arguments> [options]
+usage: ${APP_NAME} <arguments> [options]
 "}
 
 # Default identifiers to be unset
 UNSETS=('quit' 'usage' 'version' 'trim')
 
-# Import pre-defined HomeSetup bash files
+# We need to load the dotfiles below due to non-interactive shell.
+[[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_commons
 [[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_env
 [[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_colors
 [[ -f "${HOME}"/.bash_aliases ]] && source "${HOME}"/.bash_aliases
 [[ -f "${HOME}"/.bash_functions ]] && source "${HOME}"/.bash_functions
 
+# Execute a cleanup after the application has exited.
+trap _app_cleanups_ EXIT
+
+# @purpose: When the application has exited, execute some cleanups.
+function _app_cleanups_() {
+  # Unset all declared functions
+  unset -f quit usage version trim list_contains toml_get_key
+  unset -f "${UNSETS[*]}"
+}
+
 # @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR .
 # @param $2 [Opt] : The exit message to be displayed.
 function quit() {
-  # Unset all declared functions.
-  unset -f quit usage version trim "${UNSETS[*]}"
-  exit_code=${1:-0}
+
+  local exit_code=${1:-0}
+
   shift
-  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
+  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}error: ${APP_NAME}: " 1>&2
   [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
-  # shellcheck disable=SC2086
-  exit ${exit_code}
+
+  exit "${exit_code}"
 }
 
 # @purpose: Display the usage message and exit with the provided code ( or zero as default ).
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE .
 # @param $2 [Opt] : The exit message to be displayed.
 function usage() {
-  exit_code=${1:-0}
-  shift
-  echo -en "${USAGE}"
+
+  local exit_code=${1:-0}
+
+  shift && echo -en "${USAGE}"
   [[ ${#} -gt 0 ]] && echo ''
   quit "${exit_code}" "$@"
 }
@@ -70,5 +82,5 @@ function version() {
 # @param $1 [Req] : The list to check against.
 # @param $2 [Req] : The string to be checked.
 function list_contains() {
-    [[ $1 =~ (^|[[:space:]])$2($|[[:space:]]) ]] && return 0 || return 1
+  [[ $1 =~ (^|[[:space:]])$2($|[[:space:]]) ]] && return 0 || return 1
 }

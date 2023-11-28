@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-
 # shellcheck disable=SC1090
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-function _about_() {
-  echo "Vuex is a state management pattern + library for Vue.js applications"
-}
+# Vue installation requires nvm loaded
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 function _depends_() {
 

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-function _about_() {
-  echo "Compute SHA message digests"
-}

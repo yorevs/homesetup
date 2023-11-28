@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-function _about_() {
-  echo "A multi-faceted language for the Java platform"
-}

@@ -19,7 +19,7 @@ USAGE="
 Usage: ${APP_NAME} <method> [options] <url>
 
   Fetch URL resource using the most commons ways.
-  
+
     Arguments:
 
         method                      : The http method to be used [ GET, HEAD, POST, PUT, PATCH, DELETE ].
@@ -28,7 +28,7 @@ Usage: ${APP_NAME} <method> [options] <url>
     Options:
         --headers <json_headers>    : The http request headers.
         --body    <json_body>       : The http request body (payload).
-        --format                    : Format the json response.
+        --format                    : Format the json RESPONSE.
         --silent                    : Omits all informational messages.
 
 "
@@ -38,49 +38,59 @@ UNSETS=(
   'format_json' 'fetch_with_curl' 'parse_args' 'do_fetch'
 )
 
-# shellcheck disable=SC1090
-[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
-
 # Request timeout in seconds
 REQ_TIMEOUT=3
 
-# Return code
-RET=0
+# Execution return code
+RET_VAL=0
 
-# @purpose: Format or not the output
-format_json() {
+# Provided request headers
+HEADERS=
 
-  # Piped input
-  read -r responseonse
-  [[ -n "${FORMAT}" ]] && echo -e "${responseonse}" | __hhs_json_print
-  [[ -z "${FORMAT}" ]] && echo -e "${responseonse}"
-}
+# Provided request body
+BODY=
+
+# Provide a silent request/RESPONSE
+SILENT=
+
+# Response body
+RESPONSE=
+
+# Http status code
+STATUS=0
 
 # shellcheck disable=SC2086
 # @purpose: Do the request according to the method
-fetch_with_curl() {
+function fetch_with_curl() {
 
-  curl_opts=('-s' '--fail' '-m' "$REQ_TIMEOUT")
+  aux=$(mktemp)
+
+  curl_opts=(
+    '-s' '--fail' '-L' '--output' "${aux}" '-m' "${REQ_TIMEOUT}" '--write-out' "%{http_code}"
+  )
 
   if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
-    response=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   elif [[ -z "${HEADERS}" && -n "${BODY}" ]]; then
-    response=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [[ -n "${HEADERS}" && -n "${BODY}" ]]; then
-    response=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [[ -n "${HEADERS}" && -z "${BODY}" ]]; then
-    response=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
-  fi
-  RET=$?
-  if [[ ${RET} -eq 0 && -n "${response}" ]]; then
-    echo -en "${response}" | format_json
-  elif [[ ${RET} -ne 0 && -n "${response}" ]]; then
-    if [[ ${response} -ge 400 && ${response} -lt 600 ]]; then
-      RET="${response}"
-    fi
+    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
   fi
 
-  return ${RET}
+  if [[ -s "${aux}" ]]; then
+    RESPONSE=$(grep . --color=none "${aux}")
+    \rm -f "${aux}"
+  fi
+
+  if [[ ${STATUS} -ge 200 && ${STATUS} -lt 400 ]]; then
+    RET_VAL=0
+  else
+    RET_VAL=1
+  fi
+
+  return $RET_VAL
 }
 
 # ------------------------------------------
@@ -150,17 +160,20 @@ main() {
   [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."
 
   if do_fetch; then
+    echo "${RESPONSE}"
     quit 0
   else
     if [[ -z "${SILENT}" ]]; then
-      msg="Failed to process request: (Ret=${RET})"
-      __hhs_errcho "${msg}"
+      msg="Failed to process request: (Status=${STATUS})"
+      __hhs_errcho "${msg} => [resp:${RESPONSE:-<empty>}]"
     else
-      echo "${RET}" 1>&2
+      echo "${RET_VAL}" 1>&2
     fi
     quit 2
   fi
 }
+
+source "${HHS_DIR}/bin/app-commons.bash"
 
 main "${@}"
 quit 1

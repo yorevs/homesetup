@@ -1,0 +1,183 @@
+#    File: catalog.toml
+# Purpose: HomeSetup HSPM application catalog
+# Created: Nov 27, 2023
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: homesetup@gmail.com
+#    Site: https://github.com/yorevs/homesetup
+# License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2023, HomeSetup team
+
+# A ###################################################################################################################
+[ant]
+
+about = "Our mission is to drive processes described in build files as targets and extension points dependent upon each other."
+
+# B ###################################################################################################################
+
+[bats]
+
+about = "Bats is a TAP-compliant testing framework for Bash."
+
+# C ###################################################################################################################
+[colima]
+
+about = "Container runtimes on macOS (and Linux) with minimal setup."
+
+# D ###################################################################################################################
+[dialog]
+
+about = "Dialog allows creating text-based color dialog boxes from any shell script language."
+
+[direnv]
+
+about = "Shell extension that enabled loading and unloading of environment variables depending on the current directory."
+
+[docker]
+
+about = "Docker makes container capabilities approachable and easy to use."
+
+[doxygen]
+
+about = "Generate documentation from source code."
+
+# E ###################################################################################################################
+[eslint]
+
+about = "Linter tool for identifying and reporting on patterns in JavaScript."
+
+# F ###################################################################################################################
+[figlet]
+
+about = "FIGlet is a program for making large letters out of ordinary text."
+
+# G ###################################################################################################################
+[go]
+
+about = "Go is an open source programming language that makes it easy to build simple, reliable, and efficient software."
+
+[gpg]
+
+about = "Compute SHA message digests."
+
+[gradle]
+
+about = "Gradle helps teams build, automate and deliver better software, faster."
+
+[groovy]
+
+about = "A multi-faceted language for the Java platform."
+
+# H ###################################################################################################################
+
+[htop]
+
+about = "An interactive process viewer for Unix."
+
+# J ###################################################################################################################
+
+[jenkins]
+
+about = "An open source automation server which enables developers to reliably build, test, and deploy their software."
+
+[jenv]
+
+about = "Is a command line tool to help you forget how to set the JAVA_HOME environment variable."
+
+[jq]
+
+about = "Jq is a lightweight and flexible command-line JSON processor."
+
+# M ###################################################################################################################
+
+[mvn]
+
+about = "Maven is a software project management and comprehension tool."
+
+# N ###################################################################################################################
+
+[node]
+
+about = "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine."
+
+[nvm]
+
+about = "Simple bash script to manage multiple active node.js versions."
+
+# P ###################################################################################################################
+
+[pbcopy]
+
+about = "Allows copying the output of a command right into your clipboard."
+
+[pcregrep]
+
+about = "Searches files for character patterns, but it uses the PCRE regular expression library."
+
+[perl]
+
+about = "Perl is a highly capable, feature-rich programming language with over 30 years of development."
+
+[pylint]
+
+about = "Pylint is a static code analyser for Python 2 or 3."
+
+[python]
+
+about = "Python is a programming language that lets you work quickly and integrate systems more effectively."
+
+# Q ###################################################################################################################
+
+[qt]
+
+about = "Qt | Cross-platform software development for embedded & desktop."
+
+# R ###################################################################################################################
+
+[rvm]
+
+about = "Ruby environment (Version) Manager (RVM)."
+
+# S ###################################################################################################################
+
+[shellcheck]
+
+about = "Is an open source static analysis tool that automatically finds bugs in your shell scripts."
+
+[shfmt]
+
+about = "Auto-formatter for shellscript source code."
+
+[sqlite3]
+
+about = "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine."
+
+[svn]
+
+about = "Subversion is an open source version control system."
+
+# T ###################################################################################################################
+
+[telnet]
+
+about = "Provide a bidirectional interactive text-oriented communication facility using a virtual terminal."
+
+[tree]
+
+about = "Tree is a recursive directory listing program that produces a depth-indented listing of files."
+
+# V ###################################################################################################################
+
+[vim]
+
+about = "Vim is a highly configurable text editor for efficiently creating and changing any kind of text."
+
+[vue]
+
+about = "Vue is an approachable, performant and versatile framework for building web user interfaces."
+
+# X ###################################################################################################################
+
+[xcode-select]
+
+about = "Gives Mac terminal users many commonly used tools, utilities, and compilers"

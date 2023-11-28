@@ -317,17 +317,17 @@
   "Name" : "iTerm2-HomeSetup",
   "Blinking Cursor" : true,
   "Guid" : "ADDFAB51-465E-4611-B07A-478C10698414",
-  "Idle Code" : 0,
-  "Ansi 10 Color" : {
-    "Green Component" : 1,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408
   },
+  "Ansi 10 Color" : {
+    "Green Component" : 1,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
+  "Idle Code" : 0,
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Cursor Type" : 0,
@@ -363,7 +363,7 @@
     "Red Component" : 0,
     "Blue Component" : 0.73333334922790527
   },
-  "Transparency" : 0.061147668716755317,
+  "Transparency" : 0.061147668716755331,
   "Background Color" : {
     "Green Component" : 0,
     "Red Component" : 0,
@@ -380,7 +380,7 @@
   "Columns" : 176,
   "Unicode Normalization" : 0,
   "Visual Bell" : true,
-  "ASCII Ligatures" : false,
+  "Custom Directory" : "No",
   "Thin Strokes" : 4,
-  "Custom Directory" : "No"
+  "ASCII Ligatures" : false
 }

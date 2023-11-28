@@ -71,6 +71,7 @@ DOTFILES=(
   'bash_colors'
   'bash_prompt'
   'bash_aliases'
+  'bash_icons'
   'bash_functions'
   'bash_completion'
   'profile'

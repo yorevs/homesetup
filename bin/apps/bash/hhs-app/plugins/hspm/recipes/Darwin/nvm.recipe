@@ -3,10 +3,6 @@
 # shellcheck disable=SC1090
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-function _about_() {
-  echo "Simple bash script to manage multiple active node.js versions"
-}
-
 function _install_() {
 
   local ret

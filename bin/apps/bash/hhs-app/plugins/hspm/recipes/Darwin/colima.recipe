@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-function _about_() {
-  echo "Container runtimes on macOS (and Linux) with minimal setup"
-}
-
 function _install_docker_() {
 
   packman="${HHS_MY_OS_PACKMAN}"

@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-function _about_() {
-  echo "Gives Mac terminal users many commonly used tools, utilities, and compilers"
-}
-
 function _which_() {
   xcode-select -p
   return $?

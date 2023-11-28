@@ -39,6 +39,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     HOME="${HOME:-$(eval echo ~"${USER}")}"
   fi
 
+  # Functions to be unset after quit
+  UNSETS=(
+    quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
+    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
+    copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
+  )
+
   # HomeSetup installation prefix file
   HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
@@ -122,13 +129,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   RED='\033[0;31m'
   ORANGE='\033[38;5;202m'
 
-  # Functions to be unset after quit
-  UNSETS=(
-    quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
-    copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
-  )
-
   # Purpose: Quit the program and exhibits an exit message if specified
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
   # @param $2 [Opt] : The exit message to be displayed.
@@ -136,12 +136,12 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
-
-    test "$1" != '0' -a "$1" != '1' && echo -e "${RED}" 1>&2
-    test -n "$2" -a "$2" != "" && echo -e "${2}" 1>&2
-    test "$1" != '0' -a "$1" != '1' && echo -e "${NC}" 1>&2
-    echo ''
-    exit "$1"
+    exit_code=${1:-0}
+    shift
+    [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
+    [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
+    [[ ${#} -gt 0 ]] && echo ''
+    exit "${exit_code}"
   }
 
   # Usage message
@@ -152,7 +152,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # @function: Check if a command exists
   # @param $1 [Req] : The command to check
   has() {
-    type "$1" >/dev/null 2>&1
+    type "${1}" >/dev/null 2>&1
   }
 
   # @function: Create a directory and check for write permissions
@@ -187,8 +187,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${WHITE}Skipping: ${YELLOW}${dest_file} file/dir was not copied because it already exists. ${NC}"
     else
       echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
-      rsync --archive "${src_file}" "${dest_file}"
-      chown "${USER}":"${GROUP}" "${dest_file}"
+      \rsync --archive "${src_file}" "${dest_file}"
+      \chown "${USER}":"${GROUP}" "${dest_file}"
       [[ -f "${dest_file}" ]] && echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
       [[ -f "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
     fi
@@ -235,7 +235,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     done
 
     # Define the installation prefix
-    HHS_PREFIX="${HHS_PREFIX:-$([[ -s "${HHS_PREFIX_FILE}" ]] && grep . "${HHS_PREFIX_FILE}")}"
+    HHS_PREFIX="${HHS_PREFIX:-$([[ -s "${HHS_PREFIX_FILE}" ]] && \grep . "${HHS_PREFIX_FILE}")}"
 
     # Define the HomeSetup installation location
     HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
@@ -260,7 +260,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
-    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(grep . "${HHS_VERSION_FILE}")"
+    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${HHS_VERSION_FILE}")"
 
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
 
@@ -371,8 +371,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       if command -v brew &>/dev/null; then
         echo -e "${YELLOW}@@ Successfully installed Homebrew ${NC}"
         if [[ "${MY_OS}" == "Linux" ]]; then
-          test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
-          test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
+          [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
       else
@@ -756,8 +756,11 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "\n${WHITE}Installing Starship prompt ..."
       if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"  2>/dev/null; then
         chmod +x "${HHS_DIR}"/install_starship.sh
-        "${HHS_DIR}"/install_starship.sh -y &>/dev/null
-        echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+        if "${HHS_DIR}"/install_starship.sh -y &>/dev/null; then
+          echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+        else
+          quit 2 "${WHITE} [ ${RED}FAILED${NC} ]"
+        fi
       else
         echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
       fi
@@ -785,7 +788,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
     echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
     echo -e "${NC}"
-    echo -e "${HAND_PEACE_ICN} Your shell, good as hell... not just dotfiles !"
+    echo -e "${HAND_PEACE_ICN} Your shell, good as hell !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${BLUE}$ reset && source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${BLUE}$ hhu update"

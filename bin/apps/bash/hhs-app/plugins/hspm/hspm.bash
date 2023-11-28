@@ -45,25 +45,28 @@ usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
 "
 
 UNSETS=(
-  help version cleanup execute cleanup_recipes list_recipes
-  install_recipe uninstall_recipe
+  help version cleanup execute cleanup_recipes
+  uninstall_recipe list_recipes install_recipe
   add_breadcrumb del_breadcrumb recover_packages
-  _install_ _uninstall_ _about_ _depends_ _which_
+  _install_ _uninstall_ _depends_ _which_
 )
 
 [[ -s "$HHS_DIR/bin/app-commons.bash" ]] && source "$HHS_DIR/bin/app-commons.bash"
 
-# Flag to install all recovered packages
+# Flag to install all recovered packages,
 RECOVER_INSTALL=
 
-# Flag to recover HHS_DEV_TOOLS instead of breadcrumbs
+# Flag to recover HHS_DEV_TOOLS instead of breadcrumbs,
 RECOVER_TOOLS=
 
-# Hold all hspm recipes
+# Hold all hspm recipes,
 ALL_RECIPES=()
 
-# Directory containing all hspm recipes
+# Directory containing all hspm recipes,
 RECIPES_DIR="${PLUGINS_DIR}/hspm/recipes"
+
+# HSPM catalog file.
+HSPM_CATALOG_FILE="${PLUGINS_DIR}/hspm/catalog.toml"
 
 # File containing all installed/uninstalled packages
 BREADCRUMB_FILE="${HHS_DIR}/.hspm"
@@ -117,43 +120,38 @@ function execute() {
 
   shopt -s nocasematch
   case "$cmd" in
-  # Install the app
-  install)
-    [[ "${#}" -le 0 ]] && usage 1
-    for next_recipe in "${@}"; do
+    # Install the app
+    install)
+      [[ "${#}" -le 0 ]] && usage 1
+      for next_recipe in "${@}"; do
+        echo ''
+        install_recipe "${next_recipe}"
+      done
       echo ''
-      install_recipe "${next_recipe}"
-    done
-    echo ''
-    ;;
-  # Uninstall the app
-  uninstall)
-    [[ "${#}" -le 0 ]] && usage 1
-    for next_recipe in "${@}"; do
+      ;;
+    # Uninstall the app
+    uninstall)
+      [[ "${#}" -le 0 ]] && usage 1
+      for next_recipe in "${@}"; do
+        echo ''
+        uninstall_recipe "${next_recipe}"
+      done
       echo ''
-      uninstall_recipe "${next_recipe}"
-    done
-    echo ''
-    ;;
-  # Recover installed apps
-  recover)
-    [[ "$1" == "-e" || "$2" == "-e" || "$3" == "-e" ]] && __hhs_open "${BREADCRUMB_FILE}" && exit 0
-    [[ "$1" == "-i" || "$2" == "-i" ]] && RECOVER_INSTALL=1
-    [[ "$1" == "-t" || "$2" == "-t" ]] && RECOVER_TOOLS=1
-    recover_packages
-    ;;
-  # List available apps
-  list)
-    if [[ "$1" == "-a" ]]; then
-      LIST_ALL=1
-    fi
-    echo -e "\n${BLUE}Listing ${LIST_ALL//1/all }available hspm '${HHS_MY_OS}' recipes ... ${NC}\n"
-    list_recipes
-    echo -e "\n${BLUE}Found (${#ALL_RECIPES[@]}) recipes${NC}\n"
-    ;;
-  *)
-    usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
-    ;;
+      ;;
+    # Recover installed apps
+    recover)
+      [[ "$1" == "-e" || "$2" == "-e" || "$3" == "-e" ]] && __hhs_open "${BREADCRUMB_FILE}" && exit 0
+      [[ "$1" == "-i" || "$2" == "-i" ]] && RECOVER_INSTALL=1
+      [[ "$1" == "-t" || "$2" == "-t" ]] && RECOVER_TOOLS=1
+      recover_packages
+      ;;
+    # List available apps
+    list)
+      list_recipes
+      ;;
+    *)
+      usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
+      ;;
   esac
   shopt -u nocasematch
 
@@ -174,14 +172,13 @@ function del_breadcrumb() {
 
 # purpose: Unset all declared functions from the recipes
 function cleanup_recipes() {
-  unset -f _install_ _uninstall_ _about_ _depends_ _which_
+  unset -f _install_ _uninstall_ _depends_ _which_
 }
 
-# shellcheck disable=2155,SC2059,SC2183
 # purpose: List all available hspm recipes
 function list_recipes() {
 
-  local index=0 recipe pad_len=20 pad os app
+  local index=0 recipe pad_len=20 pad os app all_packages=()
 
   pad=$(printf '%0.1s' "."{1..60})
 
@@ -193,17 +190,22 @@ function list_recipes() {
     echo -e "${ORANGE}No recipes found matching OS='${HHS_MY_OS}'${NC}"
   fi
 
-  for recipe in "${ALL_RECIPES[@]}"; do
-    app="$(basename "${recipe//\.*/}")"
-    if [[ -n "${app}" && -f "${recipe}" ]]; then
-      index=$((index + 1))
-      source "${recipe}"
-      printf '%3s - %s' "${index}" "${BLUE}${app} "
-      printf '%*.*s' 0 $((pad_len - ${#app})) "${pad}"
-      echo -e "${GREEN} => ${WHITE}$(_about_) ${NC}"
-      cleanup_recipes
-    fi
+  IFS=$'\n' read -r -d '' -a all_packages < <(__hhs_toml_groups "${HSPM_CATALOG_FILE}")
+  IFS="${OLDIFS}"
+
+  echo -e "\n${YELLOW}Listing all available hspm '${HHS_MY_OS}' packages ... ${NC}\n"
+  for package in "${all_packages[@]}"; do
+    [[ "${package}" == 'default' ]] && continue
+    recipe="${RECIPES_DIR}/${HHS_MY_OS}/${package}.recipe"
+    [[ -s "${recipe}" ]] && printf '%3s + %s' "${index}" "${HHS_HIGHLIGHT_COLOR}${package} "
+    [[ -s "${recipe}" ]] || printf '%3s - %s' "${index}" "${WHITE}${package} "
+    printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
+    recipe_about="$(__hhs_toml_get_key "${HSPM_CATALOG_FILE}" 'about' "${package}")"
+    echo -e "${GREEN} => ${WHITE}${recipe_about#*=}${NC}"
+    ((index += 1))
   done
+  echo -e "\n${YELLOW}Found (${#ALL_RECIPES[@]}) custom recipes."
+  echo -e "Packages enlisted with '+' have a custom installation recipe${NC}\n"
 
   return 0
 }
@@ -286,9 +288,9 @@ function recover_packages() {
   pad=$(printf '%0.1s' "."{1..80})
 
   if [[ -n "${RECOVER_INSTALL}" ]]; then
-    echo -en "\n${ORANGE}Installing "
+    echo -en "\n${YELLOW}Installing "
   else
-    echo -en "\n${ORANGE}Listing "
+    echo -en "\n${YELLOW}Listing "
   fi
 
   if [[ -z "${RECOVER_TOOLS}" ]]; then

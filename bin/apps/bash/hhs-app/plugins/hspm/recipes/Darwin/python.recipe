@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-function _about_() {
-  echo "Python is a programming language that lets you work quickly and integrate systems more effectively"
-}

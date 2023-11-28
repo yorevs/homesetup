@@ -15,8 +15,8 @@ APP_NAME="__hhs"
 # Functions to be unset after quit.
 UNSETS+=(
   'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
-  'validate_plugin' 'register_plugins' 'register_functions' 'parse_args' 'invoke_command'
-  'find_hhs_functions' 'get_desc' 'load_dotfile' 'search_hhs_functions'
+  'validate_plugin' 'register_plugins' 'register_functions' 'parse_args'
+  'find_hhs_functions' 'get_desc' 'search_hhs_functions' 'invoke_command'
 )
 
 # Program version.
@@ -79,27 +79,11 @@ PLUGINS_LIST=()
 # List plugin commands.
 PLUGINS=()
 
-# @function: Load a HomeSetup dotfile
-# @param $1 [Req] : Path to the file to be source'd
-function load_dotfile() {
-
-  local filepath="$1"
-
-  if [[ $# -eq 0 ]]; then
-    echo -e "${RED}A valid dotfile must be provided -> '${filepath}'${NC}"
-    return 1
-  fi
-
-  source "${filepath}"
-
-  return $?
-}
-
 # @purpose: Checks whether a plugin is registered or not.
 # @param $1 [Req] : The plugin name.
 function has_function() {
 
-  if [[ -n "${1}" && ${HHS_APP_FUNCTIONS[*]} =~ ${1} ]]; then
+  if [[ -n "${1}" ]] && list_contains "${HHS_APP_FUNCTIONS[*]}" "${1}"; then
     return 0
   fi
 
@@ -110,7 +94,7 @@ function has_function() {
 # @param $1 [Req] : The plugin name.
 function has_plugin() {
 
-  if [[ -n "${1}" && "${#PLUGINS[@]}" -gt 0 && ${PLUGINS[*]} =~ ${1} ]]; then
+  if [[ -n "${1}" ]] && list_contains "${PLUGINS[*]}" "${1}"; then
     return 0
   fi
 
@@ -121,7 +105,7 @@ function has_plugin() {
 # @param $1 [Req] : The command name.
 function has_command() {
 
-  if [[ -n "${1}" && "${#PLUGINS_FUNCS[@]}" -gt 0 && ${PLUGINS_FUNCS[*]} =~ ${1} ]]; then
+  if [[ -n "${1}" ]] && list_contains "${PLUGINS_FUNCS[*]}" "${1}"; then
     return 0
   fi
 
@@ -136,11 +120,11 @@ function validate_plugin() {
 
   while [[ "$i" -lt "${#PLUGINS_FUNCS[@]}" ]]; do
     if [[ "${plg_funcs[j]}" == "${PLUGINS_FUNCS[i]}" ]]; then
-      i=$((i + 1))
+      ((i += 1))
       j=0
       [[ $i == "${#PLUGINS_FUNCS[@]}" ]] && return 0
     else
-      j=$((j + 1))
+      ((j += 1))
       [[ $j == "${#plg_funcs[@]}" ]] && return 1
     fi
   done
@@ -328,7 +312,6 @@ function main() {
 
   if has_function "${fn_name}"; then
     shift
-    # Use a subshell to avoid messing with env vars
     ${fn_name} "${@}"
     quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
   fi
@@ -339,9 +322,7 @@ function main() {
   cleanup_plugins
 }
 
-# We need to load the dotfiles below due to non-interactive shell.
-load_dotfile "${HOME}/.bash_commons"
-load_dotfile "${HOME}/.bash_env"
-load_dotfile "${HHS_DIR}/bin/app-commons.bash"
+source "${HHS_DIR}/bin/app-commons.bash"
 
 main "${@}"
+quit 1

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-function _about_() {
-  echo "Gradle helps teams build, automate and deliver better software, faster"
-}
