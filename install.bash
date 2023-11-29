@@ -258,6 +258,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     # HomeSetup version file
     HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
 
+    # HomeSetup shell options file
+    HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
+
     # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
     [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${HHS_VERSION_FILE}")"
@@ -615,6 +618,28 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
+
+    # -----------------------------------------------------------------------------------
+    # Set default HomeSetup terminal options
+    case "${SHELL_TYPE}" in
+      bash)
+        # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
+        # executing case or [[ conditional commands.
+        shopt -u nocasematch || echo "warn:: Unable to unset 'cdspell'" >>"${INSTALL_LOG}"
+        # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
+        shopt -u nocaseglob || echo "warn:: Unable to unset 'nocaseglob'" >>"${INSTALL_LOG}"
+        # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
+        shopt -u cdspell || echo "warn:: Unable to unset 'cdspell'" >>"${INSTALL_LOG}"
+        # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
+        shopt -s extglob || echo "warn:: Unable to set 'extglob'" >>"${INSTALL_LOG}"
+        # Make bash check its window size after a process completes.
+        shopt -s checkwinsize || echo "warn:: Unable to set 'checkwinsize'" >>"${INSTALL_LOG}"
+        # Creating the shell-opts file
+        echo -en "\n${WHITE}Creating the Shell Options file ${BLUE}${HHS_SHOPTS_FILE} ..."
+        shopt | awk '{print $1" = "$2}' > "${HHS_SHOPTS_FILE}" || quit 2 "Unable to create the Shell Options file !"
+        echo -e " ${GREEN}OK${NC}"
+        ;;
+    esac
 
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }

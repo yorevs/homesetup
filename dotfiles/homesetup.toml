@@ -30,8 +30,6 @@ hhs_restore_last_dir = true
 # Set to disable Home Brew updates.
 homebrew_no_auto_update = true
 # Set to enable bash completions.
-hhs_load_completions = true
+hhs_load_completions = false
 # Set to enable starship prompt.
-hhs_use_starship = true
-
-
+hhs_use_starship = false

@@ -31,6 +31,7 @@
 
   [[ -f "${HOME}/.inputrc" ]] || missing+=("${HOME}/.inputrc")
   [[ -f "${HHS_DIR}/.aliasdef" ]] || missing+=("${HHS_DIR}/.aliasdef")
+  [[ -f "${HHS_DIR}/shell-opts.toml" ]] || missing+=("${HHS_DIR}/shell-opts.toml")
   [[ -f "${HHS_DIR}/.aliases" ]] || missing+=("${HHS_DIR}/.aliases")
   [[ -f "${HHS_DIR}/.cmd_file" ]] || missing+=("${HHS_DIR}/.cmd_file")
   [[ -f "${HHS_DIR}/.colors" ]] || missing+=("${HHS_DIR}/.colors")

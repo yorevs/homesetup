@@ -50,13 +50,12 @@ fi
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 export HHS_DIR="${HOME}/.hhs"
 export HHS_VERSION="$(grep -m 1 . "${HHS_HOME}"/.VERSION)"
-
-# Overrideable.
-export HHS_BACKUP_DIR="${HHS_BACKUP_DIR:-${HHS_DIR}/backup}"
-export HHS_CACHE_DIR="${HHS_CACHE_DIR:-${HHS_DIR}/cache}"
-export HHS_LOG_DIR="${HHS_LOG_DIR:-${HHS_DIR}/log}"
-export HHS_LOG_FILE="${HHS_LOG_FILE:-${HHS_LOG_DIR}/hhsrc.log}"
-export HHS_SETUP_FILE="${HHS_SETUP_FILE:-${HHS_DIR}/.hhs-init}"
+export HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
+export HHS_BACKUP_DIR="${HHS_DIR}/backup"
+export HHS_CACHE_DIR="${HHS_DIR}/cache"
+export HHS_LOG_DIR="${HHS_DIR}/log"
+export HHS_LOG_FILE="${HHS_LOG_DIR}/hhsrc.log"
+export HHS_SETUP_FILE="${HHS_DIR}/.hhs-init"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -89,7 +88,7 @@ CUSTOM_DOTFILES=(
 )
 
 # Re-create the HomeSetup log file.
-echo -e "HomeSetup is starting: $(date)\n" > "${HHS_LOG_FILE}"
+echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
 # Source the bash common functions.
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
@@ -141,28 +140,23 @@ for file in ${CUSTOM_DOTFILES[*]}; do
   fi
 done
 
-unset file f_path DOTFILES
-
-# -----------------------------------------------------------------------------------
-# Set default terminal options
-unset HHS_TERM_OPTS
-case "${HHS_MY_SHELL}" in
-  bash)
-    # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
-    # executing case or [[ conditional commands.
-    shopt -u nocasematch || __hhs_log "WARN" "Unable to unset 'cdspell'"
-    # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
-    shopt -u nocaseglob || __hhs_log "WARN" "Unable to unset 'nocaseglob'"
-    # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-    shopt -u cdspell || __hhs_log "WARN" "Unable to unset 'cdspell'"
-    # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-    shopt -s extglob && HHS_TERM_OPTS+='extglob ' || __hhs_log "WARN" "Unable to set 'extglob'"
-    # Make bash check its window size after a process completes.
-    shopt -s checkwinsize && HHS_TERM_OPTS+=' checkwinsize ' || __hhs_log "WARN" "Unable to set 'checkwinsize'"
-    ;;
-esac
-
-export HHS_TERM_OPTS
+# Set/Unset the shell options
+re_key_pair="^([a-zA-Z0-9]*) *= *(.*)"
+while read -r line; do
+  if [[ ${line} =~ ${re_key_pair} ]]; then
+    option="${BASH_REMATCH[1]}"
+    state="${BASH_REMATCH[2]}"
+    if [[ "${state}" == 'on' ]]; then
+      if shopt -s "${option}"; then
+        __hhs_log "DEBUG" "Terminal option was set: [${option}]"
+      else
+        __hhs_log "WARN" "Unable to set terminal option: ${option}"
+      fi
+    elif [[ "${state}" == 'off' ]]; then
+      shopt -u "${option}" || __hhs_log "WARN" "Unable to unset terminal option: ${option}"
+    fi
+  fi
+done <"${HHS_SHOPTS_FILE}"
 
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
@@ -201,13 +195,13 @@ if [[ -f "${HHS_DIR}/.path" ]]; then
 fi
 
 # Remove PATH duplicates.
-PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<< "${PATH}")
+PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
 export PATH
 
 # Load system preferences.
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   # Update the settings configuration.
-  echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" > "${HHS_SETMAN_CONFIG_FILE}"
+  echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
   tmp_file="$(mktemp)"
   if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
     __hhs_log "INFO" "System settings loaded !"
@@ -235,12 +229,14 @@ if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}
   fi
 fi
 
-echo -e "\nHomeSetup initialization complete: $(date)\n" >> "${HHS_LOG_FILE}"
+echo -e "\nHomeSetup initialization complete: $(date)\n" >>"${HHS_LOG_FILE}"
 
 # shellcheck disable=2164
 if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
+
+unset shopts_file state option line file f_path tmp_file re_key_pair
 
 # Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
