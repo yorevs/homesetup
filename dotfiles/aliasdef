@@ -86,7 +86,7 @@ __hhs_alias del-tree='__hhs_del_tree'
 __hhs_alias ip-lookup='__hhs_ip_lookup'
 __hhs_alias ip-resolve='__hhs_ip_resolve'
 __hhs_alias port-check='__hhs_port_check'
-__hhs_alias ipi="__hhs_ip_info $(my-ip | cut -d":" -f2) || echo \"${YELLOW}Not connection to the internet${NC}\""
+__hhs_alias ipi="__hhs_ip_info $(my-ip | awk '{print $3}') || echo \"${YELLOW}Not connected to the internet${NC}\""
 
 # Python based shortcuts
 if __hhs_has "python3"; then

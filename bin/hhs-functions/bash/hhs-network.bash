@@ -33,17 +33,17 @@ if __hhs_has ifconfig; then
       echo ' '
       echo "${YELLOW}Listing all network interfaces:${NC}"
       echo ' '
-      for next in "${if_all[@]}"; do
-        if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
-        if_mtu=$(awk '{ print $4 }' <<<"${next}")
-        if_flags=$(awk '{ print $2 }' <<<"${next}")
+      for iface in "${if_all[@]}"; do
+        if_name=$(awk '{ print $1 }' <<<"${iface%%:*}")
+        if_mtu=$(awk '{ print $4 }' <<<"${iface}")
+        if_flags=$(awk '{ print $2 }' <<<"${iface}")
         printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU=%-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
       done
       echo ' '
       return 0
     elif [[ ${#if_all[@]} -gt 0 && ${*} =~ -flat ]]; then
-      for next in "${if_all[@]}"; do
-        if_name=$(awk '{ print $1 }' <<<"${next%%:*}")
+      for iface in "${if_all[@]}"; do
+        if_name=$(awk '{ print $1 }' <<<"${iface%%:*}")
         if_list="${if_name} ${if_list}"
       done
       echo "${if_list}"
@@ -85,18 +85,18 @@ if __hhs_has ifconfig; then
           [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "External" "${if_ip}"
         fi
         if [[ "all" == "${ip_kind}" || "gateway" == "${ip_kind}" ]]; then
-          [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | cut -b 14- | uniq)"
-          [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}' | uniq)"
+          [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | awk '{print $2}')"
+          [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}')"
           [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "Gateway" "${if_ip}"
         fi
         if [[ ${ip_kind} =~ all|vpn|local ]]; then
           read -r -d '' -a if_list < <(__hhs_active_ifaces -flat)
           [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]+'
           [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]+'
-          for next in "${if_list[@]}"; do
-            if [[ "all" == "${ip_kind}" || ${next} =~ ${if_prefix} ]]; then
-              if_ip="$(ifconfig "${next}" | grep -E "inet " | awk '{print $2}')"
-              [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "${next}" "${if_ip}"
+          for iface in "${if_list[@]}"; do
+            if [[ "all" == "${ip_kind}" || ${iface} =~ ${if_prefix} ]]; then
+              if_ip="$(ifconfig "${iface}" | grep -E "inet " | awk '{print $2}')"
+              [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "${iface}" "${if_ip}"
             fi
           done
           ret_val=0

@@ -145,7 +145,7 @@ function __hhs_defs() {
         name=${v%%=*}
         name=${name// /}
         value=${v#*=}
-        value=${value//\'/}
+        value=${value//[\'\"]/}
         if [[ ${name} =~ ${filters} ]]; then
           echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
