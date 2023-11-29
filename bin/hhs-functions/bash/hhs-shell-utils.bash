@@ -173,9 +173,6 @@ function __hhs_shell_select() {
     echo "Usage: ${FUNCNAME[0]} "
   else
     read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
-    # Add the brew bash and zsh as options
-    [[ -f '/usr/local/bin/bash' ]] && avail_shells+=('/usr/local/bin/bash')
-    [[ -f '/usr/local/bin/zsh' ]] && avail_shells+=('/usr/local/bin/zsh')
     mselect_file=$(mktemp)
     if __hhs_mselect "${mselect_file}" "Please select your new default shell:" "${avail_shells[@]}"; then
       sel_shell=$(grep . "${mselect_file}")

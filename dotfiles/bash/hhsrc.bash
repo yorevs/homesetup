@@ -34,7 +34,7 @@ unalias -a
 
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
-export HHS_MY_SHELL="${SHELL//\/bin\//}"
+export HHS_MY_SHELL="${SHELL##*/}"
 
 # Detect if HomeSetup was installed using an installation prefix.
 export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
