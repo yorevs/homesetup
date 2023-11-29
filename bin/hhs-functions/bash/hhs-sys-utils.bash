@@ -57,7 +57,7 @@ function __hhs_sysinfo() {
       if [[ ${#containers[@]} -gt 0 && $(__hhs_docker_count) -ge 1 ]]; then
         echo -e "\n${GREEN}Online Docker Containers: ${BLUE}"
         for next in "${containers[@]}"; do
-          echo -e "${next}" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
+          echo -e "${next}" | esed -e "s/(^CONTAINER.*)/${WHITE}\1${HHS_HIGHLIGHT_COLOR}/" -e 's/^/  /'
         done
       fi
     fi

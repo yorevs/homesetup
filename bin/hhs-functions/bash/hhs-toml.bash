@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-  # shellcheck disable=2094
+# shellcheck disable=2094
 
 #  Script: hhs-toml.bash
 # Created: Nov 28, 2023
@@ -12,9 +12,9 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @purpose: Get a toml file key:value pair.
+# @function: Get the key's value from a toml file.
 # @param $1 [Req] : The toml file read from.
-# @param $2 [Req] : The key to get the value from.
+# @param $2 [Req] : The key to get.
 # @param $3 [Opt] : The group to get the key from (root if not provided).
 function __hhs_toml_get_key() {
 
@@ -53,9 +53,9 @@ function __hhs_toml_get_key() {
   return 1
 }
 
-# @purpose: Get a toml file key:value pair.
-# @param $1 [Req] : The toml file read from.
-# @param $2 [Req] : The key=value to set.
+# @function: Set the key's value from a toml file.
+# @param $1 [Req] : The toml file read from..
+# @param $2 [Req] : The key to set on the form: key=value
 # @param $3 [Opt] : The group to set the key from (root if not provided).
 function __hhs_toml_set_key() {
 
@@ -102,7 +102,7 @@ function __hhs_toml_set_key() {
   return $ret_val
 }
 
-# @purpose: Get a toml file key:value pair.
+# @function: Print all toml file groups (tables).
 # @param $1 [Req] : The toml file read from.
 function __hhs_toml_groups() {
 

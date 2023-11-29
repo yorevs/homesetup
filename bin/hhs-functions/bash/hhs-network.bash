@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=2120
 
 #  Script: hhs-network.bash
 # Created: Oct 5, 2019
@@ -14,7 +15,6 @@
 # Requires ifconfig to work.
 if __hhs_has ifconfig; then
 
-  # shellcheck disable=2120
   # @function: Display a list of active network interfaces.
   function __hhs_active_ifaces() {
 

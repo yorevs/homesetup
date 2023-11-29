@@ -21,11 +21,6 @@ function tests() {
   badge="${HHS_HOME}/check-badge.svg"
   started=$(\date "+%s%S")
 
-  pass_icn="\xef\x98\xab"
-  test_pass_icn="\xef\x98\xac"
-  fail_icn="\xef\x91\xa7"
-  test_fail_icn="\xef\x91\xae"
-
   echo ''
 
   # Scan and execute bats tests
@@ -33,10 +28,10 @@ function tests() {
   while read -r result; do
     if [[ ${result} =~ ^(ok|not) ]]; then
       if [[ ${result} =~ ^not ]]; then
-        output="${result//not ok /${RED} ${fail_icn} FAIL ${NC}}"
+        output="${result//not ok /${RED} ${FAIL_ICN} FAIL ${NC}}"
         fails=$((fails + 1))
       else
-        output="${result//ok /${GREEN} ${pass_icn} PASS ${NC}}"
+        output="${result//ok /${GREEN} ${PASS_ICN} PASS ${NC}}"
       fi
       echo -e "${output}"
     elif [[ ${result} =~ ^[0-9] ]]; then
@@ -61,13 +56,13 @@ function tests() {
     echo ''
     cat -n "${err_log}"
     echo ''
-    echo -e "${RED}${test_fail_icn}${NC}  Bats tests ${RED}FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
+    echo -e "${RED}${TEST_FAIL_ICN}${NC}  Bats tests ${RED}FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2>/dev/null
     echo ''
     quit 2
   else
     echo ''
-    echo -e "${GREEN}${test_pass_icn}${NC}  Bats tests ${GREEN}PASSED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
+    echo -e "${GREEN}${TEST_PASS_ICN}${NC}  Bats tests ${GREEN}PASSED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2>/dev/null
   fi
 

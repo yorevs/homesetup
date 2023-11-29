@@ -29,6 +29,7 @@ UNSETS=('quit' 'usage' 'version' 'trim')
 [[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_commons
 [[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_env
 [[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_colors
+[[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_icons
 [[ -f "${HOME}"/.bash_aliases ]] && source "${HOME}"/.bash_aliases
 [[ -f "${HOME}"/.bash_functions ]] && source "${HOME}"/.bash_functions
 

@@ -226,7 +226,7 @@ function get_desc() {
   filename=$(awk -F '.bash:' '{print $1}'  <<<"$path")
   line_num=$(awk -F '.bash:' '{print $2}'  <<<"$path")
   line_num=${line_num// /}
-  re='# @function: '
+  re='^ *# @(function|purpose|alias): '
 
   for i in $(seq "${line_num}" -1 1); do
     line=$(sed -n "${i}p" "${filename}".bash)
@@ -242,8 +242,8 @@ function search_hhs_functions() {
 
   local all_hhs_fn=() filename fn_name desc
 
-  IFS=$'\n'
-  read -r -d '' -a all_hhs_fn < <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
+  IFS=$'\n' read -r -d '' -a all_hhs_fn < \
+    <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
   for fn_line in "${all_hhs_fn[@]}"; do
     filename=$(basename "${fn_line}" | awk -F ':function' '{print $1}')
     filename=$(printf '%-35.35s' "${filename}")
@@ -272,23 +272,23 @@ function parse_args() {
   # Short opts: -<C>, Long opts: --<Word>
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
-    -h | --help)
-      usage 0
-      ;;
-    -v | --version)
-      version
-      ;;
-    -p | --prefix)
+      -h | --help)
+        usage 0
+        ;;
+      -v | --version)
+        version
+        ;;
+      -p | --prefix)
         echo ''
-        echo -e "${BLUE}Version: ${WHITE}${HHS_VERSION}${NC}"
-        echo -e "${BLUE} Prefix: ${WHITE}${HHS_HOME}${NC}"
-        echo -e "${BLUE}Configs: ${WHITE}${HHS_DIR}${NC}"
+        echo -e "${HHS_HIGHLIGHT_COLOR}  HomeSetup Version: ${WHITE}${HHS_VERSION}${NC}"
+        echo -e "${HHS_HIGHLIGHT_COLOR}Installation Prefix: ${WHITE}${HHS_HOME}${NC}"
+        echo -e "${HHS_HIGHLIGHT_COLOR}    HomeSetup Files: ${WHITE}${HHS_DIR}${NC}"
         echo ''
         quit 0
-      ;;
-    *)
-      break
-      ;;
+        ;;
+      *)
+        break
+        ;;
     esac
     shift
   done

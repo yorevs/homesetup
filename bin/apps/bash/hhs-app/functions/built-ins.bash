@@ -73,11 +73,12 @@ function funcs() {
   echo ' '
 
   if [[ ! -s "${cache_file}" ]]; then
+    echo -en "${ORNGE}Please wait until we cache all HomeSetup v${HHS_VERSION} functions ...${NC}"
     search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
     printf "%s\n" "${HHS_FUNCTIONS[@]}" >"${cache_file}"
+    echo -en '\033[2K'
   else
-    IFS=$'\n'
-    read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
+    IFS=$'\n' read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
     IFS="${OLDIFS}"
   fi
 
@@ -204,15 +205,14 @@ function invalidate() {
     echo ' ' >>"${mchoose_file}"
     echo -e "${YELLOW}Deleting selected files ...${NC}\n"
     while read -r -d ' ' file; do
-      if [[ -f "${file}" ]]; then
-        echo -en "${BLUE}Deleting file ${WHITE}"
-        echo -n "${file} $(printf '\056%.0s' {1..50})" | head -c 50
-        if \rm -f "${file}" &>/dev/null; then
-          echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
-        else
-          echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
-          return 1
-        fi
+      echo -en "${HHS_HIGHLIGHT_COLOR}Deleting file ${WHITE}"
+      echo -n "${file} $(printf '\056%.0s' {1..50})" | head -c 50
+      # shellcheck disable=SC2086
+      if \rm -f ${file} &>/dev/null; then
+        echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+      else
+        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        return 1
       fi
     done <"${mchoose_file}"
     echo ''
