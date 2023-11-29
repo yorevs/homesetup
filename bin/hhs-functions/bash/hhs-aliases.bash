@@ -67,8 +67,7 @@ function __hhs_aliases() {
 
     if [[ -z "${alias_expr}" || "$1" == '-l' || "$1" == "--list" ]]; then
       # List all aliases; if sorted, skips comments
-      IFS=$'\n'
-      read -d '' -r -a all_aliases < <(grep -v ^\# "${HHS_ALIASES_FILE}")
+      IFS=$'\n' read -d '' -r -a all_aliases < <(grep -i -v ^\# "${HHS_ALIASES_FILE}")
       IFS="${OLDIFS}"
       if [[ ${#all_aliases[@]} -gt 0 ]]; then
         pad=$(printf '%0.1s' "."{1..60})

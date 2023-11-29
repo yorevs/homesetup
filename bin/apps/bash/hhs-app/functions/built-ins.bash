@@ -56,20 +56,20 @@ function list() {
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
-  local idx columns fn_name cache_file usage filters count matches=0
+  local idx columns fn_name cache_file usage filter count matches=0
 
-  usage="Usage: ${FUNCNAME[0]} [regex_filters]"
+  usage="Usage: ${FUNCNAME[0]} [regex_filter]"
 
   [[ "$1" == 'help' ]] && echo "${usage}" && quit 0
 
   cache_file="${HHS_CACHE_DIR}/hhs-funcs-${HHS_VERSION//./}.cache"
 
-  filters="$*"
-  filters=${filters// /\|}
-  [[ -z "${filters}" ]] && filters=".*"
+  filter=$*
+  filter="${filter// /\|}"
+  filter="${filter:-.*}"
 
   echo ' '
-  echo "${YELLOW}-=- Available HomeSetup v${HHS_VERSION} functions matching [ ${filters} ] -=-"
+  echo "${YELLOW}-=- Available HomeSetup v${HHS_VERSION} functions matching [${filter}] -=-"
   echo ' '
 
   if [[ ! -s "${cache_file}" ]]; then
@@ -83,19 +83,21 @@ function funcs() {
   fi
 
   columns="$(tput cols)"
-  count="${#HHS_FUNCTIONS[@]}"
-  for idx in "${!HHS_FUNCTIONS[@]}"; do
-    fn_name="${HHS_FUNCTIONS[${idx}]}"
-    if [[ $fn_name =~ $filters ]]; then
+  count="${#}"
+  for line in "${HHS_FUNCTIONS[@]}"; do
+    fn_name=$(awk 'BEGIN { FS = "=>" } ; { print $2 }' <<<"${line}")
+    fn_name=${fn_name%%:*}
+    fn_name=$(trim <<<"${fn_name}")
+    if [[ ${fn_name} =~ ${filter} ]]; then
       ((matches++))
       printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((matches))"
-      echo -en "${fn_name:0:${columns}}${NC}"
-      [[ "${#fn_name}" -ge "${columns}" ]] && echo -n "..."
+      echo -en "${line:0:${columns}}${NC}"
+      [[ "${#line}" -ge "${columns}" ]] && echo -n "..."
       echo -e "${NC}"
     fi
   done
 
-  [[ $matches -eq 0 ]] && echo -e "${YELLOW}No functions found matching \"${filters}\"${NC}"
+  [[ $matches -eq 0 ]] && echo -e "${YELLOW}No functions found matching \"${filter}\"${NC}"
 
   echo ''
   quit 0
@@ -200,7 +202,7 @@ function invalidate() {
   title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"
   mchoose_file=$(mktemp)
   if __hhs_mchoose "${mchoose_file}" "${title}" "${all_files[@]}"; then
-    [[ $(wc -c < "$mchoose_file") -le 1 ]] && return 1
+    [[ $(wc -c <"$mchoose_file") -le 1  ]] && return 1
     clear
     echo ' ' >>"${mchoose_file}"
     echo -e "${YELLOW}Deleting selected files ...${NC}\n"

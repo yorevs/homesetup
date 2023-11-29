@@ -11,7 +11,7 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Search for previously issued commands from history using filters.
+# @function: Search for previously issued commands from history using filter.
 # @param $1 [Req] : The case-insensitive filter to be used when listing.
 function __hhs_history() {
 
@@ -61,11 +61,11 @@ function __hhs_hist_stats() {
   return $?
 }
 
-# @function: Display all environment variables using filters.
+# @function: Display all environment variables using filter.
 # @param $1 [Opt] : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_envs() {
 
-  local pad pad_len filters name value ret_val=0 columns col_offset=8
+  local pad pad_len filter name value ret_val=0 columns col_offset=8
 
   HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
 
@@ -85,18 +85,18 @@ function __hhs_envs() {
       pad=$(printf '%0.1s' "."{1..60})
       pad_len=40
       columns="$(($(tput cols) - pad_len - col_offset))"
-      filters="$*"
-      filters=${filters// /\|}
-      [[ -z "${filters}" ]] && filters=".*"
+      filter="$*"
+      filter=${filter// /\|}
+      [[ -z "${filter}" ]] && filter=".*"
       echo ' '
-      echo -e "${YELLOW}Listing all exported environment variables matching [ ${filters} ]:${NC}"
+      echo -e "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:${NC}"
       echo ' '
       IFS=$'\n'
       shopt -s nocasematch
       for v in $(env | sort); do
         name=${v%%=*}
         value=${v#*=}
-        if [[ ${name} =~ ${filters} ]]; then
+        if [[ ${name} =~ ${filter} ]]; then
           echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
           echo -en " ${GREEN}=> ${NC}"
@@ -114,11 +114,11 @@ function __hhs_envs() {
   return ${ret_val}
 }
 
-# @function: Display all alias definitions using filters.
+# @function: Display all alias definitions using filter.
 # @param $1 [Opt] : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
 function __hhs_defs() {
 
-  local pad pad_len filters name value columns ret_val=0
+  local pad pad_len filter name value columns ret_val=0 next
 
   HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
 
@@ -133,20 +133,19 @@ function __hhs_defs() {
       pad=$(printf '%0.1s' "."{1..60})
       pad_len=51
       columns="$(($(tput cols) - pad_len - 10))"
-      filters="$*"
-      filters=${filters// /\|}
-      [[ -z "${filters}" ]] && filters=".*"
+      filter="$*"
+      filter=${filter// /\|}
+      [[ -z "${filter}" ]] && filter=".*"
       echo ' '
-      echo "${YELLOW}Listing all alias definitions matching [ ${filters} ]:"
+      echo "${YELLOW}Listing all alias definitions matching [${filter}]:"
       echo ' '
       IFS=$'\n'
-      shopt -s nocasematch
-      for v in $(grep '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
-        name=${v%%=*}
-        name=${name// /}
-        value=${v#*=}
+      for next in $(grep -i '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
+        name=${next%%=*}
+        name="$(trim <<<"${name}" | awk '{print $2}')"
+        value=${next#*=}
         value=${value//[\'\"]/}
-        if [[ ${name} =~ ${filters} ]]; then
+        if [[ ${name} =~ ${filter} ]]; then
           echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
           echo -en " ${GREEN}is defined as ${NC}"
@@ -156,7 +155,6 @@ function __hhs_defs() {
         fi
       done
       IFS="${OLDIFS}"
-      shopt -u nocasematch
       echo ' '
     fi
   fi
@@ -174,15 +172,14 @@ function __hhs_shell_select() {
   else
     read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
     mselect_file=$(mktemp)
-    if __hhs_mselect "${mselect_file}" "Please select your new default shell:" "${avail_shells[@]}"; then
+    if __hhs_mselect "${mselect_file}" "Please select your default shell:" "${avail_shells[@]}"; then
       sel_shell=$(grep . "${mselect_file}")
       if [[ -n "${sel_shell}" && -f "${sel_shell}" ]]; then
         if \chsh -s "${sel_shell}"; then
-          ret_val=$?
+          ret_val=0
           clear
-          export SHELL="${sel_shell}"
-          echo "${GREEN}Your default shell has changed to => '${SHELL}'"
-          echo "${ORANGE}Next time you open a terminal window you will use \"${SHELL}\" as your default shell"
+          echo "${GREEN}Your default shell has changed to => '${sel_shell}'"
+          echo "${ORANGE}Next time you open a terminal window you will use \"${sel_shell}\" as your default shell"
           \rm -f "${mselect_file}"
         else
           __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"
