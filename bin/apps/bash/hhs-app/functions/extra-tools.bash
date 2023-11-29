@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#  Script: ext-tools.bash
-# Purpose: Contains all extended HHS-App functions
+#  Script: extra-tools.bash
+# Purpose: Contains all extra HHS-App functions
 # Created: Apr 29, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
@@ -53,7 +53,7 @@ function host-name() {
           fi
         fi
       else
-        echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 1
+        echo "${ORANGE}Your hostname hasn't changed !${NC}" && quit 2
       fi
     else
       quit 1 "You need 'hostname' installed to use this function !"
@@ -62,3 +62,27 @@ function host-name() {
 
   quit 0
 }
+
+# @purpose: Set/Unset shell options.
+#function shopts() {
+#
+#  local minput_file title sel_options all_items
+#
+#  while read -r option; do
+#    name="${option%%=*}" && value="${option#*=}"
+#    all_items+=("${name}|checkbox||||${value}")
+#  done <<<"$(shopt | awk '{print $1"="$2}')"
+#
+#  title="${BLUE}Terminal Options${ORANGE}\n"
+#  title+="Please check the desired terminal options:"
+#  minput_file=$(mktemp)
+#
+#  if __hhs_minput "${minput_file}" "${title}" "${all_items[@]}"; then
+#    read -r -d ' ' -a sel_options < <(grep . "${minput_file}")
+#    aux="$(mktemp)"
+#  echo "${sel_options[*]}"
+#  fi
+#
+#  [[ ! -s "" ]] || shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
+#    quit 2 "Unable to create the Shell Options file !"
+#}

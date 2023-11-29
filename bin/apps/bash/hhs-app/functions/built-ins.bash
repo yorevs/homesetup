@@ -173,22 +173,10 @@ function man() {
   quit 0
 }
 
-# @purpose: Open the HomeSetup GitHub project board.
-function board() {
+# @purpose: Clear HomeSetup logs, backups and caches and restore original HomeSetup files.
+function restore() {
 
-  local raw_content_url="${HHS_GITHUB_URL}/projects/1"
-
-  echo "${ORANGE}Opening HomeSetup board from: ${raw_content_url} ${NC}"
-  sleep 2
-  __hhs_open "${raw_content_url}" && quit 0
-
-  quit 1 "Failed to open url \"${raw_content_url}\" !"
-}
-
-# @purpose: Clear HomeSetup logs, backups and caches
-function invalidate() {
-
-  local all_files title mchoose_file
+  local all_files title mchoose_file ret_val=0
 
   all_files=(
     "${HHS_LOG_DIR}/*.log"
@@ -214,26 +202,13 @@ function invalidate() {
         echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
       else
         echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
-        return 1
+        ret_val=1
       fi
     done <"${mchoose_file}"
     echo ''
   fi
   [[ -f "${mchoose_file}" ]] && \rm -f "${mchoose_file}" &>/dev/null
 
-  return 0
+  return $ret_val
 }
 
-# @purpose: Open a docsify version of the HomeSetup README.
-function docsify() {
-
-  local docsify_url raw_content_url url
-
-  docsify_url='https://docsify-this.net/?basePath='
-  raw_content_url='https://raw.githubusercontent.com/yorevs/homesetup/master&sidebar=true'
-  url="${docsify_url}${raw_content_url}"
-
-  __hhs_open "${url}" && quit 0
-
-  quit 1 "Failed to open url \"${url}\" !"
-}
