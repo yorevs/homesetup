@@ -64,25 +64,33 @@ function host-name() {
 }
 
 # @purpose: Set/Unset shell options.
-#function shopts() {
-#
-#  local minput_file title sel_options all_items
-#
-#  while read -r option; do
-#    name="${option%%=*}" && value="${option#*=}"
-#    all_items+=("${name}|checkbox||||${value}")
-#  done <<<"$(shopt | awk '{print $1"="$2}')"
-#
-#  title="${BLUE}Terminal Options${ORANGE}\n"
-#  title+="Please check the desired terminal options:"
-#  minput_file=$(mktemp)
-#
-#  if __hhs_minput "${minput_file}" "${title}" "${all_items[@]}"; then
-#    read -r -d ' ' -a sel_options < <(grep . "${minput_file}")
-#    aux="$(mktemp)"
-#  echo "${sel_options[*]}"
-#  fi
-#
-#  [[ ! -s "" ]] || shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
-#    quit 2 "Unable to create the Shell Options file !"
-#}
+function shopts() {
+
+  local minput_file title sel_options name option item all_items=()
+
+  while read -r option; do
+    name="${option%%=*}" && value="${option#*=}"
+    all_items+=("${name// /}=${value// /}")
+  done <"${HHS_SHOPTS_FILE}"
+
+  title="${BLUE}Terminal Options${ORANGE}\n"
+  title+="Please check the desired terminal options:"
+  minput_file=$(mktemp)
+
+  if __hhs_mchoose "${minput_file}" "${title}" "${all_items[@]}"; then
+    read -r -d '' -a sel_options < <(grep . "${minput_file}")
+    echo -e "\033[2K" && echo ''
+    for item in "${all_items[@]}"; do
+      option="${item%%=*}"
+      if list_contains "${sel_options[*]}" "${option}"; then
+        shopt -s "${option}" && echo -e "\t${ON_ICN}  ${GREEN} ON${BLUE} => ${option}${NC}"
+      else
+        shopt -u "${option}" && echo -e "\t${OFF_ICN}  ${ORANGE}OFF${BLUE} => ${option}${NC}"
+      fi
+    done
+    shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
+      quit 2 "Unable to create the Shell Options file !"
+  fi
+
+  echo ''
+}

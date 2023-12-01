@@ -141,20 +141,17 @@ for file in ${CUSTOM_DOTFILES[*]}; do
 done
 
 # Set/Unset the shell options
-re_key_pair="^([a-zA-Z0-9]*) *= *(.*)"
+re_key_pair="^([a-zA-Z0-9]*) *= *(.*)$"
 while read -r line; do
   if [[ ${line} =~ ${re_key_pair} ]]; then
     option="${BASH_REMATCH[1]}"
     state="${BASH_REMATCH[2]}"
     if [[ "${state}" == 'on' ]]; then
-      if shopt -s "${option}"; then
-        __hhs_log "DEBUG" "Terminal option was set: [${option}]"
-      else
-        __hhs_log "WARN" "Unable to set terminal option: ${option}"
-      fi
+      shopt -s "${option}" || __hhs_log "WARN" "Unable to SET terminal option: ${option}"
     elif [[ "${state}" == 'off' ]]; then
-      shopt -u "${option}" || __hhs_log "WARN" "Unable to unset terminal option: ${option}"
+      shopt -u "${option}" || __hhs_log "WARN" "Unable to UNSET terminal option: ${option}"
     fi
+    __hhs_log "DEBUG" "Terminal option: ${option} is ${state}"
   fi
 done <"${HHS_SHOPTS_FILE}"
 

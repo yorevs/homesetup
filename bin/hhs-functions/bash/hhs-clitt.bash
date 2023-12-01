@@ -38,42 +38,59 @@ if __hhs_has python3; then
       echo '  Notes: '
       echo '    - A temporary file is suggested to used with this command: $ mktemp.'
       echo '    - The outfile must not exist or it be an empty file.'
+      echo '    - To initialize items individually, provide items on form: name=[True|False].'
       return 1
     fi
 
-    local outfile title all_options=() len checked='False' ret_val
+    local outfile title all_options all_items=() all_checks=() len all_items_str all_checks_str ret_val checked=False
 
     [[ '-c' = "${1}" ]] && shift && checked='True'
 
     HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
-    outfile="$1"
-    shift
-    title="$1"
-    shift
+    outfile="${1}" && shift
+    title="${1}" && shift
     all_options=("${@}")
     len=${#all_options[@]}
 
-    if [[ ${len} -le 1 ]] ; then
+    if [[ ${len} -le 1 ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Invalid number of items: \"${len}\""
       return 1
     fi
 
-    printf -v all_options_str '%s,' "${all_options[@]}"
-    all_options_str="${all_options_str%,}"
+    re_prop='^([a-zA-Z0-9_]*)=(.*)$'
+    for option in "${all_options[@]}"; do
+      if [[ ${option} =~ ${re_prop} ]]; then
+        all_items+=("${BASH_REMATCH[1]}")
+        all_checks+=("${BASH_REMATCH[2]}")
+      else
+        all_items+=("${option}")
+        all_checks+=("${checked}")
+      fi
+    done
 
-    echo ''>"${outfile}"
+    printf -v all_items_str '%s,' "${all_items[@]}"
+    all_items_str="${all_items_str%,}"
+    all_items_str="${all_items_str//,/\",\"}"
+    printf -v all_checks_str '%s,' "${all_checks[@]}"
+    all_checks_str="${all_checks_str%,}"
+    all_checks_str="${all_checks_str//on/True}"
+    all_checks_str="${all_checks_str//off/False}"
 
-    python3 -c """
+    echo '' >"${outfile}"
+
+    python3 -c "
 from clitt.core.tui.mchoose.mchoose import mchoose
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-    it = [\"${all_options_str//,/\",\"}\"]
-    ret = mchoose(it, ${checked}, \"${title}\", \"${outfile}\")
-    exit(1 if ret is None else 0)
-"""
+  items = [\"${all_items_str}\"]
+  checks = [${all_checks_str}]
+  ret = mchoose(items, checks, \"${title}\", \"${outfile}\")
+  exit(1 if ret is None else 0)
+"
+    ret_val=$?
 
-    return $?
+    return $ret_val
   }
 
   # @function: Select an option from a list using a navigable menu.
@@ -81,7 +98,7 @@ if __name__ == \"__main__\":
   # @param $2 [Req] : The array of items.
   function __hhs_mselect() {
 
-    local outfile all_options=() all_options_str len ret_val
+    local outfile all_options=() all_items_str len
 
     if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <output_file> <title> <items...>"
@@ -111,17 +128,17 @@ if __name__ == \"__main__\":
 
     [[ "${len}" -le 1 ]] && echo "${all_options[0]}" >"${outfile}" && return 0
 
-    printf -v all_options_str '%s,' "${all_options[@]}"
-    all_options_str="${all_options_str%,}"
+    printf -v all_items_str '%s,' "${all_options[@]}"
+    all_items_str="${all_items_str%,}"
 
-    echo ''>"${outfile}"
+    echo '' >"${outfile}"
 
     python3 -c """
 from clitt.core.tui.mselect.mselect import mselect
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-    it = [\"${all_options_str//,/\",\"}\"]
+    it = [\"${all_items_str//,/\",\"}\"]
     ret = mselect(it, \"${title}\", \"${outfile}\")
     exit(1 if ret is None else 0)
 """
@@ -129,13 +146,12 @@ if __name__ == \"__main__\":
     return $?
   }
 
-
   # @function: Provide a terminal form input with simple validation.
   # @param $1 [Req] : The response file.
   # @param $2 [Req] : The form fields.
   function __hhs_minput() {
 
-    local outfile ret_val=1 title all_fields=() len
+    local outfile title all_fields=() len
 
     if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"
@@ -169,7 +185,7 @@ if __name__ == \"__main__\":
     all_fields=("${@}")
     len=${#all_fields[*]}
 
-    if [[ ${len} -lt 1 ]] ; then
+    if [[ ${len} -lt 1 ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Invalid number of fields: \"${len}\""
       return 1
     fi
@@ -177,7 +193,7 @@ if __name__ == \"__main__\":
     printf -v all_fields_str '%s,' "${all_fields[@]}"
     all_fields_str="${all_fields_str%,}"
 
-    echo ''>"${outfile}"
+    echo '' >"${outfile}"
 
     python3 -c """
 from clitt.core.tui.minput.input_validator import InputValidator
