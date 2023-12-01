@@ -534,6 +534,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Create alias and input definitions.
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
+    copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
 
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 
@@ -623,17 +624,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Set default HomeSetup terminal options
     case "${SHELL_TYPE}" in
       bash)
-        # If set, bash matches patterns in a case-insensitive fashion when  performing  matching while
-        # executing case or [[ conditional commands.
-        shopt -u nocasematch || echo "warn:: Unable to unset 'cdspell'" >>"${INSTALL_LOG}"
-        # If set, bash matches file names in a case-insensitive fashion when performing pathname expansion.
-        shopt -u nocaseglob || echo "warn:: Unable to unset 'nocaseglob'" >>"${INSTALL_LOG}"
-        # If set, minor errors in the spelling of a directory component in a cd command will be corrected.
-        shopt -u cdspell || echo "warn:: Unable to unset 'cdspell'" >>"${INSTALL_LOG}"
-        # If set, the extended pattern matching features described above under Pathname Expansion are enabled.
-        shopt -s extglob || echo "warn:: Unable to set 'extglob'" >>"${INSTALL_LOG}"
-        # Make bash check its window size after a process completes.
-        shopt -s checkwinsize || echo "warn:: Unable to set 'checkwinsize'" >>"${INSTALL_LOG}"
         # Creating the shell-opts file
         echo -en "\n${WHITE}Creating the Shell Options file ${BLUE}${HHS_SHOPTS_FILE} ..."
         shopt | awk '{print $1" = "$2}' > "${HHS_SHOPTS_FILE}" || quit 2 "Unable to create the Shell Options file !"
@@ -772,6 +762,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ -f "${HHS_DIR}/starship.toml" ]]; then
       \mv -f "${HHS_DIR}/starship.toml" "${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak"
       echo -e "\n${ORANGE}Your old starship.toml had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak ${NC}"
+    fi
+
+    # Old hhs-init file changed to homesetup.toml
+    if [[ -f "${HHS_DIR}/.hhs-init" ]]; then
+      \rm -f "${HHS_DIR}/.hhs-init"
+      echo -e "\n${ORANGE}Your old .hhs-init renamed to .homesetup.toml and the old file was deleted.${NC}"
     fi
   }
 

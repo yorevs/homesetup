@@ -66,7 +66,7 @@ function host-name() {
 # @purpose: Set/Unset shell options.
 function shopts() {
 
-  local minput_file title sel_options name option item all_items=()
+  local mchoose_file title sel_options name option item all_items=()
 
   while read -r option; do
     name="${option%%=*}" && value="${option#*=}"
@@ -75,10 +75,10 @@ function shopts() {
 
   title="${BLUE}Terminal Options${ORANGE}\n"
   title+="Please check the desired terminal options:"
-  minput_file=$(mktemp)
+  mchoose_file=$(mktemp)
 
-  if __hhs_mchoose "${minput_file}" "${title}" "${all_items[@]}"; then
-    read -r -d '' -a sel_options < <(grep . "${minput_file}")
+  if __hhs_mchoose "${mchoose_file}" "${title}" "${all_items[@]}"; then
+    read -r -d '' -a sel_options < <(grep . "${mchoose_file}")
     echo -e "\033[2K" && echo ''
     for item in "${all_items[@]}"; do
       option="${item%%=*}"

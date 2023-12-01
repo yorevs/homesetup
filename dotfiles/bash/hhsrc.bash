@@ -55,7 +55,7 @@ export HHS_BACKUP_DIR="${HHS_DIR}/backup"
 export HHS_CACHE_DIR="${HHS_DIR}/cache"
 export HHS_LOG_DIR="${HHS_DIR}/log"
 export HHS_LOG_FILE="${HHS_LOG_DIR}/hhsrc.log"
-export HHS_SETUP_FILE="${HHS_DIR}/.hhs-init"
+export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -103,9 +103,15 @@ if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
   \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
 fi
 
-# Load initialization settings.
+# Load initialization setup.
 if [[ -s "${HHS_SETUP_FILE}" ]]; then
-  source "${HHS_SETUP_FILE}"
+  IFS=$'\n' read -r -d '' -a prefs < <(__hhs_toml_keys "${HHS_SETUP_FILE}" 'setup' \
+    | tr -d ' ' | tr "[:lower:]" "[:upper:]")
+  IFS="${OLDIFS}"
+  for pref in "${prefs[@]}"; do
+    pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
+    export "${pref?}"
+  done
   __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
 fi
 
@@ -195,7 +201,7 @@ fi
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
 export PATH
 
-# Load system preferences.
+# Load system settings.
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   # Update the settings configuration.
   echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
@@ -233,7 +239,7 @@ if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
 
-unset shopts_file state option line file f_path tmp_file re_key_pair
+unset shopts_file state option line file f_path tmp_file re_key_pair prefs cpl pref
 
 # Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"

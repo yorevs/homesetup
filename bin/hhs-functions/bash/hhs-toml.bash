@@ -16,7 +16,7 @@
 # @param $1 [Req] : The toml file read from.
 # @param $2 [Req] : The key to get.
 # @param $3 [Opt] : The group to get the key from (root if not provided).
-function __hhs_toml_get_key() {
+function __hhs_toml_get() {
 
   local file="${1}" key="${2}" group="${3:-.*}" re_group re_key_pair group_match
 
@@ -31,7 +31,7 @@ function __hhs_toml_get_key() {
     return 1
   fi
 
-  re_group="^\[(${group})\] *$"
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
   re_key_pair="^(${key}) *= *(.*)"
 
   while read -r line; do
@@ -44,7 +44,9 @@ function __hhs_toml_get_key() {
         return 0
       fi
     elif [[ ${line} =~ ${re_group} ]]; then
-      group_match="${BASH_REMATCH[1]}"
+      if [[ "${BASH_REMATCH[1]}" == "${group}" ]]; then
+        group_match="${BASH_REMATCH[1]}"
+      fi
     fi
   done <"${file}"
 
@@ -57,10 +59,10 @@ function __hhs_toml_get_key() {
 # @param $1 [Req] : The toml file read from..
 # @param $2 [Req] : The key to set on the form: key=value
 # @param $3 [Opt] : The group to set the key from (root if not provided).
-function __hhs_toml_set_key() {
+function __hhs_toml_set() {
 
   local file="${1}" key="${2%%=*}" value="${2#*=}" group="${3:-.*}"
-  local aux re_group re_key_pair group_match ret_val=1
+  local re_group re_key_pair group_match
 
   if [[ -z "${file}" ]]; then
     echo "${RED}error: The file parameter must be provided${NC}"
@@ -73,33 +75,31 @@ function __hhs_toml_set_key() {
     return 1
   fi
 
-  re_group="^\[(${group})\] *$"
-  re_key_pair="^(${key}) *= *(.*)"
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
+  re_key_pair="^(${key}) *= *(.*)?"
 
-  if ! [[ ${line} =~ ${re_key_pair} ]]; then
-    echo "${RED}error: The key/value parameter must be on the form of 'key=value'${NC}"
+  if ! [[ ${2} =~ ${re_key_pair} ]]; then
+    echo "${RED}error: The key/value parameter must be on the form of 'key=value', but it was '${2}'${NC}"
     return 1
   fi
-
-  aux=$(mktemp)
 
   while read -r line; do
     if [[ ${line} =~ ${re_key_pair} ]]; then
       if [[ -z "${group}" ]]; then
-        \sed "s/${line}/${key} = ${value}/g" "${file}" >"${aux}"
-        ret_val=0
+        ised "s/${line}/${key} = ${value}/g" "${file}"
+        return $?
       elif [[ -n "${group}" && -n "${group_match}" ]]; then
-        \sed "s/${line}/${key} = ${value}/g" "${file}" >"${aux}"
-        ret_val=0
+        ised "s/${line}/${key} = ${value}/g" "${file}"
+        return $?
       fi
     elif [[ ${line} =~ ${re_group} ]]; then
-      group_match="${BASH_REMATCH[1]}"
+      if [[ "${BASH_REMATCH[1]}" == "${group}" ]]; then
+        group_match="${BASH_REMATCH[1]}"
+      fi
     fi
   done <"${file}"
 
-  [[ -s "${aux}" ]] && \mv -f "${aux}" "${file}"
-
-  return $ret_val
+  return 1
 }
 
 # @function: Print all toml file groups (tables).
@@ -116,11 +116,53 @@ function __hhs_toml_groups() {
     return 1
   fi
 
-  re_group="^\[([a-zA-Z0-9]+)\]"
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
   while read -r line; do
     if [[ ${line} =~ ${re_group} ]]; then
       echo -e "${BASH_REMATCH[1]}"
       ((count += 1))
+    fi
+  done <"${file}"
+
+  [[ $count -gt 0 ]] && return 0
+  [[ $count -le 0 ]] && return 1
+}
+
+# @function: Print all toml file group keys (tables).
+# @param $1 [Req] : The toml file read from.
+# @param $2 [Opt] : The group to get the keys from (root if not provided).
+function __hhs_toml_keys() {
+
+  local file="${1}" group="${2}" re_group count=0 group_match
+
+  if [[ -z "${file}" ]]; then
+    echo "${RED}error: The file parameter must be provided.${NC}"
+    return 1
+  elif [[ ! -s "${file}" ]]; then
+    echo "${RED}error: The file \"${file}\" does not exists or is empty.${NC}"
+    return 1
+  fi
+
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
+  re_key_pair="^([a-zA-Z0-9_.]+) *= *(.*)"
+
+  while read -r line; do
+    if [[ -z "${group}" && ${line} =~ ${re_group} ]]; then
+      break
+    elif [[ -n "${group_match}" && ${line} =~ ${re_group} ]]; then
+      break
+    elif [[ ${line} =~ ${re_key_pair} ]]; then
+      if [[ -z "${group}" ]]; then
+        echo -e "${line}"
+        ((count += 1))
+      elif [[ -n "${group}" && -n "${group_match}" ]]; then
+        echo -e "${line}"
+        ((count += 1))
+      fi
+    elif [[ ${line} =~ ${re_group} ]]; then
+      if [[ "${BASH_REMATCH[1]}" == "${group}" ]]; then
+        group_match="${BASH_REMATCH[1]}"
+      fi
     fi
   done <"${file}"
 

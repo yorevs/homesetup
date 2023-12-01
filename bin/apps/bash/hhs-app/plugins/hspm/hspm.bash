@@ -200,7 +200,7 @@ function list_recipes() {
     [[ -s "${recipe}" ]] && printf '%3s + %s' "${index}" "${HHS_HIGHLIGHT_COLOR}${package} "
     [[ -s "${recipe}" ]] || printf '%3s - %s' "${index}" "${WHITE}${package} "
     printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
-    recipe_about="$(__hhs_toml_get_key "${HSPM_CATALOG_FILE}" 'about' "${package}")"
+    recipe_about="$(__hhs_toml_get "${HSPM_CATALOG_FILE}" 'about' "${package}")"
     echo -e "${GREEN} => ${WHITE}${recipe_about#*=}${NC}"
     ((index += 1))
   done
