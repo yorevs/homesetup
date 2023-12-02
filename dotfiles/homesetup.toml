@@ -33,3 +33,5 @@ homebrew_no_auto_update = true
 hhs_load_completions = false
 # Set to enable starship prompt.
 hhs_use_starship = false
+# Set to enable loading shell options.
+hhs_load_shell_options = false

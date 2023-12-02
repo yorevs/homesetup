@@ -105,13 +105,14 @@ fi
 
 # Load initialization setup.
 if [[ -s "${HHS_SETUP_FILE}" ]]; then
-  IFS=$'\n' read -r -d '' -a prefs < <(__hhs_toml_keys "${HHS_SETUP_FILE}" 'setup' \
-    | tr -d ' ' | tr "[:lower:]" "[:upper:]")
-  IFS="${OLDIFS}"
-  for pref in "${prefs[@]}"; do
-    pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
-    export "${pref?}"
-  done
+  re='^([a-zA-Z0-9_.]+) *= *(.*)'
+  while read -r pref; do
+    if [[ ${pref} =~ $re ]]; then
+      pref="$(tr '[:lower:]' '[:upper:]' <<< "${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")"
+      pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
+      export "${pref?}"
+    fi
+  done <"${HHS_SETUP_FILE}"
   __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
 fi
 
@@ -147,19 +148,21 @@ for file in ${CUSTOM_DOTFILES[*]}; do
 done
 
 # Set/Unset the shell options
-re_key_pair="^([a-zA-Z0-9]*) *= *(.*)$"
-while read -r line; do
-  if [[ ${line} =~ ${re_key_pair} ]]; then
-    option="${BASH_REMATCH[1]}"
-    state="${BASH_REMATCH[2]}"
-    if [[ "${state}" == 'on' ]]; then
-      shopt -s "${option}" || __hhs_log "WARN" "Unable to SET terminal option: ${option}"
-    elif [[ "${state}" == 'off' ]]; then
-      shopt -u "${option}" || __hhs_log "WARN" "Unable to UNSET terminal option: ${option}"
+if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
+  re_key_pair="^([a-zA-Z0-9]*) *= *(.*)$"
+  while read -r line; do
+    if [[ ${line} =~ ${re_key_pair} ]]; then
+      option="${BASH_REMATCH[1]}"
+      state="${BASH_REMATCH[2]}"
+      if [[ "${state}" == 'on' ]]; then
+        shopt -s "${option}" || __hhs_log "WARN" "Unable to SET shell option: ${option}"
+      elif [[ "${state}" == 'off' ]]; then
+        shopt -u "${option}" || __hhs_log "WARN" "Unable to UNSET shell option: ${option}"
+      fi
+      __hhs_log "DEBUG" "Shell option: ${option} is ${state}"
     fi
-    __hhs_log "DEBUG" "Terminal option: ${option} is ${state}"
-  fi
-done <"${HHS_SHOPTS_FILE}"
+  done <"${HHS_SHOPTS_FILE}"
+fi
 
 # Input-rc Options:
 # - completion-ignore-case: Turns off the case-sensitive completion
@@ -239,7 +242,7 @@ if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
 
-unset shopts_file state option line file f_path tmp_file re_key_pair prefs cpl pref
+unset shopts_file state option line file f_path tmp_file re_key_pair prefs cpl pref re
 
 # Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"

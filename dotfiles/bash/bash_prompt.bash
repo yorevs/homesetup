@@ -175,7 +175,7 @@ export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
 export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 
 # Initialize Starship prompt if it is set to.
-if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
+if [[ -z ${HHS_USE_STARSHIP} || ${HHS_USE_STARSHIP} -ne 0 ]]; then
   function __hhs_set_win_title() {
     echo -ne "\033]0; ${TITLE} \007"
   }
