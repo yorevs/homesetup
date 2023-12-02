@@ -13,7 +13,6 @@
 # @version: v1.0.4
 
 # Dev notes:
-# .hhs-init -> homesetup.toml
 # .hspm -> homesetup.toml
 # .last_dirs -> homesetup.toml
 # .last_update -> homesetup.toml
@@ -29,9 +28,9 @@ hhs_export_settings = true
 hhs_restore_last_dir = true
 # Set to disable Home Brew updates.
 homebrew_no_auto_update = true
+# Set to enable starship prompt.
+hhs_use_starship = true
 # Set to enable bash completions.
 hhs_load_completions = false
-# Set to enable starship prompt.
-hhs_use_starship = false
 # Set to enable loading shell options.
 hhs_load_shell_options = false
