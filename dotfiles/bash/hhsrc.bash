@@ -157,13 +157,13 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
       option="${BASH_REMATCH[1]}"
       state="${BASH_REMATCH[2]}"
       if [[ "${state}" == 'on' ]]; then
-        shopt -s "${option}" || __hhs_log "WARN" "Unable to SET shell option: ${option}"
+        \shopt -s "${option}" || __hhs_log "WARN" "Unable to SET shell option: ${option}"
       elif [[ "${state}" == 'off' ]]; then
-        shopt -u "${option}" || __hhs_log "WARN" "Unable to UNSET shell option: ${option}"
+        \shopt -u "${option}" || __hhs_log "WARN" "Unable to UNSET shell option: ${option}"
       fi
-      __hhs_log "DEBUG" "Shell option: ${option} is ${state}"
     fi
   done <"${HHS_SHOPTS_FILE}"
+  __hhs_log "INFO" "Shell options activated !"
 fi
 
 # Input-rc Options:
@@ -246,7 +246,7 @@ if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
 
-unset shopts_file state option line file f_path tmp_file re_key_pair prefs cpl pref re
+unset state option line file f_path tmp_file re_key_pair prefs cpl pref re
 
 # Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"

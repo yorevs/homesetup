@@ -626,7 +626,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       bash)
         # Creating the shell-opts file
         echo -en "\n${WHITE}Creating the Shell Options file ${BLUE}${HHS_SHOPTS_FILE} ..."
-        shopt | awk '{print $1" = "$2}' > "${HHS_SHOPTS_FILE}" || quit 2 "Unable to create the Shell Options file !"
+        \shopt | awk '{print $1" = "$2}' > "${HHS_SHOPTS_FILE}" || quit 2 "Unable to create the Shell Options file !"
         echo -e " ${GREEN}OK${NC}"
         ;;
     esac

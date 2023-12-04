@@ -109,6 +109,8 @@ alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 alias ifs='echo -en "${IFS}" | hexdump -C'
 # @alias: Use the assigned app to open a file.
 alias open="__hhs_open"
+# @alias: Display/Set/unset current Shell Options.
+alias shopt="__hhs_shopt"
 
 # @alias: Use `vim' instead of `vi' if installed
 __hhs_has "vim" && alias vi='vim'

@@ -73,18 +73,18 @@ function shopts() {
 
   if __hhs_mchoose "${mchoose_file}" "${title}" "${all_items[@]}"; then
     read -r -d '' -a sel_options < <(grep . "${mchoose_file}")
-    echo -e "\033[2K" && echo ''
     for item in "${all_items[@]}"; do
       option="${item%%=*}"
       if list_contains "${sel_options[*]}" "${option}"; then
-        shopt -s "${option}" && echo -e "\t${ON_ICN}  ${GREEN} ON${BLUE} => ${option}${NC}"
+        shopt -s "${option}"
       else
-        shopt -u "${option}" && echo -e "\t${OFF_ICN}  ${ORANGE}OFF${BLUE} => ${option}${NC}"
+        shopt -u "${option}"
       fi
     done
+    \rm -f "${mchoose_file}"&>/dev/null
     shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
       quit 2 "Unable to create the Shell Options file !"
   fi
 
-  echo ''
+  quit 0
 }
