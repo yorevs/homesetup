@@ -104,17 +104,19 @@ if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
 fi
 
 # Load initialization setup.
-if [[ -s "${HHS_SETUP_FILE}" ]]; then
-  re='^([a-zA-Z0-9_.]+) *= *(.*)'
-  while read -r pref; do
-    if [[ ${pref} =~ $re ]]; then
-      pref="$(tr '[:lower:]' '[:upper:]' <<< "${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")"
-      pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
-      export "${pref?}"
-    fi
-  done <"${HHS_SETUP_FILE}"
-  __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
+if [[ ! -s "${HHS_SETUP_FILE}" ]]; then
+  __hhs_log "WARN" "HomeSetup initialization file not found. Using defaults."
+  \cp "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
 fi
+re='^([a-zA-Z0-9_.]+) *= *(.*)'
+while read -r pref; do
+  if [[ ${pref} =~ $re ]]; then
+    pref="$(tr '[:lower:]' '[:upper:]' <<<"${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")"
+    pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
+    export "${pref?}"
+  fi
+done <"${HHS_SETUP_FILE}"
+__hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
 
 # -----------------------------------------------------------------------------------
 # Load dotfiles
@@ -226,12 +228,14 @@ if [[ ${HHS_LOAD_COMPLETIONS} -eq 1 ]]; then
 fi
 
 # Check for HomeSetup updates.
-if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
-  __hhs_log "INFO" "Home setup is checking for updates ..."
-  if __hhs_is_reachable 'github.com'; then
-    __hhs updater execute check
-  else
-    __hhs_log "WARN" "GitHub website is not reachable !"
+if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
+  if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+    __hhs_log "INFO" "Home setup is checking for updates ..."
+    if __hhs_is_reachable 'github.com'; then
+      __hhs updater execute check
+    else
+      __hhs_log "WARN" "GitHub website is not reachable !"
+    fi
   fi
 fi
 

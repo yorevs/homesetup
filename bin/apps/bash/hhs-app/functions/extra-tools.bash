@@ -16,18 +16,11 @@ function host-name() {
 
   local cur_hostname new_hostname
 
-  if [[ "$(uname -s)" == "Darwin" ]]; then
-    sed_flag="-E"
-  else
-    sed_flag="-r"
-  fi
-
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo -e "Usage: ${FUNCNAME[0]} [new_hostname]"
   elif [[ -z "${1}" ]]; then
-    echo -en "${GREEN}Your current hostname is: ${PURPLE}"
-    hostname
-    quit $? "${NC}"
+    echo -e "${GREEN}Your current hostname is: ${HHS_HIGHLIGHT_COLOR}$(hostname)${NC}"
+    quit $?
   else
     if __hhs_has hostname; then
       cur_hostname=$(hostname)
@@ -42,7 +35,8 @@ function host-name() {
           fi
         else
           # Change the hostname in /etc/hosts & /etc/hostname
-          if sudo sed ${sed_flag} "s/${cur_hostname}/${new_hostname}/g" /etc/hosts && sudo sed ${sed_flag} "s/${cur_hostname}/${new_hostname}/g" /etc/hostname; then
+          if sudo esed "s/${cur_hostname}/${new_hostname}/g" /etc/hosts &&
+             sudo esed "s/${cur_hostname}/${new_hostname}/g" /etc/hostname; then
             echo "${GREEN}Your new hostname has changed from \"${cur_hostname}\" to ${PURPLE}\"${new_hostname}\" ${NC} !"
             read -rn 1 -p "${YELLOW}Press 'y' key to reboot now: ${NC}" ANS
             if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then

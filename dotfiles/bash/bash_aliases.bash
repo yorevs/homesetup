@@ -58,10 +58,9 @@ alias .....='.. 4'
 alias ~='cd ~'
 # @alias: Change the current directory to the previous dir
 alias -- -='cd -'
-
-# shellcheck disable=SC2139,SC2035
-# @alias: Display the current directory path
-alias ?='echo "${GREEN}Current directory: ${NC}$(pwd -LP)"'
+# @alias: Display the current working dir and remote repository if it applies
+# shellcheck disable=SC2035
+alias ?='__hhs_where_am_i'
 
 # -----------------------------------------------------------------------------------
 # @category: General

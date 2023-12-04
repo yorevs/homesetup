@@ -26,11 +26,13 @@ hhs_set_locales = true
 hhs_export_settings = true
 # Set to allow restoring the last used dir in terminal.
 hhs_restore_last_dir = true
-# Set to disable Home Brew updates.
-homebrew_no_auto_update = true
 # Set to enable starship prompt.
 hhs_use_starship = true
+# Set to enable loading shell options.
+hhs_load_shell_options = true
+# Set to disable HomeBrew updates.
+homebrew_no_auto_update = true
+# Set to disable HomeSetup updates.
+hhs_no_auto_update = false
 # Set to enable bash completions.
 hhs_load_completions = false
-# Set to enable loading shell options.
-hhs_load_shell_options = false

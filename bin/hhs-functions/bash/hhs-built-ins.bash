@@ -211,3 +211,12 @@ function __hhs_help() {
 
   return 0
 }
+
+# @function: Display the current working dir and remote repository if it applies.
+# @param $1 [Req] : The command to get help.
+function __hhs_where_am_i() {
+  echo "${GREEN}Current directory: ${NC}$(pwd -LP)"
+  if __hhs_has git && git rev-parse --is-inside-work-tree &>/dev/null; then
+    echo "${GREEN}Remote repository: ${NC}$(git remote -v | head -n 1 | awk '{print $2}')"
+  fi
+}

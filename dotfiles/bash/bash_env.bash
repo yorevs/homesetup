@@ -16,7 +16,7 @@
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
 # Set system locale (defaults)
-if [[ -z ${HHS_SET_LOCALES} ]]; then
+if [[ ${HHS_SET_LOCALES} -eq 1 ]]; then
   export LANGUAGE=${LANGUAGE:-en_US:en}
   export LANG=${LANG:-en_US.UTF-8}
   export LC_ALL=${LANG}
