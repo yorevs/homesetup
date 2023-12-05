@@ -51,9 +51,11 @@ function quit() {
   local exit_code=${1:-0}
 
   shift
-  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}error: ${APP_NAME} => " 1>&2
+  if [[ ${exit_code} -ne 0 && ${#} -ge 1 ]]; then
+    echo -en "${RED}error: ${APP_NAME} => " 1>&2
+  fi
+  [[ ${#} -eq 0 ]] && echo -e "${NC}"
   [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
-  [[ ${#} -gt 0 ]] && echo ''
 
   exit "${exit_code}"
 }

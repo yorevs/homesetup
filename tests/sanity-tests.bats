@@ -42,7 +42,7 @@
   [[ -f "${HHS_DIR}/.prompt" ]] || missing+=("${HHS_DIR}/.prompt")
   [[ -f "${HHS_DIR}/.saved_dirs" ]] || missing+=("${HHS_DIR}/.saved_dirs")
 
-  [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: ${missing[*]}"
+  echo "Missing dotfiles: [${missing[*]}]"
 
   [[ ${#missing[@]} -eq 0 ]]
 }

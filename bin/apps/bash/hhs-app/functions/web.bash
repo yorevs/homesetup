@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  Script: web.bash
-# Purpose: Contains all HHS-App miscellaneous functions
+# Purpose: Contains all HHS-App web based functions
 # Created: Nov 29, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com

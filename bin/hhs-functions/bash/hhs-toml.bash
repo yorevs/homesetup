@@ -18,7 +18,7 @@
 # @param $3 [Opt] : The group to get the key from (root if not provided).
 function __hhs_toml_get() {
 
-  local file="${1}" key="${2}" group="${3:-.*}" re_group re_key_pair group_match
+  local file="${1}" key="${2}" group="${3}" re_group re_key_pair group_match
 
   if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
     echo "Usage: __hhs_toml_get <file> <key> [group]"
@@ -66,7 +66,7 @@ function __hhs_toml_get() {
 # @param $3 [Opt] : The group to set the key from (root if not provided).
 function __hhs_toml_set() {
 
-  local file="${1}" key="${2%%=*}" value="${2#*=}" group="${3:-.*}"
+  local file="${1}" key="${2%%=*}" value="${2#*=}" group="${3}"
   local re_group re_key_pair group_match
 
   if [[ -z "${file}" ]]; then

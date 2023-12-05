@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: built-ins.bash
+#  Script: tests.bash
 # Purpose: Contains HomeSetup test functions
 # Created: Mar 04, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -13,61 +13,70 @@
 # @purpose: Run all HomeSetup automated tests.
 function tests() {
 
-  local started finished err_log output badge fails=0
+  local started finished err_log badge fail=0 pass=0 status num details re_status re_len len
+  local diff_time diff_time_sec diff_time_ms
 
   command -v bats &>/dev/null || quit 1 "The tool 'bats' must be installed to run the automated tests !"
 
   err_log="${TEMP}/homesetup-tests.log"
   badge="${HHS_HOME}/check-badge.svg"
-  started=$(\date "+%s%S")
-
-  echo ''
+  started="$(python -c 'import time; print(int(time.time() * 1000))')"
 
   # Scan and execute bats tests
   echo -n '' > "${err_log}"
-  while read -r result; do
-    if [[ ${result} =~ ^(ok|not) ]]; then
-      if [[ ${result} =~ ^not ]]; then
-        output="${result//not ok /${RED} ${FAIL_ICN} FAIL ${NC}}"
-        fails=$((fails + 1))
+  re_status='^(ok|not ok) ([0-9]+) (.+) in .*$'
+  re_len='^([0-9]+)\.\.([0-9]+)$'
+  echo -en "\n${WHITE}[$(date +'%H:%M:%S')] Started HomeSetup bats tests\n"
+  for next in "${HHS_HOME}"/tests/*.bats; do
+    while read -r result; do
+      if [[ ${result} =~ ${re_status} ]]; then
+        status="${BASH_REMATCH[1]}"
+        num="${BASH_REMATCH[2]}"
+        details="${BASH_REMATCH[3]}"
+        if [[ "${status}" == 'not ok' ]]; then
+          status="${RED} ${FAIL_ICN} FAIL${NC}"
+          ((fail += 1))
+        elif [[ "${status}" == 'ok' ]]; then
+          status="${GREEN} ${PASS_ICN} PASS${NC}"
+          ((pass += 1))
+        else
+          status="? ????"
+        fi
+        echo -en "${status} "
+        printf "%${len}d %s\n" "${num}" "${details}"
+      elif [[ ${result} =~ ${re_len} ]]; then
+        echo -en "\n${WHITE}[${next##*/}] Running tests ${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}${NC}\n\n"
+        len="${#BASH_REMATCH[2]}"
       else
-        output="${result//ok /${GREEN} ${PASS_ICN} PASS ${NC}}"
+        echo -e "${result}" >>"${err_log}"
       fi
-      echo -e "${output}"
-    elif [[ ${result} =~ ^[0-9] ]]; then
-      echo -e "${ORANGE}Running HomeSetup bats tests: [${result//\.\./ to }] ...${NC}"
-      echo ''
-    else
-      echo -e "${result}" >>"${err_log}"
-    fi
-  done < <(bats -rtT "${HHS_HOME}/tests/" 2>&1)
+    done < <(bats -tT "${next}" 2>&1)
+  done
 
-  echo -e "\n${WHITE}Finished running all tests${NC}"
-
-  finished=$(\date "+%s%S")
+  finished="$(python -c 'import time; print(int(time.time() * 1000))')"
   diff_time=$((finished - started))
   diff_time_sec=$((diff_time/1000))
   diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
-  if [[ ${fails} -gt 0 ]]; then
+  echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail)) tests:\t"
+  echo -e "Passed=${pass}  Failed=${fail}${NC}"
+
+  if [[ ${fail} -gt 0 ]]; then
     echo ''
-    echo -e "${RED}### There were errors reported ###${NC}"
-    echo "Test log can be found at: \"${err_log}\"."
+    echo -e "${ORANGE}xXx The following errors were reported xXx${NC}"
     echo ''
-    cat -n "${err_log}"
+    __hhs_tailor "${err_log}" | nl
     echo ''
-    echo -e "${RED}${TEST_FAIL_ICN}${NC}  Bats tests ${RED}FAILED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2>/dev/null
-    echo ''
+    echo -e "${RED}${TEST_FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 2
   else
     echo ''
-    echo -e "${GREEN}${TEST_PASS_ICN}${NC}  Bats tests ${GREEN}PASSED${NC} in ${diff_time_sec}s ${diff_time_ms}ms "
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2>/dev/null
+    echo -e "${GREEN}${TEST_PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
   fi
 
-  echo ''
-  quit 0
+  quit 0 ''
 }
 
 # @purpose: Run all terminal color palette tests.
