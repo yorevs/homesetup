@@ -20,14 +20,19 @@ function __hhs_toml_get() {
 
   local file="${1}" key="${2}" group="${3:-.*}" re_group re_key_pair group_match
 
+  if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
+    echo "Usage: __hhs_toml_get <file> <key> [group]"
+    quit 1
+  fi
+
   if [[ -z "${file}" ]]; then
-    echo "${RED}error: The file parameter must be provided.${NC}"
+    __hhs_errcho "The file parameter must be provided."
     return 1
   elif [[ -z "${key}" ]]; then
-    echo "${RED}error: The key parameter must be provided.${NC}"
+    __hhs_errcho "The key parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    echo "${RED}error: The file \"${file}\" does not exists or is empty.${NC}"
+    __hhs_errcho "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 
@@ -65,13 +70,13 @@ function __hhs_toml_set() {
   local re_group re_key_pair group_match
 
   if [[ -z "${file}" ]]; then
-    echo "${RED}error: The file parameter must be provided${NC}"
+    __hhs_errcho "The file parameter must be provided."
     return 1
   elif [[ -z "${key}" ]]; then
-    echo "${RED}error: The key parameter must be provided${NC}"
+    __hhs_errcho "The key parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    echo "${RED}error: The file \"${file}\" does not exists or is empty${NC}"
+    __hhs_errcho "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 
@@ -79,7 +84,7 @@ function __hhs_toml_set() {
   re_key_pair="^(${key}) *= *(.*)?"
 
   if ! [[ ${2} =~ ${re_key_pair} ]]; then
-    echo "${RED}error: The key/value parameter must be on the form of 'key=value', but it was '${2}'${NC}"
+    __hhs_errcho "The key/value parameter must be on the form of 'key=value', but it was '${2}'."
     return 1
   fi
 
@@ -109,10 +114,10 @@ function __hhs_toml_groups() {
   local file="${1}" re_group count=0
 
   if [[ -z "${file}" ]]; then
-    echo "${RED}error: The file parameter must be provided.${NC}"
+    __hhs_errcho "The file parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    echo "${RED}error: The file \"${file}\" does not exists or is empty.${NC}"
+    __hhs_errcho "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 
@@ -136,10 +141,10 @@ function __hhs_toml_keys() {
   local file="${1}" group="${2}" re_group count=0 group_match
 
   if [[ -z "${file}" ]]; then
-    echo "${RED}error: The file parameter must be provided.${NC}"
+    __hhs_errcho "The file parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    echo "${RED}error: The file \"${file}\" does not exists or is empty.${NC}"
+    __hhs_errcho "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 

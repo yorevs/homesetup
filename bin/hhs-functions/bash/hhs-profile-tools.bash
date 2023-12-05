@@ -27,7 +27,7 @@ if [[ -d "${HOME}/.nvm" ]]; then
       fi
       echo "${GREEN}[  OK  ]${NC}"
     else
-      echo "${RED}[ FAIL ] => NVM is not installed ! ${NC}" && return 1
+      __hhs_errcho "[ FAIL ] => NVM is not installed !" && return 1
     fi
 
     return 0
@@ -40,14 +40,13 @@ if [[ -d "${HOME}/.rvm" ]]; then
 
     echo -en "Activating RVM app ...... "
     # RVM setup
-    [[ ! -d "${HOME}/.rvm" ]] && echo "${RED}[ FAIL ] => Can't find RVM_HOME => \"${HOME}/.rvm\" ! ${NC}" && return 1
+    [[ ! -d "${HOME}/.rvm" ]] || __hhs_errcho "[ FAIL ] => Can't find RVM_HOME => \"${HOME}/.rvm\" !" && return 1
     export RVM_DIR="${HOME}/.rvm"
-    if [[ -s "$RVM_DIR/scripts/rvm" ]]; then
-      \. "$RVM_DIR/scripts/rvm"
+    if [[ -s "$RVM_DIR/scripts/rvm" ]] && \source "$RVM_DIR/scripts/rvm"; then
       export PATH="$PATH:$RVM_DIR/bin"
       echo "${GREEN}[  OK  ]${NC}"
     else
-      echo "${RED}[ FAIL ] => RVM is not installed ! ${NC}" && return 1
+      __hhs_errcho "[ FAIL ] => RVM is not installed !" && return 1
     fi
 
     return 0
@@ -64,7 +63,7 @@ if __hhs_has jenv; then
     if eval "$(jenv init -)" &>/dev/null; then
       echo "${GREEN}[  OK  ] ${NC}"
     else
-      echo "${RED}[ FAIL ] => JENV could not be started ! ${NC}" && return 1
+      __hhs_errcho "[ FAIL ] => JENV could not be started !" && return 1
     fi
 
     return 0
@@ -82,7 +81,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
     if open "${DK_LOC}" &>/dev/null; then
       echo "${GREEN}[  OK  ] ${NC}"
     else
-      echo "${RED}[ FAIL ] => Docker.app was not found: ${DK_LOC} at ! ${NC}" && return 1
+      __hhs_errcho "[ FAIL ] => Docker.app was not found: ${DK_LOC} at !" && return 1
     fi
 
     return 0

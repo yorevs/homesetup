@@ -337,7 +337,7 @@ function __hhs_godir() {
       echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
       ret_val=0
     else
-      echo "${RED}Unable to change to directory: ${WHITE}\"${dir}\"${NC}"
+      __hhs_errcho "Unable to change to directory: ${WHITE}\"${dir}\""
       ret_val=1
     fi
   fi

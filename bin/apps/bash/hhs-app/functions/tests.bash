@@ -35,7 +35,7 @@ function tests() {
       fi
       echo -e "${output}"
     elif [[ ${result} =~ ^[0-9] ]]; then
-      echo -e "${ORANGE}Running HomeSetup automated tests from [${result//\.\./ to }] ...${NC}"
+      echo -e "${ORANGE}Running HomeSetup bats tests: [${result//\.\./ to }] ...${NC}"
       echo ''
     else
       echo -e "${result}" >>"${err_log}"
@@ -49,10 +49,10 @@ function tests() {
   diff_time_sec=$((diff_time/1000))
   diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
-  if [[ $fails -gt 0 ]]; then
+  if [[ ${fails} -gt 0 ]]; then
     echo ''
     echo -e "${RED}### There were errors reported ###${NC}"
-    echo "Please access \"${err_log}\" for more details."
+    echo "Test log can be found at: \"${err_log}\"."
     echo ''
     cat -n "${err_log}"
     echo ''

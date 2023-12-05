@@ -38,20 +38,23 @@ function __hhs_aliases() {
     echo ''
     return 1
   else
-
     if [[ "$1" == '-e' || "$1" == "--edit" ]]; then
       __hhs_edit "${HHS_ALIASES_FILE}"
       return $?
     elif [[ "$1" == '-r' || "$1" == "--remove" ]] && [[ -n "$2" ]]; then
       alias_name="$2"
       # Remove one alias
-      ised -e "s#(^alias ${alias_name}=.*)*##g" -e '/^\s*$/d' "${HHS_ALIASES_FILE}"
       if unalias "${alias_name}" &>/dev/null; then
-        echo -e "${YELLOW}Alias removed: ${WHITE}\"${alias_name}\" ${NC}"
+        if ised "/^alias ${alias_name}=.*$/d" "${HHS_ALIASES_FILE}"; then
+          echo -e "${YELLOW}Alias removed: ${WHITE}\"${alias_name}\"${NC}"
+          return 0
+        else
+          __hhs_errcho "Failed to remove alias: \"${alias_name}\""
+        fi
       else
-        echo -e "${RED}Alias not found: \"${alias_name}\" ${NC}"
+        __hhs_errcho "Alias not found: \"${alias_name}\""
+        return 1
       fi
-      return $?
     elif [[ "$1" == '-l' || "$1" == "--list" ]] && [[ -z "$2" ]]; then
       alias_name="$2"
     else
@@ -102,7 +105,7 @@ function __hhs_aliases() {
       # Add/Set one alias
       ised -e "s#(^alias ${alias_name}=.*)*##g" -e '/^\s*$/d' "${HHS_ALIASES_FILE}"
       echo "alias ${alias_name}='${alias_expr}'" >>"${HHS_ALIASES_FILE}"
-      echo -e "${GREEN}Alias set: ${WHITE}\"${alias_name}\" is ${HHS_HIGHLIGHT_COLOR}'${alias_expr}' ${NC}"
+      echo -e "${GREEN}Alias set: ${WHITE}\"${alias_name}\" is ${HHS_HIGHLIGHT_COLOR}'${alias_expr}'${NC}"
       source "${HHS_ALIASES_FILE}"
     fi
   fi

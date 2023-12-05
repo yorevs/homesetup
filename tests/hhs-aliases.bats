@@ -13,28 +13,36 @@
 load test_helper
 load "${HHS_HOME}/bin/hhs-functions/bash/hhs-aliases.bash"
 
+# This runs before each of the following tests are executed.
+setup() {
+  unset HHS_HIGHLIGHT_COLOR
+  DIR="$(\cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && \pwd)"
+  PATH="$DIR/../src:$PATH"
+}
+
 @test "should-print-usage-when-invoking-with-help-option" {
   run __hhs_aliases -h
   [[ ${status} -eq 1 ]]
-  [[ ${lines[0]} == "Usage: __hhs_aliases <alias> <alias_expr>" ]]
+  [[ "${lines[0]}" == "Usage: __hhs_aliases <alias> <alias_expr>" ]]
 }
 
 @test "should-add-alias" {
-  expected="Alias set: .*hhs-bats.* is .*'ls -la'.*"
-  actual="$(__hhs_aliases hhs-bats 'ls -la')"
-  [[ ${actual} =~ ${expected} ]]
+  run __hhs_aliases 'hhs-bats' ls -la
+  result="${lines[0]}"
+  [[ ${status} -eq 0 ]]
+  [[ "${result}" == "Alias set: \"hhs-bats\" is 'ls -la'" ]]
+  ised "/^alias hhs-bats=.*$/d" "${HHS_ALIASES_FILE}"
 }
 
 @test "should-remove-alias" {
-  # Complaining about ised not found
-  __hhs_aliases gabits 'ls -la'
-  expected="Alias removed: .*gabits.*"
-  actual="$(__hhs_aliases -r gabits)"
-  [[ ${actual} =~ ${expected} ]]
+  __hhs_aliases 'hhs-bats' 'ls -la'
+  run __hhs_aliases -r 'hhs-bats'
+  [[ ${status} -eq 0 ]]
+  [[ "${lines[0]}" == "Alias removed: \"hhs-bats\"" ]]
 }
 
 @test "should-not-remove-invalid-alias" {
-  expected="Alias not found: .*hhs-bats.*"
-  actual="$(__hhs_aliases -r hhs-bats)"
-  [[ ${actual} =~ ${expected} ]]
+  run __hhs_aliases -r 'hhs-bats'
+  [[ ${status} -eq 1 ]]
+  [[ "${lines[0]}" == "error: Alias not found: \"hhs-bats\"" ]]
 }

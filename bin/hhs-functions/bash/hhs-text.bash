@@ -19,8 +19,7 @@ function __hhs_errcho() {
     echo "Usage: ${FUNCNAME[0]} <message>"
     return 1
   else
-    echo -e "${RED}${*}${NC}" 1>&2
-    echo ''
+    echo -e "${RED}error: ${*}${NC}" 1>&2
   fi
 
   return $?
