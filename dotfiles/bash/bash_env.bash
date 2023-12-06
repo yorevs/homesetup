@@ -138,18 +138,18 @@ export HHS_VAULT_USER="${USER}"
 [[ -d "${HOME}"/Dropbox ]] && export DROPBOX="${HOME}/Dropbox"
 [[ -d "${HOME}"/Workspace ]] && export WORKSPACE="${HOME}/Workspace"
 
-# Development tools. To override it please export HHS_DEV_TOOLS variable at <HHS_ENV_FILE>
+# Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'hexdump' 'vim' 'bats' 'tree' 'perl' 'groovy'
-  'pcregrep' 'shfmt' 'shellcheck' 'java' 'rvm'
-  'gcc' 'make' 'mvn' 'gradle' 'ruby' 'jq' 'git'
-  'docker' 'nvm' 'node' 'eslint' 'pylint' 'gpg'
-  'shasum' 'base64' 'python' 'python3' 'pip3'
-  'direnv' 'pbcopy' 'sqlite3' 'go' 'colima' 'starship'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'jq' 'gpg' 'shasum' 'base64'
+  'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
+  'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm'
+  'shfmt' 'shellcheck' 'eslint' 'pylint'
+  'nvm' 'node' 'direnv' 'starship' 'pbcopy'
+  'docker' 'sqlite3' 'colima'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
 fi
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | uniq | sort | tr '\n' ' ')}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | sort | uniq  | tr '\n' ' ')}

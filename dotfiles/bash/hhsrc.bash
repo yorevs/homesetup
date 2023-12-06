@@ -151,6 +151,10 @@ done
 
 # Set/Unset the shell options
 if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
+  if [[ ! -s "${HHS_SHOPTS_FILE}" ]]; then
+    \shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
+       quit 2 "Unable to create the Shell Options file !"
+  fi
   re_key_pair="^([a-zA-Z0-9]*) *= *(.*)$"
   while read -r line; do
     if [[ ${line} =~ ${re_key_pair} ]]; then
