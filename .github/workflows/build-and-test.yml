@@ -92,16 +92,14 @@ jobs:
         ./install.bash -r -p "${{ github.workspace }}"
         echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
         source "${HOME}"/.bashrc
-        echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
-    - name: Execute HomeSetup bats tests
-      run: |
         __hhs tests
+        echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
     - name: Upload installation logs
       if: ${{ always() }}
       uses: actions/upload-artifact@v3
       with:
         name: "Upload-Install-Log"
-        path: "${{ env.HHS_LOG_DIR }}/install.log"
+        path: "${{ env.HHS_LOG_DIR }}"
     - name: Show installation logs
       if: ${{ failure() }}
       run: |
