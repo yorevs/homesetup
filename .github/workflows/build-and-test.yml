@@ -54,17 +54,16 @@ jobs:
   build:
     strategy:
       matrix:
-        os:
-          - "ubuntu-latest"
-          - "fedora-latest"
-          - "alpine-latest"
-          - "macOS-latest"
+        include:
+          - os: "ubuntu-latest"
+            build: ${{ inputs.build_ubuntu }}
+          - os: "fedora-latest"
+            build: ${{ inputs.build_fedora }}
+          - os: "alpine-latest"
+            build: ${{ inputs.build_alpine }}
+          - os: "macOS-latest"
+            build: ${{ inputs.build_macos }}
     runs-on: ${{ matrix.os }}
-    if: |
-      (inputs.build_ubuntu == 'true' && matrix.os == 'ubuntu-latest') ||
-      (inputs.build_fedora == 'true' && matrix.os == 'fedora-latest') ||
-      (inputs.build_alpine == 'true' && matrix.os == 'alpine-latest') ||
-      (inputs.build_macos == 'true' && matrix.os == 'macOS-latest')
     steps:
     - uses: actions/checkout@v3
       with:
