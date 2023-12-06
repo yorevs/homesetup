@@ -63,6 +63,7 @@ jobs:
             build: ${{ inputs.build_alpine }}
           - os: "macOS-latest"
             build: ${{ inputs.build_macos }}
+    if: ${{ matrix.build }}
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
