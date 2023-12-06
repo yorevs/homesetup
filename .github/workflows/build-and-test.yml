@@ -4,22 +4,22 @@ run-name: Build & Test
 on:
   workflow_dispatch:
     inputs:
-      build_ubuntu:
+      ubuntu:
         description: 'Build & Test on Ubuntu latest ?'
         default: true
         required: true
         type: boolean
-      build_fedora:
+      fedora:
         description: 'Build & Test on Fedora latest ?'
         default: true
         required: true
         type: boolean
-      build_alpine:
+      alpine:
         description: 'Build & Test on Alpine latest ?'
         default: true
         required: true
         type: boolean
-      build_macos:
+      macos:
         description: 'Build & Test on macOS latest ?'
         default: true
         required: true
@@ -51,20 +51,39 @@ env:
   JOB_NAME: "HomeSetup-Build"
 
 jobs:
+  set-os-matrix:
+    runs-on: "ubuntu-latest"
+    outputs:
+      matrix: ${{ steps.set-matrix-items.outputs.matrix }}
+    steps:
+      - id: set-matrix-items
+        run: |
+          all_os=('ubuntu' 'fedora' 'alpine' 'macos')
+          JSON="{\"include\":["
+          while read -r os; do
+            if [[ (${os} == 'ubuntu' && "true" == "${{inputs.ubuntu}}") ||
+                  (${os} == 'fedora' && "true" == "${{inputs.fedora}}") ||
+                  (${os} == 'alpine' && "true" == "${{inputs.alpine}}") ||
+                  (${os} == 'macos' && "true" == "${{inputs.macos}}") ]]; then
+              JSONline="{\"os\": \"${os}\"},"
+              if [[ "$JSON" != *"$JSONline"* ]]; then
+                JSON="$JSON$JSONline"
+              fi
+            fi
+          done < <(printf '%s\n' "${all_os[@]}")
+          # Remove last ","
+          if [[ $JSON == *, ]]; then
+            JSON="${JSON%?}"
+          fi
+          # Add closing brackets
+          JSON="$JSON]}"
+          echo "matrix=$( echo "$JSON" )" >> $GITHUB_OUTPUT
   build:
-    strategy:
-      matrix:
-        include:
-          - os: "ubuntu-latest"
-            build: ${{ inputs.build_ubuntu }}
-          - os: "fedora-latest"
-            build: ${{ inputs.build_fedora }}
-          - os: "alpine-latest"
-            build: ${{ inputs.build_alpine }}
-          - os: "macOS-latest"
-            build: ${{ inputs.build_macos }}
-    if: ${{ matrix.build }}
+    needs: set-os-matrix
     runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.set-os-matrix.outputs.matrix)}}
     steps:
     - uses: actions/checkout@v3
       with:
