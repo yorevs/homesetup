@@ -798,11 +798,11 @@ Usage: $APP_NAME [OPTIONS] <args>
   activate_dotfiles() {
 
     # Set the auto-update timestamp.
-    if [[ "${HHS_MY_OS_RELEASE}" == "macOS" ]]; then
+    if [[ "${MY_OS_NAME}" == "macOS" ]]; then
       \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
-    elif [[ "${HHS_MY_OS_RELEASE}" == "alpine" ]]; then
+    elif [[ "${MY_OS_NAME}" == "alpine" ]]; then
       \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))"  '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
-    elif [[ "${HHS_MY_OS_RELEASE}" =~ ubuntu|fedora|centos ]]; then
+    elif [[ "${MY_OS_NAME}" =~ ubuntu|fedora|centos ]]; then
       \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
     else
       \date '+%s' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"

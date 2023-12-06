@@ -93,9 +93,17 @@ jobs:
         python-version: ${{ vars.PYTHON_VERSION }}
     - name: Update PIP
       run: pip install --upgrade pip
-    - name: Install HomeSetup with Prefix and Test
+    - name: Install HomeSetup with Prefix
       run: |
         ./install.bash -r -p "${{ github.workspace }}"
         echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
         source "${HOME}"/.bashrc
+    - name: Execute HomeSetup bats tests
+      run: |
         __hhs tests
+    - name: Upload Installation Logs
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: "Upload-Install-Log"
+        path: "${HHS_DIR}/.hhs/logs/install.log"
