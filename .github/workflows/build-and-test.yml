@@ -71,19 +71,18 @@ jobs:
               fi
             fi
           done < <(printf '%s\n' "${all_os[@]}")
-          # Remove last ","
-          if [[ $JSON == *, ]]; then
+          if [[ $JSON == *, ]]; then  # Remove last ","
             JSON="${JSON%?}"
           fi
-          # Add closing brackets
-          JSON="$JSON]}"
+          JSON="$JSON]}"  # Add closing brackets
           echo "matrix=$( echo "$JSON" )" >> $GITHUB_OUTPUT
+
   build:
     needs: set-os-matrix
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(needs.set-os-matrix.outputs.matrix)}}
+      matrix: ${{ fromJson(needs.set-os-matrix.outputs.matrix) }}
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
       with:
