@@ -22,13 +22,14 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
+# If not running interactively and if it is not a Jenkins build, skip it.
+[[ -z "${JOB_NAME}" && -z "${PS1}" && -z "${PS2}" ]] && return
+
+export HHS_ACTIVE_DOTFILES='bash_profile'
+
 # Unset all HHS_ variables
 unset "${!HHS_@}"
 
-# If not running interactively skip it.
-[[ -z "${PS1}" && -z "${PS2}" ]] && return
-
-export HHS_ACTIVE_DOTFILES='bash_profile'
 
 # Set path so it includes user's private bin if it exists.
 if [[ -d "${HOME}/bin" ]]; then
@@ -42,15 +43,14 @@ fi
 
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
-  bash)
-    # Source HomeSetup resources.
+  'bash')
     [[ -s "${HOME}/.hhsrc" ]] && source "${HOME}/.hhsrc"
     ;;
   *)
     echo ''
-    echo 'Sorry ! HomeSetup is only compatible with bash for now.'
+    echo "Sorry ! HomeSetup is not compatible with ${SHELL##*\/} for now."
     echo 'You can change your default shell by typing: '
-    echo "#> sudo chsh -s $(command -v bash)"
+    echo "$ sudo chsh -s $(command -v bash)"
     echo ''
     ;;
 esac

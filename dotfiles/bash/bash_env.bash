@@ -152,4 +152,4 @@ if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
 fi
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | sort | uniq  | tr '\n' ' ')}
+export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | sort --unique)}

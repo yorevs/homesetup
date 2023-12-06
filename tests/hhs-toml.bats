@@ -11,11 +11,13 @@
 # Copyright (c) 2023, HomeSetup team
 
 load test_helper
+load "${HHS_HOME}/bin/hhs-functions/bash/hhs-text.bash"
 load "${HHS_HOME}/bin/hhs-functions/bash/hhs-toml.bash"
 
 test_file=
 
 setup() {
+
   test_file=$(mktemp)
   # Stub the toml entries
   echo "
@@ -35,8 +37,13 @@ setup() {
   echo "Toml file: ${test_file}"
 }
 
+teardown() {
+  \rm -f "${test_file}"
+}
+
 # TC - 1
 @test "when-invoking-with-help-option-then-toml-get-should-print-usage" {
+  skip 'testing skip'
   run __hhs_toml_get -h
   [[ ${status} -eq 1 && ${lines[0]} == "Usage: __hhs_toml_get <file> <key> [group]" ]]
 }

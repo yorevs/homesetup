@@ -88,6 +88,7 @@ CUSTOM_DOTFILES=(
 )
 
 # Re-create the HomeSetup log file.
+started="$(python -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
 # Source the bash common functions.
@@ -198,12 +199,15 @@ esac
 
 # Add `$HHS_DIR/bin` to the system `$PATH`.
 __hhs_paths -q -a "${HHS_DIR}/bin"
+# Add `bats-core` to the system `$PATH`.
+__hhs_paths -q -a "${HHS_HOME}/tests/bats/core/bin"
 
 # Add custom paths to the system `$PATH`.
 if [[ -f "${HHS_DIR}/.path" ]]; then
   NEW_PATHS="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
   NEW_PATHS=${NEW_PATHS//'\n'/':'/}
   PATH="${PATH}:${NEW_PATHS}"
+  __hhs_log "DEBUG" "PATH variable was set"
 fi
 
 # Remove PATH duplicates.
@@ -243,14 +247,20 @@ if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
   fi
 fi
 
-echo -e "\nHomeSetup initialization complete: $(date)\n" >>"${HHS_LOG_FILE}"
+finished="$(python -c 'import time; print(int(time.time() * 1000))')"
+diff_time=$((finished - started))
+diff_time_sec=$((diff_time/1000))
+diff_time_ms=$((diff_time-(diff_time_sec*1000)))
+
+echo -e "\nHomeSetup initialization complete in ${diff_time_sec}s ${diff_time_ms}ms\n" >>"${HHS_LOG_FILE}"
 
 # shellcheck disable=2164
 if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
 
-unset state option line file f_path tmp_file re_key_pair prefs cpl pref re
+unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
+unset -f f_path tmp_file re_key_pair prefs cpl pref re
 
 # Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"

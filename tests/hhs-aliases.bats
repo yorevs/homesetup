@@ -11,12 +11,11 @@
 # Copyright (c) 2023, HomeSetup team
 
 load test_helper
+load "${HHS_HOME}/bin/hhs-functions/bash/hhs-text.bash"
 load "${HHS_HOME}/bin/hhs-functions/bash/hhs-aliases.bash"
 
 setup() {
   unset HHS_HIGHLIGHT_COLOR
-  DIR="$(\cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && \pwd)"
-  PATH="$DIR/../src:$PATH"
 }
 
 # TC - 1
