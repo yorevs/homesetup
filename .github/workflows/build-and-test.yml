@@ -58,13 +58,13 @@ jobs:
     steps:
       - id: set-matrix-items
         run: |
-          all_os=('ubuntu' 'fedora' 'alpine' 'macos')
+          all_os=('ubuntu-latest' 'fedora-latest' 'alpine-latest' 'macos-latest')
           JSON="{\"include\":["
           while read -r os; do
-            if [[ (${os} == 'ubuntu' && "true" == "${{inputs.ubuntu}}") ||
-                  (${os} == 'fedora' && "true" == "${{inputs.fedora}}") ||
-                  (${os} == 'alpine' && "true" == "${{inputs.alpine}}") ||
-                  (${os} == 'macos' && "true" == "${{inputs.macos}}") ]]; then
+            if [[ (${os} == 'ubuntu-latest' && "true" == "${{inputs.ubuntu}}") ||
+                  (${os} == 'fedora-latest' && "true" == "${{inputs.fedora}}") ||
+                  (${os} == 'alpine-latest' && "true" == "${{inputs.alpine}}") ||
+                  (${os} == 'macos-latest' && "true" == "${{inputs.macos}}") ]]; then
               JSONline="{\"os\": \"${os}\"},"
               if [[ "$JSON" != *"$JSONline"* ]]; then
                 JSON="$JSON$JSONline"
