@@ -61,7 +61,7 @@ jobs:
           echo "Build Ubuntu: ${{inputs.ubuntu}}"
           echo "Build Fedora: ${{inputs.fedora}}"
           echo "Build Alpine: ${{inputs.alpine}}"
-          echo "Build macOS: ${{inputs.macos}}"
+          echo " Build macOS: ${{inputs.macos}}"
       - id: set-matrix-items
         run: |
           all_os=('ubuntu-latest' 'fedora-latest' 'alpine-latest' 'macos-latest')
@@ -107,9 +107,13 @@ jobs:
     - name: Execute HomeSetup bats tests
       run: |
         __hhs tests
-    - name: Upload Installation Logs
-      if: ${{ failure() }}
+    - name: Upload installation logs
+      if: ${{ always() }}
       uses: actions/upload-artifact@v3
       with:
         name: "Upload-Install-Log"
-        path: "${HHS_DIR}/.hhs/logs/install.log"
+        path: "${HOME}/.hhs/logs/install.log"
+    - name: Show installation logs
+      if: ${{ failure() }}
+      run: |
+        grep . ${HOME}/.hhs/logs/install.log
