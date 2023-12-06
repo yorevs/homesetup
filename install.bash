@@ -772,14 +772,15 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Init submodules case it's not there yet
     if [[ ! -s "${HHS_HOME}/tests/bats/bats-core/bin/bats" ]]; then
-      pushd "${HHS_HOME}" || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
+      pushd "${HHS_HOME}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
       echo -en "\n${ORANGE}Pulling bats submodules ...${NC}"
-      if git submodule update --init; then
-        echo -e "${GREEN}OK${NC}"
+      if git submodule update --init &>/dev/null; then
+        echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
       else
-        echo -e "${RED}FAILED${NC}"
+        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        echo -e "${YELLOW}Bats test will not be available${NC}"
       fi
-      popd || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
+      popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
     fi
   }
 
@@ -792,7 +793,8 @@ Usage: $APP_NAME [OPTIONS] <args>
         if "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
           echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
         else
-          quit 2 "${WHITE} [ ${RED}FAILED${NC} ]"
+          echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+          echo -e "${YELLOW}Starship prompt will not be available${NC}"
         fi
       else
         echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
