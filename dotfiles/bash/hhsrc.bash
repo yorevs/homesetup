@@ -200,7 +200,7 @@ esac
 # Add `$HHS_DIR/bin` to the system `$PATH`.
 __hhs_paths -q -a "${HHS_DIR}/bin"
 # Add `bats-core` to the system `$PATH`.
-__hhs_paths -q -a "${HHS_HOME}/tests/bats/core/bin"
+__hhs_paths -q -a "${HHS_HOME}/tests/bats/bats-core/bin"
 
 # Add custom paths to the system `$PATH`.
 if [[ -f "${HHS_DIR}/.path" ]]; then
@@ -209,10 +209,6 @@ if [[ -f "${HHS_DIR}/.path" ]]; then
   PATH="${PATH}:${NEW_PATHS}"
   __hhs_log "DEBUG" "PATH variable was set"
 fi
-
-# Remove PATH duplicates.
-PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
-export PATH
 
 # Load system settings.
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
@@ -261,6 +257,10 @@ fi
 
 unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
 unset -f f_path tmp_file re_key_pair prefs cpl pref re
+
+# Remove PATH duplicates.
+PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
+export PATH
 
 # Print HomeSetup MOTD.
 echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"

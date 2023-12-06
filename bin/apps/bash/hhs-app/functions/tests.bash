@@ -13,7 +13,7 @@
 # @purpose: Run all HomeSetup automated tests.
 function tests() {
 
-  local started finished err_log badge fail=0 pass=0 status num details re_status re_len len re_skip
+  local started finished err_log badge fail=0 pass=0 skip=0 status num details re_status re_len len re_skip
   local diff_time diff_time_sec diff_time_ms all_tests=("${@}")
 
   command -v bats &>/dev/null || quit 1 "'Bats' application not available on your PATH !"
@@ -27,13 +27,15 @@ function tests() {
 
   # Execute bats tests
   echo -n '' > "${err_log}"
-  re_status='^(ok|not ok) ([0-9]+) (.+) in .*$'
+  re_skip='^(ok|not ok) ([0-9]+) (.+) in .* # skip .*'
+  re_status='^(ok|not ok) ([0-9]+) (.+) in .*'
   re_len='^([0-9]+)\.\.([0-9]+)$'
-  re_skip='^(ok|not ok) ([0-9]+) (.+) # skip (.*)'
   started="$(python -c 'import time; print(int(time.time() * 1000))')"
   echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running HomeSetup bats tests\n"
-  echo -e "|-Bats v$(__hhs_version bats | head -n 1)"
-  echo -e "|-Bash v$(__hhs_version bash | head -n 1)\n"
+  echo -e "|-Bats : v$(__hhs_version bats | head -n 1)"
+  echo -e "|-Bash : v$(__hhs_version bash | head -n 1)"
+  echo -e "|-PWD  : $(\pwd)\n"
+
 
   for next in "${all_tests[@]}"; do
     while read -r result; do
@@ -41,6 +43,7 @@ function tests() {
         status="${YELLOW} ${SKIP_ICN} SKIP${NC}"
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
+        ((skip += 1))
       elif [[ ${result} =~ ${re_status} ]]; then
         status="${BASH_REMATCH[1]}"
         num="${BASH_REMATCH[2]}"
@@ -52,16 +55,18 @@ function tests() {
           status="${GREEN} ${PASS_ICN} PASS${NC}"
           ((pass += 1))
         else
-          status="? ????"
+          status="${YELLOW} ${SKIP_ICN} ????${NC}"
         fi
-        echo -en "${status} "
-        printf "%${len}d %s\n" "${num}" "${details}"
       elif [[ ${result} =~ ${re_len} ]]; then
         echo -en "\n${WHITE}[${next##*/}] Running tests ${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}${NC}\n\n"
         len="${#BASH_REMATCH[2]}"
+        continue
       else
-        echo -e "${result}" >>"${err_log}"
+        echo -e "${result}" &> "${err_log}"
+        continue
       fi
+      echo -en "${status} "
+      printf "%${len}d %s\n" "${num}" "${details}"
     done < <(bats -rtT "${next}" 2>&1)
   done
 
@@ -70,8 +75,8 @@ function tests() {
   diff_time_sec=$((diff_time/1000))
   diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
-  echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail)) tests:\t"
-  echo -e "Passed=${pass}  Failed=${fail}${NC}"
+  echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
+  echo -e "Passed=${pass}  Skipped=${skip}  Failed=${fail}${NC}"
 
   if [[ ${fail} -gt 0 ]]; then
     echo ''

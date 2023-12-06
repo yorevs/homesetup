@@ -43,7 +43,6 @@ teardown() {
 
 # TC - 1
 @test "when-invoking-with-help-option-then-toml-get-should-print-usage" {
-  skip 'testing skip'
   run __hhs_toml_get -h
   [[ ${status} -eq 1 && ${lines[0]} == "Usage: __hhs_toml_get <file> <key> [group]" ]]
 }

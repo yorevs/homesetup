@@ -14,15 +14,15 @@
 # !NOTICE: Do not change this file. To customize your icons edit the file ~/.env
 
 # Fontawesome icons
-CROSS_ICN="\xef\x81\x97"
-CHECK_ICN="\xef\x81\x98"
-STAR_ICN="\xef\x80\x85"
 ALIAS_ICN="\xef\x81\xa1"
-FUNC_ICN="\xef\x84\xae"
-PASS_ICN="\xef\x98\xab"
-TEST_PASS_ICN="\xef\x98\xac"
+CHECK_ICN="\xef\x81\x98"
+CROSS_ICN="\xef\x81\x97"
 FAIL_ICN="\xef\x91\xa7"
-SKIP_ICN="\xef\x81\x8e"
-TEST_FAIL_ICN="\xef\x91\xae"
+FUNC_ICN="\xef\x84\xae"
 OFF_ICN="\xef\x88\x84"
 ON_ICN="\xef\x88\x85"
+PASS_ICN="\xef\x98\xab"
+SKIP_ICN="\xef\x81\x99"
+STAR_ICN="\xef\x80\x85"
+TEST_FAIL_ICN="\xef\x91\xae"
+TEST_PASS_ICN="\xef\x98\xac"
