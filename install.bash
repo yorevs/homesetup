@@ -626,7 +626,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       bash)
         # Creating the shell-opts file
         echo -en "\n${WHITE}Creating the Shell Options file ${BLUE}${HHS_SHOPTS_FILE} ..."
-        \shopt | awk '{print $1" = "$2}' > "${HHS_SHOPTS_FILE}" || quit 2 "Unable to create the Shell Options file !"
+        \shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}"  || quit 2 "Unable to create the Shell Options file !"
         echo -e " ${GREEN}OK${NC}"
         ;;
     esac
@@ -797,6 +797,17 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
 
+    # Set the auto-update timestamp.
+    if [[ "${HHS_MY_OS_RELEASE}" == "macOS" ]]; then
+      \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
+    elif [[ "${HHS_MY_OS_RELEASE}" == "alpine" ]]; then
+      \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))"  '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
+    elif [[ "${HHS_MY_OS_RELEASE}" =~ ubuntu|fedora|centos ]]; then
+      \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
+    else
+      \date '+%s' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
+    fi
+
     echo ''
     echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${HHS_HOME}/.VERSION") !"
     echo -e "${BLUE}"
@@ -817,17 +828,11 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${BLUE}$ more ${README_LINK}"
     echo -e "${NC}"
 
-    if [[ "macOS" == "${HHS_MY_OS_RELEASE}" ]]; then
-      \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
-    elif [[ "alpine" == "${MY_OS}" ]]; then
-      \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))"  '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
-    else
-      \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>/dev/null
-    fi
-
     echo -e "\nHomeSetup installation finished: $(date)" >>"${INSTALL_LOG}"
-    \mv "${INSTALL_LOG}" "${HHS_LOG_DIR}"
-    quit 0
+
+    # Move the installation log to logs folder
+    [[ -s "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
+      \mv "${INSTALL_LOG}" "${HHS_LOG_DIR}"
   }
 
   abort_install() {
@@ -842,4 +847,5 @@ Usage: $APP_NAME [OPTIONS] <args>
   check_inst_method "$@"
   install_homesetup
   check_prefix
+  quit 0
 }

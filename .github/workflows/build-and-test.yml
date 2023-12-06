@@ -11,17 +11,17 @@ on:
         type: boolean
       fedora:
         description: 'Build & Test on Fedora latest ?'
-        default: true
+        default: false
         required: true
         type: boolean
       alpine:
         description: 'Build & Test on Alpine latest ?'
-        default: true
+        default: false
         required: true
         type: boolean
       macos:
         description: 'Build & Test on macOS latest ?'
-        default: true
+        default: false
         required: true
         type: boolean
   push:

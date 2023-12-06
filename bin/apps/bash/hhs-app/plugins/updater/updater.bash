@@ -59,7 +59,7 @@ function version() {
 
 # @purpose: HHS plugin required function
 function cleanup() {
-  unset "${UNSETS[@]}"
+  unset -f "${UNSETS[@]}"
   echo -n ''
 }
 
