@@ -9,16 +9,6 @@ on:
         default: true
         required: true
         type: boolean
-      fedora:
-        description: 'Build & Test on Fedora latest ?'
-        default: false
-        required: true
-        type: boolean
-      alpine:
-        description: 'Build & Test on Alpine latest ?'
-        default: false
-        required: true
-        type: boolean
       macos:
         description: 'Build & Test on macOS latest ?'
         default: false
@@ -59,17 +49,13 @@ jobs:
       - name: Show Selected Items
         run: |
           echo "Build Ubuntu: ${{inputs.ubuntu}}"
-          echo "Build Fedora: ${{inputs.fedora}}"
-          echo "Build Alpine: ${{inputs.alpine}}"
           echo " Build macOS: ${{inputs.macos}}"
       - id: set-matrix-items
         run: |
-          all_os=('ubuntu-latest' 'fedora-latest' 'alpine-latest' 'macos-latest')
+          all_os=('ubuntu-latest' 'macos-latest')
           JSON="{\"include\":["
           while read -r os; do
             if [[ (${os} == 'ubuntu-latest' && "true" == "${{inputs.ubuntu}}") ||
-                  (${os} == 'fedora-latest' && "true" == "${{inputs.fedora}}") ||
-                  (${os} == 'alpine-latest' && "true" == "${{inputs.alpine}}") ||
                   (${os} == 'macos-latest' && "true" == "${{inputs.macos}}") ]]; then
               JSONline="{\"os\": \"${os}\"},"
               if [[ "$JSON" != *"$JSONline"* ]]; then
