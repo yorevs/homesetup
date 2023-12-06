@@ -772,12 +772,14 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Init submodules case it's not there yet
     if [[ ! -s "${HHS_HOME}/tests/bats/bats-core/bin/bats" ]]; then
-      echo -en "\n${ORANGE}Pulling bats submodules...${NC}"
-      if git submodule update --init &>/dev/null; then
+      pushd "${HHS_HOME}" || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
+      echo -en "\n${ORANGE}Pulling bats submodules ...${NC}"
+      if git submodule update --init; then
         echo -e "${GREEN}OK${NC}"
       else
         echo -e "${RED}FAILED${NC}"
       fi
+      popo || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
     fi
   }
 
@@ -785,7 +787,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   configure_starship() {
     if ! command -v starship &>/dev/null; then
       echo -en "\n${WHITE}Installing Starship prompt ..."
-      if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"  2>/dev/null; then
+      if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"; then
         chmod +x "${HHS_DIR}"/install_starship.sh
         if "${HHS_DIR}"/install_starship.sh -y &>/dev/null; then
           echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
