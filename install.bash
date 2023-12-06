@@ -769,6 +769,16 @@ Usage: $APP_NAME [OPTIONS] <args>
       \rm -f "${HHS_DIR}/.hhs-init"
       echo -e "\n${ORANGE}Your old .hhs-init renamed to .homesetup.toml and the old file was deleted.${NC}"
     fi
+
+    # Init submodules case it's not there yet
+    if [[ ! -s "${HHS_HOME}/tests/bats/bats-core/bin/bats" ]]; then
+      echo -en "\n${ORANGE}Pulling bats submodules...${NC}"
+      if git submodule update --init &>/dev/null; then
+        echo -e "${GREEN}OK${NC}"
+      else
+        echo -e "${RED}FAILED${NC}"
+      fi
+    fi
   }
 
   # Install Starship prompt.

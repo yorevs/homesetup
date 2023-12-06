@@ -131,16 +131,18 @@ update_hhs() {
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n])? " ANS
         [[ -n "$ANS" ]] && echo "${ANS}${NC}"
         if [[ "$ANS" == 'y' || "$ANS" == 'Y' ]]; then
-          pushd "${HHS_HOME}" &>/dev/null || quit 1
-          git pull || quit 1
-          popd &>/dev/null || quit 1
-          if "${HHS_HOME}"/install.bash -q -r; then
+          if pushd "${HHS_HOME}" &>/dev/null && \
+          git stash --all &>/dev/null && \
+          git pull &>/dev/null && \
+          git stash pop &>/dev/null && \
+          popd &>/dev/null && \
+          "${HHS_HOME}"/install.bash -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
             sleep 1
             reset && source "${HOME}"/.bashrc
             echo -e "${HHS_MOTD}"
           else
-            quit 1 "${PLUGIN_NAME}: Failed to install HomeSetup update !${NC}"
+            quit 1 "${PLUGIN_NAME}: Failed to update HomeSetup !${NC}"
           fi
         fi
       fi
