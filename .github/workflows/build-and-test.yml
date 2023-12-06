@@ -3,6 +3,27 @@ run-name: Build & Test
 
 on:
   workflow_dispatch:
+    inputs:
+      build_ubuntu:
+        description: 'Build & Test on Ubuntu latest ?'
+        default: true
+        required: true
+        type: boolean
+      build_fedora:
+        description: 'Build & Test on Fedora latest ?'
+        default: true
+        required: true
+        type: boolean
+      build_alpine:
+        description: 'Build & Test on Alpine latest ?'
+        default: true
+        required: true
+        type: boolean
+      build_macos:
+        description: 'Build & Test on macOS latest ?'
+        default: true
+        required: true
+        type: boolean
   push:
     branches:
       - '**'
@@ -35,10 +56,15 @@ jobs:
       matrix:
         os:
           - "ubuntu-latest"
-          - "macOS-latest"
           - "fedora-latest"
           - "alpine-latest"
+          - "macOS-latest"
     runs-on: ${{ matrix.os }}
+    if: |
+      (inputs.build_ubuntu == 'true' && matrix.os == 'ubuntu-latest') ||
+      (inputs.build_fedora == 'true' && matrix.os == 'fedora-latest') ||
+      (inputs.build_alpine == 'true' && matrix.os == 'alpine-latest') ||
+      (inputs.build_macos == 'true' && matrix.os == 'macOS-latest')
     steps:
     - uses: actions/checkout@v3
       with:
