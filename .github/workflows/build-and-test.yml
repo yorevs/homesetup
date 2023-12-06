@@ -75,6 +75,8 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.set-os-matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
+    env:
+      HOME: ''
     steps:
     - uses: actions/checkout@v3
       with:
@@ -90,6 +92,7 @@ jobs:
         ./install.bash -r -p "${{ github.workspace }}"
         echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
         source "${HOME}"/.bashrc
+        echo "HOME=$(echo $HOME)" >> $GITHUB_ENV
     - name: Execute HomeSetup bats tests
       run: |
         __hhs tests
@@ -98,8 +101,8 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: "Upload-Install-Log"
-        path: "${HOME}/.hhs/logs/install.log"
+        path: "${{ env.HOME }}/.hhs/logs/install.log"
     - name: Show installation logs
       if: ${{ failure() }}
       run: |
-        grep . ${HOME}/.hhs/logs/install.log
+        grep . "${{ env.HOME }}/.hhs/logs/install.log"
