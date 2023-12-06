@@ -99,8 +99,8 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: "Upload-Install-Log"
-        path: "${HHS_LOG_DIR}/install.log"
+        path: "${{ env.HHS_LOG_DIR }}"
     - name: Show installation logs
       if: ${{ failure() }}
       run: |
-        grep . "${HHS_LOG_DIR}/install.log"
+        grep . "${{ env.HHS_LOG_DIR }}/install.log"
