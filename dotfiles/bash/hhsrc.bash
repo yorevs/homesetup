@@ -36,6 +36,8 @@ unalias -a
 export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL##*/}"
 
+export INPUTRC="${INPUTRC:-${HOME}/.inputrc}"
+
 # Detect if HomeSetup was installed using an installation prefix.
 export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
@@ -94,9 +96,9 @@ echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 # Source the bash common functions.
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
-if ! [[ -s "${HOME}"/.inputrc ]]; then
+if ! [[ -s "${INPUTRC}" ]]; then
   __hhs_log "WARN" "'.inputrc' file was copied because it was not found at: ${HOME}"
-  \cp "${HHS_HOME}/dotfiles/inputrc" "${HOME}"/.inputrc
+  \cp "${HHS_HOME}/dotfiles/inputrc" "${INPUTRC}"
 fi
 
 if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
@@ -170,32 +172,6 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
   done <"${HHS_SHOPTS_FILE}"
   __hhs_log "INFO" "Shell options activated !"
 fi
-
-# Input-rc Options:
-# - completion-ignore-case: Turns off the case-sensitive completion
-# - colored-stats: Displays possible completions using different colors to indicate their type
-# - <shift>+<tab> Will cycle forward though complete options
-case "${HHS_MY_OS}" in
-  Darwin)
-    sed -i '' -E \
-      -e 's/(^set colored-stats) .*/\1 on/g' \
-      -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-      -e 's/(^TAB:) .*/\1 complete/g' \
-      -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
-      ~/.inputrc
-    ;;
-  Linux)
-    sed -i'' -r \
-      -e 's/(^set colored-stats) .*/\1 on/g' \
-      -e 's/(^set completion-ignore-case) .*/\1 on/g' \
-      -e 's/(^TAB:) .*/\1 complete/g' \
-      -e 's/(^\"\e\[Z\":) .*/\1 menu-complete/g' \
-      ~/.inputrc
-    ;;
-  *)
-    __hhs_log "WARN" "Can't set .inputrc for a unknown OS: ${HHS_MY_OS}"
-    ;;
-esac
 
 # Add `$HHS_DIR/bin` to the system `$PATH`.
 __hhs_paths -q -a "${HHS_DIR}/bin"
