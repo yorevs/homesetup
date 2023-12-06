@@ -104,15 +104,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
-    GROUP=${GROUP:-staff}  # Default macOs user group
-    # Darwin required tools
-    REQUIRED_TOOLS+=('xcode-select')
+    GROUP=${GROUP:-staff}  # Default macOS user group
+    REQUIRED_TOOLS+=('xcode-select')  # Darwin required tools
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
     GROUP=${GROUP:-${USER}}  # Default user group
-    # Linux required tools
-    REQUIRED_TOOLS+=('file')
+    REQUIRED_TOOLS+=('file')  # Linux required tools
   fi
 
   # Awesome icons
@@ -189,8 +187,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
       \rsync --archive "${src_file}" "${dest_file}"
       \chown "${USER}":"${GROUP}" "${dest_file}"
-      [[ -f "${dest_file}" ]] && echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
-      [[ -f "${dest_file}" ]] || echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+      [[ -f "${dest_file}" ]] && echo -e "${GREEN}OK${NC}"
+      [[ -f "${dest_file}" ]] || echo -e "${RED}FAILED${NC}"
     fi
   }
 
@@ -385,7 +383,45 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Install HomeSetup
+  # Make sure HomeBrew is installed.
+  ensure_brew() {
+    echo ''
+    if ! has 'brew'; then
+      echo -n "${YELLOW}Homebrew is not installed. Attempting to install ..."
+      install_brew || quit 2 "# Failed to install HomeBrew !"
+      echo -e "${GREEN}SUCCESS${NC} !"
+    else
+      echo -e "${BLUE}Homebrew is already installed !${NC}"
+    fi
+  }
+
+  # Install missing required tools.
+  install_missing_tools() {
+
+    local os_type="$1" install
+
+    if [[ 'Alpine' == "${os_type}" ]]; then
+      install="${SUDO} apk add --no-cache"
+    elif [[ 'macOS' == "${os_type}" ]]; then
+      install="${SUDO} ${OS_APP_MAN} install -y"
+    elif [[ "${os_type}" =~ RedHat|Debian|centos ]]; then
+      install="${SUDO} ${OS_APP_MAN} install -y"
+    fi
+
+    if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
+      [[ -n "${SUDO}" ]] &&
+        echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
+      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${os_type}) with ${OS_APP_MAN} ... "
+      if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}"  2>&1; then
+         echo -e "${GREEN}OK${NC}"
+      else
+        echo -e "${RED}FAILED${NC}"
+        quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+      fi
+    fi
+  }
+
+  # Install HomeSetup.
   install_homesetup() {
 
     echo -e "HomeSetup installation started: $(date)\n" >"${INSTALL_LOG}"
@@ -419,35 +455,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Finish installation and activate HomeSetup.
     activate_dotfiles
-  }
-
-  # Make sure HomeBrew is installed.
-  ensure_brew() {
-    echo ''
-    if ! has 'brew'; then
-      echo -n "${YELLOW}Homebrew is not installed. Attempting to install ..."
-      install_brew || quit 2 "# Failed to install HomeBrew !"
-      echo -e "${GREEN}SUCCESS${NC} !"
-    else
-      echo -e "${BLUE}Homebrew is already installed !${NC}"
-    fi
-  }
-
-  # Install missing required tools.
-  install_missing_tools() {
-
-    local os_type="$1"
-
-    if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
-      [[ -n "${SUDO}" ]] && echo -e "\nUsing 'sudo' to install apps. You may be prompted for the password."
-      echo ''
-      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${os_type}) with ${OS_APP_MAN} ... "
-      if ${SUDO} ${OS_APP_MAN} install -y "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}"  2>&1; then
-         echo -e "[   ${GREEN}OK${NC}   ]"
-      else
-        quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
-      fi
-    fi
   }
 
   # Clone the repository and install dotfiles.
@@ -551,7 +558,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
         [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
-        [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] || quit 1 " ${RED}FAILED${NC}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
     # If `all' option is NOT used, prompt for confirmation.
@@ -569,7 +576,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
         [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
-        [[ -L "${dotfile}" ]] || quit 1 "${WHITE} [ ${RED}FAILED${NC} ]"
+        [[ -L "${dotfile}" ]] || quit 1 "${RED}FAILED${NC}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
     fi
@@ -659,7 +666,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
     ${PYTHON} -m pip install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}"  2>&1 ||
-      quit 2 "[  ${RED}FAIL${NC}  ] Unable to install PyPi packages!"
+      quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     echo -e " ${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
     echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
@@ -775,9 +782,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       pushd "${HHS_HOME}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
       echo -en "\n${ORANGE}Pulling bats submodules ...${NC}"
       if git submodule update --init &>/dev/null; then
-        echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+        echo -e "${GREEN}OK${NC}"
       else
-        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        echo -e "${RED}FAILED${NC}"
         echo -e "${YELLOW}Bats test will not be available${NC}"
       fi
       popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
@@ -791,13 +798,13 @@ Usage: $APP_NAME [OPTIONS] <args>
       if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"; then
         chmod +x "${HHS_DIR}"/install_starship.sh
         if "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
-          echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+          echo -e "${GREEN}OK${NC}"
         else
-          echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+          echo -e "${RED}FAILED${NC}"
           echo -e "${YELLOW}Starship prompt will not be available${NC}"
         fi
       else
-        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        echo -e "${RED}FAILED${NC}"
       fi
     fi
   }
