@@ -779,7 +779,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       else
         echo -e "${RED}FAILED${NC}"
       fi
-      popo || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
+      popd || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
     fi
   }
 
@@ -789,7 +789,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "\n${WHITE}Installing Starship prompt ..."
       if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"; then
         chmod +x "${HHS_DIR}"/install_starship.sh
-        if "${HHS_DIR}"/install_starship.sh -y &>/dev/null; then
+        if "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
           echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
         else
           quit 2 "${WHITE} [ ${RED}FAILED${NC} ]"
