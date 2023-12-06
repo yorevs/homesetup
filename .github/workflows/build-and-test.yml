@@ -56,6 +56,12 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix-items.outputs.matrix }}
     steps:
+      - name: Show Selected Items
+        run: |
+          echo "Build Ubuntu: ${{inputs.ubuntu}}"
+          echo "Build Fedora: ${{inputs.fedora}}"
+          echo "Build Alpine: ${{inputs.alpine}}"
+          echo "Build macOS: ${{inputs.macos}}"
       - id: set-matrix-items
         run: |
           all_os=('ubuntu-latest' 'fedora-latest' 'alpine-latest' 'macos-latest')
