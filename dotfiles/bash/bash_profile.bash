@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2155,SC1090
 
 #  Script: bash_profile.bash
-# Purpose: This is user specific file that gets loaded each time user creates a new login
+# Purpose: This is user specific file that gets loaded each time user creates a new non-login
 #          shell. It simply loads the required HomeSetup dotfiles and set some required paths.
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
@@ -12,7 +11,7 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
-# !NOTICE: Do not change this file. To customize your profile create/change the following files:
+# !NOTICE: Do not change this file. To customize your shell create/change the following files:
 #   ~/.colors     : To customize your colors
 #   ~/.env        : To customize your environment variables
 #   ~/.aliases    : To customize your aliases
@@ -22,24 +21,13 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-# If not running interactively and if it is not a Jenkins build, skip it.
-[[ -z "${JOB_NAME}" && -z "${PS1}" && -z "${PS2}" ]] && return
-
-export HHS_ACTIVE_DOTFILES='bash_profile'
-
 # Unset all HHS_ variables
 unset "${!HHS_@}"
 
+# If not running interactively and if it is not a Jenkins build, skip it.
+[[ -z "${JOB_NAME}" && -z "${PS1}" && -z "${PS2}" ]] && return
 
-# Set path so it includes user's private bin if it exists.
-if [[ -d "${HOME}/bin" ]]; then
-  PATH="${PATH}:${HOME}/bin"
-fi
-
-# Set path so it includes user's private bin if it exists.
-if [[ -d "${HOME}/.local/bin" ]]; then
-  PATH="${PATH}:${HOME}/.local/bin"
-fi
+export HHS_ACTIVE_DOTFILES='bashrc'
 
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in

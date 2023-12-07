@@ -65,6 +65,18 @@ export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 # if the cache directory is not found, we have to create it.
 [[ -d "${HHS_CACHE_DIR}" ]] || mkdir -p "${HHS_CACHE_DIR}"
 
+# Set path so it includes user's private bin if it exists.
+[[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
+
+# Set path so it includes user's private bin if it exists.
+[[ -d "${HOME}/.local/bin" ]] && export PATH="${PATH}:${HOME}/.local/bin"
+
+# Set path so it includes `$HHS_DIR/bin` if it exists.
+[[ -d "${HHS_DIR}/bin" ]] && export PATH="${PATH}:${HHS_DIR}/bin"
+
+# Set path so it includes `bats-core` if it exists.
+[[ -d "${HHS_DIR}/bin" ]] && export PATH="${PATH}:${HHS_HOME}/tests/bats/bats-core/bin"
+
 # Load all dotfiles following the order.
 # Notice that the order here is important, do not reorder it.
 DOTFILES=(
@@ -172,11 +184,6 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
   done <"${HHS_SHOPTS_FILE}"
   __hhs_log "INFO" "Shell options activated !"
 fi
-
-# Add `$HHS_DIR/bin` to the system `$PATH`.
-__hhs_paths -q -a "${HHS_DIR}/bin"
-# Add `bats-core` to the system `$PATH`.
-__hhs_paths -q -a "${HHS_HOME}/tests/bats/bats-core/bin"
 
 # Add custom paths to the system `$PATH`.
 if [[ -f "${HHS_DIR}/.path" ]]; then

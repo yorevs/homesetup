@@ -175,7 +175,7 @@ export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
 export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 
 # Initialize Starship prompt if it is set to.
-if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
+if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   function __hhs_set_win_title() {
     echo -ne "\033]0; ${TITLE} \007"
   }
@@ -189,5 +189,5 @@ if [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   fi
   # shellcheck disable=SC2034
   starship_precmd_user_func="__hhs_set_win_title"
-  eval "$(starship init "${HHS_MY_SHELL}")"
+  eval "$(\starship init "${HHS_MY_SHELL}")"
 fi
