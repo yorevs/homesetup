@@ -64,6 +64,7 @@ jobs:
           [[ $JSON == *, ]] && JSON="${JSON%?}"
           JSON="[${JSON:-${default}}]"
           echo "excludes=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
+          echo "Excludes: ${JSON}" | jq
 
   build:
     needs: set-os-matrix
