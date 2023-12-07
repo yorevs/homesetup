@@ -27,6 +27,10 @@ USER="${SUDO_USER:-${USER}}"
 [[ -z "${SUDO_USER}" ]] && HOME=${HOME:-~/}
 [[ -n "${SUDO_USER}" ]] && HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
 
+UNSETS=(
+  'quit' 'usage' 'uninstall_dotfiles' 'uninstall_dotfiles'
+)
+
 # HomeSetup installation prefix file
 HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
@@ -74,20 +78,18 @@ done < <(find "${DOTFILES_DIR}" -maxdepth 1 -name "*.${SHELL_TYPE}" -exec basena
 IFS="${OLDIFS}"
 
 # Purpose: Quit the program and exhibits an exit message if specified
-# @param $1 [Req] : The exit return code.
+# @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
 # @param $2 [Opt] : The exit message to be displayed.
 quit() {
 
   # Unset all declared functions
-  unset -f \
-    quit usage check_inst_method install_dotfiles \
-    clone_repository activate_dotfiles
-
-  test "$1" != '0' -a "$1" != '1' && echo -e "${RED}"
-  test -n "$2" -a "$2" != "" && echo -e "${2}"
-  test "$1" != '0' -a "$1" != '1' && echo -e "${NC}"
-  echo ''
-  exit "$1"
+  unset -f "${UNSETS[*]}"
+  exit_code=${1:-0}
+  shift
+  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
+  [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
+  [[ ${#} -gt 0 ]] && echo ''
+  exit "${exit_code}"
 }
 
 # Usage message

@@ -50,6 +50,7 @@ if tput setaf 1 &> /dev/null; then
   WHITE=$(tput setaf 15)
   YELLOW=$(tput setaf 136)
   VIOLET=$(tput setaf 125)
+  __hhs_log "DEBUG" "Bash colors loaded using 'tput'"
 else
   # VT100 ANSI colors, taken from https://misc.flogisoft.com/bash/tip_colors_and_formatting
   export NC='\033[0;0;0m'
@@ -64,6 +65,7 @@ else
   export WHITE='\033[0;97m'
   export YELLOW='\033[0;93m'
   export VIOLET='\033[0;95m'
+  __hhs_log "DEBUG" "Bash colors loaded using '\033['"
 fi
 
 # Color used to highlight text: Default is BLUE

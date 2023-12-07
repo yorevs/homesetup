@@ -84,5 +84,4 @@ function __hhs_load_completions() {
   return 0
 }
 
-# shellcheck disable=2206
 export HHS_BASH_COMPLETIONS="${BASH_COMPLETIONS[*]}"

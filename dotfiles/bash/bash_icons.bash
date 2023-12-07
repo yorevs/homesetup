@@ -28,4 +28,3 @@ SKIP_ICN="\xef\x81\x99"
 STAR_ICN="\xef\x80\x85"
 TEST_FAIL_ICN="\xef\x91\xae"
 TEST_PASS_ICN="\xef\x98\xac"
-

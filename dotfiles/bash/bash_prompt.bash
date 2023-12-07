@@ -179,15 +179,19 @@ if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   function __hhs_set_win_title() {
     echo -ne "\033]0; ${TITLE} \007"
   }
-  __hhs_log INFO "Starting starship prompt"
+  __hhs_log "INFO" "Starting starship prompt"
   if [[ ! -s "${STARSHIP_CONFIG}" ]]; then
-    __hhs_log DEBUG "Copying default HomeSetup starship.toml config to -> ${STARSHIP_CONFIG}"
+    __hhs_log "DEBUG" "Copying default HomeSetup starship.toml config to -> ${STARSHIP_CONFIG}"
     if ! \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" \
       "${STARSHIP_CONFIG}" &>/dev/null; then
-      __hhs_log ERROR "Unable to copy default starship config file into place!"
+      __hhs_log "ERROR" "Unable to copy default starship config file into place!"
     fi
   fi
   # shellcheck disable=SC2034
   starship_precmd_user_func="__hhs_set_win_title"
-  eval "$(\starship init "${HHS_MY_SHELL}")"
+  if eval "$(\starship init "${HHS_MY_SHELL}")"; then
+    __hhs_log "INFO" "Starship successfully initialized!"
+  else
+    __hhs_log "ERROR" "Starship failed to initialize!"
+  fi
 fi
