@@ -55,8 +55,8 @@ jobs:
           all_os=('ubuntu-latest' 'macos-latest')
           JSON="["
           while read -r os; do
-            if [[ (${os} == 'ubuntu-latest' && "false" == "${inputs_ubuntu}") ||
-                  (${os} == 'macos-latest' && "false" == "${inputs_macos}") ]]; then
+            if [[ (${os} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
+                  (${os} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
               JSONline="\"${os}\","
               if [[ "${JSON}" != *"${JSONline}"* ]]; then
                 JSON="${JSON}${JSONline}"
