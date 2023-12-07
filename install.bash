@@ -94,6 +94,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   # OS Application manager. Defined later on the installation process
   OS_APP_MAN=
 
+  # OS type. Defined later on the installation process
+  OS_TYPE=
+
   # HomeSetup required tools
   REQUIRED_TOOLS=(
     'git' 'curl' 'python3' 'rsync' 'ruby'
@@ -311,30 +314,30 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup required tools
   check_required_tools() {
 
-    local os_type pad pad_len
+    local pad pad_len
 
     has sudo &>/dev/null && SUDO=sudo
 
     # macOS
     if has 'brew'; then
-      os_type='macOS'
+      OS_TYPE='macOS'
       OS_APP_MAN=brew
       ensure_brew
     # Debian or Ubuntu
     elif has 'apt-get'; then
-      os_type='Debian'
+      OS_TYPE='Debian'
       OS_APP_MAN='apt'
     # Fedora, CentOS, or Red Hat
     elif has 'yum'; then
-      os_type='RedHat'
+      OS_TYPE='RedHat'
       OS_APP_MAN='yum'
     # Alpine (busybox)
     elif has 'apk'; then
-      os_type='Alpine'
+      OS_TYPE='Alpine'
       OS_APP_MAN='apk'
     # Arch Linux
     elif has 'pacman'; then
-      os_type='ArchLinux'
+      OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
     else
       quit 1 "Unable to find package manager for $(uname -s)"
@@ -343,7 +346,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
     echo ''
-    echo -e "${WHITE}Checking required tools [${os_type}] ...${NC}"
+    echo -e "${WHITE}Checking required tools [${OS_TYPE}] ...${NC}"
     echo ''
 
     pad=$(printf '%0.1s' "."{1..60})
@@ -360,7 +363,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
     done
 
-    install_missing_tools "${os_type}"
+    install_missing_tools "${OS_TYPE}"
   }
 
   # Install HomeBrew
@@ -398,20 +401,20 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install missing required tools.
   install_missing_tools() {
 
-    local os_type="$1" install
+    local install
 
-    if [[ 'Alpine' == "${os_type}" ]]; then
+    if [[ 'Alpine' == "${OS_TYPE}" ]]; then
       install="${SUDO} apk add --no-cache"
-    elif [[ 'macOS' == "${os_type}" ]]; then
+    elif [[ 'macOS' == "${OS_TYPE}" ]]; then
       install="${SUDO} ${OS_APP_MAN} install -y"
-    elif [[ "${os_type}" =~ RedHat|Debian|centos ]]; then
+    elif [[ "${OS_TYPE}" =~ RedHat|Debian|centos ]]; then
       install="${SUDO} ${OS_APP_MAN} install -y"
     fi
 
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${os_type}) with ${OS_APP_MAN} ... "
+      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${OS_TYPE}) with ${OS_APP_MAN} ... "
       if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}"  2>&1; then
          echo -e "${GREEN}OK${NC}"
       else
@@ -819,11 +822,11 @@ Usage: $APP_NAME [OPTIONS] <args>
   activate_dotfiles() {
 
     # Set the auto-update timestamp.
-    if [[ "${MY_OS_NAME}" == "macOS" ]]; then
+    if [[ "${OS_TYPE}" == "macOS" ]]; then
       \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
-    elif [[ "${MY_OS_NAME}" == "alpine" ]]; then
+    elif [[ "${OS_TYPE}" == "Alpine" ]]; then
       \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))"  '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
-    elif [[ "${MY_OS_NAME}" =~ ubuntu|fedora|centos ]]; then
+    elif [[ "${OS_TYPE}" =~ Debian|RedHat ]]; then
       \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
     else
       \date '+%s' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
