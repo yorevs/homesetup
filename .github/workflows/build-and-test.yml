@@ -70,7 +70,7 @@ jobs:
           echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
       - name: Show Final Matrix
         run: |
-          echo "exclude=${{ fromJson(steps.set-matrix-items.outputs.exclude) }}"
+          echo "exclude=${{ steps.set-matrix-items.outputs.exclude }}"
 
   build:
     needs: set-os-matrix
