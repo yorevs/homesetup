@@ -18,24 +18,27 @@ function tests() {
 
   command -v bats &>/dev/null || quit 1 "'Bats' application not available on your PATH !"
 
-  err_log="${TEMP}/homesetup-tests.log"
+  err_log="${HHS_LOG_DIR}/hhs-tests.log"
   badge="${HHS_HOME}/check-badge.svg"
 
+  # If no bat file is provided, then assume  that we want tio run all HHS tests.
   [[ ${#all_tests[@]} -eq 0 ]] && all_tests=("${HHS_HOME}"/tests/*.bats)
-
+  # Who knows? If we did not find any test.
   [[ ${#all_tests[@]} -eq 0 ]] && quit 1 "There are no tests to execute!"
+  echo -n '' > "${err_log}"
 
   # Execute bats tests
-  echo -n '' > "${err_log}"
   re_skip='^(ok|not ok) ([0-9]+) (.+) in .* # skip .*'
   re_status='^(ok|not ok) ([0-9]+) (.+) in .*'
   re_len='^([0-9]+)\.\.([0-9]+)$'
   started="$(python -c 'import time; print(int(time.time() * 1000))')"
-  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running HomeSetup bats tests\n"
-  echo -e "|-Bats : v$(__hhs_version bats | head -n 1)"
-  echo -e "|-Bash : v$(__hhs_version bash | head -n 1)"
-  echo -e "|-PWD  : $(\pwd)\n"
 
+  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running HomeSetup bats tests\n${BLUE}"
+  echo -e "  |-Bats : v$(__hhs_version bats | head -n 1)"
+  echo -e "  |-Bash : v$(__hhs_version bash | head -n 1)"
+  echo -e "  |-User : ${USER}"
+  echo -e "  |-PWD  : $(\pwd)"
+  echo -e "${NC}"
 
   for next in "${all_tests[@]}"; do
     while read -r result; do
@@ -55,7 +58,7 @@ function tests() {
           status="${GREEN} ${PASS_ICN} PASS${NC}"
           ((pass += 1))
         else
-          status="${YELLOW} ${SKIP_ICN} ????${NC}"
+          status="${YELLOW} ${FAIL_ICN} ????${NC}"
         fi
       elif [[ ${result} =~ ${re_len} ]]; then
         echo -en "\n${WHITE}[${next##*/}] Running tests ${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}${NC}\n\n"
@@ -79,9 +82,7 @@ function tests() {
   echo -e "Passed=${pass}  Skipped=${skip}  Failed=${fail}${NC}"
 
   if [[ ${fail} -gt 0 ]]; then
-    echo ''
-    echo -e "${ORANGE}xXx The following errors were reported xXx${NC}"
-    echo ''
+    echo -e "\n${ORANGE}xXx The following errors were reported xXx${NC}\n"
     __hhs_tailor "${err_log}" | nl
     echo ''
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2>/dev/null
@@ -99,9 +100,7 @@ function tests() {
 # @purpose: Run all terminal color palette tests.
 function color-tests() {
 
-  echo ''
-  echo -e "${ORANGE}--- Home Setup color palette test ${NC}"
-  echo ''
+  echo -e "\n${ORANGE}--- Home Setup color palette test ${NC}\n"
 
   echo -en "${BLACK}  BLACK "
   echo -en "${RED}    RED "
@@ -116,23 +115,20 @@ function color-tests() {
   echo -en "${VIOLET} VIOLET "
   echo -e "${NC}\n"
 
-  echo "--- 16 Colors Low"
-  echo ''
+  echo -e "--- 16 Colors Low\n"
   for c in {30..37}; do
     echo -en "\033[0;${c}mC16-${c} "
   done
   echo -e "${NC}\n"
 
-  echo "--- 16 Colors High"
-  echo ''
+  echo -e "--- 16 Colors High\n"
   for c in {90..97}; do
     echo -en "\033[0;${c}mC16-${c} "
   done
   echo -e "${NC}\n"
 
   if [[ "${TERM##*-}" == "256color" ]]; then
-    echo "--- 256 Colors"
-    echo ''
+    echo -e "--- 256 Colors\n"
     for c in {1..256}; do
       echo -en "\033[38;5;${c}m"
       printf "C256-%-.3d " "${c}"
@@ -141,7 +137,5 @@ function color-tests() {
     echo -e "${NC}\n"
   fi
 
-  echo ''
-
-  quit 0
+  quit 0 ''
 }
