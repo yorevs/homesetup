@@ -44,7 +44,7 @@ jobs:
   set-os-matrix:
     runs-on: "ubuntu-latest"
     outputs:
-      exclude: ${{ steps.set-matrix-items.outputs.exclude }}
+      exclude-array: ${{ steps.set-matrix-items.outputs.excludes }}
     steps:
       - name: Show Selected Input
         run: |
@@ -52,26 +52,17 @@ jobs:
           echo " Build macOS: ${{inputs.macos}}"
       - id: set-matrix-items
         run: |
-          all_os=('ubuntu-latest' 'macos-latest')
-          default="{\"os\":\"ubuntu-latest\"}"
-          JSON=
-          while read -r os; do
-            if [[ (${os} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
-                  (${os} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
-              item="{\"os\":\"${os}\"},"
-              if [[ "${JSON}" != *"${item}"* ]]; then
-                JSON="${JSON}${item}"
-              fi
+          all=('ubuntu-latest' 'macos-latest')
+          while read -r next; do
+            if [[ (${next} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
+                  (${next} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
+              item="{\"os\":\"${next}\"},"
+              [[ "${JSON}" != *"${item}"* ]] && JSON="${JSON}${item}"
             fi
-          done < <(printf '%s\n' "${all_os[@]}")
-          if [[ $JSON == *, ]]; then  # Remove last ","
-            JSON="${JSON%?}"
-          fi
-          JSON="[${JSON:-${default}}]"  # Add brackets
-          echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
-      - name: Show Final Matrix
-        run: |
-          echo "exclude=${{ steps.set-matrix-items.outputs.exclude }}"
+          done < <(printf '%s\n' "${all[@]}")
+          [[ $JSON == *, ]] && JSON="${JSON%?}"
+          JSON="[${JSON}]"
+          echo "excludes=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
 
   build:
     needs: set-os-matrix
@@ -79,7 +70,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest']
-        exclude: ${{fromJSON(needs.set-os-matrix.outputs.exclude) }}
+        exclude: ${{fromJSON(needs.set-os-matrix.outputs.exclude-array) }}
     runs-on: ${{ matrix.os }}
     env:
       HHS_LOG_DIR: ''
