@@ -53,11 +53,12 @@ jobs:
       - id: set-matrix-items
         run: |
           all_os=('ubuntu-latest' 'macos-latest')
+          default="{\"os\":\"ubuntu-latest\"}"
           JSON=
           while read -r os; do
             if [[ (${os} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
                   (${os} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
-              JSONline="\"${os}\","
+              JSONline="{\"os\":\"${os}\"},"
               if [[ "${JSON}" != *"${JSONline}"* ]]; then
                 JSON="${JSON}${JSONline}"
               fi
@@ -66,7 +67,7 @@ jobs:
           if [[ $JSON == *, ]]; then  # Remove last ","
             JSON="${JSON%?}"
           fi
-          JSON="[${JSON:-'ubuntu-latest'}]"  # Add brackets
+          JSON="[${JSON:-${default}}]"  # Add brackets
           echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
       - name: Show Final Matrix
         run: |
