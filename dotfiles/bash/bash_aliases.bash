@@ -14,6 +14,11 @@
 # !NOTICE: Do not change this file. To customize your aliases edit the file ~/.aliases
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_aliases"; then
+  __hhs_log "WARN" "bash_aliases was already loaded!"
+fi
+
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 
 # @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression

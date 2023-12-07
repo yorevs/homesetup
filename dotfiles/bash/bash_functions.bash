@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090,SC2034
+# shellcheck disable=SC1090
 
 #  Script: bash_functions.bash
 # Purpose: This file is used to define some shell tools
@@ -13,17 +13,28 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_functions"; then
+  __hhs_log "WARN" "bash_functions was already loaded!"
+fi
+
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"
 
-# Load all function files prefixed with 'hhs-`
-for file in $(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "hhs-*.bash" | sort --unique); do
+# Load all function files
+read -r -d '' -a all < <(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "*.bash" | sort --unique)
+__hhs_log "DEBUG" "Loading (${#all[@]}) hhs-function files"
+for file in "${all[@]}"; do
   source "${file}" || __hhs_log "ERROR" "Unable to source file: ${file}"
 done
 
-# Load all functions that were previously aliased
-for file in $(find "${HHS_HOME}/bin/dev-tools/bash" -type f -name "*.bash" | sort --unique); do
+# Load all dev tools files
+read -r -d '' -a all < <(find "${HHS_HOME}/bin/dev-tools/bash" -type f -name "*.bash" | sort --unique)
+__hhs_log "DEBUG" "Loading (${#all[@]}) dev-tools files"
+for file in "${all[@]}"; do
   source "${file}" || __hhs_log "ERROR" "Unable to source file: ${file}"
 done
+
+unset -f all
 
 # Unalias any hhs found because we need this name to use for HomeSetup
 unalias hhs &> /dev/null

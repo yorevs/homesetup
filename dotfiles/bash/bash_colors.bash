@@ -15,6 +15,11 @@
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 # improved with: https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_colors"; then
+  __hhs_log "WARN" "bash_colors was already loaded!"
+fi
+
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_colors"
 
 # Detect which `ls` flavor is in use

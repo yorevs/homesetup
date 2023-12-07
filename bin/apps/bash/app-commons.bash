@@ -80,10 +80,3 @@ function version() {
 # Check if the user passed the help or version parameters.
 [[ "$1" = '-h' || "$1" = '--help' ]] && usage 0
 [[ "$1" = '-v' || "$1" = '--version' ]] && version
-
-# @purpose: Check whether the list contains the specified string.
-# @param $1 [Req] : The list to check against.
-# @param $2 [Req] : The string to be checked.
-function list_contains() {
-  [[ $1 =~ (^|[[:space:]])$2($|[[:space:]]) ]] && return 0 || return 1
-}

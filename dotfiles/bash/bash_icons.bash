@@ -13,6 +13,13 @@
 
 # !NOTICE: Do not change this file. To customize your icons edit the file ~/.env
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_icons"; then
+  __hhs_log "WARN" "bash_icons was already loaded!"
+fi
+
+export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_icons"
+
 # Fontawesome icons
 ALIAS_ICN="\xef\x81\xa1"
 CHECK_ICN="\xef\x81\x98"

@@ -23,6 +23,11 @@
 #   ~/.hhs/.profile    : To customize your profile
 #   ~/.hhs/.path       : To customize your paths
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "hhsrc"; then
+  __hhs_log "WARN" "hhsrc was already loaded!"
+fi
+
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
 # Do not change this formatting, it is required to proper reset IFS to it's defaults

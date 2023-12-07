@@ -19,6 +19,11 @@
 # Thanks to: https://github.com/cloudfoundry/cli/blob/master/ci/installers/completion/cf
 # Thanks to: https://github.com/Bash-it/bash-it/blob/master/completion/available/brew.completion.bash
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_completion"; then
+  __hhs_log "WARN" "bash_completion was already loaded!"
+fi
+
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_completion"
 
 # HomeSetup auto-completions directory

@@ -18,6 +18,11 @@
 # - Improved with: http://ezprompt.net
 # - If you are using Starship, you have to edit the ${STARSHIP_CONFIG} file
 
+# Do not source this file multiple times
+if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_prompt"; then
+  __hhs_log "WARN" "bash_prompt was already loaded!"
+fi
+
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_prompt"
 
 # @function: Retrieve the current git branch if inside a git repository.
