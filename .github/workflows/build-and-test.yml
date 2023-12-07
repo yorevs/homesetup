@@ -46,7 +46,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix-items.outputs.matrix }}
     steps:
-      - name: Show Selected Items
+      - name: Show Selected Input
         run: |
           echo "Build Ubuntu: ${{inputs.ubuntu}}"
           echo " Build macOS: ${{inputs.macos}}"
@@ -68,6 +68,9 @@ jobs:
           fi
           JSON="${JSON}]}"  # Add closing brackets
           echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
+      - name: Show Final Matrix
+        run: |
+          echo "exclude=${{ fromJson(steps.set-matrix-items.outputs.exclude) }}"
 
   build:
     needs: set-os-matrix
