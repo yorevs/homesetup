@@ -92,14 +92,14 @@ jobs:
         run: |
           ./install.bash -r -p "${{ github.workspace }}"
           echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
-          echo "Loading bash profile..."
-          if source "${HOME}"/.bashrc; then echo "OK"; else echo "FAILED"; fi
+          echo -n "Loading bash profile..."
+          if source "${HOME}"/.bashrc; then echo -e "Sourced!"; else echo "FAILED"; fi
           HHS_LOG_DIR="${HHS_LOG_DIR:-$(pwd)}"
-          echo "Installation information:"
-          echo "SHELL: ${SHELL}"
-          echo " HOME: ${HOME}"
-          echo " USER: ${USER}"
-          echo " LOGS: ${HHS_LOG_DIR}"
+          echo -e "\nInstallation information:"
+          echo -e "SHELL: ${SHELL}"
+          echo -e " HOME: ${HOME}"
+          echo -e " USER: ${USER}"
+          echo -e " LOGS: ${HHS_LOG_DIR}\n"
           echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
           __hhs tests
       - name: Upload installation logs
