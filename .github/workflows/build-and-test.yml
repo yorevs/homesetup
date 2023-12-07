@@ -57,7 +57,7 @@ jobs:
           while read -r os; do
             if [[ (${os} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
                   (${os} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
-              JSONline="\"${os}\","
+              JSONline="{\"os\":\"${os}\"},"
               if [[ "${JSON}" != *"${JSONline}"* ]]; then
                 JSON="${JSON}${JSONline}"
               fi
@@ -66,7 +66,7 @@ jobs:
           if [[ $JSON == *, ]]; then  # Remove last ","
             JSON="${JSON%?}"
           fi
-          JSON="${JSON}]"  # Add closing brackets
+          JSON="${JSON}]}"  # Add closing brackets
           echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
 
   build:
