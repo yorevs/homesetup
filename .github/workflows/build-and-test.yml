@@ -63,7 +63,7 @@ jobs:
             fi
           done < <(printf '%s\n' "${all[@]}")
           [[ $JSON == *, ]] && JSON="${JSON%?}"
-          [[ ${count} -eq ${#all[@]} ]] = JSON="{\"os\":\"macos-latest\"}"
+          [[ ${count} -eq ${#all[@]} ]] && JSON="{\"os\":\"macos-latest\"}"
           JSON="[${JSON}]"
           echo "JSON: ${JSON}"
           echo "excludes=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
