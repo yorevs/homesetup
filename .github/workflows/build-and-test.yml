@@ -44,7 +44,7 @@ jobs:
   set-os-matrix:
     runs-on: "ubuntu-latest"
     outputs:
-      matrix: ${{ steps.set-matrix-items.outputs.matrix }}
+      exclude: ${{ steps.set-matrix-items.outputs.matrix }}
     steps:
       - name: Show Selected Input
         run: |
