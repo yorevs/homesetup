@@ -44,7 +44,7 @@ jobs:
   set-os-matrix:
     runs-on: "ubuntu-latest"
     outputs:
-      exclude: ${{ steps.set-matrix-items.outputs.matrix }}
+      exclude: ${{ steps.set-matrix-items.outputs.exclude }}
     steps:
       - name: Show Selected Input
         run: |
@@ -57,7 +57,7 @@ jobs:
           while read -r os; do
             if [[ (${os} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
                   (${os} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
-              JSONline="{\"os\":\"${os}\"},"
+              JSONline="\"${os}\","
               if [[ "${JSON}" != *"${JSONline}"* ]]; then
                 JSON="${JSON}${JSONline}"
               fi
@@ -70,7 +70,7 @@ jobs:
           echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
       - name: Show Final Matrix
         run: |
-          echo "exclude=${{ steps.set-matrix-items.outputs.exclude }}"
+          echo "exclude=${{ fromJson(steps.set-matrix-items.outputs.exclude) }}"
 
   build:
     needs: set-os-matrix
