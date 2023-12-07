@@ -11,14 +11,16 @@
 # Copyright (c) 2023, HomeSetup team
 
 load test_helper
-load "${HHS_HOME}/bin/hhs-functions/bash/hhs-text.bash"
-load "${HHS_HOME}/bin/hhs-functions/bash/hhs-toml.bash"
+load "${HHS_FUNCTIONS_DIR}/hhs-text.bash"
+load "${HHS_FUNCTIONS_DIR}/hhs-toml.bash"
+load_bats_libs
 
 test_file=
 
 setup() {
 
   test_file=$(mktemp)
+
   # Stub the toml entries
   echo "
     default.root.key.1 = any root value one
@@ -34,62 +36,65 @@ setup() {
     valid_key_two = my valid value two
     valid_key_one = my valid value one
   " >> "${test_file}"
-  echo "Toml file: ${test_file}"
 }
 
 teardown() {
-  \rm -f "${test_file}"
+  [[ -f "${test_file}" ]] && \rm -f "${test_file}"
 }
 
 # TC - 1
 @test "when-invoking-with-help-option-then-toml-get-should-print-usage" {
   run __hhs_toml_get -h
-  [[ ${status} -eq 1 && ${lines[0]} == "Usage: __hhs_toml_get <file> <key> [group]" ]]
+  assert_failure
+  assert_output --partial "Usage: __hhs_toml_get <file> <key> [group]"
 }
 
 # TC - 2
 @test "when-invoking-with-missing-file-then-toml-get-should-raise-an-error" {
   run __hhs_toml_get
-  [[ ${status} -eq 1 && ${output} == "error: The file parameter must be provided." ]]
+  assert_failure
+  assert_output "error: The file parameter must be provided."
 }
 
 # TC - 3
 @test "when-invoking-with-missing-key-then-toml-get-should-raise-an-error" {
   run __hhs_toml_get "${test_file}"
-  [[ ${status} -eq 1 && ${output} == "error: The key parameter must be provided." ]]
+  assert_failure
+  assert_output "error: The key parameter must be provided."
 }
 
 # TC - 4
 @test "when-invoking-with-invalid-file-then-toml-get-should-raise-an-error" {
   run __hhs_toml_get "non-existent.toml" "any_key"
-  [[ ${status} -eq 1 && ${output} == "error: The file \"non-existent.toml\" does not exists or is empty." ]]
+  assert_failure
+  assert_output "error: The file \"non-existent.toml\" does not exists or is empty."
 }
 
 # TC - 5
 @test "when-invoking-with-with-correct-options-then-toml-get-should-get-it" {
   run __hhs_toml_get "${test_file}" "valid_key_one" "my.group"
-  expected="valid_key_one=my valid value one"
-  [[ ${status} -eq 0 && ${output} =~ ${expected} ]]
+  assert_success
+  assert_output "valid_key_one=my valid value one"
 }
 
 # TC - 6
 @test "when-invoking-without-group-then-toml-get-should-get-it" {
   run __hhs_toml_get "${test_file}" "default.root.key.2"
-  expected="default.root.key.2=any root value two"
-  [[ ${status} -eq 0 && ${output} =~ ${expected} ]]
+  assert_success
+  assert_output "default.root.key.2=any root value two"
 }
 
 # TC - 7
 @test "when-invoking-with-with-incorrect-key-value-pair-then-should-raise-an-error" {
   run __hhs_toml_set "${test_file}" "test.key.1" "tests"
-  expected="error: The key/value parameter must be on the form of 'key=value', but it was 'test.key.1'."
-  [[ ${status} -eq 1 && ${output} =~ ${expected} ]]
+  assert_failure
+  assert_output "error: The key/value parameter must be on the form of 'key=value', but it was 'test.key.1'."
 }
 
 # TC - 8
 @test "when-invoking-with-with-correct-options-then-toml-set-should-set-it" {
   run __hhs_toml_set "${test_file}" "test.key.1=new updated value" "tests"
-  expected="test.key.1=new updated value"
   run __hhs_toml_get "${test_file}" "test.key.1" "tests"
-  [[ ${status} -eq 0 && ${output} =~ ${expected} ]]
+  assert_success
+  assert_output "test.key.1=new updated value"
 }

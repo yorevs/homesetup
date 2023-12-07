@@ -11,6 +11,7 @@
 # Copyright (c) 2023, HomeSetup team
 
 # @purpose: Run all HomeSetup automated tests.
+# @param $1..$N [Opt] : The bats files to test.
 function tests() {
 
   local started finished err_log badge fail=0 pass=0 skip=0 status num details re_status re_len len re_skip

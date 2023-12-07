@@ -10,7 +10,7 @@
 #
 # Copyright (c) 2023, HomeSetup team
 
-@test "test-check-hhs-dirs-exist" {
+@test "after-installation-all-homesetup-folders-should-exist" {
   [[ \
     -d "${HHS_HOME}" \
     && -d "${HHS_DIR}" \
@@ -20,7 +20,8 @@
   ]]
 }
 
-@test "test-check-dotfiles-exist" {
+@test "after-installation-all-homesetup-dotfiles-should-exist" {
+
   declare -a missing=()
 
   for next in "${HHS_HOME}"/dotfiles/bash/*.bash; do
@@ -42,7 +43,6 @@
   [[ -f "${HHS_DIR}/.prompt" ]] || missing+=("${HHS_DIR}/.prompt")
   [[ -f "${HHS_DIR}/.saved_dirs" ]] || missing+=("${HHS_DIR}/.saved_dirs")
 
-  echo "Missing dotfiles: [${missing[*]}]"
-
+  [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: [${missing[*]}]"
   [[ ${#missing[@]} -eq 0 ]]
 }
