@@ -53,6 +53,7 @@ jobs:
       - id: set-matrix-items
         run: |
           all=('ubuntu-latest' 'macos-latest')
+          default="{\"os\":\"macos-latest\"}"
           while read -r next; do
             if [[ (${next} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
                   (${next} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
@@ -61,7 +62,7 @@ jobs:
             fi
           done < <(printf '%s\n' "${all[@]}")
           [[ $JSON == *, ]] && JSON="${JSON%?}"
-          JSON="[${JSON}]"
+          JSON="[${JSON:-${default}}]"
           echo "excludes=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
 
   build:
@@ -88,7 +89,14 @@ jobs:
         run: |
           ./install.bash -r -p "${{ github.workspace }}"
           echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
-          source "${HOME}"/.bashrc
+          echo "Loading bash profile..."
+          if source "${HOME}"/.bashrc; then echo "OK"; else echo "FAILED"; fi
+          HHS_LOG_DIR="${HHS_LOG_DIR:-$(pwd)}"
+          echo "Installation information:"
+          echo "SHELL: ${SHELL}"
+          echo " HOME: ${HOME}"
+          echo " USER: ${USER}"
+          echo " LOGS: ${HHS_LOG_DIR}"
           echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
           __hhs tests
       - name: Upload installation logs
