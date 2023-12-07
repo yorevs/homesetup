@@ -44,7 +44,7 @@ jobs:
   set-os-matrix:
     runs-on: "ubuntu-latest"
     outputs:
-      exclude: ${{ steps.set-matrix-items.outputs.include }}
+      exclude: ${{ steps.set-matrix-items.outputs.exclude }}
     steps:
       - name: Show Selected Input
         run: |
@@ -67,17 +67,18 @@ jobs:
             JSON="${JSON%?}"
           fi
           JSON="[${JSON:-'ubuntu-latest'}]"  # Add brackets
-          echo "include=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
+          echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
       - name: Show Final Matrix
         run: |
-          echo "include=${{ steps.set-matrix-items.outputs.include }}"
+          echo "exclude=${{ steps.set-matrix-items.outputs.exclude }}"
 
   build:
     needs: set-os-matrix
     strategy:
       fail-fast: false
       matrix:
-        os: ${{ fromJson(needs.set-os-matrix.outputs.include) }}
+        os: ['ubuntu-latest', 'macos-latest']
+        exclude: [{"os":"macos-latest"}]
     runs-on: ${{ matrix.os }}
     env:
       HHS_LOG_DIR: ''
