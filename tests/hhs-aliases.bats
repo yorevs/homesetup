@@ -15,10 +15,6 @@ load "${HHS_FUNCTIONS_DIR}/hhs-text.bash"
 load "${HHS_FUNCTIONS_DIR}/hhs-aliases.bash"
 load_bats_libs
 
-setup() {
-  unset_colors
-}
-
 # TC - 1
 @test "when-invoking-with-help-option-then-should-print-usage-message" {
   run __hhs_aliases -h

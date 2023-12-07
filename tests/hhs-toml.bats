@@ -71,10 +71,10 @@ teardown() {
 }
 
 # TC - 5
-@test "when-invoking-with-with-correct-options-then-toml-get-should-get-it" {
-  run __hhs_toml_get "${test_file}" "valid_key_one" "my.group"
-  assert_success
-  assert_output "valid_key_one=my valid value one"
+@test "when-invoking-with-with-incorrect-key-value-pair-then-should-raise-an-error" {
+  run __hhs_toml_set "${test_file}" "test.key.1" "tests"
+  assert_failure
+  assert_output "error: The key/value parameter must be on the form of 'key=value', but it was 'test.key.1'."
 }
 
 # TC - 6
@@ -85,10 +85,10 @@ teardown() {
 }
 
 # TC - 7
-@test "when-invoking-with-with-incorrect-key-value-pair-then-should-raise-an-error" {
-  run __hhs_toml_set "${test_file}" "test.key.1" "tests"
-  assert_failure
-  assert_output "error: The key/value parameter must be on the form of 'key=value', but it was 'test.key.1'."
+@test "when-invoking-with-with-correct-options-then-toml-get-should-get-it" {
+  run __hhs_toml_get "${test_file}" "valid_key_one" "my.group"
+  assert_success
+  assert_output "valid_key_one=my valid value one"
 }
 
 # TC - 8

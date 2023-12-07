@@ -53,11 +53,11 @@ jobs:
       - id: set-matrix-items
         run: |
           all_os=('ubuntu-latest' 'macos-latest')
-          JSON="{\"include\":["
+          JSON="["
           while read -r os; do
-            if [[ (${os} == 'ubuntu-latest' && "true" == "${{inputs.ubuntu}}") ||
-                  (${os} == 'macos-latest' && "true" == "${{inputs.macos}}") ]]; then
-              JSONline="{\"os\": \"${os}\"},"
+            if [[ (${os} == 'ubuntu-latest' && "true" == "${inputs_ubuntu}") ||
+                  (${os} == 'macos-latest' && "true" == "${inputs_macos}") ]]; then
+              JSONline="\"${os}\","
               if [[ "$JSON" != *"$JSONline"* ]]; then
                 JSON="$JSON$JSONline"
               fi
@@ -66,41 +66,44 @@ jobs:
           if [[ $JSON == *, ]]; then  # Remove last ","
             JSON="${JSON%?}"
           fi
-          JSON="$JSON]}"  # Add closing brackets
-          echo "matrix=$( echo "$JSON" )" >> $GITHUB_OUTPUT
+          JSON="$JSON]"  # Add closing brackets
+          echo "exclude=$( echo "$JSON" )" >> $GITHUB_OUTPUT
 
   build:
     needs: set-os-matrix
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.set-os-matrix.outputs.matrix) }}
+      matrix:
+        os:
+          - include: ['ubuntu-latest', 'macos-latest']
+          - exclude: ${{ fromJson(needs.set-os-matrix.outputs.exclude) }}
     runs-on: ${{ matrix.os }}
     env:
       HHS_LOG_DIR: ''
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ vars.PYTHON_VERSION }}
-    - name: Update PIP
-      run: pip install --upgrade pip
-    - name: Install HomeSetup with Prefix
-      run: |
-        ./install.bash -r -p "${{ github.workspace }}"
-        echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
-        source "${HOME}"/.bashrc
-        echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
-        __hhs tests
-    - name: Upload installation logs
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: "install-logs"
-        path: "${{ env.HHS_LOG_DIR }}"
-    - name: Show installation logs
-      if: ${{ failure() }}
-      run: |
-        cat -n "${{ env.HHS_LOG_DIR }}/install.log"
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+      - name: Update PIP
+        run: pip install --upgrade pip
+      - name: Install HomeSetup with Prefix
+        run: |
+          ./install.bash -r -p "${{ github.workspace }}"
+          echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
+          source "${HOME}"/.bashrc
+          echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
+          __hhs tests
+      - name: Upload installation logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: "install-logs"
+          path: "${{ env.HHS_LOG_DIR }}"
+      - name: Show installation logs
+        if: ${{ failure() }}
+        run: |
+          cat -n "${{ env.HHS_LOG_DIR }}/install.log"

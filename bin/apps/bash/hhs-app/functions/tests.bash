@@ -39,7 +39,7 @@ function tests() {
   echo -e "  |-Bash : v$(__hhs_version bash | head -n 1)"
   echo -e "  |-User : ${USER}"
   echo -e "  |-PWD  : $(\pwd)"
-  echo -e "${NC}"
+  echo -en "${NC}"
 
   for next in "${all_tests[@]}"; do
     while read -r result; do
@@ -82,7 +82,7 @@ function tests() {
   echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
   echo -e "Passed=${pass}  Skipped=${skip}  Failed=${fail}${NC}"
 
-  if [[ ${fail} -gt 0 ]]; then
+  if [[ ${fail} -gt 0 && -s "${err_log}" ]]; then
     echo -e "\n${ORANGE}xXx The following errors were reported xXx${NC}\n"
     __hhs_tailor "${err_log}" | nl
     echo ''
@@ -93,9 +93,8 @@ function tests() {
     echo ''
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2>/dev/null
     echo -e "${GREEN}${TEST_PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
+    quit 0
   fi
-
-  quit 0 ''
 }
 
 # @purpose: Run all terminal color palette tests.

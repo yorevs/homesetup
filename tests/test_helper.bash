@@ -19,13 +19,15 @@ export BATS_ASSERT="${BATS_DIR}/bats-assert/load"
 
 load "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
-# Load all bats libraries
+# @purpose: Load all bats libraries
 load_bats_libs() {
   load "${BATS_SUPPORT}"
   load "${BATS_ASSERT}"
 }
 
-# Unset all bash colors to avoid failing tests due to escape codes.
+# @purpose: Unset all bash colors to avoid failing tests due to escape codes.
 unset_colors() {
   unset HHS_HIGHLIGHT_COLOR NC BLACK RED GREEN ORANGE BLUE PURPLE CYAN GRAY WHITE YELLOW VIOLET
 }
+
+unset_colors
