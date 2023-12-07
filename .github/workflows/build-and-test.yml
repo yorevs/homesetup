@@ -58,9 +58,9 @@ jobs:
           while read -r os; do
             if [[ (${os} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
                   (${os} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
-              JSONline="{\"os\":\"${os}\"},"
-              if [[ "${JSON}" != *"${JSONline}"* ]]; then
-                JSON="${JSON}${JSONline}"
+              item="{\"os\":\"${os}\"},"
+              if [[ "${JSON}" != *"${item}"* ]]; then
+                JSON="${JSON}${item}"
               fi
             fi
           done < <(printf '%s\n' "${all_os[@]}")
@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest']
-        exclude: [{"os":"macos-latest"}]
+        exclude: ${{fromJSON(needs.set-os-matrix.outputs.exclude) }}
     runs-on: ${{ matrix.os }}
     env:
       HHS_LOG_DIR: ''
