@@ -96,7 +96,7 @@ jobs:
           echo -e "SHELL: ${SHELL}"
           echo -e " HOME: ${HOME}"
           echo -e " USER: ${USER}\n"
-          HHS_LOG_DIR="$(pwd)"
+          export HHS_LOG_DIR="$(pwd)"
           echo -en "Loading bash profile..."
           if source "${HOME}"/.bashrc; then echo "OK"; else echo "FAILED"; fi
           echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
