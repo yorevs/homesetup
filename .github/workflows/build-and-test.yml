@@ -52,20 +52,21 @@ jobs:
           echo " Build macOS: ${{inputs.macos}}"
       - id: set-matrix-items
         run: |
+          count=0
           all=('ubuntu-latest' 'macos-latest')
-          default="{\"os\":\"macos-latest\"}"
           while read -r next; do
             if [[ (${next} == 'ubuntu-latest' && "false" == "${{inputs.ubuntu}}") ||
                   (${next} == 'macos-latest' && "false" == "${{inputs.macos}}") ]]; then
               item="{\"os\":\"${next}\"},"
               [[ "${JSON}" != *"${item}"* ]] && JSON="${JSON}${item}"
+              ((count+=1))
             fi
           done < <(printf '%s\n' "${all[@]}")
           [[ $JSON == *, ]] && JSON="${JSON%?}"
-          JSON="[${JSON:-${default}}]"
-          echo "excludes=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
+          [[ ${count} -eq ${#all[@]} ]] = JSON="{\"os\":\"macos-latest\"}"
+          JSON="[${JSON}]"
           echo "JSON: ${JSON}"
-          echo "${JSON}" | jq
+          echo "excludes=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
 
   build:
     needs: set-os-matrix
