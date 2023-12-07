@@ -57,26 +57,27 @@ jobs:
           while read -r os; do
             if [[ (${os} == 'ubuntu-latest' && "false" == "${inputs_ubuntu}") ||
                   (${os} == 'macos-latest' && "false" == "${inputs_macos}") ]]; then
-              JSONline="{\"os\": \"${os}\"},"
-              if [[ "$JSON" != *"$JSONline"* ]]; then
-                JSON="$JSON$JSONline"
+              JSONline="\"${os}\","
+              if [[ "${JSON}" != *"${JSONline}"* ]]; then
+                JSON="${JSON}${JSONline}"
               fi
             fi
           done < <(printf '%s\n' "${all_os[@]}")
-
           if [[ $JSON == *, ]]; then  # Remove last ","
             JSON="${JSON%?}"
           fi
-          JSON="$JSON]"  # Add closing brackets
-          echo "excludes=$( echo "$JSON" )" >> $GITHUB_OUTPUT
+          JSON="${JSON}]"  # Add closing brackets
+          echo "exclude=$( echo "${JSON}" )" >> $GITHUB_OUTPUT
 
   build:
     needs: set-os-matrix
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'macos-latest']
-        exclude: ${{ fromJson(needs.set-os-matrix.outputs.excludes) }}
+        os:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+        exclude: ${{ fromJson(needs.set-os-matrix.outputs.exclude) }}
     runs-on: ${{ matrix.os }}
     env:
       HHS_LOG_DIR: ''
