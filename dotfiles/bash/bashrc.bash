@@ -46,5 +46,3 @@ case "${SHELL##*\/}" in
     echo ''
     ;;
 esac
-
-source "${HOME}/.bash_env"

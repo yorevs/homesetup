@@ -26,10 +26,10 @@ usage: ${APP_NAME} <arguments> [options]
 UNSETS=('quit' 'usage' 'version' 'trim')
 
 # We need to load the dotfiles below due to non-interactive shell.
-[[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_commons
+[[ -f "${HOME}"/.bash_commons ]] && source "${HOME}"/.bash_commons
 [[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_env
 [[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_colors
-[[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_icons
+[[ -f "${HOME}"/.bash_icons ]] && source "${HOME}"/.bash_icons
 [[ -f "${HOME}"/.bash_aliases ]] && source "${HOME}"/.bash_aliases
 [[ -f "${HOME}"/.bash_functions ]] && source "${HOME}"/.bash_functions
 

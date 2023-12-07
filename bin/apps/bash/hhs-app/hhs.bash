@@ -185,7 +185,7 @@ function invoke_command() {
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
   # Open a new subshell, so that we can configure the running environment properly
-  (
+  #(
     # We have to use exit and not quit, because we are in a subshell
     for idx in "${!PLUGINS[@]}"; do
       if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
@@ -205,7 +205,7 @@ function invoke_command() {
       fi
     done
     exit 0
-  )
+  #)
   ret=${?}
   [[ ${ret} -eq 255 ]] && quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
 

@@ -32,7 +32,11 @@ export HHS_ACTIVE_DOTFILES='bashrc'
 # Load the profile according to the user's SHELL.
 case "${SHELL##*\/}" in
   'bash')
-    [[ -s "${HOME}/.hhsrc" ]] && source "${HOME}/.hhsrc"
+    if [[ -s "${HOME}/.hhsrc" ]]; then
+      source "${HOME}/.hhsrc"
+    else
+      echo "HomeSetup was not loaded because it's resource file was not found: ${HOME}/.hhsrc"
+    fi
     ;;
   *)
     echo ''
