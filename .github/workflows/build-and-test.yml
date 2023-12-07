@@ -104,7 +104,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
-          name: "install-logs"
+          name: "${{ matrix.os }}-install-logs"
           path: "${{ env.HHS_LOG_DIR }}"
       - name: Show installation logs
         if: ${{ failure() }}
