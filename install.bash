@@ -99,7 +99,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools
   REQUIRED_TOOLS=(
-    'git' 'curl' 'python3' 'rsync' 'ruby'
+    'git' 'curl' 'python3' 'pip3' 'rsync' 'ruby'
   )
 
   # Missing HomeSetup required tools
@@ -643,33 +643,36 @@ Usage: $APP_NAME [OPTIONS] <args>
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }
 
-  # Configure python and HHS python library.
+  # Configure python and HomeSetup python library.
   configure_python() {
     echo ''
     echo -n 'Detecting local python environment ...'
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
-    [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
-    ${PYTHON} -m pip freeze >> "${INSTALL_LOG}" 2>&1 || quit 2 "Pip3 is required by HomeSetup !"
+    PIP=$(command -v pip3 2>/dev/null)
+    [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required to install HomeSetup !"
+    [[ -z "${PIP}" ]] && quit 2 "Pip3 is required to install HomeSetup !"
+    ${PIP} freeze >> "${INSTALL_LOG}" 2>&1 || quit 2 "Pip3 is required to install HomeSetup !"
     echo -e " ${GREEN}OK${NC}"
     echo ''
-    echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
-    install_hspylib "${PYTHON}"
+    echo -e "Using Python v${YELLOW}$(${PYTHON} -V)${NC} and Pip v${YELLOW}$(${PIP} -V | \cut -d ' ' -f2)${NC}"
+    install_hspylib "${PYTHON}" "${PIP}"
   }
 
   # Install HomeSetup python libraries.
   install_hspylib() {
     # Define python tools
     PYTHON="${1}"
+    PIP="${2}"
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
-    ${PYTHON} -m pip install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+    ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     echo -e " ${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
     echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
-    ${PYTHON} -m pip freeze | grep hspylib >>"${INSTALL_LOG}"
+    ${PIP} freeze | grep hspylib >>"${INSTALL_LOG}"
   }
 
   # Check for backward HomeSetup backward compatibility.
