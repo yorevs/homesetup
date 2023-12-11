@@ -99,7 +99,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools
   REQUIRED_TOOLS=(
-    'git' 'curl' 'rsync' 'ruby' 'python3'
+    'git' 'curl' 'ruby' 'rsync' 'python3'
   )
 
   # Missing HomeSetup required tools
@@ -372,7 +372,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       install_brew || quit 2 "# Failed to install HomeBrew !"
       echo -e "${GREEN}SUCCESS${NC} !"
     else
-      echo -e "${BLUE}Homebrew is already installed !${NC}"
+      echo -e "${BLUE}Homebrew is already installed -> $(brew --prefix) ${NC}"
     fi
   }
 
@@ -381,9 +381,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     if ! which brew &>/dev/null; then
       echo -e "${YELLOW}Installing Homebrew ...${NC}"
-      BASH -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       if command -v brew &>/dev/null; then
-        echo -e "${YELLOW}@@ Successfully installed Homebrew ${NC}"
+        echo -e "${YELLOW}@@ Successfully installed Homebrew -> $(brew --prefix)${NC}"
         if [[ "${MY_OS}" == "Linux" ]]; then
           [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -460,26 +460,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ ! -d "${HHS_HOME}" ]]; then
-      echo -en "${WHITE}Cloning HomeSetup repository ...${NC}"
+      echo -en "${WHITE}Cloning HomeSetup repository... ${NC}"
       if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >>"${INSTALL_LOG}" 2>&1; then
-        source "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}"
-        source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+        echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
       fi
     else
       cd "${HHS_HOME}" &>/dev/null  || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
-      echo -e "${WHITE}Pulling HomeSetup repository ...${NC}"
+      echo -e "${WHITE}Pulling HomeSetup repository... ${NC}"
       if git pull --rebase >>"${INSTALL_LOG}" 2>&1; then
-        source "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}"
-        source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
+        echo -e "${GREEN}OK${NC}"
       else
-        quit 2 "Unable to properly pull the repository !"
+        quit 2 "Unable to properly update HomeSetup repository !"
       fi
       cd - &>/dev/null  || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
     fi
 
-    [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directory \"${DOTFILES_DIR}\" !"
+    [[ ! -d "${DOTFILES_DIR}" || ! -d "${HHS_HOME}" || -d "${HHS_DIR}" ]] &&
+         quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
   }
 
   # Install all dotfiles.
