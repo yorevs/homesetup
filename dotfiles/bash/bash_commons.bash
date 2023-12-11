@@ -45,16 +45,20 @@ function __hhs_log() {
   fi
 
   case "${level}" in
-  'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'ALL')
-    printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
-    return 0
-    ;;
-  *)
-    echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
-    ;;
+    'INFO' | 'WARN' | 'ERROR' | 'ALL')
+      printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
+      ;;
+    'DEBUG')
+      [[ "${HHS_VERBOSE_LOGS}" -eq 1 ]] && \
+         printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
+      ;;
+    *)
+      echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
+      return 1
+      ;;
   esac
 
-  return 1
+  return 0
 }
 
 # @function: Replacement for the original source bash command.
@@ -68,15 +72,11 @@ function __hhs_source() {
   elif [[ ! -s "${filepath}" ]]; then
     __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found or empty!"
   else
-    if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOG_FILE}"; then
-      if source "${filepath}" 2>>"${HHS_LOG_FILE}"; then
-        __hhs_log "DEBUG" "File \"${filepath}\" was sourced !"
-        return 0
-      else
-        __hhs_log "ERROR" "Failed to source file \"${filepath}\"!"
-      fi
+    if source "${filepath}" 2>>"${HHS_LOG_FILE}"; then
+      __hhs_log "DEBUG" "File \"${filepath}\" was loaded !"
+      return 0
     else
-      __hhs_log "WARN" "File \"${filepath}\" was already sourced !"
+      __hhs_log "ERROR" "Failed to load file \"${filepath}\"!"
     fi
   fi
 
@@ -100,12 +100,12 @@ function __hhs_is_reachable() {
 # @param $1..$N [Req] : Sed parameters.
 function ised() {
   case "${HHS_MY_OS}" in
-  Darwin)
-    sed -i '' -E "${@}"
-    ;;
-  Linux)
-    sed -i'' -r "${@}"
-    ;;
+    Darwin)
+      sed -i '' -E "${@}"
+      ;;
+    Linux)
+      sed -i'' -r "${@}"
+      ;;
   esac
 
   return $?
@@ -115,12 +115,12 @@ function ised() {
 # @param $1..$N [Req] : Sed parameters.
 function esed() {
   case "${HHS_MY_OS}" in
-  Darwin)
-    sed -E "${@}"
-    ;;
-  Linux)
-    sed -r "${@}"
-    ;;
+    Darwin)
+      sed -E "${@}"
+      ;;
+    Linux)
+      sed -r "${@}"
+      ;;
   esac
 
   return $?
