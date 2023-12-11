@@ -42,7 +42,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_missing_tools configure_python install_hspylib ensure_brew
+    activate_dotfiles compatibility_check install_dependencies configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
   )
 
@@ -97,28 +97,28 @@ Usage: $APP_NAME [OPTIONS] <args>
   # OS type. Defined later on the installation process
   OS_TYPE=
 
-  # HomeSetup application required tools
-  INSTALL_TOOLS=(
+  # HomeSetup application dependencies
+  DEPENDENCIES=(
     'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo'
   )
 
   # HomeSetup installation required tools
-  REQUIRED_TOOLS=(
+  REQUIRED_APPS=(
     'python3' 'vim'
   )
 
-  # Missing HomeSetup required tools
-  MISSING_TOOLS=()
+  # Missing HomeSetup dependencies
+  MISSING_DEPS=()
 
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
     GROUP=${GROUP:-staff}
-    INSTALL_TOOLS+=('xcode-select')
+    DEPENDENCIES+=('xcode-select')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
     GROUP=${GROUP:-${USER}}
-    INSTALL_TOOLS+=('file' 'build-essential')
+    DEPENDENCIES+=('file' 'build-essential')
   fi
 
   # Awesome icons
@@ -358,37 +358,37 @@ Usage: $APP_NAME [OPTIONS] <args>
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
-    for tool_name in "${INSTALL_TOOLS[@]}"; do
+    for tool_name in "${DEPENDENCIES[@]}"; do
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
         echo -e " ${GREEN}INSTALLED${NC}"
       else
         echo -e " ${RED}NOT INSTALLED${NC}"
-        MISSING_TOOLS+=("${tool_name}")
+        MISSING_DEPS+=("${tool_name}")
       fi
     done
 
-    install_missing_tools "${install}"
-
+    install_dependencies "${install}"
     ensure_brew
+    # install_tools
   }
 
   # Install missing required tools.
-  install_missing_tools() {
+  install_dependencies() {
 
-    local install="${1}" tools="${MISSING_TOOLS[*]}"
+    local install="${1}" tools="${MISSING_DEPS[*]}"
 
-    if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
+    if [[ ${#MISSING_DEPS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
-      echo -e "${tools// /\n|-}"
-      if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}" 2>&1; then
+      echo -e "  |-${tools// /\n  |-}"
+      if ${install} "${MISSING_DEPS[@]}" >>"${INSTALL_LOG}" 2>&1; then
          echo -e "${GREEN}OK${NC}"
       else
         echo -e "${RED}FAILED${NC}"
-        quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+        quit 2 "Failed to install: ${MISSING_DEPS[*]}. Please manually install the missing tools and try again."
       fi
     fi
   }
@@ -409,8 +409,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     if ! which brew &>/dev/null; then
       echo -en "${YELLOW}Installing HomeBrew... ${NC}"
-      curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  #>>"${INSTALL_LOG}" 2>&1
-      if brew --prefix &>/dev/null; then
+      if curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
         echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
         if [[ "${MY_OS}" == "Linux" ]]; then
