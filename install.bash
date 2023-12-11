@@ -369,7 +369,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
     done
 
-    install_missing_tools "${OS_TYPE}" "${install}"
+    install_missing_tools "${install}"
 
     ensure_brew
   }
@@ -382,7 +382,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${OS_TYPE}) using: \"${install}\"... "
+      echo -en "${WHITE}(${OS_TYPE}) Installing required packages [${MISSING_TOOLS[*]}] using: \"${install}\"... "
       if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}" 2>&1; then
          echo -e "${GREEN}OK${NC}"
       else
