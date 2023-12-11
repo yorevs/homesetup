@@ -651,7 +651,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON=$(command -v python3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
     ${PYTHON} -m pip freeze >> "${INSTALL_LOG}" 2>&1 || quit 2 "Pip3 is required by HomeSetup !"
-    ${PYTHON} -m pip --upgrade --break-system-packages pip >> "${INSTALL_LOG}" 2>&1 || quit 2 "Unable to update Pip3 !"
     echo -e " ${GREEN}OK${NC}"
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
