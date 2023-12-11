@@ -13,8 +13,6 @@
 
 {
 
-  set -e
-
   # This script name
   APP_NAME="${0##*/}"
 

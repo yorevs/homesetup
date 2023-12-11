@@ -68,8 +68,10 @@ jobs:
             if source "${HOME}"/.bashrc; then echo "OK"; else echo "FAILED"; fi
             echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
             __hhs tests
+            exit 0
           else
             echo "HHS_LOG_DIR=$(echo ${HOME}/install.log)" >> $GITHUB_ENV
+            exit 1
           fi
       - name: Upload installation logs (success)
         if: ${{ success() }}
