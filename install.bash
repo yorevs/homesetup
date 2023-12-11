@@ -385,28 +385,28 @@ Usage: $APP_NAME [OPTIONS] <args>
     done
 
     # Install packages using the default package manager
-    install_dependencies "${install}" "${MISSING_DEPS[*]}"
+    install_dependencies "${install}" "${MISSING_DEPS[@]}"
     # From HomeSetup 1.7 we will use HomeBrew as the default package manager
     ensure_brew
     # At this point we have installed HomeBrew and can use it.
-    install_dependencies "brew install -y" "${MISSING_APPS[*]}"
+    install_dependencies "brew install -y" "${MISSING_APPS[@]}"
   }
 
   # Install missing required tools.
   install_dependencies() {
 
-    local install="${1}" tools="${2}"
+    local install="${1}" tools=("${2}")
 
-    if [[ -n "${tools}" ]]; then
+    if [[ ${#tools[@]} -gt 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
-      echo -e "  |-${tools// /\n  |-}"
-      if ${install} "${tools}" >>"${INSTALL_LOG}" 2>&1; then
+      echo -e "  |-${tools// /\\n  |-}"
+      if ${install} "${tools[@]}" >>"${INSTALL_LOG}" 2>&1; then
          echo -e "${GREEN}SUCCESS${NC}"
       else
         echo -e "${RED}FAILED${NC}"
-        quit 2 "Failed to install: ${tools}. Please manually install the missing tools and try again."
+        quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
       fi
     fi
   }
