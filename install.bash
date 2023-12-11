@@ -13,6 +13,8 @@
 
 {
 
+  set -e
+
   # This script name
   APP_NAME="${0##*/}"
 
@@ -385,7 +387,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
       echo -e "  |-${tools// /\n  |-}"
       if ${install} "${MISSING_DEPS[@]}" >>"${INSTALL_LOG}" 2>&1; then
-         echo -e "${GREEN}OK${NC}"
+         echo -e "${GREEN}Success${NC}"
       else
         echo -e "${RED}FAILED${NC}"
         quit 2 "Failed to install: ${MISSING_DEPS[*]}. Please manually install the missing tools and try again."
@@ -397,7 +399,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   ensure_brew() {
     echo ''
     if ! has 'brew'; then
-      echo -e "${YELLOW}HomeBrew is not installed. Attempting to install it... ${NC}"
+      echo -en "${YELLOW}HomeBrew is not installed. Attempting to install it... ${NC}"
       install_brew || quit 2 "### Failed to install HomeBrew !"
     else
       echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
@@ -415,14 +417,14 @@ Usage: $APP_NAME [OPTIONS] <args>
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
-        if commnd -v brew &>/dev/null; then
+        if command -v brew &>/dev/null; then
           echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
         else
           quit 2 "### Could not find HomeBrew installation !"
         fi
       else
         echo -e "${RED}FAILED${NC}"
-        quit 2 "### Failed to install HomeBrew"
+        quit 2 "### Failed to install HomeBrew !"
       fi
     fi
   }
