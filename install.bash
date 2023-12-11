@@ -377,12 +377,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install missing required tools.
   install_missing_tools() {
 
-    local install="${1}"
+    local install="${1}" tools="${MISSING_TOOLS[*]}"
 
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -en "${WHITE}(${OS_TYPE}) Installing required packages [${MISSING_TOOLS[*]}] using: \"${install}\"... "
+      echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
+      echo -e "${tools// /\n|-}"
       if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}" 2>&1; then
          echo -e "${GREEN}OK${NC}"
       else
@@ -396,10 +397,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   ensure_brew() {
     echo ''
     if ! has 'brew'; then
-      echo -e "${YELLOW}Homebrew is not installed. Attempting to install it... ${NC}"
+      echo -e "${YELLOW}HomeBrew is not installed. Attempting to install it... ${NC}"
       install_brew || quit 2 "### Failed to install HomeBrew !"
     else
-      echo -e "${BLUE}Homebrew is already installed -> $(brew --prefix) ${NC}"
+      echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
     fi
   }
 
@@ -407,17 +408,19 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_brew() {
 
     if ! which brew &>/dev/null; then
-      echo -e "${YELLOW}Installing Homebrew ...${NC}"
-      bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      if command -v brew &>/dev/null; then
-        echo -e "${GREEN}@@@ Successfully installed Homebrew -> $(brew --prefix)${NC}"
+      echo -en "${YELLOW}Installing HomeBrew... ${NC}"
+      curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1
+      if brew --prefix &>/dev/null; then
+        echo -e "${GREEN}OK${NC}"
+        echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
         if [[ "${MY_OS}" == "Linux" ]]; then
           [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
       else
-        quit 2 "### Failed to install Homebrew"
+        echo -e "${RED}FAILED${NC}"
+        quit 2 "### Failed to install HomeBrew"
       fi
     fi
   }
