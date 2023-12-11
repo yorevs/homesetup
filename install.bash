@@ -409,7 +409,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     if ! which brew &>/dev/null; then
       echo -en "${YELLOW}Installing HomeBrew... ${NC}"
-      curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1
+      curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  #>>"${INSTALL_LOG}" 2>&1
       if brew --prefix &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
         echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"

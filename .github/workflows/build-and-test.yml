@@ -58,23 +58,28 @@ jobs:
         run: pip install --upgrade pip
       - name: Install HomeSetup with Prefix
         run: |
-          ./install.bash -r -p "${{ github.workspace }}"
-          echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
-          echo -e "\nInstallation information:"
-          echo -e "SHELL: ${SHELL}"
-          echo -e " HOME: ${HOME}"
-          echo -e " USER: ${USER}\n"
-          echo -en "Loading bash profile..."
-          if source "${HOME}"/.bashrc; then echo "OK"; else echo "FAILED"; fi
-          echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
-          __hhs tests
-      - name: Upload installation logs
-        if: ${{ always() }}
+          if ./install.bash -r -p "${{ github.workspace }}"; then
+            echo "${{ github.workspace }}" > "${HOME}/.hhs-prefix"
+            echo -e "\nInstallation information:"
+            echo -e "SHELL: ${SHELL}"
+            echo -e " HOME: ${HOME}"
+            echo -e " USER: ${USER}\n"
+            echo -en "Loading bash profile..."
+            if source "${HOME}"/.bashrc; then echo "OK"; else echo "FAILED"; fi
+            echo "HHS_LOG_DIR=$(echo ${HHS_LOG_DIR})" >> $GITHUB_ENV
+            __hhs tests
+          else
+            echo "HHS_LOG_DIR=$(echo ${HOME}/install.log)" >> $GITHUB_ENV
+          fi
+      - name: Upload installation logs (success)
+        if: ${{ success() }}
         uses: actions/upload-artifact@v3
         with:
-          name: "${{ matrix.os }}-install-logs"
+          name: "success-install-logs"
           path: "${{ env.HHS_LOG_DIR }}"
-      - name: Show installation logs
+      - name: Upload installation logs (failure)
         if: ${{ failure() }}
-        run: |
-          cat -n "${{ env.HHS_LOG_DIR }}/install.log"
+        uses: actions/upload-artifact@v3
+        with:
+          name: "failure-install-logs"
+          path: "${{ env.HHS_LOG_DIR }}"
