@@ -99,7 +99,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup required tools
   REQUIRED_TOOLS=(
-    'git' 'curl' 'python3' 'pip3' 'rsync' 'ruby'
+    'git' 'curl' 'rsync' 'ruby' 'python3'
   )
 
   # Missing HomeSetup required tools
@@ -163,9 +163,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     local dir="${1}"
 
     if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
-      echo -en "\n${WHITE}Creating ${dir} directory: "
+      echo -en "\n${WHITE}Creating: ${dir} directory... "
       \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
-      echo -e " ${GREEN}OK${NC}"
+      echo -e "${GREEN}OK${NC}"
     else
       # Trying to write at the created directory to validate write permissions.
       \touch "${dir}/tmpfile" &>/dev/null || quit 2 "Not enough permissions to write to \"${dir}\" directory!"
@@ -187,7 +187,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ -f "${dest_file}" || -d "${dest_file}" ]]; then
       echo -e "${WHITE}Skipping: ${YELLOW}${dest_file} file/dir was not copied because it already exists. ${NC}"
     else
-      echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file} ${NC} ..."
+      echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file}... "
       \rsync --archive "${src_file}" "${dest_file}"
       \chown "${USER}":"${GROUP}" "${dest_file}"
       [[ -f "${dest_file}" ]] && echo -e "${GREEN}OK${NC}"
@@ -319,7 +319,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     if has 'brew'; then
       OS_TYPE='macOS'
       OS_APP_MAN=brew
-      ensure_brew
     # Debian or Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
@@ -339,6 +338,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
+
+    ensure_brew
 
     echo ''
     echo -e "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
@@ -363,6 +364,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     install_missing_tools "${OS_TYPE}"
   }
 
+  # Make sure HomeBrew is installed.
+  ensure_brew() {
+    echo ''
+    if ! has 'brew'; then
+      echo -n "${YELLOW}Homebrew is not installed. Attempting to install it ..."
+      install_brew || quit 2 "# Failed to install HomeBrew !"
+      echo -e "${GREEN}SUCCESS${NC} !"
+    else
+      echo -e "${BLUE}Homebrew is already installed !${NC}"
+    fi
+  }
+
   # Install HomeBrew
   install_brew() {
 
@@ -383,35 +396,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Make sure HomeBrew is installed.
-  ensure_brew() {
-    echo ''
-    if ! has 'brew'; then
-      echo -n "${YELLOW}Homebrew is not installed. Attempting to install ..."
-      install_brew || quit 2 "# Failed to install HomeBrew !"
-      echo -e "${GREEN}SUCCESS${NC} !"
-    else
-      echo -e "${BLUE}Homebrew is already installed !${NC}"
-    fi
-  }
-
   # Install missing required tools.
   install_missing_tools() {
 
-    local install
-
-    if [[ 'Alpine' == "${OS_TYPE}" ]]; then
-      install="${SUDO} apk add --no-cache"
-    elif [[ 'macOS' == "${OS_TYPE}" ]]; then
-      install="${SUDO} ${OS_APP_MAN} install -y"
-    elif [[ "${OS_TYPE}" =~ RedHat|Debian|centos ]]; then
-      install="${SUDO} ${OS_APP_MAN} install -y"
-    fi
+    # From HomeSetup 1.7 we will enforce using HomeBrew to install the packages
+    local install="${SUDO} brew install -y"
 
     if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${OS_TYPE}) with ${OS_APP_MAN} ... "
+      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${OS_TYPE}) using: \"${install}\"... "
       if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}"  2>&1; then
          echo -e "${GREEN}OK${NC}"
       else
@@ -559,7 +553,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "\n${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
-        [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
+        [[ -L "${dotfile}" ]] && echo -e "${GREEN}OK${NC}"
         [[ -L "${dotfile}" ]] || quit 1 " ${RED}FAILED${NC}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
@@ -577,7 +571,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -en "${WHITE}Linking: ${BLUE}"
         echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
         echo -en "...${NC}"
-        [[ -L "${dotfile}" ]] && echo -e " ${GREEN}OK${NC}"
+        [[ -L "${dotfile}" ]] && echo -e "${GREEN}OK${NC}"
         [[ -L "${dotfile}" ]] || quit 1 "${RED}FAILED${NC}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
@@ -587,44 +581,44 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Removing old links ...${BLUE}"
     echo ">>> Removed old links:" >>"${INSTALL_LOG}"
     if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}"  2>&1; then
-      echo -e " ${GREEN}OK${NC}"
+      echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
     fi
 
     # Link apps into place.
-    echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR} ..."
+    echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR}... "
     echo ">>> Linked apps:" >>"${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; >>"${INSTALL_LOG}"  2>&1; then
-      echo -e " ${GREEN}OK${NC}"
+      echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
     fi
 
     # Link auto-completes into place.
-    echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR} ..."
+    echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR}... "
     echo ">>> Linked auto-completes:" >>"${INSTALL_LOG}"
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
       -exec chmod 755 {} \; >>"${INSTALL_LOG}"  2>&1; then
-      echo -e " ${GREEN}OK${NC}"
+      echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
     fi
 
     # Copy HomeSetup fonts into place.
-    echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR} ..."
+    echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR}... "
     echo ">>> Copied HomeSetup fonts:" >>"${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/misc/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
       -exec rsync --archive {} "${FONTS_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
-      echo -e " ${GREEN}OK${NC}"
+      echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
@@ -634,9 +628,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     case "${SHELL_TYPE}" in
       bash)
         # Creating the shell-opts file
-        echo -en "\n${WHITE}Creating the Shell Options file ${BLUE}${HHS_SHOPTS_FILE} ..."
+        echo -en "\n${WHITE}Creating the Shell Options file ${BLUE}${HHS_SHOPTS_FILE}... "
         \shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}"  || quit 2 "Unable to create the Shell Options file !"
-        echo -e " ${GREEN}OK${NC}"
+        echo -e "${GREEN}OK${NC}"
         ;;
     esac
 
@@ -646,16 +640,16 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Configure python and HomeSetup python library.
   configure_python() {
     echo ''
-    echo -n 'Detecting local python environment ...'
+    echo -en "${WHITE}Detecting local python environment... ${NC}"
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     PIP=$(command -v pip3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required to install HomeSetup !"
     [[ -z "${PIP}" ]] && quit 2 "Pip3 is required to install HomeSetup !"
-    ${PIP} freeze >> "${INSTALL_LOG}" 2>&1 || quit 2 "Pip3 is required to install HomeSetup !"
-    echo -e " ${GREEN}OK${NC}"
+    ${PIP} freeze >>"${INSTALL_LOG}"  2>&1 || quit 2 "Pip3 is required to install HomeSetup !"
+    echo -e "${GREEN}OK${NC}"
     echo ''
-    echo -e "Using Python v${YELLOW}$(${PYTHON} -V)${NC} and Pip v${YELLOW}$(${PIP} -V | \cut -d ' ' -f2)${NC}"
+    echo -e "${WHITE}Using Python ${YELLOW}v$(${PYTHON} -V)${WHITE} and Pip ${YELLOW}v$(${PIP} -V | \cut -d ' ' -f2)${NC}"
     install_hspylib "${PYTHON}" "${PIP}"
   }
 
@@ -664,12 +658,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define python tools
     PYTHON="${1}"
     PIP="${2}"
-    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
+    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
     ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
-    echo -e " ${GREEN}OK${NC}"
+    echo -e "${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
     echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
     ${PIP} freeze | grep hspylib >>"${INSTALL_LOG}"
@@ -843,12 +837,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
     echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
     echo -e "${NC}"
-    echo -e "${HAND_PEACE_ICN} Your shell, good as hell !"
+    echo -e "${WHITE}${HAND_PEACE_ICN} Your shell, good as hell !"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${BLUE}$ reset && source ${HOME}/.bashrc"
-    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${BLUE}$ hhu update"
-    echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${BLUE}$ hhs logs install"
-    echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${BLUE}$ more ${README_LINK}"
+    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${WHITE}source ${HOME}/.bashrc"
+    echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${WHITE}hhu update"
+    echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${WHITE}hhs logs install"
+    echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${WHITE}more ${README_LINK}"
     echo -e "${NC}"
 
     echo -e "\nHomeSetup installation finished: $(date)" >>"${INSTALL_LOG}"
