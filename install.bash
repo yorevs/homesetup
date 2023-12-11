@@ -44,6 +44,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_dependencies configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
+    install_tools
   )
 
   # HomeSetup installation prefix file
@@ -109,6 +110,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Missing HomeSetup dependencies
   MISSING_DEPS=()
+
+  # Missing HomeSetup applications
+  MISSING_APPS=()
 
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
@@ -369,26 +373,40 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
     done
 
-    install_dependencies "${install}"
+    for tool_name in "${REQUIRED_APPS[@]}"; do
+      echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
+      printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
+      if has "${tool_name}"; then
+        echo -e " ${GREEN}INSTALLED${NC}"
+      else
+        echo -e " ${RED}NOT INSTALLED${NC}"
+        MISSING_APPS+=("${tool_name}")
+      fi
+    done
+
+    # Install packages using the default package manager
+    install_dependencies "${install}" "${MISSING_DEPS[*]}"
+    # From HomeSetup 1.7 we will use HomeBrew as the default package manager
     ensure_brew
-    # install_tools
+    # At this point we have installed HomeBrew and can use it.
+    install_dependencies "brew install -y" "${MISSING_APPS[*]}"
   }
 
   # Install missing required tools.
   install_dependencies() {
 
-    local install="${1}" tools="${MISSING_DEPS[*]}"
+    local install="${1}" tools="${2}"
 
-    if [[ ${#MISSING_DEPS[@]} -ne 0 ]]; then
+    if [[ -n "${tools}" ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
       echo -e "  |-${tools// /\n  |-}"
-      if ${install} "${MISSING_DEPS[@]}" >>"${INSTALL_LOG}" 2>&1; then
-         echo -e "${GREEN}Success${NC}"
+      if ${install} "${tools}" >>"${INSTALL_LOG}" 2>&1; then
+         echo -e "${GREEN}SUCCESS${NC}"
       else
         echo -e "${RED}FAILED${NC}"
-        quit 2 "Failed to install: ${MISSING_DEPS[*]}. Please manually install the missing tools and try again."
+        quit 2 "Failed to install: ${tools}. Please manually install the missing tools and try again."
       fi
     fi
   }
@@ -416,7 +434,7 @@ Usage: $APP_NAME [OPTIONS] <args>
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
         if command -v brew &>/dev/null; then
-          echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
+          echo -e "\n${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
         else
           quit 2 "### Could not find HomeBrew installation !"
         fi
