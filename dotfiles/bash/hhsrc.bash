@@ -141,7 +141,7 @@ for file in ${DOTFILES[*]}; do
   f_path="${HOME}/.${file}"
   if [[ -s "${f_path}" ]]; then
     __hhs_log "INFO" "Loading dotfile: ${f_path}"
-    __hhs_source "${f_path}"
+    source "${f_path}"
   else
     __hhs_log "WARN" "Skipped dotfile :: Not found -> ${f_path}"
   fi
@@ -158,7 +158,7 @@ for file in ${CUSTOM_DOTFILES[*]}; do
   f_path="${HHS_DIR}/.${file}"
   if [[ -s "${f_path}" ]]; then
     __hhs_log "INFO" "Loading custom dotfile: ${f_path}"
-    __hhs_source "${f_path}"
+    source "${f_path}"
   else
     __hhs_log "WARN" "Skipped custom dotfile :: Not found -> ${f_path}"
   fi

@@ -65,24 +65,22 @@ function __hhs_source() {
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <filepath>"
-    return 1
-  fi
-  if [[ ! -f "${filepath}" ]]; then
-    __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found !"
-    return 1
+  elif [[ ! -s "${filepath}" ]]; then
+    __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found or empty!"
   else
     if ! grep "File \"${filepath}\" was sourced !" "${HHS_LOG_FILE}"; then
       if source "${filepath}" 2>>"${HHS_LOG_FILE}"; then
         __hhs_log "DEBUG" "File \"${filepath}\" was sourced !"
+        return 0
       else
-        __hhs_log "ERROR" "File \"${filepath}\" was not sourced !"
+        __hhs_log "ERROR" "Failed to source file \"${filepath}\"!"
       fi
     else
       __hhs_log "WARN" "File \"${filepath}\" was already sourced !"
     fi
   fi
 
-  return 0
+  return 1
 }
 
 # @function: Check whether an URL is reachable.

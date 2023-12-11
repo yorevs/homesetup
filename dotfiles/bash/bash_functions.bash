@@ -24,7 +24,6 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"
 read -r -d '' -a all < <(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "*.bash" | sort --unique)
 __hhs_log "DEBUG" "Loading (${#all[@]}) hhs-function files"
 for file in "${all[@]}"; do
-  __hhs_log "DEBUG" "Loading function file \"${file}\""
   source "${file}" || __hhs_log "ERROR" "Unable to source file: ${file}"
 done
 
@@ -32,7 +31,6 @@ done
 read -r -d '' -a all < <(find "${HHS_HOME}/bin/dev-tools/bash" -type f -name "*.bash" | sort --unique)
 __hhs_log "DEBUG" "Loading (${#all[@]}) dev-tools files"
 for file in "${all[@]}"; do
-  __hhs_log "DEBUG" "Loading dev-tools file \"${file}\""
   source "${file}" || __hhs_log "ERROR" "Unable to source file: ${file}"
 done
 
