@@ -268,11 +268,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
 
-    # Enable install script to use colors and common functions
-    [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}" ]] &&
-         source "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}"
-    [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] &&
-         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -s "${HHS_HOME}/.VERSION" ]] &&
          echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
 
@@ -471,8 +466,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ ! -d "${HHS_HOME}" ]]; then
-      echo -e "${WHITE}Cloning HomeSetup repository ...${NC}"
-      if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >>"${INSTALL_LOG}"  2>&1; then
+      echo -en "${WHITE}Cloning HomeSetup repository ...${NC}"
+      if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >>"${INSTALL_LOG}" 2>&1; then
+        source "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}"
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
@@ -480,7 +476,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       cd "${HHS_HOME}" &>/dev/null  || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
       echo -e "${WHITE}Pulling HomeSetup repository ...${NC}"
-      if git pull --rebase >>"${INSTALL_LOG}"  2>&1; then
+      if git pull --rebase >>"${INSTALL_LOG}" 2>&1; then
+        source "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}"
         source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
       else
         quit 2 "Unable to properly pull the repository !"
@@ -653,8 +650,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
-    ${PYTHON} -m ensurepip --upgrade >> "${INSTALL_LOG}" 2>&1 || quit 2 "Unable to ensure Pip3 !"
-    python3 -m pip freeze >> "${INSTALL_LOG}" 2>&1 || quit 2 "Pip3 is required by HomeSetup but could not be installed !"
+    ${PYTHON} -m pip freeze >> "${INSTALL_LOG}" 2>&1 || quit 2 "Pip3 is required by HomeSetup !"
+    ${PYTHON} -m pip --upgrade --break-system-packages pip >> "${INSTALL_LOG}" 2>&1 || quit 2 "Unable to update Pip3 !"
     echo -e " ${GREEN}OK${NC}"
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
@@ -664,7 +661,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install HomeSetup python libraries.
   install_hspylib() {
     # Define python tools
-    PYTHON="${1:-python3}"
+    PYTHON="${1}"
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages ..."
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
