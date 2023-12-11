@@ -408,14 +408,17 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_brew() {
 
     if ! which brew &>/dev/null; then
-      echo -en "${YELLOW}Installing HomeBrew... ${NC}"
       if curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
-        echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
         if [[ "${MY_OS}" == "Linux" ]]; then
           [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
+        fi
+        if commnd -v brew &>/dev/null; then
+          echo -e "${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
+        else
+          quit 2 "### Could not find HomeBrew installation !"
         fi
       else
         echo -e "${RED}FAILED${NC}"
