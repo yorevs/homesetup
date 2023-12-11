@@ -40,14 +40,24 @@ function __hhs_change_dir() {
 
   path="${path//\~/${HOME}}"
 
-  [[ ! -d "${path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found ! ${NC}" && return 1
+  if [[ ! -d "${path}" ]]; then
+    __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found !"
+  else
+    # shellcheck disable=SC2086
+    if \
+      \cd ${flags} "${path}" &>/dev/null && \
+      \pushd -n "$(pwd)" &>/dev/null && \
+      \dirs -p | uniq >"${HHS_DIR}/.last_dirs"; then
+      return 0
+    else
+      __hhs_errcho "${FUNCNAME[0]}: Unable to change to directory \"${path}\" !"
+    fi
+  fi
 
-  # shellcheck disable=SC2086
-  \cd ${flags} "${path}" || return 1
-  \pushd -n "$(pwd)" &>/dev/null
+  \pushd -n "$(pwd)" &>/dev/null && \
   \dirs -p | uniq >"${HHS_DIR}/.last_dirs"
 
-  return 0
+  return 1
 }
 
 # @function: Change back the current working directory by N directories.

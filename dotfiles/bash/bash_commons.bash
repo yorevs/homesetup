@@ -83,6 +83,20 @@ function __hhs_source() {
   return 1
 }
 
+# @function: Echo a message in red color into stderr.
+# @param $1 [Req] : The message to be echoed.
+function __hhs_errcho() {
+
+  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} <message>"
+    return 1
+  else
+    echo -e "${RED}error: ${*}${NC}" 1>&2
+  fi
+
+  return $?
+}
+
 # @function: Check whether an URL is reachable.
 # @param $1 [Req] : The URL to test reachability.
 function __hhs_is_reachable() {

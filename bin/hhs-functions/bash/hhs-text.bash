@@ -11,20 +11,6 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Echo a message in red color into stderr.
-# @param $1 [Req] : The message to be echoed.
-function __hhs_errcho() {
-
-  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <message>"
-    return 1
-  else
-    echo -e "${RED}error: ${*}${NC}" 1>&2
-  fi
-
-  return $?
-}
-
 # @function: Highlight words from the piped stream.
 # @param $1 [Req] : The word to highlight.
 # @param $1 [Pip] : The piped input stream.

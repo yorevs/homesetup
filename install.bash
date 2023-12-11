@@ -268,7 +268,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
 
-    # Enable install script to use colors
+    # Enable install script to use colors and common functions
+    [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}" ]] &&
+         source "${DOTFILES_DIR}/${SHELL_TYPE}_commons.${SHELL_TYPE}"
     [[ -s "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}" ]] &&
          source "${DOTFILES_DIR}/${SHELL_TYPE}_colors.${SHELL_TYPE}"
     [[ -s "${HHS_HOME}/.VERSION" ]] &&
@@ -651,11 +653,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required by HomeSetup !"
-    [[ -z "${PIP}" ]] && "${PYTHON}" -m ensurepip >>"${INSTALL_LOG}"  2>&1
+    ${PYTHON} -m ensurepip --upgrade >> "${INSTALL_LOG}" 2>&1 || quit 2 "Unable to ensure Pip3 !"
     PIP=$(command -v pip3 2>/dev/null)
-    [[ -z "${PIP}" ]] && quit 2 "Pip3 is required by HomeSetup !"
+    [[ -z "${PIP}" ]] && quit 2 "Pip3 is required by HomeSetup but could not be installed !"
     echo -e " ${GREEN}OK${NC}"
-    ${PYTHON} -m pip install --upgrade pip >>"${INSTALL_LOG}"  2>&1
     echo ''
     echo -e "Using Python version [${YELLOW}$(${PYTHON} -V)${NC}] from: ${BLUE}\"${PYTHON}\"${NC}"
     install_hspylib "${PYTHON}"
