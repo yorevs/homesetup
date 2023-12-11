@@ -41,7 +41,7 @@ usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
 "
 
 UNSETS=(
-  help version cleanup execute update_hhs stamp_next_update is_greater update_check
+  help version cleanup execute update_hhs stamp_next_update is_greater update_check do_update
 )
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
@@ -131,12 +131,8 @@ update_hhs() {
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n])? " ANS
         [[ -n "$ANS" ]] && echo "${ANS}${NC}"
         if [[ "$ANS" == 'y' || "$ANS" == 'Y' ]]; then
-          if pushd "${HHS_HOME}" &>/dev/null && \
-          git stash --all &>/dev/null && \
-          git pull &>/dev/null && \
-          git stash pop &>/dev/null && \
-          popd &>/dev/null && \
-          "${HHS_HOME}"/install.bash -q -r; then
+          pushd "${HHS_HOME}" &>/dev/null || return 1
+          if do_update && "${HHS_HOME}"/install.bash -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
             sleep 1
             reset && source "${HOME}"/.bashrc
@@ -144,6 +140,7 @@ update_hhs() {
           else
             quit 1 "${PLUGIN_NAME}: Failed to update HomeSetup !${NC}"
           fi
+          popd &>/dev/null || return 1
         fi
       fi
       stamp_next_update &>/dev/null
@@ -156,6 +153,24 @@ update_hhs() {
   echo -e "${NC}"
 
   quit 0
+}
+
+do_update() {
+
+  local stashed ret_val
+
+  if [[ -n $(git status --porcelain) ]]; then
+    git stash --all &>/dev/null || return 1
+    stashed=1
+  fi
+  if git pull &>/dev/null; then
+    ret_val=0
+  else
+    ret_val=1
+  fi
+  [[ $stashed -eq 1 ]] && git stash pop &>/dev/null
+
+  return $ret_val
 }
 
 # @purpose: Fetch the last_update timestamp and check if HomeSetup needs to be updated.
