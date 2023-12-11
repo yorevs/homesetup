@@ -97,9 +97,14 @@ Usage: $APP_NAME [OPTIONS] <args>
   # OS type. Defined later on the installation process
   OS_TYPE=
 
-  # HomeSetup required tools
+  # HomeSetup application required tools
+  INSTALL_TOOLS=(
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo'
+  )
+
+  # HomeSetup installation required tools
   REQUIRED_TOOLS=(
-    'git' 'curl' 'ruby' 'rsync' 'python3'
+    'python3' 'vim'
   )
 
   # Missing HomeSetup required tools
@@ -107,13 +112,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
-    GROUP=${GROUP:-staff}  # Default macOS user group
-    REQUIRED_TOOLS+=('xcode-select')  # Darwin required tools
+    GROUP=${GROUP:-staff}
+    INSTALL_TOOLS+=('xcode-select')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
-    GROUP=${GROUP:-${USER}}  # Default user group
-    REQUIRED_TOOLS+=('file')  # Linux required tools
+    GROUP=${GROUP:-${USER}}
+    INSTALL_TOOLS+=('file' 'build-essential')
   fi
 
   # Awesome icons
@@ -122,13 +127,13 @@ Usage: $APP_NAME [OPTIONS] <args>
   POINTER_ICN='\xef\x90\xb2'
 
   # VT-100 Terminal colors
-  NC='\033[0;0;0m'
-  WHITE='\033[0;97m'
-  BLUE='\033[0;34m'
-  GREEN='\033[0;32m'
-  YELLOW='\033[0;93m'
-  RED='\033[0;31m'
   ORANGE='\033[38;5;202m'
+                              WHITE='\033[0;97m'
+  BLUE='\033[0;34m'
+                              GREEN='\033[0;32m'
+  YELLOW='\033[0;93m'
+                              RED='\033[0;31m'
+  NC='\033[0;0;0m'
 
   # Purpose: Quit the program and exhibits an exit message if specified
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
@@ -311,7 +316,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup required tools
   check_required_tools() {
 
-    local pad pad_len
+    local pad pad_len install
 
     has sudo &>/dev/null && SUDO=sudo
 
@@ -319,27 +324,30 @@ Usage: $APP_NAME [OPTIONS] <args>
     if has 'brew'; then
       OS_TYPE='macOS'
       OS_APP_MAN=brew
+      install="${SUDO} brew install -y"
     # Debian or Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
       OS_APP_MAN='apt'
+      install="${SUDO} apt-get install -y"
     # Fedora, CentOS, or Red Hat
     elif has 'yum'; then
       OS_TYPE='RedHat'
       OS_APP_MAN='yum'
+      install="${SUDO} yum install -y"
     # Alpine (busybox)
     elif has 'apk'; then
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
+      install="${SUDO} apk add --no-cache"
     # Arch Linux
     elif has 'pacman'; then
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
+      install="${SUDO} pacman -Sy"
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
-
-    ensure_brew
 
     echo ''
     echo -e "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
@@ -350,7 +358,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
-    for tool_name in "${REQUIRED_TOOLS[@]}"; do
+    for tool_name in "${INSTALL_TOOLS[@]}"; do
       echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
@@ -361,16 +369,35 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
     done
 
-    install_missing_tools "${OS_TYPE}"
+    install_missing_tools "${OS_TYPE}" "${install}"
+
+    ensure_brew
   }
 
-  # Make sure HomeBrew is installed.
+  # Install missing required tools.
+  install_missing_tools() {
+
+    local install="${1}"
+
+    if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
+      [[ -n "${SUDO}" ]] &&
+        echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
+      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${OS_TYPE}) using: \"${install}\"... "
+      if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}" 2>&1; then
+         echo -e "${GREEN}OK${NC}"
+      else
+        echo -e "${RED}FAILED${NC}"
+        quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+      fi
+    fi
+  }
+
+  # Make sure HomeBrew is installed. From HomeSetup 1.7 we will enforce using HomeBrew to install the packages.
   ensure_brew() {
     echo ''
     if ! has 'brew'; then
-      echo -n "${YELLOW}Homebrew is not installed. Attempting to install it ..."
-      install_brew || quit 2 "# Failed to install HomeBrew !"
-      echo -e "${GREEN}SUCCESS${NC} !"
+      echo -e "${YELLOW}Homebrew is not installed. Attempting to install it... ${NC}"
+      install_brew || quit 2 "### Failed to install HomeBrew !"
     else
       echo -e "${BLUE}Homebrew is already installed -> $(brew --prefix) ${NC}"
     fi
@@ -383,34 +410,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${YELLOW}Installing Homebrew ...${NC}"
       bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       if command -v brew &>/dev/null; then
-        echo -e "${YELLOW}@@ Successfully installed Homebrew -> $(brew --prefix)${NC}"
+        echo -e "${GREEN}@@@ Successfully installed Homebrew -> $(brew --prefix)${NC}"
         if [[ "${MY_OS}" == "Linux" ]]; then
           [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
       else
-        echo -e "${RED}### Failed to install Homebrew ${NC}"
-        quit 2
-      fi
-    fi
-  }
-
-  # Install missing required tools.
-  install_missing_tools() {
-
-    # From HomeSetup 1.7 we will enforce using HomeBrew to install the packages
-    local install="${SUDO} brew install -y"
-
-    if [[ ${#MISSING_TOOLS[@]} -ne 0 ]]; then
-      [[ -n "${SUDO}" ]] &&
-        echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -en "${WHITE}Installing required packages [${MISSING_TOOLS[*]}] (${OS_TYPE}) using: \"${install}\"... "
-      if ${install} "${MISSING_TOOLS[@]}" >>"${INSTALL_LOG}"  2>&1; then
-         echo -e "${GREEN}OK${NC}"
-      else
-        echo -e "${RED}FAILED${NC}"
-        quit 2 "Failed to install: ${MISSING_TOOLS[*]}. Please manually install the missing tools and try again."
+        quit 2 "### Failed to install Homebrew"
       fi
     fi
   }
