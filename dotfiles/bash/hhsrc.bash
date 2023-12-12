@@ -49,7 +49,7 @@ else
 fi
 
 # Defined by the installation.
-export HHS_HOME="${HHS_PREFIX:-${HOME}/homesetup}"
+export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 export HHS_DIR="${HOME}/.hhs"
 export HHS_VERSION="$(grep -m 1 . "${HHS_HOME}"/.VERSION)"
 export HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
