@@ -95,6 +95,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   # OS Application manager. Defined later on the installation process
   OS_APP_MAN=
 
+  # HomeBrew prefix
+  BREW=
+
   # OS type. Defined later on the installation process
   OS_TYPE=
 
@@ -389,22 +392,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     # From HomeSetup 1.7 we will use HomeBrew as the default package manager
     ensure_brew
     # At this point we have installed HomeBrew and can use it.
-    install_dependencies "sudo brew install -y" "${MISSING_APPS[@]}"
+    install_dependencies "sudo ${BREW} install -y" "${MISSING_APPS[@]}"
   }
 
+  # shellcheck disable=SC2206
   # Install missing required tools.
   install_dependencies() {
 
-    local install="${1}" tools
+    local install="${1}" tools pkgs
 
     shift
     tools=(${@})
+    pkgs="${tools[*]}"
+    pkgs="${pkgs// /\\n  |-}"
 
     if [[ ${#tools[@]} -gt 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
-      echo -e "  |-${tools// /\\n  |-}"
+      echo -e "  |-${pkgs}"
       if ${install} "${tools[@]}" >>"${INSTALL_LOG}" 2>&1; then
          echo -e "\n${GREEN}@@@ Successfully installed packages !${NC}"
       else
@@ -436,8 +442,9 @@ Usage: $APP_NAME [OPTIONS] <args>
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
+        BREW="$(brew --prefix)"
         if command -v brew &>/dev/null; then
-          echo -e "\n${GREEN}@@@ Successfully installed HomeBrew -> $(brew --prefix)${NC}"
+          echo -e "\n${GREEN}@@@ Successfully installed HomeBrew -> ${BREW}${NC}"
         else
           quit 2 "### Could not find HomeBrew installation !"
         fi
