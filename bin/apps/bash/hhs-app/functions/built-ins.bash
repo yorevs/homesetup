@@ -174,7 +174,7 @@ function man() {
 }
 
 # @purpose: Clear HomeSetup logs, backups and caches and restore original HomeSetup files.
-function restore() {
+function reset() {
 
   local all_files title mchoose_file ret_val=0
 
@@ -185,6 +185,8 @@ function restore() {
     "${HOME}/.inputrc"
     "${HHS_DIR}/.aliasdef"
     "${STARSHIP_CONFIG}"
+    "${HHS_SETUP_FILE}"
+    "${HHS_SHOPTS_FILE}"
   )
 
   title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"
@@ -193,21 +195,22 @@ function restore() {
     [[ $(wc -c <"$mchoose_file") -le 1  ]] && return 1
     clear
     echo ' ' >>"${mchoose_file}"
-    echo -e "${YELLOW}Deleting selected files ...${NC}\n"
+    echo -e "${YELLOW}Deleting selected files...${NC}\n"
     while read -r -d ' ' file; do
       echo -en "${HHS_HIGHLIGHT_COLOR}Deleting file ${WHITE}"
       echo -n "${file} $(printf '\056%.0s' {1..50})" | head -c 50
       # shellcheck disable=SC2086
       if \rm -f ${file} &>/dev/null; then
-        echo -e "${WHITE} [ ${GREEN}  OK  ${NC} ]"
+        echo -e "${WHITE}${GREEN} OK${NC}"
       else
-        echo -e "${WHITE} [ ${RED}FAILED${NC} ]"
+        echo -e "${WHITE}${RED} FAILED${NC}"
         ret_val=1
       fi
     done <"${mchoose_file}"
     echo ''
   fi
   [[ -f "${mchoose_file}" ]] && \rm -f "${mchoose_file}" &>/dev/null
+  echo -e "${YELLOW}Changes will take effect after you 'reload' your terminal${NC}"
 
   return $ret_val
 }
