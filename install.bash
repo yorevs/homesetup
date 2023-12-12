@@ -103,7 +103,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo' 'vim' 'eza'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo' 'vim'
   )
 
   # Missing HomeSetup dependencies
