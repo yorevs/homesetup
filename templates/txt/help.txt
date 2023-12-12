@@ -1,7 +1,7 @@
 Help template
 -------------------------------------------------------------------------------
 ```
-Usage: ${APP_NAME} <arg_name> [options]
+usage: ${APP_NAME} <arg_name> [options]
     # Optional: App. SYNOPSIS.
     # Optional: App. DESCRIPTION.
 
@@ -11,16 +11,16 @@ Usage: ${APP_NAME} <arg_name> [options]
 
     Arguments:
       ARG_1   : TODO: Description about the argument
-    
+
     Examples:
       Example description:
         => example
-    
+
     Exit Status:
-      (0) Success 
+      (0) Success
       (1) Failure due to missing/wrong client input or similar issues
       (2) Failure due to program execution failures
-  
+
   Notes: Optional: App. NOTES
 ```
 
@@ -31,6 +31,6 @@ Notes
 # - [arg_name] for an optional, singular arg
 # - arg_name... for a required arg of which there can be many (this is rare)
 # - [arg_name...] for an arg for which any number can be supplied
-# - {arg_name} for a set of required items; choose one 
-# - {arg1_name|arg2_name} for mutually exclusive items; choose one 
+# - {arg_name} for a set of required items; choose one
+# - {arg1_name|arg2_name} for mutually exclusive items; choose one
 # @@ arg_name should be a descriptive, short name, in lower, snake case

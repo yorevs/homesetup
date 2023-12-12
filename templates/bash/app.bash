@@ -6,44 +6,51 @@
 #  Author: ${author}
 #  Mailto: ${author.mail}
 
-# Current application version
-VERSION=0.9.0
+# Current application version.
+VERSION=${VERSION:-0.9.0}
 
 # This application name.
-APP_NAME="${0##*/}"
+APP_NAME="${APP_NAME:-${0##*/}}"
 
 # Help message to be displayed by the application.
 USAGE=${USAGE:-"
-Usage: ${APP_NAME} <arguments> [options]
+usage: ${APP_NAME} <arguments> [options]
 "}
+
+# Default identifiers to be unset
+UNSETS=('quit' 'usage' 'version' 'parse_args' 'cleanup')
 
 # @purpose: Exit the application with the provided exit code and exhibits an exit message if provided.
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR .
 # @param $2 [Opt] : The exit message to be displayed.
-quit() {
-  # Unset all declared functions.
-  exit_code=${1:-0}
+function quit() {
+
+  local exit_code=${1:-0}
+
   shift
-  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
+  if [[ ${exit_code} -ne 0 && ${#} -ge 1 ]]; then
+    echo -en "${RED}error: ${APP_NAME} => " 1>&2
+  fi
+  [[ ${#} -eq 0 ]] && echo -e "${NC}"
   [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
-  [[ ${#} -gt 0 ]] && echo ''
-  # shellcheck disable=SC2086
-  exit ${exit_code}
+
+  exit "${exit_code}"
 }
 
 # @purpose: Display the usage message and exit with the provided code ( or zero as default ).
 # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE .
 # @param $2 [Opt] : The exit message to be displayed.
-usage() {
-  exit_code=${1:-0}
-  shift
-  echo -en "${USAGE}"
+function usage() {
+
+  local exit_code=${1:-0}
+
+  shift && echo -en "${USAGE}"
   [[ ${#} -gt 0 ]] && echo ''
   quit "${exit_code}" "$@"
 }
 
 # @purpose: Display the current application version and exit.
-version() {
+function version() {
   quit 0 "$APP_NAME v$VERSION"
 }
 
@@ -51,7 +58,7 @@ version() {
 # Basics
 
 # @purpose: Parse command line arguments
-parse_args() {
+function parse_args() {
 
   # If not enough arguments is passed, display usage message
   if [[ ${#} -lt 1 ]]; then
@@ -77,8 +84,17 @@ parse_args() {
   done
 }
 
+# @purpose: Cleanup procedures.
+function cleanup() {
+  unset -f "${UNSETS[@]}"
+}
+
 # @purpose: Program entry point
 main() {
+
+  # Execute a cleanup after the application has exited.
+  trap cleanup EXIT
+
   echo "Executing ${APP_NAME} ..."
   parse_args "${@}"
   echo "
@@ -88,4 +104,4 @@ main() {
 }
 
 main "${@}"
-quit 0
+quit 1

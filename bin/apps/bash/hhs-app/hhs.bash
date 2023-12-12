@@ -304,6 +304,9 @@ function main() {
 
   local fn_name
 
+  # Execute a cleanup after the application has exited.
+  trap cleanup_plugins EXIT
+
   parse_args "${@}"
   register_functions
   register_plugins
@@ -319,7 +322,6 @@ function main() {
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
   invoke_command "${@}" || quit 2
-  cleanup_plugins
 }
 
 source "${HHS_DIR}/bin/app-commons.bash"
