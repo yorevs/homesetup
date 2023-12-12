@@ -329,7 +329,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Debian or Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
-      OS_APP_MAN=
+      OS_APP_MAN='apt-get'
       DEPENDENCIES+=('file' 'build-essential' 'python3' 'python3-pip')
       install="${SUDO} apt-get install -y"
     # Fedora, CentOS, or Red Hat
@@ -510,8 +510,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       cd - &>/dev/null  || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
     fi
 
-    [[ ! -d "${DOTFILES_DIR}" || ! -d "${HHS_HOME}" || -d "${HHS_DIR}" ]] &&
-         quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
+    [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
   }
 
   # Install all dotfiles.
