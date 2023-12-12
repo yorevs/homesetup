@@ -75,20 +75,37 @@ alias q="exit 0"
 # @alias: Enable aliases to be sudo’ed
 alias sudo='sudo '
 
-# @alias: Always use color output for `ls`
-alias ls='\ls ${COLOR_FLAG}'
-# @alias: List all files colorized in long format
-alias l='ls -lhF'
-# @alias: List all directories in long format
-alias ld='ls -d -lah */ 2> /dev/null'
-# @alias: List all files in long format
-alias lf='ls -lahd ??* | grep --color=never "^-"'
-# @alias: List all files and folders colorized in long format, including dot files
-alias ll='ls -lahF'
-# @alias: List all .dotfiles colorized in long format
-alias lll='ls -lahd .??* 2> /dev/null | grep --color=never "^-"'
-# @alias: List all .dotfolders colorized in long format
-alias lld='ls -d -lah .??*/ 2> /dev/null'
+if __hhs_has eza; then
+  # @alias: Use eza instead
+  alias ls='eza --color=auto --icons=auto -F -o -g -H --group-directories-first --git'
+  # @alias: List all files colorized in long format
+  alias l='ls --long'
+  # @alias: List all directories in long format
+  alias ld='l --only-dirs'
+  # @alias: List all files in long format
+  alias lf='l --only-files'
+  # @alias: List all files and folders colorized in long format, including dot files
+  alias ll='l --all'
+  # @alias: List all .dotfiles colorized in long format
+  alias lll='lf --all'
+  # @alias: List all .dotfolders colorized in long format
+  alias lld='ld --all'
+else
+  # @alias: Always use color output for `ls`
+  alias ls='\ls ${COLOR_FLAG}'
+  # @alias: List all files colorized in long format
+  alias l='ls -lhF'
+  # @alias: List all directories in long format
+  alias ld='ls -d -lah */ 2> /dev/null'
+  # @alias: List all files in long format
+  alias lf='ls -lahd ??* | grep --color=never "^-"'
+  # @alias: List all files and folders colorized in long format, including dot files
+  alias ll='ls -lahF'
+  # @alias: List all .dotfiles colorized in long format
+  alias lll='ls -lahd .??* 2> /dev/null | grep --color=never "^-"'
+  # @alias: List all .dotfolders colorized in long format
+  alias lld='ls -d -lah .??*/ 2> /dev/null'
+fi
 
 # @alias: Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.

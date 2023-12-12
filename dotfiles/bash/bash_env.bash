@@ -149,7 +149,7 @@ DEVELOPER_TOOLS=(
   'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
   'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm'
   'shfmt' 'shellcheck' 'eslint' 'pylint'
-  'nvm' 'node' 'direnv' 'starship' 'pbcopy'
+  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'eza'
   'docker' 'sqlite3' 'colima'
 )
 

@@ -26,60 +26,6 @@ function __hhs_random() {
   return 0
 }
 
-# @function: Convert string into it's decimal ASCII representation.
-# @param $1 [Req] : The string to convert.
-function __hhs_ascof() {
-
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <character>"
-    return 1
-  fi
-  echo -en "\n${GREEN}Dec:${NC}"
-  echo -en "${@}" | od -An -t uC | head -n 1 | sed 's/^ */ /g'
-  echo -en "${GREEN}Hex:${NC}"
-  echo -en "${@}" | od -An -t xC | head -n 1 | sed 's/^ */ /g'
-  echo -en "${GREEN}Str:${NC}"
-  echo -e " ${*}\n"
-
-  return $?
-}
-
-# @function: Convert unicode to hexadecimal
-# @param $1..$N [Req] : The unicode values to convert
-function __hhs_utoh() {
-
-  local result converted uni ret_val=1
-
-  if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <5d-unicode>"
-    echo ''
-    echo '  Notes: '
-    echo '    - unicode is a four digits hexadecimal number. E.g:. F205'
-    echo '    - exceeding digits will be ignored'
-    return 1
-  else
-    echo ''
-    for next in "$@"; do
-      hexa="${next:0:4}"
-      # More digits will be ignored
-      uni="$(printf '%04s' "${hexa}")"
-      [[ ${uni} =~ [0-9A-Fa-f]{4} ]] || continue
-      echo -e "[${HHS_HIGHLIGHT_COLOR}Unicode:'\u${uni}'${NC}]"
-      converted=$(python3 -c "import struct; print(bytes.decode(struct.pack('<I', int('${uni}', 16)), 'utf_32_le'))" | hexdump -Cb)
-      ret_val=$?
-      result=$(awk '
-      NR == 1 {printf "  Hex => "; print "\\\\x"$2"\\\\x"$3"\\\\x"$4}
-      NR == 2 {printf "  Oct => "; print "\\"$2"\\"$3"\\"$4}
-      NR == 1 {printf "  Icn => "; print "\\x"$2"\\x"$3"\\x"$4}
-      ' <<<"${converted}")
-      echo -e "${GREEN}${result}${NC}"
-      echo ''
-    done
-  fi
-
-  return ${ret_val}
-}
-
 # @function: Open a file or URL with the default program.
 # @param $1 [Req] : The url or filename to open.
 function __hhs_open() {
@@ -111,7 +57,7 @@ function __hhs_edit() {
     echo "Usage: ${FUNCNAME[0]} <file_path>"
     return 1
   else
-    [[ -s "${filename}" ]] || touch "${filename}" >/dev/null 2>&1
+    [[ -s "${filename}" ]] || touch "${filename}" > /dev/null 2>&1
     [[ -s "${filename}" ]] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"${filename}\""
 
     if [[ -n "${editor}" ]] && __hhs_has "${editor}" && ${editor} "${filename}"; then
@@ -124,7 +70,7 @@ function __hhs_edit() {
       return $?
     elif __hhs_has vi && \vi "${filename}"; then
       return $?
-    elif __hhs_has cat && \cat >"${filename}"; then
+    elif __hhs_has cat && \cat > "${filename}"; then
       return $?
     else
       __hhs_errcho "${FUNCNAME[0]}: Unable to find a suitable editor for the file \"${filename}\" !"
@@ -134,53 +80,54 @@ function __hhs_edit() {
   return 1
 }
 
+# shellcheck disable=SC2030,SC2031
 # @function: Display information about the given command.
 # @param $1 [Req] : The command to check.
 function __hhs_about() {
 
-  local cmd type_ret=() cmd_type cmd_details i=0
+  local cmd type_ret=() i=0 re_alias re_function re_command recurse="${2}"
+  re_alias="(.*) is aliased to \`(.*)'"
+  re_function="(.*) is a function"
+  re_command="(.*) is (.*)"
 
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <command>"
     return 1
+  elif [[ ${recurse} -gt 5 ]] || [[ ${recurse} =~ [^0-9]+ ]]; then
+    return 1
   else
+    [[ ${recurse} -eq 0 ]] && echo ''
     cmd=${1}
     IFS=$'\n'
-    read -r -d '' -a type_ret orig_ret < <(type "${cmd}" 2>/dev/null)
+    read -r -d '' -a type_ret < <(type "${cmd}" 2> /dev/null)
     IFS="${OLDIFS}"
     if [[ ${#type_ret[@]} -gt 0 ]]; then
-      echo ''
-      if [[ "${type_ret[0]}" == *"is aliased to"* ]]; then
-        cmd_details="Aliased:"
-        cmd_type=${type_ret[0]//is aliased to \`/${WHITE}=> }
-        cmd_type=${cmd_type// \`/: }
-        cmd_type=${cmd_type// \'/}
-        printf "${GREEN}%12s${BLUE} ${cmd_type//\%/%%} ${NC}\n" "${cmd_details}"
+      if [[ ${type_ret[0]} =~ ${re_alias} ]]; then
+        printf "${GREEN}%12s${BLUE} %s${WHITE} => %s ${NC}\n" "Aliased:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
         # To avoid unalias the command, we do that in another subshell
         (
-          if unalias "${cmd}" 2>/dev/null; then
-            IFS=$'\n'
-            read -r -d '' -a orig_ret < <(type "${cmd}" 2>/dev/null)
-            IFS="${OLDIFS}"
-            if [[ ${#orig_ret[@]} -gt 0 ]]; then
-              cmd_type=${orig_ret//is/${WHITE}=>}
-              printf "${GREEN}%12s${BLUE} ${cmd_type} ${NC}\n" "Unaliased:"
-            fi
+          IFS=$'\n'
+          if [[ "${BASH_REMATCH[2]}" == *"__hhs_"* ]]; then
+            ((recurse += 1))
+            __hhs_about "${BASH_REMATCH[2]}" "${recurse}"
+          else
+            while unalias "${cmd}" 2> /dev/null; do
+              ((recurse += 1))
+              __hhs_about "${cmd}" "${recurse}"
+            done
           fi
+          IFS="${OLDIFS}"
         )
-      elif [[ "${type_ret[0]}" == *"is a function"* ]]; then
-        printf "${GREEN}%12s${BLUE} ${type_ret[1]}${WHITE}=> \n" "Function:"
+      elif [[ ${type_ret[0]} =~ ${re_function} ]]; then
+        printf "${GREEN}%12s${BLUE} %s${WHITE} => \n" "Function:" "${BASH_REMATCH[1]}"
         for line in "${type_ret[@]:2}"; do
           printf "   %4d: %s\n" $((i += 1)) "${line}"
         done
-      else
-        cmd_type=${type_ret//is /${WHITE}=> }
-        printf "${GREEN}%12s${BLUE} ${cmd_type//\%/%%} ${NC}\n" "Command:"
+      elif [[ ${type_ret[0]} =~ ${re_command} ]]; then
+        printf "${GREEN}%12s${BLUE} %s${WHITE} => %s ${NC}\n" "Command:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
       fi
-      echo -e "${NC}"
-    else
-      echo -e "${YELLOW}No matches found for: ${cmd}${NC}"
     fi
+    [[ ${recurse} -eq 0 ]] && echo -e "${NC}"
   fi
 
   return 0
@@ -197,10 +144,10 @@ function __hhs_help() {
     return 1
   else
     cmd="${1}"
-    if ! ${cmd} --help 2>/dev/null; then
-      if ! ${cmd} -h 2>/dev/null; then
-        if ! ${cmd} help 2>/dev/null; then
-          if ! ${cmd} /? 2>/dev/null; then
+    if ! ${cmd} --help 2> /dev/null; then
+      if ! ${cmd} -h 2> /dev/null; then
+        if ! ${cmd} help 2> /dev/null; then
+          if ! ${cmd} /? 2> /dev/null; then
             __hhs_errcho "${RED}Help not available for ${cmd}"
           fi
         fi
@@ -217,7 +164,7 @@ function __hhs_help() {
 function __hhs_where_am_i() {
 
   echo "${GREEN}Current directory: ${NC}$(pwd -LP)"
-  if __hhs_has git && git rev-parse --is-inside-work-tree &>/dev/null; then
+  if __hhs_has git && git rev-parse --is-inside-work-tree &> /dev/null; then
     echo "${GREEN}Remote repository: ${NC}$(git remote -v | head -n 1 | awk '{print $2}')"
   fi
 }
@@ -228,7 +175,7 @@ function __hhs_shopt() {
 
   local shell_options option filter
 
-  filter=$(tr '[:lower:]' '[:upper:]' <<<"${1}")
+  filter=$(tr '[:lower:]' '[:upper:]' <<< "${1}")
 
   if [[ ${#} -eq 0 || ${filter} =~ ON|OFF ]]; then
     IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
