@@ -692,12 +692,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     PYTHON="${1}"
     PIP="${2}"
     python_minor="$(${PYTHON} -V | cut -d '.' -f2)"
-    [[ $python_minor -ge 12 ]] && pip_flags='--break-system-packages'
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
-    ${PIP} install --upgrade "${pip_flags}" -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
-      quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
+    if [[ $python_minor -ge 12 ]]; then
+      ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+        quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
+    else
+      ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+        quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
+    fi
     echo -e "${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
     echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
