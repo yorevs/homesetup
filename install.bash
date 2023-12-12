@@ -389,13 +389,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     # From HomeSetup 1.7 we will use HomeBrew as the default package manager
     ensure_brew
     # At this point we have installed HomeBrew and can use it.
-    install_dependencies "brew install -y" "${MISSING_APPS[@]}"
+    install_dependencies "sudo brew install -y" "${MISSING_APPS[@]}"
   }
 
   # Install missing required tools.
   install_dependencies() {
 
-    local install="${1}" tools=("${2}")
+    local install="${1}" tools
+
+    shift
+    tools=(${@})
 
     if [[ ${#tools[@]} -gt 0 ]]; then
       [[ -n "${SUDO}" ]] &&
@@ -403,7 +406,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
       echo -e "  |-${tools// /\\n  |-}"
       if ${install} "${tools[@]}" >>"${INSTALL_LOG}" 2>&1; then
-         echo -e "${GREEN}SUCCESS${NC}"
+         echo -e "\n${GREEN}@@@ Successfully installed packages !${NC}"
       else
         echo -e "${RED}FAILED${NC}"
         quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
