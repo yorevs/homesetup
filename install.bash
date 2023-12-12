@@ -510,7 +510,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       cd - &>/dev/null  || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
     fi
 
-    [[ ! -d "${DOTFILES_DIR}" ]] && quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
+    [[ -d "${DOTFILES_DIR}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
   }
 
   # Install all dotfiles.
@@ -677,10 +677,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     PIP=$(command -v pip3 2>/dev/null)
     [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required to install HomeSetup !"
     [[ -z "${PIP}" ]] && quit 2 "Pip3 is required to install HomeSetup !"
+    python_version="$(${PYTHON} -V)"
+    pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
     ${PIP} freeze >>"${INSTALL_LOG}"  2>&1 || quit 2 "Pip3 is required to install HomeSetup !"
     echo -e "${GREEN}OK${NC}"
     echo ''
-    echo -e "${WHITE}Using Python ${YELLOW}v$(${PYTHON} -V)${WHITE} and Pip ${YELLOW}v$(${PIP} -V | \cut -d ' ' -f2)${NC}"
+    echo -e "${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
     install_hspylib "${PYTHON}" "${PIP}"
   }
 
@@ -689,10 +691,12 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define python tools
     PYTHON="${1}"
     PIP="${2}"
+    python_minor="$(${PYTHON} -V | cut -d '.' -f2)"
+    [[ $python_minor -ge 12 ]] && pip_flags='--break-system-packages'
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
-    ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+    ${PIP} install --upgrade "${pip_flags}" -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     echo -e "${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
