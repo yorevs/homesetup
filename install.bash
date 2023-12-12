@@ -336,17 +336,20 @@ Usage: $APP_NAME [OPTIONS] <args>
     elif has 'yum'; then
       OS_TYPE='RedHat'
       OS_APP_MAN='yum'
+      DEPENDENCIES+=('file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
       install="${SUDO} yum install -y"
     # Alpine (busybox)
     elif has 'apk'; then
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
       install="${SUDO} apk add --no-cache"
+      DEPENDENCIES+=('file' 'python3' 'python3-pip')
     # Arch Linux
     elif has 'pacman'; then
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
       install="${SUDO} pacman -Sy"
+      DEPENDENCIES+=('file' 'python3' 'python3-pip')
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
@@ -384,7 +387,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Install packages using the default package manager
     install_dependencies "${install}" "${MISSING_DEPS[@]}"
-    # From HomeSetup 1.7 we will use HomeBrew as the default package manager
     ensure_brew
   }
 
@@ -413,14 +415,17 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Make sure HomeBrew is installed. From HomeSetup 1.7 we will enforce using HomeBrew to install the packages.
+  # Make sure HomeBrew is installed. From HomeSetup 1.7 we will use HomeBrew as the default HHS package manager.
   ensure_brew() {
-    echo ''
-    if ! has 'brew'; then
-      echo -en "${YELLOW}HomeBrew is not installed. Attempting to install it... ${NC}"
-      install_brew || quit 2 "### Failed to install HomeBrew !"
-    else
-      echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
+
+    if [[ ${OS_TYPE} =~ Debian|RedHat|macOS ]]; then
+      echo ''
+      if ! has 'brew'; then
+        echo -en "${YELLOW}HomeBrew is not installed. Attempting to install it... ${NC}"
+        install_brew || quit 2 "### Failed to install HomeBrew !"
+      else
+        echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
+      fi
     fi
   }
 

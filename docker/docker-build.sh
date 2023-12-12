@@ -3,7 +3,8 @@
 # We need to load the dotfiles below due to non-interactive shell.
 [[ -f "${HOME}"/.bash_commons ]] && source "${HOME}"/.bash_commons
 
-IFS=$'\n' read -r -d '' -a images < <(find "${HHS_HOME}/docker" -type d -mindepth 1 -exec basename {} \;)
+IFS=$'\n'
+read -r -d '' -a images < <(find "${HHS_HOME}/docker" -type d -exec basename {} \; )
 IFS="${OLDIFS}"
 
 if [[ $# -lt 1 || "${1}" == -h || "${1}" == --help ]]; then
