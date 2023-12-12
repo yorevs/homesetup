@@ -103,12 +103,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo'
-  )
-
-  # HomeSetup installation required tools
-  REQUIRED_APPS=(
-    'python3' 'vim'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo' 'vim'
   )
 
   # Missing HomeSetup dependencies
@@ -120,12 +115,10 @@ Usage: $APP_NAME [OPTIONS] <args>
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
     GROUP=${GROUP:-staff}
-    DEPENDENCIES+=('xcode-select')
   elif [[ "${MY_OS}" == "Linux" ]]; then
     MY_OS_NAME="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
     MY_OS_NAME="${MY_OS_NAME#*=}"
     GROUP=${GROUP:-${USER}}
-    DEPENDENCIES+=('file' 'build-essential')
   fi
 
   # Awesome icons
@@ -331,11 +324,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     if has 'brew'; then
       OS_TYPE='macOS'
       OS_APP_MAN=brew
+      DEPENDENCIES+=('xcode-select')
       install="${SUDO} brew install -y"
     # Debian or Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
-      OS_APP_MAN='apt'
+      OS_APP_MAN=
+      DEPENDENCIES+=('file' 'build-essential' 'python3' 'python3-pip')
       install="${SUDO} apt-get install -y"
     # Fedora, CentOS, or Red Hat
     elif has 'yum'; then
@@ -391,8 +386,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     install_dependencies "${install}" "${MISSING_DEPS[@]}"
     # From HomeSetup 1.7 we will use HomeBrew as the default package manager
     ensure_brew
-    # At this point we have installed HomeBrew and can use it.
-    install_dependencies "sudo ${BREW} install -y" "${MISSING_APPS[@]}"
   }
 
   # shellcheck disable=SC2206
@@ -442,7 +435,7 @@ Usage: $APP_NAME [OPTIONS] <args>
           [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           eval "$("$(brew --prefix)"/bin/brew shellenv)"
         fi
-        BREW="$(brew --prefix)"
+        BREW="$(brew --prefix)/bin/brew"
         if command -v brew &>/dev/null; then
           echo -e "\n${GREEN}@@@ Successfully installed HomeBrew -> ${BREW}${NC}"
         else
