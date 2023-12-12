@@ -30,7 +30,7 @@ if __hhs_has "python3"; then
       dir="${1}"
       file_globs="${2}"
       expr="e=\"${file_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      names=$(python -c "${expr}")
+      names=$(python3 -c "${expr}")
       echo "${YELLOW}Searching for files matching: \"${file_globs}\" in \"${dir}\" ${NC}"
       eval "find -L ${dir} -type f \( ${names} \) 2> /dev/null | __hhs_highlight \"(${file_globs//\*/.*}|$)\""
 
@@ -55,7 +55,7 @@ if __hhs_has "python3"; then
       dir="${1}"
       dir_globs="${2}"
       expr="e=\"${dir_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      names=$(python -c "${expr}")
+      names=$(python3 -c "${expr}")
       echo "${YELLOW}Searching for folders matching: [${dir_globs}] in \"${dir}\" ${NC}"
       eval "find -L ${dir} -type d \( ${names} \) 2> /dev/null | __hhs_highlight \"(${dir_globs//\*/.*}|$)\""
 
@@ -120,7 +120,7 @@ if __hhs_has "python3"; then
       search_str="${2}"
       file_globs="${3:-*.*}"
       names_expr="e=\"${file_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
-      names=$(python -c "${names_expr}")
+      names=$(python3 -c "${names_expr}")
       base_cmd="find -L ${dir} -type f \( ${names} \) -exec grep ${gflags} \"${search_str}\" {}"
 
       echo "${YELLOW}Searching for \"${file_globs_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${file_globs}] ${extra_str} ${NC}"

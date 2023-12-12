@@ -102,7 +102,7 @@ CUSTOM_DOTFILES=(
 )
 
 # Re-create the HomeSetup log file.
-started="$(python -c 'import time; print(int(time.time() * 1000))')"
+started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
 # Source the bash common functions.
@@ -226,7 +226,7 @@ if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
   fi
 fi
 
-finished="$(python -c 'import time; print(int(time.time() * 1000))')"
+finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 diff_time=$((finished - started))
 diff_time_sec=$((diff_time/1000))
 diff_time_ms=$((diff_time-(diff_time_sec*1000)))

@@ -32,7 +32,7 @@ function tests() {
   re_skip='^(ok|not ok) ([0-9]+) (.+) in .* # skip .*'
   re_status='^(ok|not ok) ([0-9]+) (.+) in .*'
   re_len='^([0-9]+)\.\.([0-9]+)$'
-  started="$(python -c 'import time; print(int(time.time() * 1000))')"
+  started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 
   echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running HomeSetup bats tests\n${BLUE}"
   echo -e "  |-Bats : v$(__hhs_version bats | head -n 1)"
@@ -74,7 +74,7 @@ function tests() {
     done < <(bats -rtT "${next}" 2>&1)
   done
 
-  finished="$(python -c 'import time; print(int(time.time() * 1000))')"
+  finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
   diff_time=$((finished - started))
   diff_time_sec=$((diff_time/1000))
   diff_time_ms=$((diff_time-(diff_time_sec*1000)))
