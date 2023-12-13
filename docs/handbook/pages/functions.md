@@ -48,4 +48,4 @@ tools. This set is new and will be improved in the future. Currently we have sup
 A list of available functions can be found on the **README.md** section [Development Tools](../../USAGE.md#development-tools)
 
 
-[Back to User Handbook](../USER_HANDBOOK.md)
+[Back to User Handbook](../handbook.md)

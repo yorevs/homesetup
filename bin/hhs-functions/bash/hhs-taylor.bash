@@ -12,7 +12,7 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Tail a log using matching colors.
+# @function: Tail a log using customized colors and patterns.
 # @param $1 [Req] : The log file name.
 function __hhs_tailor() {
 

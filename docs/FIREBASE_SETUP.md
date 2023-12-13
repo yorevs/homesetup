@@ -83,7 +83,7 @@ Firebase account. You can find detailed instructions on how to generate your [Fi
 Once you have completed the configuration of your Firebase Realtime Database and generated the service token, you can
 utilize it with HomeSetup to conveniently upload and download your dotfiles. This integration ensures that your
 configurations are safely stored and easily accessible whenever needed. For further guidance and assistance with the
-setup process, please refer to the provided documentation on the [User's Handbook](https://github.com/yorevs/homesetup/blob/master/docs/handbook/USER_HANDBOOK.md)
+setup process, please refer to the provided documentation on the [User's Handbook](https://github.com/yorevs/homesetup/blob/master/docs/handbook/handbook.md)
 of HomeSetup.
 
 [![FirebaseUsage](https://asciinema.org/a/585493.svg)](https://asciinema.org/a/585493)

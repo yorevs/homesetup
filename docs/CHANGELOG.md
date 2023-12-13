@@ -184,7 +184,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
 * Added New vim recipe.
 * Added New function __hhs_minput based on __hhs_mselect.
 * Added New compatibility with **semver** from the next release.
-* Added New CHANGELOG.md file and USER_HANDBOOK.md scratch.
+* Added New CHANGELOG.md file and handbook.md scratch.
 * Added New __hhs_ascof function.
 * Added New commit_msg git hook.
 * Added Deployer tool scratch.

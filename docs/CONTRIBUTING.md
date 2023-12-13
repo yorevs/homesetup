@@ -10,7 +10,7 @@ You are welcome to contribute with the project by following the guidelines below
 4. Provide a meaningful help using the [Help template](../templates/txt/help.txt).
 5. Commits to the repository must follow the [commit-templates](../templates/git/commits).
 6. Create a fork or branch with an adequate name.
-7. Provide/Update the [User Handbook](handbook/USER_HANDBOOK.md) for your changes if applicable.
+7. Provide/Update the [User Handbook](handbook/handbook.md) for your changes if applicable.
 8. Follow the [Pull Request Template](PULL_REQUEST_TEMPLATE.md)
 
 You can contribute in many ways:

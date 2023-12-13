@@ -40,7 +40,7 @@ integration with popular tools like Git, Gradle, Docker, and more.
 - Highly customizable **aliases**, **paths**, **environment variables** and more.
 - A **universal package manager** helper that facilitates the installation of applications using recipes, catering to various package managers _beyond normal package managers_.
 - Ability to upload custom dotfiles on [Firebase](https://firebase.google.com/) and easily download them across different environments.
-- Offers a short learning curve and provides a comprehensive [User's Handbook](docs/handbook/USER_HANDBOOK.md) for reference.
+- Offers a short learning curve and provides a comprehensive [User's Handbook](docs/handbook/handbook.md) for reference.
 - All code is licensed under The [MIT License](https://opensource.org/license/mit/), granting users the freedom to modify and use it as desired.
 - Tab completion with Shift key (using menu-complete) to cycle through options conveniently.
 - Intuitive visual input methods for selecting, choosing, and form data within scripts.
@@ -217,7 +217,7 @@ any questions or encounter any issues during the update process, feel free to re
 
 ## Contacts
 
-- Documentation: [API](docs/handbook/USER_HANDBOOK.md)
+- Documentation: [API](docs/handbook/handbook.md)
 - License: [MIT](LICENSE.md)
 - Issue tracker: https://github.com/yorevs/homesetup/issues
 - Official chat: https://gitter.im/yorevs-homesetup/community

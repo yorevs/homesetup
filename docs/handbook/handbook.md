@@ -1,7 +1,10 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup User Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+> The ultimate Terminal experience
 
 **Thank you** for using HomeSetup. This handbook contains a collection of instructions intended to provide ready
-reference for your new terminal features. We will cover all related aliases, applications and functions, as well as 
+reference for your new terminal features. We will cover all related aliases, applications and functions, as well as
 environment variables, configuration files and more.
 
 ## Table of contents
@@ -20,10 +23,10 @@ environment variables, configuration files and more.
 
 ## Environment Variables
 
-Your new terminal uses a bunch of environment variables, that will be extended by HomeSetup using the 
+Your new terminal uses a bunch of environment variables, that will be extended by HomeSetup using the
 [bash_envs.bash](../../dotfiles/bash/bash_env.bash).
 
-You can override or add additional variables by adding entries to your installed **~/.env** file. When you first 
+You can override or add additional variables by adding entries to your installed **~/.env** file. When you first
 install HomeSetup this file will be created automatically for you, so you just need to edit it.
 
 **All HomeSetup variable are prefixed with HHS_**
@@ -62,23 +65,23 @@ install HomeSetup this file will be created automatically for you, so you just n
 
 ## Aliases
 
-HomeSetup defines some [aliases](../USAGE.md#aliases) that can be used to ease common tasks and commands. We provide many functions tha are 
-also aliased, but those can be customised using the installed **~/.aliasdef** file. You can customize most of HomeSetup 
-aliases by editing this file. 
+HomeSetup defines some [aliases](../USAGE.md#aliases) that can be used to ease common tasks and commands. We provide many functions tha are
+also aliased, but those can be customised using the installed **~/.aliasdef** file. You can customize most of HomeSetup
+aliases by editing this file.
 
-When you first install HomeSetup, the file will be automatically generated for you. Further updates may require this 
-file to be updated. We always keep a backup of this file, so, you can preserve your customizations, but this process has 
+When you first install HomeSetup, the file will be automatically generated for you. Further updates may require this
+file to be updated. We always keep a backup of this file, so, you can preserve your customizations, but this process has
 to be manual. The original content is defined on the original [aliasdef](../../dotfiles/aliasdef) file.
 
 ### Alias Definitions
 
-Here is where you feel yourself home. You can override our default aliases by changing your installed **~/.aliasdef** file. 
-When you first install HomeSetup this file will be created automatically for you, so you just need to customise it the 
+Here is where you feel yourself home. You can override our default aliases by changing your installed **~/.aliasdef** file.
+When you first install HomeSetup this file will be created automatically for you, so you just need to customise it the
 what you desire.
 
 If you want to add more aliases, you can edit the file **~/.aliases**. HomeSetup will always load this file after the defaults, so whatever you write in this file, will prevail over the default.
 
-**Notice that** Sometimes we need to update this file when we add/change some functions. We will always keep a backup of this file prior to 
+**Notice that** Sometimes we need to update this file when we add/change some functions. We will always keep a backup of this file prior to
 changing it, so you can always get what you have inside it and move to the new file.
 
 ### Categories
@@ -99,11 +102,11 @@ We group our aliases using the following categories:
 
 ## Functions
 
-HomeSetup defines a bunch of [functions](../USAGE.md#functions) to help with the daily tasks such as "punch the clock", 
-calculations with time, search and cd into directories, save most used directories, aliases and commands, git stuff and more. 
+HomeSetup defines a bunch of [functions](../USAGE.md#functions) to help with the daily tasks such as "punch the clock",
+calculations with time, search and cd into directories, save most used directories, aliases and commands, git stuff and more.
 They can also be aliased using the **~/.aliasdef** file. We also define some default values for them (that you can also change later).
 
-You can override or add additional variables by adding entries to your installed **~/.functions** file. When you first 
+You can override or add additional variables by adding entries to your installed **~/.functions** file. When you first
 install HomeSetup this file will be created automatically for you, so you just need to edit it.
 
 **All HomeSetup functions are prefixed with `__hhs_`**

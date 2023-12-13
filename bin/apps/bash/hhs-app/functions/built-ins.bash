@@ -20,37 +20,38 @@ function list() {
     echo "Usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs]" && quit 0
   elif [[ "${args[*]}" =~ -flat ]]; then
     args=("${args[@]/'-flat'/}")
-    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] &&
-      for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
-    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -funcs ]] &&
-      for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
-    echo ''
-    quit 0
+    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] \
+      && for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
+    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -funcs ]] \
+      && for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
+    quit 0 ''
   else
-    echo ''
-    echo "${YELLOW}HomeSetup application command list"
+    columns="$(tput cols)"
+    count=$((${#PLUGINS[@]} > ${#HHS_APP_FUNCTIONS[@]} ? ${#PLUGINS[@]} : ${#HHS_APP_FUNCTIONS[@]}))
+    echo -e "\n${YELLOW}HomeSetup application commands"
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -plugins ]]; then
-      echo ''
-      echo "${ORANGE}-=- HHS Plugins -=-"
-      echo ''
+      echo -e "\n${ORANGE}-=- HHS Plug-ins -=-\n"
       for idx in "${!PLUGINS[@]}"; do
-        printf "${WHITE}%.2d. " "$((idx + 1))"
-        echo -e "Plug-In :: ${HHS_HIGHLIGHT_COLOR}\"${PLUGINS[$idx]}\"${NC}"
+        line="${PLUGINS[$idx]}"
+        printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
+        echo -en "${line:0:${columns}}${NC}"
+        [[ "${#line}" -ge "${columns}" ]] && echo -n "..."
+        echo -e "${NC}"
       done
     fi
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -funcs ]]; then
-      echo ''
-      echo "${ORANGE}-=- HHS Functions -=-"
-      echo ''
+      echo -e "\n${ORANGE}-=- HHS Functions -=-\n"
       for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
-        printf "${WHITE}%.2d. " "$((idx + 1))"
-        echo -e "Function :: ${HHS_HIGHLIGHT_COLOR}\"${HHS_APP_FUNCTIONS[$idx]}\"${NC}"
+        line="${HHS_APP_FUNCTIONS[$idx]}"
+        printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
+        echo -en "${line:0:${columns}}${NC}"
+        [[ "${#line}" -ge "${columns}" ]] && echo -n "..."
+        echo -e "${NC}"
       done
     fi
   fi
 
-  echo ''
-  quit 0
+  quit 0 ''
 }
 
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
@@ -74,20 +75,21 @@ function funcs() {
 
   if [[ ! -s "${cache_file}" ]]; then
     echo -en "${ORNGE}Please wait until we cache all HomeSetup v${HHS_VERSION} functions ...${NC}"
-    search_hhs_functions "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/dev-tools/bash"
-    printf "%s\n" "${HHS_FUNCTIONS[@]}" >"${cache_file}"
+    search_hhs_functions "${HHS_HOME}/dotfiles/bash" "${HHS_HOME}/bin/hhs-functions/bash" "${HHS_HOME}/bin/dev-tools/bash"
+    printf "%s\n" "${HHS_FUNCTIONS[@]}" > "${cache_file}"
     echo -en '\033[2K'
+    echo ''
   else
     IFS=$'\n' read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
     IFS="${OLDIFS}"
   fi
 
   columns="$(tput cols)"
-  count="${#}"
+  count="${#HHS_FUNCTIONS[@]}"
   for line in "${HHS_FUNCTIONS[@]}"; do
-    fn_name=$(awk 'BEGIN { FS = "=>" } ; { print $2 }' <<<"${line}")
+    fn_name=$(awk 'BEGIN { FS = "=>" } ; { print $2 }' <<< "${line}")
     fn_name=${fn_name%%:*}
-    fn_name=$(trim <<<"${fn_name}")
+    fn_name=$(trim <<< "${fn_name}")
     if [[ ${fn_name} =~ ${filter} ]]; then
       ((matches++))
       printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((matches))"
@@ -99,7 +101,6 @@ function funcs() {
 
   [[ $matches -eq 0 ]] && echo -e "${YELLOW}No functions found matching \"${filter}\"${NC}"
 
-  echo ''
   quit 0
 }
 
@@ -192,26 +193,25 @@ function reset() {
   title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"
   mchoose_file=$(mktemp)
   if __hhs_mchoose "${mchoose_file}" "${title}" "${all_files[@]}"; then
-    [[ $(wc -c <"$mchoose_file") -le 1  ]] && return 1
+    [[ $(wc -c < "$mchoose_file") -le 1 ]] && return 1
     clear
-    echo ' ' >>"${mchoose_file}"
+    echo ' ' >> "${mchoose_file}"
     echo -e "${YELLOW}Deleting selected files...${NC}\n"
     while read -r -d ' ' file; do
       echo -en "${HHS_HIGHLIGHT_COLOR}Deleting file ${WHITE}"
       echo -n "${file} $(printf '\056%.0s' {1..50})" | head -c 50
       # shellcheck disable=SC2086
-      if \rm -f ${file} &>/dev/null; then
+      if \rm -f ${file} &> /dev/null; then
         echo -e "${WHITE}${GREEN} OK${NC}"
       else
         echo -e "${WHITE}${RED} FAILED${NC}"
         ret_val=1
       fi
-    done <"${mchoose_file}"
+    done < "${mchoose_file}"
     echo ''
   fi
-  [[ -f "${mchoose_file}" ]] && \rm -f "${mchoose_file}" &>/dev/null
+  [[ -f "${mchoose_file}" ]] && \rm -f "${mchoose_file}" &> /dev/null
   echo -e "${YELLOW}Changes will take effect after you 'reload' your terminal${NC}"
 
   return $ret_val
 }
-

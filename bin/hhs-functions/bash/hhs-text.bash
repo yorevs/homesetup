@@ -73,8 +73,8 @@ function __hhs_ascof() {
   return $?
 }
 
-# @function: Convert unicode to hexadecimal
-# @param $1..$N [Req] : The unicode values to convert
+# @function: Convert unicode to hexadecimal.
+# @param $1..$N [Req] : The unicode values to convert.
 function __hhs_utoh() {
 
   local result converted uni ret_val=1

@@ -1,12 +1,11 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup usage
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
-HomeSetup offers a comprehensive [User Handbook](handbook/USER_HANDBOOK.md) that contains detailed documentation
-on all commands and examples of their usage. Additionally, there will soon be a _YouTube video_ available that guides
-you through the installation, usage, configuration, and utilization of all the features and enhancements provided.
+# HomeSetup Usage
+> The ultimate Terminal experience
 
-The User Handbook serves as a valuable resource for understanding and making the most of HomeSetup's capabilities,
-while the accompanying YouTube and [asciinema](https://asciinema.org/~yorevs) videos provides a visual demonstration of
-its usage.
+HomeSetup offers a comprehensive [User Handbook](handbook/handbook.md) that contains detailed documentation on all commands and examples of their usage. Additionally, there will soon be a _YouTube video series_ available that guides you through the installation, usage, configuration, and utilization of all the features and enhancements provided.
+
+The User Handbook serves as a valuable resource for understanding and making the most of HomeSetup's capabilities, while the accompanying [YouTube]() and [asciinema](https://asciinema.org/~yorevs) videos provides a visual demonstration of its usage.
 
 ## Table of contents
 
@@ -35,7 +34,7 @@ its usage.
 - [5. Alias Definitions](#alias-definitions)
 - [6. HomeSetup application](#homesetup-application)
   * [6.1. HHS-Plug-ins](#hhs-plug-ins)
-  * [6.2. HHS-Built-Ins](#hhs-built-ins)
+  * [6.2. HHS-Built-Ins](#hhs-functions)
 - [7. Auto completions](#auto-completions)
   * [7.1. Bash completions](#bash-completions)
 
@@ -43,38 +42,42 @@ its usage.
 
 The following dotfiles will be available after installing HomeSetup:
 
-| HHS Dotfile         | Description                |
-|---------------------|----------------------------|
-| ~/.bashrc           | Bash resources             |
-| ~/.hhsrc            | HomeSetup resources        |
-| ~/.bash_aliases     | HomeSetup built-in aliases |
-| ~/.bash_colors      | Terminal color definitions |
-| ~/.bash_commons     | Common HomeSetup functions |
-| ~/.bash_completions | Bash completion functions  |
-| ~/.bash_env         | Environment variables      |
-| ~/.bash_functions   | Bash scripting functions   |
-| ~/.bash_profile     | Profile bash               |
-| ~/.bash_prompt      | Enhanced shell prompt      |
+| HHS Dotfile        | Description                |
+|--------------------|----------------------------|
+| ~/.bash_aliases    | HomeSetup built-in aliases |
+| ~/.bash_colors     | Terminal color definitions |
+| ~/.bash_commons    | Common HomeSetup functions |
+| ~/.bash_completion | Bash completion functions  |
+| ~/.bash_env        | Environment variables      |
+| ~/.bash_functions  | Bash scripting functions   |
+| ~/.bash_icons      | Predefined unicode icons   |
+| ~/.bash_profile    | Login Bash resources       |
+| ~/.bash_prompt     | Enhanced shell prompt      |
+| ~/.bashrc          | Login Bash resources       |
+| ~/.hhsrc           | HomeSetup resources        |
 
 The following directories will be created in your <$HHS_DIR> folder:
 
-- `$HHS_DIR/bin` # Includes all useful scripts provided by the project.
-- `$HHS_DIR/log` # Includes all HomeSetup log files.
-- `$HHS_DIR/cache` # Includes all HomeSetup cache files.
 - `$HHS_DIR/backup` # Includes all HomeSetup backup files.
+- `$HHS_DIR/bin` # Includes all useful scripts provided by the project.
+- `$HHS_DIR/cache` # Includes all HomeSetup cache files.
+- `$HHS_DIR/log` # Includes all HomeSetup log files.
 
 If the installation folder already exists, the install script will replace all files, taking care to back up the
 important ones. To override or add customized configurations, you can create a custom file using the following:
 
-| Custom Dotfile     | Description                                      |
-|--------------------|--------------------------------------------------|
-| ~/.aliases         | To customize your aliases                        |
-| ~/.colors          | To customize your colors                         |
-| ~/.env             | To customize your environment variables          |
-| ~/.functions       | To customize your functions                      |
-| ~/.path            | To customize your paths                          |
-| ~/.profile         | To customize your profile                        |
-| ~/.prompt          | To customize your prompt                         |
+| Custom Dotfile     | Description                             |
+|--------------------|-----------------------------------------|
+| ~/.aliases         | To customize your aliases               |
+| ~/.colors          | To customize your colors                |
+| ~/.env             | To customize your environment variables |
+| ~/.functions       | To customize your functions             |
+| ~/.path            | To customize your paths                 |
+| ~/.profile         | To customize your profile               |
+| ~/.prompt          | To customize your prompt                |
+| ~/.homesetup.toml  | HomeSetup initialization file           |
+| ~/.starship.toml   | Starship configuration file             |
+
 
 ## Aliases
 
@@ -266,92 +269,6 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 HomeSetup provides many functions for the shell. All functions includes a help using the options -h or --help.
 
-
-### Dotfiles
-
-HomeSetup include some basic helper functions:
-
-| Dotfile              | Function               | Purpose                                                                       |
-|----------------------|------------------------|-------------------------------------------------------------------------------|
-| bash_prompt.bash     | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked     |
-| bash_commons.bash    | __hhs_has              | Check if a command is available on the current shell context                  |
-|                      | __hhs_log              | Log to HomeSetup log file                                                     |
-|                      | __hhs_source           | Read/Execute commands from the filename argument in the current shell context |
-|                      | __hhs_is_reachable     | Check whether URL/URI is reachable on the network                             |
-| bash_aliases.bash    | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it          |
-| bash_completion.bash | __hhs_check_completion | Check and add completion for tool if found in HHS completions dir             |
-|                      | __hhs_load_completions | Load all available auto-completions                                           |
-
-### Standard tools
-
-The complete handbook of standard tools can be found on the [functions handbook](handbook/pages/functions.md#standard-tools)
-
-| File                   | Function               | Purpose                                                                                      |
-|------------------------|------------------------|----------------------------------------------------------------------------------------------|
-| hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list).                                            |
-| hhs-built-ins.bash     | __hhs_random           | Generate a random number int the range <min> <max> (all limits included).                    |
-|                        | __hhs_ascof            | Convert string into it's decimal ASCII representation.                                       |
-|                        | __hhs_open             | Open a file or URL with the default program.                                                 |
-|                        | __hhs_edit             | Create and/or open a file using the default editor                                           |
-|                        | __hhs_utoh             | Convert unicode to hexadecimal                                                               |
-| hhs-clitt.bash         | __hhs_minput           | Provide a terminal form input with simple validation.                                        |
-|                        | __hhs_mchoose          | Choose options from a list using a navigable menu.                                           |
-|                        | __hhs_mselect          | Select an option from a list using a navigable menu.                                         |
-| hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands.                                                 |
-| hhs-dirs.bash          | __hhs_list_tree        | List all directories recursively (Nth level depth) as a tree.                                |
-|                        | __hhs_save_dir         | Save one directory path for future __hhs_load.                                               |
-|                        | __hhs_change_dir       | Change the current working directory to a specific Folder.                                   |
-|                        | __hhs_load_dir         | Change the current working directory to pre-saved entry from __hhs_save.                     |
-|                        | __hhs_godir            | Search and cd into the first match of the specified directory name.                          |
-|                        | __hhs_mkcd             | Create all folders using a slash or dot notation path and immediately change into it.        |
-|                        | __hhs_changeback_ndirs | Change back the current working directory by N directories.                                  |
-|                        | __hhs_dirs             | Display the list of currently remembered directories.                                        |
-| hhs-files.bash         | __hhs_ls_sorted        | List files sorted by the specified column.                                                   |
-|                        | __hhs_del_tree         | Move files recursively to the Trash.                                                         |
-| hhs-network.bash       | __hhs_ip_info          | Retrieve information about the specified IP.                                                 |
-|                        | __hhs_ip_lookup        | Lookup DNS payload to determine the IP address.                                              |
-|                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP.                                       |
-|                        | __hhs_active_ifaces    | Display a list of active network interfaces.                                                 |
-|                        | __hhs_port_check       | Check the state of local port(s).                                                            |
-|                        | __hhs_ip               | Display the associated machine IP of the given kind.                                         |
-| hhs-paths.bash         | __hhs_paths            | Manage your custom PATH entries.                                                             |
-| hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper function to initialize NVM for the terminal.                                |
-|                        | __hhs_activate_rvm     | Lazy load helper function to initialize RVM for the terminal.                                |
-|                        | __hhs_activate_jenv    | Lazy load helper function to initialize Jenv for the terminal.                               |
-|                        | __hhs_activate_docker  | Lazy load helper function to initialize Docker-Daemon for the terminal.                      |
-| hhs-punch.bash         | __hhs_punch            | PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheet.                            |
-| hhs-search.bash        | __hhs_search_file      | Search for files and links to files recursively.                                             |
-|                        | __hhs_search_dir       | Search for directories and links to directories recursively.                                 |
-|                        | __hhs_search_string    | Search in files for strings matching the specified criteria recursively.                     |
-| hhs-security.bash      | __hhs_encrypt_file     | Encrypt file using GPG.                                                                      |
-|                        | __hhs_decrypt_file     | Decrypt a GPG encrypted file.                                                                |
-| hhs-shell-utils.bash   | __hhs_shell_select     | Select a shell from the existing shell list.                                                 |
-|                        | __hhs_history          | Search for previously issued commands from history using filters.                            |
-|                        | __hhs_hist_stats       | Display statistics about commands in history.                                                |
-|                        | __hhs_envs             | Display all environment variables using filters.                                             |
-|                        | __hhs_defs             | Display all alias definitions using filters.                                                 |
-| hhs-sys-utils.bash     | __hhs_sysinfo          | Display relevant system information.                                                         |
-|                        | __hhs_process_kill     | Kills ALL processes specified by name                                                        |
-|                        | __hhs_partitions       | Exhibit a Human readable summary about all partitions.                                       |
-|                        | __hhs_process_list     | Display a process list matching the process name/expression.                                 |
-| hhs-taylor.bash        | __hhs_tailor           | Tail a log using colors and patterns specified on `.tailor' file                             |
-| hhs-text.bash          | __hhs_errcho           | Echo a message in red color into stderr.                                                     |
-|                        | __hhs_highlight        | Highlight words from the piped stream.                                                       |
-|                        | __hhs_json_print       | Pretty print (format) JSON string.                                                           |
-| hhs-toolcheck.bash     | __hhs_about            | Display information about the given command.                                                 |
-|                        | __hhs_toolcheck        | Check whether a tool is installed on the system.                                             |
-|                        | __hhs_help             | Display a help for the given command.                                                        |
-|                        | __hhs_version          | Check the version of the app using the most common ways.                                     |
-|                        | __hhs_tools            | Check whether a list of development tools are installed or not.                              |
-| bash_aliases.bash      | __hhs_alias            | Check if an alias does not exists and create it, otherwise just ignore it. Do not support... |
-| bash_commons.bash      | __hhs_has              | Check if a command is available on the current shell session.                                |
-|                        | __hhs_log              | Log a message to the HomeSetup log file.                                                     |
-|                        | __hhs_source           | Replacement for the original source bash command.                                            |
-|                        | __hhs_is_reachable     | Check whether an URL is reachable.                                                           |
-| bash_completion.bash   | __hhs_check_completion | Check and add completion for tool if found in HHS completions dir.                           |
-|                        | __hhs_load_completions | Load all available auto-completions.                                                         |
-| bash_prompt.bash       | __hhs_git_prompt       | Retrieve the current git branch if inside a git repository.                                  |
-
 ### Development tools
 
 The complete handbook of development tools can be found [here](handbook/pages/functions.md#development-tools)
@@ -374,6 +291,90 @@ The complete handbook of development tools can be found [here](handbook/pages/fu
 |                       | __hhs_git_pull_all           | Search and pull projects from the specified path using the given repository/branch. |
 |                       | __hhs_git_branch_select      | Select and checkout a local or remote branch.                                       |
 | hhs-gradle-tools.bash | __hhs_gradle                 | Prefer using the wrapper instead of the installed command itself.                   |
+
+### Standard tools
+
+The complete handbook of standard tools can be found on the [functions handbook](handbook/pages/functions.md#standard-tools)
+
+| File                   | Function               | Purpose                                                                                      |
+|------------------------|------------------------|----------------------------------------------------------------------------------------------|
+| hhs-aliases.bash       | __hhs_aliases          | Manipulate custom aliases (add/remove/edit/list).                                            |
+| hhs-built-ins.bash     | __hhs_help             | Display a help for the given command.                                                        |
+|                        | __hhs_where_am_i       | Display the current working dir and remote repository if it applies.                         |
+|                        | __hhs_shopt            | Display/Set/unset current Shell Options.                                                     |
+|                        | __hhs_random           | Generate a random number int the range <min> <max> (all limits included).                    |
+|                        | __hhs_open             | Open a file or URL with the default program.                                                 |
+|                        | __hhs_edit             | Create and/or open a file using the default editor.                                          |
+|                        | __hhs_about            | Display information about the given command.                                                 |
+| hhs-clitt.bash         | __hhs_minput           | Provide a terminal form input with simple validation.                                        |
+|                        | __hhs_mchoose          | Choose options from a list using a navigable menu.                                           |
+|                        | __hhs_punch            | PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheet.                            |
+|                        | __hhs_mselect          | Select an option from a list using a navigable menu.                                         |
+| hhs-command.bash       | __hhs_command          | Add/Remove/List/Execute saved bash commands.                                                 |
+| hhs-dirs.bash          | __hhs_list_tree        | List all directories recursively (Nth level depth) as a tree.                                |
+|                        | __hhs_save_dir         | Save one directory path for future __hhs_load.                                               |
+|                        | __hhs_change_dir       | Change the current working directory to a specific Folder.                                   |
+|                        | __hhs_load_dir         | Change the current working directory to pre-saved entry from __hhs_save.                     |
+|                        | __hhs_godir            | Search and cd into the first match of the specified directory name.                          |
+|                        | __hhs_mkcd             | Create all folders using a slash or dot notation path and immediately change into it.        |
+|                        | __hhs_changeback_ndirs | Change back the current working directory by N directories.                                  |
+|                        | __hhs_dirs             | Display the list of currently remembered directories.                                        |
+| hhs-files.bash         | __hhs_ls_sorted        | List files sorted by the specified column.                                                   |
+|                        | __hhs_del_tree         | Move files recursively to the Trash.                                                         |
+| hhs-network.bash       | __hhs_ip_info          | Retrieve information about the specified IP.                                                 |
+|                        | __hhs_ip_lookup        | Lookup DNS payload to determine the IP address.                                              |
+|                        | __hhs_ip_resolve       | Resolve domain names associated with the specified IP.                                       |
+|                        | __hhs_port_check       | Check the state of local port(s).                                                            |
+|                        | __hhs_active_ifaces    | Display a list of active network interfaces.                                                 |
+|                        | __hhs_ip               | Display the associated machine IP of the given kind.                                         |
+| hhs-paths.bash         | __hhs_paths            | Manage your custom PATH entries.                                                             |
+| hhs-profile-tools.bash | __hhs_activate_nvm     | Lazy load helper function to initialize NVM for the terminal.                                |
+|                        | __hhs_activate_rvm     | Lazy load helper function to initialize RVM for the terminal.                                |
+|                        | __hhs_activate_jenv    | Lazy load helper function to initialize Jenv for the terminal.                               |
+|                        | __hhs_activate_docker  | Lazy load helper function to initialize Docker-Daemon for the terminal.                      |
+| hhs-search.bash        | __hhs_search_file      | Search for files and links to files recursively.                                             |
+|                        | __hhs_search_dir       | Search for directories and links to directories recursively.                                 |
+|                        | __hhs_search_string    | Search in files for strings matching the specified criteria recursively.                     |
+| hhs-security.bash      | __hhs_encrypt_file     | Encrypt file using GPG.                                                                      |
+|                        | __hhs_decrypt_file     | Decrypt a GPG encrypted file.                                                                |
+| hhs-shell-utils.bash   | __hhs_defs             | Display all alias definitions using filters.                                                 |
+|                        | __hhs_shell_select     | Select a shell from the existing shell list.                                                 |
+|                        | __hhs_history          | Search for previously issued commands from history using filters.                            |
+|                        | __hhs_hist_stats       | Display statistics about commands in history.                                                |
+|                        | __hhs_envs             | Display all environment variables using filters.                                             |
+| hhs-sys-utils.bash     | __hhs_process_kill     | Kills ALL processes specified by name                                                        |
+|                        | __hhs_sysinfo          | Display relevant system information.                                                         |
+|                        | __hhs_partitions       | Exhibit a Human readable summary about all partitions.                                       |
+|                        | __hhs_process_list     | Display a process list matching the process name/expression.                                 |
+| hhs-taylor.bash        | __hhs_tailor           | Tail a log using customized colors and patterns.                                             |
+| hhs-text.bash          | __hhs_highlight        | Highlight words from the piped stream.                                                       |
+|                        | __hhs_json_print       | Pretty print (format) JSON string.                                                           |
+|                        | __hhs_ascof            | Convert string into it's decimal ASCII presentation.                                         |
+|                        | __hhs_utoh             | Convert unicode to hexadecimal.                                                              |
+| hhs-toml.bash          | __hhs_toml_groups      | Print all toml file groups (tables).                                                         |
+|                        | __hhs_toml_keys        | Print all toml file group keys (tables).                                                     |
+|                        | __hhs_toml_get         | Get the key's value from a toml file.                                                        |
+|                        | __hhs_toml_set         | Set the key's value from a toml file.                                                        |
+| hhs-toolcheck.bash     | __hhs_toolcheck        | Check whether a tool is installed on the system.                                             |
+|                        | __hhs_version          | Check the version of the app using the most common ways.                                     |
+|                        | __hhs_tools            | Check whether a list of development tools are installed or not.                              |
+
+### Dotfiles
+
+HomeSetup include some basic helper functions:
+
+| Dotfile              | Function               | Purpose                                                                        |
+|----------------------|------------------------|--------------------------------------------------------------------------------|
+| bash_aliases.bash    | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it.          |
+| bash_commons.bash    | __hhs_is_reachable     | Check whether URL/URI is reachable on the network.                             |
+|                      | __hhs_has              | Check if a command is available on the current shell context.                  |
+|                      | __hhs_log              | Log to HomeSetup log file.                                                     |
+|                      | __hhs_source           | Read/Execute commands from the filename argument in the current shell context. |
+|                      | __hhs_errcho           | Echo a message in red color into stderr.                                       |
+| bash_completion.bash | __hhs_check_completion | Check and add completion for tool if found in HHS completions dir.             |
+|                      | __hhs_load_completions | Load all available auto-completions.                                           |
+| bash_prompt.bash     | __hhs_set_win_title    | Set the terminal window title.                                                 |
+|                      | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked.     |
 
 ## Applications
 
@@ -416,7 +417,7 @@ in your terminal: `# __hhs funcs`.
 Those commands will provide you with an overview of all the functions and plug-ins that HomeSetup offers, allowing you
 to explore and leverage their capabilities.
 
-### HHS-Plug-ins
+### HHS Plug-ins
 
 | Plug-in  | Purpose                                                                  |
 |----------|--------------------------------------------------------------------------|
@@ -427,18 +428,18 @@ to explore and leverage their capabilities.
 | firebase | Manager for HomeSetup Firebase integration.                              |
 | hspm     | Manage your development tools using installation/uninstallation recipes. |
 
-### HHS-Built-Ins
+### HHS Functions
 
 | Function    | Purpose                                                                                |
 |-------------|----------------------------------------------------------------------------------------|
-| host-name   | Retrieve/Get/Set the current hostname.                                                 |
+| docsify     | Open the HomeSetup **docsify** web page.                                               |
+| board       | Open the HomeSetup GitHub project **board** for the current version.                   |
 | list        | List all HHS App **Plug-ins** and **Functions**.                                       |
 | funcs       | Search for all hhs **functions** describing it's containing file name and line number. |
 | logs        | Retrieve latest HomeSetup load logs.                                                   |
 | man         | Open manual for command.                                                               |
-| board       | Open the HomeSetup GitHub project **board** for the current version.                   |
-| invalidate  | Remove caches, logs and backup files.                                                  |
-| docsify     | Open the HomeSetup **docsify** web page.                                               |
+| reset       | Remove caches, logs and backup files.                                                  |
+| host-name   | Retrieve/Get/Set the current hostname.                                                 |
 | tests       | Execute all HomeSetup **automated tests**.                                             |
 | color-tests | Execute all HomeSetup **terminal color tests**.                                        |
 

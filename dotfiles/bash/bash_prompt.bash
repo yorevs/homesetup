@@ -181,10 +181,14 @@ export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 
 # Initialize Starship prompt if it is set to.
 if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
+
+  # @function: Set the terminal window title.
   function __hhs_set_win_title() {
     echo -ne "\033]0; ${TITLE} \007"
   }
+
   __hhs_log "INFO" "Starting starship prompt"
+
   if [[ ! -s "${STARSHIP_CONFIG}" ]]; then
     __hhs_log "DEBUG" "Copying default HomeSetup starship.toml config to -> ${STARSHIP_CONFIG}"
     if ! \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" \
@@ -192,11 +196,12 @@ if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
       __hhs_log "ERROR" "Unable to copy default starship config file into place!"
     fi
   fi
+
   # shellcheck disable=SC2034
   starship_precmd_user_func="__hhs_set_win_title"
   if eval "$(\starship init "${HHS_MY_SHELL}")"; then
-    __hhs_log "INFO" "Starship successfully initialized!"
+    __hhs_log "INFO" "Starship successfully started!"
   else
-    __hhs_log "ERROR" "Starship failed to initialize!"
+    __hhs_log "ERROR" "Starship failed to start!"
   fi
 fi

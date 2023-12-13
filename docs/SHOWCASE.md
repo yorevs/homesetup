@@ -176,7 +176,7 @@ extensibility to create your own solutions using the same principles and techniq
 
 # Small learning curve
 
-All the information you need to understand and utilize HomeSetup can be found in the comprehensive [User Handbook](https://github.com/yorevs/homesetup/blob/master/docs/handbook/USER_HANDBOOK.md).
+All the information you need to understand and utilize HomeSetup can be found in the comprehensive [User Handbook](https://github.com/yorevs/homesetup/blob/master/docs/handbook/handbook.md).
 This handbook provides detailed documentation for every aspect of HomeSetup, including usage instructions, examples,
 and explanations of various features and functionalities. It serves as a valuable resource to guide you through the
 installation, configuration, and usage. Additionally, each function is equipped with a built-in help. By appending

@@ -135,14 +135,14 @@ function validate_plugin() {
 # @purpose: Search and register all hhs application plugins
 function register_plugins() {
 
-  local f_name plg_funcs=() plg_name
+  local fn_line plg_funcs=() plg_name
 
   IFS=$'\n'
   while read -r plugin; do
     while read -r fnc; do
-      f_name="${fnc##function }"
-      f_name="${f_name%\(\) \{}"
-      plg_funcs+=("${f_name}")
+      fn_line="${fnc##function }"
+      fn_line="${fn_line%\(\) \{}"
+      plg_funcs+=("${fn_line}")
     done < <(grep '^function .*()' <"${plugin}")
     if ! validate_plugin "${plg_funcs[@]}"; then
       INVALID+=("$(basename "${plugin}")")
@@ -160,15 +160,15 @@ function register_plugins() {
 # @purpose: Read all internal functions and make them available to use
 function register_functions() {
 
-  local f_name
+  local fn_line
 
   IFS=$'\n'
   while read -r fnc_file; do
     source "${fnc_file}"
     while read -r fnc; do
-      f_name="${fnc##function }"
-      f_name="${f_name%\(\) \{}"
-      HHS_APP_FUNCTIONS+=("${f_name}")
+      fn_line="${fnc##function }"
+      fn_line="${fn_line%\(\) \{}"
+      HHS_APP_FUNCTIONS+=("${fn_line}")
     done < <(grep '^function .*()' <"${fnc_file}")
     # Register the functions to be unset when program quits
     UNSETS+=("${HHS_APP_FUNCTIONS[@]}")
@@ -184,28 +184,23 @@ function invoke_command() {
   local plg_cmd ret
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
-  # Open a new subshell, so that we can configure the running environment properly
-  #(
-    # We have to use exit and not quit, because we are in a subshell
-    for idx in "${!PLUGINS[@]}"; do
-      if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
-        [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
-        source "${PLUGINS_LIST[idx]}"
-        shift
-        plg_cmd="${1:-execute}"
-        has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
-        shift
-        # Execute the specified plugin
-        ${plg_cmd} "${@}"
-        ret=${?}
-        cleanup
-        exit ${ret}
-      else
-        [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && exit 255
-      fi
-    done
-    exit 0
-  #)
+  for idx in "${!PLUGINS[@]}"; do
+    if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
+      [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
+      source "${PLUGINS_LIST[idx]}"
+      shift
+      plg_cmd="${1:-execute}"
+      has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
+      shift
+      # Execute the specified plugin
+      ${plg_cmd} "${@}"
+      ret=${?}
+      cleanup
+      exit ${ret}
+    else
+      [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && exit 255
+    fi
+  done
   ret=${?}
   [[ ${ret} -eq 255 ]] && quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
 
@@ -218,21 +213,25 @@ function invoke_command() {
 # Functions MUST start with 'function' keyword and
 # MUST quit <exit_code> with the proper exit code
 
+# @purpose: Get the description of a function/plug-in or alias from `function' line.
+# @param $1 [Req] : The function definition line.
 function get_desc() {
 
   local path filename line_num re
 
-  path=$(awk -F ':function' '{print $1}'  <<<"$1")
-  filename=$(awk -F '.bash:' '{print $1}'  <<<"$path")
-  line_num=$(awk -F '.bash:' '{print $2}'  <<<"$path")
+  path=$(awk -F ':function' '{print $1}'  <<<"${1}")
+  filename=$(awk -F '.bash:' '{print $1}'  <<<"${path}")
+  line_num=$(awk -F '.bash:' '{print $2}'  <<<"${path}")
   line_num=${line_num// /}
-  re='^ *# @(function|purpose|alias): '
+  re='^ *(# @(function|purpose|alias):) '
 
   for i in $(seq "${line_num}" -1 1); do
-    line=$(sed -n "${i}p" "${filename}".bash)
-    desc="${line//# @function: /}"
-    desc=$(echo "$desc" | awk '{$1=$1};1')
-    [[ $line =~ $re ]] && echo "${desc}" && break
+    line=$(sed -n "${i}p" "${filename}.bash")
+    if [[ ${line} =~ ${re} ]]; then
+      desc="${line//${BASH_REMATCH[1]}/}"
+      desc=$(echo "${desc}" | awk '{$1=$1};1')
+      [[ $line =~ $re ]] && echo "${desc}" && break
+    fi
   done
 }
 
@@ -243,11 +242,11 @@ function search_hhs_functions() {
   local all_hhs_fn=() filename fn_name desc
 
   IFS=$'\n' read -r -d '' -a all_hhs_fn < \
-    <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk "NR != 0 {print \$1 \$2}" | sort | uniq)
+    <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk 'NR != 0 {print $1" "$2}' | sort --unique)
   for fn_line in "${all_hhs_fn[@]}"; do
-    filename=$(basename "${fn_line}" | awk -F ':function' '{print $1}')
+    filename=$(basename "${fn_line}" | awk -F ':function ' '{print $1}')
     filename=$(printf '%-35.35s' "${filename}")
-    fn_name=$(awk -F ':function' '{print $2}' <<<"${fn_line}")
+    fn_name=$(awk -F ':function ' '{print $2}' <<<"${fn_line}")
     fn_name=$(printf '%-35.35s' "${fn_name//\(\)/}")
     desc=$(get_desc "${fn_line}")
     HHS_FUNCTIONS+=("${BLUE}${filename// /.} ${GREEN}=> ${NC}${fn_name// /.} : ${YELLOW}${desc}")
