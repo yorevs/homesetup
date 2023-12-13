@@ -26,11 +26,10 @@ to enhance the command line experience for users. Its primary objective is to pr
 that expedite daily tasks, such as time tracking, string and file searching, directory navigation, and seamless
 integration with popular tools like Git, Gradle, Docker, and more.
 
-For the full documentation, you can access the [HomeSetup usage manual](docs/USAGE.md).
-
 > **THIS IT NOT JUST A DOTFILES FRAMEWORK**
 
-Please access the HomeSetup [Documentation](docs/SHOWCASE.md) for a full list of features.
+- For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
+- See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
 
 ## Key Features
 
@@ -107,9 +106,11 @@ provide with the installation:
 
 * [HomeSetup iTerm2](misc/iTerm2-HomeSetup.json)
 
-> When your terminal is set, then you should see something like this:
+
+When your terminal is set, then you should see something like this:
 
 <img src="https://iili.io/JuxHulR.png" />
+
 
 ### Try-it first
 
@@ -210,6 +211,10 @@ This will install the latest version of HomeSetup, keeping your setup current an
 improvements. Keeping HomeSetup updated is essential to benefit from the latest enhancements and bug fixes. If you have
 any questions or encounter any issues during the update process, feel free to reach out for assistance.
 
+## Known Issues
+
+- [In-Progress] We are aware that there is a problem with the cryptocode library when using python@3.12 and we are already working on a fix.
+
 ## Contacts
 
 - Documentation: [API](docs/handbook/USER_HANDBOOK.md)
@@ -218,5 +223,6 @@ any questions or encounter any issues during the update process, feel free to re
 - Official chat: https://gitter.im/yorevs-homesetup/community
 - Maintainer: https://www.reddit.com/user/yorevs
 - Mailto: [HomeSetup](mailto:homesetup@gmail.com)
+
 
 Enjoy!
