@@ -28,15 +28,15 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 > **THIS IT NOT JUST A DOTFILES FRAMEWORK**
 
-- For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
 - See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
+- For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
 
 ## Key Features
 
 - <img src="https://starship.rs/icon.png" width="14" height="14"/> [Starship](https://starship.rs/) prompt is here! HomeSetup now integrates with Starship.
 - Automated setup for commonly used configurations, ensuring a hassle-free initial setup.
 - A wide range of functions to simplify terminal configuration and streamline daily tasks.
-- A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons (requires a [Nerd font](https://www.nerdfonts.com/).
+- A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons (requires a [Nerd font](https://www.nerdfonts.com/)).
 - Highly customizable **aliases**, **paths**, **environment variables** and more.
 - A **universal package manager** helper that facilitates the installation of applications using recipes, catering to various package managers _beyond normal package managers_.
 - Ability to upload custom dotfiles on [Firebase](https://firebase.google.com/) and easily download them across different environments.
@@ -213,7 +213,7 @@ any questions or encounter any issues during the update process, feel free to re
 
 ## Known Issues
 
-- [In-Progress] We are aware that there is a problem with the cryptocode library when using python@3.12 and we are already working on a fix.
+- [In-Progress] We are aware that there is a problems when using python@3.12 and we are already working on a fix.
 
 ## Contacts
 

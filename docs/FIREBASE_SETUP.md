@@ -63,3 +63,27 @@ You have now successfully configured Firebase for use with HomeSetup. To learn m
 type in your shell:
 
 `$ firebase help`
+
+## HomeSetup integration
+
+When you first access the firebase feature of HomeSetup, you will be prompted for some details:
+
+[![FirebaseSetup](https://iili.io/H8ll1pa.png)](https://iili.io/H8ll1pa.png)
+
+This information can be acquired at the firebase console:
+
+![FirebaseSetup](https://iili.io/HUCM03x.png)
+
+Once the Firebase integration is set up, you can start leveraging its benefits for storing your dotfiles. Enjoy the
+convenience and peace of mind knowing that your configurations are stored securely in Firebase's Realtime Database.
+
+To enhance security, it is recommended to generate a service token that allows HomeSetup to securely connect to your
+Firebase account. You can find detailed instructions on how to generate your [Firebase private key here](https://github.com/yorevs/homesetup/blob/master/README.md#firebase-setup).
+
+Once you have completed the configuration of your Firebase Realtime Database and generated the service token, you can
+utilize it with HomeSetup to conveniently upload and download your dotfiles. This integration ensures that your
+configurations are safely stored and easily accessible whenever needed. For further guidance and assistance with the
+setup process, please refer to the provided documentation on the [User's Handbook](https://github.com/yorevs/homesetup/blob/master/docs/handbook/USER_HANDBOOK.md)
+of HomeSetup.
+
+[![FirebaseUsage](https://asciinema.org/a/585493.svg)](https://asciinema.org/a/585493)

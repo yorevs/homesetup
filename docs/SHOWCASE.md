@@ -1,6 +1,9 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup showcase
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
-# How can I try it ?
+# HomeSetup Showcase
+> The ultimate Terminal experience
+
+## How can I try it ?
 
 There are two ways of trying HomeSetup:
 
@@ -8,6 +11,12 @@ There are two ways of trying HomeSetup:
 
 ```bash
 $ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+```
+
+or
+
+```bash
+$ wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 ```
 
 ### Run on Docker
@@ -58,6 +67,7 @@ Out-of-the-box, HomeSetup provides several plug-ins that extend its capabilities
 - **HSPM**: A tool for managing your development tools using installation and uninstallation recipes.
 - **FIREBASE**: A manager for integrating HomeSetup with Firebase.
 - **UPDATER**: A HomeSetup update manager that keeps your installation up to date.
+- **SETMAN**: A settings manager allowing you to easily changed/add/remove settings and converting them to .envrc or environment variables.
 
 When you initially run HomeSetup, you'll start with a clean slate without any customizations. However, as you use the
 tool, you'll have the opportunity to create your own dotfiles and make tweaks to tailor the experience to your liking.
@@ -90,7 +100,7 @@ To make your experience more convenient, it utilizes a set of aliases that provi
 functions. These aliases are defined in the `.aliasdef` file located in the `$HHS_DIR` folder. While you have the
 flexibility to manually edit this file, for the sake of this demonstration, the default definitions will be used.
 
-You can watch a demonstration of HomeSetup's functionality in the asciicast provided below:
+You can watch a demo of some of HomeSetup's features in the asciicast below:
 
 [![HomeSetup-Aliases](https://asciinema.org/a/583777.svg)](https://asciinema.org/a/583777)
 
@@ -105,29 +115,34 @@ HomeSetup offers seamless integration with [Firebase Realtime Database](https://
 securely save and load all of your dotfiles. This feature ensures that your setup is backed up using Google's powerful
 realtime database capabilities.
 
-### Firebase setup
+### Firebase
 
-When you first access the firebase feature of HomeSetup, you will be prompted for some details:
+Please check the [Firebase Setup](FIREBASE_SETUP.md) document for instructions on how to configure your account.
 
-[![FirebaseSetup](https://iili.io/H8ll1pa.png)](https://iili.io/H8ll1pa.png)
+Once configured, you can use Firebase to upload/download your dotfiles to/from Firebase. This allows ou to have all of
+your dotfiles everywhere.
 
-This information can be acquired at the firebase console:
+<img src="https://iili.io/JuzoPwb.png" />
 
-![FirebaseSetup](https://iili.io/HUCM03x.png)
+<img src="https://iili.io/JuzIzG4.png" />
 
-Once the Firebase integration is set up, you can start leveraging its benefits for storing your dotfiles. Enjoy the
-convenience and peace of mind knowing that your configurations are stored securely in Firebase's Realtime Database.
+### Starship
 
-To enhance security, it is recommended to generate a service token that allows HomeSetup to securely connect to your
-Firebase account. You can find detailed instructions on how to generate your [Firebase private key here](https://github.com/yorevs/homesetup/blob/master/README.md#firebase-setup).
+HomeSetup provides an out-of-the-box starship.toml, but you can configure it the way you want byt typing:
 
-Once you have completed the configuration of your Firebase Realtime Database and generated the service token, you can
-utilize it with HomeSetup to conveniently upload and download your dotfiles. This integration ensures that your
-configurations are safely stored and easily accessible whenever needed. For further guidance and assistance with the
-setup process, please refer to the provided documentation on the [User's Handbook](https://github.com/yorevs/homesetup/blob/master/docs/handbook/USER_HANDBOOK.md)
-of HomeSetup.
+`$ hhs starship`
 
-[![FirebaseUsage](https://asciinema.org/a/585493.svg)](https://asciinema.org/a/585493)
+or just
+
+`$ starship`
+
+If you are lazy to configure yourself, you can try on the the Starship presets:
+
+`$ starship preset`
+
+<img src="https://iili.io/JuzfXf9.png"/>
+
+<img src="https://iili.io/JuzBxCN.png" />
 
 # Shell is boring, I prefer a graphical interface
 
