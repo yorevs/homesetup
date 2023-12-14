@@ -21,13 +21,6 @@
 [[ -d "${WORKSPACE}" ]] && __hhs_alias work="cd ${WORKSPACE}"
 [[ -d "${TEMP}" ]] && __hhs_alias temp="cd ${TEMP}"
 
-# Built-ins replacements
-alias ..='__hhs_changeback_ndirs'
-alias cd='__hhs_change_dir'
-alias dirs='__hhs_dirs'
-alias help='__hhs_help'
-alias starship='__hhs_starship'
-
 # HHS-App Aliases
 __hhs_alias hhs='__hhs'
 __hhs_alias hhu='__hhs_hhu update'
@@ -60,9 +53,6 @@ __hhs_alias has='__hhs_has'
 __hhs_alias ver='__hhs_version'
 __hhs_alias cmd='__hhs_command'
 __hhs_alias cse='clean_escapes'
-__hhs_alias ipl='__hhs_ip local'
-__hhs_alias ips='__hhs_ip'
-__hhs_alias ifa='__hhs_active_ifaces'
 __hhs_alias envs='__hhs_envs'
 __hhs_alias hist='__hhs_history'
 __hhs_alias save='__hhs_save_dir'
@@ -75,18 +65,27 @@ __hhs_alias tools='__hhs_tools'
 __hhs_alias punch='__hhs_punch'
 __hhs_alias plist='__hhs_process_list'
 __hhs_alias godir='__hhs_godir'
-__hhs_alias my-ip='__hhs_ip external'
-__hhs_alias vpn-ip='__hhs_ip vpn'
 __hhs_alias mselect='__hhs_mselect'
 __hhs_alias mchoose='__hhs_mchoose'
 __hhs_alias minput='__hhs_minput'
-__hhs_alias ip-info='__hhs_ip_info'
 __hhs_alias sysinfo='__hhs_sysinfo'
 __hhs_alias del-tree='__hhs_del_tree'
-__hhs_alias ip-lookup='__hhs_ip_lookup'
-__hhs_alias ip-resolve='__hhs_ip_resolve'
-__hhs_alias port-check='__hhs_port_check'
-__hhs_alias ipi="__hhs_ip_info $(my-ip | awk '{print $3}') || echo \"${YELLOW}Not connected to the internet${NC}\""
+
+# Network shortcuts
+__hhs_has 'netstat' && __hhs_alias port-check='__hhs_port_check'
+
+# ifconfig based shortcuts
+if __hhs_has 'ifconfig'; then
+  __hhs_alias ipl='__hhs_ip local'
+  __hhs_alias ips='__hhs_ip'
+  __hhs_alias ifa='__hhs_active_ifaces'
+  __hhs_alias my-ip='__hhs_ip external'
+  __hhs_alias vpn-ip='__hhs_ip vpn'
+  __hhs_alias ip-info='__hhs_ip_info'
+  __hhs_alias ipi="__hhs_ip_info $(my-ip | awk '{print $3}') || echo \"${YELLOW}Not connected to the internet${NC}\""
+  __hhs_alias ip-lookup='__hhs_ip_lookup'
+  __hhs_alias ip-resolve='__hhs_ip_resolve'
+fi
 
 # Python based shortcuts
 if __hhs_has "python3"; then

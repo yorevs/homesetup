@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2142,SC1090,SC2139
+# shellcheck disable=2035,2139
 
 #  Script: bash_aliases.bash
 # Purpose: This file is used to configure some useful shell aliases
@@ -24,6 +24,8 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 # -----------------------------------------------------------------------------------
 # @category: Navigational
 
+# @alias: Change-back to previous directory
+alias ..='__hhs_changeback_ndirs'
 # @alias: Change-back two previous directories
 alias ...='.. 2'
 # @alias: Change-back three previous directories
@@ -35,13 +37,12 @@ alias ~='cd ~'
 # @alias: Change the current directory to the previous dir
 alias -- -='cd -'
 # @alias: Display the current working dir and remote repository if it applies
-# shellcheck disable=SC2035
 alias ?='__hhs_where_am_i'
 
 # -----------------------------------------------------------------------------------
 # @category: General
 
-# @alias: Short for `exit 0' from terminal
+# @alias: Shorthand for `exit 0' from terminal
 alias q="exit 0"
 # @alias: Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -62,13 +63,13 @@ if __hhs_has eza; then
   # @alias: List all .dotfolders colorized in long format
   alias lld='ld --all'
 else
-  # @alias: Always use color output for `ls`
+  # @alias: Always use color output for `ls'
   alias ls='\ls ${COLOR_FLAG}'
   # @alias: List all files colorized in long format
   alias l='ls -lhF'
-  # @alias: List all directories in long format
+  # @alias: List all directories colorized in long format
   alias ld='ls -d -lah */ 2> /dev/null'
-  # @alias: List all files in long format
+  # @alias: List all files colorized in long format
   alias lf='ls -lahd ??* | grep --color=never "^-"'
   # @alias: List all files and folders colorized in long format, including dot files
   alias ll='ls -lahF'
@@ -86,6 +87,14 @@ alias fgrep='\fgrep --color=auto'
 # @alias: Always enable colored `egrep` output
 alias egrep='\egrep --color=auto'
 
+# @alias: Built-ins replacement for `cd'
+alias cd='__hhs_change_dir'
+# @alias: Built-ins replacement for `dirs'
+alias dirs='__hhs_dirs'
+# @alias: Built-ins replacement for `help'
+alias help='__hhs_help'
+# @alias: Starship replacement for `starship' binary
+alias starship='__hhs_starship'
 # @alias: By default `rm' will prompt for confirmation and will be verbose
 alias rm='\rm -iv'
 # @alias: By default `cp' will prompt for confirmation and will be verbose
@@ -100,9 +109,9 @@ alias du='\du -hcd 1'
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
 # @alias: Display current value of IFS
 alias ifs='echo -en "${IFS}" | hexdump -C'
-# @alias: Use the assigned app to open a file.
+# @alias: Use the assigned app to open a file
 alias open="__hhs_open"
-# @alias: Display/Set/unset current Shell Options.
+# @alias: Display/Set/unset current Shell Options
 alias shopt="__hhs_shopt"
 
 # @alias: Use `vim' instead of `vi' if installed
@@ -126,7 +135,7 @@ __hhs_has "wget" || alias wget='\curl -O'
 
 # @alias: Make PS1 prompt active
 alias ps1='export PS1=$PS1_STYLE'
-# @alias: Make PS2 prompt active
+# @alias: Make PS2 prompt active (continuation prompt)
 alias ps2='export PS1=$PS2_STYLE'
 
 # -----------------------------------------------------------------------------------
@@ -143,9 +152,13 @@ alias __hhs_hspm='__hhs hspm execute'
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='__hhs updater execute'
 # @alias: Shortcut for hhs starship plug-in
-alias __hhs_starship='__hhs starship execute'
-# @alias: Shortcut for hhs starship plug-in
+alias __hhs_starship='__hhs starship execute'__hhs
+# @alias: Shortcut for hhs setup plug-in
 alias __hhs_setup='__hhs setup execute'
+# @alias: Shortcut for hhs firebase plug-in
+alias __hhs_firebase='__hhs firebase execute'
+# @alias: Shortcut for hhs settings plug-in
+alias __hhs_settings='__hhs settings execute'
 
 # -----------------------------------------------------------------------------------
 # @category: External tools aliases
@@ -235,48 +248,13 @@ bash)
   # @alias: Load the saved terminal screen
   alias restore-screen='tput rmcup'
   ;;
-zsh)
-  # @alias: Make terminal cursor visible (Zsh)
-  alias show-cursor='echo "ZSH is Not supported yet"'
-  # @alias: Make terminal cursor invisible (Zsh)
-  alias hide-cursor='echo "ZSH is Not supported yet"'
-  # @alias: Save terminal cursor position (Zsh)
-  alias save-cursor-pos='echo "ZSH is Not supported yet"'
-  # @alias: Restore terminal cursor position (Zsh)
-  alias restore-cursor-pos='echo "ZSH is Not supported yet"'
-  # @alias: Enable terminal line wrap (Zsh)
-  alias enable-line-wrap='echo "ZSH is Not supported yet"'
-  # @alias: Disable terminal line wrap (Zsh)
-  alias disable-line-wrap='echo "ZSH is Not supported yet"'
-  # @alias: Enable terminal echo (Zsh)
-  alias enable-echo='echo "ZSH is Not supported yet"'
-  # @alias: Disable terminal echo (Zsh)
-  alias disable-echo='echo "ZSH is Not supported yet"'
-  # @alias: Reset all terminal cursor attributes (Zsh)
-  alias reset-cursor-attrs='echo "ZSH is Not supported yet"'
-  # @alias: Save the current terminal screen
-  alias save-screen='echo "ZSH is Not supported yet"'
-  # @alias: Load the saved terminal screen
-  alias restore-screen='echo "ZSH is Not supported yet"'
-  ;;
 esac
 
 # -----------------------------------------------------------------------------------
 # @category: Python aliases
 
 if __hhs_has "python3"; then
-  # @alias: Shortcut for clitt module
-  alias __hhs_clitt='python3 -m clitt'
-  # @alias: Shortcut for vault module
-  alias __hhs_vault='python3 -m vault'
-  # @alias: Shortcut for cfman module
-  alias __hhs_cfman='python3 -m cfman'
-  # @alias: Shortcut for kafman module
-  alias __hhs_kafman='python3 -m kafman'
-  # @alias: Shortcut for hhs firebase plug-in
-  alias __hhs_firebase='__hhs firebase execute'
-  # @alias: Shortcut for hhs settings plug-in
-  alias __hhs_settings='__hhs settings execute'
+
   # @alias: Evaluate mathematical expressions
   alias __hhs_calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
   # @alias: URL-encode strings
@@ -287,12 +265,21 @@ if __hhs_has "python3"; then
   alias __hhs_uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
   # @alias: Shortcut for the HomeSetup TimeCalc widget
   alias __hhs_tcalc="hspylib widgets TimeCalc"
+  # @alias: Shortcut for hspylib-clitt module
+  alias __hhs_clitt='python3 -m clitt'
+  # @alias: Shortcut for hspylib-vault module
+  alias __hhs_vault='python3 -m vault'
+  # @alias: Shortcut for hspylib-cfman module
+  alias __hhs_cfman='python3 -m cfman'
+  # @alias: Shortcut for hspylib-kafman module
+  alias __hhs_kafman='python3 -m kafman'
 fi
 
 # -----------------------------------------------------------------------------------
 # @category: Perl aliases
 
 if __hhs_has "perl"; then
+
   # @alias: Remove escape (\EscXX) codes from text
   alias clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
   if __hhs_has "pbcopy"; then

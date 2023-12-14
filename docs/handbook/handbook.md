@@ -4,7 +4,7 @@
 >
 > Introduction
 
-**Thank you** for using HomeSetup. This handbook contains a collection of instructions intended to provide ready
+**Thank You** for using HomeSetup. This handbook contains a collection of instructions intended to provide ready
 reference for your new terminal features. We will cover all related aliases, applications and functions, as well as
 environment variables, configuration files and more.
 
@@ -14,8 +14,8 @@ environment variables, configuration files and more.
 
 - [Environment variables](#environment-variables)
 - [Aliases](#aliases)
-  * [Alias Definitions](#alias-definitions)
-  * [Categories](#categories)
+  - [Alias Definitions](#alias-definitions)
+  - [Categories](#categories)
 - [Functions](#functions)
 - [Applications](#applications)
 - [Templates](#templates)
@@ -32,37 +32,48 @@ install HomeSetup this file will be created automatically for you, so you just n
 
 > **All HomeSetup variable are prefixed with HHS_**
 
-| VARIABLE                 | Description                                                                                          |
-|--------------------------|------------------------------------------------------------------------------------------------------|
-| HHS_ACTIVE_DOTFILES      | Dotfiles that are actually active and the load order.                                                |
-| HHS_ALIASES_FILE         | File containing your alias exports.                                                                  |
-| HHS_BACKUP_DIR           | Directory containing all HomeSetup backup files                                                      |
-| HHS_BASH_COMPLETIONS     | Bash-completions that are actually active.                                                           |
-| HHS_CMD_FILE             | This file holds the saved commands issued by __hhs_command function.                                 |
-| HHS_DEFAULT_EDITOR       | This is the default editor used by all functions or apps that require text editing.                  |
-| HHS_DEV_TOOLS            | Tools that HomeSetup will keep an eye on, to check is they are installed or not.                     |
-| HHS_DIR                  | This is where HomeSetup stores it's configuration files.                                             |
-| HHS_ENV_FILE             | File containing your environment exports.                                                            |
-| HHS_FIREBASE_CONFIG_FILE | File used to store your Firebase integration configurations.                                         |
-| HHS_FIREBASE_CREDS_FILE  | File containing your Firebase credentials, used for authentication.                                  |
-| HHS_HAS_DOCKER           | Whether docker is installed and active.                                                              |
-| HHS_HIGHLIGHT_COLOR      | Color to be used to highlight text on some functions.                                                |
-| HHS_HOME                 | HomeSetup installation directory.                                                                    |
-| HHS_LOG_DIR              | Directory containing all HomeSetup function logs.                                                    |
-| HHS_LOG_FILE             | File containing all HomeSetup load logs.                                                             |
-| HHS_MOTD                 | Message Of The Day: to be displayed when HomeSetup is loaded.                                        |
-| HHS_MY_OS                | Your OS name.                                                                                        |
-| HHS_MY_OS_PACKMAN        | Your OS package manager application.                                                                 |
-| HHS_MY_OS_RELEASE        | Your OR release name.                                                                                |
-| HHS_MY_SHELL             | Your login shell base name.                                                                          |
-| HHS_PATHS_FILE           | This file holds the additional PATH's to be added to your shell and used by __hhs_paths function.    |
-| HHS_PUNCH_FILE           | This file holds the saved punches issued by __hhs_punch function.                                    |
-| HHS_SAVED_DIRS_FILE      | This file holds the saved directories issued by __hhs_save_dir function.                             |
-| HHS_TERM_OPTS            | Active terminal options.                                                                             |
-| HHS_TUI_MAX_ROWS         | This is used by __hhs_mselect and __hhs_mchoose to set the maximum amount of items to be displayed. |
-| HHS_VAULT_FILE           | This file holds the user vault, used to store secure information.                                    |
-| HHS_VAULT_USER           | This is the user that hhs vault plugin will use to store your vault data.                            |
-| HHS_VERSION              | Currently installed HomeSetup version.                                                               |
+| VARIABLE                  | Description                                                                                            |
+|---------------------------|--------------------------------------------------------------------------------------------------------|
+| HHS_ACTIVE_DOTFILES       | Dotfiles that are actually active and the load order.                                                  |
+| HHS_ALIASES_FILE          | File containing your alias exports.                                                                    |
+| HHS_BACKUP_DIR            | Directory containing all HomeSetup backup files                                                        |
+| HHS_BASH_COMPLETIONS      | Bash-completions that are actually active.                                                             |
+| HHS_CACHE_DIR             | Directory containing all HomeSetup cache files                                                         |
+| HHS_CMD_FILE              | This file holds the saved commands issued by __hhs_command function.                                   |
+| HHS_DEV_TOOLS             | Tools that HomeSetup will keep an eye on, to check is they are installed or not.                       |
+| HHS_DIR                   | This is where HomeSetup stores it's configuration files.                                               |
+| HHS_ENV_FILE              | File containing your environment exports.                                                              |
+| HHS_EXPORT_SETTINGS       | Whether to export system settings (Setman) or not.                                                     |
+| HHS_FIREBASE_CONFIG_FILE  | File used to store your Firebase integration configurations.                                           |
+| HHS_FIREBASE_CREDS_FILE   | File containing your Firebase credentials, used for authentication.                                    |
+| HHS_GITHUB_URL            | HomeSetup Github URL                                                                                   |
+| HHS_HAS_DOCKER            | Whether docker is installed and active.                                                                |
+| HHS_HIGHLIGHT_COLOR       | Color to be used to highlight text on some functions.                                                  |
+| HHS_HOME                  | HomeSetup installation directory.                                                                      |
+| HHS_LOAD_COMPLETIONS      | Whether to load bash completions at startup.                                                           |
+| HHS_LOAD_SHELL_OPTIONS    | Whether to setr/unset shell options at startup.                                                        |
+| HHS_LOG_DIR               | Directory containing all HomeSetup function logs.                                                      |
+| HHS_LOG_FILE              | File containing all HomeSetup load logs.                                                               |
+| HHS_MY_OS                 | Your OS name.                                                                                          |
+| HHS_MY_OS_PACKMAN         | Your OS package manager application.                                                                   |
+| HHS_MY_OS_RELEASE         | Your OR release name.                                                                                  |
+| HHS_MY_SHELL              | Your login shell base name.                                                                            |
+| HHS_NO_AUTO_UPDATE        | Whether HomeSetuop auto-update is enabled or not.                                                      |
+| HHS_PATHS_FILE            | This file holds the additional PATH's to be added to your shell and used by __hhs_paths function.      |
+| HHS_PREFIX_FILE           | This is the HomeSetup installation prefix. Useful for multi-user installation.                         |
+| HHS_PUNCH_FILE            | This file holds the saved punches issued by __hhs_punch function.                                      |
+| HHS_RESTORE_LAST_DIR      | Whether to restore last user directory at startup or not.                                              |
+| HHS_SAVED_DIRS_FILE       | This file holds the saved directories issued by __hhs_save_dir function.                               |
+| HHS_SETMAN_CONFIG_FILE    | File that holds Setman configurations.                                                                 |
+| HHS_SETMAN_DB_FILE        | File containing all Setman settings.                                                                   |
+| HHS_SETUP_FILE            | File that holds HomeSetup initialization settings.                                                     |
+| HHS_SET_LOCALES           | Whether to set current locale or not.                                                                  |
+| HHS_SHOPTS_FILE           | File containing all shell options.                                                                     |
+| HHS_STARSHIP_PRESETS_DIR  | Directory containing all HomeSet-Starship presets.                                                     |
+| HHS_USE_STARSHIP          | Whether to use Starship prompt or not.                                                                 |
+| HHS_VAULT_FILE            | This file holds the user vault, used to store secure information.                                      |
+| HHS_VAULT_USER            | This is the user that hhs vault plugin will use to store your vault data.                              |
+| HHS_VERSION               | Currently installed HomeSetup version.                                                                 |
 
 ## Aliases
 
@@ -135,15 +146,15 @@ Currently HomeSetup offers a handful of templates, that helps you code or config
 are provided with the latest version:
 
 - [Bash templates](../../templates/bash)
-    * [app.bash](../../templates/bash/app.bash) : Create bash applications using our style.
+  - [app.bash](../../templates/bash/app.bash) : Create bash applications using our style.
 - [Git templates](../../templates/git)
-    * [commits](../../templates/git/commits) : HomeSetup commit messages format.
-    * [gitconfig](../../templates/git/gitconfig) : .gitconfig file template.
-    * [gitignore](../../templates/git/gitignore) : .gitignore file template.
-    * [commit-msg](../../templates/git/hooks/commit-msg) : Git hook to make sure your commit message is following our format.
-    * [prepare-commit-msg](../../templates/git/hooks/prepare-commit-msg) : Make sure no one commits on master.
+  - [commits](../../templates/git/commits) : HomeSetup commit messages format.
+  - [gitconfig](../../templates/git/gitconfig) : .gitconfig file template.
+  - [gitignore](../../templates/git/gitignore) : .gitignore file template.
+  - [commit-msg](../../templates/git/hooks/commit-msg) : Git hook to make sure your commit message is following our format.
+  - [prepare-commit-msg](../../templates/git/hooks/prepare-commit-msg) : Make sure no one commits on master.
 - [Text templates](../../templates/txt)
-    * [help.txt](../../templates/txt/help.txt) : Template used to create HomeSetup help messages.
-    * [man.txt](../../templates/txt/man.txt) : Template used to create bash man pages.
+  - [help.txt](../../templates/txt/help.txt) : Template used to create HomeSetup help messages.
+  - [man.txt](../../templates/txt/man.txt) : Template used to create bash man pages.
 
 **Do you have a nicer template ? Send it to us !**

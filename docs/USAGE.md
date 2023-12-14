@@ -85,63 +85,69 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### Navigational
 
-| ALIAS | Equivalent | Description                                      |
-|-------|------------|--------------------------------------------------|
-| ...   | cd ...     | Change-back two previous directories             |
-| ....  | cd ....    | Change-back three previous directories           |
-| ..... | cd .....   | Change-back four previous directories            |
-| ~     | cd ~       | Change the current directory to HOME dir         |
-| \-    | cd -       | Change the current directory to the previous dir |
-| ?     | pwd        | Display the current directory path               |
+| ALIAS | Equivalent | Description                                                         |
+|-------|------------|---------------------------------------------------------------------|
+| ..    | cd ..      | Change-back to previous directory                                   |
+| ...   | cd ...     | Change-back two previous directories                                |
+| ....  | cd ....    | Change-back three previous directories                              |
+| ..... | cd .....   | Change-back four previous directories                               |
+| ~     | cd ~       | Change the current directory to HOME dir                            |
+| \-    | cd -       | Change the current directory to the previous dir                    |
+| ?     | pwd        | Display the current working dir and remote repository if it applies |
 
 ### General
 
-| ALIAS | Description                                                        |
-|-------|--------------------------------------------------------------------|
-| q     | Short for `exit 0' from terminal                                   |
-| sudo  | Enable aliases to be sudo’ed                                       |
-| ls    | Always use color output for **ls**                                 |
-| l     | List _all files_ colorized in long format                          |
-| lsd   | List _all directories_ in long format                              |
-| ll    | List _all files_ colorized in long format, **including dot files** |
-| lll   | List _all **.dotfiles**_ colorized in long format                  |
-| lld   | List _all **.dotfolders**_ colorized in long format                |
-| grep  | Always enable colored **grep** output                              |
-| egrep | Always enable colored **fgrep** output                             |
-| fgrep | Always enable colored **egrep** output                             |
-| rm    | By default **rm** will prompt for confirmation and will be verbose |
-| cp    | By default **cp** will prompt for confirmation and will be verbose |
-| mv    | By default **mv** will prompt for confirmation and will be verbose |
-| df    | Make **df** command output pretty and human readable format        |
-| du    | Make **du** command output pretty and human readable format        |
-| psg   | Make **ps** command output pretty and human readable format        |
-| ifs   | Display current value of IFS                                       |
-| vi    | Use **vim** instead of **vi** if installed                         |
-| more  | **more** will interpret escape sequences                           |
-| less  | **less** will interpret escape sequences                           |
-| mount | Make `mount' command output pretty and human readable format       |
-| cpu   | **top** shortcut ordered by _cpu_                                  |
-| mem   | **top** shortcut ordered by _Memory_                               |
-| week  | Date&Time - Display current **week number**                        |
-| now   | Date&Time - Display current **date and time**                      |
-| ts    | Date&Time - Display current **timestamp**                          |
-| wget  | If **wget** is not available, use **curl** instead                 |
-| ps1   | Make _PS1_ prompt active                                           |
-| ps2   | Make _PS2_ prompt active (continuation prompt)                     |
+| ALIAS     | Description                                                        |
+|-----------|--------------------------------------------------------------------|
+| q         | Shorthand for `exit 0' from terminal                               |
+| sudo      | Enable aliases to be sudo’ed                                       |
+| ls        | Always use color output for **ls**                                 |
+| l         | List _all files_ colorized in long format                          |
+| ld        | List _all directories_ colorized in long format                    |
+| lf        | List _all files_ colorized in long format                          |
+| ll        | List _all files_ colorized in long format, **including dotfiles**  |
+| lll       | List _all **.dotfiles**_ colorized in long format                  |
+| lld       | List _all **.dotfolders**_ colorized in long format                |
+| grep      | Always enable colored **grep** output                              |
+| fgrep     | Always enable colored **egrep** output                             |
+| egrep     | Always enable colored **fgrep** output                             |
+| cd        | Built-ins replacement for `cd'                                     |
+| dirs      | Built-ins replacement for `dirs'                                   |
+| help      | Built-ins replacement for `help'                                   |
+| starship  | Starship replacement for `starship' binary                         |
+| rm        | By default **rm** will prompt for confirmation and will be verbose |
+| cp        | By default **cp** will prompt for confirmation and will be verbose |
+| mv        | By default **mv** will prompt for confirmation and will be verbose |
+| df        | Make **df** command output pretty and human readable format        |
+| du        | Make **du** command output pretty and human readable format        |
+| psg       | Make **ps** command output pretty and human readable format        |
+| ifs       | Display current value of IFS                                       |
+| open      | Use the assigned app to open a file                                |
+| shopt     | Display/Set/unset current Shell Options                            |
+| vi        | Use **vim** instead of **vi** if installed                         |
+| more      | **more** will interpret escape sequences                           |
+| less      | **less** will interpret escape sequences                           |
+| mount     | Make `mount' command output pretty and human readable format       |
+| week      | Date&Time - Display current **week number**                        |
+| now       | Date&Time - Display current **date and time**                      |
+| ts        | Date&Time - Display current **timestamp**                          |
+| wget      | If **wget** is not available, use **curl** instead                 |
+| ps1       | Make _PS1_ prompt active                                           |
+| ps2       | Make _PS2_ prompt active (continuation prompt)                     |
 
 ### HomeSetup
 
-| ALIAS          | Description                                                       |
-|----------------|-------------------------------------------------------------------|
-| __hhs_hspm     | Alias for `hhs hspm` plug-in                                      |
-| __hhs_hhu      | Alias for `hhs updater` plug-in                                   |
-| __hhs_vault    | Alias for `hspylib vault` application                             |
-| __hhs_firebase | Alias for `hspylib firebase` application                          |
-| __hhs_reload   | Alias to reload HomeSetup                                         |
-| __hhs_clear    | Alias to clear and reset cursor attributes and **IFS**            |
-| __hhs_reset    | Alias to clear screen and reset the terminal                      |
-| __hhs_open     | Alias to use the assigned application to open a file or directory |
-| __hhs_hspylib  | Alias to access HSPyLib python application                        |
+| ALIAS          | Description                                            |
+|----------------|--------------------------------------------------------|
+| __hhs_reload   | Alias to reload HomeSetup                              |
+| __hhs_clear    | Alias to clear and reset cursor attributes and **IFS** |
+| __hhs_reset    | Alias to clear screen and reset the terminal           |
+| __hhs_hspm     | Shortcut for `hhs hspm` plug-in                        |
+| __hhs_hhu      | Shortcut for `hhs updater` plug-in                     |
+| __hhs_starship | Shortcut for `hhs starship` plug-in                    |
+| __hhs_setup    | Shortcut for `hhs setup` plug-in                       |
+| __hhs_firebase | Shortcut for `hhs firebase` plug-in                    |
+| __hhs_settings | Shortcut for `hhs settings` plug-in                    |
 
 ### External tools
 
@@ -202,12 +208,16 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 
 ### Python aliases
 
-| ALIAS   | Description                         |
-|---------|-------------------------------------|
-| calc    | Evaluate mathematical expressions   |
-| urle    | URL-encode strings                  |
-| urld    | URL-decode strings                  |
-| uuid    | Generate a random UUID              |
+| ALIAS           | Description                         |
+|-----------------|-------------------------------------|
+| __hhs_urle      | URL-encode strings                  |
+| __hhs_urld      | URL-decode strings                  |
+| __hhs_uuid      | Generate a random UUID              |
+| __hhs_tcalc     | Evaluate mathematical expressions   |
+| __hhs_clitt     | Shortcut for hspylib-clitt module   |
+| __hhs_vault     | Shortcut for hspylib-vault module   |
+| __hhs_cfman     | Shortcut for hspylib-cfman module   |
+| __hhs_kafman    | Shortcut for hspylib-kafman module  |
 
 ### Perl aliases
 
