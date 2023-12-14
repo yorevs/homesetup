@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Developer-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Developer-Tools
 
 ## Table of contents
 
@@ -47,7 +51,7 @@ Prefer using the wrapper instead of the installed command itself.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1..$N _Required_ : The gradle tasks to call.
 

@@ -1,7 +1,8 @@
 <img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
 # HomeSetup Developer Handbook
-> The ultimate Terminal experience
+>
+> Introduction
 
 **Thank you** for using HomeSetup. This handbook contains a collection of instructions intended to provide ready
 reference for your new terminal features. We will cover all related aliases, applications and functions, as well as
@@ -29,7 +30,7 @@ Your new terminal uses a bunch of environment variables, that will be extended b
 You can override or add additional variables by adding entries to your installed **~/.env** file. When you first
 install HomeSetup this file will be created automatically for you, so you just need to edit it.
 
-**All HomeSetup variable are prefixed with HHS_**
+> **All HomeSetup variable are prefixed with HHS_**
 
 | VARIABLE                 | Description                                                                                          |
 |--------------------------|------------------------------------------------------------------------------------------------------|
@@ -58,7 +59,7 @@ install HomeSetup this file will be created automatically for you, so you just n
 | HHS_PUNCH_FILE           | This file holds the saved punches issued by __hhs_punch function.                                    |
 | HHS_SAVED_DIRS_FILE      | This file holds the saved directories issued by __hhs_save_dir function.                             |
 | HHS_TERM_OPTS            | Active terminal options.                                                                             |
-| HHS_TUI_MAX_ROWS         | This is used by __hhs_mselect and  __hhs_mchoose to set the maximum amount of items to be displayed. |
+| HHS_TUI_MAX_ROWS         | This is used by __hhs_mselect and __hhs_mchoose to set the maximum amount of items to be displayed. |
 | HHS_VAULT_FILE           | This file holds the user vault, used to store secure information.                                    |
 | HHS_VAULT_USER           | This is the user that hhs vault plugin will use to store your vault data.                            |
 | HHS_VERSION              | Currently installed HomeSetup version.                                                               |

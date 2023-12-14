@@ -1,6 +1,7 @@
 <img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
 # HomeSetup Usage
+>
 > The ultimate Terminal experience
 
 HomeSetup offers a comprehensive [User Handbook](handbook/handbook.md) that contains detailed documentation on all commands and examples of their usage. Additionally, there will soon be a _YouTube video series_ available that guides you through the installation, usage, configuration, and utilization of all the features and enhancements provided.
@@ -34,7 +35,7 @@ The User Handbook serves as a valuable resource for understanding and making the
 - [5. Alias Definitions](#alias-definitions)
 - [6. HomeSetup application](#homesetup-application)
   * [6.1. HHS-Plug-ins](#hhs-plug-ins)
-  * [6.2. HHS-Built-Ins](#hhs-functions)
+  * [6.2. HHS-Functions](#hhs-functions)
 - [7. Auto completions](#auto-completions)
   * [7.1. Bash completions](#bash-completions)
 

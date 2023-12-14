@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -47,7 +51,7 @@ Encrypt file using GPG.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The file to encrypt.
   - $2 _Required_ : The passphrase used to encrypt the file.
@@ -74,7 +78,7 @@ Decrypt a GPG encrypted file.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The file to decrypt.
   - $2 _Required_ : The passphrase used to decrypt the file.

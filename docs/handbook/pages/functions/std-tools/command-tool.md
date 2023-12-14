@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -57,7 +61,7 @@ Add/Remove/List/Execute saved bash commands.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The command index or alias.
   - $2..$N _Conditional_ : The command expression. This is required when alias is provided.

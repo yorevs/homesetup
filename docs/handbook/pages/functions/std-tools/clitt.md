@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -38,21 +42,21 @@
 ```bash
 Usage: __hhs_mchoose [options] <output_file> <title> <items...>
 
-    Options: 
+    Options:
       -c  : All options are initially checked instead of unchecked.
 
-    Arguments: 
+    Arguments:
       output_file : The output file where the results will be stored.
       title       : The text to be displayed before rendering the items.
       items       : The items to be displayed for choosing. Must be greater than 1.
 
-    Examples: 
+    Examples:
       Choose numbers from 1 to 20 (start with all options checked):
         => __hhs_mchoose /tmp/out.txt 'Mark the desired options' {1..20} && cat /tmp/out.txt
       Choose numbers from 1 to 20 (start with all options unchecked):
         => __hhs_mchoose -c /tmp/out.txt 'Mark the desired options' {1..20} && cat /tmp/out.txt
 
-  Notes: 
+  Notes:
     - A temporary file is suggested to used with this command: $ mktemp.
     - The outfile must not exist or it be an empty file.
 ```
@@ -67,7 +71,7 @@ Choose options from a list using a navigable menu.
   - **127** if the user Canceled (**Q** pressed).
   - **non-zero** for all other cases.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_     : The output file where the results will be stored.
   - $2 _Required_     : The text to be displayed before rendering the items.
@@ -92,16 +96,16 @@ Choose options from a list using a navigable menu.
 ```bash
 Usage: __hhs_mselect <output_file> <title> <items...>
 
-    Arguments: 
+    Arguments:
       output_file : The output file where the result will be stored.
       title       : The text to be displayed before rendering the items.
       items       : The items to be displayed for selecting.
 
-    Examples: 
+    Examples:
       Select a number from 1 to 100:
         => __hhs_mselect /tmp/out.txt 'Please select one option' {1..100} && cat /tmp/out.txt
 
-  Notes: 
+  Notes:
     - If only one option is available, mselect will select it and return.
     - A temporary file is suggested to used with this command: $ mktemp.
     - The outfile must not exist or it be an empty file.
@@ -117,7 +121,7 @@ Select an option from a list using a navigable menu.
   - **127** if the user Canceled (**Q** pressed).
   - **non-zero** for all other cases.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_     : The output file where the result will be stored.
   - $2 _Required_     : The text to be displayed before rendering the items.
@@ -139,12 +143,12 @@ Select an option from a list using a navigable menu.
 ```bash
 Usage: __hhs_minput <output_file> <title> <form_fields...>
 
-    Arguments: 
+    Arguments:
       output_file : The output file where the results will be stored.
       title       : The text to be displayed before rendering the items.
            fields : A list of form fields: Label|Mode|Type|Min/Max len|Perm|Value
 
-    Fields: 
+    Fields:
       Field tokens (in-order):
                     <Label> : The field label. Consisting only of alphanumeric characters and under‐scores.
                      [Mode] : The input mode. One of {[text]|password|checkbox|select|masked}.
@@ -152,11 +156,11 @@ Usage: __hhs_minput <output_file> <title> <form_fields...>
               [Min/Max len] : The minimum and maximum length of characters allowed. Defaults to [0/30].
                      [Perm] : The field permissions. One of {r|[rw]}. Where \"r\" for Read Only ; \"rw\" for Read & Write.
 
-    Examples: 
-      Form with 4 fields (Name,Age,Password,Role,Accept Conditions): 
-        => __hhs_minput /tmp/out.txt 'Please fill the form below:' 'Name|||5/30|rw|' 'Age||numbers|1/3||' 'Password|password||5|rw|' 'Role||||r|Admin' 'Accept Conditions|checkbox||||' 
+    Examples:
+      Form with 4 fields (Name,Age,Password,Role,Accept Conditions):
+        => __hhs_minput /tmp/out.txt 'Please fill the form below:' 'Name|||5/30|rw|' 'Age||numbers|1/3||' 'Password|password||5|rw|' 'Role||||r|Admin' 'Accept Conditions|checkbox||||'
 
-  Notes: 
+  Notes:
     - Optional fields will assume a default value if they are not specified.
     - A temporary file is suggested to used with this command: $ mktemp.
 ```
@@ -171,7 +175,7 @@ Provide a terminal form input with simple validation.
   - **127** if the user Canceled (**Esc** pressed).
   - **non-zero** for all other cases.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_     : The output file where the results will be stored.
   - $2 _Required_     : The text to be displayed before rendering the items.

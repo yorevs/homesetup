@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -50,7 +54,7 @@ Search for files and links to files recursively.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_     : The base search path.
   - $2 _Required_     : The search glob expressions.
@@ -80,7 +84,7 @@ Search for directories and links to directories recursively.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_     : The base search path.
   - $2 _Required_     : The search glob expressions.
@@ -116,7 +120,7 @@ Search in files for strings matching the specified criteria recursively.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_     : The base search path.
   - $2 _Required_     : The search expression. Can be a regex or just a string.

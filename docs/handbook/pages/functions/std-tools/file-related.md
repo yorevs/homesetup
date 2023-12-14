@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -61,7 +65,7 @@ List files sorted by the specified column. The following columns apply:
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The listed column number
 
@@ -92,7 +96,7 @@ Move files recursively to the Trash.
 
 **0** if command was successful; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : Base search path.
   - $2 _Required_ : The glob expression to match the file/dir names.

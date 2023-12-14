@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Developer-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Developer-Tools
 
 ## Table of contents
 
@@ -36,7 +40,7 @@
 #### __hhs_docker_count
 
 ```bash
-Usage: __hhs_docker_count 
+Usage: __hhs_docker_count
 ```
 
 ##### **Purpose**:
@@ -71,7 +75,7 @@ Display information about the container.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The running container ID.
 
@@ -88,7 +92,7 @@ Display information about the container.
 ```bash
 Usage: __hhs_docker_exec <container_id> [shell_cmd]
 
-  Notes: 
+  Notes:
     - If shell_cmd is not provided /bin/bash will be used.
 ```
 
@@ -100,7 +104,7 @@ Run a command or bash in a running container.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The running container ID.
   - $2 _Optional_ : The command to be executed on the container.
@@ -127,7 +131,7 @@ This is the equivalent of docker exec, but for docker-compose.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The running container ID.
   - $2 _Optional_ : The command to be executed on the container.
@@ -154,7 +158,7 @@ Fetch the logs of a container.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The running container ID.
 
@@ -195,7 +199,7 @@ Remove all docker volumes not referenced by any containers (dangling).
 ```bash
 Usage: __hhs_docker_kill_all [-a]
 
-    Options: 
+    Options:
       -a : Remove active and inactive volumes; othewise it will only remove inactive
 ```
 
@@ -207,7 +211,7 @@ Stop, remove and remove dangling [active?] volumes of all docker containers.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : Option to remove active containers as well.
 

@@ -1,4 +1,8 @@
-# HomeSetup Directory Related Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -52,7 +56,7 @@ Usage: __hhs_change_dir [-L|-P] [dir]
 
 **0** if the directory is changed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : [-L|-P] whether to follow (-L) or not (-P) symbolic links.
   - $2 _Optional_ : The directory to change. If not provided, default DIR is the value of the HOME variable.
@@ -82,7 +86,7 @@ Change the current working directory to the previous folder by N times.
 
 **0** if directory is changed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The number of directories to change backwards. If not provided, default is one.
 
@@ -109,7 +113,7 @@ Display the list of currently selectable remembered directories.
 
 **0** if directory is changed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $N _Optional_ : If any parameter is used, the default dirs command is invoked instead.
 
@@ -166,7 +170,7 @@ Save one directory path for future __hhs_load.
 
 **0** if the save was successful; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Conditional_ : The directory path to save or the alias to be removed.
   - $2 _Conditional_ : The alias to name the saved path.
@@ -201,7 +205,7 @@ Change the current working directory to pre-saved entry from __hhs_save.
 
 **0** if the load was successful; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The alias to load the path from.
 
@@ -228,7 +232,7 @@ Search and cd into the first match of the specified directory name.
 
 **0** if directory is changed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The base search path.
   - $2 _Required_ : The directory name to search and cd into.
@@ -245,7 +249,7 @@ Search and cd into the first match of the specified directory name.
 #### __hhs_mkcd
 
 ```bash
-Usage: __hhs_mkcd <dirtree | package> 
+Usage: __hhs_mkcd <dirtree | package>
 
 E.g:. __hhs_mkcd dir1/dir2/dir3 (dirtree)
 E.g:. __hhs_mkcd dir1.dir2.dir3 (FQDN)
@@ -259,7 +263,7 @@ Create all folders using a slash or dot notation path and immediately change int
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The directory tree or the package name
 

@@ -1,22 +1,23 @@
 <img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
 # HomeSetup Showcase
+>
 > The ultimate Terminal experience
 
 ## How can I try it ?
 
 There are two ways of trying HomeSetup:
 
-### Local installation:
+### Local installation
 
 ```bash
-$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 ```
 
 or
 
 ```bash
-$ wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 ```
 
 ### Run on Docker
@@ -27,10 +28,10 @@ affecting your host system. This allows you to experiment and evaluate the insta
 changes. You can try HomeSetup on Docker, issuing one of the following commands:
 
 ```bash
-$ docker run --rm -it yorevs/hhs-centos
-$ docker run --rm -it yorevs/hhs-ubuntu
-$ docker run --rm -it yorevs/hhs-fedora
-$ docker run --rm -it yorevs/hhs-alpine
+docker run --rm -it yorevs/hhs-centos
+docker run --rm -it yorevs/hhs-ubuntu
+docker run --rm -it yorevs/hhs-fedora
+docker run --rm -it yorevs/hhs-alpine
 ```
 
 ![HomeSetup Welcome](https://iili.io/H8ry3vI.png "Welcome to HomeSetup")
@@ -117,10 +118,9 @@ realtime database capabilities.
 
 ### Firebase
 
-Please check the [Firebase Setup](FIREBASE_SETUP.md) document for instructions on how to configure your account.
+Please refer to the [Firebase Setup](FIREBASE_SETUP.md) document for detailed instructions on configuring your account.
 
-Once configured, you can use Firebase to upload/download your dotfiles to/from Firebase. This allows ou to have all of
-your dotfiles everywhere.
+After completing the setup, leverage Firebase to seamlessly upload/download your dotfiles, providing you with accessibility to all your configurations from anywhere.
 
 <img src="https://iili.io/JuzoPwb.png" />
 
@@ -128,7 +128,7 @@ your dotfiles everywhere.
 
 ### Starship
 
-HomeSetup provides an out-of-the-box starship.toml, but you can configure it the way you want byt typing:
+HomeSetup includes a pre-configured starship.toml for a quick start, yet you have the flexibility to customize it according to your preferences simply by entering:
 
 `$ hhs starship`
 
@@ -136,7 +136,7 @@ or just
 
 `$ starship`
 
-If you are lazy to configure yourself, you can try on the the Starship presets:
+If manual configuration feels too cumbersome, you can effortlessly explore one of the convenient Starship presets:
 
 `$ starship preset`
 

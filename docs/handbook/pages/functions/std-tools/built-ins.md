@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -47,7 +51,7 @@ Generate a random number int the range <min> <max> (all limits included).
 
 **0** if the number was generated; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The minimum range of the number.
   - $2 _Required_ : The maximum range of the number.
@@ -74,7 +78,7 @@ Convert string into it's decimal ASCII representation.
 
 **0** if the representation was displayed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The string to convert.
 
@@ -102,7 +106,7 @@ Convert unicode to hexadecimal
 
 **0** if the unicode was successfully converted; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1..$N _Required_ : The unicode values to convert
 
@@ -127,7 +131,7 @@ Open a file or URL with the default program.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The url or program arguments to be passed to open.
 
@@ -153,7 +157,7 @@ Create and/or open a file using the default editor.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The file path.
 

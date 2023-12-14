@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -38,13 +42,13 @@
 ```bash
 Usage: __hhs_punch [options] <args>
 
-    Options: 
+    Options:
       -l | --list       : List all registered punches.
       -e | --edit       : Edit current punch file.
       -r | --reset      : Reset punches for the current week and save the previous one.
       -w | --week <num> : Report (list) all punches of specified week using the pattern: week-N.punch.
 
-  Notes: 
+  Notes:
     When no arguments are provided it will !!PUNCH THE CLOCK!!.
 ```
 
@@ -56,7 +60,7 @@ PUNCH-THE-CLOCK. This is a helper tool to aid with the timesheets.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Conditional_     : The week list punches from.
 

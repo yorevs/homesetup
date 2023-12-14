@@ -178,7 +178,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # @function: Copy file from source into proper destination
+  # @function: Copy file from source to destination.
   # @Param $1 [Req] : The source file/dir.
   # @Param $2 [Req] : The destination file/dir.
   copy_file() {
@@ -200,8 +200,27 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
+  # @function: Link file from source to destination.
+  # @Param $1 [Req] : The source file/dir.
+  # @Param $2 [Req] : The destination file/dir.
+  link_file() {
+
+    local src_file dest_file
+
+    src_file="${1}"
+    dest_file="${2}"
+
+    # Backup existing dest_file into ${HHS_BACKUP_DIR}.
+    [[ -s "${dest_file}" && ! -L "${dest_file}" ]] && \mv "${dest_file}" "${HHS_BACKUP_DIR}/$(basename "${dest_file}".orig)"
+    echo ''
+    echo -en "${WHITE}Linking: ${BLUE}"
+    echo -en "$(\ln -sfv "${src_file}" "${dest_file}")...${NC}"
+    [[ -L "${dest_file}" ]] && echo -e " ${GREEN}OK${NC}"
+    [[ -L "${dest_file}" ]] || quit 1 " ${RED}FAILED${NC}"
+  }
+
   # shellcheck disable=SC2199,SC2076
-  # Check current active User shell type
+  # Check current active User shell type.
   check_current_shell() {
 
     if [[ ! " ${SUPP_SHELL_TYPES[@]} " =~ " ${SHELL##*/} " ]]; then
@@ -354,17 +373,14 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
 
-    echo ''
-    echo -e "Using ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager"
-    echo ''
-    echo -e "${WHITE}Checking required tools [${OS_TYPE}] ...${NC}"
-    echo ''
+    echo -e "\nUsing ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager!\n"
+    echo -e "${WHITE}Checking required tools [${OS_TYPE}] ...${NC}\n"
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
     for tool_name in "${DEPENDENCIES[@]}"; do
-      echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
+      echo -en "${ORANGE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
         echo -e " ${GREEN}INSTALLED${NC}"
@@ -375,7 +391,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     done
 
     for tool_name in "${REQUIRED_APPS[@]}"; do
-      echo -en "${WHITE}Checking: ${YELLOW}${tool_name}${NC} ..."
+      echo -en "${ORANGE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
         echo -e " ${GREEN}INSTALLED${NC}"
@@ -580,35 +596,22 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo ">>> Linked dotfiles:" >>"${INSTALL_LOG}"
     # If `all' option is used, copy all files.
     if [[ "$OPT" == 'all' ]]; then
-      # Copy all dotfiles
-      # shellcheck disable=2048
-      for next in ${ALL_DOTFILES[*]}; do
+      # Link all dotfiles
+      for next in "${ALL_DOTFILES[@]}"; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
-        # Backup existing dotfile into ${HHS_BACKUP_DIR}
-        [[ -s "${dotfile}" && ! -L "${dotfile}" ]] && \mv "${dotfile}" "${HHS_BACKUP_DIR}/$(basename "${dotfile}".orig)"
-        echo -en "\n${WHITE}Linking: ${BLUE}"
-        echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
-        echo -en "...${NC}"
-        [[ -L "${dotfile}" ]] && echo -e "${GREEN}OK${NC}"
-        [[ -L "${dotfile}" ]] || quit 1 " ${RED}FAILED${NC}"
+        link_file "${DOTFILES_DIR}/${next}" "${dotfile}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
     # If `all' option is NOT used, prompt for confirmation.
     else
-      # Copy all dotfiles
-      for next in ${ALL_DOTFILES[*]}; do
+      # Link all dotfiles
+      for next in "${ALL_DOTFILES[@]}"; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
         [[ -z ${QUIET} && -z "${STREAMED}" ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [[ "${ANS}" != 'y' && "${ANS}" != 'Y' ]] && continue
         echo ''
-        # Backup existing dotfile into ${HHS_BACKUP_DIR}.
-        [[ -s "${dotfile}" && ! -L "${dotfile}" ]] && \mv "${dotfile}" "${HHS_BACKUP_DIR}/$(basename "${dotfile}".orig)"
-        echo -en "${WHITE}Linking: ${BLUE}"
-        echo -en "$(\ln -sfv "${DOTFILES_DIR}/${next}" "${dotfile}")"
-        echo -en "...${NC}"
-        [[ -L "${dotfile}" ]] && echo -e "${GREEN}OK${NC}"
-        [[ -L "${dotfile}" ]] || quit 1 "${RED}FAILED${NC}"
+        link_file "${DOTFILES_DIR}/${next}" "${dotfile}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
       done
     fi
@@ -623,13 +626,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Link apps into place.
-    echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR}... "
+    echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR}..."
     echo ">>> Linked apps:" >>"${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
-      -exec chmod 755 {} \; >>"${INSTALL_LOG}"  2>&1; then
-      echo -e "${GREEN}OK${NC}"
+      -exec chmod +x {} \; >>"${INSTALL_LOG}" 2>&1; then
+      echo -e " ${GREEN}OK${NC}"
     else
       quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
     fi
@@ -640,10 +643,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
       -print \
       -exec ln -sfv {} "${BIN_DIR}" \; \
-      -exec chmod 755 {} \; >>"${INSTALL_LOG}"  2>&1; then
-      echo -e "${GREEN}OK${NC}"
+      -exec chmod +x {} \; >>"${INSTALL_LOG}" 2>&1; then
+      echo -e " ${GREEN}OK${NC}"
     else
-      quit 2 "Unable to link completions into bin (${BIN_DIR}) directory !"
+      quit 2 "Unable to link auto-completes into bin (${BIN_DIR}) directory !"
     fi
 
     # Copy HomeSetup fonts into place.
@@ -881,7 +884,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
     echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
     echo -e "${NC}"
-    echo -e "${WHITE}${HAND_PEACE_ICN} Your shell, good as hell !"
+    echo -e "${WHITE}${HAND_PEACE_ICN} The ultimate Terminal experience !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${WHITE}hhu update"

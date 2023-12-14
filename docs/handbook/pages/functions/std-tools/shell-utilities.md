@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -47,7 +51,7 @@ Search for previously issued commands from history using filters.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The case-insensitive filter to be used when listing.
 
@@ -71,7 +75,7 @@ Display statistics about commands in history.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : Limit to the top N commands.
 
@@ -96,7 +100,7 @@ Display all environment variables using filters.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The case-insensitive filter to be used when listing.
 
@@ -121,7 +125,7 @@ Display all alias definitions using filters.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
 

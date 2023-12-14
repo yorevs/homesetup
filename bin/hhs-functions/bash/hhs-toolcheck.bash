@@ -93,22 +93,21 @@ function __hhs_version() {
 # @param $1..$N [Opt] : The tool list to be checked.
 function __hhs_tools() {
 
-  local tool_list
+  local app tool_list
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [tool_list]"
     return 1
   else
     if [[ $# -gt 0 ]]; then
-      tool_list=$*
+      tool_list=(${@})
     else
-      tool_list=${HHS_DEV_TOOLS[*]}
+      tool_list=(${HHS_DEV_TOOLS[@]})
     fi
-    IFS=$' '
-    for app in ${tool_list}; do
+    echo -e "\n${YELLOW}Checking (${#tool_list[@]}) development tools:${NC}\n"
+    for app in "${tool_list[@]}"; do
       __hhs_toolcheck "$app"
     done
-    IFS="${OLDIFS}"
 
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"

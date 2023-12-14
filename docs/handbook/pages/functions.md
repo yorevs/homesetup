@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Functions handbook
 
 ## Table of contents
 
@@ -32,9 +36,9 @@
 
 ## Standard Tools
 
-This set of tool were designed to help you on daily tasks and improve productivity with the command line. Many 
+This set of tool were designed to help you on daily tasks and improve productivity with the command line. Many
 functions to help find files/directories, text and other utilities such as system information and partitions. A
-list of available functions can be found on the **README.md** section [Standard Tools](../../USAGE.md#standard-tools) 
+list of available functions can be found on the **README.md** section [Standard Tools](../../USAGE.md#standard-tools)
 
 ## Development Tools
 

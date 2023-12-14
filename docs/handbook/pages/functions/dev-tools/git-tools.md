@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Developer-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Developer-Tools
 
 ## Table of contents
 
@@ -36,7 +40,7 @@
 #### __hhs_git_branch_previous
 
 ```bash
-Usage: __hhs_git_branch_previous 
+Usage: __hhs_git_branch_previous
 ```
 
 ##### **Purpose**:
@@ -74,7 +78,7 @@ Select and checkout a local or remote branch.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : Fetch all branches instead of only local branches (default).
 
@@ -100,7 +104,7 @@ Get the current branch name of all repositories from the base search path.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The base path to search for git repositories. Default is current directory.
 
@@ -126,7 +130,7 @@ Get the status of current branch of all repositories from the base search path.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The base path to search for git repositories. Default is current directory.
 
@@ -152,7 +156,7 @@ Display a file diff comparing the version between the first and second commit ID
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The first commit ID.
   - $2 _Required_ : The second commit ID.
@@ -180,7 +184,7 @@ __hhs_git_show_file_contents
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The commit ID.
   - $2 _Required_ : The filename to show contents from.
@@ -207,7 +211,7 @@ List all changed files from a commit ID.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The commit ID.
 
@@ -237,7 +241,7 @@ Search and pull projects from the specified path using the given repository/bran
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The base path to search for git repositories.
   - $2 _Optional_ : The remote repository to pull from.

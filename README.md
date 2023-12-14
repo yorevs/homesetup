@@ -1,6 +1,7 @@
 <img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
 # HomeSetup
+>
 > The ultimate Terminal experience
 
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
@@ -165,7 +166,7 @@ Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.m
 
 ### Starship Setup
 
-HumeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and configurations please checkout the [Starship](https://starship.rs/) website.
+HomeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and configurations please checkout the [Starship](https://starship.rs/) website.
 
 
 ## Uninstallation
@@ -219,10 +220,9 @@ any questions or encounter any issues during the update process, feel free to re
 
 - Documentation: [API](docs/handbook/handbook.md)
 - License: [MIT](LICENSE.md)
-- Issue tracker: https://github.com/yorevs/homesetup/issues
-- Official chat: https://gitter.im/yorevs-homesetup/community
-- Maintainer: https://www.reddit.com/user/yorevs
+- Issue tracker: [ISSUES](https://github.com/yorevs/homesetup/issues)
+- Official chat: [GITTER](https://gitter.im/yorevs-homesetup/community)
+- Maintainer: [REDDIT](https://www.reddit.com/user/yorevs)
 - Mailto: [HomeSetup](mailto:homesetup@gmail.com)
-
 
 Enjoy!

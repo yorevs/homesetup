@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -47,7 +51,7 @@ Check if an alias does not exists and create it, otherwise just ignore it. Do no
 
 **0** if the alias name was created (available); **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The alias to set/check.
   - $* _Required_ : The alias expression.
@@ -66,11 +70,11 @@ Check if an alias does not exists and create it, otherwise just ignore it. Do no
 ```bash
 Usage: __hhs_aliases <alias> <alias_expr>
 
-    Options: 
+    Options:
       -e | --edit    : Open the aliases file for editing.
       -r | --remove  : Remove an alias.
 
-  Notes: 
+  Notes:
     List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter results using it.
     Add/Set an alias    : When both [alias] and [alias_expr] are provided.
 ```
@@ -83,7 +87,7 @@ Manipulate custom aliases (add/remove/edit/list).
 
 **0** if the alias was created (available); **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The alias name.
   - $2 _Conditional_ : The alias expression.

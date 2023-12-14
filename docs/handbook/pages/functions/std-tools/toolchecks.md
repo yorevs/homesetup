@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -51,7 +55,7 @@ Check whether a tool is installed on the system.
 
 **0** if the tool is installed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The app to check.
 
@@ -77,7 +81,7 @@ Check the version of the app using the most common ways.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The app to check.
 
@@ -103,7 +107,7 @@ Check whether a list of development tools are installed or not.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1..$N _Optional_ : The tool list to be checked.
 
@@ -128,7 +132,7 @@ Display information about the given command.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The command to check.
 

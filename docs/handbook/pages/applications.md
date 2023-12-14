@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Applications Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Applications handbook
 
 ## Table of contents
 
@@ -16,7 +20,7 @@
 
 HomeSetup comes with a bundled set of Bash applications and functions.
 
-A list of available bash applications can be found on the **README.md** 
+A list of available bash applications can be found on the **README.md**
 section [Bash Apps](../../USAGE.md#applications).
 
 [Back to User Handbook](../handbook.md)

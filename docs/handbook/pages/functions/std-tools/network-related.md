@@ -1,4 +1,8 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Standard-Tools Functions Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Standard-Tools
 
 ## Table of contents
 
@@ -47,7 +51,7 @@ Usage: __hhs_ip [kind]
        gateway : Get the IPv4 of your gateway
            vpn : Get your IPv4 assigned by your VPN
 
-  Notes: 
+  Notes:
     - If no kind is specified, all ips assigned to the machine will be retrieved
 ```
 
@@ -85,7 +89,7 @@ Resolve domain names associated with the specified IP.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The IP address to resolve.
 
@@ -135,7 +139,7 @@ Retrieve information about the specified IP.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The IP to get information about.
 
@@ -160,7 +164,7 @@ Lookup DNS entries to determine the IP address.
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   $1 _Required_ : The domain name to lookup.
 
@@ -176,7 +180,7 @@ $ __hhs_ip_lookup www.google.com
 ```bash
 Usage: __hhs_port_check <port_number> [port_state]
 
-  Notes: 
+  Notes:
     States: One of [CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT]
 ```
 
@@ -188,7 +192,7 @@ Check the state of local port(s).
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The port number regex.
   - $2 _Optional_ : The port state to match.
