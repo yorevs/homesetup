@@ -98,7 +98,7 @@ Within HomeSetup, there are specific manager applications for some of the custom
 3. `__hhs_aliases`: Manages the custom aliases defined in `~/.aliases`.
 
 To make your experience more convenient, it utilizes a set of aliases that provide shortcuts to most of the `__hhs`
-functions. These aliases are defined in the `.aliasdef` file located in the `$HHS_DIR` folder. While you have the
+functions. These aliases are defined in the `.aliasdef` file located in the **$HHS_DIR** folder. While you have the
 flexibility to manually edit this file, for the sake of this demonstration, the default definitions will be used.
 
 You can watch a demo of some of HomeSetup's features in the asciicast below:
@@ -130,15 +130,15 @@ After completing the setup, leverage Firebase to seamlessly upload/download your
 
 HomeSetup includes a pre-configured starship.toml for a quick start, yet you have the flexibility to customize it according to your preferences simply by entering:
 
-`$ hhs starship`
+`hhs starship`
 
 or just
 
-`$ starship`
+`starship`
 
 If manual configuration feels too cumbersome, you can effortlessly explore one of the convenient Starship presets:
 
-`$ starship preset`
+`starship preset`
 
 <img src="https://iili.io/JuzfXf9.png"/>
 

@@ -21,35 +21,6 @@ fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 
-# @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression
-# @param $1 [Req] : The alias to set/check.
-# @param $* [Req] : The alias expression.
-function __hhs_alias() {
-
-  local all_args alias_expr alias_name
-
-  if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>"
-    return 1
-  fi
-
-  all_args="${*}"
-  alias_expr="${all_args#*=}"
-  alias_name="${all_args//=*/}"
-
-  if ! type "$alias_name" >/dev/null 2>&1; then
-    if alias "${alias_name}"="${alias_expr}" >/dev/null 2>&1; then
-      return 0
-    else
-      echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
-    fi
-  else
-    __hhs_log "WARN" "Setting alias: \"${alias_name}\" was skipped because it already exists !"
-  fi
-
-  return 1
-}
-
 # -----------------------------------------------------------------------------------
 # @category: Navigational
 

@@ -289,8 +289,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Check if the user passed the help or version parameters
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
     [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${HHS_VERSION_FILE}")"
-
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
+    [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
     [[ -s "${HHS_HOME}/.VERSION" ]] &&
          echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
@@ -383,9 +383,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "${ORANGE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}"; then
-        echo -e " ${GREEN}INSTALLED${NC}"
+        echo -e " ${GREEN}√ INSTALLED${NC}"
       else
-        echo -e " ${RED}NOT INSTALLED${NC}"
+        echo -e " ${RED}X NOT INSTALLED${NC}"
         MISSING_DEPS+=("${tool_name}")
       fi
     done

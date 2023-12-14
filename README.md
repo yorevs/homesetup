@@ -48,40 +48,37 @@ integration with popular tools like Git, Gradle, Docker, and more.
 - Supports Linux and macOS, expanding its compatibility to a wider range of operating systems.
 - Can be tried on a [Docker](https://hub.docker.com/repository/docker/yorevs/hhs-fedora/general) container beforehand, ensuring a **risk-free trial**.
 
-
 ## Catalina moved from bash to zsh
 
 Starting with the _Catalina_ version of macOS, the default shell has been switched to **Zsh**. Nonetheless, you retain
 the flexibility to change the default shell back to bash. To accomplish this, you can utilize the following command:
 
 ```bash
-$ sudo chsh -s /bin/bash
+sudo chsh -s /bin/bash
 ```
 
 If Apple decides to remove **Bash** from future macOS releases, you can always rely on Homebrew's version. In such cases,
 the path to the shell may differ. Here's an alternative approach:
 
 ```bash
-$ brew install bash
-$ sudo chsh -s /usr/local/bin/bash
+brew install bash
+sudo chsh -s /usr/local/bin/bash
 ```
 
 ## Installation
 
-
 ### Operating Systems
 
 - Darwin (macOS)
-    + High Sierra and higher
+  - High Sierra and higher
 - Linux
-    + Ubuntu 16 and higher
-    + CentOS  7 and higher
-    + Fedora 31 and higher
-    + Alpine
+  - Ubuntu 16 and higher
+  - CentOS  7 and higher
+  - Fedora 31 and higher
+  - Alpine
 
 > While it's possible to install HomeSetup on **other Linux** distributions and it might work, it's important to note that
 **there are no guarantees** of its _full functionality or compatibility_.
-
 
 ### Supported Shells
 
@@ -93,7 +90,7 @@ $ sudo chsh -s /usr/local/bin/bash
 To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font. We recommend using the font we
 provide with the installation:
 
-* [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
+  [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
 **Linux users**: Some terminals already support icons, but if not, you can manually install the font.
 
@@ -101,17 +98,15 @@ provide with the installation:
 
 #### Terminal App (Darwin)
 
-* [HomeSetup Terminal](misc/HomeSetup.terminal)
+  [HomeSetup Terminal](misc/HomeSetup.terminal)
 
 #### iTerm2 App (Darwin)
 
-* [HomeSetup iTerm2](misc/iTerm2-HomeSetup.json)
-
+  [HomeSetup iTerm2](misc/iTerm2-HomeSetup.json)
 
 When your terminal is set, then you should see something like this:
 
 <img src="https://iili.io/JuxHulR.png" />
-
 
 ### Try-it first
 
@@ -119,35 +114,35 @@ Running HomeSetup in a Docker container offers a convenient and isolated environ
 that your machine remains unaffected during the evaluation process. Use one of the following image below:
 
 ```bash
-$ docker run --rm -it yorevs/hhs-centos
-$ docker run --rm -it yorevs/hhs-ubuntu
-$ docker run --rm -it yorevs/hhs-fedora
-$ docker run --rm -it yorevs/hhs-alpine
+docker run --rm -it yorevs/hhs-centos
+docker run --rm -it yorevs/hhs-ubuntu
+docker run --rm -it yorevs/hhs-fedora
+docker run --rm -it yorevs/hhs-alpine
 ```
 
 ### Remote installation
 
 This is the recommended installation method. You can install HomeSetup directly from GitHub by executing one of the following commands:
 
-`$ curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+`curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 or
 
-`$ wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+`wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
 ### Local installation
 
 Clone the HomeSetup repository:
 
-`$ git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
+`git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
 
 And then install all dotfiles using the following command:
 
-`$ cd ~/HomeSetup && ./install.bash` => **To install all files at once**
+`cd ~/HomeSetup && ./install.bash` => **To install all files at once**
 
 or
 
-`$ cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
+`cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
 
 Your existing dotfiles (such as .bashrc, .bash_profile, etc.) will be backed up with the **'.orig'** suffix and stored
 in the **~/.hhs/backup** folder. This ensures that your original dotfiles are safely preserved during the installation
@@ -156,7 +151,6 @@ process.
 Once the installation is completed successfully, you should see the following welcome message:
 
 ![HomeSetup Welcome](https://iili.io/JuxFH3G.png "Welcome to HomeSetup")
-
 
 ### Firebase setup
 
@@ -168,7 +162,6 @@ Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.m
 
 HomeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and configurations please checkout the [Starship](https://starship.rs/) website.
 
-
 ## Uninstallation
 
 If you choose to uninstall HomeSetup and restore your old dotfiles, you can do so by issuing the following command
@@ -177,7 +170,7 @@ in a shell:
 `# HomeSetup> ./uninstall.bash`
 
 The uninstaller will remove all files and folders associated with HomeSetup. The only folder that will remain is
-the $HHS_DIR (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is safe
+the **$HHS_DIR** (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is safe
 to delete this folder if you no longer need it, **HOWEVER ALL CUSTOM DOTFILES WILL BE GONE**.
 
 ## Support
@@ -202,11 +195,11 @@ Thank you <3 !!
 HomeSetup is designed to automatically fetch updates **every 7 days** from the time of installation. However, if you
 want to manually ensure that your HomeSetup is up to date, you can run one of the following command in your terminal:
 
-`$ hhs updater execute update`
+`hhs updater execute update`
 
 or just
 
-`$ hhu`
+`hhu`
 
 This will install the latest version of HomeSetup, keeping your setup current and incorporating any new features and
 improvements. Keeping HomeSetup updated is essential to benefit from the latest enhancements and bug fixes. If you have

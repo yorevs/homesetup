@@ -71,7 +71,6 @@ function funcs() {
 
   echo ' '
   echo "${YELLOW}-=- Available HomeSetup v${HHS_VERSION} functions matching [${filter}] -=-"
-  echo ' '
 
   if [[ ! -s "${cache_file}" ]]; then
     echo -en "${ORNGE}Please wait until we cache all HomeSetup v${HHS_VERSION} functions ...${NC}"
@@ -80,6 +79,7 @@ function funcs() {
     echo -en '\033[2K'
     echo ''
   else
+    echo ' '
     IFS=$'\n' read -r -d '' -a HHS_FUNCTIONS < <(grep . "${cache_file}")
     IFS="${OLDIFS}"
   fi

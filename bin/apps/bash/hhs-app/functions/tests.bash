@@ -38,13 +38,12 @@ function tests() {
   echo -e "  |-Bats : v$(__hhs_version bats | head -n 1)"
   echo -e "  |-Bash : v$(__hhs_version bash | head -n 1)"
   echo -e "  |-User : ${USER}"
-  echo -e "  |-PWD  : $(\pwd)"
   echo -en "${NC}"
 
   for next in "${all_tests[@]}"; do
     while read -r result; do
       if [[ ${result} =~ ${re_skip} ]]; then
-        status="${YELLOW} ${SKIP_ICN} SKIP${NC}"
+        status="${YELLOW} ø SKIP${NC}"
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
         ((skip += 1))
@@ -53,13 +52,13 @@ function tests() {
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
         if [[ "${status}" == 'not ok' ]]; then
-          status="${RED} ${FAIL_ICN} FAIL${NC}"
+          status="${RED} X FAIL${NC}"
           ((fail += 1))
         elif [[ "${status}" == 'ok' ]]; then
-          status="${GREEN} ${PASS_ICN} PASS${NC}"
+          status="${GREEN} √ PASS${NC}"
           ((pass += 1))
         else
-          status="${YELLOW} ${FAIL_ICN} ????${NC}"
+          status="${YELLOW} X ????${NC}"
         fi
       elif [[ ${result} =~ ${re_len} ]]; then
         echo -en "\n${WHITE}[${next##*/}] Running tests ${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}${NC}\n\n"

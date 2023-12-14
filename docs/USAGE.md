@@ -14,30 +14,30 @@ The User Handbook serves as a valuable resource for understanding and making the
 
 - [1. Built-in dotfiles](#built-in-dotfiles)
 - [2. Aliases](#aliases)
-  * [2.1. Navigational](#navigational)
-  * [2.2. General](#general)
-  * [2.3. HomeSetup](#homesetup)
-  * [2.4. External tools](#external-tools)
-  * [2.5. OS Specific aliases](#os-specific-aliases)
-    + [2.5.1. Linux](#linux)
-    + [2.5.2. Darwin](#darwin)
-  * [3.6. Handy terminal shortcuts](#handy-terminal-shortcuts)
-  * [3.7. Python aliases](#python-aliases)
-  * [3.8. Perl aliases](#perl-aliases)
-  * [3.9. Git aliases](#git-aliases)
-  * [3.10. Gradle aliases](#gradle-aliases)
-  * [3.11. Docker aliases](#docker-aliases)
+  - [2.1. Navigational](#navigational)
+  - [2.2. General](#general)
+  - [2.3. HomeSetup](#homesetup)
+  - [2.4. External tools](#external-tools)
+  - [2.5. OS Specific aliases](#os-specific-aliases)
+    - [2.5.1. Linux](#linux)
+    - [2.5.2. Darwin](#darwin)
+  - [3.6. Handy terminal shortcuts](#handy-terminal-shortcuts)
+  - [3.7. Python aliases](#python-aliases)
+  - [3.8. Perl aliases](#perl-aliases)
+  - [3.9. Git aliases](#git-aliases)
+  - [3.10. Gradle aliases](#gradle-aliases)
+  - [3.11. Docker aliases](#docker-aliases)
 - [3. Functions](#functions)
-  * [3.1. Standard tools](#standard-tools)
-  * [3.2. Development tools](#development-tools)
+  - [3.1. Standard tools](#standard-tools)
+  - [3.2. Development tools](#development-tools)
 - [4. Applications](#applications)
-  * [4.1. Built-ins](#built-ins)
+  - [4.1. Built-ins](#built-ins)
 - [5. Alias Definitions](#alias-definitions)
 - [6. HomeSetup application](#homesetup-application)
-  * [6.1. HHS-Plug-ins](#hhs-plug-ins)
-  * [6.2. HHS-Functions](#hhs-functions)
+  - [6.1. HHS-Plug-ins](#hhs-plug-ins)
+  - [6.2. HHS-Functions](#hhs-functions)
 - [7. Auto completions](#auto-completions)
-  * [7.1. Bash completions](#bash-completions)
+  - [7.1. Bash completions](#bash-completions)
 
 ## Built-in dotfiles
 
@@ -57,7 +57,7 @@ The following dotfiles will be available after installing HomeSetup:
 | ~/.bashrc          | Login Bash resources       |
 | ~/.hhsrc           | HomeSetup resources        |
 
-The following directories will be created in your <$HHS_DIR> folder:
+The following directories will be created in your **$HHS_DIR** folder:
 
 - `$HHS_DIR/backup` # Includes all HomeSetup backup files.
 - `$HHS_DIR/bin` # Includes all useful scripts provided by the project.
@@ -78,7 +78,6 @@ important ones. To override or add customized configurations, you can create a c
 | ~/.prompt          | To customize your prompt                |
 | ~/.homesetup.toml  | HomeSetup initialization file           |
 | ~/.starship.toml   | Starship configuration file             |
-
 
 ## Aliases
 
@@ -185,7 +184,6 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | md5sum         | If **md5sum** is not available, use **md5** instead`                     |
 | sha1           | If **sha1** is not available, use **shasum** instead`                    |
 
-
 ### Handy Terminal Shortcuts
 
 | ALIAS              | Description                          |
@@ -265,14 +263,13 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_docker_up           | Enhancement for `docker compose up           |
 | __hhs_docker_down         | Shortcut for `docker compose stop            |
 
-
 ## Functions
 
 HomeSetup provides many functions for the shell. All functions includes a help using the options -h or --help.
 
 ### Development tools
 
-The complete handbook of development tools can be found [here](handbook/pages/functions.md#development-tools)
+The complete handbook of development tools can be found on [functions handbook](handbook/pages/functions.md#development-tools)
 
 | File                  | Function                     | Purpose                                                                             |
 |-----------------------|------------------------------|-------------------------------------------------------------------------------------|
@@ -295,7 +292,7 @@ The complete handbook of development tools can be found [here](handbook/pages/fu
 
 ### Standard tools
 
-The complete handbook of standard tools can be found on the [functions handbook](handbook/pages/functions.md#standard-tools)
+The complete handbook of standard tools can be found on [functions handbook](handbook/pages/functions.md#standard-tools)
 
 | File                   | Function               | Purpose                                                                                      |
 |------------------------|------------------------|----------------------------------------------------------------------------------------------|
@@ -303,7 +300,7 @@ The complete handbook of standard tools can be found on the [functions handbook]
 | hhs-built-ins.bash     | __hhs_help             | Display a help for the given command.                                                        |
 |                        | __hhs_where_am_i       | Display the current working dir and remote repository if it applies.                         |
 |                        | __hhs_shopt            | Display/Set/unset current Shell Options.                                                     |
-|                        | __hhs_random           | Generate a random number int the range <min> <max> (all limits included).                    |
+|                        | __hhs_random           | Generate a random number int the range \<min\> \<max\> (all limits included).                |
 |                        | __hhs_open             | Open a file or URL with the default program.                                                 |
 |                        | __hhs_edit             | Create and/or open a file using the default editor.                                          |
 |                        | __hhs_about            | Display information about the given command.                                                 |
@@ -366,12 +363,12 @@ HomeSetup include some basic helper functions:
 
 | Dotfile              | Function               | Purpose                                                                        |
 |----------------------|------------------------|--------------------------------------------------------------------------------|
-| bash_aliases.bash    | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it.          |
-| bash_commons.bash    | __hhs_is_reachable     | Check whether URL/URI is reachable on the network.                             |
+| bash_commons.bash    | __hhs_errcho           | Echo a message in red color into stderr.                                       |
+|                      | __hhs_is_reachable     | Check whether URL/URI is reachable on the network.                             |
 |                      | __hhs_has              | Check if a command is available on the current shell context.                  |
 |                      | __hhs_log              | Log to HomeSetup log file.                                                     |
 |                      | __hhs_source           | Read/Execute commands from the filename argument in the current shell context. |
-|                      | __hhs_errcho           | Echo a message in red color into stderr.                                       |
+|                      | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it.          |
 | bash_completion.bash | __hhs_check_completion | Check and add completion for tool if found in HHS completions dir.             |
 |                      | __hhs_load_completions | Load all available auto-completions.                                           |
 | bash_prompt.bash     | __hhs_set_win_title    | Set the terminal window title.                                                 |
@@ -402,7 +399,7 @@ you to update this file. We always keep a backup of this file, allowing you to p
 note that the backup process needs to be done manually in this case.
 
 The original content and aliases are defined in the original [aliasdef](../dotfiles/aliasdef) file. If you remove your
-`~/.aliasdef` file, the HomeSetup's original definitions file will be copied to your "$HHS_DIR" folder next time you
+`~/.aliasdef` file, the HomeSetup's original definitions file will be copied to your **$HHS_DIR** folder next time you
 start you terminal.
 
 ## HomeSetup Application
@@ -410,10 +407,10 @@ start you terminal.
 HomeSetup is more than just a collection of scripts and functions to enhance your terminal experience. It also includes
 an application framework and a variety of **plug-able scripts and functions** that can be seamlessly integrated into it.
 To view a comprehensive list of all available functions and plug-ins, you can simply run the following command in your
-terminal: `# __hhs list`.
+terminal: `__hhs list`.
 
 If you want to explore and check all the existing functions within HomeSetup, you can simply run the following command
-in your terminal: `# __hhs funcs`.
+in your terminal: `__hhs funcs`.
 
 Those commands will provide you with an overview of all the functions and plug-ins that HomeSetup offers, allowing you
 to explore and leverage their capabilities.
@@ -446,13 +443,13 @@ to explore and leverage their capabilities.
 
 ## Auto completions
 
-In addition to the standard bash <tab> complete feature, HomeSetup introduces an enhanced completion functionality
+In addition to the standard bash \<tab\> complete feature, HomeSetup introduces an enhanced completion functionality
 accessed through **<shift+tab>**. This feature allows you to iterate over the available options provided by the
 completion function, providing a more interactive experience.
 
 By default, HomeSetup _does not load the completions_ during terminal startup to optimize performance. However, if you
 wish to load the completions and utilize this enhanced feature, you can issue the following command in your terminal:
-`$ __hhs_load_completions`
+`__hhs_load_completions`
 
 Executing this command will load the completions and enable the <shift+tab> complete functionality within HomeSetup.
 
