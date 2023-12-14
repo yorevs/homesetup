@@ -175,12 +175,14 @@ to delete this folder if you no longer need it, **HOWEVER ALL CUSTOM DOTFILES WI
 
 ## Support
 
+> Your support and contributions are greatly appreciated in helping us improve and enhance HomeSetup. Together, we can
+make it even better!
+
 You can support HomeSetup by [donating](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 or contributing code. Feel free to contact me for further details. When making code contributions, please make sure to
 review our [guidelines](docs/CONTRIBUTING.md) and adhere to our [code of conduct](docs/CODE_OF_CONDUCT.md).
 
-> Your support and contributions are greatly appreciated in helping us improve and enhance HomeSetup. Together, we can
-make it even better!
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/yorevs)
 
 This project is already supported by:
 
