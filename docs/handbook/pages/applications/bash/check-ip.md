@@ -3,13 +3,21 @@
 ## Table of contents
 
 <!-- toc -->
+
 - [Bash Applications](../../applications.md)
-  * [App-Commons](app-commons.md#application-commons)
-  * [Check-IP](check-ip.md#check-ip-application)
-  * [Fetch](fetch.md#fetch-application)
-  * [HHS-App](hhs-app.md#homesetup-application)
-    + [Functions](hhs-app.md#functions)
-    + [Plugins](hhs-app.md#plug-ins)
+  - [App-Commons](app-commons.md#application-commons)
+  - [Check-IP](check-ip.md#check-ip-application)
+  - [Fetch](fetch.md#fetch-application)
+  - [HHS-App](hhs-app.md#homesetup-application)
+    - [Functions](hhs-app.md#functions)
+    - [Plugins](hhs-app.md#plug-ins)
+      - [Firebase](hhs-app.md#firebase)
+      - [HSPM](hhs-app.md#hspm)
+      - [Settings](hhs-app.md#settings)
+      - [Setup](hhs-app.md#setup)
+      - [Starship](hhs-app.md#starship)
+      - [Updater](hhs-app.md#updater)
+
 <!-- tocstop -->
 
 ## Check-IP application
@@ -30,7 +38,7 @@ Validate and check information about a provided IP address.
 
 **0** if the IP is valid; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The IP address.
 

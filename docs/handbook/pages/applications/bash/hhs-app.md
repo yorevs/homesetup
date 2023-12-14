@@ -3,16 +3,21 @@
 ## Table of contents
 
 <!-- toc -->
+
 - [Bash Applications](../../applications.md)
-  * [App-Commons](app-commons.md#application-commons)
-  * [Check-IP](check-ip.md#check-ip-application)
-  * [Fetch](fetch.md#fetch-application)
-  * [HHS-App](hhs-app.md#homesetup-application)
-    + [Functions](hhs-app.md#functions)
-    + [Plugins](hhs-app.md#plug-ins)
+  - [App-Commons](app-commons.md#application-commons)
+  - [Check-IP](check-ip.md#check-ip-application)
+  - [Fetch](fetch.md#fetch-application)
+  - [HHS-App](hhs-app.md#homesetup-application)
+    - [Functions](hhs-app.md#functions)
+    - [Plugins](hhs-app.md#plug-ins)
       - [Firebase](hhs-app.md#firebase)
       - [HSPM](hhs-app.md#hspm)
+      - [Settings](hhs-app.md#settings)
+      - [Setup](hhs-app.md#setup)
+      - [Starship](hhs-app.md#starship)
       - [Updater](hhs-app.md#updater)
+
 <!-- tocstop -->
 
 ## HomeSetup application
@@ -20,35 +25,35 @@
 ```bash
 Usage:  [option] {function | plugin {task} <command>} [args...]
 
- _   _                      ____       _               
-| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __  
-| |_| |/ _ \| '_ ` _ \ / _ \___ \ / _ \ __| | | | '_ \ 
+ _   _                      ____       _
+| | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
+| |_| |/ _ \| '_ ` _ \ / _ \___ \ / _ \ __| | | | '_ \
 |  _  | (_) | | | | | |  __/___) |  __/ |_| |_| | |_) |
-|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/ 
-                                                |_|    
+|_| |_|\___/|_| |_| |_|\___|____/ \___|\__|\__,_| .__/
+                                                |_|
 
   HomeSetup Application Manager v1.0.0.
 
     Arguments:
-      args              : Plugin command arguments will depend on the plugin. May be mandatory 
+      args              : Plugin command arguments will depend on the plugin. May be mandatory
                           or not.
-    
+
     Options:
       -v  |  --version  : Display current program version.
       -h  |     --help  : Display this help message.
       -p  |   --prefix  : Display the HomeSetup installation directory.
-    
+
     Tasks:
       help              : Display a help about the plugin.
       version           : Display current plugin version.
       execute           : Execute a plugin command.
-    
+
     Exit Status:
       (0) Success.
       (1) Failure due to missing/wrong client input or similar issues.
       (2) Failure due to program/plugin execution failures.
-  
-  Notes: 
+
+  Notes:
     - To discover which plugins and functions are available type: hhs list
 ```
 
@@ -71,7 +76,7 @@ Retrieve/Get/Set the current hostname.
 
 **0** if the hostname was successfully changed/retrieved; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : The new hostname. If not provided, current hostname is retrieved.
 
@@ -100,7 +105,7 @@ Display any HomeSetup command help.
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The HomeSetup command to get help with.
 
@@ -127,7 +132,7 @@ List all HHS App Plug-ins and Functions
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Optional_ : Instead of a formatted as a list, flat the commands for bash completion.
 
@@ -328,7 +333,7 @@ Manager for HomeSetup Firebase integration.
 ```bash
 Usage: hspm [option] {install,uninstall,list,recover}
 
- _   _ ____  ____  __  __ 
+ _   _ ____  ____  __  __
 | | | / ___||  _ \|  \/  |
 | |_| \___ \| |_) | |\/| |
 |  _  |___) |  __/| |  | |
@@ -339,7 +344,7 @@ Usage: hspm [option] {install,uninstall,list,recover}
     Options:
       -v  |   --version     : Display current program version.
       -h  |      --help     : Display this help message.
-    
+
     Arguments:
       install   <package>   : Install the package using a matching installation recipe.
       uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
@@ -347,7 +352,7 @@ Usage: hspm [option] {install,uninstall,list,recover}
                               list even packages without any matching recipe.
       recover [-i,-t,-e]    : Install or list all packages previously installed by hspm. If -i is provided, then hspm
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
-                              hspm will check ${HHS_DEV_TOOLS} instead of previously installed packages. If -e is 
+                              hspm will check ${HHS_DEV_TOOLS} instead of previously installed packages. If -e is
                               provided, then the default editor will open the recovery file.
 ```
 
@@ -373,19 +378,19 @@ HomeSetup package manager.
 ```bash
 Usage: updater updater [option] {check,update,stamp}
 
- _   _           _       _            
-| | | |_ __   __| | __ _| |_ ___ _ __ 
+ _   _           _       _
+| | | |_ __   __| | __ _| |_ ___ _ __
 | | | | '_ \ / _` |/ _` | __/ _ \ '__|
-| |_| | |_) | (_| | (_| | ||  __/ |   
- \___/| .__/ \__,_|\__,_|\__\___|_|   
-      |_|                             
+| |_| | |_) | (_| | (_| | ||  __/ |
+ \___/| .__/ \__,_|\__,_|\__\___|_|
+      |_|
 
   HomeSetup update manager.
 
     Options:
       -v  |   --version : Display current program version.
       -h  |      --help : Display this help message.
-      
+
     Arguments:
       check             : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
       update            : Check the current HomeSetup installation and look for updates.
@@ -403,7 +408,7 @@ HomeSetup update manager.
 ##### **Examples:**
 
 ```bash
-  $ hhs updater execute check && echo 'Fetch last updated timestamp' 
+  $ hhs updater execute check && echo 'Fetch last updated timestamp'
   $ hhs updater execute update' && echo 'Attempt to update HomeSetup'
   $ hhs updater execute stamp' && echo 'Set next update check to 7 days ahead'
 ```

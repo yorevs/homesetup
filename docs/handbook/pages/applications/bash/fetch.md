@@ -3,13 +3,21 @@
 ## Table of contents
 
 <!-- toc -->
+
 - [Bash Applications](../../applications.md)
-  * [App-Commons](app-commons.md#application-commons)
-  * [Check-IP](check-ip.md#check-ip-application)
-  * [Fetch](fetch.md#fetch-application)
-  * [HHS-App](hhs-app.md#homesetup-application)
-    + [Functions](hhs-app.md#functions)
-    + [Plugins](hhs-app.md#plug-ins)
+  - [App-Commons](app-commons.md#application-commons)
+  - [Check-IP](check-ip.md#check-ip-application)
+  - [Fetch](fetch.md#fetch-application)
+  - [HHS-App](hhs-app.md#homesetup-application)
+    - [Functions](hhs-app.md#functions)
+    - [Plugins](hhs-app.md#plug-ins)
+      - [Firebase](hhs-app.md#firebase)
+      - [HSPM](hhs-app.md#hspm)
+      - [Settings](hhs-app.md#settings)
+      - [Setup](hhs-app.md#setup)
+      - [Starship](hhs-app.md#starship)
+      - [Updater](hhs-app.md#updater)
+
 <!-- tocstop -->
 
 ## Fetch application
@@ -35,7 +43,7 @@ Fetch URL resource using the most commons ways.
 
 **0** if the command executed successfully; **non-zero** otherwise.
 
-##### **Parameters**: 
+##### **Parameters**:
 
   - $1 _Required_ : The Http method to be used.
   - $2 _Required_ : The URL to fetch.
