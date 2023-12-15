@@ -1,29 +1,36 @@
-# <img src="https://iili.io/HvtxC1S.png"  width="34" height="34"> HomeSetup Applications Handbook
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Developer Handbook
+>
+> Applications handbook
 
 ## Table of contents
 
 <!-- toc -->
 
-- [Bash Applications](../../applications.md)
-  - [App-Commons](app-commons.md#application-commons)
-  - [Check-IP](check-ip.md#check-ip-application)
-  - [Fetch](fetch.md#fetch-application)
-  - [HHS-App](hhs-app.md#homesetup-application)
-    - [Functions](hhs-app.md#functions)
-    - [Plugins](hhs-app.md#plug-ins)
-      - [Firebase](hhs-app.md#firebase)
-      - [HSPM](hhs-app.md#hspm)
-      - [Settings](hhs-app.md#settings)
-      - [Setup](hhs-app.md#setup)
-      - [Starship](hhs-app.md#starship)
-      - [Updater](hhs-app.md#updater)
+- [Bash Applications](../../applications)
+  - [Check-IP](check-ip#check-ip)
+  - [Fetch](fetch#fetch)
+  - [HHS-App](hhs-app#homesetup-application)
+    - [Functions](hhs-app#functions)
+      - [Built-Ins](hhs-app/functions/built-ins)
+      - [Misc](hhs-app/functions/misc)
+      - [Tests](hhs-app/functions/tests)
+      - [Web](hhs-app/functions/web)
+    - [Plugins](hhs-app#plug-ins)
+      - [Firebase](hhs-app/plugins/firebase)
+      - [HSPM](hhs-app/plugins/hspm)
+      - [Settings](hhs-app/plugins/settings)
+      - [Setup](hhs-app/plugins/setup)
+      - [Starship](hhs-app/plugins/starship)
+      - [Updater](hhs-app/plugins/updater)
 
 <!-- tocstop -->
 
 ## HomeSetup application
 
 ```bash
-Usage:  [option] {function | plugin {task} <command>} [args...]
+Usage:  [option] {function <args> | plugin [task <args>]}
 
  _   _                      ____       _
 | | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
@@ -35,8 +42,7 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
   HomeSetup Application Manager v1.0.0.
 
     Arguments:
-      args              : Plugin command arguments will depend on the plugin. May be mandatory
-                          or not.
+      args              : Plugin/Function arguments will depend on the plugin/functions and may be required or not.
 
     Options:
       -v  |  --version  : Display current program version.
@@ -60,35 +66,11 @@ Usage:  [option] {function | plugin {task} <command>} [args...]
 ## Functions
 
 ------
-### External Tools
 
-#### "host-name"
-
-```bash
-Usage: hhs host-name [new_hostname]
-```
-
-##### **Purpose**:
-
-Retrieve/Get/Set the current hostname.
-
-##### **Returns**:
-
-**0** if the hostname was successfully changed/retrieved; **non-zero** otherwise.
-
-##### **Parameters**:
-
-  - $1 _Optional_ : The new hostname. If not provided, current hostname is retrieved.
-
-##### **Examples:**
-
-```bash
-  $ hhs host-name my.domain.hostname
-  $ hhs host-name && echo 'This is the current hostname'
-```
 
 
 ------
+
 ### Built-ins
 
 #### "help"
@@ -97,143 +79,144 @@ Retrieve/Get/Set the current hostname.
 Usage: hhs help <__hhs_command>
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Display any HomeSetup command help.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Parameters**:
+#### **Parameters**
 
-  - $1 _Required_ : The HomeSetup command to get help with.
+- $1 _Required_ : The HomeSetup command to get help with.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs help hhs
-  $ hhs help __hhs_has
+  hhs help hhs
+  hhs help __hhs_has
 ```
 
-
 ------
+
 #### "list"
 
 ```bash
 Usage: hhs list [opts]
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 List all HHS App Plug-ins and Functions
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Parameters**:
+#### **Parameters**
 
   - $1 _Optional_ : Instead of a formatted as a list, flat the commands for bash completion.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs list && echo 'This is the listing format'
-  $ hhs list opts && echo 'This is the bash complete format'
+  hhs list && echo 'This is the listing format'
+  hhs list opts && echo 'This is the bash complete format'
 ```
 
-
 ------
+
 #### "funcs"
 
 ```bash
 Usage: hhs funcs
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Search for all `__hhs_` functions pointing it's source file name and line number.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs funcs && echo 'Those are all available __hhs_ functions'
+  hhs funcs && echo 'Those are all available __hhs_ functions'
 ```
 
-
 ------
+
 #### "logs"
 
 ```bash
 Usage: hhs logs [log_level]
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Retrieve HomeSetup logs. By default, this command is going to return 100 log lines. If the file contains more than that
 you can set the environment variable HHS_LOG_LINES to a greater value and issue the command again.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs logs && echo 'Those are all HomeSetup logs'
-  $ hhs logs warn && echo 'Those are all HomeSetup WARN logs'
+  hhs logs && echo 'Those are all HomeSetup logs'
+  hhs logs warn && echo 'Those are all HomeSetup WARN logs'
 ```
 
-
 ------
+
 #### "man"
 
 ```bash
 Usage: hhs man <bash_command>
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Fetch the ss64 manual from the web for the specified bash command.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs man grep && echo 'Open the manual page for grep command'
+  hhs man grep && echo 'Open the manual page for grep command'
 ```
 
-
 ------
+
 #### "board"
 
 ```bash
 Usage: hhs board
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Open the HomeSetup GitHub project board.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs board && echo 'Open HomeSetup issues board'
+  hhs board && echo 'Open HomeSetup issues board'
 ```
 
 ------
+
 ### Run tests
 
 #### "tests"
@@ -242,44 +225,44 @@ Open the HomeSetup GitHub project board.
 Usage: hhs tests
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Run all HomeSetup automated tests.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if all tests ran successfully; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs tests && echo 'ALL TESTS PASSED'
+  hhs tests && echo 'ALL TESTS PASSED'
 ```
 
-
 ------
+
 #### "color-tests"
 
 ```bash
 Usage: hhs color-tests
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Run all terminal color palette tests.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if all color tests ran successfully; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs color-tests && echo 'ALL TESTS PASSED'
+  hhs color-tests && echo 'ALL TESTS PASSED'
 ```
 
-
 ------
+
 ## Plug-ins
 
 ### Firebase
@@ -311,23 +294,24 @@ operation:
 ### Error firebase -> the following arguments are required: operation
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 Manager for HomeSetup Firebase integration.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs firebase setup' && echo 'Setup Firebase'
-  $ hhs firebase upload work' && echo 'Upload dotfiles to `work\' db alias'
-  $ hhs firebase download work'  && echo 'Download dotfiles from `work\' db alias'
+  hhs firebase setup' && echo 'Setup Firebase'
+  hhs firebase upload work' && echo 'Upload dotfiles to `work\' db alias'
+  hhs firebase download work'  && echo 'Download dotfiles from `work\' db alias'
 ```
 
 ------
+
 ### HSPM
 
 ```bash
@@ -356,23 +340,24 @@ Usage: hspm [option] {install,uninstall,list,recover}
                               provided, then the default editor will open the recovery file.
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 HomeSetup package manager.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs hspm execute list' && echo 'List all available recipes'
-  $ hhs hspm execute install nvm' && echo 'Install nvm on the system'
-  $ hhs hspm execute uninstall nvm' && echo 'Uninstall nvm on the system'
+  hhs hspm execute list' && echo 'List all available recipes'
+  hhs hspm execute install nvm' && echo 'Install nvm on the system'
+  hhs hspm execute uninstall nvm' && echo 'Uninstall nvm on the system'
 ```
 
 ------
+
 ### Updater
 
 ```bash
@@ -397,18 +382,18 @@ Usage: updater updater [option] {check,update,stamp}
       stamp             : Stamp the next auto-update check for 7 days ahead.
 ```
 
-##### **Purpose**:
+#### **Purpose**
 
 HomeSetup update manager.
 
-##### **Returns**:
+#### **Returns**
 
 **0** if the command was successfully executed; **non-zero** otherwise.
 
-##### **Examples:**
+#### **Examples**
 
 ```bash
-  $ hhs updater execute check && echo 'Fetch last updated timestamp'
-  $ hhs updater execute update' && echo 'Attempt to update HomeSetup'
-  $ hhs updater execute stamp' && echo 'Set next update check to 7 days ahead'
+  hhs updater execute check && echo 'Fetch last updated timestamp'
+  hhs updater execute update' && echo 'Attempt to update HomeSetup'
+  hhs updater execute stamp' && echo 'Set next update check to 7 days ahead'
 ```

@@ -17,10 +17,6 @@ RUN ./configure --enable-optimizations --enable-loadable-sqlite-extensions
 RUN make install
 RUN python3 -m pip install --upgrade pip
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
-RUN useradd -ms /bin/bash runner
-
-USER runner
-WORKDIR "/home/runner"
 
 RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 

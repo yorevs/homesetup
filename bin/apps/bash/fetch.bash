@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034
+# shellcheck disable=2034
 
 #  Script: fetch.bash
 # Purpose: Fetch URL resource using the most commons ways.
@@ -30,36 +30,37 @@ Usage: ${APP_NAME} <method> [options] <url>
         --body    <json_body>       : The http request body (payload).
         --format                    : Format the json RESPONSE.
         --silent                    : Omits all informational messages.
-
 "
 
-# Functions to be unset after quit
+# Functions to be unset after quit.
 UNSETS=(
-  'format_json' 'fetch_with_curl' 'parse_args' 'do_fetch'
+  format_json fetch_with_curl parse_args do_fetch main
 )
 
-# Request timeout in seconds
+# Common application functions.
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
+
+# Request timeout in seconds.
 REQ_TIMEOUT=3
 
-# Execution return code
+# Execution return code.
 RET_VAL=0
 
-# Provided request headers
+# Provided request headers.
 HEADERS=
 
-# Provided request body
+# Provided request body.
 BODY=
 
-# Provide a silent request/RESPONSE
+# Provide a silent request/RESPONSE.
 SILENT=
 
-# Response body
+# Response body.
 RESPONSE=
 
-# Http status code
+# Http status code.
 STATUS=0
 
-# shellcheck disable=SC2086
 # @purpose: Do the request according to the method
 function fetch_with_curl() {
 
@@ -70,13 +71,13 @@ function fetch_with_curl() {
   )
 
   if [[ -z "${HEADERS}" && -z "${BODY}" ]]; then
-    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+    STATUS=$(curl "${curl_opts[@]}" -X "${METHOD}" "${URL}")
   elif [[ -z "${HEADERS}" && -n "${BODY}" ]]; then
-    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+    STATUS=$(curl "${curl_opts[@]}" -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [[ -n "${HEADERS}" && -n "${BODY}" ]]; then
-    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" -d "${BODY}" "${URL}")
+    STATUS=$(curl "${curl_opts[@]}" -X "${METHOD}" -d "${BODY}" "${URL}")
   elif [[ -n "${HEADERS}" && -z "${BODY}" ]]; then
-    STATUS=$(curl ${curl_opts[*]} -X "${METHOD}" "${URL}")
+    STATUS=$(curl "${curl_opts[@]}" -X "${METHOD}" "${URL}")
   fi
 
   if [[ -s "${aux}" ]]; then
@@ -103,35 +104,35 @@ parse_args() {
 
   shopt -s nocasematch
   case "${1}" in
-  'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
-    METHOD="$(tr '[:lower:]' '[:upper:]' <<<"${1}")"
-    shift
-    ;;
-  *) quit 2 "Method \"${1}\" is not not valid!" ;;
+    'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')
+      METHOD="$(tr '[:lower:]' '[:upper:]' <<< "${1}")"
+      shift
+      ;;
+    *) quit 2 "Method \"${1}\" is not not valid!" ;;
   esac
   shopt -u nocasematch
 
   # Loop through the command line options.
   while test -n "$1"; do
     case "$1" in
-    --headers)
-      shift
-      HEADERS=" -H ${1//,/ -H }"
-      ;;
-    --body)
-      shift
-      BODY="$1"
-      ;;
-    --format)
-      FORMAT=1
-      ;;
-    --silent)
-      SILENT=1
-      ;;
-    *)
-      URL="$*"
-      break
-      ;;
+      --headers)
+        shift
+        HEADERS=" -H ${1//,/ -H }"
+        ;;
+      --body)
+        shift
+        BODY="$1"
+        ;;
+      --format)
+        FORMAT=1
+        ;;
+      --silent)
+        SILENT=1
+        ;;
+      *)
+        URL="$*"
+        break
+        ;;
     esac
     shift
   done
@@ -149,12 +150,12 @@ main() {
   parse_args "${@}"
 
   case "${METHOD}" in
-  'GET' | 'HEAD' | 'DELETE')
-    [[ -n "${BODY}" ]] && quit 1 "${METHOD} does not accept a body"
-    ;;
-  'PUT' | 'POST' | 'PATCH')
-    [[ -z "${BODY}" ]] && quit 1 "${METHOD} requires a body"
-    ;;
+    'GET' | 'HEAD' | 'DELETE')
+      [[ -n "${BODY}" ]] && quit 1 "${METHOD} does not accept a body"
+      ;;
+    'PUT' | 'POST' | 'PATCH')
+      [[ -z "${BODY}" ]] && quit 1 "${METHOD} requires a body"
+      ;;
   esac
 
   [[ -z "${SILENT}" ]] && echo -e "Fetching: ${METHOD} ${HEADERS} ${URL} ..."
@@ -168,12 +169,10 @@ main() {
       __hhs_errcho "${msg} => [resp:${RESPONSE:-<empty>}]"
     else
       echo "${RET_VAL}" 1>&2
+      quit 0
     fi
-    quit 2
   fi
 }
-
-source "${HHS_DIR}/bin/app-commons.bash"
 
 main "${@}"
 quit 1

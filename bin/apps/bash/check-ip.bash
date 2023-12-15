@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2034
+# shellcheck disable=2034
 
 #  Script: check-ip.bash
 # Purpose: Validate and check information about a provided IP address.
@@ -20,14 +20,13 @@ Usage: ${APP_NAME} [Options] <ip_address>
     Options:
       -q | --quiet  : Silent mode. Do not check for IP details.
       -i | --info   : Fetch additional information from the web.
-
 "
 
 # Functions to be unset after quit
-UNSETS=('main' 'check_class' 'check_scope' 'check_valid' 'parse_args')
+UNSETS=(main check_class check_scope check_valid parse_args)
 
-# shellcheck disable=SC1090
-[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && \. "${HHS_DIR}/bin/app-commons.bash"
+# Common application functions
+[[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
 
 # Whether the IP is valid or not.
 IP_VALID=1
@@ -169,32 +168,32 @@ parse_args() {
   # Short opts: -<C>, Long opts: --<Word>.
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
-    -h | --help)
-      usage 0
-      ;;
-    -v | --version)
-      version
-      ;;
-    -q | --quiet)
-      SILENT=1
-      ;;
-    -i | --info)
-      EXTRA_INFO=1
-      ;;
-    -[.*])
-      quit 1 "## Invalid option: ${1}"
-      ;;
+      -h | --help)
+        usage 0
+        ;;
+      -v | --version)
+        version
+        ;;
+      -q | --quiet)
+        SILENT=1
+        ;;
+      -i | --info)
+        EXTRA_INFO=1
+        ;;
+      -[.*])
+        quit 1 "## Invalid option: ${1}"
+        ;;
 
-    *)
-      break
-      ;;
+      *)
+        break
+        ;;
     esac
     shift
   done
 
   IP_ADDRESS="${1}"
   IFS=$'.'
-  read -r -a IP_OCTETS <<<"${IP_ADDRESS}"
+  read -r -a IP_OCTETS <<< "${IP_ADDRESS}"
   IFS="${OLDIFS}"
 }
 

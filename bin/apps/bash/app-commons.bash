@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090,SC1091
+# shellcheck disable=1090,1091
 
 #  Script: app-commons.bash
 # Purpose: Commonly used bash code functions and variables
@@ -26,12 +26,12 @@ usage: ${APP_NAME} <arguments> [options]
 UNSETS=('quit' 'usage' 'version' 'trim')
 
 # We need to load the dotfiles below due to non-interactive shell.
-[[ -f "${HOME}"/.bash_commons ]] && source "${HOME}"/.bash_commons
-[[ -f "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_env
-[[ -f "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_colors
-[[ -f "${HOME}"/.bash_icons ]] && source "${HOME}"/.bash_icons
-[[ -f "${HOME}"/.bash_aliases ]] && source "${HOME}"/.bash_aliases
-[[ -f "${HOME}"/.bash_functions ]] && source "${HOME}"/.bash_functions
+[[ -s "${HOME}"/.bash_commons ]] && source "${HOME}"/.bash_commons
+[[ -s "${HOME}"/.bash_env ]] && source "${HOME}"/.bash_env
+[[ -s "${HOME}"/.bash_colors ]] && source "${HOME}"/.bash_colors
+[[ -s "${HOME}"/.bash_icons ]] && source "${HOME}"/.bash_icons
+[[ -s "${HOME}"/.bash_aliases ]] && source "${HOME}"/.bash_aliases
+[[ -s "${HOME}"/.bash_functions ]] && source "${HOME}"/.bash_functions
 
 # Execute a cleanup after the application has exited.
 trap _app_cleanups_ EXIT

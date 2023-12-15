@@ -75,10 +75,10 @@ sudo chsh -s /usr/local/bin/bash
   - Ubuntu 16 and higher
   - CentOS  7 and higher
   - Fedora 31 and higher
-  - Alpine
+  - Alpine (jenkins-agent)
 
-> While it's possible to install HomeSetup on **other Linux** distributions and it might work, it's important to note that
-**there are no guarantees** of its _full functionality or compatibility_.
+> While it's possible to install HomeSetup on **other Linux** distributions and it might work, it's important to note
+> that **there are no guarantees** of its _full functionality or compatibility_.
 
 ### Supported Shells
 
@@ -122,7 +122,8 @@ docker run --rm -it yorevs/hhs-alpine
 
 ### Remote installation
 
-This is the recommended installation method. You can install HomeSetup directly from GitHub by executing one of the following commands:
+This is the recommended installation method. You can install HomeSetup directly from GitHub by executing one of the
+following commands:
 
 `curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
 
@@ -170,8 +171,8 @@ in a shell:
 `# HomeSetup> ./uninstall.bash`
 
 The uninstaller will remove all files and folders associated with HomeSetup. The only folder that will remain is
-the **$HHS_DIR** (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is safe
-to delete this folder if you no longer need it, **HOWEVER ALL CUSTOM DOTFILES WILL BE GONE**.
+the **$HHS_DIR** (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is
+safe to delete this folder if you no longer need it, **HOWEVER ALL CUSTOM DOTFILES WILL BE GONE**.
 
 ## Support
 

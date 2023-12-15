@@ -17,7 +17,7 @@ tab_width                   = 2
 # Matches multiple files with brace expansion notation
 
 # 4 space indentation
-[{*.md,*.py,*.txt}]
+[{*.py,*.txt}]
 indent_size     = 4
 tab_width       = 4
 
