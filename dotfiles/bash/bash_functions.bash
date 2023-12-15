@@ -21,14 +21,14 @@ fi
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"
 
 # Load all function files
-read -r -d '' -a all < <(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "*.bash" | sort --unique)
+read -r -d '' -a all < <(find "${HHS_HOME}/bin/hhs-functions/bash" -type f -name "*.bash" | sort | uniq)
 __hhs_log "DEBUG" "Loading (${#all[@]}) hhs-function files"
 for file in "${all[@]}"; do
   source "${file}" || __hhs_log "ERROR" "Unable to source file: ${file}"
 done
 
 # Load all dev tools files
-read -r -d '' -a all < <(find "${HHS_HOME}/bin/dev-tools/bash" -type f -name "*.bash" | sort --unique)
+read -r -d '' -a all < <(find "${HHS_HOME}/bin/dev-tools/bash" -type f -name "*.bash" | sort | uniq)
 __hhs_log "DEBUG" "Loading (${#all[@]}) dev-tools files"
 for file in "${all[@]}"; do
   source "${file}" || __hhs_log "ERROR" "Unable to source file: ${file}"

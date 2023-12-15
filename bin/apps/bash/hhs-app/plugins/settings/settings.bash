@@ -67,7 +67,7 @@ function execute() {
       quit 1 "Invalid settings syntax: ${*}"
     elif python3 -m setman source -f "${env_file}" "${args[@]}"; then
       # Remove duplicate entries
-      sort --unique -o "${env_file}"{,}
+      sort | uniq -o "${env_file}"{,}
       # Check if env_file is not empty and count the exported settings
       if [[ -f "${env_file}" && -n "${env_file}" ]]; then
         num=$(wc -l "${env_file}" | sed -e 's/^[ \t]*\([0-9]*\) *\/*.*/\1/')

@@ -242,7 +242,7 @@ function search_hhs_functions() {
   local all_hhs_fn=() filename fn_name desc
 
   IFS=$'\n' read -r -d '' -a all_hhs_fn < \
-    <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk 'NR != 0 {print $1" "$2}' | sort --unique)
+    <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk 'NR != 0 {print $1" "$2}' | sort | uniq)
   for fn_line in "${all_hhs_fn[@]}"; do
     filename=$(basename "${fn_line}" | awk -F ':function ' '{print $1}')
     filename=$(printf '%-35.35s' "${filename}")
