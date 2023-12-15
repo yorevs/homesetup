@@ -53,12 +53,44 @@ Retrieve/Get/Set the current hostname.
 
 **Output**
 
-```bash
+N/A
 
+`hhs host-name'`
+
+```bash
+my.domain.hostname
 ```
 
-`hhs host-name && echo 'This is the current hostname'`
+------
+
+### "shopt"
 
 ```bash
+Usage: hhs host-name [new_hostname]
+```
 
+### **Purpose**
+
+Retrieve/Get/Set the current hostname.
+
+### **Returns**
+
+**0** if the hostname was successfully changed/retrieved; **non-zero** otherwise.
+
+### **Parameters**
+
+- $1 _Optional_ : The new hostname. If not provided, current hostname is retrieved.
+
+### **Examples**
+
+`hhs host-name my.domain.hostname`
+
+**Output**
+
+N/A
+
+`hhs host-name'`
+
+```bash
+my.domain.hostname
 ```
