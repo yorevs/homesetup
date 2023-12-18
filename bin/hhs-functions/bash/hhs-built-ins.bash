@@ -169,31 +169,37 @@ function __hhs_where_am_i() {
   fi
 }
 
+# shellcheck disable=SC2068
 # @function: Display/Set/unset current Shell Options.
 # @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
 function __hhs_shopt() {
 
-  local shell_options option filter
+  local shell_options option filter enable opt
 
-  filter=$(tr '[:lower:]' '[:upper:]' <<< "${1}")
+  enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
+  filter=$(tr '[:upper:]' '[:lower:]' <<< "${2}")
+  IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
+  IFS="${OLDIFS}"
 
-  if [[ ${#} -eq 0 || ${filter} =~ ON|OFF ]]; then
-    IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
-    IFS="${OLDIFS}"
+  if [[ ${#} -gt 0 && ${enable} =~ -s|-u && ${filter} =~ on|off ]]; then
     echo ' '
     echo "${YELLOW}Available shell options (${#shell_options[@]}):"
     echo ' '
     for option in "${shell_options[@]}"; do
-      if [[ "${option#*=}" == 'on' ]] && [[ -z "${filter}" || "${filter}" == 'ON' ]]; then
+      if [[ "${option#*=}" == 'on' ]] && [[ -z "${filter}" || "${filter}" == 'on' ]]; then
         echo -e "  ${WHITE}${ON_ICN}  ${GREEN} ON${BLUE}\t${option%%=*}"
-      elif [[ "${option#*=}" == 'off' ]] && [[ -z "${filter}" || "${filter}" == 'OFF' ]]; then
+      elif [[ "${option#*=}" == 'off' ]] && [[ -z "${filter}" || "${filter}" == 'off' ]]; then
         echo -e "  ${WHITE}${OFF_ICN}  ${RED} OFF${BLUE}\t${option%%=*}"
       fi
     done
     echo "${NC}"
-  else
-    # shellcheck disable=2068
+    return 0
+  elif list_contains "${shell_options[@]}" "${filter}"; then
     \shopt ${@}
+    return $?
+  else
+    __hhs_errcho "shopt \"${filter}\" is not available!"
   fi
 
+  return 1
 }

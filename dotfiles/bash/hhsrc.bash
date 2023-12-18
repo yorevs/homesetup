@@ -217,6 +217,7 @@ fi
 # Check for HomeSetup updates.
 if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
   if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+    echo
     __hhs_log "INFO" "Home setup is checking for updates ..."
     if __hhs_is_reachable 'github.com'; then
       __hhs updater execute check
@@ -238,12 +239,18 @@ if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
 
-unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
-unset -f f_path tmp_file re_key_pair prefs cpl pref re
-
 # Remove PATH duplicates.
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
 export PATH
 
-# Print HomeSetup MOTD.
-echo -e "$(eval "echo -e \"$(<"${HHS_HOME}"/.MOTD)\"")"
+# Print HomeSetup MOTDs.
+if [[ -d "${HHS_DIR}"/motd ]]; then
+  all=$(find "${HHS_DIR}"/motd -type f | sort | uniq)
+
+  for motd in ${all}; do
+    echo -e "$(eval "echo -e \"$(<"${motd}")\"")"
+  done
+fi
+
+unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
+unset -f f_path tmp_file re_key_pair prefs cpl pref re motd all

@@ -92,7 +92,7 @@ function __hhs_envs() {
       echo -e "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:${NC}"
       echo ' '
       IFS=$'\n'
-      shopt -s nocasematch
+      \shopt -s nocasematch
       for v in $(env | sort); do
         name=${v%%=*}
         value=${v#*=}
@@ -106,7 +106,7 @@ function __hhs_envs() {
         fi
       done
       IFS="${OLDIFS}"
-      shopt -u nocasematch
+      \shopt -u nocasematch
       echo ' '
     fi
   fi

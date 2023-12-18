@@ -310,6 +310,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     HHS_LOG_DIR="${HHS_DIR}/log"
     create_directory "${HHS_LOG_DIR}"
 
+    # Define and create the HomeSetup MOTD directory
+    HHS_MOTD_DIR="${HHS_DIR}/motd"
+
     # Define the fonts directory
     if [[ "Darwin" == "${MY_OS}" ]]; then
       FONTS_DIR="${HOME}/Library/Fonts"
@@ -672,6 +675,10 @@ Usage: $APP_NAME [OPTIONS] <args>
         echo -e "${GREEN}OK${NC}"
         ;;
     esac
+
+    # Copy MOTDs file into place
+    [[ -d "${HHS_MOTD_DIR}" ]] || create_directory "${HHS_MOTD_DIR}"
+    copy_file "${HHS_HOME}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd
 
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }

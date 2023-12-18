@@ -73,8 +73,8 @@ function execute() {
   shift
   args=("$@")
 
-  shopt -s nocasematch
-  case "$cmd" in
+  \shopt -s nocasematch
+  case "${cmd}" in
     check)
       update_check
     ;;
@@ -88,7 +88,7 @@ function execute() {
       usage 1 "Invalid ${PLUGIN_NAME} command: \"${cmd}\" !"
     ;;
   esac
-  shopt -u nocasematch
+  \shopt -u nocasematch
 
   quit 0
 }
@@ -135,7 +135,8 @@ update_hhs() {
           if do_update && "${HHS_HOME}"/install.bash -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
             sleep 1
-            reset && source "${HOME}"/.bashrc
+            reset
+            source "${HOME}"/.bashrc
             echo -e "${HHS_MOTD}"
           else
             quit 1 "${PLUGIN_NAME}: Failed to update HomeSetup !${NC}"

@@ -82,7 +82,7 @@ function shopt() {
       fi
     done
     \rm -f "${mchoose_file}"&>/dev/null
-    shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
+    \shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
       quit 2 "Unable to create the Shell Options file !"
   fi
 

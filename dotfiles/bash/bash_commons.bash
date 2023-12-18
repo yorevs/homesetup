@@ -83,6 +83,7 @@ function __hhs_source() {
   return 1
 }
 
+# shellcheck disable=SC2139
 # @function: Check if an alias does not exists and create it, otherwise just ignore it. Do not support the use of single quotes in the expression
 # @param $1 [Req] : The alias to set/check.
 # @param $* [Req] : The alias expression.
@@ -134,7 +135,7 @@ function __hhs_is_reachable() {
     return 1
   fi
 
-  curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
+  \curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
 
   return $?
 }
