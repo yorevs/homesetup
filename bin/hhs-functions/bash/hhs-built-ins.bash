@@ -169,36 +169,50 @@ function __hhs_where_am_i() {
   fi
 }
 
-# shellcheck disable=SC2068
 # @function: Display/Set/unset current Shell Options.
 # @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
 function __hhs_shopt() {
 
-  local shell_options option filter enable opt
+  local shell_options option enable
 
   enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
-  filter=$(tr '[:upper:]' '[:lower:]' <<< "${2}")
-  IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
-  IFS="${OLDIFS}"
 
-  if [[ ${#} -gt 0 && ${enable} =~ -s|-u && ${filter} =~ on|off ]]; then
+  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [on|off] | [-pqsu] [-o] [optname ...]"
+    echo ''
+    echo '    Options:'
+    echo '      off : Display all unset options.'
+    echo '      on  : Display all set options.'
+    echo '      -s  : Enable (set) each optname'
+    echo '      -u  : Disable (unset) each optname.'
+    echo '      -p  : Display a list of all settable options, with an indication of whether or not each is set.'
+    echo '            The output is displayed in a form that can be reused as input. (-p is the default action).'
+    echo '      -q  : Suppresses normal output; the return status indicates whether the optname is set or unset.'
+    echo '            If multiple optname arguments are given with '-q', the return status is zero if all optnames'
+    echo '            are enabled; non-zero otherwise.'
+    echo '      -o  : Restricts the values of optname to be those defined for the '-o' option to the set builtin.'
+    echo ''
+    echo '  Notes:'
+    echo '    If no option is provided, then, display all set & unset options.'
+  elif [[ ${#} -eq 0 || ${enable} =~ on|off ]]; then
+    IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
+    IFS="${OLDIFS}"
     echo ' '
     echo "${YELLOW}Available shell options (${#shell_options[@]}):"
     echo ' '
     for option in "${shell_options[@]}"; do
-      if [[ "${option#*=}" == 'on' ]] && [[ -z "${filter}" || "${filter}" == 'on' ]]; then
+      if [[ "${option#*=}" == 'on' ]] && [[ -z "${enable}" || "${enable}" == 'on' ]]; then
         echo -e "  ${WHITE}${ON_ICN}  ${GREEN} ON${BLUE}\t${option%%=*}"
-      elif [[ "${option#*=}" == 'off' ]] && [[ -z "${filter}" || "${filter}" == 'off' ]]; then
+      elif [[ "${option#*=}" == 'off' ]] && [[ -z "${enable}" || "${enable}" == 'off' ]]; then
         echo -e "  ${WHITE}${OFF_ICN}  ${RED} OFF${BLUE}\t${option%%=*}"
       fi
     done
     echo "${NC}"
     return 0
-  elif list_contains "${shell_options[@]}" "${filter}"; then
-    \shopt ${@}
-    return $?
-  else
-    __hhs_errcho "shopt \"${filter}\" is not available!"
+  elif [[ ${#} -ge 2 && ${enable} =~ -(s|u|p|q) ]]; then
+      # shellcheck disable=SC2068
+      \shopt ${@}
+      return $?
   fi
 
   return 1
