@@ -59,7 +59,6 @@ Count the number of active docker containers.
   $ __hhs_docker_count
 ```
 
-
 -----
 #### __hhs_docker_info
 
@@ -84,7 +83,6 @@ Display information about the container.
 ```bash
   $ __hhs_docker_info 6ae3b31765d2
 ```
-
 
 -----
 #### __hhs_docker_exec
@@ -115,7 +113,6 @@ Run a command or bash in a running container.
   $ __hhs_docker_exec 6ae3b31765d2 redis-cli
 ```
 
-
 -----
 #### __hhs_docker_compose_exec
 
@@ -141,7 +138,6 @@ This is the equivalent of docker exec, but for docker-compose.
 ```bash
   $ __hhs_docker_compose_exec 6ae3b31765d2 redis-cli
 ```
-
 
 -----
 #### __hhs_docker_logs

@@ -35,19 +35,19 @@
 Usage: hhs host-name [new_hostname]
 ```
 
-### **Purpose**
+#### **Purpose**
 
 Retrieve/Get/Set the current hostname.
 
-### **Returns**
+#### **Returns**
 
 **0** if the hostname was successfully changed/retrieved; **non-zero** otherwise.
 
-### **Parameters**
+#### **Parameters**
 
 - $1 _Optional_ : The new hostname. If not provided, current hostname is retrieved.
 
-### **Examples**
+#### **Examples**
 
 `hhs host-name my.domain.hostname`
 
@@ -55,7 +55,9 @@ Retrieve/Get/Set the current hostname.
 
 N/A
 
-`hhs host-name'`
+`__hhs host-name`
+
+**Output**
 
 ```bash
 my.domain.hostname
@@ -63,34 +65,40 @@ my.domain.hostname
 
 ------
 
-### "shopt"
+### "shopts"
 
 ```bash
-Usage: hhs host-name [new_hostname]
+Usage: __hhs shopts
 ```
 
-### **Purpose**
+#### **Purpose**
 
-Retrieve/Get/Set the current hostname.
+Set/Unset Shell Options.
 
-### **Returns**
+#### **Returns**
 
-**0** if the hostname was successfully changed/retrieved; **non-zero** otherwise.
+**0** if the command was successful; **non-zero** otherwise.
 
-### **Parameters**
+#### **Examples**
 
-- $1 _Optional_ : The new hostname. If not provided, current hostname is retrieved.
-
-### **Examples**
-
-`hhs host-name my.domain.hostname`
+`__hhs shopts`
 
 **Output**
 
-N/A
-
-`hhs host-name'`
-
 ```bash
-my.domain.hostname
+Terminal Options
+Please check the desired terminal options:
+
+   1      cdable_vars
+   2       cdspell
+   3       checkhash
+   4       checkwinsize
+   5       cmdhist
+   6       compat31
+   7       dotglob
+   8       execfail
+   9       expand_aliases
+  10       extdebug
+
+[Enter] Accept  [↑↓] Navigate  [Space] Mark  [I] Invert  [Esc] Quit  [1..34] Goto:
 ```

@@ -17,7 +17,7 @@ function tests() {
   local started finished err_log badge fail=0 pass=0 skip=0 status num details re_status re_len len re_skip
   local diff_time diff_time_sec diff_time_ms all_tests=("${@}")
 
-  command -v bats &>/dev/null || quit 1 "'Bats' application not available on your PATH !"
+  command -v bats &> /dev/null || quit 1 "'Bats' application not available on your PATH !"
 
   err_log="${HHS_LOG_DIR}/hhs-tests.log"
   badge="${HHS_HOME}/check-badge.svg"
@@ -75,8 +75,8 @@ function tests() {
 
   finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
   diff_time=$((finished - started))
-  diff_time_sec=$((diff_time/1000))
-  diff_time_ms=$((diff_time-(diff_time_sec*1000)))
+  diff_time_sec=$((diff_time / 1000))
+  diff_time_ms=$((diff_time - (diff_time_sec * 1000)))
 
   echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
   echo -e "Passed=${pass}  Skipped=${skip}  Failed=${fail}${NC}"
@@ -85,12 +85,12 @@ function tests() {
     echo -e "\n${ORANGE}xXx The following errors were reported xXx${NC}\n"
     __hhs_tailor "${err_log}" | nl
     echo ''
-    curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2>/dev/null
+    curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2> /dev/null
     echo -e "${RED}${TEST_FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 2
   else
     echo ''
-    curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2>/dev/null
+    curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2> /dev/null
     echo -e "${GREEN}${TEST_PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 0
   fi
@@ -99,7 +99,9 @@ function tests() {
 # @purpose: Run all terminal color palette tests.
 function color-tests() {
 
-  echo -e "\n${ORANGE}--- Home Setup color palette test ${NC}\n"
+  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running HomeSetup color palette test${BLUE}\n"
+  echo -e "  |-Terminal : ${TERM:-not-detected}"
+  echo -e "  |-Terminal Program : ${TERM_PROGRAM:-not-detected}\n"
 
   echo -en "${BLACK}  BLACK "
   echo -en "${RED}    RED "
@@ -119,14 +121,13 @@ function color-tests() {
     echo -en "\033[0;${c}mC16-${c} "
   done
   echo -e "${NC}\n"
-
   echo -e "--- 16 Colors High\n"
   for c in {90..97}; do
     echo -en "\033[0;${c}mC16-${c} "
   done
-  echo -e "${NC}\n"
 
   if [[ "${TERM##*-}" == "256color" ]]; then
+    echo -e "${NC}\n"
     echo -e "--- 256 Colors\n"
     for c in {1..256}; do
       echo -en "\033[38;5;${c}m"

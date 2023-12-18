@@ -188,9 +188,9 @@ function __hhs_shopt() {
     echo '      -p  : Display a list of all settable options, with an indication of whether or not each is set.'
     echo '            The output is displayed in a form that can be reused as input. (-p is the default action).'
     echo '      -q  : Suppresses normal output; the return status indicates whether the optname is set or unset.'
-    echo '            If multiple optname arguments are given with '-q', the return status is zero if all optnames'
+    echo "            If multiple optname arguments are given with '-q', the return status is zero if all optnames"
     echo '            are enabled; non-zero otherwise.'
-    echo '      -o  : Restricts the values of optname to be those defined for the '-o' option to the set builtin.'
+    echo "      -o  : Restricts the values of optname to be those defined for the '-o' option to the set builtin."
     echo ''
     echo '  Notes:'
     echo '    If no option is provided, then, display all set & unset options.'
@@ -209,7 +209,7 @@ function __hhs_shopt() {
     done
     echo "${NC}"
     return 0
-  elif [[ ${#} -ge 2 && ${enable} =~ -(s|u|p|q) ]]; then
+  elif [[ ${#} -ge 2 && ${enable} =~ -(s|u|p|q|o) ]]; then
       # shellcheck disable=SC2068
       \shopt ${@}
       return $?

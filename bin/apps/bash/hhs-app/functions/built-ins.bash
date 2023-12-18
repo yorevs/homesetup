@@ -59,7 +59,7 @@ function funcs() {
 
   local idx columns fn_name cache_file usage filter count matches=0
 
-  usage="Usage: ${FUNCNAME[0]} [regex_filter]"
+  usage="Usage: __hhs ${FUNCNAME[0]} [regex_filter]"
 
   [[ "$1" == 'help' ]] && echo "${usage}" && quit 0
 
@@ -161,7 +161,7 @@ function man() {
   local ss63_url="https://ss64.com/${HHS_MY_SHELL}/%CMD%.html"
 
   if [[ $# -ne 1 ]]; then
-    echo "Usage: ${FUNCNAME[0]} <bash_command>"
+    echo "Usage: __hhs ${FUNCNAME[0]} <bash_command>"
   else
     cmd="${1}"
     url="${ss63_url//%CMD%/$cmd}"

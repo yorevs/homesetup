@@ -58,7 +58,7 @@ function host-name() {
 }
 
 # @purpose: Set/Unset shell options.
-function shopt() {
+function shopts() {
 
   local mchoose_file title sel_options name option item all_items=()
 

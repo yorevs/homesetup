@@ -34,9 +34,9 @@ usage: $PLUGIN_NAME [option] {install,uninstall,list,recover}
       -h  |      --help     : Display this help message.
 
     arguments:
-      install   <package>   : Install the package using a matching installation recipe.
-      uninstall <package>   : Uninstall the package using a matching uninstallation recipe.
       list                  : List all available, OS based, installation recipes.
+      install   <package>   : Install packages using a matching installation recipe.
+      uninstall <package>   : Uninstall packages using a matching uninstallation recipe.
       recover [-i,-t,-e]    : Install or list all packages previously installed by hspm. If -i is provided, then hspm
                               will attempt to install all packages, otherwise the list is displayed. If -t is provided
                               hspm will check \${HHS_DEV_TOOLS} instead of previously installed packages. If -e is
@@ -237,7 +237,7 @@ function install_recipe() {
 
   echo -e "${BLUE}Installing \"${package}\", please wait ..."
 
-  if _depends_ && _install_ "${package}" 2>"${LOGFILE}" && _which_ "${package}"; then
+  if _depends_ && _install_ "${package}" >>"${LOGFILE}" 2>&1 && _which_ "${package}"; then
     echo -e "${GREEN}Installation successful => \"${package}\" ${NC}"
     add_breadcrumb "${package}"
   else
@@ -272,7 +272,7 @@ function uninstall_recipe() {
 
   echo -e "${BLUE}Uninstalling \"${package}\", please wait ..."
 
-  if _uninstall_ "${package}" 2>"${LOGFILE}" && ! _which_ "${package}"; then
+  if _uninstall_ "${package}" >>"${LOGFILE}" 2>&1 && ! _which_ "${package}"; then
     echo -e "${GREEN}Uninstallation successful => \"${package}\" ${NC}"
     del_breadcrumb "${package}"
   else

@@ -16,8 +16,11 @@ function docsify() {
   local docsify_url raw_content_url url
 
   docsify_url='https://docsify-this.net/?basePath='
-  raw_content_url='https://raw.githubusercontent.com/yorevs/homesetup/master&sidebar=true'
+  raw_content_url="${HHS_GITHUB_URL//github/raw.githubusercontent}/master&sidebar=true"
   url="${docsify_url}${raw_content_url}"
+
+  echo "${ORANGE}Opening HomeSetup docsify README from: ${url} ${NC}"
+  sleep 2
 
   __hhs_open "${url}" && quit 0
 
