@@ -363,7 +363,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   # @alias: Docker - Shortcut for `docker rmi'
   alias __hhs_docker_remove_image='docker rmi'
   # @alias: Docker - Enhancement for `docker ps'
-  alias __hhs_docker_ps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
+  alias __hhs_docker_ps='docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
   # @alias: Docker - Enhancement for `docker stats'
   alias __hhs_docker_top='docker stats --format "table {{.Container}}\t{{.Name}}\t{{.CPUPerc}}\t{{.NetIO}}\t{{.BlockIO}}"'
   # @alias: Docker - Enhancement for `docker container ls'

@@ -21,7 +21,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
 
     local count
 
-    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
       return 1
     fi
@@ -33,66 +33,67 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   }
 
   # @function: Display information about the container.
-  # @param $1 [Req] : The running container ID.
+  # @param $1 [Req] : The active container ID.
   function __hhs_docker_info() {
-    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
+
+    if [[ $# -ne 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
       return 1
     fi
-    \docker ps | grep "$1" | awk '"'"'{print $1}'"'"'
+
+    \docker ps | grep "${1}" | awk '"'"'{print $1}'"'"'
 
     return $?
   }
 
   # @function: Run a command or bash in a running container.
-  # @param $1 [Req] : The running container ID.
+  # @param $1 [Req] : The active container ID.
   # @param $2 [Opt] : The command to be executed on the container.
   function __hhs_docker_exec() {
 
-    if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ $# -lt 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       echo ''
       echo '  Notes: '
-      echo '    - If shell_cmd is not provided /bin/bash will be used.'
+      echo "    - If shell_cmd is not provided '/bin/sh' will be used."
       return 1
-    elif [[ $# -ge 2 ]]; then
-      \docker exec -it "${@}"
-    else
-      \docker exec -it "$1" '/bin/bash'
+    elif [[ $# -ge 1 ]]; then
+      \docker exec -it "${1}" "${2:-/bin/sh}"
+      return $?
     fi
 
-    return $?
+    return 1
   }
 
   # @function: This is the equivalent of docker exec, but for docker-compose.
-  # @param $1 [Req] : The running container ID.
+  # @param $1 [Req] : The active container ID.
   # @param $2 [Opt] : The command to be executed.
   function __hhs_docker_compose_exec() {
 
-    if [[ $# -lt 1 || '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ $# -lt 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       echo ''
       echo '  Notes: '
-      echo '    - If shell_cmd is not provided /bin/bash will be used.'
+      echo '    - If shell_cmd is not provided /bin/sh will be used.'
       return 1
-    elif [[ $# -ge 2 ]]; then
-      \docker-compose exec "${@}"
-    else
-      \docker-compose exec "$1" '/bin/bash'
+    elif [[ $# -ge 1 ]]; then
+      \docker exec -it "${1}" "${2:-/bin/sh}"
+      return $?
     fi
 
-    return $?
+    return 1
   }
 
   # @function: Fetch the logs of a container.
-  # @param $1 [Req] : The running container ID.
+  # @param $1 [Req] : The active container ID.
   function __hhs_docker_logs() {
 
-    if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ $# -ne 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]} <container_id>"
       return 1
     fi
-    \docker logs -f "$1"
+
+    \docker logs -f "${1}"
 
     return $?
   }
@@ -102,16 +103,16 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
 
     local volumes=() retVal=0
 
-    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]}"
     else
       read -d '' -r -a volumes <<<"$(docker volume ls -qf dangling=true)"
       for container in "${volumes[@]}"; do
-        echo -en "Removing dangling docker volume: ${container} ... "
-        if docker volume rm "${container}" &>/dev/null; then
-          echo -e "[   ${GREEN}OK${NC}   ]"
+        echo -en "Removing dangling docker volume: ${container}..."
+        if \docker volume rm "${container}" &>/dev/null; then
+          echo -e " ${GREEN}OK${NC}"
         else
-          echo -e "[ ${GREEN}FAILED${NC} ]"
+          echo -e " ${GREEN}FAILED${NC}"
           retVal=1
         fi
       done
@@ -124,36 +125,35 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   # @param $1 [Opt] : Option to remove active containers as well.
   function __hhs_docker_kill_all() {
 
-    local all_containers=() all
+    local all_containers=() all retVal=1
 
-    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+    if [[ '-h' == "${1}" || '--help' == "${1}" ]]; then
       echo "Usage: ${FUNCNAME[0]} [-a]"
       echo ''
       echo '    Options: '
       echo '      -a : Remove active and inactive volumes; otherwise it will only remove inactive ones'
     else
-
       [[ "${1}" == '-a' ]] && all="-a" && shift
       read -r -d '' -a all_containers <<<"$(docker ps ${all} --format "{{.ID}}")"
-
       for container in "${all_containers[@]}"; do
-        echo -en "Stopping Docker container: ${container} ... "
-        if docker stop "${container}" &>/dev/null; then
-          echo -e "[   ${GREEN}OK${NC}   ]"
-          echo -en "Removing Docker container: ${container} ... "
-          if docker rm "${container}" &>/dev/null; then
-            echo -e "[   ${GREEN}OK${NC}   ]"
+        echo -en "Stopping Docker container: ${container}..."
+        if \docker stop "${container}" &>/dev/null; then
+          echo -e " ${GREEN}OK${NC}"
+          echo -en "Removing Docker container: ${container}..."
+          if \docker rm "${container}" &>/dev/null; then
+            echo -e " ${GREEN}OK${NC}"
           else
-            echo -e "[ ${RED}FAILED${NC} ]"
+            echo -e " ${RED}FAILED${NC}"
           fi
         else
-          echo -e "[ ${RED}FAILED${NC} ]"
+          echo -e " ${RED}FAILED${NC}"
         fi
       done
-      __hhs_docker_remove_volumes "$@"
+      __hhs_docker_remove_volumes "${@}"
+      return $?
     fi
 
-    return 0
+    return 1
   }
 
 fi

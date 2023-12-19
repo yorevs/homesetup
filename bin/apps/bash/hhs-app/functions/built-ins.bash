@@ -109,13 +109,17 @@ function funcs() {
 # @param $2 [opt] : The log level to retrieve.
 function logs() {
 
-  local level log_level logfile logs
+  local level logfile logs usage tail_opts="-n ${HHS_LOG_LINES:-100}"
+  local all_levels="ALL CRITICAL DEBUG ERROR FATAL FINE INFO OUT TRACE WARNING WARN SEVERE"
 
-  HHS_LOG_LINES=${HHS_LOG_LINES:-100}
+  usage="Usage: __hhs ${FUNCNAME[0]} [-F] [hhs-log-file] [level]"
+
+  [[ "${1}" = '-F' ]] && tail_opts="${tail_opts} -F" && shift
+  [[ "${1}" =~ -h|--help ]] && quit 0 "${usage}"
   level=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
 
   if [[ -n "${level}" ]]; then
-    if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
+    if ! list_contains "${all_levels}" "${level}"; then
       logfile="${HHS_LOG_DIR}/${1//.log/}.log"
       if [[ ! -f "${logfile}" ]]; then
         logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \;)
@@ -125,7 +129,7 @@ function logs() {
       fi
       level=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
       if [[ -n "${level}" ]]; then
-        if ! list_contains "DEBUG FINE TRACE INFO OUT WARN WARNING SEVERE CRITICAL FATAL ERROR ALL" "${level}"; then
+        if ! list_contains "${all_levels}" "${level}"; then
           quit 1 "Undefined log level: ${level}"
         fi
       fi
@@ -141,17 +145,18 @@ function logs() {
   fi
 
   logfile=${logfile:="${HHS_LOG_FILE}"}
-  level=${level:='ALL'}
+  re='-n [0-9]* -F'
 
-  [[ "${level}" == "ALL" ]] && log_level='.*'
-  [[ "${level}" != "ALL" ]] && log_level="${level}"
+  [[ ${tail_opts} =~ ${re} ]] && echo -en "\n${WHITE}Tailing " || echo -en "\n${WHITE}Retrieving "
+  echo -e "[${level:-ALL}] logs from ${logfile} (last ${HHS_LOG_LINES:-100} lines):${NC}\n"
 
-  echo ''
-  echo -e "${ORANGE}Retrieving logs from ${logfile} (last ${HHS_LOG_LINES} lines) [level='${level}'] :${NC}"
-  echo ''
-  __hhs_tailor -n "${HHS_LOG_LINES}" "${logfile}" | grep "${log_level}"
+  if [[ -z "${level}" || "${level}" == 'ALL' ]]; then
+    __hhs_tailor "${tail_opts}" "${logfile}"
+  else
+    __hhs_tailor "${tail_opts}" "${logfile}" | grep -i "${level}"
+  fi
 
-  quit 0
+  quit $?
 }
 
 # @purpose: Fetch the ss64 manual from the web for the specified bash command.
