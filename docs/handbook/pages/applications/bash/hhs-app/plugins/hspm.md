@@ -8,22 +8,22 @@
 
 <!-- toc -->
 
-- [Bash Applications](../../../../applications)
-  - [Check-IP](../../check-ip#check-ip)
-  - [Fetch](../../fetch#fetch)
-  - [HHS-App](../../hhs-app#homesetup-application)
-    - [Functions](../../hhs-app#functions)
-      - [Built-Ins](../functions/built-ins)
-      - [Misc](../functions/misc)
-      - [Tests](../functions/tests)
-      - [Web](../functions/web)
-    - [Plugins](../../hhs-app#plug-ins)
-      - [Firebase](firebase)
-      - [HSPM](hspm)
-      - [Settings](settings)
-      - [Setup](setup)
-      - [Starship](starship)
-      - [Updater](updater)
+- [Bash Applications](../../../../applications.md)
+  - [Check-IP](../../check-ip.md#check-ip)
+  - [Fetch](../../fetch.md#fetch)
+  - [HHS-App](../../hhs-app.md#homesetup-application)
+    - [Functions](../../hhs-app.md#functions)
+      - [Built-Ins](../functions/built-ins.md)
+      - [Misc](../functions/misc.md)
+      - [Tests](../functions/tests.md)
+      - [Web](../functions/web.md)
+    - [Plugins](../../hhs-app.md#plug-ins)
+      - [Firebase](firebase.md)
+      - [HSPM](hspm.md)
+      - [Settings](settings.md)
+      - [Setup](setup.md)
+      - [Starship](starship.md)
+      - [Updater](updater.md)
 
 <!-- tocstop -->
 
@@ -232,11 +232,18 @@ Listing recovered [Darwin/macOS] packages ...
 **Output**
 
 ```bash
-Listing recovered [Darwin/macOS] packages ...
+Listing development tools ...
 
-  0 - figlet ........................ INSTALLED
-  1 - eza ........................... INSTALLED
-  2 - tree .......................... INSTALLED
+  0 - base64 ........................ INSTALLED
+  1 - brew .......................... INSTALLED
+  2 - colima ........................ INSTALLED
+  3 - direnv ........................ INSTALLED
+  4 - docker ........................ INSTALLED
+  5 - eslint ........................ INSTALLED
+  6 - eza ........................... NOT INSTALLED
+  7 - gcc ........................... INSTALLED
+  8 - git ........................... INSTALLED
+  9 - go ............................ NOT INSTALLED
 ...
 ...
 ```

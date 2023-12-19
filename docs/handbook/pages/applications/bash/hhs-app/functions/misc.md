@@ -8,22 +8,22 @@
 
 <!-- toc -->
 
-- [Bash Applications](../../../../applications)
-  - [Check-IP](../../check-ip#check-ip)
-  - [Fetch](../../fetch#fetch)
-  - [HHS-App](../../hhs-app#homesetup-application)
-    - [Functions](../../hhs-app#functions)
-      - [Built-Ins](built-ins)
-      - [Misc](misc)
-      - [Tests](tests)
-      - [Web](web)
-    - [Plugins](../../hhs-app#plug-ins)
-      - [Firebase](../plugins/firebase)
-      - [HSPM](../plugins/hspm)
-      - [Settings](../plugins/settings)
-      - [Setup](../plugins/setup)
-      - [Starship](../plugins/starship)
-      - [Updater](../plugins/updater)
+- [Bash Applications](../../../../applications.md)
+  - [Check-IP](../../check-ip.md#check-ip)
+  - [Fetch](../../fetch.md#fetch)
+  - [HHS-App](../../hhs-app.md#homesetup-application)
+    - [Functions](../../hhs-app.md#functions)
+      - [Built-Ins](built-ins.md)
+      - [Misc](misc.md)
+      - [Tests](tests.md)
+      - [Web](web.md)
+    - [Plugins](../../hhs-app.md#plug-ins)
+      - [Firebase](../plugins/firebase.md)
+      - [HSPM](../plugins/hspm.md)
+      - [Settings](../plugins/settings.md)
+      - [Setup](../plugins/setup.md)
+      - [Starship](../plugins/starship.md)
+      - [Updater](../plugins/updater.md)
 
 <!-- tocstop -->
 

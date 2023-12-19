@@ -22,7 +22,7 @@ UNSETS=(
 VERSION="1.0.4"
 
 # Usage message
-USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [restore]
+USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [-restore]
 
  ____       _
 / ___|  ___| |_ _   _ _ __
@@ -34,7 +34,7 @@ USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [restore]
   HomeSetup initialization setup.
 
     options:
-      restore   : Restore the HomeSetup defaults.
+      -restore    : Restore HomeSetup defaults.
 "
 
 # Regex to match a setting.
@@ -64,7 +64,7 @@ function execute() {
 
   local file_ver name title value minput_file sel_settings all_items=()
 
-  if list_contains "${*}" "restore"; then
+  if list_contains "${*}" "-restore"; then
     \cp -f "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
     quit 0
   elif [[ ! -s "${HHS_SETUP_FILE}" ]]; then

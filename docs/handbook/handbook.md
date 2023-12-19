@@ -132,13 +132,12 @@ Checkout the full handbook of [functions here](pages/functions.md).
 
 ## Applications
 
-In addition to aliases and functions, HomeSetup also puts available some [applications](../USAGE.md#applications)
-with different purposes, such as IP information verification, fetch REST services, and more. Currently we are using two
-kinds of applications:
+In addition to aliases and functions, HomeSetup also puts available some applications with different purposes, such as
+IP information verification, fetch REST services, and more:
 
 - [Bash applications](../USAGE.md#applications)
 
-Checkout the full handbook of [applications here](pages/applications.md).
+Checkout the complete handbook of [applications here](pages/applications.md).
 
 ## Templates
 
