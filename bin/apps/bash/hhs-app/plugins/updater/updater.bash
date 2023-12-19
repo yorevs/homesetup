@@ -30,13 +30,9 @@ usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
 
   HomeSetup update manager.
 
-    options:
-      -v  |   --version : Display current program version.
-      -h  |      --help : Display this help message.
-
     arguments:
       check             : Fetch the last_update timestamp and check if HomeSetup needs to be updated.
-      update            : Check the current HomeSetup installation and look for updates.
+      update            : Check for HomeSetup updates.
       stamp             : Stamp the next auto-update check for 7 days ahead.
 "
 

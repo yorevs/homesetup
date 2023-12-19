@@ -55,7 +55,7 @@ Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
       (2) Failure due to program/plugin execution failures.
 
   Notes:
-    - To discover which plugins and functions are available type: hhs list
+    - To discover which plugins and functions are available type: hhs list.
 "
 
 # Directory containing all HHS plug-ins.

@@ -41,7 +41,7 @@ Display HHS-Firebase help message.
 
 #### **Parameters**
 
-  - N/A
+N/A
 
 #### **Examples**
 
