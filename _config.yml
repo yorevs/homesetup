@@ -1,3 +1,7 @@
+# Reference docs: https://github.com/daattali/beautiful-jekyll/blob/master/_config.yml
+
+theme: beautiful-jekyll-theme
+
 # Name of website
 title: HomeSetup
 
