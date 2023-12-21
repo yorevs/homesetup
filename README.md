@@ -125,25 +125,37 @@ docker run --rm -it yorevs/hhs-alpine
 This is the recommended installation method. You can install HomeSetup directly from GitHub by executing one of the
 following commands:
 
-`curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+```bash
+curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+```
 
 or
 
-`wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash`
+```bash
+wget -qO- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+```
 
 ### Local installation
 
 Clone the HomeSetup repository:
 
-`git clone https://github.com/yorevs/homesetup.git ~/HomeSetup`
+```bash
+git clone https://github.com/yorevs/homesetup.git ~/HomeSetup
+```
 
 And then install all dotfiles using the following command:
 
-`cd ~/HomeSetup && ./install.bash` => **To install all files at once**
+**To install all files at once**
+```bash
+cd ~/HomeSetup && ./install.bash
+```
 
 or
 
-`cd ~/HomeSetup && ./install.bash -i` => **To install one by one**
+**To install one by one**
+```bash
+cd ~/HomeSetup && ./install.bash -i
+```
 
 Your existing dotfiles (such as .bashrc, .bash_profile, etc.) will be backed up with the **'.orig'** suffix and stored
 in the **~/.hhs/backup** folder. This ensures that your original dotfiles are safely preserved during the installation
@@ -161,14 +173,15 @@ Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.m
 
 ### Starship Setup
 
-HomeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and configurations please checkout the [Starship](https://starship.rs/) website.
+HomeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and
+configurations please checkout the [Starship](https://starship.rs/) website.
 
 ## Uninstallation
 
 If you choose to uninstall HomeSetup and restore your old dotfiles, you can do so by issuing the following command
 in a shell:
 
-`# HomeSetup> ./uninstall.bash`
+`# HomeSetup $ ./uninstall.bash`
 
 The uninstaller will remove all files and folders associated with HomeSetup. The only folder that will remain is
 the **$HHS_DIR** (~/.hhs typically), whereas your configurations were stored. After a successful uninstallation, it is
