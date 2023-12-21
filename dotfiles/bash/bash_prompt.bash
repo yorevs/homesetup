@@ -205,3 +205,15 @@ if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
     __hhs_log "ERROR" "Starship failed to start!"
   fi
 fi
+
+# ColorLS integration. Copy HomeSetup config files if they are not found.
+if __hhs_has 'gem' && gem which colorls &>/dev/null; then
+  colorls_dir="$(dirname "$(gem which colorls)")/yaml"
+  [[ -d "${colorls_dir}" ]] || \mkdir "${colorls_dir}"
+  \cp -n "${HHS_HOME}/misc/colorls/dark_colors.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/misc/colorls/light_colors.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/misc/colorls/file_aliases.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/misc/colorls/files.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/misc/colorls/folder_aliases.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/misc/colorls/folders.yaml" "${colorls_dir}"
+fi

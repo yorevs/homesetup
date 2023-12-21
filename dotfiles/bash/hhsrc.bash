@@ -101,6 +101,14 @@ CUSTOM_DOTFILES=(
    'functions'
 )
 
+# Add custom paths to the system `$PATH`.
+if [[ -f "${HHS_DIR}/.path" ]]; then
+  all="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
+  for f_path in ${all}; do
+    [[ -n "${f_path}" ]] && PATH="${f_path}:${PATH}"
+  done
+fi
+
 # Re-create the HomeSetup log file.
 started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
@@ -185,14 +193,6 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
   __hhs_log "INFO" "Shell options activated !"
 fi
 
-# Add custom paths to the system `$PATH`.
-if [[ -f "${HHS_DIR}/.path" ]]; then
-  NEW_PATHS="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
-  NEW_PATHS=${NEW_PATHS//'\n'/':'/}
-  PATH="${PATH}:${NEW_PATHS}"
-  __hhs_log "DEBUG" "PATH variable was set"
-fi
-
 # Load system settings.
 if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
   # Update the settings configuration.
@@ -239,10 +239,6 @@ if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
 fi
 
-# Remove PATH duplicates.
-PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
-export PATH
-
 # Print HomeSetup MOTDs.
 if [[ -d "${HHS_DIR}"/motd ]]; then
   all=$(find "${HHS_DIR}"/motd -type f | sort | uniq)
@@ -251,6 +247,10 @@ if [[ -d "${HHS_DIR}"/motd ]]; then
     echo -e "$(eval "echo -e \"$(<"${motd}")\"")"
   done
 fi
+
+# Remove PATH duplicates.
+PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
+export PATH
 
 unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
 unset -f f_path tmp_file re_key_pair prefs cpl pref re motd all

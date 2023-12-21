@@ -146,11 +146,11 @@ export HHS_VAULT_USER="${USER}"
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
   'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'jq' 'gpg' 'shasum' 'base64'
-  'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
-  'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm'
   'shfmt' 'shellcheck' 'eslint' 'pylint'
-  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'eza'
   'docker' 'sqlite3' 'colima'
+  'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
+  'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm' 'gem'
+  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'colorls'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

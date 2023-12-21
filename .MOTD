@@ -1,3 +1,3 @@
 ${ORANGE}
-[${HHS_MY_OS}-${HHS_MY_OS_RELEASE}/${HHS_MY_SHELL}] ${GREEN}Welcome ${USER:-user} to HomeSetup ${BLUE}v${HHS_VERSION}
+[${HHS_MY_OS}-${HHS_MY_OS_RELEASE}/${HHS_MY_SHELL}] ${WHITE}${HAND_PEACE_ICN}  ${GREEN}Welcome ${USER:-user} to HomeSetup ${BLUE}v${HHS_VERSION}
 ${NC}

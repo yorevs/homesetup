@@ -47,20 +47,20 @@ alias q="exit 0"
 # @alias: Enable aliases to be sudo’ed
 alias sudo='sudo '
 
-if __hhs_has eza; then
-  # @alias: Use eza instead
-  alias ls='eza --color=auto --icons=auto -F -o -g -H --group-directories-first --git'
-  # @alias: List all files colorized in long format
+if __hhs_has 'gem' && gem which colorls &>/dev/null; then
+  # @alias: Use colorls instead or built-in `ls'
+  alias ls='colorls --dark --group-directories-first --git-status'
+  # @alias: [colorls] List all files colorized in long format
   alias l='ls --long'
-  # @alias: List all directories in long format
-  alias ld='l --only-dirs'
-  # @alias: List all files in long format
-  alias lf='l --only-files'
-  # @alias: List all files and folders colorized in long format, including dot files
+  # @alias: [colorls] List all directories in long format
+  alias ld='l --dirs'
+  # @alias: [colorls] List all files in long format
+  alias lf='l --files'
+  # @alias: [colorls] List all files and folders colorized in long format, including dot files
   alias ll='l --all'
-  # @alias: List all .dotfiles colorized in long format
+  # @alias: [colorls] List all .dotfiles colorized in long format
   alias lll='lf --all'
-  # @alias: List all .dotfolders colorized in long format
+  # @alias: [colorls] List all .dotfolders colorized in long format
   alias lld='ld --all'
 else
   # @alias: Always use color output for `ls'

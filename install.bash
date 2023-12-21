@@ -678,7 +678,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Copy MOTDs file into place
     [[ -d "${HHS_MOTD_DIR}" ]] || create_directory "${HHS_MOTD_DIR}"
-    copy_file "${HHS_HOME}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd
+    \cp "${HHS_HOME}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd &>/dev/null
 
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }

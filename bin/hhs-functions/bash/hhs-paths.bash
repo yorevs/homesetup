@@ -66,9 +66,9 @@ function __hhs_paths() {
             echo -en "${ORANGE} ${CROSS_ICN} => "
           fi
         fi
-        [[ -n "${custom}" ]] && echo -n "from ${HHS_PATHS_FILE}"
-        [[ -n "${path_dir}" ]] && echo -n "from ${PATHS_D}"
-        [[ -n "${private}" ]] && echo -n "from ${PVT_PATHS_D}"
+        [[ -n "${custom}" ]] && echo -n "${YELLOW}Custom paths${NC}"
+        [[ -n "${path_dir}" ]] && echo -n "${YELLOW}Private system paths${PATHS_D}${NC}"
+        [[ -n "${private}" ]] && echo -n "${YELLOW}General system path dir${PVT_PATHS_D}${NC}"
         if [[ -z "${custom}" && -z "${path_dir}" && -z "${private}" ]]; then
           echo -n "Shell export"
         fi
