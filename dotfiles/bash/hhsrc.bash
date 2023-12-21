@@ -50,7 +50,7 @@ fi
 
 # Defined by the installation.
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
-export HHS_DIR="${HOME}/.hhs"
+export HHS_DIR="${HOME}/.config/hhs"
 export HHS_VERSION="$(grep -m 1 . "${HHS_HOME}"/.VERSION)"
 export HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
 export HHS_BACKUP_DIR="${HHS_DIR}/backup"

@@ -266,7 +266,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 
     # Define the HomeSetup files (.hhs) location
-    HHS_DIR="${HOME}/.hhs"
+    HHS_DIR="${HOME}/.config/hhs"
 
     # Installation log file
     INSTALL_LOG="${HOME}/install.log"
@@ -839,6 +839,16 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
       popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
     fi
+
+    # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
+    # common the standard.
+    if [[ -d "${HOME}/.hhs" ]]; then
+      if rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
+        echo -e "\n${ORANGE}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
+        \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
+          "${RED}Unable to delete the old .hhs directory. It was moved to ~/.config. Feel free to wipe it out!${NC}"
+      fi
+    fi
   }
 
   # Install Starship prompt.
@@ -903,7 +913,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Move the installation log to logs folder
     [[ -s "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
-      \mv "${INSTALL_LOG}" "${HHS_LOG_DIR}"
+      rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
   }
 
   abort_install() {
