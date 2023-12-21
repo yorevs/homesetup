@@ -90,7 +90,7 @@ sudo chsh -s /usr/local/bin/bash
 To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font. We recommend using the font we
 provide with the installation:
 
-  [Droid font](misc/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
+  [Droid font](assets/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
 **Linux users**: Some terminals already support icons, but if not, you can manually install the font.
 
@@ -98,11 +98,11 @@ provide with the installation:
 
 #### Terminal App (Darwin)
 
-  [HomeSetup Terminal](misc/HomeSetup.terminal)
+  [HomeSetup Terminal](assets/HomeSetup.terminal)
 
 #### iTerm2 App (Darwin)
 
-  [HomeSetup iTerm2](misc/iTerm2-HomeSetup.json)
+  [HomeSetup iTerm2](assets/iTerm2-HomeSetup.json)
 
 When your terminal is set, then you should see something like this:
 
