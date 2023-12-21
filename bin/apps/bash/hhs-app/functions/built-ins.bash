@@ -190,12 +190,12 @@ function reset() {
     "${HHS_CACHE_DIR}/*.cache"
     "${HOME}/.inputrc"
     "${HHS_DIR}/.aliasdef"
-    "${STARSHIP_CONFIG}"
     "${HHS_SETUP_FILE}"
     "${HHS_SHOPTS_FILE}"
   )
 
   gem which colorls &>/dev/null && all_files+=("$(dirname "$(gem which colorls)")/yaml/*.yaml")
+  __hhs_has 'starship' && all_files+=("${STARSHIP_CONFIG}")
 
   title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"
   mchoose_file=$(mktemp)
