@@ -35,6 +35,7 @@ integration with popular tools like Git, Gradle, Docker, and more.
 ## Key Features
 
 - <img src="https://starship.rs/icon.png" width="14" height="14"/> [Starship](https://starship.rs/) prompt is here! HomeSetup now integrates with Starship.
+- [ColorLS](https://github.com/athityakumar/colorls) is here. HomeSetup now integrates with ColorLS.
 - Automated setup for commonly used configurations, ensuring a hassle-free initial setup.
 - A wide range of functions to simplify terminal configuration and streamline daily tasks.
 - A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons (requires a [Nerd font](https://www.nerdfonts.com/)).
@@ -174,7 +175,15 @@ Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.m
 ### Starship Setup
 
 HomeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and
-configurations please checkout the [Starship](https://starship.rs/) website.
+configurations please checkout the [Starship](https://starship.rs/) website. Please check the [Starship Plugin](docs/handbook/pages/applications/bash/hhs-app/plugins/starship.md)
+document for mode details about HomeSetup / Starship integration.
+
+### ColorLS Integration
+
+HomeSetup, now, integrates the new modern **ls** command [ColorLS](https://github.com/athityakumar/colorls). HomeSetup
+will not install it, but once you have installed it, it will be used instead of the built-in **ls**.
+
+Please check the [ColorLS Setup](docs/COLOR_LS_SETUP.md) document for more instructions on how to set up ColorLS.
 
 ## Uninstallation
 

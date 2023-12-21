@@ -1,8 +1,14 @@
-# Firebase Setup
+<img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
+
+# HomeSetup Firebase
+>
+> The ultimate Terminal experience
+
+## Setup
 
 To use firebase along with HomeSetup, you must first to configure your Firebase account.
 
-## Create new account
+### Create new account
 
 If you have a Google account but don't have a Firebase account yet, you can create one using your Google credentials.
 
@@ -36,7 +42,7 @@ Visit https://firebase.google.com/docs/database/security to learn more about sec
     }
     ```
 
-## Configure account
+### Configure account
 
 To configure your Firebase account for use with HomeSetup, follow these steps:
 
@@ -64,7 +70,7 @@ type in your shell:
 
 `$ firebase help`
 
-## HomeSetup integration
+### HomeSetup integration
 
 When you first access the firebase feature of HomeSetup, you will be prompted for some details:
 

@@ -5,7 +5,7 @@ executable_file:   red
 dir:               royalblue
 
 # Link
-dead_link: gray
+dead_link: orange
 link:      cyan
 
 # special files
