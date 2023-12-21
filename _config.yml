@@ -1,72 +1,19 @@
-# Reference docs: https://github.com/daattali/beautiful-jekyll/blob/master/_config.yml
-
-remote_theme: pages-themes/midnight@v0.2.0
+# HomeSetup github-pages configuration
+remote_theme: pages-themes/leap-day@v0.2.0
 
 plugins:
 - jekyll-remote-theme
-- jekyll-paginate
-- jekyll-sitemap
 
-# Name of website
 title: HomeSetup
+description: The ultimate Terminal experience
 
-# Your name to show in the footer
+show_downloads: "true"
+
 author: Hugo Saporetti Junior
-
-# Image to show in the navigation bar - works best with a square image
-# Remove this parameter if you don't want an image in the navbar
-avatar: /images/hs-logo-x32.png
-
-# By default, the image is cut into a circle. You can disable this behaviour by setting 'round-avatar: false'
-round-avatar: true
 
 blank_issues_enabled: false
 
-# How to display the link to your website in the footer
-# Remove this if you don't want a link in the footer
-url-pretty: "HomeSetup.com"
-
-# Excerpt word length - Truncate the excerpt of each post on the feed page to the specified number of words
-excerpt_length: 50
-
-# Whether or not to show an excerpt for every blog post in the feed page
-feed_show_excerpt: true
-
-# Whether or not to show a list of tags below each post preview in the feed page
-feed_show_tags: true
-
-# Add a search button to the navbar
-post_search: true
-
-# Contact links
 contact_links:
   - name: HomeSetup Support
     url: https://gitter.im/yorevs-homesetup/community/
     about: Please ask and answer questions here.
-
-# Social networks
-social-network-links:
-  email: "yorevs@hotmail.com"
-  rss: true
-  github: yorevs
-  twitter: yorevs
-  patreon: yorevs
-  youtube: "@homesetup"
-
-# Ruby Date Format to show dates of posts
-date_format: "%B %-d, %Y"
-
-# Output options (more information on Jekyll's site)
-timezone: "America/Toronto"
-markdown: kramdown
-highlighter: rouge
-permalink: /:year-:month-:day-:title/
-paginate: 5
-
-# Exclude these files from production site
-exclude:
-  - CHANGELOG.md
-  - CODE_OF_CONDUCT.md
-  - CONTRIBUTING.md
-  - PULL_REQUEST_TEMPLATE.md
-  - devel/
