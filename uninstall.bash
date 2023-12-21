@@ -19,13 +19,14 @@ USAGE="
 Usage: $APP_NAME
 "
 
-# Import pre-defined Bash Colors.
-[[ -f ~/.bash_colors ]] && \. ~/.bash_colors
-
 # Define the USER and HOME
 USER="${SUDO_USER:-${USER}}"
 [[ -z "${SUDO_USER}" ]] && HOME=${HOME:-~/}
 [[ -n "${SUDO_USER}" ]] && HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
+SHELL="${SHELL:/bin/bash}"
+
+# Import pre-defined Bash Colors.
+[[ -f "${HOME}/.bash_colors" ]] && source "${HOME}/.bash_colors"
 
 UNSETS=(
   'quit' 'usage' 'uninstall_dotfiles' 'uninstall_dotfiles'
