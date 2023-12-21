@@ -195,6 +195,8 @@ function reset() {
     "${HHS_SHOPTS_FILE}"
   )
 
+  gem which colorls &>/dev/null && all_files+=("$(dirname "$(gem which colorls)")/yaml/*.yaml")
+
   title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"
   mchoose_file=$(mktemp)
   if __hhs_mchoose "${mchoose_file}" "${title}" "${all_files[@]}"; then
@@ -204,7 +206,7 @@ function reset() {
     echo -e "${YELLOW}Deleting selected files...${NC}\n"
     while read -r -d ' ' file; do
       echo -en "${HHS_HIGHLIGHT_COLOR}Deleting file ${WHITE}"
-      echo -n "${file} $(printf '\056%.0s' {1..50})" | head -c 50
+      echo -n "${file} $(printf '\056%.0s' {1..60})" | head -c 60
       # shellcheck disable=SC2086
       if \rm -f ${file} &> /dev/null; then
         echo -e "${WHITE}${GREEN} OK${NC}"
@@ -216,7 +218,8 @@ function reset() {
     echo ''
   fi
   [[ -f "${mchoose_file}" ]] && \rm -f "${mchoose_file}" &> /dev/null
-  echo -e "${YELLOW}Changes will take effect after you 'reload' your terminal${NC}"
+  source "${HOME}/.bash_prompt"
+  echo -e "${YELLOW}Some changes will take effect after you 'reopen' your terminal!${NC}"
 
   return $ret_val
 }

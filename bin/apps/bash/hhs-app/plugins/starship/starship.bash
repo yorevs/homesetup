@@ -15,7 +15,7 @@
 PLUGIN_NAME="starship"
 
 UNSETS=(
-  help version cleanup execute STARSHIP_PRESETS
+  help version cleanup execute add_hhs_preset
 )
 
 # Current hhs starship version
@@ -28,7 +28,7 @@ STARSHIP_PRESETS=(
   'plain-text-symbols'
   'no-runtime-versions'
   'no-empty-icons'
-  'pure-prompt'
+  'pure-preset'
   'tokyo-night'
   'pastel-powerline'
   'nerd-font-symbols'
@@ -91,10 +91,20 @@ function cleanup() {
   echo -n ''
 }
 
+# @purpose: Add HomeSetup presets.
+function add_hhs_presets() {
+
+  local hhs_presets
+
+  IFS=$'\n' read -r -d '' -a hhs_presets < <(find "${HHS_STARSHIP_PRESETS_DIR}" -type f -name "hhs-*.toml" -exec basename {} \;)
+  IFS="${OLDIFS}"
+  STARSHIP_PRESETS+=("${hhs_presets[@]}")
+}
+
 # @purpose: HHS plugin required function
 function execute() {
 
-  local preset_val mselect_file title
+  local preset_val mselect_file title preset
 
   if __hhs_has starship; then
 
@@ -110,6 +120,7 @@ function execute() {
         echo -e "${RED}Unable to restore HomeSetup starship preset${NC}" && quit 1
       fi
     elif list_contains "${*}" "preset"; then
+      add_hhs_presets
       preset_val="${2}"
       if [[ -z ${preset_val} ]]; then
         mselect_file=$(mktemp)
@@ -117,14 +128,17 @@ function execute() {
         if __hhs_mselect "${mselect_file}" "${title}${NC}" "${STARSHIP_PRESETS[@]}"; then
           preset_val=$(grep . "${mselect_file}")
         fi
-      else
-        if ! list_contains "${STARSHIP_PRESETS[*]}" "${preset_val}"; then
-          echo -e "${YELLOW}\nPlease choose one valid Starship preset: "
-          for f in "${STARSHIP_PRESETS[@]}"; do echo "  |-$f"; done
-          quit 1
-        fi
+      fi
+      if [[ -n "${preset_val}" ]] && ! list_contains "${STARSHIP_PRESETS[*]}" "${preset_val}"; then
+        echo -e "${YELLOW}\nPlease choose one valid Starship preset: "
+        for preset in "${STARSHIP_PRESETS[@]}"; do echo "  |-${preset}"; done
+        quit 1
+      fi
+      if [[ -n "${preset_val}" ]]; then
         echo -e "${GREEN}Setting starship preset \"${preset_val}\"...${NC}"
-        if bash -c "starship preset \"${preset_val}\" -o ${STARSHIP_CONFIG}" &> /dev/null; then
+        if [[ "${preset_val}" == *'hhs-'* ]] && \cp "${HHS_STARSHIP_PRESETS_DIR}/${preset_val}" "${STARSHIP_CONFIG}"; then
+          echo -e "${GREEN}Your starship prompt changed to HomeSetup preset: ${preset_val} !${NC}" && quit 0
+        elif bash -c "starship preset \"${preset_val}\" -o ${STARSHIP_CONFIG}" &> /dev/null; then
           echo -e "${GREEN}Your starship prompt changed to preset: ${preset_val} !${NC}" && quit 0
         else
           echo -e "${RED}Unable to set starship preset: ${preset_val} ${NC}" && quit 1

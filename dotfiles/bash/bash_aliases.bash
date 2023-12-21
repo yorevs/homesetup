@@ -152,7 +152,7 @@ alias __hhs_hspm='__hhs hspm execute'
 # @alias: Shortcut for hhs updater plug-in
 alias __hhs_hhu='__hhs updater execute'
 # @alias: Shortcut for hhs starship plug-in
-alias __hhs_starship='__hhs starship execute'__hhs
+alias __hhs_starship='__hhs starship execute'
 # @alias: Shortcut for hhs setup plug-in
 alias __hhs_setup='__hhs setup execute'
 # @alias: Shortcut for hhs firebase plug-in
