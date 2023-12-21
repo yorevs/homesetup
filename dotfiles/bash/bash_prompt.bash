@@ -210,10 +210,10 @@ fi
 if __hhs_has 'gem' && gem which colorls &>/dev/null; then
   colorls_dir="$(dirname "$(gem which colorls)")/yaml"
   [[ -d "${colorls_dir}" ]] || \mkdir "${colorls_dir}"
-  \cp -n "${HHS_HOME}/misc/colorls/hhs-preset/dark_colors.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/misc/colorls/hhs-preset/light_colors.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/misc/colorls/hhs-preset/file_aliases.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/misc/colorls/hhs-preset/files.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/misc/colorls/hhs-preset/folder_aliases.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/misc/colorls/hhs-preset/folders.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/dark_colors.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/light_colors.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/file_aliases.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/files.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/folder_aliases.yaml" "${colorls_dir}"
+  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/folders.yaml" "${colorls_dir}"
 fi

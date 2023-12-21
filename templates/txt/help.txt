@@ -5,23 +5,24 @@ usage: ${APP_NAME} <arg_name> [options]
     # Optional: App. SYNOPSIS.
     # Optional: App. DESCRIPTION.
 
-    Options:
-      -A | --Along            : TODO: Description about the option -A
-      -B | --Blong  <ARG_1>   : TODO: Description about the option -B
+    options:
+      -A | --A_long            : TODO: Description about the option -A
+      -B | --B_long  <ARG_1>   : TODO: Description about the option -B
 
-    Arguments:
+    arguments:
       ARG_1   : TODO: Description about the argument
 
-    Examples:
+    examples:
       Example description:
         => example
 
-    Exit Status:
+    exit status:
       (0) Success
       (1) Failure due to missing/wrong client input or similar issues
       (2) Failure due to program execution failures
 
-  Notes: Optional: App. NOTES
+  Notes:
+    - Optional: App. NOTES
 ```
 
 Notes

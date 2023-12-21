@@ -31,9 +31,9 @@
 #-
 #================================================================
 #  HISTORY
-#     2015/03/01 : mvongvilay : Script creation
-#     2015/04/01 : mvongvilay : Add long options and improvements
-# 
+#     2015/03/01 : yorevs : Script creation
+#     2015/04/01 : yorevs : Add long options and improvements
+#
 #================================================================
 #  DEBUG OPTION
 #    set -n  # Uncomment to check your syntax, without execution.
