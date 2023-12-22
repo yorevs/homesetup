@@ -209,11 +209,14 @@ fi
 # ColorLS integration. Copy HomeSetup config files if they are not found.
 if __hhs_has 'gem' && gem which colorls &>/dev/null; then
   colorls_dir="$(dirname "$(gem which colorls)")/yaml"
-  [[ -d "${colorls_dir}" ]] || \mkdir "${colorls_dir}"
-  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/dark_colors.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/light_colors.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/file_aliases.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/files.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/folder_aliases.yaml" "${colorls_dir}"
-  \cp -n "${HHS_HOME}/assets/colorls/hhs-preset/folders.yaml" "${colorls_dir}"
+  hhs_colorls_dir="${HHS_HOME}/assets/colorls/hhs-preset"
+  [[ -d "${colorls_dir}" ]] || \mkdir -p "${colorls_dir}"
+  [[ -f "${colorls_dir}/dark_colors.yaml" ]] || \cp "${hhs_colorls_dir}/dark_colors.yaml" "${colorls_dir}"
+  [[ -f "${colorls_dir}/light_colors.yaml" ]] || \cp "${hhs_colorls_dir}/light_colors.yaml" "${colorls_dir}"
+  [[ -f "${colorls_dir}/file_aliases.yaml" ]] || \cp "${hhs_colorls_dir}/file_aliases.yaml" "${colorls_dir}"
+  [[ -f "${colorls_dir}/files.yaml" ]] || \cp "${hhs_colorls_dir}/files.yaml" "${colorls_dir}"
+  [[ -f "${colorls_dir}/folder_aliases.yaml" ]] || \cp "${hhs_colorls_dir}/folder_aliases.yaml" "${colorls_dir}"
+  [[ -f "${colorls_dir}/folders.yaml" ]] || \cp "${hhs_colorls_dir}/folders.yaml" "${colorls_dir}"
 fi
+
+# FZF integration. Source fzf key bindings and auto-completes

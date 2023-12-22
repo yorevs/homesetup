@@ -86,7 +86,6 @@ DOTFILES=(
   'bash_aliases'
   'bash_icons'
   'bash_functions'
-  'bash_completion'
   'profile'
 )
 
@@ -207,11 +206,34 @@ fi
 
 # Load bash completions.
 if [[ ${HHS_LOAD_COMPLETIONS} -eq 1 ]]; then
-  __hhs_log "INFO" "Loading bash completions !"
+  __hhs_log "INFO" "Loading bash completions!"
   while read -r cpl; do
-    __hhs_source "${cpl}"
-    HHS_BASH_COMPLETIONS="${HHS_BASH_COMPLETIONS}$(basename "${cpl//\.$HHS_MY_SHELL/}") "
-  done < <(find "${HHS_HOME}/bin/completions" -type f -name '*-completion.bash')
+    app_name="$(basename "${cpl//-completion/}")"
+    app_name="${app_name//\.${HHS_MY_SHELL}/}"
+    if __hhs_has "${app_name}"; then
+      __hhs_source "${cpl}"
+      HHS_COMPLETIONS="${HHS_COMPLETIONS}${app_name} "
+    else
+      __hhs_log "WARN" "Skipping completion \"${app_name}\" because the application was not detected!"
+    fi
+  done < <(find "${HHS_HOME}/bin/completions" -type f -name "*-completion.${HHS_MY_SHELL}")
+  export HHS_COMPLETIONS
+fi
+
+# Load bash key bindings.
+if [[ ${HHS_LOAD_KEY_BINDINGS} -eq 1 ]]; then
+  __hhs_log "INFO" "Loading bash key bindings!"
+  while read -r bnd; do
+    app_name="$(basename "${bnd//-key-bindings/}")"
+    app_name="${app_name//\.${HHS_MY_SHELL}/}"
+    if __hhs_has "${app_name}"; then
+      __hhs_source "${bnd}"
+      HHS_BINDINGS="${HHS_BINDINGS}${app_name} "
+    else
+      __hhs_log "WARN" "Skipping key binding \"${app_name}\" because the application was not detected!"
+    fi
+  done < <(find "${HHS_HOME}/bin/key-bindings" -type f -name '*-key-bindings.bash')
+  export HHS_BINDINGS
 fi
 
 # Check for HomeSetup updates.
@@ -253,4 +275,4 @@ PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<
 export PATH
 
 unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
-unset -f f_path tmp_file re_key_pair prefs cpl pref re motd all
+unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name

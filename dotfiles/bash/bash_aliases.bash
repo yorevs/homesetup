@@ -91,6 +91,8 @@ alias egrep='\egrep --color=auto'
 alias cd='__hhs_change_dir'
 # @alias: Built-ins replacement for `dirs'
 alias dirs='__hhs_dirs'
+# @alias: Built-ins replacement for `cat'
+__hhs_has "bat" && alias cat='bat --show-all'
 # @alias: Built-ins replacement for `help'
 alias help='__hhs_help'
 # @alias: Starship replacement for `starship' binary

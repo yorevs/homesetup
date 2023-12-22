@@ -280,6 +280,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Auto-completions location
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
 
+    # Key-Bindings location
+    BINDINGS_DIR="${HHS_HOME}/bin/key-bindings"
+
     # HomeSetup version file
     HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
 
@@ -652,6 +655,18 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link auto-completes into bin (${BIN_DIR}) directory !"
     fi
 
+    # Link key-bindings into place.
+    echo -en "\n${WHITE}Linking key-bindings from ${BLUE}${BINDINGS_DIR} to ${BIN_DIR}... "
+    echo ">>> Linked key-bindings:" >>"${INSTALL_LOG}"
+    if find "${BINDINGS_DIR}" -maxdepth 2 -type f -iname "**-key-bindings.${SHELL_TYPE}" \
+      -print \
+      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec chmod +x {} \; >>"${INSTALL_LOG}" 2>&1; then
+      echo -e " ${GREEN}OK${NC}"
+    else
+      quit 2 "Unable to link key-bindings into bin (${BIN_DIR}) directory !"
+    fi
+
     # Copy HomeSetup fonts into place.
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR}... "
     echo ">>> Copied HomeSetup fonts:" >>"${INSTALL_LOG}"
@@ -791,10 +806,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # .bash_completions was renamed to .bash_completion. #e6ce231 .
-    if [[ -L "${HOME}/.bash_completions" ]]; then
-      \rm -f "${HOME}/.bash_completions"
-      echo -e "\n${ORANGE}Your old ${HOME}/.bash_completions link had to be removed. ${NC}"
-    fi
+    # .bash_completion was deleted.
+    [[ -L "${HOME}/.bash_completions" ]] && \rm -f "${HOME}/.bash_completions"
+    [[ -L "${HOME}/.bash_completion" ]] && \rm -f "${HOME}/.bash_completion"
 
     # Removing the old python lib directories and links.
     [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] &&

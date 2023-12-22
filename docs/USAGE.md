@@ -379,8 +379,6 @@ HomeSetup include some basic helper functions:
 |                      | __hhs_log              | Log to HomeSetup log file.                                                     |
 |                      | __hhs_source           | Read/Execute commands from the filename argument in the current shell context. |
 |                      | __hhs_alias            | Check if an alias does not exists and create it, otherwise ignore it.          |
-| bash_completion.bash | __hhs_check_completion | Check and add completion for tool if found in HHS completions dir.             |
-|                      | __hhs_load_completions | Load all available auto-completions.                                           |
 | bash_prompt.bash     | __hhs_set_win_title    | Set the terminal window title.                                                 |
 |                      | __hhs_git_prompt       | Check whether inside a git repository or not, and which branch is checked.     |
 

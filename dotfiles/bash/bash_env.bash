@@ -150,7 +150,7 @@ DEVELOPER_TOOLS=(
   'docker' 'sqlite3' 'colima'
   'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
   'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm' 'gem'
-  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'colorls'
+  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

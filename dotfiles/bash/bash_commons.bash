@@ -70,9 +70,9 @@ function __hhs_source() {
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "Usage: ${FUNCNAME[0]} <filepath>"
   elif [[ ! -s "${filepath}" ]]; then
-    __hhs_log "ERROR" "${FUNCNAME[0]}: File \"${filepath}\" not found or empty!"
+    __hhs_log "WARN" "${FUNCNAME[0]}: Skipping \"${filepath}\" because it was not found or empty!"
   else
-    if source "${filepath}" 2>>"${HHS_LOG_FILE}"; then
+    if source "${filepath}" >>"${HHS_LOG_FILE}"; then
       __hhs_log "DEBUG" "File \"${filepath}\" was loaded !"
       return 0
     else
