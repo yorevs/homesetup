@@ -34,8 +34,9 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 ## Key Features
 
-- <img src="https://starship.rs/icon.png" width="14" height="14"/> [Starship](https://starship.rs/) prompt is here! HomeSetup now integrates with Starship.
-- [ColorLS](https://github.com/athityakumar/colorls) is here. HomeSetup now integrates with ColorLS.
+- [Starship](https://starship.rs/) integration! HomeSetup now integrates with Starship.
+- [ColorLS](https://github.com/athityakumar/colorls) integration. HomeSetup now integrates with ColorLS.
+- [FZF](https://www.redhat.com/sysadmin/fzf-linux-fuzzy-finder) integration! HomeSetup now integrates with fzf.
 - Automated setup for commonly used configurations, ensuring a hassle-free initial setup.
 - A wide range of functions to simplify terminal configuration and streamline daily tasks.
 - A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons (requires a [Nerd font](https://www.nerdfonts.com/)).

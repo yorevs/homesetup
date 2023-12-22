@@ -143,6 +143,12 @@ export HHS_VAULT_USER="${USER}"
 [[ -d "${HOME}"/Dropbox ]] && export DROPBOX="${HOME}/Dropbox"
 [[ -d "${HOME}"/Workspace ]] && export WORKSPACE="${HOME}/Workspace"
 
+# Integrations
+if __hhs_has 'fzf'; then
+  __hhs_has 'bat' && export FZF_DEFAULT_OPTS="--preview 'bat --color=always {}'"
+  __hhs_has 'fd' && export FZF_DEFAULT_COMMAND="fd --type f"
+fi
+
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
   'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'jq' 'gpg' 'shasum' 'base64'
@@ -150,7 +156,7 @@ DEVELOPER_TOOLS=(
   'docker' 'sqlite3' 'colima'
   'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
   'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm' 'gem'
-  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat'
+  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
