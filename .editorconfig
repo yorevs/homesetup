@@ -17,12 +17,6 @@ tab_width                   = 2
 # Matches multiple files with brace expansion notation
 
 # 4 space indentation
-[{*.py,*.txt}]
+[{*.py,*.txt,*.conf}]
 indent_size     = 4
 tab_width       = 4
-
-# 4 space TAB indentation
-[*.conf]
-indent_size     = 4
-tab_width       = 4
-indent_style    = tab
