@@ -1,7 +1,7 @@
 # Main Colors
 unrecognized_file: white
 recognized_file:   white
-executable_file:   red
+executable_file:   limegreen
 dir:               royalblue
 
 # Link
@@ -44,4 +44,4 @@ addition:     purple
 modification: orange
 deletion:     darkred
 untracked:    purple
-unchanged:    forestgreen
+unchanged:    limegreen
