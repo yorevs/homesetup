@@ -18,6 +18,19 @@ function __hhs_change_dir() {
 
   local flags path
 
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [-L|-P] [dirname]"
+    echo ''
+    echo '    Options: '
+    echo '      -L    : Follow symbolic links.'
+    echo "      -P    : Don't follow symbolic links."
+    echo ''
+    echo '  Notes: '
+    echo "    - dirname: The directory to change. If not provided, default is the user's home directory"
+    echo ''
+    return 0
+  fi
+
   while [[ '-L' == "${1}" || '-P' == "${1}" ]]; do
     flags="${flags} ${1}" && shift
   done
@@ -44,27 +57,33 @@ function __hhs_change_dir() {
     __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found !"
   else
     # shellcheck disable=SC2086
-    if \
-      \cd ${flags} "${path}" &>/dev/null && \
-      \pushd -n "$(pwd)" &>/dev/null && \
-      \dirs -p | uniq >"${HHS_DIR}/.last_dirs"; then
+    if
+      \cd ${flags} "${path}" &> /dev/null \
+                                         && \pushd -n "$(pwd)" &> /dev/null \
+                                     && \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
+    then
       return 0
     else
       __hhs_errcho "${FUNCNAME[0]}: Unable to change to directory \"${path}\" !"
     fi
   fi
 
-  \pushd -n "$(pwd)" &>/dev/null && \
-  \dirs -p | uniq >"${HHS_DIR}/.last_dirs"
+  \pushd -n "$(pwd)" &> /dev/null \
+                                 && \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
 
   return 1
 }
 
 # @function: Change back the current working directory by N directories.
-# @param $1 [Opt] : The amount of directories to jump back.
+# @param $1 [Opt] : The amount of directories to change backwards. If not provided, default is one.
 function __hhs_changeback_ndirs() {
 
   local x last_pwd
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [amount]"
+    return 0
+  fi
 
   last_pwd=$(pwd)
 
@@ -93,7 +112,7 @@ function __hhs_dirs() {
     return $?
   fi
 
-  read -r -d '\n' -a results <<<"$(dirs -p -l | sort | uniq)"
+  read -r -d '\n' -a results <<< "$(dirs -p -l | sort | uniq)"
   len=${#results[@]}
 
   if [[ ${len} -eq 0 ]]; then
@@ -125,13 +144,23 @@ function __hhs_dirs() {
 # @param $2 [Opt] : The max level depth to walk into.
 function __hhs_list_tree() {
 
+  local dir="${1}" max_depth=${2}
+
   if __hhs_has "tree"; then
-    if [[ -n "$1" && -n "$2" ]]; then
-      tree "$1" -L "$2"
-    elif [[ -n "$1" && -z "$2" ]]; then
-      tree "$1"
+    if [[ -n "${dir}" && -n "${max_depth}" ]]; then
+      tree "${dir}" -L "${max_depth}"
+    elif [[ -n "${dir}" && -z "${max_depth}" ]]; then
+      tree "${dir}"
     else
       tree '.'
+    fi
+  elif __hhs_has "colorls"; then
+    if [[ -n "${dir}" && -n "${max_depth}" ]]; then
+      ls "${dir}" --tree="${max_depth}"
+    elif [[ -n "${dir}" && -z "${max_depth}" ]]; then
+      ls "${dir}" --tree
+    else
+      ls . --tree
     fi
   else
     \ls -Rl
@@ -160,7 +189,7 @@ function __hhs_save_dir() {
   else
 
     dir_alias=$(echo -en "${2:-$1}" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
-    dir_alias=$(tr '[:punct:]' '_' <<<"${dir_alias}")
+    dir_alias=$(tr '[:punct:]' '_' <<< "${dir_alias}")
 
     if [[ "$1" == "-e" ]]; then
       __hhs_edit "${HHS_SAVED_DIRS_FILE}"
@@ -173,13 +202,13 @@ function __hhs_save_dir() {
         ret_val=0
       fi
     elif [[ "$1" == "-c" ]]; then
-      read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+      read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
       for idx in $(seq 1 "${#all_dirs[@]}"); do
         dir=${all_dirs[idx - 1]}
         dir_alias=${dir%%=*}
         dir=${dir#*=}
         [[ -d "${dir}" ]] && dirs+=("${dir_alias}=${dir}")
-        printf "%s\n" "${dirs[@]}" >"${HHS_SAVED_DIRS_FILE}"
+        printf "%s\n" "${dirs[@]}" > "${HHS_SAVED_DIRS_FILE}"
       done
     elif [[ -n "$2" && -n "${dir_alias}" ]]; then
       dir="$1"
@@ -193,9 +222,9 @@ function __hhs_save_dir() {
       fi
       # Remove the old saved directory aliased
       ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
-      read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+      read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
       all_dirs+=("${dir_alias}=${dir}")
-      printf "%s\n" "${all_dirs[@]}" >"${HHS_SAVED_DIRS_FILE}"
+      printf "%s\n" "${all_dirs[@]}" > "${HHS_SAVED_DIRS_FILE}"
       sort -u "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
       if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
         echo "${GREEN}Directory ${WHITE}\"${dir}\" ${GREEN}saved as ${HHS_HIGHLIGHT_COLOR}${dir_alias} ${NC}"
@@ -229,7 +258,7 @@ function __hhs_load_dir() {
     echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
 
-    read -d '' -r -a all_dirs <"${HHS_SAVED_DIRS_FILE}"
+    read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
 
     if [ ${#all_dirs[@]} -ne 0 ]; then
 
@@ -282,7 +311,7 @@ function __hhs_load_dir() {
       [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
 
       if [[ ${ret_val} -eq 0 && -d "${dir}" ]]; then
-        __hhs_change_dir "${dir}" &>/dev/null || return 1
+        __hhs_change_dir "${dir}" &> /dev/null || return 1
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\""
         ret_val=0
       elif [[ -n "${dir}" && ! -d "${dir}" ]]; then
@@ -317,9 +346,9 @@ function __hhs_godir() {
       search_path="$(pwd)"
     fi
     search_name="$(basename "${2:-$1}")"
-    pushd "${search_path%/}" &>/dev/null || echo
-    read -d '' -r -a found_dirs < <(find -L . -type d -iname "*""${search_name}" 2>/dev/null)
-    popd &>/dev/null || echo
+    pushd "${search_path%/}" &> /dev/null || echo
+    read -d '' -r -a found_dirs < <(find -L . -type d -iname "*""${search_name}" 2> /dev/null)
+    popd &> /dev/null || echo
     len=${#found_dirs[@]}
     # If no directory is found under the specified name
     if [[ ${len} -eq 0 ]]; then
@@ -343,7 +372,7 @@ function __hhs_godir() {
 
   # If a valid directory was selected, change to it.
   if [[ ${ret_val} -eq 0 && -n "${dir}" && -d "${dir}" ]]; then
-    if __hhs_change_dir "${dir}" &>/dev/null; then
+    if __hhs_change_dir "${dir}" &> /dev/null; then
       echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
       ret_val=0
     else

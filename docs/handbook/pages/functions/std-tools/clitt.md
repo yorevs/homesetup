@@ -7,35 +7,34 @@
 ## Table of contents
 
 <!-- toc -->
+
 - [Standard Tools](../../functions.md#standard-tools)
-  * [General](general.md#general-functions)
-  * [Aliases Related](aliases-related.md#aliases-related-functions)
-  * [Built-ins](built-ins.md#built-ins-functions)
-  * [Command Tool](command-tool.md#command-tool)
-  * [Directory Related](directory-related.md#directory-related-functions)
-  * [File Related](file-related.md#file-related-functions)
-  * [MChoose Tool](clitt.md#mchoose-tool)
-  * [MInput Tool](clitt.md#minput-tool)
-  * [MSelect Tool](clitt.md#mselect-tool)
-  * [Network Related](network-related.md#network-related-functions)
-  * [Paths Tool](paths-tool.md#paths-tool)
-  * [Profile Related](profile-related.md#profile-related-functions)
-  * [Punch-Tool](punch-tool.md#punch-tool)
-  * [Search Related](search-related.md#search-related-functions)
-  * [Security Related](security-related.md#security-related-functions)
-  * [Shell Utilities](shell-utilities.md#shell-utilities)
-  * [System Utilities](system-utilities.md#system-utilities)
-  * [Taylor Tool](taylor-tool.md#taylor-tool)
-  * [Text Utilities](text-utilities.md#text-utilities)
-  * [Toolchecks](toolchecks.md#tool-checks-functions)
+  - [Aliases Related](aliases-related.md#aliases-related-functions)
+  - [Built-ins](built-ins.md#built-ins-functions)
+  - [CLI Terminal Tools](clitt.md#cli-terminal-tools)
+  - [Command Tool](command-tool.md#command-tool)
+  - [Directory Related](directory-related.md#directory-related-functions)
+  - [File Related](file-related.md#file-related-functions)
+  - [Network Related](network-related.md#network-related-functions)
+  - [Paths Tool](paths-tool.md#paths-tool)
+  - [Profile Related](profile-related.md#profile-related-functions)
+  - [Search Related](search-related.md#search-related-functions)
+  - [Security Related](security-related.md#security-related-functions)
+  - [Shell Utilities](shell-utilities.md#shell-utilities)
+  - [System Utilities](system-utilities.md#system-utilities)
+  - [Taylor Tool](taylor-tool.md#taylor-tool)
+  - [Text Utilities](text-utilities.md#text-utilities)
+  - [TOML Utilities](toml-utilities.md#toml-utilities)
+  - [Toolchecks](toolchecks.md#tool-checks-functions)
 - [Development Tools](../../functions.md#development-tools)
-  * [Gradle](../dev-tools/gradle-tools.md#gradle-functions)
-  * [Docker](../dev-tools/docker-tools.md#docker-functions)
-  * [Git](../dev-tools/git-tools.md#git-functions)
+  - [Gradle](../dev-tools/gradle-tools.md#gradle-functions)
+  - [Docker](../dev-tools/docker-tools.md#docker-functions)
+  - [Git](../dev-tools/git-tools.md#git-functions)
+
 <!-- tocstop -->
 
 
-### MChoose tool
+### CLI Terminal Tools
 
 #### __hhs_mchoose
 
@@ -59,36 +58,71 @@ Usage: __hhs_mchoose [options] <output_file> <title> <items...>
   Notes:
     - A temporary file is suggested to used with this command: $ mktemp.
     - The outfile must not exist or it be an empty file.
+    - To initialize items individually, provide items on form: name=[True|False].
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Choose options from a list using a navigable menu.
 
-##### **Returns**:
+##### **Returns**
 
   - **0** on success and if chosen items were Accepted.
   - **127** if the user Canceled (**Q** pressed).
   - **non-zero** for all other cases.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Required_     : The output file where the results will be stored.
   - $2 _Required_     : The text to be displayed before rendering the items.
   - $3..$N _Required_ : The items to be displayed for choosing.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_mchoose /tmp/out.txt 'Mark the desired options' {1..20}`
+
+**Output**
 
 ```bash
-  $ __hhs_mchoose /tmp/out.txt \
-    'Mark the desired options' {1..20} \
-    && echo -n "These options were checked: " && cat /tmp/out.txt
-  $ __hhs_mchoose -c /tmp/out.txt \
-    'Unmark the undesired options' {1..20} \
-    && echo -n "These options were checked: " && cat /tmp/out.txt
+Mark the desired options
+
+   1      1
+   2       2
+   3       3
+   4       4
+   5       5
+   6       6
+   7       7
+   8       8
+   9       9
+  10       10
+
+[Enter] Accept  [↑↓] Navigate  [Space] Mark  [I] Invert  [Esc] Quit  [1..20] Goto:
+```
+
+`__hhs_mchoose -c /tmp/out.txt 'Unmark the undesired options' {1..20}`
+
+**Output**
+
+```bash
+Unmark the undesired options
+
+   1      1
+   2       2
+   3       3
+   4       4
+   5       5
+   6       6
+   7       7
+   8       8
+   9       9
+  10       10
+
+[Enter] Accept  [↑↓] Navigate  [Space] Mark  [I] Invert  [Esc] Quit  [1..20] Goto:
 ```
 
 ------
+
 ### MSelect tool
 
 #### __hhs_mselect
@@ -111,31 +145,47 @@ Usage: __hhs_mselect <output_file> <title> <items...>
     - The outfile must not exist or it be an empty file.
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Select an option from a list using a navigable menu.
 
-##### **Returns**:
+##### **Returns**
 
   - **0** on success and if the selected item was Accepted.
   - **127** if the user Canceled (**Q** pressed).
   - **non-zero** for all other cases.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Required_     : The output file where the result will be stored.
   - $2 _Required_     : The text to be displayed before rendering the items.
   - $3..$N _Required_ : The items to be displayed for selecting.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_mselect /tmp/out.txt 'Please select one option' {1..100}`
+
+**Output**
 
 ```bash
-  $ __hhs_mselect \
-    /tmp/out.txt 'Please select one option' {1..100} \
-    && echo -n "This item has been selected => " && cat /tmp/out.txt
+Please select one option
+
+    1    1
+    2     2
+    3     3
+    4     4
+    5     5
+    6     6
+    7     7
+    8     8
+    9     9
+   10     10
+
+[Enter] Select  [↑↓] Navigate  [Esc] Quit  [1..100] Goto:
 ```
 
 ------
+
 ### MInput tool
 
 #### __hhs_minput
@@ -165,30 +215,47 @@ Usage: __hhs_minput <output_file> <title> <form_fields...>
     - A temporary file is suggested to used with this command: $ mktemp.
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Provide a terminal form input with simple validation.
 
-##### **Returns**:
+##### **Returns**
 
   - **0** on success and form was validated and Accepted.
   - **127** if the user Canceled (**Esc** pressed).
   - **non-zero** for all other cases.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Required_     : The output file where the results will be stored.
   - $2 _Required_     : The text to be displayed before rendering the items.
   - $3..$N _Required_ : The form fields to be displayed for input.
 
-##### **Examples:**
+##### **Examples**
 
 ```bash
-  $ __hhs_minput /tmp/out.txt 'Please fill the form below:' \
+__hhs_minput /tmp/out.txt 'Please fill the form below:' \
     'Name|||5/30|rw|' \
     'Age|masked|masked|1/3|| ;###' \
     'Password|password||5|rw|' \
     'Role|select||4/5|rw|Admin;<User>;Guest' \
     'Locked||||r|locked value' \
-    'Accept Conditions|checkbox||||' && cat /tmp/out.txt
+    'Accept Conditions|checkbox||||'
+```
+
+**Output**
+
+```bash
+Please fill the form below:
+
+  Name              :                                :    0/30
+  Age               : ###                            :    0/3
+  Password          :                                :    0/30
+  Role              : User                           :    2/3
+  Locked            : locked value                   :   12/30
+  Accept Conditions :                               :    1/30
+
+ the name
+
+[Enter] Submit  [↑↓] Navigate  [↹] Next  [Space] Toggle  [^P] Paste  [Esc] Quit
 ```

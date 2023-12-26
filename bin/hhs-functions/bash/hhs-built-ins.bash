@@ -159,7 +159,7 @@ function __hhs_help() {
   return 0
 }
 
-# @function: Display the current working dir and remote repository if it applies.
+# @function: Display the current dir (pwd) and remote repo url, if it applies.
 # @param $1 [Req] : The command to get help.
 function __hhs_where_am_i() {
 
@@ -177,13 +177,13 @@ function __hhs_shopt() {
 
   enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
 
-  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [on|off] | [-pqsu] [-o] [optname ...]"
     echo ''
     echo '    Options:'
     echo '      off : Display all unset options.'
     echo '      on  : Display all set options.'
-    echo '      -s  : Enable (set) each optname'
+    echo '      -s  : Enable (set) each optname.'
     echo '      -u  : Disable (unset) each optname.'
     echo '      -p  : Display a list of all settable options, with an indication of whether or not each is set.'
     echo '            The output is displayed in a form that can be reused as input. (-p is the default action).'
@@ -198,7 +198,7 @@ function __hhs_shopt() {
     IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
     IFS="${OLDIFS}"
     echo ' '
-    echo "${YELLOW}Available shell options (${#shell_options[@]}):"
+    echo "${YELLOW}Available shell ${enable:-on and off} options (${#shell_options[@]}):"
     echo ' '
     for option in "${shell_options[@]}"; do
       if [[ "${option#*=}" == 'on' ]] && [[ -z "${enable}" || "${enable}" == 'on' ]]; then
@@ -209,7 +209,7 @@ function __hhs_shopt() {
     done
     echo "${NC}"
     return 0
-  elif [[ ${#} -ge 2 && ${enable} =~ -(s|u|p|q|o) ]]; then
+  elif [[ ${#} -ge 1 && ${enable} =~ -(s|u|p|q|o) ]]; then
       # shellcheck disable=SC2068
       \shopt ${@}
       return $?
