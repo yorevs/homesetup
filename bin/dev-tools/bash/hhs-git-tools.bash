@@ -22,15 +22,22 @@ if __hhs_has "git"; then
     if [[ $# -eq 0 ]]; then
       IFS=$'\n'
       read -r -d '' -a changed_files < <(\git status --porcelain)
-      mchoose_file=$(mktemp)
-      if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs git" "${changed_files[@]}"; then
-        for line in $(head -n 1 "${mchoose_file}" | \tr ' ' '\n'); do
-          if [[ -f ${line} ]]; then
-            \git add "${line}"
-          fi
-        done
+      if [[ "${#changed_files[@]}" -gt 1 ]]; then
+        mchoose_file=$(mktemp)
+        if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs git" "${changed_files[@]}"; then
+          for line in $(head -n 1 "${mchoose_file}" | \tr ' ' '\n'); do
+            if [[ -f ${line} ]]; then
+              \git add "${line}"
+            fi
+          done
+        fi
+        IFS="${OLFIFS}"
+      elif [[ "${#changed_files[@]}" -eq 1 ]]; then
+        # TODO add one
+        return 0
+      else
+        echo -e "\n${YELLOW}Nothing has changed!${NC}\n"
       fi
-      IFS="${OLFIFS}"
     else
       \git add ${@}
     fi
