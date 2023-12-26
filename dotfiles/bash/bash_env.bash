@@ -151,12 +151,12 @@ fi
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'jq' 'gpg' 'shasum' 'base64'
-  'shfmt' 'shellcheck' 'eslint' 'pylint'
-  'docker' 'sqlite3' 'colima'
-  'perl' 'groovy' 'java' 'ruby' 'python' 'python3' 'go'
-  'gcc' 'make'  'mvn' 'gradle' 'pip3' 'rvm' 'gem'
-  'nvm' 'node' 'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'jq' 'gpg' 'base64'
+  'shfmt' 'shellcheck' 'pylint'
+  'docker' 'sqlite3'
+  'perl' 'groovy' 'java' 'ruby' 'python3'
+  'gcc' 'make'  'mvn' 'gradle' 'pip3' 'gem'
+  'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
