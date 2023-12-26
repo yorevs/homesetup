@@ -135,8 +135,8 @@ export HHS_VAULT_USER="${USER}"
 # ----------------------------------------------------------------------------
 # Directories
 
-[[ -d "${HOME}"/GIT-Repository ]] && __hhs_has git && export GIT_REPOS="${HOME}"/GIT-Repository
-[[ -d "${HOME}"/SVN-Repository ]] && __hhs_has svn && export SVN_REPOS="${HOME}"/SVN-Repository
+__hhs_has git && [[ -d "${HOME}"/GIT-Repository ]] && export GIT_REPOS="${HOME}"/GIT-Repository
+__hhs_has svn && [[ -d "${HOME}"/SVN-Repository ]] && export SVN_REPOS="${HOME}"/SVN-Repository
 [[ -d "${HOME}"/Desktop ]] && export DESKTOP="${HOME}/Desktop"
 [[ -d "${HOME}"/Documents ]] && export DOCUMENTS="${HOME}/Documents"
 [[ -d "${HOME}"/Downloads ]] && export DOWNLOADS="${HOME}/Downloads"
@@ -163,4 +163,4 @@ if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
 fi
 
-export HHS_DEV_TOOLS=${HHS_DEV_TOOLS:-$(tr ' ' '\n' <<<"${DEVELOPER_TOOLS[@]}" | sort | uniq)}
+export HHS_DEV_TOOLS="${HHS_DEV_TOOLS:-${DEVELOPER_TOOLS[*]}}"

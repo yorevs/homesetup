@@ -311,8 +311,6 @@ if __hhs_has "git"; then
   alias __hhs_git_log='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
   # @alias: Git - Shortcut for `git checkout'
   alias __hhs_git_checkout='git checkout'
-  # @alias: Git - Shortcut for `git add'
-  alias __hhs_git_add='git add'
   # @alias: Git - Shortcut for `git commit'
   alias __hhs_git_commit='git commit -m'
   # @alias: Git - Shortcut for `git commit amend'

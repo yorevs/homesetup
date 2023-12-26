@@ -37,8 +37,7 @@ function __hhs_command() {
     echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
   else
 
-    IFS=$'\n'
-    read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
+    IFS=$'\n' read -d '' -r -a all_cmds <"${HHS_CMD_FILE}"
     IFS="${OLDIFS}"
 
     case "$1" in

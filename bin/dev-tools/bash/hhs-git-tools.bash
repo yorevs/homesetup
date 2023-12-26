@@ -13,6 +13,29 @@
 
 if __hhs_has "git"; then
 
+  # shellcheck disable=SC2068
+  # @function: Shortcut for `git add'
+  function __hhs_git_add() {
+
+    local changed_files mchoose_file
+
+    if [[ $# -eq 0 ]]; then
+      IFS=$'\n'
+      read -r -d '' -a changed_files < <(\git status --porcelain)
+      mchoose_file=$(mktemp)
+      if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs git" "${changed_files[@]}"; then
+        for line in $(head -n 1 "${mchoose_file}" | \tr ' ' '\n'); do
+          if [[ -f ${line} ]]; then
+            \git add "${line}"
+          fi
+        done
+      fi
+      IFS="${OLFIFS}"
+    else
+      \git add ${@}
+    fi
+  }
+
   # @function: Checkout the previous branch in history (skips branch-to-same-branch changes ).
   function __hhs_git_branch_previous() {
 
@@ -40,7 +63,7 @@ if __hhs_has "git"; then
       echo '    Options:'
       echo '      -l | --local : List only local branches. Do not fetch remote branches.'
       return 1
-    elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
+    elif [[ "$(git rev-parse --is-inside-work-tree &> /dev/null && echo "${?}")" != '0' ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
       return 1
     else
@@ -48,7 +71,7 @@ if __hhs_has "git"; then
       clear
       if [[ -n "${all_flag}" ]]; then
         echo -en "${YELLOW}=> Updating branches ${NC}"
-        if ! git fetch &>/dev/null; then
+        if ! git fetch &> /dev/null; then
           __hhs_errcho "${FUNCNAME[0]}: Unable fetch from remote"
           return 1
         fi
@@ -67,12 +90,11 @@ if __hhs_has "git"; then
       echo -en "${WHITE}"
 
       mchoose_file=$(mktemp)
-      if __hhs_mselect "${mchoose_file}" "Select a local ${all_str} branch to checkout" "${all_branches[@]}"
-      then
+      if __hhs_mselect "${mchoose_file}" "Select a local ${all_str} branch to checkout" "${all_branches[@]}"; then
         [[ -z "${sel_branch}" ]] && echo '' && return 1
         if ! git diff-index --quiet HEAD --; then
           echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
-          if ! git stash &>/dev/null; then
+          if ! git stash &> /dev/null; then
             __hhs_errcho "${FUNCNAME[0]}: Unable to stash your changes"
             return 1
           fi
@@ -86,7 +108,7 @@ if __hhs_has "git"; then
           ret_val=$?
           if [[ -n "$stash_flag" ]]; then
             echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-            if ! git stash pop &>/dev/null; then
+            if ! git stash pop &> /dev/null; then
               __hhs_errcho "${FUNCNAME[0]}: Unable to retrieve stash changes"
               return 1
             fi
@@ -117,10 +139,10 @@ if __hhs_has "git"; then
     else
       git_repos_path=${1:-.}
       for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git"); do
-        pushd "${repo//\/\.git/}" &>/dev/null || continue
+        pushd "${repo//\/\.git/}" &> /dev/null || continue
         echo -e "\n${BLUE}Fetching status of $(basename "$(pwd)") ...${NC}\n"
         git status | head -n 1 || continue
-        popd &>/dev/null || continue
+        popd &> /dev/null || continue
         sleep 1
       done
     fi
@@ -141,10 +163,10 @@ if __hhs_has "git"; then
     else
       git_repos_path=${1:-.}
       for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname "*.git"); do
-        pushd "${repo//\/\.git/}" &>/dev/null || continue
+        pushd "${repo//\/\.git/}" &> /dev/null || continue
         echo -e "\n${BLUE}Fetching status of $(basename "$(pwd)") ...${NC}\n"
         git status || continue
-        popd &>/dev/null || continue
+        popd &> /dev/null || continue
         sleep 1
       done
     fi
@@ -220,8 +242,7 @@ if __hhs_has "git"; then
     repository="${1:-origin}"
 
     mchoose_file=$(mktemp)
-    if __hhs_mchoose -c "${mchoose_file}" "Choose the projects to pull from. Available Repositories (${#all_repos[@]}):" "${all_repos[@]}"
-    then
+    if __hhs_mchoose -c "${mchoose_file}" "Choose the projects to pull from. Available Repositories (${#all_repos[@]}):" "${all_repos[@]}"; then
       read -r -d '' -a sel_repos < <(grep . "${mchoose_file}")
     else
       return 1
@@ -231,9 +252,9 @@ if __hhs_has "git"; then
       repo_dir=$(dirname "${repo}")
       if [[ "${sel_repos[*]}" =~ ${repo} ]]; then
         if [[ -d "${repo_dir}" ]]; then
-          pushd "${repo_dir}" &>/dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
-          branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-          if git rev-parse --abbrev-ref "${branch}@{u}" &>/dev/null; then
+          pushd "${repo_dir}" &> /dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
+          branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
+          if git rev-parse --abbrev-ref "${branch}@{u}" &> /dev/null; then
             stash_flag=0
             echo ''
             printf '%0.1s' "-"{1..80}
@@ -243,7 +264,7 @@ if __hhs_has "git"; then
             if git fetch; then
               if ! git diff-index --quiet HEAD --; then
                 echo -en "\n${YELLOW}=> Stashing your changes prior to change ... ${NC}"
-                if ! git stash &>/dev/null; then
+                if ! git stash &> /dev/null; then
                   echo -e " [ ${RED}FAILED${NC} ] => Unable to stash changes. Skipping ... \n"
                 else
                   stash_flag=1
@@ -255,7 +276,7 @@ if __hhs_has "git"; then
               if git pull "${repository}" "${gitbranch}"; then
                 if [[ ${stash_flag} -ne 0 ]]; then
                   echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-                  if ! git stash pop &>/dev/null; then
+                  if ! git stash pop &> /dev/null; then
                     echo -e " [ ${RED}FAILED${NC} ] => Unable to retrieve stash changes. Skipping ... \n"
                   else
                     echo -e " [   ${GREEN}OK${NC}   ] \n"
@@ -271,7 +292,7 @@ if __hhs_has "git"; then
             echo ''
             echo -e "${ORANGE}@@@ The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
           fi
-          popd &>/dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
+          popd &> /dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
         else
           echo ''
           echo -e "${YELLOW}>>> Skipping: repository not found \"${repo_dir}\" ${NC}"
