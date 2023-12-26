@@ -151,7 +151,7 @@ Please choose one directory to change into (6) found:
 #### __hhs_list_tree
 
 ```bash
-Usage: __hhs_list_tree [from_dir] [recurse_level]
+Usage: __hhs_list_tree [dir] [max_depth]
 ```
 
 ##### **Purpose**
@@ -162,27 +162,45 @@ List contents of directories in a tree-like format.
 
 **0** on success ; **non-zero** otherwise.
 
-##### **Parameters** -
+##### **Parameters**
 
+  - $N _Optional_ : The directory to list from.
+  - $N _Optional_ : The max level depth to walk into.
 
 ##### **Examples**
 
+`__hhs_list_tree . 5`
+
+**Output**
+
 ```bash
-  $ __hhs_list_tree . 5
-  $ __hhs_list_tree /tmp 2
-  $ __hhs_list_tree /Users
+.
+├── LICENSE.md
+├── README.md
+├── _config.yml
+├── assets
+│   ├── HomeSetup.terminal
+│    ├── colorls
+│    │    ├── hhs-preset
+│    │    │    ├── dark_colors.yaml
+│    │    │    ├── file_aliases.yaml
+│    │    │    ├── files.yaml
+│    │    │    ├── folder_aliases.yaml
+...
+...
 ```
 
-
 ------
+
 #### __hhs_save_dir
 
 ```bash
-Usage: __hhs_save_dir -e | [-r] <dir_alias> | <dir_to_save> <dir_alias>
+Usage: __hhs_save_dir -e | [-r] <dir_alias> | <path> <dir_alias>
 
 Options:
     -e : Edit the saved dirs file.
     -r : Remove saved dir.
+    -c : Cleanup directory paths that does not exist.
 ```
 
 ##### **Purpose**
@@ -195,18 +213,29 @@ Save one directory path for future __hhs_load.
 
 ##### **Parameters**
 
-  - $1 _Conditional_ : The directory path to save or the alias to be removed.
-  - $2 _Conditional_ : The alias to name the saved path.
+  - $1 _Required_ : The directory path to save or the alias to be removed.
+  - $2 _Required_ : The alias to name the saved path.
 
 ##### **Examples**
 
+`__hhs_save_dir . dot`
+
+**Output**
+
 ```bash
-  $ __hhs_save_dir . dot && echo "Directory . saved as dot"
-  $ __hhs_save_dir -r dot && echo "Directory dot removed"
+Directory "/Users/hjunior/HomeSetup" saved as DOT
 ```
 
+`__hhs_save_dir -r dot`
+
+**Output**
+
+```bash
+Directory aliased as "DOT" was removed!
+```
 
 ------
+
 #### __hhs_load_dir
 
 ```bash
@@ -214,10 +243,10 @@ Usage: __hhs_load_dir [-l] | [dir_alias]
 
 Options:
     [dir_alias] : The alias to load the path from.
-             -l : List all saved dirs.
+             -l : If provided, list all saved dirs instead.
 
   Notes:
-    MSelect default : When no arguments are provided, a menu with options will be displayed.
+    MSelect default : If no arguments is provided, a menu with options will be displayed.
 ```
 
 ##### **Purpose**
@@ -231,16 +260,30 @@ Change the current working directory to pre-saved entry from __hhs_save.
 ##### **Parameters**
 
   - $1 _Optional_ : The alias to load the path from.
+  - $2 _Optional_ : If provided, list all saved dirs instead.
 
 ##### **Examples**
 
+`__hhs_load_dir dot`
+
+**Output**
+
 ```bash
-  $ __hhs_load_dir dot
-  $ __hhs_load_dir -l
+Directory changed to: "/Users/hjunior/HomeSetup"
 ```
 
+`__hhs_load_dir -l`
+
+**Output**
+
+```bash
+AKS...................................... points to '/tmp'
+HOM...................................... points to '/Users/hjunior'
+DOT...................................... points to '/Users/hjunior/HomeSetup'
+```
 
 ------
+
 #### __hhs_godir
 
 ```bash
@@ -262,13 +305,16 @@ Search and cd into the first match of the specified directory name.
 
 ##### **Examples**
 
+`__hhs_godir /usr/bin`
+
+**Output**
+
 ```bash
-  $ __hhs_godir /usr bin && echo "Entered the bin directory"
-  $ __hhs_godir bin && echo "Entered the bin directory"
+Directory changed to: "/usr/bin"
 ```
 
-
 ------
+
 #### __hhs_mkcd
 
 ```bash
@@ -292,7 +338,20 @@ Create all folders using a slash or dot notation path and immediately change int
 
 ##### **Examples**
 
+`__hhs_mkcd dir1/dir2/dir3`
+
+**Output**
+
 ```bash
-  $ __hhs_mkcd dir1/dir2/dir3 && echo "Changed to dir3: $(pwd)"
-  $ __hhs_mkcd br.edu.hhs && echo "Changed to hhs: $(pwd)"
+   Directories created: ./dir1/dir2/dir3
+  Directory changed to: /tmp/dir1/dir2/dir3
+```
+
+`__hhs_mkcd br.edu.hhs`
+
+**Output**
+
+```bash
+   Directories created: ./br/edu/hhs
+  Directory changed to: /tmp/br/edu/hhs
 ```

@@ -15,24 +15,49 @@
 # @param $1 [Opt] : The column to sort; 9 (filename) by default
 function __hhs_ls_sorted() {
 
+  local col_number
+
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [column_number]"
-    echo ''
-    echo '  Columns:'
-    echo '    1 : First column gives the type of the file/dir and the file permissions.'
-    echo '    2 : Second column is the number of links to the file/dir.'
-    echo '    3 : Third column is the user who owns the file.'
-    echo '    4 : Fourth column is the Unix group of users to which the file belongs.'
-    echo '    5 : Fifth column is the size of the file in bytes.'
-    echo '    6 : Sixth column is the Month at which the file was last changed.'
-    echo '    7 : Seventh column is the Day at which the file was last changed.'
-    echo '    8 : Eighth column is the Year or Time at which the file was last changed.'
-    echo '    9 : The last column is the name of the file.'
-    return 1
+    if __hhs_has 'colorls'; then
+      colorls --help
+      return 0
+    else
+      echo "Usage: ${FUNCNAME[0]} [column_name] [-reverse]"
+      echo ''
+      echo '  Columns:'
+      echo '    type  : First column gives the type of the file/dir and the file permissions.'
+      echo '    links : Second column is the number of links to the file/dir.'
+      echo '    owner : Third column is the user who owns the file.'
+      echo '    group : Fourth column is the Unix group of users to which the file belongs.'
+      echo '    size  : Fifth column is the size of the file in bytes.'
+      echo '    month : Sixth column is the Month at which the file was last changed.'
+      echo '    day   : Seventh column is the Day at which the file was last changed.'
+      echo '    time  : Eighth column is the Year or Time at which the file was last changed.'
+      echo '    name  : The last column is the name of the file.'
+      echo ''
+      echo ''
+      echo '  Notes: '
+      echo '    - If -reverse is specified, reverse the order or sorting'
+    fi
+    return 0
   else
-    col="${1:-9}"
-    # shellcheck disable=SC2012
-    \ls -la | sort -k "${col}"
+    if __hhs_has 'colorls'; then
+      colorls --long --sort="${1:-size}"
+      return 0
+    else
+      col_number="${1:-9}"
+      col_number="${col_number//type/1}"  ; col_number="${col_number//links/2}"
+      col_number="${col_number//owner/3}" ; col_number="${col_number//group/4}"
+      col_number="${col_number//size/5}"  ; col_number="${col_number//month/6}"
+      col_number="${col_number//day/7}"   ; col_number="${col_number//time/8}"
+      col_number="${col_number//name/9}"
+      # shellcheck disable=SC2012
+      if [[ "${2}" == "-reverse" ]]; then
+        \ls -la | sort -r -k "${col_number}"
+      else
+        \ls -la | sort -k "${col_number}"
+      fi
+    fi
     return $?
   fi
 }
@@ -50,6 +75,8 @@ function __hhs_del_tree() {
     echo '    -n | --dry-run      : Just show what would be deleted instead of removing it.'
     echo '    -f | --force        : Actually delete all files/directories it finds.'
     echo '    -i | --interactive  : Interactive deleting files/directories.'
+    echo '  Notes:'
+    echo '    - If no option is specified, dry-run is default.'
     return 1
   else
 

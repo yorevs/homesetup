@@ -140,13 +140,16 @@ function __hhs_dirs() {
 }
 
 # @function: List all directories recursively (Nth level depth) as a tree.
-# @param $1 [Opt] : The root directory to list from.
+# @param $1 [Opt] : The directory to list from.
 # @param $2 [Opt] : The max level depth to walk into.
 function __hhs_list_tree() {
 
   local dir="${1}" max_depth=${2}
 
-  if __hhs_has "tree"; then
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [dir] [max_depth]"
+    return 0
+  elif __hhs_has "tree"; then
     if [[ -n "${dir}" && -n "${max_depth}" ]]; then
       tree "${dir}" -L "${max_depth}"
     elif [[ -n "${dir}" && -z "${max_depth}" ]]; then
@@ -198,7 +201,7 @@ function __hhs_save_dir() {
       # Remove the previously saved directory aliased
       if grep -q "${dir_alias}" "${HHS_SAVED_DIRS_FILE}"; then
         ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
-        echo "${YELLOW}Directory removed: ${WHITE}\"${dir_alias}\" ${NC}"
+        echo "${YELLOW}Directory aliased as ${HHS_HIGHLIGHT_COLOR}\"${dir_alias}\" ${YELLOW}was removed!${NC}"
         ret_val=0
       fi
     elif [[ "$1" == "-c" ]]; then
@@ -252,10 +255,10 @@ function __hhs_load_dir() {
     echo ''
     echo 'Options: '
     echo '    [dir_alias] : The alias to load the path from.'
-    echo '             -l : List all saved dirs.'
+    echo '             -l : If provided, list all saved dirs instead.'
     echo ''
     echo '  Notes: '
-    echo '    MSelect default : When no arguments is provided, a menu with options will be displayed.'
+    echo '    MSelect default : If no arguments is provided, a menu with options will be displayed.'
   else
 
     read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
@@ -392,11 +395,12 @@ function __hhs_mkcd() {
 
   local ret_val=1
 
-  if [[ $# -lt 1 && "$1" == "-h" || "$1" == "--help" ]]; then
+  if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
     echo ''
     echo "E.g:. ${FUNCNAME[0]} dir1/dir2/dir3 (dirtree)"
     echo "E.g:. ${FUNCNAME[0]} dir1.dir2.dir3 (FQDN)"
+    return 0
   elif [[ -n "$1" && ! -d "$1" ]]; then
     dir_tree="${1//.//}"
     dir_tree="${dir_tree//-//}"
@@ -408,8 +412,8 @@ function __hhs_mkcd() {
     done
     IFS="${OLDIFS}"
     export OLDPWD=${last_pwd}
-    echo "${GREEN}   Directories created: ${WHITE}${dir_tree}"
-    echo "${GREEN}  Directory changed to: ${WHITE}\"$(pwd)\"${NC}"
+    echo "${GREEN}   Directories created: ${WHITE}./${dir_tree}"
+    echo "${GREEN}  Directory changed to: ${WHITE}$(pwd)${NC}"
     ret_val=0
   fi
 

@@ -33,8 +33,8 @@ function __hhs_aliases() {
     echo '      -r | --remove  : Remove an alias.'
     echo ''
     echo '  Notes: '
-    echo '    List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter results using it.'
-    echo '    Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
+    echo '    - List all aliases    : When [alias_expr] is NOT provided. If [alias] is provided, filter results using it.'
+    echo '    - Add/Set an alias    : When both [alias] and [alias_expr] are provided.'
     echo ''
     return 1
   else
