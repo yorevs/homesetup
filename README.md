@@ -217,6 +217,8 @@ review our [guidelines](docs/CONTRIBUTING.md) and adhere to our [code of conduct
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/yorevs)
 
+You can also sponsor it by using our [GitHub Sponsors](https://github.com/sponsors/yorevs) page.
+
 This project is already supported by:
 
 <a href="https://www.jetbrains.com/community/opensource/?utm_campaign=opensource&utm_content=approved&utm_medium=email&utm_source=newsletter&utm_term=jblogo#support">
