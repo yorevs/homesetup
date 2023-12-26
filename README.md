@@ -186,6 +186,15 @@ will not install it, but once you have installed it, it will be used instead of 
 
 Please check the [ColorLS Setup](docs/COLOR_LS_SETUP.md) document for more instructions on how to set up ColorLS.
 
+### FZF Integration
+
+HomeSetup, now, integrates the modern [fuzzy-finder](https://github.com/junegunn/fzf). HomeSetup
+will not install it, but once you have installed it, it will be used. We have set the common configurations like the
+key bindings (Ctrl+T \[find\] and Ctrl+R \[history\]) and auto-completions. Is also integrates with
+[bat](https://github.com/sharkdp/bat) (extended 'cat') and [fd](https://github.com/sharkdp/fd) (extended 'find').
+
+Please check the [FZF Docs](https://github.com/junegunn/fzf#examples) for more usage examples.
+
 ## Uninstallation
 
 If you choose to uninstall HomeSetup and restore your old dotfiles, you can do so by issuing the following command
