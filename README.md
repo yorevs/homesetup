@@ -29,6 +29,8 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 > **THIS IT NOT JUST A DOTFILES FRAMEWORK**
 
+[![asciicast](https://asciinema.org/a/629060.svg)](https://asciinema.org/a/629060)
+
 - See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
 - For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
 
