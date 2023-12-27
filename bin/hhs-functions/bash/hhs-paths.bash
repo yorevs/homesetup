@@ -33,7 +33,7 @@ function __hhs_paths() {
     echo '      -q        : Quiet mode on.'
     echo ''
     echo '  Notes: '
-    echo '    When no arguments are provided it will list all PATH payload'
+    echo '    - When no arguments are provided it will list all PATH payload'.
     return 1
   else
     # Remove duplicate items

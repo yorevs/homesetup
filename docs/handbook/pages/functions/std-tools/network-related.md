@@ -36,6 +36,51 @@
 
 ### Network related functions
 
+### __hhs_active_ifaces
+
+```bash
+Usage: __hhs_active_ifaces [-flat]
+```
+
+##### **Purpose**
+
+Display a list of active network interfaces.
+
+##### **Returns**
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**
+
+  - $1 _Optional_ : Whether to flat the returned items.
+
+##### **Examples**
+
+`__hhs_active_ifaces`
+
+**Output**
+
+```bash
+lo0         	MTU=16384   	flags=8049<UP,LOOPBACK,RUNNING,MULTICAST>
+gif0        	MTU=1280    	flags=8010<POINTOPOINT,MULTICAST>
+stf0        	MTU=1280    	flags=0<>
+en3         	MTU=1500    	flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST>
+ap1         	MTU=1500    	flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST>
+en0         	MTU=1500    	flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST>
+...
+...
+```
+
+`__hhs_active_ifaces -flat`
+
+**Output**
+
+```bash
+en5 utun6 utun5 utun4 utun3 utun2 utun1 utun0 bridge0 en2 en1 llw0 awdl0 en0 ap1 en3 stf0 gif0 lo0
+```
+
+------
+
 ### __hhs_ip
 
 ```bash
@@ -68,21 +113,27 @@ Display the associated machine IP of the given kind.
 
 ##### **Examples**
 
+`__hhs_ip`
+
+**Output**
+
+```bash
+External  : 189.45.44.23
+Gateway   : 192.168.100.1
+en5       : 192.168.100.139
+lo0       : 127.0.0.1
+```
+
 `__hhs_ip local`
 
 **Output**
 
 ```bash
-```
-
-`__hhs_ip gateway`
-
-**Output**
-
-```bash
+en5       : 192.168.100.139
 ```
 
 ------
+
 ### __hhs_ip_resolve
 
 ```bash
@@ -103,36 +154,16 @@ Resolve domain names associated with the specified IP.
 
 ##### **Examples**
 
-```bash
-  $ __hhs_ip_resolve 8.8.8.8 && echo "Resolved google DNS"
-```
+`__hhs_ip_resolve 8.8.8.8`
 
+**Output**
+
+```bash
+dns.google.
+```
 
 ------
-### __hhs_active_ifaces
 
-```bash
-Usage: __hhs_active_ifaces
-```
-
-##### **Purpose**
-
-Display a list of active network interfaces.
-
-##### **Returns**
-
-**0** on success; **non-zero** otherwise.
-
-##### **Parameters** -
-
-##### **Examples**
-
-```bash
-$ __hhs_active_ifaces
-```
-
-
-------
 ### __hhs_ip_info
 
 ```bash
@@ -153,11 +184,31 @@ Retrieve information about the specified IP.
 
 ##### **Examples**
 
+`__hhs_ip_info 8.8.8.8`
+
+**Output**
+
 ```bash
-$ __hhs_ip_info 8.8.8.8
+{
+  "status": "success",
+  "country": "United States",
+  "countryCode": "US",
+  "region": "VA",
+  "regionName": "Virginia",
+  "city": "Ashburn",
+  "zip": "20149",
+  "lat": 39.03,
+  "lon": -77.5,
+  "timezone": "America/New_York",
+  "isp": "Google LLC",
+  "org": "Google Public DNS",
+  "as": "AS15169 Google LLC",
+  "query": "8.8.8.8"
+}
 ```
 
 ------
+
 ### __hhs_ip_lookup
 
 ```bash
@@ -178,18 +229,30 @@ Lookup DNS entries to determine the IP address.
 
 ##### **Examples**
 
+`__hhs_ip_lookup google.com`
+
+**Output**
+
 ```bash
-$ __hhs_ip_lookup www.google.com
+google.com has address 142.250.79.46
+google.com has IPv6 address 2800:3f0:4004:80b::200e
+google.com mail is handled by 10 smtp.google.com.
 ```
 
 ------
+
 ### __hhs_port_check
 
 ```bash
-Usage: __hhs_port_check <port_number> [port_state]
+Usage: __hhs_port_check <port_number> [port_state] [protocol]
 
   Notes:
-    States: One of [CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT]
+       States: One of [CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING|TIME_WAIT].
+    Wildcards: Use dots (.) as a wildcard. E.g: 80.. will match 80[0-9][0-9].
+
+  Notes:
+    - You can use the dot '.' as a wild card like: __hhs_port_check 8... will match 8[0-9][0-9][0-9].
+    - You can use the dot '.' to match any state or protocol.
 ```
 
 ##### **Purpose**
@@ -207,7 +270,32 @@ Check the state of local port(s).
 
 ##### **Examples**
 
+`__hhs_port_check 5...`
+
+**Output**
+
 ```bash
-$ __hhs_port_check 8080
-$ __hhs_port_check 8080 listen
+Showing ports  Proto: [^(tcp|udp)] Number: [5***] State: [*]
+
+Proto Recv-Q Send-Q  Local Address          Foreign Address        State
+
+tcp4       0      0  192.168.100.139.65470  17.57.144.87.5223      ESTABLISHED
+tcp4       0      0  192.168.100.139.62064  192.204.13.5.5091      ESTABLISHED
+tcp6       0      0  *.5000                 *.*                    LISTEN
+tcp4       0      0  *.5000                 *.*                    LISTEN
+udp6       0      0  *.5353                 *.*
+udp4       0      0  *.5353                 *.*
+```
+
+`__hhs_port_check 5... listen tcp`
+
+**Output**
+
+```bash
+Showing ports  Proto: [tcp] Number: [5***] State: [LISTEN]
+
+Proto Recv-Q Send-Q  Local Address          Foreign Address        State
+
+tcp6       0      0  *.5000                 *.*                    LISTEN
+tcp4       0      0  *.5000                 *.*                    LISTEN
 ```

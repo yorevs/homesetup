@@ -24,7 +24,7 @@ if __hhs_has "python3"; then
       echo "Usage: ${FUNCNAME[0]} <search_path> [file_globs...]"
       echo ''
       echo '  Notes: '
-      echo '    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
+      echo '    - <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
       dir="${1}"
@@ -49,7 +49,7 @@ if __hhs_has "python3"; then
       echo "Usage: ${FUNCNAME[0]} <search_path> [dir_globs...]"
       echo ''
       echo '  Notes: '
-      echo '  ** <dir_names...>: Comma separated directories. E.g:. "dir1,dir2,dir2"'
+      echo '    - <dir_globs...>: Comma separated directories. E.g:. "dir1,dir2,dir2"'
       return 1
     else
       dir="${1}"
@@ -72,11 +72,11 @@ if __hhs_has "python3"; then
   # @param $6 [Con] : Required if $4 is provided. This is the replacement string.
   function __hhs_search_string() {
 
-    local gflags extra_str replace names file_globs_type='regex' gflags="-HnEI"
+    local gflags extra_str replace names file_globs_type='regex' gflags='-HnEI' sflags='g'
     local names_expr search_str base_cmd full_cmd dir repl_str
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [options] <search_path> <regex/string> [globs]"
+      echo "Usage: ${FUNCNAME[0]} <search_path> [options] <regex/string> [file_globs]"
       echo ''
       echo '    Options: '
       echo '      -i | --ignore-case            : Makes the search case INSENSITIVE.'
@@ -85,10 +85,18 @@ if __hhs_has "python3"; then
       echo '      -b | --binary                 : Includes BINARY files in the search.'
       echo ''
       echo '  Notes: '
-      echo '    ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
+      echo '    - <file_globs...>: Comma separated file globs. E.g: "*.txt,*.md,*.rtf"'
       return 1
     else
-      while [[ -n "$1" ]]; do
+      dir="${1}"
+      shift
+
+      if [[ ! -d "${dir}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: Search path does not exist: \"${dir}\""
+        return 1
+      fi
+
+      while [[ -n "${1}" ]]; do
         case "$1" in
         -w | --words)
           gflags="${gflags//E/Fw}"
@@ -96,6 +104,7 @@ if __hhs_has "python3"; then
           ;;
         -i | --ignore-case)
           gflags="${gflags}i"
+          sflags="${sflags}i"
           file_globs_type="${file_globs_type}+ignore-case"
           ;;
         -b | --binary)
@@ -110,29 +119,33 @@ if __hhs_has "python3"; then
           extra_str=", replacement: \"${repl_str}\""
           ;;
         *)
-          [[ ! "$1" =~ ^-[wibr] && ! "$1" =~ ^--(words|ignore-case|binary|replace) ]] && break
+          [[ ${1} =~ ^-[wibr] || "${1}" =~ ^--(words|ignore-case|binary|replace) ]] || break
           ;;
         esac
         shift
       done
 
-      dir="${1}"
-      search_str="${2}"
-      file_globs="${3:-*.*}"
+      search_str="${1}"
+      if [[ -z "${search_str}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: Invalid search string: \"${search_str}\""
+        return 1
+      fi
+      file_globs="${2:-*.*}"
       names_expr="e=\"${file_globs}\"; a=e.split(','); print(' -o '.join(['-iname \"{}\"'.format(s) for s in a]))"
       names=$(python3 -c "${names_expr}")
       base_cmd="find -L ${dir} -type f \( ${names} \) -exec grep ${gflags} \"${search_str}\" {}"
 
       echo "${YELLOW}Searching for \"${file_globs_type}\" matching: \"${search_str}\" in \"${dir}\" , file_globs = [${file_globs}] ${extra_str} ${NC}"
 
-      if [[ -n "$replace" ]]; then
-        if [[ "$file_globs_type" = 'string' ]]; then
+      if [[ -n "${replace}" ]]; then
+        if [[ "${file_globs_type}" = 'string' ]]; then
           __hhs_errcho "${FUNCNAME[0]}: Can't search and replace non-Regex expressions !"
           return 1
+        else
+          [[ "${HHS_MY_OS}" == "Darwin" ]] && ised="sed -i '' -E"
+          [[ "${HHS_MY_OS}" == "Linux" ]] && ised="sed -i'' -r"
+          full_cmd="${base_cmd} \; -exec $ised \"s/${search_str}/${repl_str}/${sflags}\" {} + | sed \"s/${search_str}/${repl_str}/${sflags}\"  | __hhs_highlight \"${repl_str}\""
         fi
-        [[ "${HHS_MY_OS}" == "Darwin" ]] && ised="sed -i '' -E"
-        [[ "${HHS_MY_OS}" == "Linux" ]] && ised="sed -i'' -r"
-        full_cmd="${base_cmd} \; -exec $ised \"s/${search_str}/${repl_str}/g\" {} + | sed \"s/${search_str}/${repl_str}/g\"  | __hhs_highlight \"${repl_str}\""
       else
         full_cmd="${base_cmd} + 2> /dev/null | __hhs_highlight \"${search_str}\""
       fi

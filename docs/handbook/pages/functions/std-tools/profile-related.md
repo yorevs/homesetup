@@ -42,43 +42,56 @@
 Usage: __hhs_activate_nvm
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Lazy load helper function to initialize NVM for the terminal.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: -
+##### **Parameters**
 
-##### **Examples:**
+N/A
+
+##### **Examples**
+
+`__hhs_activate_nvm`
+
+**Output**
 
 ```bash
-  $ __hhs_activate_nvm
+Activating NVM app... OK
 ```
 
 ------
+
 ### __hhs_activate_rvm
 
 ```bash
 Usage: __hhs_activate_rvm
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Lazy load helper function to initialize RVM for the terminal.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: -
+##### **Parameters**
 
-##### **Examples:**
+N/A
+
+##### **Examples**
+
+`__hhs_activate_rvm`
+
+**Output**
 
 ```bash
-  $ __hhs_activate_rvm
+Activating RVM app... OK
 ```
 
 ------
@@ -88,20 +101,26 @@ Lazy load helper function to initialize RVM for the terminal.
 Usage: __hhs_activate_jenv
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Lazy load helper function to initialize Jenv for the terminal.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: -
+##### **Parameters**
 
-##### **Examples:**
+N/A
+
+##### **Examples**
+
+`__hhs_activate_jenv`
+
+**Output**
 
 ```bash
-  $ __hhs_activate_jenv
+Activating JENV app... OK
 ```
 
 ------
@@ -111,18 +130,24 @@ Lazy load helper function to initialize Jenv for the terminal.
 Usage: __hhs_activate_docker
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Lazy load helper function to initialize Docker-Daemon for the terminal.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: -
+##### **Parameters**
 
-##### **Examples:**
+N/A
+
+##### **Examples**
+
+`____hhs_activate_docker`
+
+**Output**
 
 ```bash
-  $ __hhs_activate_docker
+Activating Docker... OK
 ```

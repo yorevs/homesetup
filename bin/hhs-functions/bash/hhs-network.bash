@@ -59,7 +59,7 @@ if __hhs_has ifconfig; then
     # @param $1 [Opt] : The kind of IP to get.
     function __hhs_ip() {
 
-      local ret_val=1 ip_kind if_list if_ip if_prefix ip_srv_url='ipinfo.io'
+      local ret_val=1 ip_kind if_name if_list if_ip if_prefix ip_srv_url='ipinfo.io'
 
       if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: ${FUNCNAME[0]} [kind]"
@@ -79,19 +79,21 @@ if __hhs_has ifconfig; then
         return 1
       else
         ip_kind=${1:-all}
-        if [[ "all" == "${ip_kind}" || "external" == "${ip_kind}" ]]; then
+        if [[ ${ip_kind} =~ all|external ]]; then
           if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null | grep -E '^ *"ip":' | awk '{print $2}')"
           [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "External" "${if_ip//[\",]/}"
         fi
-        if [[ "all" == "${ip_kind}" || "gateway" == "${ip_kind}" ]]; then
+        if [[ ${ip_kind} =~ all|gateway ]]; then
           [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | awk '{print $2}')"
           [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}')"
           [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "Gateway" "${if_ip}"
         fi
-        if [[ ${ip_kind} =~ all|vpn|local ]]; then
+        if_name='all|vpn|local|(lo|en|wl|utun|tun)[a-z0-9]+'
+        if [[ ${ip_kind} =~ ${if_name} ]]; then
           read -r -d '' -a if_list < <(__hhs_active_ifaces -flat)
           [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]+'
           [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]+'
+          [[ -z "${if_prefix}" ]] && if_prefix="${ip_kind}"
           for iface in "${if_list[@]}"; do
             if [[ "all" == "${ip_kind}" || ${iface} =~ ${if_prefix} ]]; then
               if_ip="$(ifconfig "${iface}" | grep -E "inet " | awk '{print $2}')"
@@ -173,32 +175,32 @@ if __hhs_has netstat; then
 
     local states state port protocol ret_val
 
-    states='CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING TIME_WAIT'
+    states='CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING|TIME_WAIT'
     port=${1:0:5}
     port=$(printf "%-.5s" "${port}")
-    protocol='^(tcp|udp)[0-9]*'
+    state=$(tr '[:lower:]' '[:upper:]' <<< "${2}")
+    state="${state//\./}"
+    protocol="${3//\./}"
 
     if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <port_number> [port_state] [protocol]"
       echo ''
       echo '  Notes: '
-      echo "       States: One of [${states//|,, /}]"
-      echo "    Wildcards: Use dots (.) as a wildcard. E.g: 80.. will match 80[0-9][0-9]"
+      echo '    - Protocol: One of [tcp udp]'
+      echo "    - States: One of [${states//|,, /}]"
+      echo '    - Wildcards: Use dots (.) as a wildcard. E.g: 80.. will match 80[0-9][0-9]'
       return 1
-    fi
-
-    state=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
-
-    if [[ -z "${state}" || "${state}" =~ ^(${states})$ ]]; then
-      echo -e "\n${YELLOW}Showing ports  Proto: [${protocol}] Number: [${port//\./*}] State: [\"${state:-*}\"] ${NC}"
+    elif [[ -z "${state}" || "${state}" =~ ^(${states})$ ]] && [[ -z "${protocol}" ||  ${protocol} =~ ^(udp|tcp)$ ]]; then
+      protocol="${protocol:-^(tcp|udp)}"
+      echo -e "\n${YELLOW}Showing ports  Proto: [${protocol}] Number: [${port//\./*}] State: [${state:-*}] ${NC}"
       echo -e "\nProto Recv-Q Send-Q  Local Address          Foreign Address        State\n"
       \netstat -an \
-        | __hhs_highlight "${protocol}" \
+        | __hhs_highlight "${protocol}[0-9]*" \
         | __hhs_highlight "[.:]${port} " \
         | __hhs_highlight "${state}"
       ret_val=$?
     else
-      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state \"${state}\". Use one of [${states//|,, /}]"
+      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state or protocol ($2 $3)!"
     fi
 
     echo ''

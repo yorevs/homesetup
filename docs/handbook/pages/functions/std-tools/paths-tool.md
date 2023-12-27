@@ -49,25 +49,58 @@ Usage: __hhs_paths [options] <args>
       -q        : Quiet mode on.
 
   Notes:
-    When no arguments are provided it will list all PATH entries
+    - When no arguments are provided it will list all PATH payload.
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
-Manage your custom PATH entries. To add to your PATH, the directory must be a valid directory path.
+Manage your custom PATH entries.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Conditional_     : The path to be added or removed.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_paths`
+
+**Output**
 
 ```bash
-  $ __hhs_paths -a /tmp && echo "/tmp added to your custom PATH"
-  $ __hhs_paths -r /tmp && echo "/tmp removed from your custom PATH"
-  $ __hhs_paths -c && echo "Cleaned up invalid custom PATHs"
+Listing all PATH entries:
+
+/usr/local/opt/ruby/bin...............................................  => Custom paths
+/usr/local/bin........................................................  => Shell export
+/System/Cryptexes/App/usr/bin.........................................  => Shell export
+/usr/bin..............................................................  => Shell export
+/bin..................................................................  => Shell export
+/usr/sbin.............................................................  => Shell export
+/sbin.................................................................  => Shell export
+/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/lo....  => Shell export
+/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bi....  => Shell export
+/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/ap....  => Shell export
+/Users/hjunior/.local/bin.............................................  => Shell export
+/Users/hjunior/.config/hhs/bin........................................  => Shell export
+/Users/hjunior/HomeSetup/tests/bats/bats-core/bin.....................  => Shell export
 ```
+
+`__hhs_paths -a /tmp`
+
+**Output**
+
+```bash
+Path was added: "/tmp"
+```
+
+`__hhs_paths -r /tmp`
+
+**Output**
+
+```bash
+Path was removed: "/tmp"
+```
+

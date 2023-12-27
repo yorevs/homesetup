@@ -39,20 +39,22 @@ function __hhs_highlight() {
 # @param $1 [Req] : The unformatted JSON string.
 function __hhs_json_print() {
 
+  local json="${1}"
+
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} <json_string>"
     return 1
   else
     if __hhs_has jq; then
-      echo "$1" | jq
+      echo "${json}" | jq
     elif __hhs_has json_pp; then
-      echo "$1" | json_pp -f json -t json -json_opt pretty indent escape_slash
+      echo "${json}" | json_pp -f json -t json -json_opt pretty indent escape_slash
     else
-      echo "$1"
+      echo "${BLUE}${json}${NC}"
     fi
   fi
 
-  return 0
+  return $?
 }
 
 # @function: Convert string into it's decimal ASCII representation.
