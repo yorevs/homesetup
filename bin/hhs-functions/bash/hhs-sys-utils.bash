@@ -22,33 +22,39 @@ function __hhs_sysinfo() {
     return 1
   else
     username="$(whoami)"
-    echo -e "\n${ORANGE}System information ------------------------------------------------"
-    echo -e "\n${GREEN}User:${HHS_HIGHLIGHT_COLOR}"
-    echo -e "  Username..... : $username"
-    echo -e "  UID.......... : $(id -u "$username")"
-    echo -e "  GID.......... : $(id -g "$username")"
-    echo -e "\n${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
+    echo ''
+    echo -e "${ORANGE}System information ------------------------------------------------"
+    echo ''
+    echo -e "${GREEN}User:${HHS_HIGHLIGHT_COLOR}"
+    echo -e "  Username..... : ${username}"
+    echo -e "  Group........ : $(groups "${username}" | awk '{print $1}')"
+    echo -e "  UID.......... : $(id -u "${username}")"
+    echo -e "  GID.......... : $(id -g "${username}")"
+    echo -e "${GREEN}System:${HHS_HIGHLIGHT_COLOR}\n"
     echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
     __hhs_has "sw_vers" && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
     echo -e "  Up-Time...... : $(uptime | cut -d ',' -f1)"
     echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
-    echo -e "\n${GREEN}Storage:"
-    printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
-    echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
-    echo -e "\n${GREEN}Network ($(hostname)):${HHS_HIGHLIGHT_COLOR}"
+    echo ''
+    echo -e "${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
     if __hhs_has __hhs_ip; then
       all_ips=$(__hhs_ip | sort)
+      printf "  Hostname..... :%s\n" " $(hostname)"
       IFS=$'\n'
       for next in ${all_ips}; do
         if_name="${next%%:*}"
         if_ip="${next##*:}"
-        printf "%-10s :%s\n" "  ${if_name// /.}" "${if_ip}"
+        printf "%-13s :%s\n" "  IP-${if_name// /.}" "${if_ip}"
       done
       IFS="${OLDIFS}"
     fi
-    IFS=$'\n'
+    echo ''
+    echo -e "${GREEN}Storage:"
+    printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
+    echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
     echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
+    IFS=$'\n'
     for next in $(who -H); do
       echo -e "${next}" | esed -e "s/(^NAME.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
     done

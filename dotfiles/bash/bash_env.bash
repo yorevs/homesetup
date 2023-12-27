@@ -151,16 +151,16 @@ fi
 
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'jq' 'gpg' 'base64'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64'
   'shfmt' 'shellcheck' 'pylint'
   'docker' 'sqlite3'
   'perl' 'groovy' 'java' 'ruby' 'python3'
   'gcc' 'make'  'mvn' 'gradle' 'pip3' 'gem'
-  'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd'
+  'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd' 'jq'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
   DEVELOPER_TOOLS+=('brew' 'xcode-select')
 fi
 
-export HHS_DEV_TOOLS="${HHS_DEV_TOOLS:-${DEVELOPER_TOOLS[*]}}"
+export HHS_DEV_TOOLS="${HHS_DEV_TOOLS:-"${DEVELOPER_TOOLS[@]}"}"

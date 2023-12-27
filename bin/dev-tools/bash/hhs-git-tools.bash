@@ -17,31 +17,38 @@ if __hhs_has "git"; then
   # @function: Shortcut for `git add'
   function __hhs_git_add() {
 
-    local changed_files mchoose_file
+    local changed_files mchoose_file ret_val=1 count=0
 
     if [[ $# -eq 0 ]]; then
       IFS=$'\n'
       read -r -d '' -a changed_files < <(\git status --porcelain)
+      count=${#changed_files[@]}
       if [[ "${#changed_files[@]}" -gt 1 ]]; then
         mchoose_file=$(mktemp)
-        if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs git" "${changed_files[@]}"; then
+        if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs to git" "${changed_files[@]}"; then
           for line in $(head -n 1 "${mchoose_file}" | \tr ' ' '\n'); do
             if [[ -f ${line} ]]; then
-              \git add "${line}"
+              \git add "${line}" && ret_val=$?
             fi
           done
         fi
         IFS="${OLFIFS}"
       elif [[ "${#changed_files[@]}" -eq 1 ]]; then
         line="${changed_files[0]}"
-        \git add "$(awk '{print $2}' <<< "${line}")"
-        return 0
+        count=1
+        \git add "$(awk '{print $2}' <<< "${line}")" && ret_val=$?
       else
         echo -e "\n${YELLOW}Nothing has changed!${NC}\n"
+        return 1
       fi
     else
-      \git add ${@}
+      count=$#
+      \git add ${@} && ret_val=$?
     fi
+    [[ ${ret_val} -eq 0 ]] && echo "${GREEN}${count} files has been added !${NC}"
+    echo ''
+
+    return ${ret_val}
   }
 
   # @function: Checkout the previous branch in history (skips branch-to-same-branch changes ).

@@ -11,47 +11,6 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-# @function: Check whether a tool is installed on the system.
-# @param $1 [Req] : The app to check.
-function __hhs_toolcheck() {
-
-  local pad pad_len tool_name check is_alias quiet
-
-  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
-    echo ''
-    echo '    Options: '
-    echo '      -q  : Quiet mode on'
-  else
-    pad=$(printf '%0.1s' "."{1..60})
-    pad_len=20
-    if [[ "$1" == "-q" || "$1" == "--quiet" ]]; then
-      shift
-      quiet=1
-    fi
-    tool_name="$1"
-    check=$(command -v "${tool_name}")
-    is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
-    [[ -z "${quiet}" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
-    [[ -z "${quiet}" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
-    [[ -z "${quiet}" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-    if __hhs_has "${tool_name}"; then
-      if [[ -z "${is_alias}" && $check =~ ^(\/.*) ]]; then
-        [[ -z "${quiet}" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} at ${check}"
-      elif [[ -n "${is_alias}" ]]; then
-        [[ -z "${quiet}" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED  ${NC} as ${check}"
-      else
-        [[ -z "${quiet}" ]] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION${NC} as ${check}"
-      fi
-      return 0
-    else
-      [[ -z "${quiet}" ]] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
-    fi
-  fi
-
-  return 1
-}
-
 # @function: Check the version of the app using the most common ways.
 # @param $1 [Req] : The app to check.
 function __hhs_version() {
@@ -89,24 +48,62 @@ function __hhs_version() {
   return 0
 }
 
+# @function: Check whether a tool is installed on the system.
+# @param $1 [Req] : The app to check.
+function __hhs_toolcheck() {
+
+  local pad pad_len tool_name check is_alias quiet
+
+  if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
+    echo ''
+    echo '    Options: '
+    echo '      -q  : Quiet mode on'
+  else
+    pad=$(printf '%0.1s' "."{1..60})
+    pad_len=20
+    if [[ "$1" == "-q" || "$1" == "--quiet" ]]; then
+      shift
+      quiet=1
+    fi
+    tool_name="$1"
+    check=$(command -v "${tool_name}")
+    is_alias=$(alias "${tool_name}" >/dev/null 2>&1 && echo "OK")
+    [[ -z "${quiet}" ]] && echo -en "${ORANGE}[${HHS_MY_OS}]${NC} "
+    [[ -z "${quiet}" ]] && echo -en "Checking: ${YELLOW}${tool_name}${NC} "
+    [[ -z "${quiet}" ]] && printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
+    if __hhs_has "${tool_name}"; then
+      if [[ -z "${is_alias}" && ${check} =~ ^(\/.*) ]]; then
+        [[ -z "${quiet}" ]] && echo -e "${GREEN} ${CHECK_ICN} INSTALLED${NC} => ${check}"
+      elif [[ -n "${is_alias}" ]]; then
+        [[ -z "${quiet}" ]] && echo -e "${CYAN} ${ALIAS_ICN} ALIASED   => ${check}${NC}"
+      else
+        [[ -z "${quiet}" ]] && echo -e "${BLUE} ${FUNC_ICN}  FUNCTION => function ${check}(){...}${NC}"
+      fi
+      return 0
+    else
+      [[ -z "${quiet}" ]] && echo -e "${RED} ${CROSS_ICN} NOT FOUND ${NC}"
+    fi
+  fi
+
+  return 1
+}
+
+# shellcheck disable=SC2206
 # @function: Check whether a list of development tools are installed or not.
 # @param $1..$N [Opt] : The tool list to be checked.
 function __hhs_tools() {
 
-  local app tool_list
+  local app tool_list=(${@})
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [tool_list]"
     return 1
   else
-    if [[ $# -gt 0 ]]; then
-      tool_list=(${@})
-    else
-      tool_list=(${HHS_DEV_TOOLS[@]})
-    fi
+    [[ ${#} -eq 0 ]] && tool_list=(${HHS_DEV_TOOLS[@]})
     echo -e "\n${YELLOW}Checking (${#tool_list[@]}) development tools:${NC}\n"
     for app in "${tool_list[@]}"; do
-      __hhs_toolcheck "$app"
+      __hhs_toolcheck "${app}"
     done
 
     echo ''

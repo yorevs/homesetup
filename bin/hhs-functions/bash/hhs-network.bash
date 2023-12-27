@@ -18,40 +18,39 @@ if __hhs_has ifconfig; then
   # @function: Display a list of active network interfaces.
   function __hhs_active_ifaces() {
 
-    local if_all=() if_name if_flags if_mtu if_list
+    local all_ifaces=() if_name if_flags if_mtu if_list
 
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} [-flat]"
       return 1
     fi
 
-    IFS=$'\n'
-    read -r -d '' -a if_all < <(ifconfig -a | grep '^[a-z0-9]*: ')
+    IFS=$'\n' read -r -d '' -a all_ifaces < <(ifconfig -a | grep '^[a-z0-9]*: ')
     IFS="${OLDIFS}"
 
-    if [[ ${#if_all[@]} -gt 0 && ! ${*} =~ -flat ]]; then
+    if [[ ${#all_ifaces[@]} == 0 ]]; then
+      echo "${YELLOW}No active interfaces found !${NC}"
+      return 1
+    elif [[ ${#all_ifaces[@]} -gt 0 && ${*} =~ -flat ]]; then
+      for iface in "${all_ifaces[@]}"; do
+        if_name=$(awk '{ print $1 }' <<<"${iface%%:*}")
+        if_list="${if_name} ${if_list}"
+      done
+      echo "${if_list}"
+    else
       echo ' '
       echo "${YELLOW}Listing all network interfaces:${NC}"
       echo ' '
-      for iface in "${if_all[@]}"; do
+      for iface in "${all_ifaces[@]}"; do
         if_name=$(awk '{ print $1 }' <<<"${iface%%:*}")
         if_mtu=$(awk '{ print $4 }' <<<"${iface}")
         if_flags=$(awk '{ print $2 }' <<<"${iface}")
         printf "${HHS_HIGHLIGHT_COLOR}%-12s${NC}\tMTU=%-8d\t%-s\n" "${if_name}" "${if_mtu}" "${if_flags}"
       done
       echo ' '
-      return 0
-    elif [[ ${#if_all[@]} -gt 0 && ${*} =~ -flat ]]; then
-      for iface in "${if_all[@]}"; do
-        if_name=$(awk '{ print $1 }' <<<"${iface%%:*}")
-        if_list="${if_name} ${if_list}"
-      done
-      echo "${if_list}"
-    else
-      echo "${YELLOW}No active interfaces found !${NC}"
     fi
 
-    return 1
+    return 0
   }
 
   if __hhs_has route; then
@@ -60,7 +59,7 @@ if __hhs_has ifconfig; then
     # @param $1 [Opt] : The kind of IP to get.
     function __hhs_ip() {
 
-      local ret_val=1 ip_kind if_list if_ip if_prefix ip_srv_url='ifconfig.me'
+      local ret_val=1 ip_kind if_list if_ip if_prefix ip_srv_url='ipinfo.io'
 
       if [[ "$1" == "-h" || "$1" == "--help" ]]; then
         echo "Usage: ${FUNCNAME[0]} [kind]"
@@ -81,8 +80,8 @@ if __hhs_has ifconfig; then
       else
         ip_kind=${1:-all}
         if [[ "all" == "${ip_kind}" || "external" == "${ip_kind}" ]]; then
-          if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null)"
-          [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "External" "${if_ip}"
+          if_ip="$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null | grep -E '^ *"ip":' | awk '{print $2}')"
+          [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "External" "${if_ip//[\",]/}"
         fi
         if [[ "all" == "${ip_kind}" || "gateway" == "${ip_kind}" ]]; then
           [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | awk '{print $2}')"
