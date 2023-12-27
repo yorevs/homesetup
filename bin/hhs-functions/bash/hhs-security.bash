@@ -11,7 +11,7 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-if __hhs_has "gpg"; then
+if __hhs_has 'gpg' && __hhs_has 'base64'; then
 
   # @function: Encrypt file using GPG.
   # @param $1 [Req] : The file to encrypt.
@@ -19,22 +19,26 @@ if __hhs_has "gpg"; then
   # @param $3 [Opt] : If provided, keeps the decrypted file, delete it otherwise.
   function __hhs_encrypt_file() {
 
-    local keep_file="${3}"
+    local file="${1}" passwd="${2}" keep_file="${3}"
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
-      if gpg --yes --batch --passphrase="$2" -c "$1" &>/dev/null; then
-        if encode "$1.gpg" >"$1"; then
-          [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "$1.gpg" &>/dev/null
-          echo -e "${GREEN}File \"$1\" has been encrypted !${NC}"
+      if [[ ! -f "${file}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: File not found: \"${file}\" !"
+      elif [[ -z "${passwd}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: Passphrase can't be blank !"
+      elif gpg --yes --batch --passphrase="${passwd}" -c "${file}" &>/dev/null; then
+        if encode -i "${file}.gpg" -o "${file}"; then
+          [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "${file}.gpg" &>/dev/null
+          echo -e "${GREEN}File \"${file}\" has been encrypted !${NC}"
           return 0
         fi
+      else
+        __hhs_errcho "${FUNCNAME[0]}: Unable to encrypt file: \"$1\" ${NC}"
       fi
     fi
-
-    __hhs_errcho "${FUNCNAME[0]}: Unable to encrypt file: \"$1\" ${NC}"
 
     return 1
   }
@@ -45,22 +49,26 @@ if __hhs_has "gpg"; then
   # @param $3 [Opt] : If provided, keeps the encrypted file, delete it otherwise.
   function __hhs_decrypt_file() {
 
-    local keep_file="$3"
+    local file="${1}" passwd="${2}" keep_file="${3}"
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
       echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
-      if decode "$1" >"$1.gpg"; then
-        if gpg --yes --batch --passphrase="$2" "$1.gpg" &>/dev/null; then
-          [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "$1.gpg" &>/dev/null
-          echo -e "${GREEN}File \"$1\" has been decrypted !${NC}"
+      if [[ ! -f "${file}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: File not found: \"${file}\" !"
+      elif [[ -z "${passwd}" ]]; then
+        __hhs_errcho "${FUNCNAME[0]}: Passphrase can't be blank !"
+      elif decode -i "${file}" -o "${file}.gpg"; then
+        if gpg --yes --batch --passphrase="${passwd}" "${file}.gpg" &>/dev/null; then
+          [[ ${keep_file} =~ --[kK][eE]{2}[pP]keep ]] || rm -f "${file}.gpg" &>/dev/null
+          echo -e "${GREEN}File \"${file}\" has been decrypted !${NC}"
           return 0
         fi
+      else
+        __hhs_errcho "${FUNCNAME[0]}: Unable to decrypt file: \"${file}\""
       fi
     fi
-
-    __hhs_errcho "${FUNCNAME[0]}: Unable to decrypt file: \"$1\" ${NC}"
 
     return 1
   }

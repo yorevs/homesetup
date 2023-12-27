@@ -36,7 +36,7 @@
 
 ### Profile related functions
 
-### __hhs_activate_nvm
+#### __hhs_activate_nvm
 
 ```bash
 Usage: __hhs_activate_nvm
@@ -66,7 +66,7 @@ Activating NVM app... OK
 
 ------
 
-### __hhs_activate_rvm
+#### __hhs_activate_rvm
 
 ```bash
 Usage: __hhs_activate_rvm
@@ -95,7 +95,7 @@ Activating RVM app... OK
 ```
 
 ------
-### __hhs_activate_jenv
+#### __hhs_activate_jenv
 
 ```bash
 Usage: __hhs_activate_jenv
@@ -124,7 +124,7 @@ Activating JENV app... OK
 ```
 
 ------
-### __hhs_activate_docker
+#### __hhs_activate_docker
 
 ```bash
 Usage: __hhs_activate_docker

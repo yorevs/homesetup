@@ -36,55 +36,64 @@
 
 ### Security related functions
 
-### __hhs_encrypt_file
+#### __hhs_encrypt_file
 
 ```bash
 Usage: __hhs_encrypt_file <filename> <passphrase>  [keep]
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Encrypt file using GPG.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Required_ : The file to encrypt.
   - $2 _Required_ : The passphrase used to encrypt the file.
   - $3 _Required_ : If provided, keeps the decrypted file, delete it otherwise.
 
-##### **Examples:**
+##### **Examples**
+
+`encrypt test.txt '12345'`
+
+**Output**
 
 ```bash
-  $ __hhs_encrypt_file my-passwords.txt 112233 && echo "my-passwords.txt is now encrypted"
+File "test.txt" has been encrypted !
 ```
 
 ------
-### __hhs_decrypt_file
+
+#### __hhs_decrypt_file
 
 ```bash
 Usage: __hhs_decrypt_file <filename> <passphrase> [keep]
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Decrypt a GPG encrypted file.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Required_ : The file to decrypt.
   - $2 _Required_ : The passphrase used to decrypt the file.
   - $3 _Required_ : If provided, keeps the encrypted file, delete it otherwise.
 
-##### **Examples:**
+##### **Examples**
+
+`decrypt test.txt '12345'`
+
+**Output**
 
 ```bash
-  $ __hhs_decrypt_file my-passwords.txt 112233 && echo "my-passwords.txt is now decrypted"
+File "test.txt" has been decrypted !
 ```

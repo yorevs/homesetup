@@ -36,7 +36,7 @@
 
 ### Paths tool
 
-### __hhs_paths
+#### __hhs_paths
 
 ```bash
 Usage: __hhs_paths [options] <args>

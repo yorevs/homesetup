@@ -36,7 +36,7 @@
 
 ### Network related functions
 
-### __hhs_active_ifaces
+#### __hhs_active_ifaces
 
 ```bash
 Usage: __hhs_active_ifaces [-flat]
@@ -81,7 +81,7 @@ en5 utun6 utun5 utun4 utun3 utun2 utun1 utun0 bridge0 en2 en1 llw0 awdl0 en0 ap1
 
 ------
 
-### __hhs_ip
+#### __hhs_ip
 
 ```bash
 Usage: __hhs_ip [kind]
@@ -134,7 +134,7 @@ en5       : 192.168.100.139
 
 ------
 
-### __hhs_ip_resolve
+#### __hhs_ip_resolve
 
 ```bash
 Usage: __hhs_ip_resolve <IPv4_address>
@@ -164,7 +164,7 @@ dns.google.
 
 ------
 
-### __hhs_ip_info
+#### __hhs_ip_info
 
 ```bash
 Usage: __hhs_ip_info <IPv4_address>
@@ -209,7 +209,7 @@ Retrieve information about the specified IP.
 
 ------
 
-### __hhs_ip_lookup
+#### __hhs_ip_lookup
 
 ```bash
 Usage: __hhs_ip_lookup <domain_name>
@@ -241,7 +241,7 @@ google.com mail is handled by 10 smtp.google.com.
 
 ------
 
-### __hhs_port_check
+#### __hhs_port_check
 
 ```bash
 Usage: __hhs_port_check <port_number> [port_state] [protocol]

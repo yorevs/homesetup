@@ -35,7 +35,7 @@
 
 ### Search related functions
 
-### __hhs_search_file
+#### __hhs_search_file
 
 ```bash
 Usage: __hhs_search_file <search_path> [file_globs...]
@@ -89,7 +89,7 @@ Search for files and links to files recursively.
 
 ------
 
-### __hhs_search_dir
+#### __hhs_search_dir
 
 ```bash
 Usage: __hhs_search_dir <search_path> [dir_globs...]
@@ -132,7 +132,7 @@ Search for directories and links to directories recursively.
 
 ------
 
-### __hhs_search_string
+#### __hhs_search_string
 
 ```bash
 Usage: __hhs_search_string <search_path> [options] <regex/string> [file_globs]
