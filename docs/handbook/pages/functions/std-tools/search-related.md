@@ -145,6 +145,7 @@ Usage: __hhs_search_string <search_path> [options] <regex/string> [file_globs]
 
   Notes:
     - <file_globs...>: Comma separated file globs. E.g: "*.txt,*.md,*.rtf"
+    - If <file_globs> is not specified, it will assume "*.*"
 ```
 
 ##### **Purpose**
@@ -163,8 +164,27 @@ Search in files for strings matching the specified criteria recursively.
 
 ##### **Examples**
 
+`__hhs_search_string /var/log 'apple' '*.log'`
+
+**Output**
+
 ```bash
-  $ __hhs_search_string /var/log 'apple' '*.log'
-  $ __hhs_search_string . 'server.port' '*.properties,*.yaml'
-  $ __hhs_search_string -r 'server.port = 1234' . 'server.port *= *.*' '*.properties,*.yaml'
+/var/log/com.apple.xpc.launchd/launchd.log:1:2023-12-27 16:40:17.298063 (gui/504 [100004]) <Warning>: denied lookup: name = com.apple.contactsd.persistence, requestor = imagent[859], error = 159: Sandbox restriction
+/var/log/com.apple.xpc.launchd/launchd.log:2:2023-12-27 16:40:17.904750 (gui/504 [100004]) <Warning>: denied lookup: name = com.apple.audio.audiohald, flags = 0x9, requestor = Microsoft Teams[20877], error = 159: Sandbox restriction
+```
+
+`__hhs_search_string . 'timezone:' '*.yaml,*.yml'`
+
+**Output**
+
+```bash
+./src/main/resources/application.yml:1:timezone: America/Los_Angeles
+```
+
+`__hhs_search_string . -r 'timezone: America/Sao_Paulo' 'timezone: America/Los_Angeles' '*.properties,*.yaml'`
+
+**Output**
+
+```bash
+./src/main/resources/application.yml:1:timezone: America/Sao_Paulo
 ```

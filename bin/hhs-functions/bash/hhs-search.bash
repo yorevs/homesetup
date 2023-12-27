@@ -86,6 +86,7 @@ if __hhs_has "python3"; then
       echo ''
       echo '  Notes: '
       echo '    - <file_globs...>: Comma separated file globs. E.g: "*.txt,*.md,*.rtf"'
+      echo '    - If <file_globs> is not specified, it will assume "*.*"'
       return 1
     else
       dir="${1}"
