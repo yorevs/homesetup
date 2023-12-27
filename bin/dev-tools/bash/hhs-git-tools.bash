@@ -33,7 +33,8 @@ if __hhs_has "git"; then
         fi
         IFS="${OLFIFS}"
       elif [[ "${#changed_files[@]}" -eq 1 ]]; then
-        # TODO add one
+        line="${changed_files[0]}"
+        \git add "$(awk '{print $2}' <<< "${line}")"
         return 0
       else
         echo -e "\n${YELLOW}Nothing has changed!${NC}\n"
