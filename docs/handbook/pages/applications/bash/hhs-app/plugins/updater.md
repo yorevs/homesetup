@@ -115,7 +115,7 @@ N/A
 
 ```bash
 Your version of HomeSetup is not up-to-date:
-  => Repository: v1.7.0, Yours: v1.6.19
+  => Repository: v1.6.19, Yours: v1.6.19
 
 Would you like to update it now (y/[n])?
 ```
