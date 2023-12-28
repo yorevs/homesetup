@@ -728,12 +728,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     if \
       ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
+      echo -e "${GREEN}OK${NC}"
+      \rm -f  "$(mktemp)"
+      echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
+      ${PIP} freeze | grep hspylib >>"${INSTALL_LOG}"
+    else
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     fi
-    echo -e "${GREEN}OK${NC}"
-    \rm -f  "$(mktemp)"
-    echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
-    ${PIP} freeze | grep hspylib >>"${INSTALL_LOG}"
   }
 
   # Check for backward HomeSetup backward compatibility.
