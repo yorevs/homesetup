@@ -368,7 +368,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
       install="apk add --no-cache"
-      DEPENDENCIES+=('file' 'python3' 'py3-pip')
+      DEPENDENCIES+=('file' 'python3' 'pip3')
     # Arch Linux
     elif has 'pacman'; then
       OS_TYPE='ArchLinux'
