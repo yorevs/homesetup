@@ -725,10 +725,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
-    if [[ ${python_minor} -ge 12 ]] ||
-       [[ ${python_minor} -ge 11 && -f /usr/lib/python3.11/EXTERNALLY-MANAGED ]] ||
-       [[ ${python_minor} -ge 10 && -f /usr/lib/python3.10/EXTERNALLY-MANAGED ]] ||; then
-      ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+    if ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+      ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     else
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
