@@ -843,7 +843,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Init submodules case it's not there yet
     if [[ ! -s "${HHS_HOME}/tests/bats/bats-core/bin/bats" ]]; then
       pushd "${HHS_HOME}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
-      echo -en "\n${ORANGE}Pulling bats submodules ...${NC}"
+      echo -en "\n${ORANGE}Pulling bats submodules... ${NC}"
       if git submodule update --init &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
       else
@@ -867,7 +867,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install Starship prompt.
   configure_starship() {
     if ! command -v starship &>/dev/null; then
-      echo -en "\n${WHITE}Installing Starship prompt ..."
+      echo -en "\n${WHITE}Installing Starship prompt... "
       if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"; then
         chmod +x "${HHS_DIR}"/install_starship.sh
         if "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
