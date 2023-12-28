@@ -34,3 +34,63 @@
 <!-- tocstop -->
 
 ### TOML Utilities
+
+#### __hhs_toml_get
+
+```bash
+Usage: __hhs_toml_get <file> <key> [group]
+```
+
+##### **Purpose**
+
+Get the key's value from a toml file.
+
+##### **Returns**
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**
+
+  - $1 _Required_ : The toml file read from.
+  - $2 _Required_ : The key to get.
+  - $3 _Optional_ : The group to get the key from (root if not provided).
+
+##### **Examples**
+
+`__hhs_toml_get bumpver.toml current_version`
+
+**Output**
+
+```bash
+current_version=1.6.19
+```
+
+#### __hhs_toml_set
+
+```bash
+Usage: __hhs_toml_set <file> <key=value> [group]
+```
+
+##### **Purpose**
+
+Set the key's value from a toml file.
+
+##### **Returns**
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**
+
+  - $1 _Required_ : The toml file read from.
+  - $2 _Required_ : The key to set on the form: key=value
+  - $3 _Optional_ : The group to get the key from (root if not provided).
+
+##### **Examples**
+
+`__hhs_toml_set bumpver.toml current_version=1.6.20`
+
+**Output**
+
+```bash
+current_version=1.6.19
+```

@@ -22,7 +22,7 @@ function __hhs_highlight() {
     echo "Usage: ${FUNCNAME[0]} <text_to_highlight> [filename]"
     echo ''
     echo '  Notes: '
-    echo '    filename: If not provided, stdin will be used instead'
+    echo '    filename: If not provided, stdin will be used instead.'
     return 1
   else
     search="${1:-.*}"
@@ -62,7 +62,7 @@ function __hhs_json_print() {
 function __hhs_ascof() {
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <character>"
+    echo "Usage: ${FUNCNAME[0]} <string>"
     return 1
   fi
   echo ''
@@ -71,7 +71,7 @@ function __hhs_ascof() {
   echo -en "${GREEN}Hex:${NC}"
   echo -en "${@}" | od -An -t xC | head -n 1 | sed 's/^ */ /g'
   echo -en "${GREEN}Str:${NC}"
-  echo -e " ${*}"
+  echo -e  " ${*}"
   echo ''
 
   return 0
@@ -84,7 +84,7 @@ function __hhs_utoh() {
   local result converted uni ret_val=1
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <5d-unicode>"
+    echo "Usage: ${FUNCNAME[0]} <4d-unicode...>"
     echo ''
     echo '  Notes: '
     echo '    - unicode is a four digits hexadecimal number. E.g:. F205'
