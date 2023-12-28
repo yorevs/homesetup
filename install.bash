@@ -725,8 +725,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
-    if ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
-      ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1
+    if \
+      ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+      ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     else
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
