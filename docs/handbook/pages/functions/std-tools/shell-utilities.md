@@ -36,123 +36,199 @@
 
 ### Shell utilities
 
-### __hhs_history
+#### __hhs_history
 
 ```bash
 Usage: __hhs_history [regex_filter]
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
-Search for previously issued commands from history using filters.
+Search for previously issued commands from history using filter.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Optional_ : The case-insensitive filter to be used when listing.
 
-##### **Examples:**
+##### **Examples**
+
+`hist`
+
+**Output**
 
 ```bash
-  $ hist ls && echo "List previously type `ls' commands"
+    1  [hjunior, 2023-12-28 14:16:07]  __hhs_history -h
+    2  [hjunior, 2023-12-28 14:17:29]  about hl
+    3  [hjunior, 2023-12-28 14:17:50]  hist
+    4  [hjunior, 2023-12-28 14:18:05]  hist stats
+    5  [hjunior, 2023-12-28 14:18:10]  __hhs_hist_stats
+    6  [hjunior, 2023-12-28 14:19:14]  hist
+...
+...
 ```
 
-### __hhs_hist_stats
+#### __hhs_hist_stats
 
 ```bash
 Usage: __hhs_hist_stats [top_N]
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Display statistics about commands in history.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Optional_ : Limit to the top N commands.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_hist_stats 10`
+
+**Output**
 
 ```bash
-  $ __hhs_hist_stats 10 && echo "Top 10 used commands"
+  1:  git ........................... 050 |▄▄▄▄▄▄▄▄▄▄
+  2:  gwb ........................... 030 |▄▄▄▄▄▄
+  3:  about ......................... 025 |▄▄▄▄▄
+  4:  cat ........................... 015 |▄▄▄
+  5:  hhs ........................... 010 |▄▄
+  6:  hist .......................... 010 |▄▄
+  7:  history ....................... 005 |▄
+  8:  man ........................... 005 |▄
+  9:  grep .......................... 003 |
+ 10:  more .......................... 001 |
 ```
 
 ------
-### __hhs_envs
+
+#### __hhs_envs
 
 ```bash
-Usage: __hhs_envs [regex_filter]
+Usage: __hhs_envs [options] [regex_filters]
+
+    Options:
+      -e : Edit current HHS_ENV_FILE.
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
-Display all environment variables using filters.
+Display all environment variables using filter.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
-  - $1 _Optional_ : The case-insensitive filter to be used when listing.
+  - $1 _Optional_ : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_envs hhs`
+
+**Output**
 
 ```bash
-  $ envs hhs && echo "That's all HHS variables"
+Listing all exported environment variables matching [ hhs ]:
+
+HHS_ACTIVE_DOTFILES ..................... => bashrc hhsrc bash_commons bash_env bash_colors bash_prompt bash_aliases bash_icons bash_functions
+HHS_ALIASES_FILE ........................ => /Users/hjunior/.config/hhs/.aliases
+HHS_BACKUP_DIR .......................... => /Users/hjunior/.config/hhs/backup
+HHS_CACHE_DIR ........................... => /Users/hjunior/.config/hhs/cache
+HHS_CMD_FILE ............................ => /Users/hjunior/.config/hhs/.cmd_file
+HHS_DEV_TOOLS ........................... => git hexdump vim tree pcregrep gpg base64 shfmt shellcheck pylint docker sqlite3 perl groovy java ruby python3 gcc make mvn gradl...
+HHS_DIR ................................. => /Users/hjunior/.config/hhs
+HHS_ENV_FILE ............................ => /Users/hjunior/.config/hhs/.env
+...
+...
 ```
 
 ------
-### __hhs_envs
+
+#### ____hhs_defs
 
 ```bash
 Usage: __hhs_defs [regex_filter]
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Display all alias definitions using filters.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Optional_ : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_defs gw`
+
+**Output**
 
 ```bash
-  $ defs gw && echo "That's all gradle wrapper alias definitions"
+Listing all alias definitions matching [gw]:
+
+gw ........................ defined as => __hhs_gradle
+gwb ....................... defined as => __hhs_gradle_build
+gwi ....................... defined as => __hhs_gradle_init
+gwp ....................... defined as => __hhs_gradle_projects
+gwq ....................... defined as => __hhs_gradle_quiet
+gwr ....................... defined as => __hhs_gradle_run
+gwt ....................... defined as => __hhs_gradle_tasks
+gwtt ...................... defined as => __hhs_gradle_test
+gww ....................... defined as => __hhs_gradle_wrapper
 ```
 
 ------
-### __hhs_shell_select
+
+#### __hhs_shell_select
 
 ```bash
 Usage: __hhs_shell_select
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Select a shell from the existing shell list.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**: -
+##### **Parameters**
 
-##### **Examples:**
+N/A
+
+##### **Examples**
+
+`__hhs_shell_select`
+
+**Output**
 
 ```bash
-  $ __hhs_shell_select
+Please select your default shell:
+
+  1    /bin/bash
+  2     /bin/csh
+  3     /bin/dash
+  4     /bin/ksh
+  5     /bin/sh
+  6     /bin/tcsh
+  7     /bin/zsh
+  8     /usr/local/bin/bash
+
+[Enter] Select  [↑↓] Navigate  [Esc] Quit  [1..8] Goto:
 ```

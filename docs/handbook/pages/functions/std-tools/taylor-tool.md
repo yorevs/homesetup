@@ -36,31 +36,38 @@
 
 ### Taylor tool
 
-------
-### __hhs_tailor
+#### __hhs_tailor
 
 ```bash
-Usage: __hhs_tailor [filename]
+Usage: __hhs_tailor [-F | -f | -r] [-q] [-b # | -c # | -n #] <file>
 
   Notes:
-    filename: If not provided, stdin will be used instead
+    - filename: If not provided, /dev/stdin will be used instead
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
-Tail a log using colors and patterns specified on `.tailor' file
+Tail a log using colors and patterns specified on `.tailor' file.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   $1 _Required_ : The log file name.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_tailor /var/log/install.log`
+
+**Output**
 
 ```bash
-  $ __hhs_tailor /var/log/syslog.log
-  $ cat /var/log/syslog.log | __hhs_tailor
+2023-12-28 16:30:15-03 localhost softwareupdated[93882]: Product 052-14528 is deferred until 2024-03-10 08:00:00 +0000
+2023-12-28 16:30:15-03 localhost softwareupdated[93882]: Product 052-14644 is deferred until 2024-03-10 08:00:00 +0000
+2023-12-28 16:30:15-03 localhost softwareupdated[93882]: Product 052-15153 is deferred until 2024-03-10 08:00:00 +0000
+2023-12-28 16:30:15-03 localhost softwareupdated[93882]: Product 052-23678 is deferred until 2024-03-17 08:00:00 +0000
+...
+...
 ```

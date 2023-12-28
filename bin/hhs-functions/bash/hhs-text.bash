@@ -65,14 +65,16 @@ function __hhs_ascof() {
     echo "Usage: ${FUNCNAME[0]} <character>"
     return 1
   fi
-  echo -en "\n${GREEN}Dec:${NC}"
+  echo ''
+  echo -en "${GREEN}Dec:${NC}"
   echo -en "${@}" | od -An -t uC | head -n 1 | sed 's/^ */ /g'
   echo -en "${GREEN}Hex:${NC}"
   echo -en "${@}" | od -An -t xC | head -n 1 | sed 's/^ */ /g'
   echo -en "${GREEN}Str:${NC}"
-  echo -e " ${*}\n"
+  echo -e " ${*}"
+  echo ''
 
-  return $?
+  return 0
 }
 
 # @function: Convert unicode to hexadecimal.

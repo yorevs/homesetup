@@ -15,7 +15,7 @@
 # @function: Display relevant system information.
 function __hhs_sysinfo() {
 
-  local username containers if_name if_ip containers all_ips
+  local username containers if_name if_ip containers all_ips all_users
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
@@ -23,22 +23,23 @@ function __hhs_sysinfo() {
   else
     username="$(whoami)"
     echo ''
-    echo -e "${ORANGE}System information ------------------------------------------------"
+    echo -e "${ORANGE}-=- System Information -=-"
     echo ''
     echo -e "${GREEN}User:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  Username..... : ${username}"
     echo -e "  Group........ : $(groups "${username}" | awk '{print $1}')"
     echo -e "  UID.......... : $(id -u "${username}")"
     echo -e "  GID.......... : $(id -g "${username}")"
-    echo -e "${GREEN}System:${HHS_HIGHLIGHT_COLOR}\n"
-    echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
-    __hhs_has "sw_vers" && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
-    echo -e "  Up-Time...... : $(uptime | cut -d ',' -f1)"
-    echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
-    echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
     echo ''
-    echo -e "${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
+    echo -e "${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
+    echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
+    __hhs_has 'sw_vers' && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
+    __hhs_has 'uptime' echo -e "  Up-Time...... : $(uptime | cut -d ',' -f1)"
+    __hhs_has 'ps' && echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
+    __hhs_has 'ps' && echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
+    echo ''
     if __hhs_has __hhs_ip; then
+      echo -e "${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
       all_ips=$(__hhs_ip | sort)
       printf "  Hostname..... :%s\n" " $(hostname)"
       IFS=$'\n'
@@ -50,14 +51,16 @@ function __hhs_sysinfo() {
       IFS="${OLDIFS}"
     fi
     echo ''
-    echo -e "${GREEN}Storage:"
-    printf "${WHITE}  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
+    echo -e "${GREEN}Storage:${WHITE}"
+    printf "  %-15s %-7s %-7s %-7s %-5s \n" "Disk" "Size" "Used" "Free" "Cap"
     echo -e "${HHS_HIGHLIGHT_COLOR}$(df -h | grep "^/dev/disk\|^.*fs" | awk -F " *" '{ printf("  %-15s %-7s %-7s %-7s %-5s \n", $1,$2,$3,$4,$5) }')"
-    echo -e "\n${GREEN}Logged Users:${HHS_HIGHLIGHT_COLOR}"
-    IFS=$'\n'
-    for next in $(who -H); do
-      echo -e "${next}" | esed -e "s/(^NAME.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
-    done
+    IFS=$'\n' read -r -d '' -a all_users < <(who -H)
+    if [[ ${#all_users[@]} -gt 0 ]]; then
+      echo -e "\n${GREEN}Currently Logged in Users:${HHS_HIGHLIGHT_COLOR}"
+      for next in "${all_users[@]}"; do
+        echo -e "${next}" | esed -e "s/(^NAME.*)/${WHITE}\1${BLUE}/" -e 's/^/  /'
+      done
+    fi
     if __hhs_has "docker" && __hhs_has "__hhs_docker_ps"; then
       read -r -d '' -a containers < <(__hhs_docker_ps -a)
       if [[ ${#containers[@]} -gt 0 && $(__hhs_docker_count) -ge 1 ]]; then

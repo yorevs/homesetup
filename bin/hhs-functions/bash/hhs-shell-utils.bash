@@ -19,9 +19,9 @@ function __hhs_history() {
     echo "Usage: ${FUNCNAME[0]} [regex_filter]"
     return 1
   elif [[ "$#" -eq 0 ]]; then
-    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep -i "^ *[0-9]*  "
+    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | __hhs_highlight -i "^ *[0-9]*  "
   else
-    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | grep -i "$*"
+    history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | __hhs_highlight -i "${*}"
   fi
 
   return $?
@@ -130,15 +130,13 @@ function __hhs_defs() {
       __hhs_edit "${HHS_ALIASDEF_FILE}"
       ret_val=$?
     else
-      pad=$(printf '%0.1s' "."{1..60})
-      pad_len=51
+      pad=$(printf '%0.1s' "."{1..30})
+      pad_len=26
       columns="$(($(tput cols) - pad_len - 10))"
       filter="$*"
       filter=${filter// /\|}
       [[ -z "${filter}" ]] && filter=".*"
-      echo ' '
-      echo "${YELLOW}Listing all alias definitions matching [${filter}]:"
-      echo ' '
+      echo -e "\n${YELLOW}Listing all alias definitions matching [${filter}]:\n"
       IFS=$'\n'
       for next in $(grep -i '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
         name=${next%%=*}
@@ -148,7 +146,7 @@ function __hhs_defs() {
         if [[ ${name} =~ ${filter} ]]; then
           echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
           printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
-          echo -en " ${GREEN}is defined as ${NC}"
+          echo -en "${GREEN} defined as => ${NC}"
           echo -n "${value:0:${columns}}"
           [[ ${#value} -ge ${columns} ]] && echo -n "..."
           echo "${NC}"

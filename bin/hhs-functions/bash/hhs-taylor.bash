@@ -45,7 +45,7 @@ function __hhs_tailor() {
     echo "Usage: ${FUNCNAME[0]} [-F | -f | -r] [-q] [-b # | -c # | -n #] <file>"
     echo ''
     echo '  Notes: '
-    echo '    filename: If not provided, /dev/stdin will be used instead'
+    echo '    - filename: If not provided, /dev/stdin will be used instead.'
     return 1
   else
 
