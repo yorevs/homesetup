@@ -17,35 +17,43 @@ if __hhs_has "git"; then
   # @function: Shortcut for `git add'
   function __hhs_git_add() {
 
-    local changed_files mchoose_file ret_val=1 count=0
+    local changed_files mchoose_file ret_val=1 count=0 git_dir lines re_status
+
+    git_dir="$(git rev-parse --show-toplevel)"
+    re_status='^ *(M|D|\?)+ *'
 
     if [[ $# -eq 0 ]]; then
       IFS=$'\n'
       read -r -d '' -a changed_files < <(\git status --porcelain)
-      count=${#changed_files[@]}
       if [[ "${#changed_files[@]}" -gt 1 ]]; then
         mchoose_file=$(mktemp)
         if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs to git" "${changed_files[@]}"; then
-          for line in $(head -n 1 "${mchoose_file}" | \tr ' ' '\n'); do
-            if [[ -f ${line} ]]; then
-              \git add "${line}" && ret_val=$?
+          read -r -d '' -a lines < <(\head -n 1 "${mchoose_file}" | \tr ' ' '\n')
+          for line in "${lines[@]}"; do
+            file="${git_dir}/${line}"
+            if [[ ${line} =~ ${re_status} ]]; then
+              continue
+            elif [[ -f "${file}" ]]; then
+              \git add "${file}" && ret_val=$?
+            else
+              __hhs_errcho "File not found: F: '${file}'  L: '${line}'"
             fi
           done
         fi
         IFS="${OLFIFS}"
-      elif [[ "${#changed_files[@]}" -eq 1 ]]; then
-        line="${changed_files[0]}"
-        count=1
-        \git add "$(awk '{print $2}' <<< "${line}")" && ret_val=$?
+      elif [[ ${#changed_files[@]} -eq 1 ]]; then
+        file="${changed_files[0]}"
+        \git add "$(awk '{print $2}' <<< "${file}")" && ret_val=$?
       else
         echo -e "\n${YELLOW}Nothing has changed!${NC}\n"
         return 1
       fi
     else
-      count=$#
+      count=${#}
       \git add ${@} && ret_val=$?
     fi
-    [[ ${ret_val} -eq 0 ]] && echo "${GREEN}${count} files has been added !${NC}"
+    count=$(git diff --cached --numstat | wc -l | awk '{print $1}')
+    [[ ${ret_val} -eq 0 ]] && echo -e "${GREEN}(${count}) file(s) has been added !${NC}"
     echo ''
 
     return ${ret_val}

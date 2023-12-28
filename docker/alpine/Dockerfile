@@ -19,11 +19,12 @@ RUN apk add --no-cache ruby
 RUN apk add --no-cache file
 RUN apk add --no-cache gnupg
 RUN apk add --no-cache bash
+RUN apk add --no-cache vim
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
 USER jenkins
 WORKDIR "${HOME}"
 
-RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+#RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 
 CMD ["bash", "--login"]
