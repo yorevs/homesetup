@@ -103,7 +103,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'sudo' 'vim'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim'
   )
 
   # Missing HomeSetup dependencies
@@ -349,19 +349,19 @@ Usage: $APP_NAME [OPTIONS] <args>
     if has 'brew'; then
       OS_TYPE='macOS'
       OS_APP_MAN=brew
-      DEPENDENCIES+=('xcode-select')
+      DEPENDENCIES+=('sudo' 'xcode-select')
       install="${SUDO} brew install -y"
     # Debian or Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
       OS_APP_MAN='apt-get'
-      DEPENDENCIES+=('file' 'build-essential' 'python3' 'python3-pip')
+      DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3' 'python3-pip')
       install="${SUDO} apt-get install -y"
     # Fedora, CentOS, or Red Hat
     elif has 'yum'; then
       OS_TYPE='RedHat'
       OS_APP_MAN='yum'
-      DEPENDENCIES+=('file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
+      DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
       install="${SUDO} yum install -y"
     # Alpine (busybox)
     elif has 'apk'; then
@@ -374,7 +374,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
       install="${SUDO} pacman -Sy"
-      DEPENDENCIES+=('file' 'python3' 'python3-pip')
+      DEPENDENCIES+=('sudo' 'file' 'python3' 'python3-pip')
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi

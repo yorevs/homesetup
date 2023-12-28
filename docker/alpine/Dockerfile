@@ -10,17 +10,16 @@ ENV GROUP=jenkins
 ENV HOME=/home/jenkins
 
 RUN apk -U upgrade
-RUN apk add python3
-RUN apk add py3-pip
-RUN apk add curl
-RUN apk add rsync
-RUN apk add ncurses
-RUN apk add ruby
-RUN apk add file
+RUN apk add --no-cache python3
+RUN apk add --no-cache py3-pip
+RUN apk add --no-cache curl
+RUN apk add --no-cache rsync
+RUN apk add --no-cache ncurses
+RUN apk add --no-cache ruby
+RUN apk add --no-cache file
 RUN apk add --no-cache gnupg
 RUN apk add --no-cache bash
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
-RUN adduser -D -s "${SHELL}" -h "${HOME}" -g "${GROUP}" "${USER}"
 
 USER jenkins
 WORKDIR "${HOME}"
