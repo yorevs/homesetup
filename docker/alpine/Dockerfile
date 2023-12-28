@@ -25,6 +25,6 @@ RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 USER jenkins
 WORKDIR "${HOME}"
 
-#RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
+RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 
 CMD ["bash", "--login"]
