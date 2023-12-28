@@ -65,6 +65,8 @@ Get the key's value from a toml file.
 current_version=1.6.19
 ```
 
+------
+
 #### __hhs_toml_set
 
 ```bash
@@ -91,6 +93,72 @@ Set the key's value from a toml file.
 
 **Output**
 
+N/A
+
+------
+
+#### __hhs_toml_groups
+
 ```bash
-current_version=1.6.19
+Usage: __hhs_toml_groups <file> [regex_filter]
+```
+
+##### **Purpose**
+
+Print all toml file groups (tables).
+
+##### **Returns**
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**
+
+  - $1 _Required_ : The toml file read from.
+  - $2 _Optional_ : The group name to filter the results.
+
+##### **Examples**
+
+`__hhs_toml_groups bumpver.toml`
+
+**Output**
+
+```bash
+bumpver
+bumpver.file_patterns
+```
+
+------
+
+#### __hhs_toml_keys
+
+```bash
+Usage: __hhs_toml_keys <file> [group]
+```
+
+##### **Purpose**
+
+Print all toml file group keys (tables).
+
+##### **Returns**
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**
+
+  - $1 _Required_ : The toml file read from.
+  - $2 _Optional_ : The group to get the keys from (root if not provided).
+
+##### **Examples**
+
+`__hhs_toml_keys bumpver.toml bumpver`
+
+**Output**
+
+```bash
+current_version = "1.6.19"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "++version {old_version} -> {new_version}"
+commit = false
+tag = false
+push = false
 ```

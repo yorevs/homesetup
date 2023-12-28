@@ -33,11 +33,39 @@
 
 <!-- tocstop -->
 
-
 ### Tool checks functions
 
+#### __hhs_version
+
+```bash
+Usage: __hhs_version <app_name>
+```
+
+##### **Purpose**
+
+Check the version of the app using the most common ways.
+
+##### **Returns**
+
+**0** on success; **non-zero** otherwise.
+
+##### **Parameters**
+
+  - $1 _Required_ : The app to check.
+
+##### **Examples**
+
+`__hhs_version python3`
+
+**Output**
+
+```bash
+Python 3.11.6
+```
+
 ------
-### __hhs_toolcheck
+
+#### __hhs_toolcheck
 
 ```bash
 Usage: __hhs_toolcheck [options] <app_name>
@@ -46,97 +74,64 @@ Usage: __hhs_toolcheck [options] <app_name>
       -q  : Quiet mode on
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
 Check whether a tool is installed on the system.
 
-##### **Returns**:
+##### **Returns**
 
 **0** if the tool is installed; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1 _Required_ : The app to check.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_toolcheck python3`
+
+**Output**
 
 ```bash
-  $ __hhs_toolcheck java && echo "java is installed"
-  $ __hhs_toolcheck -q nottatool || echo "nottatool is not installed"
+[Darwin] Checking: python3 .............  INSTALLED => /usr/local/bin/python3
 ```
 
 ------
-### __hhs_version
 
-```bash
-Usage: __hhs_version <app_name>
-```
-
-##### **Purpose**:
-
-Check the version of the app using the most common ways.
-
-##### **Returns**:
-
-**0** on success; **non-zero** otherwise.
-
-##### **Parameters**:
-
-  - $1 _Required_ : The app to check.
-
-##### **Examples:**
-
-```bash
-  $ __hhs_version java
-  $ __hhs_version git
-```
-
-------
-### __hhs_tools
+#### __hhs_tools
 
 ```bash
 Usage: __hhs_tools [tool_list]
+
+  Notes:
+    - If tool_list is not provided, the value variable HHS_DEV_TOOLS will be used.
 ```
 
-##### **Purpose**:
+##### **Purpose**
 
-Check whether a list of development tools are installed or not.
+Check whether development tools are installed or not.
 
-##### **Returns**:
+##### **Returns**
 
 **0** on success; **non-zero** otherwise.
 
-##### **Parameters**:
+##### **Parameters**
 
   - $1..$N _Optional_ : The tool list to be checked.
 
-##### **Examples:**
+##### **Examples**
+
+`__hhs_tools 'git' 'svn' 'java' 'python3'`
 
 ```bash
-  $ __hhs_tools 'git' 'svn' 'java' 'python3'
-```
+Checking (4) development tools:
 
-------
-### __hhs_about
+[Darwin] Checking: git .................  INSTALLED => /usr/local/bin/git
+[Darwin] Checking: svn .................  NOT FOUND
+[Darwin] Checking: java ................  INSTALLED => /usr/bin/java
+[Darwin] Checking: python3 .............  INSTALLED => /usr/local/bin/python3
 
-```bash
-Usage: __hhs_about <command>
-```
-
-##### **Purpose**:
-
-Display information about the given command.
-
-##### **Returns**:
-
-**0** on success; **non-zero** otherwise.
-
-##### **Parameters**:
-
-  - $1 _Required_ : The command to check.
-
-##### **Examples:**
-
-```bash
-  $ __hhs_about ls
+ To check the current installed version, type: #> ver <tool_name>
+ To install/uninstall a tool, type: #> hspm install/uninstall <tool_name>
+ To override the list of tools, type: #> export HHS_DEV_TOOLS=( "tool1" "tool2" ... )
 ```

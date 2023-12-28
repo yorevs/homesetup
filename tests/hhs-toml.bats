@@ -51,14 +51,14 @@ teardown() {
 
 # TC - 2
 @test "when-invoking-with-missing-file-then-toml-get-should-raise-an-error" {
-  run __hhs_toml_get
+  run __hhs_toml_get ''
   assert_failure
   assert_output "error: The file parameter must be provided."
 }
 
 # TC - 3
 @test "when-invoking-with-missing-key-then-toml-get-should-raise-an-error" {
-  run __hhs_toml_get "${test_file}"
+  run __hhs_toml_get "${test_file}" ''
   assert_failure
   assert_output "error: The key parameter must be provided."
 }
