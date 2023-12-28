@@ -367,7 +367,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     elif has 'apk'; then
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
-      install="${SUDO} apk add --no-cache"
+      install="apk add --no-cache"
       DEPENDENCIES+=('file' 'python3' 'py3-pip')
     # Arch Linux
     elif has 'pacman'; then
