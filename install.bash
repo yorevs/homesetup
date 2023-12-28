@@ -729,9 +729,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
-    else
-      ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
-        quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     fi
     echo -e "${GREEN}OK${NC}"
     \rm -f  "$(mktemp)"
