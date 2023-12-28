@@ -98,9 +98,6 @@ function __hhs_tools() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} [tool_list]"
-    echo ''
-    echo '  Notes:'
-    echo '    - If tool_list is not provided, the value variable HHS_DEV_TOOLS will be used.'
     return 1
   else
     [[ ${#} -eq 0 ]] && tool_list=(${HHS_DEV_TOOLS[@]})

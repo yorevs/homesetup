@@ -36,7 +36,7 @@ function __hhs_toml_get() {
     return 1
   fi
 
-  re_group='^\[([a-zA-Z0-9_.]+)\] *'
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
   re_key_pair="^(${key}) *= *(.*)"
 
   while read -r line; do
@@ -69,9 +69,6 @@ function __hhs_toml_set() {
   local file="${1}" key="${2%%=*}" value="${2#*=}" group="${3}"
   local re_group re_key_pair group_match
 
-  re_group='^\[([a-zA-Z0-9_.]+)\] *'
-  re_key_pair="^(${key}) *= *(.*)?"
-
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
     echo "Usage: __hhs_toml_set <file> <key=value> [group]"
     return 1
@@ -87,6 +84,9 @@ function __hhs_toml_set() {
     __hhs_errcho "The file \"${file}\" does not exists or is empty."
     return 1
   fi
+
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
+  re_key_pair="^(${key}) *= *(.*)?"
 
   if ! [[ ${2} =~ ${re_key_pair} ]]; then
     __hhs_errcho "The key/value parameter must be on the form of 'key=value', but it was '${2}'."
@@ -114,16 +114,12 @@ function __hhs_toml_set() {
 
 # @function: Print all toml file groups (tables).
 # @param $1 [Req] : The toml file read from.
-# @param $2 [Opt] : The group name to filter the results.
 function __hhs_toml_groups() {
 
-  local file="${1}" count=0 re_group filter group_name
-
-  re_group='^\[([a-zA-Z0-9_.]+)\] *'
-  filter=${2:-${re_group}}
+  local file="${1}" re_group count=0
 
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
-    echo "Usage: __hhs_toml_groups <file> [regex_filter]"
+    echo "Usage: __hhs_toml_groups <file>"
     return 1
   fi
 
@@ -135,13 +131,11 @@ function __hhs_toml_groups() {
     return 1
   fi
 
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
   while read -r line; do
     if [[ ${line} =~ ${re_group} ]]; then
-      group_name="${BASH_REMATCH[1]}"
-      if [[ ${line} =~ ${filter} ]]; then
-        echo -e "${group_name}"
-        ((count += 1))
-      fi
+      echo -e "${BASH_REMATCH[1]}"
+      ((count += 1))
     fi
   done <"${file}"
 
@@ -154,11 +148,7 @@ function __hhs_toml_groups() {
 # @param $2 [Opt] : The group to get the keys from (root if not provided).
 function __hhs_toml_keys() {
 
-  local file="${1}" group="${2}" re_group count=0 group_match filter
-
-  re_group='^\[([a-zA-Z0-9_.]+)\] *'
-  re_key_pair='^"?([a-zA-Z0-9_.]+)"? *= *(.*)'
-  filter=${2:-${re_group}}
+  local file="${1}" group="${2}" re_group count=0 group_match
 
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
     echo "Usage: __hhs_toml_keys <file> [group]"
@@ -172,6 +162,9 @@ function __hhs_toml_keys() {
     __hhs_errcho "The file \"${file}\" does not exists or is empty."
     return 1
   fi
+
+  re_group="^\[([a-zA-Z0-9_.]+)\] *"
+  re_key_pair="^([a-zA-Z0-9_.]+) *= *(.*)"
 
   while read -r line; do
     if [[ -z "${group}" && ${line} =~ ${re_group} ]]; then
