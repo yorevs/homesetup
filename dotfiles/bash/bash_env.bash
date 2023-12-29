@@ -143,12 +143,23 @@ __hhs_has svn && [[ -d "${HOME}"/SVN-Repository ]] && export SVN_REPOS="${HOME}"
 [[ -d "${HOME}"/Dropbox ]] && export DROPBOX="${HOME}/Dropbox"
 [[ -d "${HOME}"/Workspace ]] && export WORKSPACE="${HOME}/Workspace"
 
+# ----------------------------------------------------------------------------
 # Integrations
+
 if __hhs_has 'fzf'; then
-  __hhs_has 'bat' && export FZF_DEFAULT_OPTS="--preview 'bat --color=always {}'"
-  __hhs_has 'fd' && export FZF_DEFAULT_COMMAND="fd --type f"
+  if __hhs_has 'bat'; then
+    export FZF_DEFAULT_OPTS="--preview 'bat --color=always {}'"
+  else
+    export FZF_DEFAULT_OPTS="--preview 'cat --color=always {}'"
+  fi
+  if __hhs_has 'fd'; then
+    export FZF_DEFAULT_COMMAND="fd --type f"
+  else
+    export FZF_DEFAULT_COMMAND="find --type f"
+  fi
 fi
 
+# ----------------------------------------------------------------------------
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
   'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64'
