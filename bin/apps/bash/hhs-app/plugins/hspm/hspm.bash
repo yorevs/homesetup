@@ -241,7 +241,7 @@ function install_recipe() {
     echo -e "${GREEN}Installation successful => \"${package}\" ${NC}"
     add_breadcrumb "${package}"
   else
-    quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\" !"
+    quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\"! Please type __hhs logs hspm to find out details\n"
   fi
 }
 
@@ -276,7 +276,7 @@ function uninstall_recipe() {
     echo -e "${GREEN}Uninstallation successful => \"${package}\" ${NC}"
     del_breadcrumb "${package}"
   else
-    quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" !"
+    quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" ! Please type __hhs logs hspm to find out details\n"
   fi
 }
 

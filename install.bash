@@ -448,6 +448,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       else
         echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
       fi
+    else
+      echo -e "${YELLOW}Skipping brew installation (not supported OS): \"${OS_TYPE}\""
     fi
   }
 
