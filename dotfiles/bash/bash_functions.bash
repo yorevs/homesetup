@@ -15,7 +15,7 @@
 
 # Do not source this file multiple times.
 if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_functions"; then
-  __hhs_log "WARN" "bash_functions was already loaded!"
+  __hhs_log "DEBUG" "bash_functions was already loaded!"
 fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"

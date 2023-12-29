@@ -15,7 +15,7 @@
 
 # Do not source this file multiple times
 if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_icons"; then
-  __hhs_log "WARN" "bash_icons was already loaded!"
+  __hhs_log "DEBUG" "bash_icons was already loaded!"
 fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_icons"

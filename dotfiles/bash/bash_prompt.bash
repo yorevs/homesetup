@@ -20,7 +20,7 @@
 
 # Do not source this file multiple times
 if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_prompt"; then
-  __hhs_log "WARN" "bash_prompt was already loaded!"
+  __hhs_log "DEBUG" "bash_prompt was already loaded!"
 fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_prompt"
@@ -218,5 +218,3 @@ if __hhs_has 'gem' && gem which colorls &>/dev/null; then
   [[ -f "${colorls_dir}/folder_aliases.yaml" ]] || \cp "${hhs_colorls_dir}/folder_aliases.yaml" "${colorls_dir}"
   [[ -f "${colorls_dir}/folders.yaml" ]] || \cp "${hhs_colorls_dir}/folders.yaml" "${colorls_dir}"
 fi
-
-# FZF integration. Source fzf key bindings and auto-completes

@@ -15,7 +15,7 @@
 
 # Do not source this file multiple times
 if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_env"; then
-  __hhs_log "WARN" "bash_env was already loaded!"
+  __hhs_log "DEBUG" "bash_env was already loaded!"
 fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
