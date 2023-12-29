@@ -13,10 +13,13 @@ RUN wget https://www.python.org/ftp/python/3.10.2/Python-3.10.2.tgz
 RUN tar -xzf Python-3.10.2.tgz
 
 WORKDIR "Python-3.10.2"
+
 RUN ./configure --enable-optimizations --enable-loadable-sqlite-extensions
 RUN make install
 RUN python3 -m pip install --upgrade pip
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
+
+WORKDIR ~
 
 RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 

@@ -4,7 +4,7 @@
 [[ -f "${HOME}"/.bash_commons ]] && source "${HOME}"/.bash_commons
 
 IFS=$'\n'
-read -r -d '' -a images < <(find "${HHS_HOME}/docker/" -type d -exec basename {} \; )
+read -r -d '' -a images < <(find "${HHS_HOME}/docker" -mindepth 1 -type d -exec basename {} \;)
 IFS="${OLDIFS}"
 
 if [[ $# -lt 1 || "${1}" == -h || "${1}" == --help ]]; then

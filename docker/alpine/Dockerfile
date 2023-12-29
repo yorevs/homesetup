@@ -4,6 +4,7 @@ MAINTAINER Hugo Saporetti Junior<homesetup@gmail.com>
 
 USER root
 
+ENV SHELL='/bin/bash'
 
 RUN apk -U upgrade
 RUN apk add --no-cache python3
