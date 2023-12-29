@@ -4,10 +4,6 @@ MAINTAINER Hugo Saporetti Junior<homesetup@gmail.com>
 
 USER root
 
-ENV SHELL=/bin/bash
-ENV USER=jenkins
-ENV GROUP=jenkins
-ENV HOME=/home/jenkins
 
 RUN apk -U upgrade
 RUN apk add --no-cache python3
@@ -22,8 +18,7 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache vim
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
-USER jenkins
-WORKDIR "${HOME}"
+WORKDIR "~/"
 
 RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 
