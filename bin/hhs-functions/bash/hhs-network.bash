@@ -85,18 +85,18 @@ if __hhs_has ifconfig; then
         fi
         if [[ ${ip_kind} =~ all|gateway ]]; then
           [[ "Darwin" == "${HHS_MY_OS}" ]] && if_ip="$(route get default 2>/dev/null | grep 'gateway' | awk '{print $2}')"
-          [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n | grep 'UG[ \t]' | awk '{print $2}')"
+          [[ "Linux" == "${HHS_MY_OS}" ]] && if_ip="$(route -n 2>/dev/null | grep 'UG[ \t]' | awk '{print $2}')"
           [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "Gateway" "${if_ip}"
         fi
-        if_name='all|vpn|local|(lo|en|wl|utun|tun)[a-z0-9]+'
+        if_name='all|vpn|local|(lo|eth|en|wl|utun|tun)[a-z0-9]+'
         if [[ ${ip_kind} =~ ${if_name} ]]; then
-          read -r -d '' -a if_list < <(__hhs_active_ifaces -flat)
+          read -r -d '' -a if_list < <(__hhs_active_ifaces -flat 2>/dev/null)
           [[ "vpn" == "${ip_kind}" ]] && if_prefix='(utun|tun)[a-z0-9]+'
-          [[ "local" == "${ip_kind}" ]] && if_prefix='(en|wl)[a-z0-9]+'
+          [[ "local" == "${ip_kind}" ]] && if_prefix='(eth|en|wl)[a-z0-9]+'
           [[ -z "${if_prefix}" ]] && if_prefix="${ip_kind}"
           for iface in "${if_list[@]}"; do
             if [[ "all" == "${ip_kind}" || ${iface} =~ ${if_prefix} ]]; then
-              if_ip="$(ifconfig "${iface}" | grep -E "inet " | awk '{print $2}')"
+              if_ip="$(ifconfig "${iface}" 2>/dev/null | grep -E "inet " | awk '{print $2}')"
               [[ -n "${if_ip}" ]] && printf "%-10s: %-13s\n" "${iface}" "${if_ip}"
             fi
           done

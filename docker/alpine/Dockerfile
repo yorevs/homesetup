@@ -17,6 +17,13 @@ RUN apk add --no-cache file
 RUN apk add --no-cache gnupg
 RUN apk add --no-cache bash
 RUN apk add --no-cache vim
+RUN apk add --no-cache fd
+RUN apk add --no-cache bat
+RUN apk add --no-cache fzf
+RUN apk add --no-cache ruby-dev
+RUN apk add --no-cache build-base
+RUN gem update --system
+RUN gem install rdoc colorls
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
 WORKDIR "~/"

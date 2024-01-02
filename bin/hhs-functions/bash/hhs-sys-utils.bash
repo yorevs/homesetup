@@ -37,8 +37,8 @@ function __hhs_sysinfo() {
     __hhs_has 'uptime' echo -e "  Up-Time...... : $(uptime | cut -d ',' -f1)"
     __hhs_has 'ps' && echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     __hhs_has 'ps' && echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
-    echo ''
     if __hhs_has __hhs_ip; then
+      echo ''
       echo -e "${GREEN}Network:${HHS_HIGHLIGHT_COLOR}"
       all_ips=$(__hhs_ip | sort)
       printf "  Hostname..... :%s\n" " $(hostname)"
