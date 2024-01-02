@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2068
 
 function _about_() {
+
   echo "This is the default recipe and will be used when no recipe is found the specified package"
+
   return 0
 }
 
 function _which_() {
-  if command -v "${1}" &>/dev/null; then
+
+  if command -v ${@} &>/dev/null; then
     return 0
   fi
+
   return 1
 }
 
 function _depends_() {
+
   return 0
 }
 
@@ -20,8 +26,14 @@ function _install_() {
 
   command -v sudo &> /dev/null && SUDO=sudo
 
-  if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install "$@"; then
-    return $?
+  if [[ ${HHS_MY_OS_PACKMAN} == 'apk' ]]; then
+    if ${SUDO} "${HHS_MY_OS_PACKMAN}" add --no-cache ${@}; then
+      return 0
+    fi
+  else
+    if ${SUDO} "${HHS_MY_OS_PACKMAN}" -y install ${@}; then
+      return 0
+    fi
   fi
 
   return 1
@@ -31,10 +43,15 @@ function _uninstall_() {
 
   command -v sudo &> /dev/null && SUDO=sudo
 
-  packman="${HHS_MY_OS_PACKMAN}"
+  if [[ ${HHS_MY_OS_PACKMAN} == 'apk' ]]; then
+    if ${SUDO} "${HHS_MY_OS_PACKMAN}" del ${@}; then
+      return 0
+    fi
+  else
+    if ${SUDO} "${HHS_MY_OS_PACKMAN}" uninstall ${@}; then
+      return 0
+    fi
+  fi
 
-  ${SUDO} command "${packman}" uninstall "$@" \
-    && ${SUDO} command "${packman}" deps "$@" | xargs "${packman}" remove --ignore-dependencies
-
-  return $?
+  return 1
 }

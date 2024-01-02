@@ -346,30 +346,30 @@ Usage: $APP_NAME [OPTIONS] <args>
     has sudo &>/dev/null && SUDO=sudo
 
     # macOS
-    if has 'brew'; then
+    if [[ "${MY_OS}" == "Darwin" ]]; then
       OS_TYPE='macOS'
       OS_APP_MAN=brew
       DEPENDENCIES+=('sudo' 'xcode-select')
       install="${SUDO} brew install -y"
-    # Debian or Ubuntu
+    # Debian: Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
       OS_APP_MAN='apt-get'
       DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3' 'python3-pip')
       install="${SUDO} apt-get install -y"
-    # Fedora, CentOS, or Red Hat
+    # RedHat: Fedora, CentOS
     elif has 'yum'; then
       OS_TYPE='RedHat'
       OS_APP_MAN='yum'
       DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
       install="${SUDO} yum install -y"
-    # Alpine (busybox)
+    # Alpine: Busybox
     elif has 'apk'; then
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
       install="apk add --no-cache"
       DEPENDENCIES+=('file' 'python3' 'pip3')
-    # Arch Linux
+    # ArchLinux
     elif has 'pacman'; then
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'

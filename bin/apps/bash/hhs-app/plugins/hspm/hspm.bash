@@ -109,7 +109,7 @@ function execute() {
 
   if [[ -z "${HHS_MY_OS_PACKMAN}" ]]; then
     for pkg_man in "${KNOWN_PCG_MANAGERS[@]}"; do
-      command -v "${pkg_man}" &>/dev/null && HHS_MY_OS_PACKMAN="${HHS_MY_OS_PACKMAN:-"${pkg_man}"}"
+      command -v "${pkg_man}" &> /dev/null && HHS_MY_OS_PACKMAN="${HHS_MY_OS_PACKMAN:-"${pkg_man}"}"
     done
     [[ -z "${OS_APP_MAN}" ]] && quit 1 "hspm.bash: no suitable tool found to install software on this machine. Tried: ${KNOWN_PCG_MANAGERS[*]}"
   fi
@@ -161,7 +161,7 @@ function execute() {
 # @purpose: Add a package to the breadcrumb file
 function add_breadcrumb() {
   local package="${1}" os="${HHS_MY_OS_RELEASE}"
-  grep -qxF "${os}:${package}" "${BREADCRUMB_FILE}" || echo "${os}:${package}" >>"${BREADCRUMB_FILE}"
+  grep -qxF "${os}:${package}" "${BREADCRUMB_FILE}" || echo "${os}:${package}" >> "${BREADCRUMB_FILE}"
 }
 
 # @purpose: Remove a package to the breadcrumb file
@@ -222,12 +222,6 @@ function install_recipe() {
   source "${RECIPES_DIR}/${HHS_MY_OS}/default.recipe"
   package=$(basename "${recipe%\.*}")
 
-  # Check if the package is already installed
-  if _which_ "${package}"; then
-    echo -e "${YELLOW}Package \"${package}\" is already installed!\n"
-    quit 0
-  fi
-
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Using recipe for \"${package}\""
@@ -237,9 +231,10 @@ function install_recipe() {
 
   echo -e "${BLUE}Installing \"${package}\", please wait ..."
 
-  if _depends_ && _install_ "${package}" >>"${LOGFILE}" 2>&1 && _which_ "${package}"; then
+  if _depends_ && _install_ "${package}" 1>> "${LOGFILE}"; then
     echo -e "${GREEN}Installation successful => \"${package}\" ${NC}"
     add_breadcrumb "${package}"
+    _which_ "${package}" || echo -e "${YELLOW}WARN: Package \"${package}\" did not provide a known binary!${NC}"
   else
     quit 1 "${PLUGIN_NAME}: Failed to install \"${package}\"! Please type __hhs logs hspm to find out details\n"
   fi
@@ -257,12 +252,6 @@ function uninstall_recipe() {
   source "${RECIPES_DIR}/${HHS_MY_OS}/default.recipe"
   package=$(basename "${recipe%\.*}")
 
-  # Check if the package is already installed
-  if ! _which_ "${package}"; then
-    echo -e "${YELLOW}Package \"${package}\" is not installed!\n"
-    quit 0
-  fi
-
   if [[ -f "${recipe}" ]]; then
     source "${recipe}"
     echo -e "${BLUE}Using recipe for \"${package}\""
@@ -272,9 +261,10 @@ function uninstall_recipe() {
 
   echo -e "${BLUE}Uninstalling \"${package}\", please wait ..."
 
-  if _uninstall_ "${package}" >>"${LOGFILE}" 2>&1 && ! _which_ "${package}"; then
+  if _uninstall_ "${package}" 1>> "${LOGFILE}"; then
     echo -e "${GREEN}Uninstallation successful => \"${package}\" ${NC}"
     del_breadcrumb "${package}"
+    _which_ "${package}" && echo -e "${YELLOW}WARN: Package \"${package}\" is yet a known binary !${NC}"
   else
     quit 1 "${PLUGIN_NAME}: Failed to uninstall \"${package}\" ! Please type __hhs logs hspm to find out details\n"
   fi
@@ -308,10 +298,10 @@ function recover_packages() {
   if [[ -n "${RECOVER_INSTALL}" ]]; then
     for pkg in "${all_packages[@]}"; do
       package="${pkg#*:}"
-      if ! command -v "${package}" &>/dev/null; then
+      if ! command -v "${package}" &> /dev/null; then
         printf '%3s - %s' "${index}" "${BLUE}Installing package ${package} ${NC}"
         printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
-        if install_recipe "${package}" &>/dev/null; then
+        if install_recipe "${package}" &> /dev/null; then
           echo -e " [   ${GREEN}OK${NC}   ]"
         else
           echo -e " [ ${RED}FAILED${NC} ]"
@@ -324,7 +314,7 @@ function recover_packages() {
       package="${pkg#*:}"
       printf '%3s - %s' "${index}" "${BLUE}${package} "
       printf '%*.*s' 0 $((pad_len - ${#package})) "${pad}"
-      command -v "${package}" &>/dev/null && echo -e "${GREEN} INSTALLED${NC}" || echo -e "${RED} NOT INSTALLED${NC}"
+      command -v "${package}" &> /dev/null && echo -e "${GREEN} INSTALLED${NC}" || echo -e "${RED} NOT INSTALLED${NC}"
       index=$((index + 1))
     done
   fi
