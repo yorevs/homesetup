@@ -29,15 +29,16 @@ permissions:
 jobs:
 
   detect-version:
-    outputs:
-      app_version:·${{·steps.detect-version.outputs.app_version·}}
+    runs-on: 'ubuntu-latest'
     steps:
       - name: Detect Version
         id: detect-version
         run: |
-          appVersion=$(grep·-e·'^[0-9]+\.[0-9]+\.[0-9]+'·.VERSION)
+          appVersion=$(grep -e '^[0-9]+\.[0-9]+\.[0-9]+'.VERSION)
           echo "Application version: ${appVersion}"
           echo·"app_version=$(echo·$appVersion)"·>>·$GITHUB_OUTPUT
+    outputs:
+      app_version: ${{ steps.detect-version.outputs.app_version }}
 
   build-docker-images:
     needs: detect-version
