@@ -35,7 +35,7 @@ jobs:
       - name: Detect Version
         id: detect-version
         run: |
-          appVersion=$(grep -e '^[0-9]+\.[0-9]+\.[0-9]+' "${{ github.workspace }}/.VERSION")
+          appVersion=$(grep -E '^[0-9]+\.[0-9]+\.[0-9]+' "${{ github.workspace }}/.VERSION")
           echo "Application version: ${appVersion}"
           echo·"app_version=$(echo·$appVersion)"·>>·$GITHUB_OUTPUT
     outputs:
