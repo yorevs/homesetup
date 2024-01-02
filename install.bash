@@ -440,14 +440,16 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Make sure HomeBrew is installed. From HomeSetup 1.7 we will use HomeBrew as the default HHS package manager.
   ensure_brew() {
 
-    if [[ ${OS_TYPE} =~ Debian|RedHat|macOS ]]; then
+    if [[ ${OS_TYPE} == macOS ]]; then
       echo ''
       if ! has 'brew'; then
-        echo -en "${YELLOW}HomeBrew is not installed. Attempting to install it... ${NC}"
+        echo -en "${YELLOW}HomeBrew is not installed!${NC}"
         install_brew || quit 2 "### Failed to install HomeBrew !"
       else
         echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
       fi
+    elif [[ ${OS_TYPE} =~ Debian|RedHat ]]; then
+     echo -e "${YELLOW}Skipping brew installation (not enforced): \"${OS_TYPE}\""
     else
       echo -e "${YELLOW}Skipping brew installation (not supported OS): \"${OS_TYPE}\""
     fi
@@ -456,24 +458,23 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install HomeBrew
   install_brew() {
 
-    if ! which brew &>/dev/null; then
-      if curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
-        echo -e "${GREEN}OK${NC}"
-        if [[ "${MY_OS}" == "Linux" ]]; then
-          [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
-          [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          eval "$("$(brew --prefix)"/bin/brew shellenv)"
-        fi
-        BREW="$(brew --prefix)/bin/brew"
-        if command -v brew &>/dev/null; then
-          echo -e "\n${GREEN}@@@ Successfully installed HomeBrew -> ${BREW}${NC}"
-        else
-          quit 2 "### Could not find HomeBrew installation !"
-        fi
-      else
-        echo -e "${RED}FAILED${NC}"
-        quit 2 "### Failed to install HomeBrew !"
+    echo -e "Attempting to install HomeBrew [${OS_TYPE}]... "
+    if curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
+      echo -e "${GREEN}OK${NC}"
+      if [[ "${MY_OS}" == "Linux" ]]; then
+        [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
+        [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        eval "$("$(brew --prefix)"/bin/brew shellenv)"
       fi
+      BREW="$(brew --prefix)/bin/brew"
+      if command -v brew &>/dev/null; then
+        echo -e "\n${GREEN}@@@ Successfully installed HomeBrew -> ${BREW}${NC}"
+      else
+        quit 2 "### Could not find HomeBrew installation !"
+      fi
+    else
+      echo -e "${RED}FAILED${NC}"
+      quit 2 "### Failed to install HomeBrew !"
     fi
   }
 

@@ -128,5 +128,5 @@ jobs:
     needs: publish
     uses: yorevs/homesetup/.github/workflows/docker-deploy.yml@master
     with:
-      image_tag: 'latest'
+      image_tag: ${{ needs.publish.outputs.version }}
     secrets: inherit
