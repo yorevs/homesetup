@@ -31,6 +31,7 @@ jobs:
   detect-version:
     runs-on: 'ubuntu-latest'
     steps:
+      - uses: actions/checkout@v3
       - name: Detect Version
         id: detect-version
         run: |
