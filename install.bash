@@ -724,7 +724,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define python tools
     PYTHON="${1}"
     PIP="${2}"
-    python_minor="$(${PYTHON} -V | cut -d '.' -f2)"
     echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"

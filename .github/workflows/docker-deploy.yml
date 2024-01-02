@@ -19,7 +19,7 @@ on:
     inputs:
       image_tag:
         description: 'Docker Image Tag'
-        default: 'latest'
+        default: ''
         required: true
         type: string
 
@@ -28,7 +28,19 @@ permissions:
 
 jobs:
 
+  detect-version:
+    outputs:
+      app_version:·${{·steps.detect-version.outputs.app_version·}}
+    steps:
+      - name: Detect Version
+        id: detect-version
+        run: |
+          appVersion=$(grep·-e·'^[0-9]+\.[0-9]+\.[0-9]+'·.VERSION)
+          echo "Application version: ${appVersion}"
+          echo·"app_version=$(echo·$appVersion)"·>>·$GITHUB_OUTPUT
+
   build-docker-images:
+    needs: detect-version
     strategy:
       matrix:
         os:
@@ -43,6 +55,7 @@ jobs:
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      IMAGE_TAG: ${{ inputs.image_tag || needs.detect-version.outputs.app_version }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -61,4 +74,4 @@ jobs:
           context: "docker/${{ matrix.docker-container }}"
           file: "docker/${{ matrix.docker-container }}/Dockerfile"
           push: true
-          tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:${{ inputs.image_tag }}"
+          tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:${{ env.IMAGE_TAG }}"
