@@ -162,7 +162,7 @@ fi
 # ----------------------------------------------------------------------------
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'speedtest-cli'
   'shfmt' 'shellcheck' 'pylint'
   'docker' 'sqlite3'
   'perl' 'groovy' 'java' 'ruby' 'python3'
