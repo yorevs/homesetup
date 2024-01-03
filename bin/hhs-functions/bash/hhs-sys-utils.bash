@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2009
+# shellcheck disable=SC2009,SC1090
 
 #  Script: hhs-sys-utils.bash
 # Created: Oct 5, 2019
@@ -231,3 +231,59 @@ function __hhs_partitions() {
 
   return 0
 }
+
+# @function: Provide information about the OS.
+function __hhs_os_info() {
+
+  local os_info linux_os_release='/etc/os-release'
+
+  echo ''
+  IFS=$'\n'
+  if [[ "${HHS_MY_OS}" == "Darwin" ]]; then
+    code_name=$(__hhs_macos_get_codename)
+    read -r -d '' -a os_info < <(sw_vers | awk '{print $2}')
+    echo "${HHS_HIGHLIGHT_COLOR}    Type: ${WHITE}Darwin"
+    echo "${HHS_HIGHLIGHT_COLOR}    Name: ${WHITE}${os_info[0]}"
+    echo "${HHS_HIGHLIGHT_COLOR} Version: ${WHITE}${os_info[1]}"
+    echo "${HHS_HIGHLIGHT_COLOR}Codename: ${WHITE}${code_name:-Not identified}"
+    echo "${HHS_HIGHLIGHT_COLOR}Home URL: ${WHITE}https://www.apple.com/support"
+    echo "${NC}"
+    return 0
+  elif [[ "${HHS_MY_OS}" == "Linux" ]]; then
+    if [[ -f "${linux_os_release}" ]] && source "${linux_os_release}"; then
+      echo "${HHS_HIGHLIGHT_COLOR}    Type: ${WHITE}Linux"
+      echo "${HHS_HIGHLIGHT_COLOR}    Name: ${WHITE}${ID}"
+      echo "${HHS_HIGHLIGHT_COLOR} Version: ${WHITE}${VERSION}"
+      echo "${HHS_HIGHLIGHT_COLOR}Codename: ${WHITE}${VERSION_CODENAME}"
+      echo "${HHS_HIGHLIGHT_COLOR}Home URL: ${WHITE}${HOME_URL}"
+      echo "${NC}"
+      return 0
+    else
+      echo "${YELLOW}Could not find a valid os-release file in '/etc' folder !${NC}"
+    fi
+  else
+    echo "${YELLOW}Unknown OS!${NC}"
+  fi
+  IFS="${OLDIFS}"
+
+  return 1
+}
+
+if [[ "${HHS_MY_OS}" == "Darwin" ]]; then
+
+  # @function: Get the macOS Codename.
+  function __hhs_macos_get_codename() {
+
+    local line re_codename='.*SOFTWARE LICENSE AGREEMENT FOR ([a-zA-Z ]+).*'
+    local os_info_file="/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf"
+
+    line=$(grep -E "${re_codename}" "${os_info_file}")
+    if [[ ${line} =~ ${re_codename} ]]; then
+      echo "${BASH_REMATCH[1]//macOS /}"
+      return 0
+    fi
+
+    return 1
+  }
+
+fi
