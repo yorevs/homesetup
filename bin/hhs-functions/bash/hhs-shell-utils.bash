@@ -44,8 +44,8 @@ function __hhs_hist_stats() {
 
   echo -e "\n${ORANGE}Top '${top_n}' used commands in bash history ...\n"
   IFS=$'\n'
-  for cmd in $(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}" |
-    perl -lane 'printf "%s %03d %s \n", $F[1], $F[0], "▄" x ($F[0] / 5)'); do
+  for cmd in $(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}" \
+      | perl -lane 'printf "%s %03d %s \n", $F[1], $F[0], "▄" x ($F[0] / 5)'); do
     cmd_name=$(echo "${cmd}" | cut -d ' ' -f1)
     cmd_qty=$(echo "${cmd}" | cut -d ' ' -f2)
     cmd_chart=$(echo "${cmd}" | cut -d ' ' -f3-)
@@ -53,7 +53,7 @@ function __hhs_hist_stats() {
     echo -n "${cmd_name} "
     printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
     printf "${GREEN}%s ${CYAN}|%s \n" " ${cmd_qty}" "${cmd_chart}"
-    i=$((i+1))
+    ((i += 1))
   done
   IFS="${OLDIFS}"
   echo "${NC}"
@@ -140,7 +140,7 @@ function __hhs_defs() {
       IFS=$'\n'
       for next in $(grep -i '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
         name=${next%%=*}
-        name="$(trim <<<"${name}" | awk '{print $2}')"
+        name="$(trim <<< "${name}" | awk '{print $2}')"
         value=${next#*=}
         value=${value//[\'\"]/}
         if [[ ${name} =~ ${filter} ]]; then
@@ -168,7 +168,7 @@ function __hhs_shell_select() {
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "Usage: ${FUNCNAME[0]} "
   else
-    read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
+    read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
     mselect_file=$(mktemp)
     if __hhs_mselect "${mselect_file}" "Please select your default shell:" "${avail_shells[@]}"; then
       sel_shell=$(grep . "${mselect_file}")
