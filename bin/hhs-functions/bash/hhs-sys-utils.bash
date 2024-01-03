@@ -245,17 +245,17 @@ function __hhs_os_info() {
     echo "${HHS_HIGHLIGHT_COLOR}    Type: ${WHITE}Darwin"
     echo "${HHS_HIGHLIGHT_COLOR}    Name: ${WHITE}${os_info[0]}"
     echo "${HHS_HIGHLIGHT_COLOR} Version: ${WHITE}${os_info[1]}"
-    echo "${HHS_HIGHLIGHT_COLOR}Codename: ${WHITE}${code_name:-Not identified}"
+    echo "${HHS_HIGHLIGHT_COLOR}Codename: ${WHITE}${code_name:-N/D}"
     echo "${HHS_HIGHLIGHT_COLOR}Home URL: ${WHITE}https://www.apple.com/support"
     echo "${NC}"
     return 0
   elif [[ "${HHS_MY_OS}" == "Linux" ]]; then
     if [[ -f "${linux_os_release}" ]] && source "${linux_os_release}"; then
       echo "${HHS_HIGHLIGHT_COLOR}    Type: ${WHITE}Linux"
-      echo "${HHS_HIGHLIGHT_COLOR}    Name: ${WHITE}${ID}"
-      echo "${HHS_HIGHLIGHT_COLOR} Version: ${WHITE}${VERSION}"
-      echo "${HHS_HIGHLIGHT_COLOR}Codename: ${WHITE}${VERSION_CODENAME}"
-      echo "${HHS_HIGHLIGHT_COLOR}Home URL: ${WHITE}${HOME_URL}"
+      echo "${HHS_HIGHLIGHT_COLOR}    Name: ${WHITE}${ID:-N/D}"
+      echo "${HHS_HIGHLIGHT_COLOR} Version: ${WHITE}${VERSION:-${VERSION_ID:-N/D}}"
+      echo "${HHS_HIGHLIGHT_COLOR}Codename: ${WHITE}${VERSION_CODENAME:-${PRETTY_NAME:-N/D}}"
+      echo "${HHS_HIGHLIGHT_COLOR}Home URL: ${WHITE}${HOME_URL:-N/D}"
       echo "${NC}"
       return 0
     else
