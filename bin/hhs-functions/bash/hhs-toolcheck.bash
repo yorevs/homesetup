@@ -102,9 +102,11 @@ function __hhs_tools() {
   else
     [[ ${#} -eq 0 ]] && tool_list=(${HHS_DEV_TOOLS[@]})
     echo -e "\n${YELLOW}Checking (${#tool_list[@]}) development tools:${NC}\n"
+    IFS=' '
     for app in "${tool_list[@]}"; do
       __hhs_toolcheck "${app}"
     done
+    IFS="${OLDIFS}"
 
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To check the current installed version, type: ${GREEN}#> ver <tool_name>"
