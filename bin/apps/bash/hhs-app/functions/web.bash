@@ -38,3 +38,15 @@ function board() {
 
   quit 1 "Failed to open url \"${raw_content_url}\" !"
 }
+
+# @purpose: Open the HomeSetup GitHub sponsors page.
+function sponsor() {
+
+  local raw_content_url="https://github.com/sponsors/yorevs"
+
+  echo "${ORANGE}Opening HomeSetup sponsors page from: ${raw_content_url} ${NC}"
+  sleep 2
+  __hhs_open "${raw_content_url}" && quit 0
+
+  quit 1 "Failed to open url \"${raw_content_url}\" !"
+}
