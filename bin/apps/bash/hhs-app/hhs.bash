@@ -8,7 +8,7 @@
 #  Mailto: homesetup@gmail.com
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2023, HomeSetup team
+# Copyright (c) 2024, HomeSetup team
 
 APP_NAME="__hhs"
 

@@ -9,7 +9,7 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2023, HomeSetup team
+# Copyright (c) 2024, HomeSetup team
 
 # !NOTICE: Do not change this file. To customize your bash colors edit the file ~/.colors
 # inspiRED by: https://github.com/mathiasbynens/dotfiles

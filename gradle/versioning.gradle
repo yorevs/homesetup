@@ -3,9 +3,10 @@
 
     Created: 4th March, 2021
     License: MIT - Please refer to <https://opensource.org/licenses/MIT>
-    Copyright 2023, HomeSetup team
+    Copyright (c) 2024, HomeSetup team
     This module uses python module bumpver: https://pypi.org/project/bumpver/
-    Note: Following Semantic Versioning 2.0.0 => https://semver.org/
+    
+    Notice: Following Semantic Versioning 2.0.0 => https://semver.org/
     - Increment the MAJOR version when making incompatible API changes
     - Increment the MINOR version when adding functionality in a backwards-compatible manner
     - Increment the PATCH version when making backwards-compatible bug fixes. (Source)
