@@ -23,8 +23,7 @@ UNSETS+=(
 VERSION=1.0.0
 
 # Help message to be displayed by the application.
-USAGE="
-Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
+USAGE="Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
  _   _                      ____       _
 | | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
