@@ -20,11 +20,17 @@ fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
-# Set system locale (defaults)
-if [[ ${HHS_SET_LOCALES} -eq 1 ]]; then
+# Set system locale variables (defaults)
+if [[ ${HHS_SET_LOCALES} -eq 1 ]] && __hhs_has "locale"; then
   export LANGUAGE=${LANGUAGE:-en_US:en}
   export LANG=${LANG:-en_US.UTF-8}
-  export LC_ALL=${LANG}
+  export LC_ALL=${LC_ALL:-${LANG}}
+  export LC_CTYPE=${LC_CTYPE:-${LANG}}
+  export LC_COLLATE=${LC_COLLATE:-${LANG}}
+  export LC_MESSAGES=${LC_MESSAGES:-${LANG}}
+  export LC_MONETARY=${LC_MONETARY:-${LANG}}
+  export LC_NUMERIC=${LC_NUMERIC:-${LANG}}
+  export LC_TIME=${LC_TIME:-${LANG}}
 fi
 
 # ----------------------------------------------------------------------------
@@ -63,7 +69,7 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
   # OS Release - Darwin
   export HHS_MY_OS_RELEASE="$(sw_vers -productName)"
   export HHS_MY_OS_PACKMAN='brew'
-  if command -v xcode-select &>/dev/null; then
+  if command -v xcode-select &> /dev/null; then
     export XCODE_HOME=$(xcode-select -p)
     if [[ -d "${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" ]]; then
       export MACOS_SDK="${XCODE_HOME}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
@@ -73,18 +79,18 @@ if [[ "Darwin" == "$(uname -s)" ]]; then
   fi
 # Linux
 else
-  HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2>/dev/null)"
+  HHS_MY_OS_RELEASE="$(grep '^ID=' '/etc/os-release' 2> /dev/null)"
   HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE#*=}"
   export HHS_MY_OS_RELEASE="${HHS_MY_OS_RELEASE//\"/}"
-  if command -v 'apt-get' &>/dev/null; then
+  if command -v 'apt-get' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='apt-get'
-  elif command -v 'dnf' &>/dev/null; then
+  elif command -v 'dnf' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='dnf'
-  elif command -v 'yum' &>/dev/null; then
+  elif command -v 'yum' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='yum'
-  elif command -v 'apt' &>/dev/null; then
+  elif command -v 'apt' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='apt'
-  elif command -v 'apk' &>/dev/null; then
+  elif command -v 'apk' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='apk'
   else
     export HHS_MY_OS_PACKMAN=''
@@ -114,7 +120,7 @@ unset PROMPT_COMMAND
 # HomeSetup variables
 
 export HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
-export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &>/dev/null && echo '1')
+export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &> /dev/null && echo '1')
 
 # ----------------------------------------------------------------------------
 # Module configs
@@ -166,7 +172,7 @@ DEVELOPER_TOOLS=(
   'shfmt' 'shellcheck' 'pylint'
   'docker' 'sqlite3'
   'perl' 'groovy' 'java' 'ruby' 'python3'
-  'gcc' 'make'  'mvn' 'gradle' 'pip3' 'gem'
+  'gcc' 'make' 'mvn' 'gradle' 'pip3' 'gem'
   'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd' 'jq'
 )
 
