@@ -222,16 +222,18 @@ function __hhs_save_dir() {
       if [[ -n "${dir}" && "${dir}" == "-" ]]; then dir=${dir//-/$OLDPWD}; fi
       if [[ -n "${dir}" && ! -d "${dir}" ]]; then
         __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist !"
-      fi
-      # Remove the old saved directory aliased
-      ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
-      read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
-      all_dirs+=("${dir_alias}=${dir}")
-      printf "%s\n" "${all_dirs[@]}" > "${HHS_SAVED_DIRS_FILE}"
-      sort -u "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
-      if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
-        echo "${GREEN}Directory ${WHITE}\"${dir}\" ${GREEN}saved as ${HHS_HIGHLIGHT_COLOR}${dir_alias} ${NC}"
         ret_val=0
+      else
+        # Remove the old saved directory aliased
+        ised -e "s#(^${dir_alias}=.*)*##g" -e '/^\s*$/d' "${HHS_SAVED_DIRS_FILE}"
+        read -d '' -r -a all_dirs < "${HHS_SAVED_DIRS_FILE}"
+        all_dirs+=("${dir_alias}=${dir}")
+        printf "%s\n" "${all_dirs[@]}" > "${HHS_SAVED_DIRS_FILE}"
+        sort -u "${HHS_SAVED_DIRS_FILE}" -o "${HHS_SAVED_DIRS_FILE}"
+        if grep -q "$dir_alias" "${HHS_SAVED_DIRS_FILE}"; then
+          echo "${GREEN}Directory ${WHITE}\"${dir}\" ${GREEN}saved as ${HHS_HIGHLIGHT_COLOR}${dir_alias} ${NC}"
+          ret_val=0
+        fi
       fi
     else
       __hhs_errcho "${FUNCNAME[0]}: Invalid alias \"${2}\" !"
