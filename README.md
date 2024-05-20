@@ -11,6 +11,10 @@
 [![Donate](https://badgen.net/badge/paypal/donate/yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J5CDEFLF6M3H4)
 [![Build](https://github.com/yorevs/homesetup/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/yorevs/homesetup/actions/workflows/build-and-test.yml)
 
+<img src="https://iili.io/JinJpTu.png" width="100%" height="100%" />
+
+---
+
 Are you passionate about the terminal and CLI? If so, you've come to the right place, especially if you're a command
 line enthusiast. Terminal dotfiles are well-known for improving productivity and streamlining everyday tasks. While
 there are numerous frameworks available to assist with this, many of them come with a steep learning curve and are
