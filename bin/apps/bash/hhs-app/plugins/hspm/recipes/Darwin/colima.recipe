@@ -5,17 +5,17 @@ function _install_docker_() {
   packman="${HHS_MY_OS_PACKMAN}"
 
   if ! which docker &> /dev/null; then
-    echo -e "${BLUE}Installing Colima ...${NC}"
+    echo -e "${BLUE}Installing Docker ...${NC}"
     ${packman} install docker docker-buildx docker-compose docker-credential-helper
     if which docker &> /dev/null; then
-      echo -e "${GREEN}m@@ Successfully installed Colima ${NC}"
+      echo -e "${GREEN}@@@ Successfully installed Docker ${NC}"
       return 0
     else
-      echo -e "${RED}### Failed to install Colima ${NC}"
+      echo -e "${RED}### Failed to install Docker ${NC}"
       return 1
     fi
   else
-    echo -e "${YELLOW}Colima is already installed ...${NC}"
+    echo -e "${YELLOW}Docker is already installed ...${NC}"
   fi
 
   return 0
@@ -29,7 +29,7 @@ function _install_colima_() {
     echo -e "${BLUE}Installing Colima ...${NC}"
     ${packman} install colima
     if which colima &> /dev/null; then
-      echo -e "${GREEN}@@ Successfully installed Colima ${NC}"
+      echo -e "${GREEN}@@@ Successfully installed Colima ${NC}"
     else
       echo -e "${RED}### Failed to install Colima ${NC}"
     fi
@@ -43,12 +43,14 @@ function _install_() {
   local packages packman
 
   # shellcheck disable=SC2154
-  if ! _install_docker__ || ! _install_colima_; then
+  if ! _install_docker_ || ! _install_colima_; then
     __hhs_errcho "hspm.bash: unable to install docker/colima"
     return 1
   fi
+
   # Configure credentials
   sed -i'' -e 's|"credsStore": ".*"|"credsStore": "osxkeychain"|g' ~/.docker/config.json
+
   # Configure plugins
   [[ -d "${HOME}/.docker/cli-plugins" ]] || \mkdir "-p ${HOME}/.docker/cli-plugins"
   \rm -f "${HOME}/.docker/cli-plugins/*"
@@ -56,7 +58,7 @@ function _install_() {
   unset _install_colima_ _install_docker_
 
   # Link plugins
-  pushd ~/.docker/cli-plugins &> /dev/null || return 1
+  pushd "${HOME}/.docker/cli-plugins" &> /dev/null || return 1
   ln -s "$(which docker-compose)" &> /dev/null .
   ln -s "$(which docker-buildx)" &> /dev/null .
   popd &> /dev/null || return 1
