@@ -27,9 +27,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
 
-  # HomeSetup GitHub repository URL
-  HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
-
   # Define USER and HOME variables
   if [[ -n "${SUDO_USER}" ]]; then
     USER="${SUDO_USER}"
@@ -46,6 +43,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
     install_tools
   )
+
+  # HomeSetup GitHub repository URL
+  HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
 
   # HomeSetup installation prefix file
   HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -152,7 +152,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Usage message
   usage() {
-    quit 2 "$USAGE"
+    quit 2 "${USAGE}"
   }
 
   # @function: Check if a command exists
@@ -296,7 +296,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
     [[ -s "${HHS_HOME}/.VERSION" ]] &&
-         echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
+      echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
 
     # Create HomeSetup .hhs directory
     create_directory "${HHS_DIR}"
@@ -459,7 +459,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_brew() {
 
     echo -e "Attempting to install HomeBrew [${OS_TYPE}]... "
-    if curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
+    if ${SUDO} curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
       echo -e "${GREEN}OK${NC}"
       if [[ "${MY_OS}" == "Linux" ]]; then
         [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
@@ -931,6 +931,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
   }
 
+  # shellcheck disable=SC2317
   abort_install() {
     echo "Installation aborted:  ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}" >>"${INSTALL_LOG}"  2>&1
     quit 2 'Installation aborted !'
@@ -938,6 +939,8 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   trap abort_install SIGINT
   trap abort_install SIGABRT
+
+  [[ "${1}" == "-h" || "${1}" == "--help" ]] && usage
 
   check_current_shell
   check_inst_method "$@"
