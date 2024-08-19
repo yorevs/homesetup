@@ -10,11 +10,14 @@
 # See a the full starship reference at:
 # https://starship.rs/config/#prompt
 
-# Timeout for starship to scan files (in milliseconds).
-scan_timeout = 20
+# Inserts a blank line between shell prompts
+add_newline = true
 
-# Disable the blank line at the start of the prompt.
-add_newline = false
+# Timeout for commands executed by starship (in milliseconds).
+command_timeout = 250
+
+# Timeout for starship to scan files (in milliseconds).
+scan_timeout = 500
 
 # Continuation prompt (PS2).
 continuation_prompt = '… '

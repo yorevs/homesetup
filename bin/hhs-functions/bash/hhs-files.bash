@@ -19,7 +19,7 @@ function __hhs_ls_sorted() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     if __hhs_has 'colorls'; then
-      colorls --help
+      \colorls --help
       return 0
     else
       echo "Usage: ${FUNCNAME[0]} [column_name] [-reverse]"
@@ -42,7 +42,7 @@ function __hhs_ls_sorted() {
     return 0
   else
     if __hhs_has 'colorls'; then
-      colorls --long --sort="${1:-size}"
+      \colorls --long --sort="${1:-size}"
       return 0
     else
       col_number="${1:-9}"

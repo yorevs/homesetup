@@ -194,7 +194,7 @@ function reset() {
     "${HHS_SHOPTS_FILE}"
   )
 
-  gem which colorls &>/dev/null && all_files+=("$(dirname "$(gem which colorls)")/yaml/*.yaml")
+  __hhs_has 'colorls' && gem which colorls &>/dev/null && all_files+=("$(dirname "$(gem which colorls)")/yaml/*.yaml")
   __hhs_has 'starship' && all_files+=("${STARSHIP_CONFIG}")
 
   title="${YELLOW}Attention! Mark what you want to delete  (${#all_files[@]})${NC}"

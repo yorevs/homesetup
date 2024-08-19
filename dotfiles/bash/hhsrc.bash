@@ -144,7 +144,7 @@ __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
 # Load dotfiles
 
 # Load all HomeSetup dotfiles.
-for file in ${DOTFILES[*]}; do
+for file in "${DOTFILES[@]}"; do
   f_path="${HOME}/.${file}"
   if [[ -s "${f_path}" ]]; then
     __hhs_log "INFO" "Loading dotfile: ${f_path}"
@@ -161,7 +161,7 @@ done
 #   source -> ~/.hhs/.aliases can be used to extend/override .bash_aliases
 #   source -> ~/.hhs/.aliasdef can be used to customize your alias definitions
 #   source -> ~/.hhs/.functions can be used to extend/override .bash_functions
-for file in ${CUSTOM_DOTFILES[*]}; do
+for file in "${CUSTOM_DOTFILES[@]}"; do
   f_path="${HHS_DIR}/.${file}"
   if [[ -s "${f_path}" ]]; then
     __hhs_log "INFO" "Loading custom dotfile: ${f_path}"
@@ -183,9 +183,9 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
       option="${BASH_REMATCH[1]}"
       state="${BASH_REMATCH[2]}"
       if [[ "${state}" == 'on' ]]; then
-        \shopt -s "${option}" || __hhs_log "WARN" "Unable to SET shell option: ${option}"
+        \shopt -s "${option}" &>/dev/null || __hhs_log "WARN" "Unable to SET shell option: ${option}"
       elif [[ "${state}" == 'off' ]]; then
-        \shopt -u "${option}" || __hhs_log "WARN" "Unable to UNSET shell option: ${option}"
+        \shopt -u "${option}" &>/dev/null || __hhs_log "WARN" "Unable to UNSET shell option: ${option}"
       fi
     fi
   done <"${HHS_SHOPTS_FILE}"

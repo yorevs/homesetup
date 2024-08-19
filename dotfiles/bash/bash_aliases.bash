@@ -47,9 +47,9 @@ alias q="exit 0"
 # @alias: Enable aliases to be sudo’ed
 alias sudo='sudo '
 
-if __hhs_has 'gem' && gem which colorls &>/dev/null; then
+if __hhs_has 'colorls'; then
   # @alias: Use colorls instead or built-in `ls'
-  alias ls='colorls --dark --group-directories-first --git-status'
+  alias ls='\colorls --dark --group-directories-first --git-status'
   # @alias: [colorls] List all files colorized in long format
   alias l='ls --long'
   # @alias: [colorls] List all directories in long format
@@ -92,7 +92,7 @@ alias cd='__hhs_change_dir'
 # @alias: Built-ins replacement for `dirs'
 alias dirs='__hhs_dirs'
 # @alias: Built-ins replacement for `cat'
-__hhs_has "bat" && alias cat='bat --show-all'
+__hhs_has "bat" && alias cat='bat'
 # @alias: Built-ins replacement for `help'
 alias help='__hhs_help'
 # @alias: Starship replacement for `starship' binary

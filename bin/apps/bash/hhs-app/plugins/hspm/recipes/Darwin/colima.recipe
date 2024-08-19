@@ -20,15 +20,13 @@ function _install_docker_() {
 
   return 0
 }
-
 function _install_colima_() {
 
   packman="${HHS_MY_OS_PACKMAN}"
 
   if ! which colima &> /dev/null; then
     echo -e "${BLUE}Installing Colima ...${NC}"
-    ${packman} install colima
-    if which colima &> /dev/null; then
+    if ${packman} install colima && which colima &> /dev/null; then
       echo -e "${GREEN}@@@ Successfully installed Colima ${NC}"
     else
       echo -e "${RED}### Failed to install Colima ${NC}"
@@ -36,6 +34,15 @@ function _install_colima_() {
   else
     echo -e "${YELLOW}Colima is already installed ...${NC}"
   fi
+}
+
+function _which_() {
+
+  if which colima docker &>/dev/null; then
+    return 0
+  fi
+
+  return 1
 }
 
 function _install_() {
@@ -53,7 +60,9 @@ function _install_() {
 
   # Configure plugins
   [[ -d "${HOME}/.docker/cli-plugins" ]] || \mkdir "-p ${HOME}/.docker/cli-plugins"
-  \rm -f "${HOME}/.docker/cli-plugins/*"
+  find "${HOME}/.docker/cli-plugins/" -type f -print -delete
+  [[ -L "$(brew --prefix)/opt/docker-compose/bin/docker-compose" ]] ||
+    ln -sfn "$(brew --prefix)/opt/docker-compose/bin/docker-compose" "${HOME}"/.docker/cli-plugins/docker-compose
 
   unset _install_colima_ _install_docker_
 

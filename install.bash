@@ -493,6 +493,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         compatibility_check
         configure_python
         configure_starship
+        configure_gtrash
         ;;
       repair)
         check_required_tools
@@ -500,6 +501,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         compatibility_check
         configure_python
         configure_starship
+        configure_gtrash
         ;;
       local)
         install_dotfiles
@@ -870,16 +872,29 @@ Usage: $APP_NAME [OPTIONS] <args>
   configure_starship() {
     if ! command -v starship &>/dev/null; then
       echo -en "\n${WHITE}Installing Starship prompt... "
-      if curl -sS https://starship.rs/install.sh 1>"${HHS_DIR}/install_starship.sh"; then
-        chmod +x "${HHS_DIR}"/install_starship.sh
-        if "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
+      if curl -sSL "https://starship.rs/install.sh" 1>"${HHS_DIR}/install_starship.sh" \
+        && chmod a+x "${HHS_DIR}"/install_starship.sh \
+        && "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
           echo -e "${GREEN}OK${NC}"
-        else
+      else
           echo -e "${RED}FAILED${NC}"
           echo -e "${YELLOW}Starship prompt will not be available${NC}"
-        fi
+      fi
+    fi
+  }
+
+  # Install GTrash application
+  configure_gtrash() {
+    if ! command -v gtrash &>/dev/null; then
+      echo -en "\n${WHITE}Installing GTrash... "
+      if \
+        curl -sSL "https://github.com/umlx5h/gtrash/releases/latest/download/gtrash_$(uname -s)_$(uname -m).tar.gz" | tar xz \
+        && chmod a+x ./gtrash \
+        && mv ./gtrash "${HHS_DIR}/bin/gtrash"; then
+          echo -e "${GREEN}OK${NC}"
       else
-        echo -e "${RED}FAILED${NC}"
+          echo -e "${RED}FAILED${NC}"
+          echo -e "${YELLOW}GTrash will not be available${NC}"
       fi
     fi
   }

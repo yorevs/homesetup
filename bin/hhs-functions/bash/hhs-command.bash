@@ -89,7 +89,7 @@ function __hhs_command() {
         echo "${YELLOW}Available commands (${#all_cmds[@]}) stored:"
         echo ' '
         IFS=$'\n'
-        for next in ${all_cmds[*]}; do
+        for next in "${all_cmds[@]}"; do
           printf "${WHITE}(%03d) " $((index))
           cmd_name="$(echo -en "${next}" | awk -F ':' '{ print $1 }')"
           cmd_expr="$(echo -en "${next}" | awk -F ': ' '{ print $2 }')"

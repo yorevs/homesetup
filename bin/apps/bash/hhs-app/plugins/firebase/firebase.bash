@@ -49,8 +49,8 @@ function execute() {
   dotfiles+=()
   IFS=''
   while read -r dotfile; do
-    [[ "${dotfile}" == *.last_update ]] && continue
-    is_text_file=$(file -bL --mime "${dotfile}" | grep 'text')
+    [[ "$(basename "${dotfile}")" == .last_update ]] && continue
+    is_text_file=$(file -bL --mime "${dotfile}" | grep -v 'binary')
     [[ -s "${dotfile}" && -n ${is_text_file} ]] && dotfiles+=("${dotfile}")
   done < <(find "${HHS_DIR}" -maxdepth 1 -type f -name ".*" -exec basename {} \;)
   IFS="${OLDIFS}"
