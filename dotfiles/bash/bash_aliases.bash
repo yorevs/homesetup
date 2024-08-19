@@ -97,6 +97,8 @@ __hhs_has "bat" && alias cat='bat'
 alias help='__hhs_help'
 # @alias: Starship replacement for `starship' binary
 alias starship='__hhs_starship'
+# @alias: Name replacement for `gtrash' binary
+__hhs_has "trash" || alias trash='gtrash'
 # @alias: By default `rm' will prompt for confirmation and will be verbose
 alias rm='\rm -iv'
 # @alias: By default `cp' will prompt for confirmation and will be verbose

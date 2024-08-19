@@ -902,7 +902,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup installation prefix
   check_prefix() {
     [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" >"${HHS_PREFIX_FILE}"
-    [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f  "${HHS_PREFIX_FILE}"
+    [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f "${HHS_PREFIX_FILE}"
   }
 
   # Reload the terminal and apply installed files.
