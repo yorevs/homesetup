@@ -87,6 +87,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     'hspylib-setman'
     'hspylib-vault'
     'hspylib-firebase'
+    'hspylib-askai'
   )
 
   # User's operating system
@@ -325,6 +326,10 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create fonts directory
     create_directory "${FONTS_DIR}"
+
+    # Define and create the HomeSetup AskAI prompts directory
+    PROMPTS_DIR="${HHS_DIR}/askai/prompts"
+    create_directory "${PROMPTS_DIR}"
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then
@@ -683,6 +688,19 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
+    fi
+
+    # Copy HomeSetup AskAI prompts into place.
+    echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${PROMPTS_DIR}... "
+    echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
+    [[ -d "${PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${PROMPTS_DIR}) directory !"
+    if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
+      -print \
+      -exec rsync --archive {} "${PROMPTS_DIR}" \; \
+      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
+      echo -e "${GREEN}OK${NC}"
+    else
+      quit 2 "Unable to copy AskAI prompts into fonts (${PROMPTS_DIR}) directory !"
     fi
 
     # -----------------------------------------------------------------------------------
