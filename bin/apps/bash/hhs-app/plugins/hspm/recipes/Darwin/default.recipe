@@ -8,7 +8,7 @@ function _about_() {
 
 function _which_() {
 
-  if command -v ${@} &>/dev/null; then
+  if command -v ${@} &>/dev/null || "${HHS_MY_OS_PACKMAN}" info ${@} &>/dev/null; then
     return 0
   fi
 

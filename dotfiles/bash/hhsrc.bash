@@ -57,6 +57,8 @@ export HHS_BACKUP_DIR="${HHS_DIR}/backup"
 export HHS_CACHE_DIR="${HHS_DIR}/cache"
 export HHS_LOG_DIR="${HHS_DIR}/log"
 export HHS_LOG_FILE="${HHS_LOG_DIR}/hhsrc.log"
+export HHS_MOTD_DIR="${HHS_DIR}/motd"
+export HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
 export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 
 # if the log directory is not found, we have to create it.
@@ -64,6 +66,12 @@ export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 
 # if the cache directory is not found, we have to create it.
 [[ -d "${HHS_CACHE_DIR}" ]] || mkdir -p "${HHS_CACHE_DIR}"
+
+# if the motd directory is not found, we have to create it.
+[[ -d "${HHS_MOTD_DIR}" ]] || mkdir -p "${HHS_MOTD_DIR}"
+
+# if the prompts directory is not found, we have to create it.
+[[ -d "${HHS_PROMPTS_DIR}" ]] || mkdir -p "${HHS_PROMPTS_DIR}"
 
 # Set path so it includes user's private bin if it exists.
 [[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
@@ -262,8 +270,8 @@ if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
 fi
 
 # Print HomeSetup MOTDs.
-if [[ -d "${HHS_DIR}"/motd ]]; then
-  all=$(find "${HHS_DIR}"/motd -type f | sort | uniq)
+if [[ -d "${HHS_MOTD_DIR}" ]]; then
+  all=$(find "${HHS_MOTD_DIR}" -type f | sort | uniq)
 
   for motd in ${all}; do
     echo -e "$(eval "echo -e \"$(<"${motd}")\"")"

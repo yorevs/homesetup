@@ -86,12 +86,12 @@ else
     export HHS_MY_OS_PACKMAN='apt-get'
   elif command -v 'dnf' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='dnf'
-  elif command -v 'yum' &> /dev/null; then
-    export HHS_MY_OS_PACKMAN='yum'
   elif command -v 'apt' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='apt'
   elif command -v 'apk' &> /dev/null; then
     export HHS_MY_OS_PACKMAN='apk'
+  elif command -v 'pacman' &> /dev/null; then
+    export HHS_MY_OS_PACKMAN='pacman'
   else
     export HHS_MY_OS_PACKMAN=''
     __hhs_log "WARN" "Unable to find a proper package manager"
@@ -168,12 +168,13 @@ fi
 # ----------------------------------------------------------------------------
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'speedtest-cli'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64'
   'shfmt' 'shellcheck' 'pylint'
-  'docker' 'sqlite3'
+  'docker' 'colima' 'sqlite3'
   'perl' 'groovy' 'java' 'ruby' 'python3'
   'gcc' 'make' 'mvn' 'gradle' 'pip3' 'gem'
-  'direnv' 'starship' 'pbcopy' 'colorls' 'fzf' 'bat' 'fd' 'jq'
+  'direnv' 'pbcopy' 'fd' 'jq'
+  'colorls' 'fzf' 'bat' 'starship' 'gtrash'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

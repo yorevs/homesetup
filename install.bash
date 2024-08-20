@@ -110,9 +110,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Missing HomeSetup dependencies
   MISSING_DEPS=()
 
-  # Missing HomeSetup applications
-  MISSING_APPS=()
-
   if [[ "${MY_OS}" == "Darwin" ]]; then
     MY_OS_NAME=$(sw_vers -productName)
     GROUP=${GROUP:-staff}
@@ -317,6 +314,10 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define and create the HomeSetup MOTD directory
     HHS_MOTD_DIR="${HHS_DIR}/motd"
 
+    # Define and create the HomeSetup AskAI prompts directory
+    HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
+    create_directory "${HHS_PROMPTS_DIR}"
+
     # Define the fonts directory
     if [[ "Darwin" == "${MY_OS}" ]]; then
       FONTS_DIR="${HOME}/Library/Fonts"
@@ -326,10 +327,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Create fonts directory
     create_directory "${FONTS_DIR}"
-
-    # Define and create the HomeSetup AskAI prompts directory
-    PROMPTS_DIR="${HHS_DIR}/askai/prompts"
-    create_directory "${PROMPTS_DIR}"
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then
@@ -346,7 +343,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup required tools
   check_required_tools() {
 
-    local pad pad_len install
+    local pad pad_len install check_pkg
 
     has sudo &>/dev/null && SUDO=sudo
 
@@ -356,15 +353,17 @@ Usage: $APP_NAME [OPTIONS] <args>
       OS_APP_MAN=brew
       DEPENDENCIES+=('sudo' 'xcode-select' 'portaudio' 'libmagic')
       install="${SUDO} brew install -y"
+      check_pkg="brew info "
     # Debian: Ubuntu
-    elif has 'apt-get'; then
+    elif has 'apt'; then
       OS_TYPE='Debian'
-      OS_APP_MAN='apt-get'
+      OS_APP_MAN='apt'
       DEPENDENCIES+=(
-        'sudo' 'file' 'build-essential' 'python3' 'python3-pip' 'python3-pyaudio'
+        'sudo' 'file' 'build-essential' 'python3' 'python3-pip' 'python3-pyaudio' 'portaudio19-dev'
         'libasound-dev' 'libmagic-dev'
       )
-      install="${SUDO} apt-get install -y"
+      install="${SUDO} apt install -y"
+      check_pkg="apt list --installed | grep"
     # RedHat: Fedora, CentOS
     elif has 'dnf'; then
       OS_TYPE='RedHat'
@@ -374,32 +373,35 @@ Usage: $APP_NAME [OPTIONS] <args>
         'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev'
       )
       install="${SUDO} yum install -y"
+      check_pkg="dnf list installed | grep"
     # Alpine: Busybox
     elif has 'apk'; then
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
-      install="apk add --no-cache"
       DEPENDENCIES+=('file' 'python3' 'pip3')
+      install="apk add --no-cache"
+      check_pkg="apk list | grep"
     # ArchLinux
     elif has 'pacman'; then
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
-      install="${SUDO} pacman -Sy"
       DEPENDENCIES+=('sudo' 'file' 'python3' 'python3-pip')
+      install="${SUDO} pacman -Sy"
+      check_pkg="pacman -Q | grep"
     else
       quit 1 "Unable to find package manager for $(uname -s)"
     fi
 
     echo -e "\nUsing ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager!\n"
-    echo -e "${WHITE}Checking required tools [${OS_TYPE}] ...${NC}\n"
+    echo -e "(${OS_TYPE}) ${WHITE}Checking required tools using ${YELLOW}'${check_pkg}'${WHITE} ...${NC}\n"
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
     for tool_name in "${DEPENDENCIES[@]}"; do
-      echo -en "${ORANGE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
+      echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-      if has "${tool_name}"; then
+      if has "${tool_name}" || ${check_pkg} "${tool_name}" >/dev/null 2>&1; then
         echo -e " ${GREEN}√ INSTALLED${NC}"
       else
         echo -e " ${RED}X NOT INSTALLED${NC}"
@@ -407,19 +409,8 @@ Usage: $APP_NAME [OPTIONS] <args>
       fi
     done
 
-    for tool_name in "${REQUIRED_APPS[@]}"; do
-      echo -en "${ORANGE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
-      printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-      if has "${tool_name}"; then
-        echo -e " ${GREEN}INSTALLED${NC}"
-      else
-        echo -e " ${RED}NOT INSTALLED${NC}"
-        MISSING_APPS+=("${tool_name}")
-      fi
-    done
-
     # Install packages using the default package manager
-    install_dependencies "${install}" "${MISSING_DEPS[@]}"
+    install_dependencies "${install}" "${check_pkg}" "${MISSING_DEPS[@]}"
     ensure_brew
   }
 
@@ -427,8 +418,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install missing required tools.
   install_dependencies() {
 
-    local install="${1}" tools pkgs
+    local install="${1}" check_pkg="${2}" tools pkgs
 
+    shift
     shift
     tools=(${@})
     pkgs="${tools[*]}"
@@ -437,18 +429,23 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ${#tools[@]} -gt 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
-      echo -en "  |-${pkgs}... "
-      if ${install} "${tools[@]}" >>"${INSTALL_LOG}" 2>&1; then
-        echo -e "${GREEN}OK${NC}"
-      else
-        echo -e "${RED}FAILED${NC}"
-        quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
-      fi
+      echo -e "(${OS_TYPE}) ${WHITE}Installing required packages using: ${YELLOW}\"${install}\"${NC}"
+      echo -e "  |-${pkgs}"
+      for tool_name in "${tools[@]}"; do
+        echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Installing: ${YELLOW}${tool_name}${NC}..."
+        if ${install} "${tool_name}" >>"${INSTALL_LOG}" 2>&1; then
+          printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
+          echo -e " ${GREEN}√ OK${NC}"
+        else
+          echo -e " ${RED}X FAILED${NC}"
+          MISSING_DEPS+=("${tool_name}")
+          quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
+        fi
+      done
     fi
   }
 
-  # Make sure HomeBrew is installed. From HomeSetup 1.7 we will use HomeBrew as the default HHS package manager.
+  # Make sure HomeBrew is installed. In the future will use HomeBrew as the default HHS package manager.
   ensure_brew() {
 
     if [[ ${OS_TYPE} == macOS ]]; then
@@ -475,7 +472,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       if [[ "${MY_OS}" == "Linux" ]]; then
         [[ -d ~/.linuxbrew ]] && eval "$(~/.linuxbrew/bin/brew shellenv)"
         [[ -d /home/linuxbrew/.linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        eval "$("$(brew --prefix)"/bin/brew shellenv)"
+        ${SUDO} eval "$("$(brew --prefix)"/bin/brew shellenv)"
       fi
       BREW="$(brew --prefix)/bin/brew"
       if command -v brew &>/dev/null; then
@@ -531,7 +528,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   clone_repository() {
 
     has git || quit 2 "You need git installed in order to install HomeSetup remotely !"
-    [[ -d "${HHS_HOME}" ]] && echo -e "\n${ORANGE}Installation directory was already created: \"${HHS_HOME}\" !"
+    [[ -d "${HHS_HOME}" ]] && echo -e "\n${YELLOW}Installation directory was already created: \"${HHS_HOME}\" !"
 
     echo -e "${NC}"
 
@@ -697,16 +694,16 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Copy HomeSetup AskAI prompts into place.
-    echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${PROMPTS_DIR}... "
+    echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
     echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
-    [[ -d "${PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${PROMPTS_DIR}) directory !"
+    [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
     if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
       -print \
-      -exec rsync --archive {} "${PROMPTS_DIR}" \; \
+      -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
       echo -e "${GREEN}OK${NC}"
     else
-      quit 2 "Unable to copy AskAI prompts into fonts (${PROMPTS_DIR}) directory !"
+      quit 2 "Unable to copy AskAI prompts into fonts (${HHS_PROMPTS_DIR}) directory !"
     fi
 
     # -----------------------------------------------------------------------------------
@@ -738,7 +735,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${PIP}" ]] && quit 2 "Pip3 is required to install HomeSetup !"
     python_version="$(${PYTHON} -V)"
     pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
-    ${PIP} freeze >>"${INSTALL_LOG}"  2>&1 || quit 2 "Pip3 is required to install HomeSetup !"
+    ${PIP} freeze >>"${INSTALL_LOG}"  2>&1 || quit 2 "PIP3 is required to install HomeSetup !"
     echo -e "${GREEN}OK${NC}"
     echo ''
     echo -e "${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
@@ -803,33 +800,33 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Removing the old ${HOME}/bin folder.
     if [[ -L "${HOME}/bin" ]]; then
       \rm -f "${HOME:?}/bin"
-      echo -e "\n${ORANGE}Your old ${HOME}/bin link had to be removed. ${NC}"
+      echo -e "\n${YELLOW}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
     # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0 .
     if [[ -L "${HOME}/.bash_aliasdef" ]]; then
       \rm -f "${HOME}/.bash_aliasdef"
-      echo -e "\n${ORANGE}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
+      echo -e "\n${YELLOW}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
     fi
 
     # .inputrc Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.inputrc" ]]; then
       \mv -f "${HOME}/.inputrc" "${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak"
       copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-      echo -e "\n${ORANGE}Your old ${HOME}/.inputrc had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old ${HOME}/.inputrc had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.aliasdef" || -f "${HHS_HOME}/dotfiles/aliasdef" ]]; then
       [[ -f "${HOME}/.aliasdef" ]] && copy_file "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
       [[ -f "${HHS_HOME}/dotfiles/aliasdef" ]] && copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
-      echo -e "\n${ORANGE}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving .path file to .hhs .
     if [[ -f "${HOME}/.path" ]]; then
       \mv -f "${HOME}/.path" "${HHS_DIR}/.path"
-      echo -e "\n${ORANGE}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
+      echo -e "\n${YELLOW}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
 
     # .bash_completions was renamed to .bash_completion. #e6ce231 .
@@ -853,25 +850,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     # .tailor Needs to be updated, so, we need to replace it.
     if [[ -f "${HHS_DIR}/.tailor" ]]; then
       \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
-      echo -e "\n${ORANGE}Your old .tailor had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old .tailor had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Old $HHS_DIR/starship.toml changed to $HHS_DIR/.starship.toml
     if [[ -f "${HHS_DIR}/starship.toml" ]]; then
       \mv -f "${HHS_DIR}/starship.toml" "${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak"
-      echo -e "\n${ORANGE}Your old starship.toml had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old starship.toml had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Old hhs-init file changed to homesetup.toml
     if [[ -f "${HHS_DIR}/.hhs-init" ]]; then
       \rm -f "${HHS_DIR}/.hhs-init"
-      echo -e "\n${ORANGE}Your old .hhs-init renamed to .homesetup.toml and the old file was deleted.${NC}"
+      echo -e "\n${YELLOW}Your old .hhs-init renamed to .homesetup.toml and the old file was deleted.${NC}"
     fi
 
     # Init submodules case it's not there yet
     if [[ ! -s "${HHS_HOME}/tests/bats/bats-core/bin/bats" ]]; then
       pushd "${HHS_HOME}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
-      echo -en "\n${ORANGE}Pulling bats submodules... ${NC}"
+      echo -en "\n${YELLOW}Pulling bats submodules... ${NC}"
       if git submodule update --init &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
       else
@@ -885,7 +882,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # common the standard.
     if [[ -d "${HOME}/.hhs" ]]; then
       if rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
-        echo -e "\n${ORANGE}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
+        echo -e "\n${YELLOW}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
           "${RED}Unable to delete the old .hhs directory. It was moved to ~/.config. Feel free to wipe it out!${NC}"
       fi
@@ -969,8 +966,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
       rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
   }
-
-  set -e
 
   # shellcheck disable=SC2317
   abort_install() {
