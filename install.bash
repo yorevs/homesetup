@@ -104,7 +104,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'ffmpeg'
   )
 
   # Missing HomeSetup dependencies
@@ -354,19 +354,25 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ "${MY_OS}" == "Darwin" ]]; then
       OS_TYPE='macOS'
       OS_APP_MAN=brew
-      DEPENDENCIES+=('sudo' 'xcode-select')
+      DEPENDENCIES+=('sudo' 'xcode-select' 'portaudio' 'libmagic')
       install="${SUDO} brew install -y"
     # Debian: Ubuntu
     elif has 'apt-get'; then
       OS_TYPE='Debian'
       OS_APP_MAN='apt-get'
-      DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3' 'python3-pip')
+      DEPENDENCIES+=(
+        'sudo' 'file' 'build-essential' 'python3' 'python3-pip' 'python3-pyaudio'
+        'libasound-dev' 'libmagic-dev'
+      )
       install="${SUDO} apt-get install -y"
     # RedHat: Fedora, CentOS
-    elif has 'yum'; then
+    elif has 'dnf'; then
       OS_TYPE='RedHat'
-      OS_APP_MAN='yum'
-      DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
+      OS_APP_MAN='dnf'
+      DEPENDENCIES+=(
+        'sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip'
+        'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev'
+      )
       install="${SUDO} yum install -y"
     # Alpine: Busybox
     elif has 'apk'; then
@@ -432,9 +438,9 @@ Usage: $APP_NAME [OPTIONS] <args>
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
       echo -e "${WHITE}(${OS_TYPE}) Installing required packages using: \"${install}\""
-      echo -e "  |-${pkgs}"
+      echo -en "  |-${pkgs}... "
       if ${install} "${tools[@]}" >>"${INSTALL_LOG}" 2>&1; then
-         echo -e "\n${GREEN}@@@ Successfully installed packages !${NC}"
+        echo -e "${GREEN}OK${NC}"
       else
         echo -e "${RED}FAILED${NC}"
         quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
@@ -963,6 +969,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
       rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
   }
+
+  set -e
 
   # shellcheck disable=SC2317
   abort_install() {
