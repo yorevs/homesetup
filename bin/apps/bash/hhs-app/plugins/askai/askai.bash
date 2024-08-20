@@ -44,7 +44,7 @@ function execute() {
 
   # shellcheck disable=SC2206
   args=(${@})
-  python3 -m askai -p "${PROMPTS_DIR}/homesetup.txt" ${args[@]}
+  python3 -m askai -p "${PROMPTS_DIR}/homesetup.txt" "${args[@]}"
   ret_val=$?
   quit ${ret_val}
 }
