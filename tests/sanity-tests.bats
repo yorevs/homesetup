@@ -10,6 +10,10 @@
 #
 # Copyright (c) 2024, HomeSetup team
 
+load test_helper
+load_bats_libs
+
+# TC - 1
 @test "after-installation-all-homesetup-folders-should-exist" {
   [[ \
     -d "${HHS_HOME}" \
@@ -22,6 +26,7 @@
   ]]
 }
 
+# TC - 2
 @test "after-installation-all-homesetup-dotfiles-should-exist" {
 
   declare -a missing=()
@@ -48,4 +53,23 @@
 
   [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: [${missing[*]}]"
   [[ ${#missing[@]} -eq 0 ]]
+}
+
+# TC - 3
+@test "after-installation-all-homesetup-integrations-should-exist" {
+
+  declare -a integrations=('starship' 'gtrash') missing=()
+
+  for next in "${integrations[@]}"; do
+    command -v "${next}" &>/dev/null || missing+=("${dotfile}")
+  done
+
+  [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: [${missing[*]}]"
+  [[ ${#missing[@]} -eq 0 ]]
+}
+
+# TC - 4
+@test "after-installation-all-homesetup-dotfiles-should-be-active" {
+  run echo "$HHS_ACTIVE_DOTFILES"
+  assert_output --partial "bashrc hhsrc bash_commons bash_env bash_colors bash_prompt bash_aliases bash_icons bash_functions"
 }

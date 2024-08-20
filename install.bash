@@ -126,12 +126,13 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # VT-100 Terminal colors
   ORANGE='\033[38;5;202m'
-                              WHITE='\033[0;97m'
-  BLUE='\033[0;34m'
-                              GREEN='\033[0;32m'
-  YELLOW='\033[0;93m'
-                              RED='\033[0;31m'
-  NC='\033[0;0;0m'
+  WHITE='\033[97m'
+  BLUE='\033[34m'
+  CYAN='\033[36m'
+  GREEN='\033[32m'
+  YELLOW='\033[93m'
+  RED='\033[31m'
+  NC='\033[m'
 
   # Purpose: Quit the program and exhibits an exit message if specified
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
@@ -393,7 +394,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     echo -e "\nUsing ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager!\n"
-    echo -e "(${OS_TYPE}) ${WHITE}Checking required tools using ${YELLOW}'${check_pkg}'${WHITE} ...${NC}\n"
+    echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Checking required tools using ${YELLOW}'${check_pkg}'${WHITE} ...${NC}\n"
 
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
@@ -429,7 +430,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ ${#tools[@]} -gt 0 ]]; then
       [[ -n "${SUDO}" ]] &&
         echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
-      echo -e "(${OS_TYPE}) ${WHITE}Installing required packages using: ${YELLOW}\"${install}\"${NC}"
+      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Installing required packages using: ${YELLOW}\"${install}\"${NC}"
       echo -e "  |-${pkgs}"
       for tool_name in "${tools[@]}"; do
         echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Installing: ${YELLOW}${tool_name}${NC}..."
@@ -466,7 +467,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install HomeBrew
   install_brew() {
 
-    echo -e "Attempting to install HomeBrew [${OS_TYPE}]... "
+    echo -e "${BLUE}[${OS_TYPE}] Attempting to install HomeBrew [${OS_TYPE}]... "
     if ${SUDO} curl -fsSL https://raw.githubusercontent.com/HomeBrew/install/HEAD/install.sh | bash  >>"${INSTALL_LOG}" 2>&1; then
       echo -e "${GREEN}OK${NC}"
       if [[ "${MY_OS}" == "Linux" ]]; then
@@ -490,7 +491,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_homesetup() {
 
     echo -e "HomeSetup installation started: $(date)\n" >"${INSTALL_LOG}"
-    echo -e "\nUsing ${YELLOW}\"${METHOD}\"${NC} installation method!"
+    echo -e "\nUsing ${BLUE}\"${METHOD}\"${NC} installation method!"
 
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
@@ -567,7 +568,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo ''
     echo -e "${WHITE}### HomeSetup Installation Settings ###"
-    echo -e "${BLUE}"
+    echo -e "${CYAN}"
     echo -e "          Shell: ${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "   Install Type: ${METHOD}"
     echo -e " Install Prefix: ${HHS_PREFIX:-none}"
@@ -747,7 +748,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Define python tools
     PYTHON="${1}"
     PIP="${2}"
-    echo -en "\n${WHITE}[$(basename "${PYTHON}")] Installing HSPyLib packages... "
+    echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... "
     pkgs=$(mktemp)
     echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
     if \
