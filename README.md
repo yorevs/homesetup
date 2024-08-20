@@ -37,6 +37,7 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 - See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
 - For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
+- **HOT** Find the new GPT for HomeSetup: [ChaGPT-HomeSetup]https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-taius
 
 ## Key Features
 
