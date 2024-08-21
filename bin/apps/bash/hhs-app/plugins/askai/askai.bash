@@ -50,12 +50,13 @@ function execute() {
   script_name="${script_name%.*}.bash"
 
   if [[ -f "${script_name}" ]]; then
-    read -r -p "File '${script_name}' already exists. Replace (Yes/[No])? " -n 1 ans
-    echo ''
+    echo -e "${ORANGE}"
+    read -rn 1 -p "File '${script_name}' already exists. Overwrite it (y/[n])? " ans
+    echo -e "${NC}" && [[ -n "${ans}" ]] && echo ''
   fi
 
-  if [[ -z "${ans}" || $(echo "${ans}" | tr '[:upper:]' '[:lower:]') == "y" ]]; then
-    echo -en "${BLUE}Saving file: ${WHITE}${script_name}${NC}... "
+  if [[ -z "${ans}" || "${ans}" != "y" && "${ans}" != 'Y' ]]; then
+    echo -en "${BLUE}Writing file: ${WHITE}${script_name}${NC}... "
     echo "${output}" > "${script_name}"
     [[ -s "${script_name}" ]] && echo "${GREEN}OK${NC}"
     [[ -f "${script_name}" ]] || echo "${RED}FAILED${NC}"

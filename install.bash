@@ -41,7 +41,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_dependencies configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
-    install_tools
+    install_tools query_askai_install create_destination_dirs
   )
 
   # HomeSetup GitHub repository URL
@@ -65,6 +65,9 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
+  # Whether to install the AskAI functionalities or not
+  INSTALL_AI="${GITHUB_USER:-}"
+
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
 
@@ -87,7 +90,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     'hspylib-setman'
     'hspylib-vault'
     'hspylib-firebase'
-    'hspylib-askai'
   )
 
   # User's operating system
@@ -104,7 +106,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'ffmpeg'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim'
   )
 
   # Missing HomeSetup dependencies
@@ -128,7 +130,6 @@ Usage: $APP_NAME [OPTIONS] <args>
   ORANGE='\033[38;5;202m'
   WHITE='\033[97m'
   BLUE='\033[34m'
-  CYAN='\033[36m'
   GREEN='\033[32m'
   YELLOW='\033[93m'
   RED='\033[31m'
@@ -258,37 +259,59 @@ Usage: $APP_NAME [OPTIONS] <args>
       shift
     done
 
-    # Define the installation prefix
+    # Installation prefix
     HHS_PREFIX="${HHS_PREFIX:-$([[ -s "${HHS_PREFIX_FILE}" ]] && \grep . "${HHS_PREFIX_FILE}")}"
 
-    # Define the HomeSetup installation location
+    # Installation location
     HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
 
-    # Define the HomeSetup files (.hhs) location
+    # Configuration files location
     HHS_DIR="${HOME}/.config/hhs"
 
-    # Installation log file
-    INSTALL_LOG="${HOME}/install.log"
+    # Binaries location
+    HHS_BIN_DIR="${HHS_DIR}/bin"
+
+    # MOTD location
+    HHS_MOTD_DIR="${HHS_DIR}/motd"
+
+    # Backup location
+    HHS_BACKUP_DIR="${HHS_DIR}/backup"
+
+    # AskAI prompts location
+    HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
+
+    # Logs directory
+    HHS_LOG_DIR="${HHS_DIR}/log"
+
+    # Shell options file
+    HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
+
+    # Version file
+    HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
+
+    # Fonts destination location
+    if [[ "Darwin" == "${MY_OS}" ]]; then
+      FONTS_DIR="${HOME}/Library/Fonts"
+    elif [[ "Linux" == "${MY_OS}" ]]; then
+      FONTS_DIR="${HOME}/.local/share/fonts"
+    fi
 
     # Dotfiles source location
     DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
 
-    # HHS applications location
+    # Applications source location
     APPS_DIR="${HHS_HOME}/bin/apps"
 
-    # Auto-completions location
+    # Auto-completions source location
     COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
 
-    # Key-Bindings location
+    # Key-Bindings source location
     BINDINGS_DIR="${HHS_HOME}/bin/key-bindings"
 
-    # HomeSetup version file
-    HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
+    # Installation log file
+    INSTALL_LOG="${HOME}/install.log"
 
-    # HomeSetup shell options file
-    HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
-
-    # Check if the user passed the help or version parameters
+    # Check if the user passed help or version options
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
     [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${HHS_VERSION_FILE}")"
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
@@ -296,38 +319,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     [[ -s "${HHS_HOME}/.VERSION" ]] &&
       echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
-
-    # Create HomeSetup .hhs directory
-    create_directory "${HHS_DIR}"
-
-    # Define and create the HomeSetup backup directory
-    HHS_BACKUP_DIR="${HHS_DIR}/backup"
-    create_directory "${HHS_BACKUP_DIR}"
-
-    # Define and create the HomeSetup bin directory
-    BIN_DIR="${HHS_DIR}/bin"
-    create_directory "${BIN_DIR}"
-
-    # Define and create the HomeSetup log directory
-    HHS_LOG_DIR="${HHS_DIR}/log"
-    create_directory "${HHS_LOG_DIR}"
-
-    # Define and create the HomeSetup MOTD directory
-    HHS_MOTD_DIR="${HHS_DIR}/motd"
-
-    # Define and create the HomeSetup AskAI prompts directory
-    HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
-    create_directory "${HHS_PROMPTS_DIR}"
-
-    # Define the fonts directory
-    if [[ "Darwin" == "${MY_OS}" ]]; then
-      FONTS_DIR="${HOME}/Library/Fonts"
-    elif [[ "Linux" == "${MY_OS}" ]]; then
-      FONTS_DIR="${HOME}/.local/share/fonts"
-    fi
-
-    # Create fonts directory
-    create_directory "${FONTS_DIR}"
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then
@@ -341,6 +332,35 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
+  # Prompt the user for AskAI installation
+  query_askai_install() {
+    echo -e "${ORANGE}"
+    read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
+    echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
+    if [[ "${ANS}" == "y" || "${ANS}" == 'Y' ]]; then
+      INSTALL_AI=1
+      PYTHON_MODULES+=('hspylib-askai')
+    fi
+  }
+
+  # Create all HomeSetup destination directories
+  create_destination_dirs() {
+    # Create HomeSetup .hhs directory
+    create_directory "${HHS_DIR}"
+    # Create HomeSetup bin directory
+    create_directory "${HHS_BIN_DIR}"
+    # Create HomeSetup motd directory
+    create_directory "${HHS_MOTD_DIR}"
+    # Create HomeSetup backup directory
+    create_directory "${HHS_BACKUP_DIR}"
+    # Create HomeSetup AskAI prompts directory
+    create_directory "${HHS_PROMPTS_DIR}"
+    # Create HomeSetup logs directory
+    create_directory "${HHS_LOG_DIR}"
+    # Create fonts destination directory
+    create_directory "${FONTS_DIR}"
+  }
+
   # Check HomeSetup required tools
   check_required_tools() {
 
@@ -351,28 +371,28 @@ Usage: $APP_NAME [OPTIONS] <args>
     # macOS
     if [[ "${MY_OS}" == "Darwin" ]]; then
       OS_TYPE='macOS'
-      OS_APP_MAN=brew
-      DEPENDENCIES+=('sudo' 'xcode-select' 'portaudio' 'libmagic')
+      OS_APP_MAN='brew'
+      DEPENDENCIES+=('sudo' 'xcode-select')
+      [[ -n "${INSTALL_AI}" ]] &&
+        DEPENDENCIES+=('ffmpeg' 'portaudio' 'libmagic')
       install="${SUDO} brew install -y"
       check_pkg="brew info "
     # Debian: Ubuntu
     elif has 'apt'; then
       OS_TYPE='Debian'
       OS_APP_MAN='apt'
-      DEPENDENCIES+=(
-        'sudo' 'file' 'build-essential' 'python3' 'python3-pip' 'python3-pyaudio' 'portaudio19-dev'
-        'libasound-dev' 'libmagic-dev'
-      )
+      DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3' 'python3-pip')
+      [[ -n "${INSTALL_AI}" ]] &&
+        DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio19-dev' 'libasound-dev' 'libmagic-dev')
       install="${SUDO} apt install -y"
       check_pkg="apt list --installed | grep"
     # RedHat: Fedora, CentOS
     elif has 'dnf'; then
       OS_TYPE='RedHat'
       OS_APP_MAN='dnf'
-      DEPENDENCIES+=(
-        'sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip'
-        'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev'
-      )
+      DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
+      [[ -n "${INSTALL_AI}" ]] &&
+        DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev')
       install="${SUDO} yum install -y"
       check_pkg="dnf list installed | grep"
     # Alpine: Busybox
@@ -380,6 +400,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
       DEPENDENCIES+=('file' 'python3' 'pip3')
+      unset INSTALL_AI  # AskAI is not tested on Alpine
       install="apk add --no-cache"
       check_pkg="apk list | grep"
     # ArchLinux
@@ -387,6 +408,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
       DEPENDENCIES+=('sudo' 'file' 'python3' 'python3-pip')
+      unset INSTALL_AI  # AskAI is not tested on ArchLinux
       install="${SUDO} pacman -Sy"
       check_pkg="pacman -Q | grep"
     else
@@ -491,12 +513,15 @@ Usage: $APP_NAME [OPTIONS] <args>
   install_homesetup() {
 
     echo -e "HomeSetup installation started: $(date)\n" >"${INSTALL_LOG}"
-    echo -e "\nUsing ${BLUE}\"${METHOD}\"${NC} installation method!"
+    echo ''
+    echo -e "${WHITE}Using ${YELLOW}\"${METHOD}\"${NC} installation method!"
 
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
       remote)
+        query_askai_install
         check_required_tools
+        create_destination_dirs
         clone_repository
         install_dotfiles
         compatibility_check
@@ -505,7 +530,9 @@ Usage: $APP_NAME [OPTIONS] <args>
         configure_gtrash
         ;;
       repair)
+        query_askai_install
         check_required_tools
+        create_destination_dirs
         install_dotfiles
         compatibility_check
         configure_python
@@ -565,24 +592,26 @@ Usage: $APP_NAME [OPTIONS] <args>
     done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
     [[ -z ${STREAMED} ]] && is_streamed='No'
+    [[ -z ${INSTALL_AI} ]] && is_askai='No'
 
     echo ''
-    echo -e "${WHITE}### HomeSetup Installation Settings ###"
-    echo -e "${CYAN}"
-    echo -e "          Shell: ${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
-    echo -e "   Install Type: ${METHOD}"
-    echo -e " Install Prefix: ${HHS_PREFIX:-none}"
-    echo -e "    Install Dir: ${HHS_HOME}"
-    echo -e " Configurations: ${HHS_DIR}"
-    echo -e "  PyPi Packages: ${PYTHON_MODULES[*]}"
-    echo -e "     User/Group: ${USER}:${GROUP}"
-    echo -e "       Streamed: ${is_streamed:=Yes}"
+    echo -e "${WHITE}### ${GREEN}HomeSetup© ${WHITE}Installation Settings ###${NC}"
+    echo -e ""
+    echo -e "${WHITE}          Shell: ${YELLOW}${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
+    echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
+    echo -e "${WHITE} Install Prefix: ${YELLOW}${HHS_PREFIX:-none}"
+    echo -e "${WHITE}    Install Dir: ${YELLOW}${HHS_HOME}"
+    echo -e "${WHITE}     Install AI: ${YELLOW}${is_askai:=Yes}"
+    echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
+    echo -e "${WHITE}  PyPi Packages: ${YELLOW}${PYTHON_MODULES[*]}"
+    echo -e "${WHITE}     User/Group: ${YELLOW}${USER}:${GROUP}"
+    echo -e "${WHITE}       Streamed: ${YELLOW}${is_streamed:=Yes}"
     echo -e "${NC}"
 
     if [[ "${METHOD}" != "local" && -z "${QUIET}" && -z "${STREAMED}" ]]; then
       echo -e "${ORANGE}"
       if [[ -z "${ANS}" ]]; then
-        read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue y/[n] ? ' ANS
+        read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue (y/[n])? ' ANS
       fi
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
       if [[ "${ANS}" != "y" && "${ANS}" != 'Y' ]]; then
@@ -639,46 +668,46 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Remove old apps.
     echo -en "\n${WHITE}Removing old links ...${BLUE}"
     echo ">>> Removed old links:" >>"${INSTALL_LOG}"
-    if find "${BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}"  2>&1; then
+    if find "${HHS_BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}"  2>&1; then
       echo -e "${GREEN}OK${NC}"
     else
-      quit 2 "Unable to remove old app links from \"${BIN_DIR}\" directory !"
+      quit 2 "Unable to remove old app links from \"${HHS_BIN_DIR}\" directory !"
     fi
 
     # Link apps into place.
-    echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${BIN_DIR}..."
+    echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${HHS_BIN_DIR}..."
     echo ">>> Linked apps:" >>"${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
       -print \
-      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec ln -sfv {} "${HHS_BIN_DIR}" \; \
       -exec chmod +x {} \; >>"${INSTALL_LOG}" 2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
-      quit 2 "Unable to link apps into \"${BIN_DIR}\" directory !"
+      quit 2 "Unable to link apps into \"${HHS_BIN_DIR}\" directory !"
     fi
 
     # Link auto-completes into place.
-    echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${BIN_DIR}... "
+    echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${HHS_BIN_DIR}... "
     echo ">>> Linked auto-completes:" >>"${INSTALL_LOG}"
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
       -print \
-      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec ln -sfv {} "${HHS_BIN_DIR}" \; \
       -exec chmod +x {} \; >>"${INSTALL_LOG}" 2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
-      quit 2 "Unable to link auto-completes into bin (${BIN_DIR}) directory !"
+      quit 2 "Unable to link auto-completes into bin (${HHS_BIN_DIR}) directory !"
     fi
 
     # Link key-bindings into place.
-    echo -en "\n${WHITE}Linking key-bindings from ${BLUE}${BINDINGS_DIR} to ${BIN_DIR}... "
+    echo -en "\n${WHITE}Linking key-bindings from ${BLUE}${BINDINGS_DIR} to ${HHS_BIN_DIR}... "
     echo ">>> Linked key-bindings:" >>"${INSTALL_LOG}"
     if find "${BINDINGS_DIR}" -maxdepth 2 -type f -iname "**-key-bindings.${SHELL_TYPE}" \
       -print \
-      -exec ln -sfv {} "${BIN_DIR}" \; \
+      -exec ln -sfv {} "${HHS_BIN_DIR}" \; \
       -exec chmod +x {} \; >>"${INSTALL_LOG}" 2>&1; then
       echo -e " ${GREEN}OK${NC}"
     else
-      quit 2 "Unable to link key-bindings into bin (${BIN_DIR}) directory !"
+      quit 2 "Unable to link key-bindings into bin (${HHS_BIN_DIR}) directory !"
     fi
 
     # Copy HomeSetup fonts into place.
@@ -694,17 +723,20 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    # Copy HomeSetup AskAI prompts into place.
-    echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
-    echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
-    [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
-    if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
-      -print \
-      -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
-      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
-      echo -e "${GREEN}OK${NC}"
-    else
-      quit 2 "Unable to copy AskAI prompts into fonts (${HHS_PROMPTS_DIR}) directory !"
+    # Install the AI capabilities
+    if [[ -n "${INSTALL_AI}" ]]; then
+      # Copy HomeSetup AskAI prompts into place.
+      echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
+      echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
+      [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
+      if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
+        -print \
+        -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
+        -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
+        echo -e "${GREEN}OK${NC}"
+      else
+        quit 2 "Unable to copy AskAI prompts into fonts (${HHS_PROMPTS_DIR}) directory !"
+      fi
     fi
 
     # -----------------------------------------------------------------------------------
@@ -769,7 +801,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "\n${WHITE}Checking HomeSetup backward compatibility ...${BLUE}"
 
     # Cleaning up old dotfiles links
-    [[ -d "${BIN_DIR}" ]] && rm -f "${BIN_DIR:?}/*.*"
+    [[ -d "${HHS_BIN_DIR}" ]] && rm -f "${HHS_BIN_DIR:?}/*.*"
 
     # .profile Needs to be renamed, so, we guarantee that no dead lock occurs.
     if [[ -f "${HOME}/.profile" ]]; then
@@ -896,7 +928,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "\n${WHITE}Installing Starship prompt... "
       if curl -sSL "https://starship.rs/install.sh" 1>"${HHS_DIR}/install_starship.sh" \
         && chmod a+x "${HHS_DIR}"/install_starship.sh \
-        && "${HHS_DIR}"/install_starship.sh -y -b "${BIN_DIR}" &>/dev/null; then
+        && "${HHS_DIR}"/install_starship.sh -y -b "${HHS_BIN_DIR}" &>/dev/null; then
           echo -e "${GREEN}OK${NC}"
       else
           echo -e "${RED}FAILED${NC}"
@@ -970,6 +1002,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # shellcheck disable=SC2317
   abort_install() {
+    echo ''
     echo "Installation aborted:  ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}" >>"${INSTALL_LOG}"  2>&1
     quit 2 'Installation aborted !'
   }
