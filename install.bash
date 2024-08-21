@@ -723,20 +723,17 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    # Install the AI capabilities
-    if [[ -n "${INSTALL_AI}" ]]; then
-      # Copy HomeSetup AskAI prompts into place.
-      echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
-      echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
-      [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
-      if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
-        -print \
-        -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
-        -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
-        echo -e "${GREEN}OK${NC}"
-      else
-        quit 2 "Unable to copy AskAI prompts into fonts (${HHS_PROMPTS_DIR}) directory !"
-      fi
+    # Copy HomeSetup AskAI prompts into place.
+    echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
+    echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
+    [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
+    if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
+      -print \
+      -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
+      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
+      echo -e "${GREEN}OK${NC}"
+    else
+      quit 2 "Unable to copy AskAI prompts into fonts (${HHS_PROMPTS_DIR}) directory !"
     fi
 
     # -----------------------------------------------------------------------------------
@@ -919,6 +916,11 @@ Usage: $APP_NAME [OPTIONS] <args>
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
           "${RED}Unable to delete the old .hhs directory. It was moved to ~/.config. Feel free to wipe it out!${NC}"
       fi
+    fi
+
+    # Remove the __hhs app AI plugin if the user decided not to install it.
+    if [[ -z "${INSTALL_AI}" ]]; then
+      [[ -d "" ]] && \rm -rf ""
     fi
   }
 

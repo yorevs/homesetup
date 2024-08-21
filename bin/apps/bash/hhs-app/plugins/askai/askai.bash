@@ -17,15 +17,19 @@ UNSETS=(
   help version cleanup execute args action db_alias dotfiles
 )
 
+AI_ENABLED="${AI_ENABLED:-$(python3 -m pip show hspylib-askai &>/dev/null && echo 1)}"
+
+ASKAI_URL="https://github.com/yorevs/askai"
+
 # @purpose: HHS plugin required function
 function help() {
-  python3 -m ${PLUGIN_NAME} -h
+  [[ -n "${AI_ENABLED}" ]] && python3 -m ${PLUGIN_NAME} -h
   exit $?
 }
 
 # @purpose: HHS plugin required function
 function version() {
-  python3 -m ${PLUGIN_NAME} -v
+  [[ -n "${AI_ENABLED}" ]] && python3 -m ${PLUGIN_NAME} -v
   exit $?
 }
 
@@ -37,6 +41,8 @@ function cleanup() {
 
 # @purpose: HHS plugin required function
 function execute() {
+
+  [[ -n "${AI_ENABLED}" ]] || quit 1 "AskAI is not installed. Visit ${ASKAI_URL} for installation instructions"
 
   local args output ret_val ans script_name
 
