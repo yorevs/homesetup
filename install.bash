@@ -66,7 +66,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
   # Whether to install the AskAI functionalities or not
-  INSTALL_AI="${GITHUB_USER:-}"
+  INSTALL_AI="${GITHUB_ACTIONS:-}"
 
   # Shell type
   SHELL_TYPE="${SHELL##*/}"

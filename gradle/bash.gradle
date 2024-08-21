@@ -12,8 +12,6 @@ String dirName(File file) {
   file.getParentFile().getPath()
 }
 
-/***** Verification Group */
-
 /* Run all Bats tests */
 task check(type: Task) {
   group = 'Verification'
@@ -21,7 +19,7 @@ task check(type: Task) {
   doLast {
     println "Performing bats tests from $rootDir/tests"
     fileTree("$rootDir/tests").matching {
-      include "**/*.bats"
+      include "*.bats"
     }.each { File file ->
       if (verbose) {
           println ""
@@ -33,8 +31,20 @@ task check(type: Task) {
           commandLine 'bats', '--tap', file.path
         }
       }
-
   }
+}
+
+/* Install HomeSetup */
+task install(type: Task) {
+  group = 'Install'
+  description = "Install (repairing) HomeSetup"
+  finalizedBy check
+    doLast {
+      exec {
+        workingDir project.rootDir
+        commandLine 'bash', '-x', 'install.bash', "-r"
+      }
+    }
 }
 
 /* Generate a changelog with the commits from last git tag */
@@ -104,5 +114,3 @@ task publish(type: Task) {
     }
   }
 }
-
-/* end */
