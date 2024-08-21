@@ -83,7 +83,7 @@ if __hhs_has 'ifconfig'; then
   __hhs_alias my-ip='__hhs_ip external'
   __hhs_alias vpn-ip='__hhs_ip vpn'
   __hhs_alias ip-info='__hhs_ip_info'
-  __hhs_alias ipi="__hhs_ip_info $(my-ip | awk '{print $3}') || echo \"${YELLOW}Not connected to the internet${NC}\""
+  __hhs_alias ipi="__hhs_ip_info $(__hhs_ip external | awk '{print $3}') || echo \"${YELLOW}Not connected to the internet${NC}\""
   __hhs_alias ip-lookup='__hhs_ip_lookup'
   __hhs_alias ip-resolve='__hhs_ip_resolve'
 fi

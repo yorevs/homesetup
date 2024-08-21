@@ -25,7 +25,7 @@
 unset "${!HHS_@}"
 
 # If not running interactively and if it is not a Jenkins build, skip it.
-[[ -z "${JOB_NAME}" && -z "${PS1}" && -z "${PS2}" ]] && return
+[[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 

@@ -36,6 +36,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     HOME="${HOME:-$(eval echo ~"${USER}")}"
   fi
 
+  [[ -z "${USER}" || -z "${HOME}" ]] && quit 1 "Unable to determine USER/HOME -> ${USER}/${HOME}"
+
+  # Installation log file
+  INSTALL_LOG="${HOME}/install.log"
+  touch "${INSTALL_LOG}"
+  [[ -f "${INSTALL_LOG}" ]] || quit 1 "Unable initialize installation logs -> ${INSTALL_LOG}"
+  [[ -f "${INSTALL_LOG}" ]] && echo "Logs can be accessed here: ${BLUE}${INSTALL_LOG}${NC}"
+
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
@@ -44,8 +52,27 @@ Usage: $APP_NAME [OPTIONS] <args>
     install_tools query_askai_install create_destination_dirs
   )
 
+
+  # Awesome icons
+  STAR_ICN='\xef\x80\x85'
+  HAND_PEACE_ICN='\xef\x89\x9b'
+  POINTER_ICN='\xef\x90\xb2'
+
+  # VT-100 Terminal colors
+  ORANGE='\033[38;5;202m'
+  WHITE='\033[97m'
+  BLUE='\033[34m'
+  CYAN='\033[36m'
+  GREEN='\033[32m'
+  YELLOW='\033[93m'
+  RED='\033[31m'
+  NC='\033[m'
+
   # HomeSetup GitHub repository URL
   HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
+
+  # HomeSetup GitHub issues URL
+  ISSUES_URL="https://github.com/yorevs/homesetup/issues"
 
   # HomeSetup installation prefix file
   HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -121,20 +148,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     GROUP=${GROUP:-${USER}}
   fi
 
-  # Awesome icons
-  STAR_ICN='\xef\x80\x85'
-  HAND_PEACE_ICN='\xef\x89\x9b'
-  POINTER_ICN='\xef\x90\xb2'
-
-  # VT-100 Terminal colors
-  ORANGE='\033[38;5;202m'
-  WHITE='\033[97m'
-  BLUE='\033[34m'
-  GREEN='\033[32m'
-  YELLOW='\033[93m'
-  RED='\033[31m'
-  NC='\033[m'
-
   # Purpose: Quit the program and exhibits an exit message if specified
   # @param $1 [Req] : The exit return code. 0 = SUCCESS, 1 = FAILURE, * = ERROR ${RED}.
   # @param $2 [Opt] : The exit message to be displayed.
@@ -194,7 +207,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     else
       echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file}... "
       \rsync --archive "${src_file}" "${dest_file}"
-      \chown "${USER}":"${GROUP}" "${dest_file}"
+      \chown "${USER}":"${GROUP}" "${dest_file}" &>/dev/null
       [[ -f "${dest_file}" ]] && echo -e "${GREEN}OK${NC}"
       [[ -f "${dest_file}" ]] || echo -e "${RED}FAILED${NC}"
     fi
@@ -307,9 +320,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Key-Bindings source location
     BINDINGS_DIR="${HHS_HOME}/bin/key-bindings"
-
-    # Installation log file
-    INSTALL_LOG="${HOME}/install.log"
 
     # Check if the user passed help or version options
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
@@ -666,7 +676,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Remove old apps.
-    echo -en "\n${WHITE}Removing old links ...${BLUE}"
+    echo -en "\n${WHITE}Removing old links... ${BLUE}"
     echo ">>> Removed old links:" >>"${INSTALL_LOG}"
     if find "${HHS_BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}"  2>&1; then
       echo -e "${GREEN}OK${NC}"
@@ -795,7 +805,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Check for backward HomeSetup backward compatibility.
   compatibility_check() {
 
-    echo -e "\n${WHITE}Checking HomeSetup backward compatibility ...${BLUE}"
+    echo -e "\n${WHITE}Checking HomeSetup backward compatibility${BLUE}"
 
     # Cleaning up old dotfiles links
     [[ -d "${HHS_BIN_DIR}" ]] && rm -f "${HHS_BIN_DIR:?}/*.*"
@@ -843,14 +853,14 @@ Usage: $APP_NAME [OPTIONS] <args>
     if [[ -f "${HOME}/.inputrc" ]]; then
       \mv -f "${HOME}/.inputrc" "${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak"
       copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
-      echo -e "\n${YELLOW}Your old ${HOME}/.inputrc had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old ${HOME}/.inputrc had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.aliasdef" || -f "${HHS_HOME}/dotfiles/aliasdef" ]]; then
       [[ -f "${HOME}/.aliasdef" ]] && copy_file "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
       [[ -f "${HHS_HOME}/dotfiles/aliasdef" ]] && copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
-      echo -e "\n${YELLOW}Your old .aliasdef had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old .aliasdef had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Moving .path file to .hhs .
@@ -880,13 +890,13 @@ Usage: $APP_NAME [OPTIONS] <args>
     # .tailor Needs to be updated, so, we need to replace it.
     if [[ -f "${HHS_DIR}/.tailor" ]]; then
       \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
-      echo -e "\n${YELLOW}Your old .tailor had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old .tailor had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Old $HHS_DIR/starship.toml changed to $HHS_DIR/.starship.toml
     if [[ -f "${HHS_DIR}/starship.toml" ]]; then
       \mv -f "${HHS_DIR}/starship.toml" "${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak"
-      echo -e "\n${YELLOW}Your old starship.toml had to be replaced by a new version. Your old file it located at ${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak ${NC}"
+      echo -e "\n${YELLOW}Your old starship.toml had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/starship.toml-${TIMESTAMP}.bak ${NC}"
     fi
 
     # Old hhs-init file changed to homesetup.toml
@@ -957,7 +967,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Check HomeSetup installation prefix
   check_prefix() {
+    # Create the prefix file to be used
     [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" >"${HHS_PREFIX_FILE}"
+    # Delete the useless prefix file
     [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f "${HHS_PREFIX_FILE}"
   }
 
@@ -977,7 +989,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     echo ''
     echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${HHS_HOME}/.VERSION") !"
-    echo -e "${BLUE}"
+    echo -e "${CYAN}"
     echo '888       888          888                                          '
     echo '888   o   888          888                                          '
     echo '888  d8b  888          888                                          '
@@ -986,20 +998,21 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo '88888P Y88888 88888888 888 888      888  888 888  888  888 88888888 '
     echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
     echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
-    echo -e "${NC}"
-    echo -e "${WHITE}${HAND_PEACE_ICN} The ultimate Terminal experience !"
+    echo ''
+    echo -e "${HAND_PEACE_ICN} The ultimate Terminal experience !"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${WHITE}hhu update"
     echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${WHITE}hhs logs install"
     echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${WHITE}more ${README_LINK}"
+    echo -e "${YELLOW}${STAR_ICN} Report issues at: ${WHITE}${ISSUES_URL}"
     echo -e "${NC}"
 
-    echo -e "\nHomeSetup installation finished: $(date)" >>"${INSTALL_LOG}"
+    echo -e "HomeSetup installation finished: $(date)" >>"${INSTALL_LOG}"
 
     # Move the installation log to logs folder
-    [[ -s "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
-      rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
+    [[ -f "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
+      \rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
   }
 
   # shellcheck disable=SC2317

@@ -34,6 +34,13 @@ task check(type: Task) {
   }
 }
 
+/* Run all Bats tests (wrapper) */
+task test(type: Task) {
+  group = 'Verification'
+  description = "Run all Bats test"
+  dependsOn check
+}
+
 /* Install HomeSetup */
 task install(type: Task) {
   group = 'Install'
@@ -45,6 +52,13 @@ task install(type: Task) {
         commandLine 'bash', '-x', 'install.bash', "-r"
       }
     }
+}
+
+/* Install HomeSetup */
+task build(type: Task) {
+  group = 'Build'
+  description = "Install (repairing) HomeSetup"
+  dependsOn install
 }
 
 /* Generate a changelog with the commits from last git tag */
@@ -107,7 +121,7 @@ task publish(type: Task) {
       commandLine 'git', 'add', '-A', ':/'
     }
     exec {
-      commandLine 'git', 'commit', '-m', "$commitMsg"
+      commandLine 'git', 'commit', '-m', "${commitMsg}"
     }
     exec {
       commandLine 'git', 'push', 'origin', 'HEAD'
