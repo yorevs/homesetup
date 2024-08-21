@@ -17,8 +17,6 @@ UNSETS=(
   help version cleanup execute args action db_alias dotfiles
 )
 
-PROMPTS_DIR="${HHS_DIR}/askai/prompts"
-
 # @purpose: HHS plugin required function
 function help() {
   python3 -m ${PLUGIN_NAME} -h
@@ -40,11 +38,31 @@ function cleanup() {
 # @purpose: HHS plugin required function
 function execute() {
 
-  local args
+  local args output ret_val ans script_name
 
   # shellcheck disable=SC2206
-  args=(${@})
-  python3 -m askai -p "${PROMPTS_DIR}/homesetup.txt" "${args[@]}"
+  args=("$@")
+  output=$(python3 -m askai -c off -p "${HHS_PROMPTS_DIR}/homesetup.txt" "${args[*]}")
+  [[ -z "${output}" ]] && echo -e "The query didn't produce an output!" && exit 1
+  script_name=$(echo "${output}" | grep -R '^# Script Name:')
+  [[ -z "${script_name}" ]] && echo -e "${output}\n" && exit 0
+  script_name="${script_name#*: }"
+  script_name="${script_name%.*}.bash"
+
+  if [[ -f "${script_name}" ]]; then
+    read -r -p "File '${script_name}' already exists. Replace (Yes/[No])? " -n 1 ans
+    echo ''
+  fi
+
+  if [[ -z "${ans}" || $(echo "${ans}" | tr '[:upper:]' '[:lower:]') == "y" ]]; then
+    echo -en "${BLUE}Saving file: ${WHITE}${script_name}${NC}... "
+    echo "${output}" > "${script_name}"
+    [[ -s "${script_name}" ]] && echo "${GREEN}OK${NC}"
+    [[ -f "${script_name}" ]] || echo "${RED}FAILED${NC}"
+  fi
+
   ret_val=$?
+  echo -e "${NC}"
+
   quit ${ret_val}
 }
