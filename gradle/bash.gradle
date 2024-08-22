@@ -128,3 +128,8 @@ task publish(type: Task) {
     }
   }
 }
+
+/* Publish a new HomeSetup version */
+task dockerBuild(type: Task) {
+
+}

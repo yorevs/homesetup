@@ -351,6 +351,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       INSTALL_AI=1
       PYTHON_MODULES+=('hspylib-askai')
     fi
+    unset ANS
   }
 
   # Create all HomeSetup destination directories
