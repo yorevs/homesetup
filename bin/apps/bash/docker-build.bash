@@ -15,7 +15,7 @@ VERSION=2.0.0
 
 # Read folders containing images.
 IFS=$'\n'
-read -r -d '' -a images < <(find "${HHS_HOME}/docker" -mindepth 1 -type d -exec basename {} \; -print0)
+read -r -d '' -a images < <(find "${HHS_HOME}/docker" -mindepth 1 -type d -exec basename {} \;)
 IFS="${OLDIFS}"
 
 USAGE="
@@ -27,6 +27,8 @@ Usage: Usage: ${APP_NAME} [Options] image_type
   Arguments
     - image_type  : The OS to be installed. One of [${images[*]}]
 "
+
+declare -a platforms
 
 # Common application functions
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
@@ -43,28 +45,29 @@ else
   for next_image in "${@}"; do
     # shellcheck disable=SC2199
     if [[ ${images[@]} =~ ${next_image} ]]; then
-      [[ -d "${next_image}/" ]] || __hhs_errcho "Unable to find directory: ${next_image}/"
-      echo ''
-      echo -e "${PURPLE}Building ${BLUE}[${next_image}] ... ${NC}"
-      echo ''
+      image_dir="${HHS_HOME}/docker/${next_image}"
+      [[ -d "${image_dir}/" ]] || __hhs_errcho "Unable to find directory: ${image_dir}/"
       # Docker build tag: ${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
-      if [[ -d "${next_image}/" ]] && \
-          ! docker buildx build --no-cache --progress=plain \
-          -t "yorevs/hhs-${next_image}:latest" "${next_image}/"; then
+      echo ''
+      echo -e "${PURPLE}Building ${BLUE}[${next_image}-arm64:latest] ... ${NC}"
+      echo ''
+      if ! docker buildx build --no-cache --progress=plain -t "yorevs/hhs-${next_image}-arm64:latest" \
+           --platform linux/arm64/v8 "${image_dir}/"; then
             __hhs_errcho "Failed to build image: \"${next_image}\" !"
-            exit 1
-      elif [[ -n ${push_image} ]]; then
-        if ! docker push "yorevs/hhs-${next_image}:latest"; then
-          __hhs_errcho "Failed to push image: \"${next_image}\" !"
-          exit 1
-        fi
       fi
-
+      echo ''
+      echo -e "${PURPLE}Building ${BLUE}[${next_image}-amd64:latest] ... ${NC}"
+      echo ''
+      if ! docker buildx build --no-cache --progress=plain -t "yorevs/hhs-${next_image}-amd64:latest" \
+           --platform linux/amd64 "${image_dir}/"; then
+            __hhs_errcho "Failed to build image: \"${next_image}\" !"
+      fi
+      echo "Finished"
+      exit 0
     else
       __hhs_errcho "Invalid container type: \"${next_image}\". Please use one of [${images[*]}] !"
-      exit 1
     fi
   done
 fi
 
-exit 0
+exit 1
