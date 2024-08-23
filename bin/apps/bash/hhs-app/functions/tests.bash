@@ -34,10 +34,10 @@ function tests() {
   re_len='^([0-9]+)\.\.([0-9]+)$'
   started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 
-  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running HomeSetup bats tests\n${BLUE}"
-  echo -e "  |-Bats : v$(__hhs_version bats | head -n 1)"
-  echo -e "  |-Bash : v$(__hhs_version bash | head -n 1)"
-  echo -e "  |-User : ${USER}"
+  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running Bats tests from $(pwd)\n"
+  echo -e "  ${BLUE}|-Bats\t: ${WHITE}v$(__hhs_version bats | head -n 1)"
+  echo -e "  ${BLUE}|-Bash\t: ${WHITE}v$(__hhs_version bash | head -n 1)"
+  echo -e "  ${BLUE}|-User\t: ${WHITE}${USER}"
   echo -en "${NC}"
 
   for next in "${all_tests[@]}"; do
@@ -61,7 +61,7 @@ function tests() {
           status="${YELLOW} X ????${NC}"
         fi
       elif [[ ${result} =~ ${re_len} ]]; then
-        echo -en "\n${WHITE}[${next##*/}] Running tests ${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}${NC}\n\n"
+        echo -en "\n${CYAN}[${next##*/}] ${WHITE}Running tests [${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}]${NC}\n\n"
         len="${#BASH_REMATCH[2]}"
         continue
       else
@@ -69,8 +69,8 @@ function tests() {
         continue
       fi
       echo -en "${status} "
-      printf "%${len}d %s\n" "${num}" "${details}"
-    done < <(bats -rtT "${next}" 2>&1)
+      printf "TC-%${len}d %s\n" "${num}" "${details}"
+    done < <(bats -rtT --print-output-on-failure "${next}" 2>&1)
   done
 
   finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
@@ -79,7 +79,7 @@ function tests() {
   diff_time_ms=$((diff_time - (diff_time_sec * 1000)))
 
   echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
-  echo -e "Passed=${pass}  Skipped=${skip}  Failed=${fail}${NC}"
+  echo -e "${GREEN}Passed=${pass}  ${YELLOW}Skipped=${skip}  ${RED}Failed=${fail}${NC}"
 
   if [[ ${fail} -gt 0 && -s "${err_log}" ]]; then
     echo -e "\n${ORANGE}xXx The following errors were reported xXx${NC}\n"

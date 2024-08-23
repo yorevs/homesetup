@@ -14,13 +14,14 @@
 # @param $1 [opt] : The new hostname. If not provided, current hostname is retrieved.
 function host-name() {
 
-  local cur_hostname new_hostname
+  local cur_hostname new_hostname ret
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo -e "Usage: ${FUNCNAME[0]} [new_hostname]"
   elif [[ -z "${1}" ]]; then
-    echo -e "${GREEN}Your current hostname is: ${HHS_HIGHLIGHT_COLOR}$(hostname)${NC}"
-    quit $?
+    cur_hostname=$(hostname)
+    [[ $ret -eq 0 ]] && echo -e "${GREEN}Your current hostname is: ${HHS_HIGHLIGHT_COLOR}$(cur_hostname)${NC}"
+    quit 0
   else
     if __hhs_has hostname; then
       cur_hostname=$(hostname)

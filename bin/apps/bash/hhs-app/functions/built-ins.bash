@@ -159,6 +159,21 @@ function logs() {
   quit $?
 }
 
+# @purpose: Display logs for a specified process over the last specified number of days.
+# @param $1 [req] : The name of the process to filter logs for.
+# @param $2 [req] : The number of days in the past to search for logs.
+function sys-logs() {
+    local process_name=$1 days=$2
+    # Check if both arguments are provided
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage: __hhs ${FUNCNAME[0]} <process_name> <days>"
+        return 1
+    fi
+    shift 2
+    log show --predicate "process == \"${process_name}\"" --info --last "${days}"d "$@"
+}
+
+
 # @purpose: Fetch the ss64 manual from the web for the specified bash command.
 # @param $1 [req] : The bash command to find out the manual.
 function man() {

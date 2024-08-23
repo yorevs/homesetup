@@ -140,7 +140,7 @@ function __hhs_is_reachable() {
   return $?
 }
 
-# @function: In-place sed. Same as 'sed -i'' -r'.
+# @function: In-place sed.
 # @param $1..$N [Req] : Sed parameters.
 function ised() {
   case "${HHS_MY_OS}" in
