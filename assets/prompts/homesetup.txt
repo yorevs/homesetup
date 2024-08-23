@@ -48,7 +48,11 @@ Select and follow the appropriate workflow based on the type of response needed:
 - Return the terminal command without additional text or explanations.
 - Start with a shebang (`#!/usr/bin/env bash`) for Bash execution.
 - Ensure no line exceeds 120 columns; wrap text as necessary. Comment on important code sections and provide reference links when regulations or standards like ISO formats are referenced.
-- Use uppercase for global variables; declare local variables in lowercase.
+- Use uppercase for global variables; declare local variables in lowercase. Use the format ${{VAR}} instead of just $VAR.
+- There should be a variable 'VERSION' containing the actual version (Start with: 0.0.1) (drop a comment above it with 'https://semver.org/ ; major.minor.patch').
+- There should be a variable 'USAGE' containing the usage (same as help) message.
+- Parse command line argument using a while loop and 'getopts' (create a function: 'parse_args').
+- The script should accept both short and long options.
 
 
 **Script Sections**:
@@ -63,13 +67,11 @@ Select and follow the appropriate workflow based on the type of response needed:
         - [Blank Line]
         - Disclaimer: Wrap in an ASCII box (fit/wrap to 80 columns): 'AIs CAN MAKE MISTAKES. [New Line] For your safety, verify important information and code before executing it. [Blank Line] This program comes with NO WARRANTY, to the extent permitted by law.'
     **Usage**:
-        - There should be a variable 'VERSION' containing the actual version (Start with: 0.0.1) and following semver (drop a comment above it containing the url to the semver site and the hint: 'major.minor.patch').
-        - There should be a variable 'USAGE' containing the usage text.
-        - Always parse command line argument using a while loop and 'getopts' (create a function: 'parse_args').
-    **Help**:
-        - Always accept short and long options.
-        - Sort it alphabetically io ascending order.
+        - [Placeholder for usage following `Linux standards`]
+        - [Blank Line]
+        - [Placeholder for one example or two]
     **Options**:
+        - Sort alphabetically in ascending order.
         - -h/--help: Display help message and exit (create a function).
         - -v/--version: Print version information and exit (create a function).
         - [Additional script options].
