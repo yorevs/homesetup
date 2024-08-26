@@ -2,8 +2,12 @@
 
 # Test suite for cron-scheduler.bash
 
+# Load helper functions
+load "${HHS_HOME}/tests/bats/bats-support/load"
+load "${HHS_HOME}/tests/bats/bats-assert/load"
+
 # Path to the script
-SCRIPT_PATH="../cron-scheduler.bash"
+SCRIPT="${HHS_HOME}/assets/devel/scripts/gpt/src/cron-scheduler.bash"
 
 # Path to the iso-to-cron.bash mock script
 MOCK_ISO_TO_CRON="./iso-to-cron.bash"
@@ -32,42 +36,42 @@ teardown() {
 
 # Test: Valid ISO date and script path
 @test "Valid ISO date and script path" {
-  run bash "${SCRIPT_PATH}" -s "/path/to/script.sh" -i "2024-08-23T15:30:00Z"
+  run bash "${SCRIPT}" -s "/path/to/script.sh" -i "2024-08-23T15:30:00Z"
   [ "$status" -eq 0 ]
   [[ "${output}" =~ SUCCESS ]]
 }
 
 # Test: Missing ISO date argument
 @test "Missing ISO date argument" {
-  run bash "${SCRIPT_PATH}" -s "/path/to/script.sh"
+  run bash "${SCRIPT}" -s "/path/to/script.sh"
   [ "$status" -eq 2 ]
   [[ "${output}" =~ ERROR ]]
 }
 
 # Test: Missing script path argument
 @test "Missing script path argument" {
-  run bash "${SCRIPT_PATH}" -i "2024-08-23T15:30:00Z"
+  run bash "${SCRIPT}" -i "2024-08-23T15:30:00Z"
   [ "$status" -eq 2 ]
   [[ "${output}" =~ ERROR ]]
 }
 
 # Test: Invalid ISO date
 @test "Invalid ISO date" {
-  run bash "${SCRIPT_PATH}" -s "/path/to/script.sh" -i "2024-08-23T99:99:99Z"
+  run bash "${SCRIPT}" -s "/path/to/script.sh" -i "2024-08-23T99:99:99Z"
   [ "$status" -eq 1 ]
   [[ "${output}" =~ ERROR ]]
 }
 
 # Test: Version option
 @test "Version option" {
-  run bash "${SCRIPT_PATH}" -v
+  run bash "${SCRIPT}" -v
   [ "$status" -eq 2 ]
   [[ "${output}" =~ 0.0.1 ]]
 }
 
 # Test: Help option
 @test "Help option" {
-  run bash "${SCRIPT_PATH}" -h
+  run bash "${SCRIPT}" -h
   [ "$status" -eq 2 ]
   [[ "${output}" =~ Usage ]]
 }

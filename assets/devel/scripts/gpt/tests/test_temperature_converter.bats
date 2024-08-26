@@ -4,11 +4,11 @@
 # Purpose: Tests for temperature converter script
 
 # Load helper functions
-load 'bats-support/load'
-load 'bats-assert/load'
+load "${HHS_HOME}/tests/bats/bats-support/load"
+load "${HHS_HOME}/tests/bats/bats-assert/load"
 
 setup() {
-  SCRIPT="../temperature-converter.bash"
+  SCRIPT="${HHS_HOME}/assets/devel/scripts/gpt/src/temperature-converter.bash"
 }
 
 @test "Convert 100°C to °F" {

@@ -4,11 +4,11 @@
 # Purpose: Tests for ISO to Cron converter script
 
 # Load helper functions
-load 'bats-support/load'
-load 'bats-assert/load'
+load "${HHS_HOME}/tests/bats/bats-support/load"
+load "${HHS_HOME}/tests/bats/bats-assert/load"
 
 setup() {
-    SCRIPT="../iso-to-cron.bash"
+    SCRIPT="${HHS_HOME}/assets/devel/scripts/gpt/src/iso-to-cron.bash"
 }
 
 @test "Version output" {

@@ -4,13 +4,13 @@
 # Purpose: Tests for file archiver script
 
 # Load helper functions
-load 'bats-support/load'
-load 'bats-assert/load'
+load "${HHS_HOME}/tests/bats/bats-support/load"
+load "${HHS_HOME}/tests/bats/bats-assert/load"
 
 # Test Setup
 setup() {
     TEST_DIR="test_directory"
-    SCRIPT="../file-archiver.bash"
+    SCRIPT="${HHS_HOME}/assets/devel/scripts/gpt/src/file-archiver.bash"
     mkdir -p "$TEST_DIR"
     touch -t 202307010000 "$TEST_DIR/old_file.txt"    # File older than 30 days
     touch -t 202408010000 "$TEST_DIR/new_file.txt"    # Recent file

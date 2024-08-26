@@ -11,7 +11,7 @@
 # Copyright (c) 2024, HomeSetup team
 
 # @purpose: Run all HomeSetup automated tests.
-# @param $1..$N [Opt] : The bats files to test.
+# @param $1..$N [Opt] : The bats files/folders to test.
 function tests() {
 
   local started finished err_log badge fail=0 pass=0 skip=0 status num details re_status re_len len re_skip
@@ -23,8 +23,9 @@ function tests() {
   badge="${HHS_HOME}/check-badge.svg"
 
   # If no bat file is provided, then assume  that we want tio run all HHS tests.
-  [[ ${#all_tests[@]} -eq 0 ]] && all_tests=("${HHS_HOME}"/tests/*.bats)
-  # Who knows? If we did not find any test.
+  # shellcheck disable=SC2207
+  [[ ${#all_tests[@]} -eq 0 ]] && all_tests=($(find "${HHS_HOME}/tests/" -maxdepth 1  -name "*.bats"))
+  # If we did not find any test.
   [[ ${#all_tests[@]} -eq 0 ]] && quit 1 "There are no tests to execute!"
   echo -n '' > "${err_log}"
 
@@ -43,7 +44,7 @@ function tests() {
   for next in "${all_tests[@]}"; do
     while read -r result; do
       if [[ ${result} =~ ${re_skip} ]]; then
-        status="${YELLOW} ø SKIP${NC}"
+        status="${YELLOW}  SKIP${NC}"
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
         ((skip += 1))
@@ -69,7 +70,7 @@ function tests() {
         continue
       fi
       echo -en "${status} "
-      printf "TC-%${len}d %s\n" "${num}" "${details}"
+      printf "${BLUE}TC-%${len}d${NC} %s\n" "${num}" "${details}"
     done < <(bats -rtT --print-output-on-failure "${next}" 2>&1)
   done
 
@@ -79,19 +80,22 @@ function tests() {
   diff_time_ms=$((diff_time - (diff_time_sec * 1000)))
 
   echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
-  echo -e "${GREEN}Passed=${pass}  ${YELLOW}Skipped=${skip}  ${RED}Failed=${fail}${NC}"
+  echo -e "${GREEN}√ Passed=${pass}   ${YELLOW} Skipped=${skip}   ${RED}X Failed=${fail}${NC}"
 
   if [[ ${fail} -gt 0 && -s "${err_log}" ]]; then
-    echo -e "\n${ORANGE}xXx The following errors were reported xXx${NC}\n"
+    echo -e "${ORANGE}"
+    echo -e "+--------------------------------------------+"
+    echo -e "|     The following errors were reported     |"
+    echo -e "+--------------------------------------------+${NC}\n"
     __hhs_tailor "${err_log}" | nl
     echo ''
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2> /dev/null
-    echo -e "${RED}${TEST_FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
+    echo -e " ${RED}${TEST_FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 2
   else
     echo ''
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2> /dev/null
-    echo -e "${GREEN}${TEST_PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
+    echo -e " ${GREEN}${TEST_PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 0
   fi
 }
