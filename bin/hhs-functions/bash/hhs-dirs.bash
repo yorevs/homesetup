@@ -59,17 +59,17 @@ function __hhs_change_dir() {
     # shellcheck disable=SC2086
     if
       \cd ${flags} "${path}" &> /dev/null \
-                                         && \pushd -n "$(pwd)" &> /dev/null \
-                                     && \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
+        && \pushd -n "$(pwd)" &> /dev/null \
+        && \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
     then
+      export CURPWD="${path}"
       return 0
     else
       __hhs_errcho "${FUNCNAME[0]}: Unable to change to directory \"${path}\" !"
     fi
   fi
 
-  \pushd -n "$(pwd)" &> /dev/null \
-                                 && \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
+  \pushd -n "$(pwd)" &> /dev/null && \dirs -p | uniq > "${HHS_DIR}/.last_dirs"
 
   return 1
 }
@@ -95,7 +95,7 @@ function __hhs_changeback_ndirs() {
       \cd .. || return 1
     done
     echo "${GREEN}Changed directory backwards by ${x} time(s) and landed at: ${WHITE}\"$(pwd)\"${NC}"
-    [[ -d "${last_pwd}" ]] && export OLDPWD="${last_pwd}"
+    [[ -d "${last_pwd}" ]] && export OLDPWD="${last_pwd}" && export CURPWD="${last_pwd}"
   fi
 
   return 0
