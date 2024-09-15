@@ -738,7 +738,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
     echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
     [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
-    if find "${HHS_HOME}"/assets/prompts -maxdepth 1 -type f -iname "*.txt" \
+    if find "${HHS_HOME}"/assets/prompts -maxdepth 2 -type f -iname "*.txt" \
       -print \
       -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then

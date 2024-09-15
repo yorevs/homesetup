@@ -15,7 +15,7 @@ The output should be formatted using markdown.
 3. Ask the user for the User Terminal Type.
 4. Once the above information is collected, proceed to generate the script.
 
-<<EXECUTION GUIDELINES>
+<<EXECUTION GUIDELINES>>
 
 
 **IMPORTANT NOTES**:
