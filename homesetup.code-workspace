@@ -6,6 +6,7 @@
 	],
 	"settings": {
 		"python.pythonPath": "/usr/local/bin/python2-32",
-		"workbench.colorTheme": "Eclipse"
+		"workbench.colorTheme": "Eclipse",
+		"hide-files.files": []
 	}
 }
