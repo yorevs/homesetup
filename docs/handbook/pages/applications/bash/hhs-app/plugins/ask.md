@@ -28,13 +28,13 @@
 
 <!-- tocstop -->
 
-## Setup
+## Updater
 
 ### "help"
 
 #### **Purpose**
 
-HomeSetup initialization setup.
+HomeSetup AI integration.
 
 #### **Returns**
 
@@ -42,44 +42,35 @@ HomeSetup initialization setup.
 
 #### **Parameters**
 
-- $1 _Optional_ : If specified, restore HomeSetup defaults.
+- $1..$N _Required_ : The question about HomeSetup.
 
 #### **Examples**
 
-`__hhs setup help`
+`__hhs ask execute How can I use starship?`
 
 **Output**
 
 ```bash
-usage: __hhs setup [-restore]
+  Taius: You can use Starship by executing commands in your terminal. Here are some examples:
 
- ____       _
-/ ___|  ___| |_ _   _ _ __
-\___ \ / _ \ __| | | | '_ \
- ___) |  __/ |_| |_| | |_) |
-|____/ \___|\__|\__,_| .__/
-                     |_|
+ 1 To set a specific preset for your Starship prompt:
 
-  HomeSetup initialization setup.
+    __hhs starship execute preset 'no-nerd-font'
 
-    options:
-      -restore    : Restore the HomeSetup defaults.
-```
+   This changes your Starship prompt to the "no-nerd-font" preset.
+ 2 To view help information about Starship commands:
 
-`__hhs setup`
+    __hhs starship help
 
-```bash
-HomeSetup Initialization Settings
-Please check the desired startup settings:
+   This will display usage information and available commands.
+ 3 To edit your Starship configuration file:
 
-  1      hhs_set_locales
-  2       hhs_export_settings
-  3       hhs_restore_last_dir
-  4       hhs_use_starship
-  5       hhs_load_shell_options
-  6       homebrew_no_auto_update
-  7       hhs_no_auto_update
-  8       hhs_load_completions
+    __hhs starship edit
 
-[Enter] Accept  [↑↓] Navigate  [Space] Mark  [I] Invert  [Esc] Quit  [1..8] Goto:
+ 4 To restore HomeSetup defaults:
+
+    __hhs starship restore
+
+
+For more detailed information, you can refer to the HomeSetup Developer Handbook, specifically the section on Starship. You can also visit the Starship website at [starship.rs]( https://starship.rs/).
 ```

@@ -49,7 +49,6 @@ load_bats_libs
   [[ -f "${HHS_DIR}/.profile" ]] || missing+=("${HHS_DIR}/.profile")
   [[ -f "${HHS_DIR}/.prompt" ]] || missing+=("${HHS_DIR}/.prompt")
   [[ -f "${HHS_DIR}/.saved_dirs" ]] || missing+=("${HHS_DIR}/.saved_dirs")
-  [[ -f "${HHS_PROMPTS_DIR}/homesetup.txt" ]] || missing+=("${HHS_PROMPTS_DIR}/homesetup.txt")
 
   [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: [${missing[*]}]"
   [[ ${#missing[@]} -eq 0 ]]

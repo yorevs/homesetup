@@ -163,9 +163,16 @@ alias __hhs_setup='__hhs setup execute'
 alias __hhs_firebase='__hhs firebase execute'
 # @alias: Shortcut for hhs settings plug-in
 alias __hhs_settings='__hhs settings execute'
+# @alias: Shortcut for hhs ask plug-in
+alias __hhs_ask='__hhs ask execute'
 
 # -----------------------------------------------------------------------------------
 # @category: External tools aliases
+
+if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
+  # @alias: Shortcut for the AskAI python module
+  alias ask='python3 -m askai'
+fi
 
 # @alias: Jenv - Set JAVA_HOME using jenv
 __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="${HOME}/.jenv/versions/`jenv version-name`"'

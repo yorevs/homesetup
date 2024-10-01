@@ -24,5 +24,6 @@
       - [Setup](setup.md)
       - [Starship](starship.md)
       - [Updater](updater.md)
+      - [Ask](ask.md)
 
 <!-- tocstop -->

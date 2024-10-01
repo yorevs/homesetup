@@ -120,7 +120,9 @@ unset PROMPT_COMMAND
 # HomeSetup variables
 
 export HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
+export HHS_ASKAI_URL='https://github.com/yorevs/askai'
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &> /dev/null && echo '1')
+export HHS_AI_ENABLED=$(python3 -m pip show hspylib-askai &>/dev/null && echo '1')
 
 # ----------------------------------------------------------------------------
 # Module configs

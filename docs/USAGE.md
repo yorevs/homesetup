@@ -148,11 +148,13 @@ HomeSetup will provide many useful aliases (shortcuts) to your terminal:
 | __hhs_setup    | Shortcut for `hhs setup` plug-in                       |
 | __hhs_firebase | Shortcut for `hhs firebase` plug-in                    |
 | __hhs_settings | Shortcut for `hhs settings` plug-in                    |
+| __hhs_ask      | Shortcut for `hhs ask` plug-in                         |
 
 ### External tools
 
 | ALIAS              | Description                                                                      |
 |--------------------|----------------------------------------------------------------------------------|
+| ask                | Shortcut for the HomeSetup AskAI application.                                    |
 | jenv_set_java_home | Jenv - Set JAVA_HOME using jenv                                                  |
 | cleanup-db         | Dropbox - Recursively delete Dropbox conflicted files from the current directory |
 | encode             | Shortcut for base64 encode                                                       |

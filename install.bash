@@ -290,9 +290,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     # Backup location
     HHS_BACKUP_DIR="${HHS_DIR}/backup"
 
-    # AskAI prompts location
-    HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
-
     # Logs directory
     HHS_LOG_DIR="${HHS_DIR}/log"
 
@@ -347,7 +344,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${ORANGE}"
     read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
     echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
-    if [[ "${ANS}" == "y" || "${ANS}" == 'Y' ]]; then
+    if [[ "${ANS}" =~ ^[yY]$ ]]; then
       INSTALL_AI=1
       PYTHON_MODULES+=('hspylib-askai')
     fi
@@ -364,8 +361,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     create_directory "${HHS_MOTD_DIR}"
     # Create HomeSetup backup directory
     create_directory "${HHS_BACKUP_DIR}"
-    # Create HomeSetup AskAI prompts directory
-    create_directory "${HHS_PROMPTS_DIR}"
     # Create HomeSetup logs directory
     create_directory "${HHS_LOG_DIR}"
     # Create fonts destination directory
@@ -625,7 +620,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue (y/[n])? ' ANS
       fi
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
-      if [[ "${ANS}" != "y" && "${ANS}" != 'Y' ]]; then
+      if [[ ! "${ANS}" =~ ^[yY]$ ]]; then
         echo "Installation cancelled:  " >>"${INSTALL_LOG}"  2>&1
         echo ">> ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}  STREAM=${STREAMED}" >>"${INSTALL_LOG}"
         quit 1 "${RED}Installation cancelled !${NC}"
@@ -669,7 +664,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
         echo ''
         [[ -z ${QUIET} && -z "${STREAMED}" ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
-        [[ "${ANS}" != 'y' && "${ANS}" != 'Y' ]] && continue
+        [[ ! "${ANS}" =~ ^[yY]$ ]] && continue
         echo ''
         link_file "${DOTFILES_DIR}/${next}" "${dotfile}"
         echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
@@ -723,7 +718,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Copy HomeSetup fonts into place.
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR}... "
-    echo ">>> Copied HomeSetup fonts:" >>"${INSTALL_LOG}"
+    echo ">>> Copied HomeSetup fonts" >>"${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
     if find "${HHS_HOME}"/assets/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
@@ -735,16 +730,18 @@ Usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Copy HomeSetup AskAI prompts into place.
-    echo -en "\n${WHITE}Copying HomeSetup AskAI prompts into ${BLUE}${HHS_PROMPTS_DIR}... "
-    echo ">>> Copied HomeSetup AskAI prompts:" >>"${INSTALL_LOG}"
-    [[ -d "${HHS_PROMPTS_DIR}" ]] || quit 2 "Unable to locate AskAI prompts (${HHS_PROMPTS_DIR}) directory !"
-    if find "${HHS_HOME}"/assets/prompts -maxdepth 2 -type f -iname "*.txt" \
-      -print \
-      -exec rsync --archive {} "${HHS_PROMPTS_DIR}" \; \
-      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
+    echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
+    echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
+    copy_code="
+    from askai.core.support.rag_provider import RAGProvider
+    if __name__ == '__main__':
+      RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
+    "
+    PYTHON=$(command -v python3 2>/dev/null)
+    if ${PYTHON} -c "${copy_code//    /}" 2>&1; then
       echo -e "${GREEN}OK${NC}"
     else
-      quit 2 "Unable to copy AskAI prompts into fonts (${HHS_PROMPTS_DIR}) directory !"
+      quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
     fi
 
     # -----------------------------------------------------------------------------------
