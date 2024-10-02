@@ -607,7 +607,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
     echo -e "${WHITE} Install Prefix: ${YELLOW}${HHS_PREFIX:-none}"
     echo -e "${WHITE}    Install Dir: ${YELLOW}${HHS_HOME}"
-    echo -e "${WHITE}     Install AI: ${YELLOW}${is_askai:=Yes}"
+    echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
     echo -e "${WHITE}  PyPi Packages: ${YELLOW}${PYTHON_MODULES[*]}"
     echo -e "${WHITE}     User/Group: ${YELLOW}${USER}:${GROUP}"
@@ -729,19 +729,21 @@ Usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    # Copy HomeSetup AskAI prompts into place.
-    echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
-    echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
-    copy_code="
-    from askai.core.support.rag_provider import RAGProvider
-    if __name__ == '__main__':
-      RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
-    "
-    PYTHON=$(command -v python3 2>/dev/null)
-    if ${PYTHON} -c "${copy_code//    /}" 2>&1; then
-      echo -e "${GREEN}OK${NC}"
-    else
-      quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
+    if [[ -n "${INSTALL_AI}" ]]; then
+      # Copy HomeSetup AskAI prompts into place.
+      echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
+      echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
+      copy_code="
+      from askai.core.support.rag_provider import RAGProvider
+      if __name__ == '__main__':
+        RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
+      "
+      PYTHON=$(command -v python3 2>/dev/null)
+      if ${PYTHON} -c "${copy_code//      /}" 2>&1; then
+        echo -e "${GREEN}OK${NC}"
+      else
+        quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
+      fi
     fi
 
     # -----------------------------------------------------------------------------------
@@ -924,11 +926,6 @@ Usage: $APP_NAME [OPTIONS] <args>
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
           "${RED}Unable to delete the old .hhs directory. It was moved to ~/.config. Feel free to wipe it out!${NC}"
       fi
-    fi
-
-    # Remove the __hhs app AI plugin if the user decided not to install it.
-    if [[ -z "${INSTALL_AI}" ]]; then
-      [[ -d "" ]] && \rm -rf ""
     fi
   }
 
