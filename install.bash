@@ -49,7 +49,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_dependencies configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
-    install_tools query_askai_install create_destination_dirs
+    install_tools query_askai_install create_destination_dirs configure_askai_rag
   )
 
 
@@ -346,7 +346,6 @@ Usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
     if [[ "${ANS}" =~ ^[yY]$ ]]; then
       INSTALL_AI=1
-      PYTHON_MODULES+=('hspylib-askai')
     fi
     unset ANS
   }
@@ -373,6 +372,8 @@ Usage: $APP_NAME [OPTIONS] <args>
     local pad pad_len install check_pkg
 
     has sudo &>/dev/null && SUDO=sudo
+
+    [[ -n "${INSTALL_AI}" ]] && PYTHON_MODULES+=('hspylib-askai')
 
     # macOS
     if [[ "${MY_OS}" == "Darwin" ]]; then
@@ -534,6 +535,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         configure_python
         configure_starship
         configure_gtrash
+        configure_askai_rag
         ;;
       repair)
         query_askai_install
@@ -544,10 +546,12 @@ Usage: $APP_NAME [OPTIONS] <args>
         configure_python
         configure_starship
         configure_gtrash
+        configure_askai_rag
         ;;
       local)
         install_dotfiles
         configure_starship
+        configure_askai_rag
         ;;
       *)
         quit 2 "Installation method \"${METHOD}\" is not valid!"
@@ -727,23 +731,6 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
-    fi
-
-    if [[ -n "${INSTALL_AI}" ]]; then
-      # Copy HomeSetup AskAI prompts into place.
-      echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
-      echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
-      copy_code="
-      from askai.core.support.rag_provider import RAGProvider
-      if __name__ == '__main__':
-        RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
-      "
-      PYTHON=$(command -v python3 2>/dev/null)
-      if ${PYTHON} -c "${copy_code//      /}" 2>&1; then
-        echo -e "${GREEN}OK${NC}"
-      else
-        quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
-      fi
     fi
 
     # -----------------------------------------------------------------------------------
@@ -956,6 +943,27 @@ Usage: $APP_NAME [OPTIONS] <args>
       else
           echo -e "${RED}FAILED${NC}"
           echo -e "${YELLOW}GTrash will not be available${NC}"
+      fi
+    fi
+  }
+
+  # Configure AskAI HomeSetup/RAG documents
+  configure_askai_rag() {
+    if [[ -n "${INSTALL_AI}" ]]; then
+      # Copy HomeSetup AskAI prompts into place.
+      echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
+      echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
+      copy_code="
+      from askai.core.support.rag_provider import RAGProvider
+      if __name__ == '__main__':
+        RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
+      "
+      PYTHON=$(command -v python3 2>/dev/null)
+      # Dedent the python code above, 6 spaces for now
+      if ${PYTHON} -c "${copy_code//      /}" 2>&1; then
+        echo -e "${GREEN}OK${NC}"
+      else
+        quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
       fi
     fi
   }
