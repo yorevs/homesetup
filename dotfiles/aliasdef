@@ -28,9 +28,10 @@ __hhs_alias hspm='__hhs_hspm'
 __hhs_alias setup='__hhs_setup'
 __hhs_alias errcho='__hhs_errcho'
 __hhs_alias tailor='__hhs_tailor'
-__hhs_alias ask='__hhs_ask'
 __hhs_alias fetch='fetch.bash'
 __hhs_alias check-ip='check-ip.bash'
+
+[[ ${HHS_AI_ENABLED} -eq 1 ]] && __hhs_alias ask='__hhs_ask'
 
 # General shortcuts
 __hhs_alias aa='__hhs_aliases'
