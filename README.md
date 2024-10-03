@@ -33,7 +33,7 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 > **THIS IT NOT JUST A DOTFILES FRAMEWORK**
 
-[![asciicast](https://asciinema.org/a/629065.svg)](https://asciinema.org/a/629065)
+<img src="https://iili.io/dbXcC6g.gif">
 
 - See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
 - For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
@@ -116,9 +116,11 @@ provide with the installation:
 
 When your terminal is set, then you should see something like this:
 
-<img src="https://iili.io/JuxHulR.png" />
+[Welcome](https://iili.io/JuxHulR.png)
 
 ### Try-it first
+
+<img src="https://iili.io/dbXM29a.gif">
 
 Running HomeSetup in a Docker container offers a convenient and isolated environment for testing purposes, ensuring
 that your machine remains unaffected during the evaluation process. Use one of the following image below:
@@ -173,7 +175,7 @@ process.
 
 Once the installation is completed successfully, you should see the following welcome message:
 
-![HomeSetup Welcome](https://iili.io/JuxFH3G.png "Welcome to HomeSetup")
+[HomeSetup Welcome](https://iili.io/JuxFH3G.png "Welcome to HomeSetup")
 
 ### Firebase setup
 
