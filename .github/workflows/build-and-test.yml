@@ -75,6 +75,7 @@ jobs:
     env:
       PREFIX: "${{ github.workspace }}"
       HHS_LOG_DIR: "${{ matrix.os == 'macos-latest' && '/Users/runner/.config/hhs/log' || '/home/runner/.config/hhs/log' }}"
+      LC_ALL: "${{ vars.LC_ALL }}"
       GOOGLE_API_KEY: "${{ secrets.GOOGLE_API_KEY }}"
       DEEPL_API_KEY: "${{ secrets.DEEPL_API_KEY }}"
       OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
