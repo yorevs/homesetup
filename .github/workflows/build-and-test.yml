@@ -75,6 +75,9 @@ jobs:
     env:
       PREFIX: "${{ github.workspace }}"
       HHS_LOG_DIR: "${{ matrix.os == 'macos-latest' && '/Users/runner/.config/hhs/log' || '/home/runner/.config/hhs/log' }}"
+      GOOGLE_API_KEY: "${{ secrets.GOOGLE_API_KEY }}"
+      DEEPL_API_KEY: "${{ secrets.DEEPL_API_KEY }}"
+      OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
     steps:
       - uses: actions/checkout@v3
         with:
