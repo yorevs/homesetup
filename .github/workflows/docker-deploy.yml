@@ -14,12 +14,21 @@ on:
         default: 'latest'
         required: true
         type: string
+      platforms:
+        description: 'Build platforms (architectures)'
+        default: 'linux/amd64,linux/arm64'
+        required: true
+        type: choice
+        options:
+          - linux/amd64,linux/arm64
+          - linux/amd64
+          - linux/arm64
 
   workflow_call:
     inputs:
       image_tag:
         description: 'Docker Image Tag'
-        default: ''
+        default: 'latest'
         required: true
         type: string
 
@@ -41,8 +50,23 @@ jobs:
     outputs:
       app_version: ${{ steps.detect-version.outputs.app_version }}
 
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      arch-matrix: ${{ steps.set-matrix.outputs.arch-matrix }}
+    steps:
+      - name: Set matrix based on input
+        id: set-matrix
+        shell: bash
+        run: |
+          platforms="${{ github.event.inputs.platforms }}"
+          archs=$(echo '["'${platforms//,/\",\"}'"]')
+          echo "arch-matrix=$archs" >> "$GITHUB_OUTPUT"
+
   build-docker-images:
-    needs: detect-version
+    needs:
+      - detect-version
+      - set-matrix
     strategy:
       matrix:
         os:
@@ -52,6 +76,7 @@ jobs:
           - "fedora"
           - "centos"
           - "alpine"
+        arch: ${{ fromJSON(needs.set-matrix.outputs.arch-matrix) }}
     runs-on: ${{ matrix.os }}
     environment: homesetup
     env:
@@ -59,6 +84,9 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       IMAGE_TAG: ${{ inputs.image_tag || needs.detect-version.outputs.app_version }}
     steps:
+      - name: Print matrix
+        run: |
+          echo "Building for OS: ${{ matrix.os }}, Docker: ${{ matrix.docker-container }}, Arch: ${{ matrix.arch }}"
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
         with:
@@ -68,12 +96,18 @@ jobs:
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
+      - name: Set up Architecture tag
+        run: |
+          arch="${{ matrix.arch }}"
+          arch_tag="${arch#*/}"
+          echo "ARCH=$arch_tag" >> "$GITHUB_ENV"
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build and Push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
+          platforms: "${{ inputs.platforms }}"
           context: "docker/${{ matrix.docker-container }}"
           file: "docker/${{ matrix.docker-container }}/Dockerfile"
           push: true
-          tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:${{ env.IMAGE_TAG }}"
+          tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:${{ env.ARCH }}-${{ env.IMAGE_TAG }}"

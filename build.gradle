@@ -31,11 +31,29 @@ tasks.withType(Exec) {
   }
 }
 
+String detectPython() {
+  def pythonHome = System.getenv('PYTHON_HOME') ?: null
+  if (pythonHome != null) {
+      return pythonHome + '/python3'
+  }
+
+  def output = new ByteArrayOutputStream()
+  exec {
+      commandLine 'bash', '-c', 'command -v python3'
+      standardOutput = output
+  }
+
+  pythonHome = output.toString().trim()
+  assert pythonHome != null && !pythonHome.isEmpty(), "Could not find any installed python3 version"
+
+  return pythonHome
+}
+
 ext {
   bash = "bash${bashVersion}"
   versionFile = "$rootDir/.VERSION"
   verbose = findProperty('verbose') ?: false
-  python = "python${pythonVersion}"
+  python = detectPython()
 }
 
 apply from: "$projectDir/gradle.properties"
