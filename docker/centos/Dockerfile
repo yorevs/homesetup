@@ -1,6 +1,6 @@
 FROM centos
 
-MAINTAINER Hugo Saporetti Junior<homesetup@gmail.com>
+LABEL maintainer="Hugo Saporetti Junior<homesetup@gmail.com>"
 
 USER root
 

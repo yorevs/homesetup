@@ -75,7 +75,6 @@ jobs:
           - "ubuntu"
           - "fedora"
           - "centos"
-          - "alpine"
         arch: ${{ fromJSON(needs.set-matrix.outputs.arch-matrix) }}
     runs-on: ${{ matrix.os }}
     environment: homesetup
