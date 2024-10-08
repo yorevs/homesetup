@@ -27,12 +27,24 @@ environment, you can opt for the **Docker method**. By using it, you can run Hom
 affecting your host system. This allows you to experiment and evaluate the installation before making any permanent
 changes. You can try HomeSetup on Docker, issuing one of the following commands:
 
+#### amd64
+
 ```bash
-docker run --rm -it yorevs/hhs-centos
-docker run --rm -it yorevs/hhs-ubuntu
-docker run --rm -it yorevs/hhs-fedora
-docker run --rm -it yorevs/hhs-alpine
+docker run --rm -it yorevs/hhs-centos:amd64-latest
+docker run --rm -it yorevs/hhs-ubuntu:amd64-latest
+docker run --rm -it yorevs/hhs-fedora:amd64-latest
+docker run --rm -it yorevs/hhs-alpine:amd64-latest
 ```
+
+#### arm64
+
+```bash
+docker run --rm -it yorevs/hhs-centos:arm64-latest
+docker run --rm -it yorevs/hhs-ubuntu:arm64-latest
+docker run --rm -it yorevs/hhs-fedora:arm64-latest
+```
+
+> Alpine is not available for **arm64** architecture.
 
 ![HomeSetup Welcome](https://iili.io/H8ry3vI.png "Welcome to HomeSetup")
 
@@ -44,6 +56,8 @@ is geared towards streamlining your workflow and significantly boosting producti
 support for Bash (version 3.4+) on both _macOS_ and _Linux_ platforms. Moreover, we have exciting plans to extend
 support for [Zsh](https://www.zsh.org/) in the near future, catering to a wider range of users. If you're seeking a
 more powerful and efficient shell experience, HomeSetup is the perfect solution.
+
+# Features
 
 ## Create your own syntax
 
@@ -65,10 +79,13 @@ functions, allowing for easy integration and customization.
 
 Out-of-the-box, HomeSetup provides several plug-ins that extend its capabilities:
 
-- **HSPM**: A tool for managing your development tools using installation and uninstallation recipes.
+- **ASK**: A tool to provide AI answers for your HomeSetup questions.
 - **FIREBASE**: A manager for integrating HomeSetup with Firebase.
+- **HSPM**: A tool for managing your development tools using installation and uninstallation recipes.
+- **SETTINGS**: A settings manager allowing you to easily changed/add/remove settings and converting them to .envrc or environment variables.
+- **SETUP**: HomeSetup initialization setup tool.
+- **STARSHIP**: The minimal, blazing-fast, and infinitely customizable prompt for any shell.
 - **UPDATER**: A HomeSetup update manager that keeps your installation up to date.
-- **SETMAN**: A settings manager allowing you to easily changed/add/remove settings and converting them to .envrc or environment variables.
 
 When you initially run HomeSetup, you'll start with a clean slate without any customizations. However, as you use the
 tool, you'll have the opportunity to create your own dotfiles and make tweaks to tailor the experience to your liking.
@@ -116,6 +133,8 @@ HomeSetup offers seamless integration with [Firebase Realtime Database](https://
 securely save and load all of your dotfiles. This feature ensures that your setup is backed up using Google's powerful
 realtime database capabilities.
 
+## Integrations
+
 ### Firebase
 
 Please refer to the [Firebase Setup](FIREBASE_SETUP.md) document for detailed instructions on configuring your account.
@@ -144,6 +163,38 @@ If manual configuration feels too cumbersome, you can effortlessly explore one o
 
 <img src="https://iili.io/JuzBxCN.png" />
 
+### ColorLS
+
+HomeSetup integrates with colorls, a Ruby gem that beautifies the terminal's ls command, with color and font-awesome icons. For more information, please access the [ColorLS project](https://github.com/athityakumar/colorls).
+
+<img src="https://iili.io/dynBBSI.gif" />
+
+### FZF
+
+HomeSetup integrates with fzf, which is a general-purpose command-line fuzzy finder. For more information, please access the [FZF project](https://github.com/junegunn/fzf).
+
+<img src="https://iili.io/dynqv6l.gif" />
+
+### GTrash
+
+HomeSetup integrates with GTrash, a featureful Trash CLI manager: alternative to rm and trash-cli. For more information, please access the [GTrash project](https://github.com/umlx5h/gtrash).
+
+<img src="https://github.com/umlx5h/gtrash/raw/main/doc/image/demo.gif" />
+
+### AskAI
+
+HomeSetup has officially entered the AI landscape, introducing Taius, your dedicated AskAI assistant. Taius is here to provide accurate, on-demand answers to all your HomeSetup-related inquiries. Leveraging Retrieval-Augmented Generation (RAG) technology, Taius accesses and analyzes the full breadth of HomeSetup documentation, ensuring a seamless and enhanced user experience like never before.
+
+<img src="https://iili.io/dy2Ga6u.gif">
+
+> It's required that you own accounts on GoogleSearch API (for searching the web), DeepL (for translations), and OpenAI. For that is required that you provide the following Api Keys:
+
+1. GOOGLE_API_KEY
+2. OPENAI_API_KEY
+3. DEEPL_API_KEY
+
+For a detailed documentation about the AskAI, please access the [AskAI project](https://github.com/yorevs/askai).
+
 # Shell is boring, I prefer a graphical interface
 
 Indeed, graphical user interfaces (GUIs) can be helpful when getting started with a new application. However, they
@@ -159,7 +210,7 @@ By leveraging the command line interface of HomeSetup, you can explore the full 
 maintaining the simplicity and efficiency of a visual interface. Enjoy the best of both worlds with HomeSetup's
 intuitive and feature-rich command line experience.
 
-[![HomeSetup-TUI](https://asciinema.org/a/586008.svg)](https://asciinema.org/a/586008)
+[![HomeSetup-TUI](https://asciinema.org/a/586008.svg)](https://asciinema.org/a/586008).
 
 [The HomeSetup](https://github.com/yorevs/homesetup) team is dedicated to crafting their own tools using a combination
 of shell script and Python. These custom tools are designed to enhance the functionality of HomeSetup and provide a

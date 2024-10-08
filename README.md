@@ -234,7 +234,7 @@ It's required that you own accounts on GoogleSearch API (for searching the web),
 2. OPENAI_API_KEY
 3. DEEPL_API_KEY
 
-For more information about getting the ApiKeys, please check: [AskAI](https://github.com/yorevs/askai)
+For more information about getting the ApiKeys, please check: [AskAI](https://github.com/yorevs/askai).
 
 ## Uninstallation
 
