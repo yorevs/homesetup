@@ -37,7 +37,12 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 - See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
 - For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
-- **HOT** Find the new GPT for HomeSetup: [ChaGPT-HomeSetup]https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-taius
+
+
+**🔥 HOT** AI is here ! **HomesSetup** has integrated AI with RAG capabilities.
+
+<img src="https://iili.io/dy2Ga6u.gif">
+
 
 ## Key Features
 
@@ -218,6 +223,18 @@ key bindings (Ctrl+T \[find\] and Ctrl+R \[history\]) and auto-completions. Is a
 [bat](https://github.com/sharkdp/bat) (extended 'cat') and [fd](https://github.com/sharkdp/fd) (extended 'find').
 
 Please check the [FZF Docs](https://github.com/junegunn/fzf#examples) for more usage examples.
+
+### AskAI Integration
+
+HomeSetup now integrates with the AskAI application. You can ask questions about the terminal or any aspect of the HomeSetup project. You can also request assistance in building commands and using HomeSetup easily. You just need to ask!
+
+It's required that you own accounts on GoogleSearch API (for searching the web), DeepL (for translations), and OpenAI. For that is required that you provide the following Api Keys:
+
+1. GOOGLE_API_KEY
+2. OPENAI_API_KEY
+3. DEEPL_API_KEY
+
+For more information about getting the ApiKeys, please check: [AskAI](https://github.com/yorevs/askai)
 
 ## Uninstallation
 
