@@ -120,17 +120,29 @@ When your terminal is set, then you should see something like this:
 
 ### Try-it first
 
-<img src="https://iili.io/dbXM29a.gif">
+<img src="https://iili.io/dydwcjR.gif">
 
 Running HomeSetup in a Docker container offers a convenient and isolated environment for testing purposes, ensuring
-that your machine remains unaffected during the evaluation process. Use one of the following image below:
+that your machine remains unaffected during the evaluation process. Use one of the following docker images:
+
+#### amd64
 
 ```bash
-docker run --rm -it yorevs/hhs-centos
-docker run --rm -it yorevs/hhs-ubuntu
-docker run --rm -it yorevs/hhs-fedora
-docker run --rm -it yorevs/hhs-alpine
+docker run --rm -it yorevs/hhs-centos:amd64-latest
+docker run --rm -it yorevs/hhs-ubuntu:amd64-latest
+docker run --rm -it yorevs/hhs-fedora:amd64-latest
+docker run --rm -it yorevs/hhs-alpine:amd64-latest
 ```
+
+#### arm64
+
+```bash
+docker run --rm -it yorevs/hhs-centos:arm64-latest
+docker run --rm -it yorevs/hhs-ubuntu:arm64-latest
+docker run --rm -it yorevs/hhs-fedora:arm64-latest
+```
+
+> Alpine is not available for **arm64** architecture.
 
 ### Remote installation
 
@@ -182,6 +194,8 @@ Once the installation is completed successfully, you should see the following we
 HomeSetup provides the capability to utilize your Firebase account for uploading and downloading your custom files
 (dotfiles file synchronization) to your *Real-time Database*. To utilize this feature, you must first configure your
 Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.md) document for instructions.
+
+<img src="https://iili.io/dbXM29a.gif">
 
 ### Starship Setup
 
