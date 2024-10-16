@@ -954,7 +954,7 @@ Usage: $APP_NAME [OPTIONS] <args>
       echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
       echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
       copy_code="
-      from askai.core.support.rag_provider import RAGProvider
+      from askai.core.component.rag_provider import RAGProvider
       if __name__ == '__main__':
         RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
       "
