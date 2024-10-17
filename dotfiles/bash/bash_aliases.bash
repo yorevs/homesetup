@@ -79,6 +79,11 @@ else
   alias lld='ls -d -lah .??*/ 2> /dev/null'
 fi
 
+if __hhs_has 'sdiff' && __hhs_has 'colordiff'; then
+  # @alias: Replacement for diff using colors and split panels
+  alias diff='sdiff --diff-program=colordiff cb-dev.yaml cb-stage.yaml'
+fi
+
 # @alias: Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
 alias grep='\grep --color=auto'

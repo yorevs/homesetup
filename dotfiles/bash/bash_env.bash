@@ -177,6 +177,7 @@ DEVELOPER_TOOLS=(
   'gcc' 'make' 'mvn' 'gradle' 'pip3' 'gem'
   'direnv' 'pbcopy' 'fd' 'jq'
   'colorls' 'fzf' 'bat' 'starship' 'gtrash'
+  'sdiff' 'colordiff' 'nvim'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

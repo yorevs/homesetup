@@ -38,12 +38,6 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   [[ -z "${USER}" || -z "${HOME}" ]] && quit 1 "Unable to determine USER/HOME -> ${USER}/${HOME}"
 
-  # Installation log file
-  INSTALL_LOG="${HOME}/install.log"
-  touch "${INSTALL_LOG}"
-  [[ -f "${INSTALL_LOG}" ]] || quit 1 "Unable initialize installation logs -> ${INSTALL_LOG}"
-  [[ -f "${INSTALL_LOG}" ]] && echo "Logs can be accessed here: ${BLUE}${INSTALL_LOG}${NC}"
-
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
@@ -67,6 +61,12 @@ Usage: $APP_NAME [OPTIONS] <args>
   YELLOW='\033[93m'
   RED='\033[31m'
   NC='\033[m'
+
+  # Installation log file
+  INSTALL_LOG="${HOME}/install.log"
+  touch "${INSTALL_LOG}"
+  [[ -f "${INSTALL_LOG}" ]] || quit 1 "Unable initialize installation logs -> ${INSTALL_LOG}"
+  [[ -f "${INSTALL_LOG}" ]] && echo -e "${ORANGE}Installation logs can be accessed here: ${BLUE}${INSTALL_LOG}${NC}"
 
   # HomeSetup GitHub repository URL
   HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
@@ -649,6 +649,9 @@ Usage: $APP_NAME [OPTIONS] <args>
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
     copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+    # NeoVim integration
+    [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
+    copy_file "${HHS_HOME}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
 
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 

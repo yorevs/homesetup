@@ -1,0 +1,3 @@
+set number        " Show line numbers
+syntax on         " Enable syntax highlighting
+set autoindent    " Enable auto-indentation
