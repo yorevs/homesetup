@@ -46,17 +46,18 @@ function execute() {
   db_alias="${args[1]}"
 
   # Find all dotfiles
-  dotfiles+=()
+  dotfiles=()
   IFS=''
   while read -r dotfile; do
     [[ "$(basename "${dotfile}")" == .last_update ]] && continue
     is_text_file=$(file -bL --mime "${dotfile}" | grep -v 'binary')
     [[ -s "${dotfile}" && -n ${is_text_file} ]] && dotfiles+=("${dotfile}")
-  done < <(find "${HHS_DIR}" -maxdepth 1 -type f -name ".*" -exec basename {} \;)
+  done < <(find "${HHS_DIR}" -maxdepth 1 -type f -name ".*")
   IFS="${OLDIFS}"
+  [[ ${#dotfiles[@]} -eq 0 ]] && quit 2 "Unable to find any dotfile to upload!"
 
   echo ''
-  pushd "${HHS_DIR}" &>/dev/null || exit 1
+  pushd "${HHS_DIR}" &>/dev/null || quit 1
 
   if [[ 'upload' == "${action}" ]]; then
     python3 -m firebase upload dotfiles."${db_alias}" "${dotfiles[@]}"
@@ -69,7 +70,7 @@ function execute() {
   fi
   ret_val=$?
 
-  popd &>/dev/null || exit 1
+  popd &>/dev/null || quit 1
   echo -e "${NC}"
 
   quit ${ret_val}
