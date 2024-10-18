@@ -81,7 +81,7 @@ fi
 
 if __hhs_has 'sdiff' && __hhs_has 'colordiff'; then
   # @alias: Replacement for diff using colors and split panels
-  alias diff='sdiff --diff-program=colordiff cb-dev.yaml cb-stage.yaml'
+  alias diff='sdiff --diff-program=colordiff'
 fi
 
 # @alias: Always enable colored `grep` output
@@ -123,8 +123,14 @@ alias open="__hhs_open"
 # @alias: Display/Set/unset current Shell Options
 alias shopt="__hhs_shopt"
 
-# @alias: Use `vim' instead of `vi' if installed
-__hhs_has "vim" && alias vi='vim'
+if __hhs_has nvim; then
+  # @alias: Use `nvim' instead of `vi' if installed
+  alias vi='nvim'
+elif __hhs_has "vim"; then
+  # @alias: Use `vim' instead of `vi' if installed
+  alias vi='vim'
+fi
+
 # @alias: `more' will interpret escape sequences
 __hhs_has "more" && alias more='\more -r'
 # @alias: `less' will interpret escape sequences
