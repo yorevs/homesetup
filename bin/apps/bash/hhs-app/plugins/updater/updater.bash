@@ -127,10 +127,10 @@ update_hhs() {
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n])? " ANS
         [[ -n "$ANS" ]] && echo "${ANS}${NC}"
         if [[ "${ANS}" =~ ^[yY]$ ]]; then
-          pushd "${HHS_HOME}" &>/dev/null || return 1
+          pushd "${HHS_HOME}" &>/dev/null || quit 1
           ai_enabled=$(python3 -m pip show hspylib-askai &>/dev/null && echo '1')
           export GITHUB_ACTIONS="${ai_enabled:-0}"
-          if do_update && "${HHS_HOME}"/install.bash -q -r; then
+          if do_update && "${HHS_HOME}/install.bash" -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
             echo ''
             echo -e "${YELLOW}${POINTER_ICN}  The new version will become active once you restart your terminal!${NC}"
@@ -138,7 +138,7 @@ update_hhs() {
           else
             quit 1 "${PLUGIN_NAME}: Failed to update HomeSetup !${NC}"
           fi
-          popd &>/dev/null || return 1
+          popd &>/dev/null || quit 1
         fi
       fi
       stamp_next_update &>/dev/null
@@ -161,7 +161,7 @@ do_update() {
     git stash --all &>/dev/null || return 1
     stashed=1
   fi
-  if git pull &>/dev/null; then
+  if git pull --rebase -Xtheirs &>/dev/null; then
     ret_val=0
   else
     ret_val=1
