@@ -37,7 +37,7 @@ usage: ${PLUGIN_NAME} ${PLUGIN_NAME} [option] {check,update,stamp}
 "
 
 UNSETS=(
-  help version cleanup execute update_hhs stamp_next_update is_greater update_check do_update
+  help version cleanup execute update_hhs stamp_next_update is_updated update_check do_update
 )
 
 [[ -s "${HHS_DIR}/bin/app-commons.bash" ]] && source "${HHS_DIR}/bin/app-commons.bash"
@@ -90,7 +90,7 @@ function execute() {
 }
 
 # @purpose: Check whether the repository version is greater than installed version.
-is_greater() {
+is_updated() {
   IFS='.'
   read -r -a curr_versions <<<"${HHS_VERSION}"
   read -r -a repo_versions <<<"${repo_ver}"
@@ -101,20 +101,20 @@ is_greater() {
       echo -e "${ORANGE}Your version of HomeSetup is not up-to-date: ${NC}"
       echo -e "  => Repository: ${GREEN}v${repo_ver}${NC}, Yours: ${RED}v${HHS_VERSION}${NC}"
       echo ''
-      return 0
+      return 1
     fi
   done
 
   echo -e "${GREEN}Your version of HomeSetup is up-to-date v${HHS_VERSION}${NC}"
 
-  return 1
+  return 0
 }
 
 # shellcheck disable=SC2120
 # @purpose: Check the current HomeSetup installation and look for updates.
 update_hhs() {
 
-  local repo_ver re
+  local repo_ver re ai_enabled
   local VERSION_URL='https://raw.githubusercontent.com/yorevs/homesetup/master/.VERSION'
 
   if [[ -n "${HHS_VERSION}" ]]; then
@@ -123,17 +123,18 @@ update_hhs() {
     re="[0-9]+\.[0-9]+\.[0-9]+"
 
     if [[ ${repo_ver} =~ $re ]]; then
-      if is_greater "${repo_ver}"; then
+      if ! is_updated "${repo_ver}"; then
         read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n])? " ANS
         [[ -n "$ANS" ]] && echo "${ANS}${NC}"
-        if [[ "$ANS" == 'y' || "$ANS" == 'Y' ]]; then
+        if [[ "${ANS}" =~ ^[yY]$ ]]; then
           pushd "${HHS_HOME}" &>/dev/null || return 1
+          ai_enabled=$(python3 -m pip show hspylib-askai &>/dev/null && echo '1')
+          export GITHUB_ACTIONS="${ai_enabled:-0}"
           if do_update && "${HHS_HOME}"/install.bash -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
-            sleep 1
-            reset
-            source "${HOME}"/.bashrc
-            echo -e "${HHS_MOTD}"
+            echo ''
+            echo -e "${YELLOW}${POINTER_ICN}  The new version will become active once you restart your terminal!${NC}"
+            quit 0
           else
             quit 1 "${PLUGIN_NAME}: Failed to update HomeSetup !${NC}"
           fi

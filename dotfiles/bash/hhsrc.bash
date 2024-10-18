@@ -266,13 +266,14 @@ echo -e "\nHomeSetup initialization complete in ${diff_time_sec}s ${diff_time_ms
 
 # shellcheck disable=2164
 if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
-  cd "$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
+  last_dir="$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
+  cd "${last_dir}" 2> /dev/null
+  __hhs_log "WARN" "Last directory ${last_dir} is not available !"
 fi
 
 # Print HomeSetup MOTDs.
 if [[ -d "${HHS_MOTD_DIR}" ]]; then
   all=$(find "${HHS_MOTD_DIR}" -type f | sort | uniq)
-
   for motd in ${all}; do
     echo -e "$(eval "echo -e \"$(<"${motd}")\"")"
   done
@@ -282,5 +283,5 @@ fi
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
 export PATH
 
-unset -f started finished diff_time diff_time_sec diff_time_ms state option line file
-unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name
+unset -f started finished diff_time diff_time_sec diff_time_ms state option line file all
+unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name last_dir

@@ -93,14 +93,12 @@ jobs:
         run: |
           if ./install.bash -r -p "${PREFIX}"; then
             echo "${PREFIX}" > "${HOME}/.hhs-prefix"
-            echo ''
-            echo -e "${YELLOW}Installation information:"
-            echo -e " SHELL: ${SHELL}"
-            echo -e "PREFIX: ${PREFIX}"
-            echo -e "  HOME: ${HOME}"
-            echo -e "  USER: ${USER}"
-            echo -e "  LOGS: ${HHS_LOG_DIR}"
-            echo ''
+            echo "## Installation information" >> $GITHUB_STEP_SUMMARY
+            echo " SHELL: ${SHELL}" >> $GITHUB_STEP_SUMMARY
+            echo "PREFIX: ${PREFIX}" >> $GITHUB_STEP_SUMMARY
+            echo "  HOME: ${HOME}" >> $GITHUB_STEP_SUMMARY
+            echo "  USER: ${USER}" >> $GITHUB_STEP_SUMMARY
+            echo "  LOGS: ${HHS_LOG_DIR}" >> $GITHUB_STEP_SUMMARY
             echo -en "${BLUE}Loading bash profile... "
             if source "${HOME}/.bashrc"; then
               echo -e "${GREEN}OK${NC}"

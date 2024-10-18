@@ -341,13 +341,15 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Prompt the user for AskAI installation
   query_askai_install() {
-    echo -e "${ORANGE}"
-    read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
-    echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
-    if [[ "${ANS}" =~ ^[yY]$ ]]; then
-      INSTALL_AI=1
+    if [[ -z "${GITHUB_ACTIONS}" ]]; then
+      echo -e "${ORANGE}"
+      read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
+      echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
+      if [[ "${ANS}" =~ ^[yY]$ ]]; then
+        INSTALL_AI=1
+      fi
+      unset ANS
     fi
-    unset ANS
   }
 
   # Create all HomeSetup destination directories
