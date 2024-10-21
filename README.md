@@ -46,10 +46,6 @@ integration with popular tools like Git, Gradle, Docker, and more.
 
 ## Key Features
 
-- [Starship](https://starship.rs/) integration! HomeSetup now integrates with Starship.
-- [ColorLS](https://github.com/athityakumar/colorls) integration. HomeSetup now integrates with ColorLS.
-- [FZF](https://www.redhat.com/sysadmin/fzf-linux-fuzzy-finder) integration! HomeSetup now integrates with fzf.
-- [GTrash](https://github.com/umlx5h/gtrash) integration! HomeSetup now integrates with GTrash.
 - Automated setup for commonly used configurations, ensuring a hassle-free initial setup.
 - A wide range of functions to simplify terminal configuration and streamline daily tasks.
 - A visually appealing prompt with a monospaced font that supports [Font-Awesome](https://fontawesome.com/) icons (requires a [Nerd font](https://www.nerdfonts.com/)).
@@ -62,6 +58,17 @@ integration with popular tools like Git, Gradle, Docker, and more.
 - Intuitive visual input methods for selecting, choosing, and form data within scripts.
 - Supports Linux and macOS, expanding its compatibility to a wider range of operating systems.
 - Can be tried on a [Docker](https://hub.docker.com/repository/docker/yorevs/hhs-fedora/general) container beforehand, ensuring a **risk-free trial**.
+
+## Integrations
+
+HomeSetup offers seamless integration with a variety of tools to enhance productivity and customization:
+
+- **[Starship](https://starship.rs/):** Elevate your terminal experience with this highly customizable prompt.
+- **[ColorLS](https://github.com/athityakumar/colorls):** Add colorized and feature-rich directory listings for improved readability.
+- **[FZF](https://www.redhat.com/sysadmin/fzf-linux-fuzzy-finder):** Enjoy the power of fuzzy search for rapid navigation and command-line operations.
+- **[GTrash](https://github.com/umlx5h/gtrash):** Manage file deletion effortlessly with this trash-cli alternative.
+- **[NeoVim](https://neovim.io/):** A hyper-extensible, modern rewrite of Vim, offering improved performance and enhanced plugins for developers and power users.
+- **[Sdiff](https://man7.org/linux/man-pages/man1/sdiff.1.html) + [Colordiff](https://www.colordiff.org/):** Compare and colorize file differences directly in your terminal, providing an intuitive way to track changes between files.
 
 ## Catalina moved from bash to zsh
 
