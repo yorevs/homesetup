@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------------------------------
 # Script Name: temperature-converter.bash
 # Purpose: Convert temperatures between Celsius, Fahrenheit, and Kelvin
 # Created Date: Aug 23, 2024
 # Author: Hugo
 # Required Packages: None
 # Powered by [HomeSetup](https://github.com/yorevs/homesetup)
-# -----------------------------------------------------------------------------
+# GPT: [HHS-Script-Generator](https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-script-generator)
 
 # +------------------------------------------------------------------------------+
-# | AIs CAN MAKE MISTAKES.                                                        |
+# | AIs CAN MAKE MISTAKES.                                                       |
 # | For your safety, verify important information and code before executing it.  |
 # |                                                                              |
 # | This program comes with NO WARRANTY, to the extent permitted by law.         |
 # +------------------------------------------------------------------------------+
 
+# https://semver.org/ ; major.minor.patch
 VERSION="0.0.2"  # https://semver.org/ ; major.minor.patch
 
 USAGE="Usage: $(basename "$0") -t <temperature> -f <C|F|K> -o <C|F|K>

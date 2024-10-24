@@ -3,9 +3,10 @@
 # cron-scheduler.bash
 # Purpose: Schedule a script as a cron job based on an ISO date provided by the user
 # Created Date: Aug 23, 2024
-# Author: [Placeholder for the User Name]
+# Author: Hugo
 # Required Packages: cron
 # Powered by [HomeSetup](https://github.com/yorevs/homesetup)
+# GPT: [HHS-Script-Generator](https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-script-generator)
 
 # +------------------------------------------------------------------------------+
 # | AIs CAN MAKE MISTAKES.                                                       |
@@ -14,8 +15,10 @@
 # | This program comes with NO WARRANTY, to the extent permitted by law.         |
 # +------------------------------------------------------------------------------+
 
+# https://semver.org/ ; major.minor.patch
 VERSION="0.0.1" # https://semver.org/ ; major.minor.patch
 
+# Usage message
 USAGE="Usage: $0 -s <script_path> -i <iso_date> [-u <user>]
 Example: $0 -s /path/to/script.sh -i 2024-08-23T15:30:00Z -u username"
 
@@ -25,10 +28,10 @@ usage() {
     exit 2
 }
 
-# @purpose: Display version information and exit
+# @purpose: Display the version information
 version() {
-    echo "$VERSION"
-    exit 2
+    echo "$(basename "$0") version ${VERSION}"
+    exit 0
 }
 
 # @purpose: Parse command line arguments

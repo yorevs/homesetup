@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------------------------------
 # Script Name: media-converter.bash
 # Purpose: Convert media files from one format to another using ffmpeg.
 # Created Date: Aug 23, 2024
 # Author: Hugo
 # Required Packages: ffmpeg
 # Powered by [HomeSetup](https://github.com/yorevs/homesetup)
-# -----------------------------------------------------------------------------
+# GPT: [HHS-Script-Generator](https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-script-generator)
 
 # +-----------------------------------------------------------------------------+
 # | AIs CAN MAKE MISTAKES.                                                      |
@@ -16,7 +15,10 @@
 # | This program comes with NO WARRANTY, to the extent permitted by law.        |
 # +-----------------------------------------------------------------------------+
 
+# https://semver.org/ ; major.minor.patch
 VERSION="0.0.1"  # https://semver.org/ ; major.minor.patch
+
+# Usage message
 USAGE="Usage: $(basename "$0") [-i input_file] [-o output_file] [-f format] [-h] [-v]
 Convert a media file to another format using ffmpeg.
 
@@ -32,15 +34,15 @@ Example:
   $(basename "$0") -i input.wav -o output.mp3 -f mp3
 "
 
+# @purpose: Display the usage/help message
+usage() {
+    echo "$USAGE"
+}
+
 # @purpose: Display the version information
 version() {
     echo "$(basename "$0") version ${VERSION}"
     exit 0
-}
-
-# @purpose: Display the usage/help message
-usage() {
-    echo "$USAGE"
 }
 
 # @purpose: Check if ffmpeg is installed
@@ -69,7 +71,7 @@ parse_args() {
 # @purpose: Main conversion logic
 main() {
     require_ffmpeg
-    
+
     if [[ -z "${INPUT}" ]] || [[ -z "${FORMAT}" ]]; then
         echo -e "\033[31mERROR\033[m: Input file and format are required."
         usage

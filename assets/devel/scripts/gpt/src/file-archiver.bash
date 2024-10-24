@@ -6,6 +6,7 @@
 # Author: Hugo
 # Required Packages: None
 # Powered by HomeSetup (https://github.com/yorevs/homesetup)
+# GPT: [HHS-Script-Generator](https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-script-generator)
 
 # +------------------------------------------------------------------------------+
 # | AIs CAN MAKE MISTAKES.                                                       |
@@ -17,8 +18,9 @@
 # https://semver.org/ ; major.minor.patch
 VERSION="0.0.1"
 
+# Usage message
 USAGE="Usage: file-archiver.bash -d directory [-n days] [-h] [-v]
-  
+
   Options:
     -d, --directory   Specify the directory to search (mandatory).
     -n, --days        Specify the number of days old the files should be (default: 30 days).
@@ -40,7 +42,7 @@ usage() {
 
 # @purpose: Display the version information
 version() {
-    echo "file-archiver.bash version ${VERSION}"
+    echo "$(basename "$0") version ${VERSION}"
     exit 0
 }
 

@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# iso-to-cron.bash
+# Script Name: iso-to-cron.bash
 # Purpose: Convert ISO 8601 formatted time to cron expression
 # Created Date: Aug 23, 2024
 # Author: Hugo
 # Required Packages: None
 # Powered by [HomeSetup](https://github.com/yorevs/homesetup)
+# GPT: [HHS-Script-Generator](https://chatgpt.com/g/g-ra0RVB9Jo-homesetup-script-generator)
 
 # +------------------------------------------------------------------------------+
 # | AIs CAN MAKE MISTAKES.                                                       |
@@ -14,8 +15,10 @@
 # | This program comes with NO WARRANTY, to the extent permitted by law.         |
 # +------------------------------------------------------------------------------+
 
+# https://semver.org/ ; major.minor.patch
 VERSION="0.0.3" # https://semver.org/ ; major.minor.patch
 
+# Usage message
 USAGE="Usage: $0 [options]
 
 Options:
@@ -35,9 +38,9 @@ usage() {
     exit 2
 }
 
-# @purpose: Display version information
+# @purpose: Display the version information
 version() {
-    echo "iso-to-cron.bash version ${VERSION}"
+    echo "$(basename "$0") version ${VERSION}"
     exit 0
 }
 
@@ -87,11 +90,11 @@ parse_args() {
         case "$1" in
             -h|--help) usage ;;
             -v|--version) version ;;
-            -i|--iso-to-cron) 
+            -i|--iso-to-cron)
                 if [[ -z "$2" ]] || ! iso_to_cron "$2"; then echo "ERROR: ISO date not provided."; usage; fi
                 shift
                 ;;
-            -c|--cron-to-iso) 
+            -c|--cron-to-iso)
                 if [[ -z "$2" ]] || ! cron_to_iso "$2"; then echo "ERROR: Cron expression not provided."; usage; fi
                 shift
                 ;;
