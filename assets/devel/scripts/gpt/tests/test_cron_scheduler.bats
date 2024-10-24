@@ -9,13 +9,16 @@ load "${HHS_HOME}/tests/bats/bats-assert/load"
 # Path to the script
 SCRIPT="${HHS_HOME}/assets/devel/scripts/gpt/src/cron-scheduler.bash"
 
+# Mock directory
+MOCK_DIR="${HHS_HOME}/assets/devel/scripts/gpt/tests/mocks"
+
 # Path to the iso-to-cron.bash mock script
-MOCK_ISO_TO_CRON="./iso-to-cron.bash"
+MOCK_ISO_TO_CRON="${MOCK_DIR}/iso-to-cron.bash"
 
 # Setup: Create a mock iso-to-cron.bash script
 setup() {
   # Create a temporary directory for the mock
-  mkdir -p "$(dirname "${MOCK_ISO_TO_CRON}")"
+  [[ -d "${MOCK_DIR}" ]] || mkdir -p "${MOCK_DIR}"
   # Mock iso-to-cron.bash script to return a fixed cron expression
   cat <<'EOF' > "${MOCK_ISO_TO_CRON}"
 #!/usr/bin/env bash
