@@ -1,19 +1,29 @@
 # HomeSetup github-pages configuration
-remote_theme: pages-themes/leap-day@v0.2.0
-
+theme: jekyll-theme-slate
 plugins:
 - jekyll-remote-theme
 
-title: HomeSetup
-description: The ultimate Terminal experience
 
+url: https://yorevs.github.io
+baseurl: /homesetup
 show_downloads: "true"
-
-author: Hugo Saporetti Junior
-
 blank_issues_enabled: false
 
+title: HomeSetup
+description: > # The ultimate Terminal experience
+  HomeSetup simplifies terminal customization by offering seamless cloud
+  integration for dotfiles, packages, and configurations, enhancing productivity
+  and command line experiences without complex frameworks.
+
+author: Hugo Saporetti Junior
+email: taius.hhs@gmail.com
+
+# Contact links
 contact_links:
-  - name: HomeSetup Support
+  - name: Support
     url: https://gitter.im/yorevs-homesetup/community/
     about: Please ask and answer questions here.
+
+# social links
+github_username:  yorevs
+show_excerpts: true

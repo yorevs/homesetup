@@ -8,5 +8,6 @@
     "**/Thumbs.db": true,
     ".vscode": true,
     "**/*.pyc": true
-  }
+  },
+  "hide-files.files": []
 }
