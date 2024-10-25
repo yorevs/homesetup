@@ -28,6 +28,7 @@
     -h, --help            Display this help message and exit
     -v, --version         Print version information and exit
     -f, --font <name>     Install the first matching font by name (partial match)
+    -d, --droid           Install HomeSetup provided nerd font
 
   Examples:
     ./nerd-font-installer.bash
@@ -36,6 +37,9 @@
 
   # Nerd font version
   NF_VERSION="v3.2.1"
+
+  # HHS Nerd font version
+  HHS_VERSION="v1.7.17"
 
   # Resources dir
   RESOURCE_DIR="$(dirname "${BASH_SOURCE[0]}")/resources"
@@ -109,19 +113,22 @@
   install_font() {
     font_name="${1// /}"
     font_name="${font_name//NerdFont/}"
-    font_url="https://github.com/ryanoasis/nerd-fonts/releases/download/${NF_VERSION}/${font_name// /%20}.zip"
+    font_url="${font_url:-https://github.com/ryanoasis/nerd-fonts/releases/download/${NF_VERSION}/${font_name// /%20}.zip}"
     font_zip="/tmp/${font_name// /_}.zip"
     target_dir="$HOME/.fonts/${font_name}"
 
-    echo -en "\033[34mDownloading\033[m \n  \033[33m${font_name}\033[m\n  from \033[36m'${font_url}'\033[m\n  into \033[36m'${target_dir}\033[m'..."
-
-    # Download the font ZIP file, redirecting stdout to /dev/null
-    if ! curl --fail -L -o "${font_zip}" "${font_url}" &>/dev/null || [[ ! -f "${font_zip}" ]]; then
-      echo -e "\033[31m FAIL\033[m"
-      echo -e "\033[31mERROR:\033[m Failed to download ${font_name}. Exiting."
-      exit 1
+    if [[ ! -f "${font_zip}" ]]; then
+      # Download the font ZIP file
+      echo -en "\033[34mDownloading\033[m \n  \033[33m${font_name}\033[m\n  from \033[36m'${font_url}'\033[m\n  into \033[36m'${target_dir}\033[m'..."
+      if ! curl --fail -L -o "${font_zip}" "${font_url}" &>/dev/null || [[ ! -f "${font_zip}" ]]; then
+        echo -e "\033[31m FAIL\033[m"
+        echo -e "\033[31mERROR:\033[m Failed to download ${font_name}. Exiting."
+        exit 1
+      else
+        echo -e "\033[32m OK\033[m"
+      fi
     else
-      echo -e "\033[32m OK\033[m"
+      echo -e "\033[34mUsing existing\033[m font ZIP file: \033[32m'${font_zip}'\033[m."
     fi
 
     echo -en "\033[34mExtracting\033[m \n  \033[33m${font_name}\033[m\n  into \033[36m'${target_dir}'\033[m..."
@@ -164,6 +171,7 @@
         -h|--help) usage; exit 0 ;;
         -v|--version) version; exit 0 ;;
         -f|--font) shift; quiet_font_name="$1" ;;
+        -d|--droid) hhs_font="1" ;;
         *) echo -e "\033[31mERROR:\033[m Invalid option: $1" >&2; usage; exit 2 ;;
       esac
       shift
@@ -180,12 +188,19 @@
 
   # Parse input arguments
   quiet_font_name=""
+  hhs_font=""
   parse_args "$@"
 
   # If -f option is used, install the specified font directly
   if [[ -n "$quiet_font_name" ]]; then
     selected_font=$(find_font_by_name "$quiet_font_name")
     [[ -z "$selected_font" ]] && echo -e "\033[31mERROR:\033[m Font not found: '$quiet_font_name'!" && exit 1
+  fi
+
+  # If -d option is used, install the HomeSetup Droid font directly
+  if [[ -n "$hhs_font" ]]; then
+    selected_font="Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete"
+    font_url="https://github.com/yorevs/homesetup/releases/download/${HHS_VERSION}/${selected_font}.zip"
   fi
 
   if [[ -z "$selected_font" ]]; then

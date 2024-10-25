@@ -109,8 +109,7 @@ sudo chsh -s /usr/local/bin/bash
 
 ### Terminal configuration
 
-To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font. We recommend using the font we
-provide with the installation:
+To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font. We recommend using the font we provide with the installation:
 
   [Droid font](assets/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
