@@ -124,16 +124,6 @@ jobs:
             ${{ steps.change-log.outputs.changelog }}
           draft: false
           prerelease: false
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./assets/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.zip
-          asset_name: Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.zip
-          asset_content_type: application/zip
 
   build-docker-images:
     if: inputs.build_docker
