@@ -169,6 +169,14 @@ function __hhs_shell_select() {
     echo "Usage: ${FUNCNAME[0]} "
   else
     read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
+    if __hhs_has brew; then
+      echo "${BLUE}Checking: HomeBrew's shells...${NC}"
+      for next_sh in "${avail_shells[@]}"; do
+        next_sh_app="$(basename "${next_sh}")"
+        next_brew_sh="$(brew --prefix "${next_sh_app}" 2>/dev/null)"
+        [[ -n "${next_brew_sh}" ]] && avail_shells+=("${next_brew_sh}/bin/${next_sh_app}")
+      done
+    fi
     mselect_file=$(mktemp)
     if __hhs_mselect "${mselect_file}" "Please select your default shell:" "${avail_shells[@]}"; then
       sel_shell=$(grep . "${mselect_file}")
@@ -178,11 +186,10 @@ function __hhs_shell_select() {
           clear
           echo "${GREEN}Your default shell has changed to => '${sel_shell}'"
           echo "${ORANGE}Next time you open a terminal window you will use \"${sel_shell}\" as your default shell"
-          \rm -f "${mselect_file}"
         else
-          __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}"
-          [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
+          __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}. You may have to add it to /etc/shells and try again!"
         fi
+        [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
       fi
     fi
     echo -e "${NC}"
