@@ -28,6 +28,8 @@ hhs_export_settings = true
 hhs_restore_last_dir = true
 # Set to enable starship prompt.
 hhs_use_starship = true
+# Set to enable blesh plug-in.
+hhs_use_blesh = true
 # Set to enable loading shell options.
 hhs_load_shell_options = true
 # Set to disable HomeBrew updates.

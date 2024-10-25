@@ -43,7 +43,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_dependencies configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
-    install_tools query_askai_install create_destination_dirs configure_askai_rag
+    install_tools query_askai_install create_destination_dirs configure_askai_rag configure_blesh
   )
 
 
@@ -133,7 +133,7 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk'
   )
 
   # Missing HomeSetup dependencies
@@ -298,6 +298,9 @@ Usage: $APP_NAME [OPTIONS] <args>
 
     # Version file
     HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
+
+    # Ble Bash plug installation in location
+    HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
 
     # Fonts destination location
     if [[ "Darwin" == "${MY_OS}" ]]; then
@@ -537,6 +540,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         configure_python
         configure_starship
         configure_gtrash
+        configure_blesh
         configure_askai_rag
         ;;
       repair)
@@ -548,6 +552,7 @@ Usage: $APP_NAME [OPTIONS] <args>
         configure_python
         configure_starship
         configure_gtrash
+        configure_blesh
         configure_askai_rag
         ;;
       local)
@@ -651,6 +656,7 @@ Usage: $APP_NAME [OPTIONS] <args>
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
     copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+
     # NeoVim integration
     [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
     copy_file "${HHS_HOME}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
@@ -939,7 +945,7 @@ Usage: $APP_NAME [OPTIONS] <args>
   # Install GTrash application
   configure_gtrash() {
     if ! command -v gtrash &>/dev/null; then
-      echo -en "\n${WHITE}Installing GTrash... "
+      echo -en "\n${WHITE}Installing ${BLUE}GTrash${NC} app... "
       if \
         curl -sSL "https://github.com/umlx5h/gtrash/releases/latest/download/gtrash_$(uname -s)_$(uname -m).tar.gz" | tar xz \
         && chmod a+x ./gtrash \
@@ -948,6 +954,22 @@ Usage: $APP_NAME [OPTIONS] <args>
       else
           echo -e "${RED}FAILED${NC}"
           echo -e "${YELLOW}GTrash will not be available${NC}"
+      fi
+    fi
+  }
+
+  # Install ble.sh plug-in
+  configure_blesh() {
+    if [[ ! -d "${HHS_BLESH_DIR}" ]]; then
+      ble_repo="https://github.com/akinomyoga/ble.sh.git"
+      echo -en "\n${WHITE}Installing ${BLUE}Blesh${NC} plug-in... "
+      if \
+        git clone --recursive --depth 1 --shallow-submodules "${ble_repo}" "${HHS_BLESH_DIR}" >> "${INSTALL_LOG}" 2>&1 \
+        && make -C "${HHS_BLESH_DIR}" >> "${INSTALL_LOG}" 2>&1; then
+          echo -e "${GREEN}OK${NC}"
+      else
+          echo -e "${RED}FAILED${NC}"
+          echo -e "${YELLOW}Ble-sh will not be available${NC}"
       fi
     fi
   }

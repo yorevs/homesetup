@@ -60,6 +60,7 @@ export HHS_LOG_FILE="${HHS_LOG_DIR}/hhsrc.log"
 export HHS_MOTD_DIR="${HHS_DIR}/motd"
 export HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
 export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
+export HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -83,7 +84,7 @@ export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 [[ -d "${HHS_DIR}/bin" ]] && export PATH="${PATH}:${HHS_DIR}/bin"
 
 # Set path so it includes `bats-core` if it exists.
-[[ -d "${HHS_DIR}/bin" ]] && export PATH="${PATH}:${HHS_HOME}/tests/bats/bats-core/bin"
+[[ -d "${HHS_HOME}/tests/bats/bats-core/bin" ]] && export PATH="${PATH}:${HHS_HOME}/tests/bats/bats-core/bin"
 
 # Load all dotfiles following the order.
 # Notice that the order here is important, do not reorder it.
@@ -120,7 +121,7 @@ fi
 started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
-# Source the bash common functions.
+# Source the bash common functions. Logs are available below here.
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 if ! [[ -s "${INPUTRC}" ]]; then
@@ -147,6 +148,29 @@ while read -r pref; do
   fi
 done <"${HHS_SETUP_FILE}"
 __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
+
+# Settings are available as environments variables below this point.
+
+# Set system locale variables (defaults)
+if [[ ${HHS_SET_LOCALES} -eq 1 ]] && __hhs_has "locale"; then
+  export LANGUAGE=${LANGUAGE:-en_US:en}
+  export LANG=${LANG:-en_US.UTF-8}
+  export LC_ALL=${LC_ALL:-${LANG}}
+  export LC_CTYPE=${LC_CTYPE:-${LANG}}
+  export LC_COLLATE=${LC_COLLATE:-${LANG}}
+  export LC_MESSAGES=${LC_MESSAGES:-${LANG}}
+  export LC_MONETARY=${LC_MONETARY:-${LANG}}
+  export LC_NUMERIC=${LC_NUMERIC:-${LANG}}
+  export LC_TIME=${LC_TIME:-${LANG}}
+fi
+
+# Initialize Blesh plug-in if it's enabled.
+if [[ ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
+  __hhs_log "INFO" "Loading Blesh plug-in"
+  [[ $- == *i* ]] && source "${HHS_BLESH_DIR}/out/ble.sh" --noattach
+else
+  __hhs_log "WARN" "Blesh could not be initialized ! UB=${HHS_USE_BLESH}"
+fi
 
 # -----------------------------------------------------------------------------------
 # Load dotfiles
@@ -218,6 +242,13 @@ if [[ ${HHS_LOAD_COMPLETIONS} -eq 1 ]]; then
   while read -r cpl; do
     app_name="$(basename "${cpl//-completion/}")"
     app_name="${app_name//\.${HHS_MY_SHELL}/}"
+    if [[ "${app_name}" == "fzf" && ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
+      # Note: If you want to combine fzf-completion with bash_completion, you need to load bash_completion
+      # earlier than fzf-completion. This is required regardless of whether to use ble.sh or not.
+      # source /etc/profile.d/bash_completion.sh
+      ble-import -d integration/fzf-completion
+      ble-import -d integration/fzf-key-bindings
+    fi
     if __hhs_has "${app_name}"; then
       __hhs_source "${cpl}"
       HHS_COMPLETIONS="${HHS_COMPLETIONS}${app_name} "
@@ -277,6 +308,14 @@ if [[ -d "${HHS_MOTD_DIR}" ]]; then
   for motd in ${all}; do
     echo -e "$(eval "echo -e \"$(<"${motd}")\"")"
   done
+fi
+
+# Attach ble-sh to bash if it's enabled.
+if [[ ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
+  __hhs_log "DEBUG" "Attaching Blesh plug-in"
+  [[ ! ${BLE_VERSION-} ]] || ble-attach
+else
+  __hhs_log "WARN" "Blesh could not be attached !"
 fi
 
 # Remove PATH duplicates.

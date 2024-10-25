@@ -20,19 +20,6 @@ fi
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
-# Set system locale variables (defaults)
-if [[ ${HHS_SET_LOCALES} -eq 1 ]] && __hhs_has "locale"; then
-  export LANGUAGE=${LANGUAGE:-en_US:en}
-  export LANG=${LANG:-en_US.UTF-8}
-  export LC_ALL=${LC_ALL:-${LANG}}
-  export LC_CTYPE=${LC_CTYPE:-${LANG}}
-  export LC_COLLATE=${LC_COLLATE:-${LANG}}
-  export LC_MESSAGES=${LC_MESSAGES:-${LANG}}
-  export LC_MONETARY=${LC_MONETARY:-${LANG}}
-  export LC_NUMERIC=${LC_NUMERIC:-${LANG}}
-  export LC_TIME=${LC_TIME:-${LANG}}
-fi
-
 # ----------------------------------------------------------------------------
 # Starship variables
 export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
