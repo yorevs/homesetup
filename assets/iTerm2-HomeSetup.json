@@ -88,6 +88,7 @@
       "algorithm" : 0
     }
   },
+  "Cursor Shadow" : false,
   "Flashing Bell" : true,
   "BM Growl" : true,
   "Ansi 3 Color" : {
@@ -340,7 +341,7 @@
   },
   "Blur" : true,
   "Normal Font" : "DroidSansMonoNerdFontComplete- 14",
-  "Vertical Spacing" : 0.90000000000000002,
+  "Vertical Spacing" : 1.1200000000000001,
   "Ansi 7 Color" : {
     "Green Component" : 0.73333334922790527,
     "Blue Component" : 0.73333334922790527,
@@ -350,7 +351,7 @@
   "Space" : 0,
   "Command" : "",
   "Terminal Type" : "xterm-256color",
-  "Horizontal Spacing" : 0.88,
+  "Horizontal Spacing" : 1.01,
   "Reduce Flicker" : true,
   "Option Key Sends" : 0,
   "Only The Default BG Color Uses Transparency" : false,

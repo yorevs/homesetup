@@ -1,0 +1,78 @@
+# ~/.config/starship.toml
+# Credits to: HomeSetup team
+
+# Purpose: HomeSetup's starship configuration file.
+# Created: Aug 26, 2018
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: homesetup@gmail.com
+#    Site: https://github.com/yorevs/homesetup
+#
+# See a the full starship reference at:
+# https://starship.rs/config/#prompt
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+# Timeout for commands executed by starship (in milliseconds).
+command_timeout = 250
+
+# Timeout for starship to scan files (in milliseconds).
+scan_timeout = 500
+
+# Continuation prompt (PS2).
+continuation_prompt = '… '
+
+format = """\
+[ BASH ](bold fg:#C4D3D4 bg:#B58901)\
+[](bold fg:#B58901 bg:#083642)\
+$username\
+[](bold fg:#083642 bg:#258BD2)\
+$time\
+[](bold fg:#258bd2 bg:#2AA198)\
+$directory\
+[](bold fg:#2AA198 bg:#859901)\
+$git_branch\
+$git_status\
+$git_metrics\
+[](bold fg:#859901)\
+$line_break\
+$character\
+"""
+
+[username]
+style_user = "bold bg:#083642 fg:#C4D3D4"
+style_root = "red"
+format = "[(bold bg:#083642 fg:#C4D3D4) $user]($style)"
+show_always = true
+disabled = false
+
+[time]
+disabled = false
+time_format = "%a %d %b - %H:%M" # DDD DD MMM - HH:MM
+style = "bold bg:#258bd2"
+format = '[[ $time ](bg:#258bd2 fg:#C4D3D4)]($style)'
+
+[directory]
+format = "[ $path ]($style)"
+style = "bold fg:#C4D3D4 bg:#2AA198"
+
+[git_branch]
+format = '[ $symbol$branch(:$remote_branch) ]($style)'
+symbol = "療"
+style = "bold fg:#C4D3D4 bg:#859901"
+
+[git_status]
+format = '[$all_status]($style)'
+style = "bold fg:#C4D3D4 bg:#859901"
+
+[hg_branch]
+format = "[ $symbol$branch ]($style)"
+symbol = "療"
+
+[cmd_duration]
+format = "[ $duration ]($style)"
+style = "bold fg:bright-white bg:18"
+
+[character]
+success_symbol = '[❯](#258bd3)'
+error_symbol = '[❯](#258bd3)'
