@@ -154,7 +154,7 @@
     echo -en "\033[34mCaching fonts\033[m..."
 
     # Refresh the font cache, redirecting stdout to /dev/null
-    if fc-cache -fv &>/dev/null; then
+    if fc-cache -f &>/dev/null; then
       echo -e "\033[32m OK\033[m\n"
       echo -e "\033[32mSUCCESS:\033[m \033[33m${font_name}\033[m installed successfully."
     else

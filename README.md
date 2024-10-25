@@ -115,7 +115,19 @@ To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font.
 
 **Linux users**: Some terminals already support icons, but if not, you can manually install the font.
 
-**Mac users**: We suggest using one of the terminal profiles listed below to ensure optimal icon display:
+**Mac users**: We suggest using one of the terminal profiles listed below to ensure optimal icon display.
+
+You can execute the following commands to install it even before installing HomeSetup:
+
+```bash
+curl -L https://github.com/yorevs/homesetup/releases/download/v1.7.17/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.zip -o /tmp/Droid-Sans-Mono.zip && unzip -o /tmp/Droid-Sans-Mono.zip -d $HOME/.fonts/DroidSan-MonoforPowerlineNerdFontComplete && fc-cache -f
+```
+
+**Mac users**: There is one additional step:
+
+```bash
+cp -f $HOME/.fonts/DroidSan-MonoforPowerlineNerdFontComplete/*.otf $HOME/Library/Fonts  && fc-cache -f
+```
 
 #### Terminal App (Darwin)
 
