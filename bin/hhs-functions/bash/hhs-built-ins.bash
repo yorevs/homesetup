@@ -103,7 +103,7 @@ function __hhs_about() {
     IFS="${OLDIFS}"
     if [[ ${#type_ret[@]} -gt 0 ]]; then
       if [[ ${type_ret[0]} =~ ${re_alias} ]]; then
-        printf "${GREEN}%12s${BLUE} %s${WHITE} => %s ${NC}\n" "Aliased:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+        printf "${GREEN}%14s${BLUE} %s${WHITE} => %s ${NC}\n" "Aliased:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
         # To avoid unalias the command, we do that in another subshell
         (
           IFS=$'\n'
@@ -119,12 +119,14 @@ function __hhs_about() {
           IFS="${OLDIFS}"
         )
       elif [[ ${type_ret[0]} =~ ${re_function} ]]; then
-        printf "${GREEN}%12s${BLUE} %s${WHITE} => \n" "Function:" "${BASH_REMATCH[1]}"
+        printf "${GREEN}%14s${BLUE} %s${WHITE} => \n" "Function:" "${BASH_REMATCH[1]}"
         for line in "${type_ret[@]:2}"; do
           printf "   %4d: %s\n" $((i += 1)) "${line}"
         done
       elif [[ ${type_ret[0]} =~ ${re_command} ]]; then
-        printf "${GREEN}%12s${BLUE} %s${WHITE} => %s ${NC}\n" "Command:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+        printf "${GREEN}%14s${BLUE} %s${WHITE} => %s ${NC}\n" "Command:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+        brew_cmd="$(brew --prefix "${cmd}" 2>/dev/null)"
+        [[ -n "${brew_cmd}" ]] && printf "${GREEN}%14s${BLUE} %s${WHITE} => %s\n" "Brew:" "prefix" "${brew_cmd}"
       fi
     fi
     [[ ${recurse} -eq 0 ]] && echo -e "${NC}"
