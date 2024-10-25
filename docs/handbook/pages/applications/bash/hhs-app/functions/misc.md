@@ -18,6 +18,7 @@
       - [Tests](tests.md)
       - [Web](web.md)
     - [Plugins](../../hhs-app.md#plug-ins)
+      - [Ask](../plugins/ask.md)
       - [Firebase](../plugins/firebase.md)
       - [HSPM](../plugins/hspm.md)
       - [Settings](../plugins/settings.md)

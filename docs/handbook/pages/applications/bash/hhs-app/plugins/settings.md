@@ -18,12 +18,12 @@
       - [Tests](../functions/tests.md)
       - [Web](../functions/web.md)
     - [Plugins](../../hhs-app.md#plug-ins)
+      - [Ask](ask.md)
       - [Firebase](firebase.md)
       - [HSPM](hspm.md)
       - [Settings](settings.md)
       - [Setup](setup.md)
       - [Starship](starship.md)
       - [Updater](updater.md)
-      - [Ask](ask.md)
 
 <!-- tocstop -->

@@ -18,6 +18,7 @@
       - [Tests](tests.md)
       - [Web](web.md)
     - [Plugins](../../hhs-app.md#plug-ins)
+      - [Ask](../plugins/ask.md)
       - [Firebase](../plugins/firebase.md)
       - [HSPM](../plugins/hspm.md)
       - [Settings](../plugins/settings.md)
@@ -61,25 +62,29 @@ HomeSetup application commands
 -=- HHS Plug-ins -=-
 
  1  settings
- 2  starship
- 3  setup
- 4  updater
- 5  firebase
- 6  hspm
+ 2  ask
+ 3  starship
+ 4  setup
+ 5  updater
+ 6  firebase
+ 7  hspm
 
 -=- HHS Functions -=-
 
  1  docsify
  2  board
- 3  list
- 4  funcs
- 5  logs
- 6  man
- 7  reset
- 8  host-name
- 9  shopt
-10  tests
-11  color-tests
+ 3  sponsor
+ 4  list
+ 5  funcs
+ 6  logs
+ 7  sys-logs
+ 8  man
+ 9  reset
+10  shorts
+11  host-name
+12  shopts
+13  tests
+14  color-tests
 ```
 
 `__hhs list -flat`
