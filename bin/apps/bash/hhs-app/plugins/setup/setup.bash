@@ -19,7 +19,7 @@ UNSETS=(
 )
 
 # Current hhs setup version
-VERSION="1.0.5"
+VERSION="1.0.6"
 
 # Usage message
 USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [-restore]
