@@ -66,6 +66,7 @@ HomeSetup offers seamless integration with a variety of tools to enhance product
 - **[Starship](https://starship.rs/):** Elevate your terminal experience with this highly customizable prompt.
 - **[ColorLS](https://github.com/athityakumar/colorls):** Add colorized and feature-rich directory listings for improved readability.
 - **[FZF](https://www.redhat.com/sysadmin/fzf-linux-fuzzy-finder):** Enjoy the power of fuzzy search for rapid navigation and command-line operations.
+- **[Bat](https://github.com/sharkdp/bat):** A cat(1) clone with syntax highlighting and Git integration.
 - **[GTrash](https://github.com/umlx5h/gtrash):** Manage file deletion effortlessly with this trash-cli alternative.
 - **[NeoVim](https://neovim.io/):** A hyper-extensible, modern rewrite of Vim, offering improved performance and enhanced plugins for developers and power users.
 - **[Sdiff](https://man7.org/linux/man-pages/man1/sdiff.1.html) + [Colordiff](https://www.colordiff.org/):** Compare and colorize file differences directly in your terminal, providing an intuitive way to track changes between files.

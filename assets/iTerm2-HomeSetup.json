@@ -1,16 +1,14 @@
 {
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Blue Component" : 0.73333334922790527,
-    "Red Component" : 0.73333334922790527
-  },
-  "Set Local Environment Vars" : false,
+  "Thin Strokes" : 4,
+  "ASCII Ligatures" : true,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
-    "Green Component" : 0,
-    "Blue Component" : 0,
-    "Red Component" : 0
+    "Red Component" : 0.29999999999999999,
+    "Color Space" : "P3",
+    "Blue Component" : 0.29999999999999999,
+    "Alpha Component" : 1,
+    "Green Component" : 0.29999999999999999
   },
   "Rows" : 25,
   "Ansi 11 Color" : {
@@ -20,18 +18,22 @@
   },
   "Use Italic Font" : true,
   "Foreground Color" : {
-    "Green Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527,
-    "Red Component" : 0.73333334922790527
+    "Red Component" : 0.90000000000000002,
+    "Color Space" : "P3",
+    "Blue Component" : 0.90000000000000002,
+    "Alpha Component" : 1,
+    "Green Component" : 0.90000000000000002
   },
   "Use Custom Window Title" : false,
   "Right Option Key Sends" : 0,
   "Show Status Bar" : false,
   "Character Encoding" : 4,
   "Selection Color" : {
-    "Green Component" : 0.8353000283241272,
-    "Blue Component" : 1,
-    "Red Component" : 0.70980000495910645
+    "Red Component" : 0.37167900800704956,
+    "Color Space" : "P3",
+    "Blue Component" : 0.82730168104171753,
+    "Alpha Component" : 1,
+    "Green Component" : 0.53517895936965942
   },
   "Blend" : 0.050000000000000003,
   "Mouse Reporting" : true,
@@ -315,19 +317,19 @@
     "Red Component" : 0.73333334922790527
   },
   "Name" : "iTerm2-HomeSetup",
-  "Blinking Cursor" : true,
   "Guid" : "ADDFAB51-465E-4611-B07A-478C10698414",
-  "Idle Code" : 0,
-  "Ansi 10 Color" : {
-    "Green Component" : 1,
-    "Blue Component" : 0.3333333432674408,
-    "Red Component" : 0.3333333432674408
-  },
+  "Blinking Cursor" : true,
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408
   },
+  "Ansi 10 Color" : {
+    "Green Component" : 1,
+    "Blue Component" : 0.3333333432674408,
+    "Red Component" : 0.3333333432674408
+  },
+  "Idle Code" : 0,
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Cursor Type" : 0,
@@ -338,7 +340,7 @@
   },
   "Blur" : true,
   "Normal Font" : "DroidSansMonoNerdFontComplete- 14",
-  "Vertical Spacing" : 0.94999999999999996,
+  "Vertical Spacing" : 0.90000000000000002,
   "Ansi 7 Color" : {
     "Green Component" : 0.73333334922790527,
     "Blue Component" : 0.73333334922790527,
@@ -353,6 +355,7 @@
   "Option Key Sends" : 0,
   "Only The Default BG Color Uses Transparency" : false,
   "Blink Allowed" : true,
+  "Minimum Contrast" : 0.050000000000000003,
   "Ansi 15 Color" : {
     "Green Component" : 1,
     "Blue Component" : 1,
@@ -365,9 +368,11 @@
   },
   "Transparency" : 0.061147668716755331,
   "Background Color" : {
-    "Green Component" : 0,
-    "Blue Component" : 0,
-    "Red Component" : 0
+    "Red Component" : 0.10000000000000001,
+    "Color Space" : "P3",
+    "Blue Component" : 0.10000000000000001,
+    "Alpha Component" : 1,
+    "Green Component" : 0.10000000000000001
   },
   "Screen" : 0,
   "Initial Use Transparency" : false,
@@ -379,8 +384,13 @@
   },
   "Columns" : 176,
   "Unicode Normalization" : 0,
+  "Use Tab Color" : false,
   "Visual Bell" : true,
-  "ASCII Ligatures" : false,
-  "Thin Strokes" : 4,
-  "Custom Directory" : "No"
+  "Custom Directory" : "No",
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Blue Component" : 0.73333334922790527,
+    "Red Component" : 0.73333334922790527
+  },
+  "Set Local Environment Vars" : false
 }
