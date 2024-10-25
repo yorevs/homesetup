@@ -1,7 +1,7 @@
 # ~/.config/starship.toml
 # Credits to: HomeSetup team
 
-# Purpose: HomeSetup's starship configuration file.
+# Purpose: HomeSetup's rromao starship configuration file.
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
@@ -26,6 +26,7 @@ format = """\
 [ BASH ](bold fg:#C4D3D4 bg:#B58901)\
 [](bold fg:#B58901 bg:#083642)\
 $username\
+$hostname\
 [](bold fg:#083642 bg:#258BD2)\
 $time\
 [](bold fg:#258bd2 bg:#2AA198)\
@@ -44,6 +45,13 @@ style_user = "bold bg:#083642 fg:#C4D3D4"
 style_root = "red"
 format = "[(bold bg:#083642 fg:#C4D3D4) $user]($style)"
 show_always = true
+disabled = false
+
+[hostname]
+ssh_only = false
+trim_at = "."
+style = "bold bg:#083642 fg:#C4D3D4"
+format = "[[@]($style)$hostname]($style)"
 disabled = false
 
 [time]
