@@ -960,17 +960,16 @@ Usage: $APP_NAME [OPTIONS] <args>
 
   # Install ble.sh plug-in
   configure_blesh() {
-    if [[ ! -d "${HHS_BLESH_DIR}" ]]; then
-      ble_repo="https://github.com/akinomyoga/ble.sh.git"
-      echo -en "\n${WHITE}Installing ${BLUE}Blesh${NC} plug-in... "
-      if \
-        git clone --recursive --depth 1 --shallow-submodules "${ble_repo}" "${HHS_BLESH_DIR}" >> "${INSTALL_LOG}" 2>&1 \
-        && make -C "${HHS_BLESH_DIR}" >> "${INSTALL_LOG}" 2>&1; then
-          echo -e "${GREEN}OK${NC}"
-      else
-          echo -e "${RED}FAILED${NC}"
-          echo -e "${YELLOW}Ble-sh will not be available${NC}"
-      fi
+    ble_repo="https://github.com/akinomyoga/ble.sh.git"
+    echo -en "\n${WHITE}Installing ${BLUE}Blesh${NC} plug-in... "
+    [[ -d "${HHS_BLESH_DIR}" ]] && \rm -rfv "${HHS_BLESH_DIR:?}" &>/dev/null
+    if \
+      git clone --recursive --depth 1 --shallow-submodules "${ble_repo}" "${HHS_BLESH_DIR}" >> "${INSTALL_LOG}" 2>&1 \
+      && make -C "${HHS_BLESH_DIR}" >> "${INSTALL_LOG}" 2>&1; then
+        echo -e "${GREEN}OK${NC}"
+    else
+        echo -e "${RED}FAILED${NC}"
+        echo -e "${YELLOW}Ble-sh will not be available${NC}"
     fi
   }
 
