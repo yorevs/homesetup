@@ -318,6 +318,14 @@ else
   __hhs_log "WARN" "Blesh could not be attached !"
 fi
 
+# Attach atuin to bash if it's enabled
+if __hhs_has "atuin" && [[ ${HHS_USE_ATUIN} -eq 1 ]]; then
+  __hhs_log "DEBUG" "Attaching Atuin plug-in"
+  if ! eval "$(atuin init bash)" || ! atuin import auto; then
+    __hhs_log "WARN" "Atuin could not be attached !"
+  fi
+fi
+
 # Remove PATH duplicates.
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
 export PATH
