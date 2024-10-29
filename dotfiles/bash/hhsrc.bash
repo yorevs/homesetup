@@ -321,7 +321,7 @@ fi
 # Attach atuin to bash if it's enabled
 if __hhs_has "atuin" && [[ ${HHS_USE_ATUIN} -eq 1 ]]; then
   __hhs_log "DEBUG" "Attaching Atuin plug-in"
-  if ! eval "$(atuin init bash)" || ! atuin import auto; then
+  if ! eval "$(atuin init bash)" || ! atuin import auto &>/dev/null; then
     __hhs_log "WARN" "Atuin could not be attached !"
   fi
 fi
