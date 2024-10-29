@@ -114,12 +114,12 @@ check_installation() {
       "Uninstall HomeSetup python packages(${PYTHON_MODULES[*]}) y/[n] ? " REMOVE_HSPYLIB
     [[ -n "${REMOVE_HSPYLIB}" ]] && echo ''
 
-    [[ "${REMOVE_PRJ_DIR}" == 'y' || "${REMOVE_PRJ_DIR}" == 'Y' ]] && UNINSTALL_TYPE+=' +hhs-prj'
-    [[ "${REMOVE_HHS_DIR}" == 'y' || "${REMOVE_HHS_DIR}" == 'Y' ]] && UNINSTALL_TYPE+=' +hhs-dir'
-    [[ "${REMOVE_HSPYLIB}" == 'y' || "${REMOVE_HSPYLIB}" == 'Y' ]] && UNINSTALL_TYPE+=' +lib-dir'
+    [[ "${REMOVE_PRJ_DIR}" =~ ^[yY]$ ]] && UNINSTALL_TYPE+=' +hhs-prj'
+    [[ "${REMOVE_HHS_DIR}" =~ ^[yY]$ ]] && UNINSTALL_TYPE+=' +hhs-dir'
+    [[ "${REMOVE_HSPYLIB}" =~ ^[yY]$ ]] && UNINSTALL_TYPE+=' +lib-dir'
 
     echo -e "${NC}"
-    echo -e "${WHITE}### Uninstallation Settings ###"
+    echo -e "${WHITE}### ${GREEN}HomeSetup© ${WHITE}Removal Settings ###${NC}"
     echo -e "${BLUE}"
     echo -e "  Uninstall Type: ${UNINSTALL_TYPE}"
     echo -e "     Install Dir: ${HHS_HOME}"
@@ -131,7 +131,7 @@ check_installation() {
     read -rn 1 -p "HomeSetup will be completely removed and all backups restored. Continue y/[n] ?" ANS
     echo -e "${NC}"
     [[ -n "$ANS" ]] && echo ''
-    if [[ "$ANS" == "y" || "$ANS" == "Y" ]]; then
+    if [[ "$ANS" =~ ^[yY]$ ]]; then
       uninstall_dotfiles
     else
       quit 1 "Uninstallation cancelled !"
@@ -150,7 +150,7 @@ uninstall_dotfiles() {
   echo -e "\n${BLUE}Removing installed HomeSetup dotfiles ...${NC}"
   for next in ${ALL_DOTFILES[*]}; do
     dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
-    [[ -f "${dotfile}" ]] && \rm -fv "${dotfile}"
+    [[ -f "${dotfile}" ]] && \rm -fv "${dotfile:?}"
   done
 
   # Removing HomeSetup folders
@@ -159,7 +159,7 @@ uninstall_dotfiles() {
 
   # Remove HomeSetup .hhs folder
   [[ -n "${REMOVE_HHS_DIR}" ]] && echo ''
-  if [[ "${REMOVE_HHS_DIR}" == "y" || "${REMOVE_HHS_DIR}" == 'Y' ]]; then
+  if [[ "${REMOVE_HHS_DIR}" =~ ^[yY]$ ]]; then
     [[ -d "${HHS_DIR}" ]] && \rm -rfv "${HHS_DIR:?}" &> /dev/null
   fi
 
@@ -173,7 +173,7 @@ uninstall_dotfiles() {
   fi
 
   # Uninstall HomeSetup python library
-  if [[ "${REMOVE_HSPYLIB}" == "y" || "${REMOVE_HSPYLIB}" == 'Y' ]]; then
+  if [[ "${REMOVE_HSPYLIB}" =~ ^[yY]$ ]]; then
     PIP=$(command -v pip3 2>/dev/null)
     # HsPyLib-Vault
     echo -e "\n${BLUE}Removing HomeSetup Vault${NC}"
@@ -191,6 +191,10 @@ uninstall_dotfiles() {
     echo -e "\n${BLUE}Removing HomeSetup Datasource${NC}"
     ${PIP} uninstall -y hspylib-datasource &> /dev/null \
       || echo -e "${RED}# Unable to uninstall HomeSetup datasource !\n${NC}"
+    # HsPyLib-AskAi
+    echo -e "\n${BLUE}Removing HomeSetup HsPyLib-AskAi${NC}"
+    ${PIP} uninstall -y hspylib-askai &> /dev/null \
+      || echo -e "${RED}# Unable to uninstall HomeSetup HsPyLib-AskAi !\n${NC}"
     # HsPyLib-Core
     echo -e "\n${BLUE}Removing HomeSetup HsPyLib-Core${NC}"
     ${PIP} uninstall -y hspylib &> /dev/null \
