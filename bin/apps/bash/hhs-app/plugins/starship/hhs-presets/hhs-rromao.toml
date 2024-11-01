@@ -33,8 +33,8 @@ $time\
 $directory\
 [](bold fg:#2AA198 bg:#859901)\
 $git_branch\
-$git_status\
 $git_metrics\
+$git_status\
 [](bold fg:#859901)\
 $line_break\
 $character\
@@ -70,8 +70,14 @@ symbol = "療"
 style = "bold fg:#C4D3D4 bg:#859901"
 
 [git_status]
-format = '[$all_status]($style)'
+format = '[ $all_status]($style)'
 style = "bold fg:#C4D3D4 bg:#859901"
+
+[git_metrics]
+format = "([+$added]($added_style)[ -$deleted]($deleted_style))[]($added_style)"
+added_style = "fg:#C4D3D4 bg:#859901"
+deleted_style = "fg:#C4D3D4 bg:#859901"
+disabled = false
 
 [hg_branch]
 format = "[ $symbol$branch ]($style)"
