@@ -200,14 +200,14 @@ function invoke_plugin() {
 
   local plg_cmd ret
 
-  has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
+  has_plugin "${1}" || command_hint "Plugin/Function not found: \"${1}\"" "${1}"
   for idx in "${!PLUGINS[@]}"; do
     if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
       [[ -s "${PLUGINS_LIST[idx]}" ]] || quit 1
       source "${PLUGINS_LIST[idx]}"
       shift
       plg_cmd="${1:-execute}"
-      has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
+      has_command "${plg_cmd}" || command_hint  "Command not available: ${plg_cmd}"
       shift
       ${plg_cmd} "${@}"  # Execute the specified plugin
       ret=${?}
@@ -218,7 +218,7 @@ function invoke_plugin() {
     fi
   done
   ret=${?}
-  [[ ${ret} -eq 255 ]] && quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
+  [[ ${ret} -eq 255 ]] && command_hint "Plugin/Function not found: \"${1}\"" "${1}"
 
   return ${ret}
 }
@@ -309,6 +309,37 @@ function display_list() {
     '
 }
 
+# @purpose: Display an error message and suggest similar commands based on partial user input.
+# @param $1 [Req]: The error message to display.
+# @param $2 [Req]: The partial command the user entered.
+function command_hint() {
+    local error_message="$1" user_input="$2" commands matches
+
+    commands=(${PLUGINS[@]} ${HHS_APP_FUNCTIONS[@]} $(compgen -c __hhs))
+    matches=()
+
+    # Find commands that contain the user input as a substring
+    for cmd in "${commands[@]}"; do
+        if [[ "$cmd" == *"${user_input}"* ]]; then
+            matches+=("${cmd}")
+        fi
+    done
+
+    # Display error message and matching commands or an appropriate message if none found
+    __hhs_errcho "${error_message}\n"
+
+    if (( ${#matches[@]} > 0 )); then
+        echo -e "${YELLOW}Did you mean one of these commands?${NC}"
+        for match in "${matches[@]}"; do
+            echo "  - ${BLUE}${match}${NC}"
+        done
+    else
+      __hhs_ercho "> Type 'hhs list' to find out options."
+    fi
+
+    quit 1  # Exit with an error
+}
+
 
 # ------------------------------------------
 # Basics
@@ -370,9 +401,8 @@ function main() {
   fn_name="${1//help/list}"
 
   if has_function "${fn_name}"; then
-    # Invoke internal function
     shift
-    ${fn_name} "${@}"
+    ${fn_name} "${@}"  # Invoke internal function
     quit $?
   fi
 
