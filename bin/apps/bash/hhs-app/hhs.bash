@@ -334,7 +334,7 @@ function command_hint() {
             echo "  - ${BLUE}${match}${NC}"
         done
     else
-      __hhs_ercho "> Type 'hhs list' to find out options."
+      echo -e "${ORANGE}> Type 'hhs list' to find out options.${NC}"
     fi
 
     quit 1  # Exit with an error
