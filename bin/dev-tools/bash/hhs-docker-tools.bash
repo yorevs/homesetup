@@ -22,7 +22,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
     local count
 
     if [[ '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]}"
+      echo "usage: ${FUNCNAME[0]}"
       return 1
     fi
 
@@ -37,7 +37,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   function __hhs_docker_info() {
 
     if [[ $# -ne 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <container_id>"
+      echo "usage: ${FUNCNAME[0]} <container_id>"
       return 1
     fi
 
@@ -52,7 +52,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   function __hhs_docker_exec() {
 
     if [[ $# -lt 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
+      echo "usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       echo ''
       echo '  Notes: '
       echo "    - If shell_cmd is not provided '/bin/sh' will be used."
@@ -71,7 +71,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   function __hhs_docker_compose_exec() {
 
     if [[ $# -lt 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
+      echo "usage: ${FUNCNAME[0]} <container_id> [shell_cmd]"
       echo ''
       echo '  Notes: '
       echo '    - If shell_cmd is not provided /bin/sh will be used.'
@@ -89,7 +89,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
   function __hhs_docker_logs() {
 
     if [[ $# -ne 1 || '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <container_id>"
+      echo "usage: ${FUNCNAME[0]} <container_id>"
       return 1
     fi
 
@@ -104,7 +104,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
     local volumes=() retVal=0
 
     if [[ '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]}"
+      echo "usage: ${FUNCNAME[0]}"
     else
       read -d '' -r -a volumes <<<"$(docker volume ls -qf dangling=true)"
       for container in "${volumes[@]}"; do
@@ -128,7 +128,7 @@ if [[ -n "${HHS_HAS_DOCKER}" ]]; then
     local all_containers=() all retVal=1
 
     if [[ '-h' == "${1}" || '--help' == "${1}" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [-a]"
+      echo "usage: ${FUNCNAME[0]} [-a]"
       echo ''
       echo '    Options: '
       echo '      -a : Remove active and inactive volumes; otherwise it will only remove inactive ones'

@@ -46,7 +46,7 @@ teardown() {
 @test "when-invoking-with-help-option-then-toml-get-should-print-usage" {
   run __hhs_toml_get -h
   assert_failure
-  assert_output --partial "Usage: __hhs_toml_get <file> <key> [group]"
+  assert_output --partial "usage: __hhs_toml_get <file> <key> [group]"
 }
 
 # TC - 2

@@ -14,40 +14,33 @@
 # @param $1 [opt] : Instead of a formatted as a list, flat the commands for bash completion.
 function list() {
 
-  local args=("${@}")
+  local args=("${@}") columns args count line
 
   if [[ "$1" == "help" ]]; then
-    echo "Usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs]" && quit 0
+    echo "usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs] [-commands]" && quit 0
   elif [[ "${args[*]}" =~ -flat ]]; then
     args=("${args[@]/'-flat'/}")
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] \
       && for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -funcs ]] \
       && for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
+    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -commands ]] \
+      && for next in $(compgen -c __hhs); do echo -n "${next} "; done
     quit 0 ''
   else
     columns="$(tput cols)"
     count=$((${#PLUGINS[@]} > ${#HHS_APP_FUNCTIONS[@]} ? ${#PLUGINS[@]} : ${#HHS_APP_FUNCTIONS[@]}))
+    count=$((${#count[@]} > ${#HHS_FUNCTIONS[@]} ? ${#count[@]} : ${#HHS_FUNCTIONS[@]}))
     echo -e "\n${YELLOW}HomeSetup application commands"
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -plugins ]]; then
-      echo -e "\n${ORANGE}-=- HHS Plug-ins -=-\n"
-      for idx in "${!PLUGINS[@]}"; do
-        line="${PLUGINS[$idx]}"
-        printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
-        echo -en "${line:0:${columns}}${NC}"
-        [[ "${#line}" -ge "${columns}" ]] && echo -n "..."
-        echo -e "${NC}"
-      done
+      display_list "\n-=- HHS Plug-ins -=-\n" "${PLUGINS[@]}"
     fi
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -funcs ]]; then
-      echo -e "\n${ORANGE}-=- HHS Functions -=-\n"
-      for idx in "${!HHS_APP_FUNCTIONS[@]}"; do
-        line="${HHS_APP_FUNCTIONS[$idx]}"
-        printf "${YELLOW}%${#count}d  ${HHS_HIGHLIGHT_COLOR}" "$((idx + 1))"
-        echo -en "${line:0:${columns}}${NC}"
-        [[ "${#line}" -ge "${columns}" ]] && echo -n "..."
-        echo -e "${NC}"
-      done
+      display_list "\n-=- HHS Functions -=-\n" "${HHS_APP_FUNCTIONS[@]}"
+    fi
+    if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -commands ]]; then
+      HHS_FUNCTIONS=($(compgen -c __hhs))
+      display_list "\n-=- HHS Commands -=-\n" "${HHS_FUNCTIONS[@]}"
     fi
   fi
 
@@ -57,9 +50,9 @@ function list() {
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
 function funcs() {
 
-  local idx columns fn_name cache_file usage filter count matches=0
+  local columns fn_name cache_file usage filter count matches=0
 
-  usage="Usage: __hhs ${FUNCNAME[0]} [regex_filter]"
+  usage="usage: __hhs ${FUNCNAME[0]} [regex_filter]"
 
   [[ "$1" == 'help' ]] && echo "${usage}" && quit 0
 
@@ -112,7 +105,7 @@ function logs() {
   local level logfile logs usage tail_opts="-n ${HHS_LOG_LINES:-100}"
   local all_levels="ALL CRITICAL DEBUG ERROR FATAL FINE INFO OUT TRACE WARNING WARN SEVERE"
 
-  usage="Usage: __hhs ${FUNCNAME[0]} [-F] [hhs-log-file] [level]"
+  usage="usage: __hhs ${FUNCNAME[0]} [-F] [hhs-log-file] [level]"
 
   [[ "${1}" = '-F' ]] && tail_opts="${tail_opts} -F" && shift
   [[ "${1}" =~ -h|--help ]] && quit 0 "${usage}"
@@ -166,7 +159,7 @@ function sys-logs() {
     local process_name=$1 days=$2
     # Check if both arguments are provided
     if [ -z "$1" ] || [ -z "$2" ]; then
-        echo "Usage: __hhs ${FUNCNAME[0]} <process_name> <days>"
+        echo "usage: __hhs ${FUNCNAME[0]} <process_name> <days>"
         return 1
     fi
     shift 2
@@ -181,7 +174,7 @@ function man() {
   local ss63_url="https://ss64.com/${HHS_MY_SHELL}/%CMD%.html"
 
   if [[ $# -ne 1 ]]; then
-    echo "Usage: __hhs ${FUNCNAME[0]} <bash_command>"
+    echo "usage: __hhs ${FUNCNAME[0]} <bash_command>"
   else
     cmd="${1}"
     url="${ss63_url//%CMD%/$cmd}"

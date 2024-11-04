@@ -39,7 +39,7 @@
 #### __hhs_history
 
 ```bash
-Usage: __hhs_history [regex_filter]
+usage: __hhs_history [regex_filter]
 ```
 
 ##### **Purpose**
@@ -74,7 +74,7 @@ Search for previously issued commands from history using filter.
 #### __hhs_hist_stats
 
 ```bash
-Usage: __hhs_hist_stats [top_N]
+usage: __hhs_hist_stats [top_N]
 ```
 
 ##### **Purpose**
@@ -113,7 +113,7 @@ Display statistics about commands in history.
 #### __hhs_envs
 
 ```bash
-Usage: __hhs_envs [options] [regex_filters]
+usage: __hhs_envs [options] [regex_filters]
 
     Options:
       -e : Edit current HHS_ENV_FILE.
@@ -157,7 +157,7 @@ HHS_ENV_FILE ............................ => /Users/hjunior/.config/hhs/.env
 #### ____hhs_defs
 
 ```bash
-Usage: __hhs_defs [regex_filter]
+usage: __hhs_defs [regex_filter]
 ```
 
 ##### **Purpose**
@@ -197,7 +197,7 @@ gww ....................... defined as => __hhs_gradle_wrapper
 #### __hhs_shell_select
 
 ```bash
-Usage: __hhs_shell_select
+usage: __hhs_shell_select
 ```
 
 ##### **Purpose**

@@ -41,7 +41,7 @@
 #### __hhs_docker_count
 
 ```bash
-Usage: __hhs_docker_count
+usage: __hhs_docker_count
 ```
 
 ##### **Purpose**
@@ -71,7 +71,7 @@ N/A
 #### __hhs_docker_info
 
 ```bash
-Usage: __hhs_docker_info <container_id>
+usage: __hhs_docker_info <container_id>
 ```
 
 ##### **Purpose**
@@ -101,7 +101,7 @@ Display information about the container.
 #### __hhs_docker_exec
 
 ```bash
-Usage: __hhs_docker_exec <container_id> [shell_cmd]
+usage: __hhs_docker_exec <container_id> [shell_cmd]
 
   Notes:
     - If shell_cmd is not provided '/bin/sh' will be used.
@@ -135,7 +135,7 @@ Run a command or bash in a running container.
 #### __hhs_docker_compose_exec
 
 ```bash
-Usage: __hhs_docker_compose_exec <container_id> [shell_cmd]
+usage: __hhs_docker_compose_exec <container_id> [shell_cmd]
 ```
 
 ##### **Purpose**
@@ -168,7 +168,7 @@ N/A
 #### __hhs_docker_logs
 
 ```bash
-Usage: __hhs_docker_logs <container_id>
+usage: __hhs_docker_logs <container_id>
 ```
 
 ##### **Purpose**
@@ -211,7 +211,7 @@ fixing permissions on existing directory /var/lib/postgresql/data ... ok
 #### __hhs_docker_remove_volumes
 
 ```bash
-Usage: __hhs_docker_remove_volumes
+usage: __hhs_docker_remove_volumes
 ```
 
 ##### **Purpose**
@@ -242,7 +242,7 @@ Removing dangling docker volume: postgres_postgres-data... OK
 #### __hhs_docker_kill_all
 
 ```bash
-Usage: __hhs_docker_kill_all [-a]
+usage: __hhs_docker_kill_all [-a]
 
     Options:
       -a : Remove active and inactive volumes; othewise it will only remove inactive ones.

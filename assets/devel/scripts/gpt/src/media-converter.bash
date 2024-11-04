@@ -19,7 +19,7 @@
 VERSION="0.0.1"  # https://semver.org/ ; major.minor.patch
 
 # Usage message
-USAGE="Usage: $(basename "$0") [-i input_file] [-o output_file] [-f format] [-h] [-v]
+USAGE="usage: $(basename "$0") [-i input_file] [-o output_file] [-f format] [-h] [-v]
 Convert a media file to another format using ffmpeg.
 
 Options:

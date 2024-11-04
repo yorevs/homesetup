@@ -23,7 +23,7 @@ function __hhs_has() {
   local cmd="$1"
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <command>"
+    echo "usage: ${FUNCNAME[0]} <command>"
     return 1
   fi
 
@@ -40,7 +40,7 @@ function __hhs_log() {
   local level="${1}" message="${2}"
 
   if [[ $# -lt 2 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <log_level> <log_message>"
+    echo "usage: ${FUNCNAME[0]} <log_level> <log_message>"
     return 1
   fi
 
@@ -68,7 +68,7 @@ function __hhs_source() {
   local filepath="$1"
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <filepath>"
+    echo "usage: ${FUNCNAME[0]} <filepath>"
   elif [[ ! -s "${filepath}" ]]; then
     __hhs_log "WARN" "${FUNCNAME[0]}: Skipping \"${filepath}\" because it was not found or empty!"
   else
@@ -92,7 +92,7 @@ function __hhs_alias() {
   local all_args alias_expr alias_name
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>"
+    echo "usage: ${FUNCNAME[0]} <alias_name>='<alias_expr>"
     return 1
   fi
 
@@ -118,7 +118,7 @@ function __hhs_alias() {
 function __hhs_errcho() {
 
   if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <message>"
+    echo "usage: ${FUNCNAME[0]} <message>"
     return 1
   else
     echo -e "${RED}error: ${*}${NC}" 1>&2
@@ -131,7 +131,7 @@ function __hhs_errcho() {
 # @param $1 [Req] : The URL to test reachability.
 function __hhs_is_reachable() {
   if [[ $# -eq 0 || '-h' == "$1" || -z "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <url>"
+    echo "usage: ${FUNCNAME[0]} <url>"
     return 1
   fi
 

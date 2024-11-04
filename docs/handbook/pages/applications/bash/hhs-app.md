@@ -30,7 +30,7 @@
 ## HomeSetup application
 
 ```bash
-Usage:  [option] {function <args> | plugin [task <args>]}
+usage:  [option] {function <args> | plugin [task <args>]}
 
  _   _                      ____       _
 | | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __

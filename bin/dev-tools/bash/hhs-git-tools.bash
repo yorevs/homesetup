@@ -81,7 +81,7 @@ if __hhs_has "git"; then
     local sel_branch mchoose_file stash_flag branch_name
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [options]"
+      echo "usage: ${FUNCNAME[0]} [options]"
       echo ''
       echo '    Options:'
       echo '      -l | --local : List only local branches. Do not fetch remote branches.'
@@ -157,7 +157,7 @@ if __hhs_has "git"; then
     local git_repos_path
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [base_search_path]"
+      echo "usage: ${FUNCNAME[0]} [base_search_path]"
       return 1
     else
       git_repos_path=${1:-.}
@@ -181,7 +181,7 @@ if __hhs_has "git"; then
     local git_repos_path
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [base_search_path]"
+      echo "usage: ${FUNCNAME[0]} [base_search_path]"
       return 1
     else
       git_repos_path=${1:-.}
@@ -203,7 +203,7 @@ if __hhs_has "git"; then
   # @param $3 [Req] : The file to be compared.
   function __hhs_git_show_file_diff() {
     if [[ $# -ne 3 || '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <first_commit_id> <second_commit_id> <filename>"
+      echo "usage: ${FUNCNAME[0]} <first_commit_id> <second_commit_id> <filename>"
       return 1
     else
       git diff "${1}" "${2}" -- "${3}"
@@ -217,7 +217,7 @@ if __hhs_has "git"; then
   # @param $2 [Req] : The filename to show contents from .
   function __hhs_git_show_file_contents() {
     if [[ $# -ne 2 || '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <commit_id> <filename>"
+      echo "usage: ${FUNCNAME[0]} <commit_id> <filename>"
       return 1
     else
       git show "${1}":"${2}"
@@ -230,7 +230,7 @@ if __hhs_has "git"; then
   # @param $1 [Req] : The commit ID.
   function __hhs_git_show_changes() {
     if [[ $# -ne 1 || '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <commit_id>"
+      echo "usage: ${FUNCNAME[0]} <commit_id>"
       return 1
     else
       git diff-tree --no-commit-id --name-only -r "${1}"
@@ -247,7 +247,7 @@ if __hhs_has "git"; then
     local cur_pwd git_repos_path all_repos=() sel_repos=() repository branch repo_dir stash_flag mchoose_file
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [base_search_path] [repository]"
+      echo "usage: ${FUNCNAME[0]} [base_search_path] [repository]"
       echo ''
       echo '    Arguments:'
       echo '      repos_search_path   : The base path to search for git repositories. Default is current directory.'

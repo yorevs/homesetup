@@ -31,7 +31,7 @@
 ### "docsify"
 
 ```bash
-Usage: __hhs docsify
+usage: __hhs docsify
 ```
 
 #### **Purpose**
@@ -59,7 +59,7 @@ Opening HomeSetup docsify README from: https://docsify-this.net/?basePath=https:
 ### "board"
 
 ```bash
-Usage: __hhs board
+usage: __hhs board
 ```
 
 #### **Purpose**

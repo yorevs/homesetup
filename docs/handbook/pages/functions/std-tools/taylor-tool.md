@@ -39,7 +39,7 @@
 #### __hhs_tailor
 
 ```bash
-Usage: __hhs_tailor [-F | -f | -r] [-q] [-b # | -c # | -n #] <file>
+usage: __hhs_tailor [-F | -f | -r] [-q] [-b # | -c # | -n #] <file>
 
   Notes:
     - filename: If not provided, /dev/stdin will be used instead

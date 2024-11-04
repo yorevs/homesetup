@@ -18,7 +18,7 @@
 
   # Help message to be displayed by the script
   USAGE="
-Usage: $APP_NAME [OPTIONS] <args>
+usage: $APP_NAME [OPTIONS] <args>
 
   -l | --local          : Local installation. This is just going to replace the dotfiles.
   -r | --repair         : Repair current installation.

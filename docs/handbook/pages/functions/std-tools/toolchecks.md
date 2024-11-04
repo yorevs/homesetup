@@ -40,7 +40,7 @@
 ### __hhs_toolcheck
 
 ```bash
-Usage: __hhs_toolcheck [options] <app_name>
+usage: __hhs_toolcheck [options] <app_name>
 
     Options:
       -q  : Quiet mode on
@@ -69,7 +69,7 @@ Check whether a tool is installed on the system.
 ### __hhs_version
 
 ```bash
-Usage: __hhs_version <app_name>
+usage: __hhs_version <app_name>
 ```
 
 ##### **Purpose**:
@@ -95,7 +95,7 @@ Check the version of the app using the most common ways.
 ### __hhs_tools
 
 ```bash
-Usage: __hhs_tools [tool_list]
+usage: __hhs_tools [tool_list]
 ```
 
 ##### **Purpose**:
@@ -120,7 +120,7 @@ Check whether a list of development tools are installed or not.
 ### __hhs_about
 
 ```bash
-Usage: __hhs_about <command>
+usage: __hhs_about <command>
 ```
 
 ##### **Purpose**:

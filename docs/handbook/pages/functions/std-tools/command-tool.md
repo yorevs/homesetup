@@ -38,7 +38,7 @@
 #### __hhs_command
 
 ```bash
-Usage: __hhs_command [options [cmd_alias] <cmd_expression>] | [cmd_index]
+usage: __hhs_command [options [cmd_alias] <cmd_expression>] | [cmd_index]
 
     Options:
       [cmd_index]   : Execute the command specified by the command index.

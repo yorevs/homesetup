@@ -16,7 +16,7 @@
 function __hhs_history() {
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [regex_filter]"
+    echo "usage: ${FUNCNAME[0]} [regex_filter]"
     return 1
   elif [[ "$#" -eq 0 ]]; then
     history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | __hhs_highlight -i "^ *[0-9]*  "
@@ -35,7 +35,7 @@ function __hhs_hist_stats() {
   local top_n=${1:-10} i=1 cmd_name cmd_qty cmd_chart
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [top_N]"
+    echo "usage: ${FUNCNAME[0]} [top_N]"
     return 1
   fi
 
@@ -72,7 +72,7 @@ function __hhs_envs() {
   touch "${HHS_ENV_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] [regex_filters]"
+    echo "usage: ${FUNCNAME[0]} [options] [regex_filters]"
     echo ''
     echo '    Options: '
     echo '      -e : Edit current HHS_ENV_FILE.'
@@ -123,7 +123,7 @@ function __hhs_defs() {
   HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [regex_filters]"
+    echo "usage: ${FUNCNAME[0]} [regex_filters]"
     return 1
   else
     if [[ "$1" == '-e' ]]; then
@@ -166,7 +166,7 @@ function __hhs_shell_select() {
   local ret_val=1 sel_shell mselect_file avail_shells=()
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} "
+    echo "usage: ${FUNCNAME[0]} "
   else
     read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
     if __hhs_has brew; then

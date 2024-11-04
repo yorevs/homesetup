@@ -23,7 +23,7 @@ function __hhs_paths() {
   PVT_PATHS_D="/private/etc/paths"                   # General system path dir
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] <args>"
+    echo "usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
     echo '    Options: '
     echo '      -a <path> : Add to the current <path> to PATH.'

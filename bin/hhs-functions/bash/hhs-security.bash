@@ -22,7 +22,7 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
     local file="${1}" passwd="${2}" keep_file="${3}"
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
+      echo "usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
       if [[ ! -f "${file}" ]]; then
@@ -52,7 +52,7 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
     local file="${1}" passwd="${2}" keep_file="${3}"
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
+      echo "usage: ${FUNCNAME[0]} <filename> <passphrase> [--keep]"
       return 1
     else
       if [[ ! -f "${file}" ]]; then

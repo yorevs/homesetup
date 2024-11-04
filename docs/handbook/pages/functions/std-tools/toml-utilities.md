@@ -38,7 +38,7 @@
 #### __hhs_toml_get
 
 ```bash
-Usage: __hhs_toml_get <file> <key> [group]
+usage: __hhs_toml_get <file> <key> [group]
 ```
 
 ##### **Purpose**
@@ -68,7 +68,7 @@ current_version=1.6.19
 #### __hhs_toml_set
 
 ```bash
-Usage: __hhs_toml_set <file> <key=value> [group]
+usage: __hhs_toml_set <file> <key=value> [group]
 ```
 
 ##### **Purpose**

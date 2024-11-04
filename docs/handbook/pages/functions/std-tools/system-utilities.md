@@ -38,7 +38,7 @@
 #### __hhs_sysinfo
 
 ```bash
-Usage: __hhs_sysinfo
+usage: __hhs_sysinfo
 ```
 
 ##### **Purpose**
@@ -101,7 +101,7 @@ Currently Logged in Users:
 #### __hhs_process_list
 
 ```bash
-Usage: __hhs_process_list [options] <process_name>
+usage: __hhs_process_list [options] <process_name>
 
     Options:
         -k, --kill        : When specified, attempts to kill the processes it finds.
@@ -154,7 +154,7 @@ Display a process list matching the process name/expression.
 #### __hhs_process_kill
 
 ```bash
-Usage: __hhs_process_kill [options] <process_name>
+usage: __hhs_process_kill [options] <process_name>
 
     Options:
         -f | --force : Do not prompt for confirmation when killing a process
@@ -187,7 +187,7 @@ Kills ALL processes specified by name.
 #### __hhs_partitions
 
 ```bash
-Usage: __hhs_partitions
+usage: __hhs_partitions
 ```
 
 ##### **Purpose**

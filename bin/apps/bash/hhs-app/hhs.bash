@@ -15,15 +15,15 @@ APP_NAME="__hhs"
 # Functions to be unset after quit.
 UNSETS+=(
   'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
-  'validate_plugin' 'register_plugins' 'register_functions' 'parse_args'
-  'find_hhs_functions' 'get_desc' 'search_hhs_functions' 'invoke_command'
+  'validate_plugin' 'register_plugins' 'register_functions' 'parse_args' 'has_hhs_function'
+  'find_hhs_functions' 'get_desc' 'search_hhs_functions' 'invoke_command' 'display_list'
 )
 
 # Program version.
 VERSION=1.0.0
 
 # Help message to be displayed by the application.
-USAGE="Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
+USAGE="usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]
 
  _   _                      ____       _
 | | | | ___  _ __ ___   ___/ ___|  ___| |_ _   _ _ __
@@ -54,7 +54,7 @@ USAGE="Usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...
       (2) Failure due to program/plugin execution failures.
 
   Notes:
-    - To discover which plugins and functions are available type: hhs list.
+    - To discover which plugins and functions are available type: ${APP_NAME} list.
 "
 
 # Directory containing all HHS plug-ins.
@@ -111,6 +111,24 @@ function has_command() {
   return 1
 }
 
+# @purpose: Checks whether the command matches a __hhs function or not and invoke it.
+# @param $1..$N [Req] : The command line arguments.
+function invoke_hhs_function() {
+  local args=("$@") max_words=5 joined="" pattern functions
+
+  # Loop to form combinations starting from max_words down to 1
+  for ((i = (max_words < ${#args[@]}) ? max_words : ${#args[@]}; i > 0; i--)); do
+      # Wrap to a probable '__hhs' command
+      joined="__hhs_$(printf "%s_" "${args[@]:0:i}" | sed 's/_$//')"
+      if __hhs_has "${joined}"; then
+        "${joined}" "${args[@]:i}"  # Invoke the matched command with remaining arguments
+        exit $?
+      fi
+  done
+
+  return 1
+}
+
 # @purpose: Validates if the plugin contains the required hhs application plugin structure
 # @param $1 [Req] : Array of plugin functions.
 function validate_plugin() {
@@ -150,7 +168,7 @@ function register_plugins() {
       PLUGINS+=("${plg_name}")
       PLUGINS_LIST+=("${plugin}")
     fi
-  done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.bash")
+  done < <(find "${PLUGINS_DIR}" -maxdepth 2 -type f -iname "*.${HHS_MY_SHELL}")
   IFS="${OLDIFS}"
 
   return 0
@@ -178,26 +196,25 @@ function register_functions() {
 }
 
 # @purpose: Invoke the plugin command
-function invoke_command() {
+function invoke_plugin() {
 
   local plg_cmd ret
 
   has_plugin "${1}" || quit 1 "Plugin/Function not found: \"${1}\" ! Type 'hhs list' to find out options."
   for idx in "${!PLUGINS[@]}"; do
     if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
-      [[ -s "${PLUGINS_LIST[idx]}" ]] || exit 1
+      [[ -s "${PLUGINS_LIST[idx]}" ]] || quit 1
       source "${PLUGINS_LIST[idx]}"
       shift
       plg_cmd="${1:-execute}"
       has_command "${plg_cmd}" || quit 1 "#1-Command not available: ${plg_cmd}"
       shift
-      # Execute the specified plugin
-      ${plg_cmd} "${@}"
+      ${plg_cmd} "${@}"  # Execute the specified plugin
       ret=${?}
       cleanup
       exit ${ret}
     else
-      [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && exit 255
+      [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && quit 255
     fi
   done
   ret=${?}
@@ -255,6 +272,44 @@ function search_hhs_functions() {
   return 0
 }
 
+# @purpose: Get a list, display it in columns according to the terminal width.
+# @param: $1 [Req] : The list title
+# @param $2..$N [Req] : The array list
+function display_list() {
+    local title="$1" items columns max_width num_columns
+
+    shift
+    items=("$@")
+    columns=$(tput cols)  # Get terminal width
+
+    # Remove '__hhs_' prefix and replace '_' with ' ' in each item
+    for i in "${!items[@]}"; do
+        items[$i]="${items[$i]//__hhs_/}"   # Remove prefix
+        items[$i]="${items[$i]//_/ }"       # Replace underscores with spaces
+    done
+
+    # Calculate max item length + padding
+    max_width=$(printf "%s\n" "${items[@]}" | awk '{ if (length > max) max = length } END { print max + 2 }')
+
+    # Determine number of columns that can fit in the terminal
+    num_columns=$(((columns / (max_width + 5) - 1)))
+    num_columns=$((num_columns > 0 ? num_columns : 1))  # Ensure at least one column
+
+    echo -e "${ORANGE}${title}${NC}"
+
+    # Print each item with its index in columns
+    printf "%s\n" "${items[@]}" | awk -v cols="${num_columns}" -v width="${max_width}" '
+    {
+        printf "\033[33m%4d\033[m. \033[34m%-*s\033[m", NR, width, $0  # Print index followed by item
+        if (NR % cols == 0) print ""  # Newline after every full row
+    }
+    END {
+        if (NR % cols != 0) print ""  # Ensure proper formatting for partial rows
+    }
+    '
+}
+
+
 # ------------------------------------------
 # Basics
 
@@ -305,6 +360,9 @@ function main() {
   # Execute a cleanup after the application has exited.
   trap cleanup_plugins EXIT
 
+  # Check and invoke any matching '__hhs' function
+  invoke_hhs_function "${@}"
+
   parse_args "${@}"
   register_functions
   register_plugins
@@ -312,14 +370,17 @@ function main() {
   fn_name="${1//help/list}"
 
   if has_function "${fn_name}"; then
+    # Invoke internal function
     shift
     ${fn_name} "${@}"
-    quit 0 # If we use an internal function, we don't need to scan for plugins, so just quit after call.
+    quit $?
   fi
 
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
-  invoke_command "${@}" || quit 2
+  invoke_plugin "${@}" || quit 2
+
+  quit 255 "${RED}Failed to invoke hhs command: ${*} ${NC}"
 }
 
 source "${HHS_DIR}/bin/app-commons.bash"

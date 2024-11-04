@@ -19,7 +19,7 @@ read -r -d '' -a images < <(find "${HHS_HOME}/docker" -mindepth 1 -type d -exec 
 IFS="${OLDIFS}"
 
 USAGE="
-Usage: Usage: ${APP_NAME} [Options] image_type
+usage: usage: ${APP_NAME} [Options] image_type
 
   Options
     -p | --push   : Push the image after a successful build

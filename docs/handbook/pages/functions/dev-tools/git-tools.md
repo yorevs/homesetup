@@ -41,7 +41,7 @@
 #### __hhs_git_branch_previous
 
 ```bash
-Usage: __hhs_git_branch_previous
+usage: __hhs_git_branch_previous
 ```
 
 ##### **Purpose**
@@ -69,7 +69,7 @@ Switched to branch 'prev-branch'
 #### __hhs_git_branch_select
 
 ```bash
-Usage: __hhs_git_branch_select [options]
+usage: __hhs_git_branch_select [options]
 
     Options:
       -l | --local : List only local branches. Do not fetch remote branches.
@@ -110,7 +110,7 @@ Select a local or remote branch to checkout
 #### __hhs_git_branch_all
 
 ```bash
-Usage: __hhs_git_branch_all [base_search_path]
+usage: __hhs_git_branch_all [base_search_path]
 ```
 
 ##### **Purpose**
@@ -145,7 +145,7 @@ Choose the projects to pull from. Available Repositories (2):
 #### __hhs_git_status_all
 
 ```bash
-Usage: __hhs_git_status_all [base_search_path]
+usage: __hhs_git_status_all [base_search_path]
 ```
 
 ##### **Purpose**
@@ -188,7 +188,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 #### __hhs_git_show_file_diff
 
 ```bash
-Usage: __hhs_git_show_file_diff <first_commit_id> <second_commit_id> <filename>
+usage: __hhs_git_show_file_diff <first_commit_id> <second_commit_id> <filename>
 ```
 
 ##### **Purpose**
@@ -230,7 +230,7 @@ index 84af258..8106157
 #### __hhs_git_show_file_contents
 
 ```bash
-Usage: __hhs_git_show_file_contents <commit_id> <filename>
+usage: __hhs_git_show_file_contents <commit_id> <filename>
 ```
 
 ##### **Purpose**
@@ -261,7 +261,7 @@ __hhs_git_show_file_contents
 #### __hhs_git_show_changes
 
 ```bash
-Usage: __hhs_git_show_changes <commit_id>
+usage: __hhs_git_show_changes <commit_id>
 ```
 
 ##### **Purpose**
@@ -292,7 +292,7 @@ dotfiles/bash/bash_aliases.bash
 #### __hhs_git_pull_all
 
 ```bash
-Usage: __hhs_git_pull_all [base_search_path] [repository]
+usage: __hhs_git_pull_all [base_search_path] [repository]
 
     Arguments:
       repos_search_path   : The base path to search for git repositories. Default is current directory.

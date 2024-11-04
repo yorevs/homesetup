@@ -19,7 +19,7 @@ function __hhs_change_dir() {
   local flags path
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [-L|-P] [dirname]"
+    echo "usage: ${FUNCNAME[0]} [-L|-P] [dirname]"
     echo ''
     echo '    Options: '
     echo '      -L    : Follow symbolic links.'
@@ -81,7 +81,7 @@ function __hhs_changeback_ndirs() {
   local x last_pwd
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [amount]"
+    echo "usage: ${FUNCNAME[0]} [amount]"
     return 0
   fi
 
@@ -147,7 +147,7 @@ function __hhs_list_tree() {
   local dir="${1}" max_depth=${2}
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [dir] [max_depth]"
+    echo "usage: ${FUNCNAME[0]} [dir] [max_depth]"
     return 0
   elif __hhs_has "tree"; then
     if [[ -n "${dir}" && -n "${max_depth}" ]]; then
@@ -183,7 +183,7 @@ function __hhs_save_dir() {
   touch "${HHS_SAVED_DIRS_FILE}"
 
   if [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} -e | [-r] <dir_alias> | <path> <dir_alias>"
+    echo "usage: ${FUNCNAME[0]} -e | [-r] <dir_alias> | <path> <dir_alias>"
     echo ''
     echo 'Options: '
     echo "    -e : Edit the saved dirs file."
@@ -253,7 +253,7 @@ function __hhs_load_dir() {
   touch "${HHS_SAVED_DIRS_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [-l] | [dir_alias]"
+    echo "usage: ${FUNCNAME[0]} [-l] | [dir_alias]"
     echo ''
     echo 'Options: '
     echo '    [dir_alias] : The alias to load the path from.'
@@ -340,7 +340,7 @@ function __hhs_godir() {
   local dir len mselect_file found_dirs=() search_path search_name ret_val=1 title
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [search_path] <dir_name>"
+    echo "usage: ${FUNCNAME[0]} [search_path] <dir_name>"
   elif [[ -d "${1}" && -z "${2}" ]]; then
     dir="${1}"
     ret_val=0
@@ -398,7 +398,7 @@ function __hhs_mkcd() {
   local ret_val=1
 
   if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <dirtree | package>"
+    echo "usage: ${FUNCNAME[0]} <dirtree | package>"
     echo ''
     echo "E.g:. ${FUNCNAME[0]} dir1/dir2/dir3 (dirtree)"
     echo "E.g:. ${FUNCNAME[0]} dir1.dir2.dir3 (FQDN)"

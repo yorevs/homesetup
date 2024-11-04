@@ -46,7 +46,7 @@ __hhs_about........................ : Display information about the given comman
 #### __hhs_random
 
 ```bash
-Usage: __hhs_random <min> <max>
+usage: __hhs_random <min> <max>
 ```
 
 ##### **Purpose**
@@ -77,7 +77,7 @@ Generate a random number int the range <min> <max> (all limits included).
 ### __hhs_open
 
 ```bash
-Usage: __hhs_open <file_path>
+usage: __hhs_open <file_path>
 ```
 
 ##### **Purpose**
@@ -111,7 +111,7 @@ N/A
 ### __hhs_edit
 
 ```bash
-Usage: __hhs_edit <file_path>
+usage: __hhs_edit <file_path>
 ```
 
 ##### **Purpose**
@@ -139,7 +139,7 @@ N/A
 ### __hhs_about
 
 ```bash
-Usage: __hhs_about <command>
+usage: __hhs_about <command>
 ```
 
 ##### **Purpose**
@@ -170,7 +170,7 @@ Display information about the given command.
 ### __hhs_help
 
 ```bash
-Usage: __hhs_help <command>
+usage: __hhs_help <command>
 ```
 
 ##### **Purpose**
@@ -194,7 +194,7 @@ Display a help for the given command.
 ```bash
 The cross-shell prompt for astronauts. ☄🌌️
 
-Usage: starship <COMMAND>
+usage: starship <COMMAND>
 
 Commands:
   bug-report    Create a pre-populated GitHub issue with information about your configuration
@@ -221,7 +221,7 @@ Options:
 ### __hhs_where_am_i
 
 ```bash
-Usage: __hhs_where_am_i
+usage: __hhs_where_am_i
 ```
 
 ##### **Purpose**
@@ -247,7 +247,7 @@ N/A
 ### __hhs_shopt
 
 ```bash
-Usage: __hhs_shopt [on|off] | [-pqsu] [-o] [optname ...]
+usage: __hhs_shopt [on|off] | [-pqsu] [-o] [optname ...]
 
     Options:
       off : Display all unset options.

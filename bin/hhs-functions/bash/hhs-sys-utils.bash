@@ -18,7 +18,7 @@ function __hhs_sysinfo() {
   local username containers if_name if_ip containers all_ips all_users
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} "
+    echo "usage: ${FUNCNAME[0]} "
     return 1
   else
     username="$(whoami)"
@@ -86,7 +86,7 @@ function __hhs_process_list() {
   local all_pids uid pid ppid cmd force=0 quiet=0 kill_flag=0 pad divider gflags='-E'
 
   if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] <process_name>"
+    echo "usage: ${FUNCNAME[0]} [options] <process_name>"
     echo ''
     echo '    Options: '
     echo '        -k, --kill        : When specified, attempts to kill the processes it finds'
@@ -179,7 +179,7 @@ function __hhs_process_kill() {
   local ret_val=1 force_flag=
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] <process_name>"
+    echo "usage: ${FUNCNAME[0]} [options] <process_name>"
     echo ''
     echo '    Options: '
     echo '        -f | --force : Do not prompt for confirmation when killing a process'
@@ -207,7 +207,7 @@ function __hhs_partitions() {
   local all_parts=() str_text mounted size used avail cap
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} "
+    echo "usage: ${FUNCNAME[0]} "
     return 1
   else
     IFS=$'\n'

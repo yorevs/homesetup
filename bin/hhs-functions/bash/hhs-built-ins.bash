@@ -17,7 +17,7 @@
 function __hhs_random() {
 
   if [[ $# -ne 2 ]]; then
-    echo "Usage: ${FUNCNAME[0]} <min> <max>"
+    echo "usage: ${FUNCNAME[0]} <min> <max>"
     return 1
   else
     echo "$((RANDOM % ($2 - $1 + 1) + $1))"
@@ -54,7 +54,7 @@ function __hhs_edit() {
   local filename="$1" editor="${EDITOR:-vi}"
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <file_path>"
+    echo "usage: ${FUNCNAME[0]} <file_path>"
     return 1
   else
     [[ -s "${filename}" ]] || touch "${filename}" > /dev/null 2>&1
@@ -91,7 +91,7 @@ function __hhs_about() {
   re_command="(.*) is (.*)"
 
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <command>"
+    echo "usage: ${FUNCNAME[0]} <command>"
     return 1
   elif [[ ${recurse} -gt 5 ]] || [[ ${recurse} =~ [^0-9]+ ]]; then
     return 1
@@ -142,7 +142,7 @@ function __hhs_help() {
   local cmd
 
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <command>"
+    echo "usage: ${FUNCNAME[0]} <command>"
     return 1
   else
     cmd="${1}"
@@ -180,7 +180,7 @@ function __hhs_shopt() {
   enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [on|off] | [-pqsu] [-o] [optname ...]"
+    echo "usage: ${FUNCNAME[0]} [on|off] | [-pqsu] [-o] [optname ...]"
     echo ''
     echo '    Options:'
     echo '      off : Display all unset options.'

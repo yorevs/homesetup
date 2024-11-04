@@ -19,7 +19,7 @@ load_bats_libs
 @test "when-invoking-with-help-option-then-should-print-usage-message" {
   run __hhs_aliases -h
   assert_failure
-  assert_output --partial "Usage: __hhs_aliases <alias> <alias_expr>"
+  assert_output --partial "usage: __hhs_aliases <alias> <alias_expr>"
 }
 
 # TC - 2

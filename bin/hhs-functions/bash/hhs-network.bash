@@ -21,7 +21,7 @@ if __hhs_has ifconfig; then
     local all_ifaces=() if_name if_flags if_mtu if_list
 
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [-flat]"
+      echo "usage: ${FUNCNAME[0]} [-flat]"
       return 1
     fi
 
@@ -62,7 +62,7 @@ if __hhs_has ifconfig; then
       local ret_val=1 ip_kind if_name if_list if_ip if_prefix ip_srv_url='ipinfo.io'
 
       if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-        echo "Usage: ${FUNCNAME[0]} [kind]"
+        echo "usage: ${FUNCNAME[0]} [kind]"
         echo ''
         echo '    Arguments:'
         echo '      type : The kind of IP to get. One of [all|local|external|gateway|vpn]'
@@ -118,7 +118,7 @@ function __hhs_ip_info() {
   local ipinfo ip_srv_url="http://ip-api.com/json/${1}"
 
   if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
+    echo "usage: ${FUNCNAME[0]} <IPv4_address>"
     return 1
   else
     ipinfo=$(curl -s --fail -m 3 "${ip_srv_url}" 2>/dev/null)
@@ -136,7 +136,7 @@ if __hhs_has host; then
   function __hhs_ip_lookup() {
 
     if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <domain_name>"
+      echo "usage: ${FUNCNAME[0]} <domain_name>"
       return 1
     else
       \host "${1}"
@@ -155,7 +155,7 @@ if __hhs_has dig; then
   function __hhs_ip_resolve() {
 
     if [[ "$1" == "-h" || "$1" == "--help" || "$#" -ne 1 ]]; then
-      echo "Usage: ${FUNCNAME[0]} <IPv4_address>"
+      echo "usage: ${FUNCNAME[0]} <IPv4_address>"
       return 1
     fi
     \dig +short -x "$1"
@@ -183,7 +183,7 @@ if __hhs_has netstat; then
     protocol="${3//\./}"
 
     if [[ "$#" -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <port_number> [port_state] [protocol]"
+      echo "usage: ${FUNCNAME[0]} <port_number> [port_state] [protocol]"
       echo ''
       echo '  Notes: '
       echo '    - Protocol: One of [tcp udp]'

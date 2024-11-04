@@ -45,7 +45,8 @@ __hhs_has 'hhs' && __hhs_log "ERROR" "'hhs' is already defined: $(command -v 'hh
 # @function: Invoke the hhs application.
 # @param $* [Opt] : All parameters are passed to hhs.bash.
 function __hhs() {
-  if [[ -z "${1}" ]]; then
+
+  if [[ -z "${1}" || "${1}" == 'home' ]]; then
     __hhs_change_dir "${HHS_HOME}" || return 1
   elif [[ "${1}" == 'dir' ]]; then
     __hhs_change_dir "${HHS_DIR}" || return 1

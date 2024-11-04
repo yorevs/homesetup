@@ -38,7 +38,7 @@
 #### __hhs_alias
 
 ```bash
-Usage: __hhs_alias <alias_name>='<alias_expr>'
+usage: __hhs_alias <alias_name>='<alias_expr>'
 ```
 
 ##### **Purpose**
@@ -75,7 +75,7 @@ OK
 #### __hhs_aliases
 
 ```bash
-Usage: __hhs_aliases <alias> <alias_expr>
+usage: __hhs_aliases <alias> <alias_expr>
 
     Options:
       -l | --list    : List all custom aliases.

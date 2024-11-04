@@ -19,7 +19,7 @@ TODO
 ### __hhs_<funcname>
 
 ```bash
-Usage: __hhs_<funcname> [options] <args>
+usage: __hhs_<funcname> [options] <args>
 ```
 
 #### **Purpose**

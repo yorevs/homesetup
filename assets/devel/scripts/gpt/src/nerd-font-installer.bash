@@ -20,7 +20,7 @@
   VERSION="0.0.3"
 
   # Usage message
-  USAGE="Usage: $(basename "$0") [-h|--help] [-v|--version] [-f|--font <font_name>]
+  USAGE="usage: $(basename "$0") [-h|--help] [-v|--version] [-f|--font <font_name>]
 
   This script allows you to download and install a Nerd Font of your choice.
 
@@ -78,9 +78,8 @@
 
   # @purpose: Display available fonts in columns based on terminal width
   display_fonts_list() {
-    local columns
+    local columns max_width
     columns=$(tput cols)  # Get terminal width
-    local max_width
     max_width=$(get_max_font_length)  # Max font name length + 2 spaces
 
     # Adjust the number of columns to fit within the terminal width

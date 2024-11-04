@@ -33,7 +33,7 @@
 ### "tests"
 
 ```bash
-Usage: __hhs tests
+usage: __hhs tests
 ```
 
 #### **Purpose**
@@ -72,7 +72,7 @@ Run all HomeSetup automated tests.
 ### "color-tests"
 
 ```bash
-Usage: __hhs color-tests
+usage: __hhs color-tests
 ```
 
 #### **Purpose**

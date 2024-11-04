@@ -33,7 +33,7 @@
 ### "host-name"
 
 ```bash
-Usage: hhs host-name [new_hostname]
+usage: hhs host-name [new_hostname]
 ```
 
 #### **Purpose**
@@ -69,7 +69,7 @@ my.domain.hostname
 ### "shopts"
 
 ```bash
-Usage: __hhs shopts
+usage: __hhs shopts
 ```
 
 #### **Purpose**

@@ -14,7 +14,7 @@
 VERSION=2.0.0
 
 # Help message to be displayed by the application.
-USAGE="Usage: ${APP_NAME} [Options] <ip_address>
+USAGE="usage: ${APP_NAME} [Options] <ip_address>
 
     Options:
       -q | --quiet  : Silent mode. Do not check for IP details.

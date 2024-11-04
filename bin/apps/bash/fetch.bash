@@ -15,7 +15,7 @@
 VERSION=1.0.0
 
 # Help message to be displayed by the application.
-USAGE="Usage: ${APP_NAME} <method> [options] <url>
+USAGE="usage: ${APP_NAME} <method> [options] <url>
 
   Fetch URL resource using the most commons ways.
 

@@ -21,7 +21,7 @@ if __hhs_has "python3"; then
     local names expr file_globs dir
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <search_path> [file_globs...]"
+      echo "usage: ${FUNCNAME[0]} <search_path> [file_globs...]"
       echo ''
       echo '  Notes: '
       echo '    - <file_globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"'
@@ -46,7 +46,7 @@ if __hhs_has "python3"; then
     local names expr dir dir_globs
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <search_path> [dir_globs...]"
+      echo "usage: ${FUNCNAME[0]} <search_path> [dir_globs...]"
       echo ''
       echo '  Notes: '
       echo '    - <dir_globs...>: Comma separated directories. E.g:. "dir1,dir2,dir2"'
@@ -76,7 +76,7 @@ if __hhs_has "python3"; then
     local names_expr search_str base_cmd full_cmd dir repl_str
 
     if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <search_path> [options] <regex/string> [file_globs]"
+      echo "usage: ${FUNCNAME[0]} <search_path> [options] <regex/string> [file_globs]"
       echo ''
       echo '    Options: '
       echo '      -i | --ignore-case            : Makes the search case INSENSITIVE.'

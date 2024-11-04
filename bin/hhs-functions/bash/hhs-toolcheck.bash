@@ -18,7 +18,7 @@ function __hhs_version() {
   local version APP
 
   if [[ "$#" -ne 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <app_name>"
+    echo "usage: ${FUNCNAME[0]} <app_name>"
     return 1
   else
     # First attempt: app --version
@@ -55,7 +55,7 @@ function __hhs_toolcheck() {
   local pad pad_len tool_name check is_alias quiet
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options] <app_name>"
+    echo "usage: ${FUNCNAME[0]} [options] <app_name>"
     echo ''
     echo '    Options: '
     echo '      -q  : Quiet mode on'
@@ -97,7 +97,7 @@ function __hhs_tools() {
   local app tool_list=(${@})
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [tool_list]"
+    echo "usage: ${FUNCNAME[0]} [tool_list]"
     return 1
   else
     [[ ${#} -eq 0 ]] && tool_list=(${HHS_DEV_TOOLS[@]})

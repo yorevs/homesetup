@@ -39,7 +39,7 @@
 #### __hhs_paths
 
 ```bash
-Usage: __hhs_paths [options] <args>
+usage: __hhs_paths [options] <args>
 
     Options:
       -a <path> : Add to the current <path> to PATH.

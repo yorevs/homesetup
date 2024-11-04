@@ -38,7 +38,7 @@
 #### __hhs_highlight
 
 ```bash
-Usage: __hhs_highlight <text_to_highlight> [filename]
+usage: __hhs_highlight <text_to_highlight> [filename]
 
   Notes:
     filename: If not provided, stdin will be used instead.
@@ -75,7 +75,7 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #### __hhs_json_print
 
 ```bash
-Usage: __hhs_json_print <json_string>
+usage: __hhs_json_print <json_string>
 ```
 
 ##### **Purpose**
@@ -110,7 +110,7 @@ Pretty print (format) JSON string.
 ##### __hhs_ascof
 
 ```bash
-Usage: __hhs_ascof <string>
+usage: __hhs_ascof <string>
 ```
 
 ##### **Purpose**
@@ -142,7 +142,7 @@ Str: Hello
 ##### __hhs_utoh
 
 ```bash
-Usage: __hhs_utoh <4d-unicode...>
+usage: __hhs_utoh <4d-unicode...>
 
   Notes:
     - unicode is a four digits hexadecimal number. E.g:. F205
@@ -184,7 +184,7 @@ Convert unicode to hexadecimal.
 #### __hhs_errcho
 
 ```bash
-Usage: __hhs_errcho <message>
+usage: __hhs_errcho <message>
 ```
 
 ##### **Purpose**

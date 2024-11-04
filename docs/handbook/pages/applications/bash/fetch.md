@@ -30,7 +30,7 @@
 ## Fetch
 
 ```bash
-Usage:  <method> [options] <url>
+usage:  <method> [options] <url>
 
         method                      : The http method to be used \[ GET, POST, PUT, PATCH, DELETE \].
         url                         : The url to make the request.

@@ -30,7 +30,7 @@
 ## Check-IP
 
 ```bash
-Usage:  [Options] <ip_address>
+usage:  [Options] <ip_address>
 
     Options:
       -q | --quiet  : Silent mode. Do not check for IP details.

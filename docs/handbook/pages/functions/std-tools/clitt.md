@@ -39,7 +39,7 @@
 #### __hhs_mchoose
 
 ```bash
-Usage: __hhs_mchoose [options] <output_file> <title> <items...>
+usage: __hhs_mchoose [options] <output_file> <title> <items...>
 
     Options:
       -c  : All options are initially checked instead of unchecked.
@@ -128,7 +128,7 @@ Unmark the undesired options
 #### __hhs_mselect
 
 ```bash
-Usage: __hhs_mselect <output_file> <title> <items...>
+usage: __hhs_mselect <output_file> <title> <items...>
 
     Arguments:
       output_file : The output file where the result will be stored.
@@ -191,7 +191,7 @@ Please select one option
 #### __hhs_minput
 
 ```bash
-Usage: __hhs_minput <output_file> <title> <form_fields...>
+usage: __hhs_minput <output_file> <title> <form_fields...>
 
     Arguments:
       output_file : The output file where the results will be stored.

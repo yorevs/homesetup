@@ -41,7 +41,7 @@
 #### __hhs_gradle
 
 ```bash
-Usage: __hhs_gradle [gradle_args]
+usage: __hhs_gradle [gradle_args]
 ```
 
 ##### **Purpose**

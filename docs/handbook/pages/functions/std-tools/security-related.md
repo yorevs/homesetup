@@ -39,7 +39,7 @@
 #### __hhs_encrypt_file
 
 ```bash
-Usage: __hhs_encrypt_file <filename> <passphrase>  [keep]
+usage: __hhs_encrypt_file <filename> <passphrase>  [keep]
 ```
 
 ##### **Purpose**
@@ -71,7 +71,7 @@ File "test.txt" has been encrypted !
 #### __hhs_decrypt_file
 
 ```bash
-Usage: __hhs_decrypt_file <filename> <passphrase> [keep]
+usage: __hhs_decrypt_file <filename> <passphrase> [keep]
 ```
 
 ##### **Purpose**

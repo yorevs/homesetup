@@ -25,7 +25,7 @@ function __hhs_aliases() {
   touch "${HHS_ALIASES_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <alias> <alias_expr>"
+    echo "usage: ${FUNCNAME[0]} <alias> <alias_expr>"
     echo ''
     echo '    Options: '
     echo '      -l | --list    : List all custom aliases.'

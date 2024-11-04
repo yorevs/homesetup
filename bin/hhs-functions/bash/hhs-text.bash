@@ -19,7 +19,7 @@ function __hhs_highlight() {
   local search file hl_color="${HHS_HIGHLIGHT_COLOR}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <text_to_highlight> [filename]"
+    echo "usage: ${FUNCNAME[0]} <text_to_highlight> [filename]"
     echo ''
     echo '  Notes: '
     echo '    filename: If not provided, stdin will be used instead.'
@@ -42,7 +42,7 @@ function __hhs_json_print() {
   local json="${1}"
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <json_string>"
+    echo "usage: ${FUNCNAME[0]} <json_string>"
     return 1
   else
     if __hhs_has jq; then
@@ -62,7 +62,7 @@ function __hhs_json_print() {
 function __hhs_ascof() {
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <string>"
+    echo "usage: ${FUNCNAME[0]} <string>"
     return 1
   fi
   echo ''
@@ -84,7 +84,7 @@ function __hhs_utoh() {
   local result converted uni ret_val=1
 
   if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} <4d-unicode...>"
+    echo "usage: ${FUNCNAME[0]} <4d-unicode...>"
     echo ''
     echo '  Notes: '
     echo '    - unicode is a four digits hexadecimal number. E.g:. F205'

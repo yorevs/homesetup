@@ -19,7 +19,7 @@ if __hhs_has python3; then
   function __hhs_mchoose() {
 
     if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [options] <output_file> <title> <items...>"
+      echo "usage: ${FUNCNAME[0]} [options] <output_file> <title> <items...>"
       echo ''
       echo '    Options: '
       echo '      -c  : All options are initially checked instead of unchecked.'
@@ -101,7 +101,7 @@ if __name__ == \"__main__\":
     local outfile all_options=() all_items_str len
 
     if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <output_file> <title> <items...>"
+      echo "usage: ${FUNCNAME[0]} <output_file> <title> <items...>"
       echo ''
       echo '    Arguments: '
       echo '      output_file : The output file where the result will be stored.'
@@ -154,7 +154,7 @@ if __name__ == \"__main__\":
     local outfile title all_fields=() len
 
     if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"
+      echo "usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"
       echo ''
       echo '    Arguments: '
       echo '      output_file : The output file where the results will be stored.'
@@ -216,7 +216,7 @@ if __name__ == \"__main__\":
   function __hhs_punch() {
 
     if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [options] <args>"
+      echo "usage: ${FUNCNAME[0]} [options] <args>"
       echo ''
       echo '    Options: '
       echo '      -l | --list       : List all registered punches.'

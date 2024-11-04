@@ -19,7 +19,7 @@
 VERSION="0.0.1"
 
 # Usage message
-USAGE="Usage: file-archiver.bash -d directory [-n days] [-h] [-v]
+USAGE="usage: file-archiver.bash -d directory [-n days] [-h] [-v]
 
   Options:
     -d, --directory   Specify the directory to search (mandatory).

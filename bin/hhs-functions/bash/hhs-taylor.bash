@@ -42,7 +42,7 @@ function __hhs_tailor() {
   fi
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [-F | -f | -r] [-q] [-b # | -c # | -n #] <file>"
+    echo "usage: ${FUNCNAME[0]} [-F | -f | -r] [-q] [-b # | -c # | -n #] <file>"
     echo ''
     echo '  Notes: '
     echo '    - filename: If not provided, /dev/stdin will be used instead.'

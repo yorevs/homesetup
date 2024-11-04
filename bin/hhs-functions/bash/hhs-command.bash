@@ -24,7 +24,7 @@ function __hhs_command() {
   touch "${HHS_CMD_FILE}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [options [cmd_alias] <cmd_expression>] | [cmd_index]"
+    echo "usage: ${FUNCNAME[0]} [options [cmd_alias] <cmd_expression>] | [cmd_index]"
     echo ''
     echo '    Options: '
     echo '      [cmd_index]   : Execute the command specified by the command index.'

@@ -38,7 +38,7 @@
 #### __hhs_change_dir
 
 ```bash
-Usage: __hhs_change_dir [-L|-P] [dirname]
+usage: __hhs_change_dir [-L|-P] [dirname]
 
     Options:
       -L    : Follow symbolic links.
@@ -72,7 +72,7 @@ Usage: __hhs_change_dir [-L|-P] [dirname]
 #### __hhs_changeback_ndirs
 
 ```bash
-Usage: __hhs_changeback_ndirs [amount]
+usage: __hhs_changeback_ndirs [amount]
 ```
 
 ##### **Purpose**
@@ -112,7 +112,7 @@ Changed directory backwards by 2 time(s) and landed at: "/"
 #### __hhs_dirs
 
 ```bash
-Usage: __hhs_dirs
+usage: __hhs_dirs
 ```
 
 ##### **Purpose**
@@ -151,7 +151,7 @@ Please choose one directory to change into (6) found:
 #### __hhs_list_tree
 
 ```bash
-Usage: __hhs_list_tree [dir] [max_depth]
+usage: __hhs_list_tree [dir] [max_depth]
 ```
 
 ##### **Purpose**
@@ -195,7 +195,7 @@ List contents of directories in a tree-like format.
 #### __hhs_save_dir
 
 ```bash
-Usage: __hhs_save_dir -e | [-r] <dir_alias> | <path> <dir_alias>
+usage: __hhs_save_dir -e | [-r] <dir_alias> | <path> <dir_alias>
 
 Options:
     -e : Edit the saved dirs file.
@@ -239,7 +239,7 @@ Directory aliased as "DOT" was removed!
 #### __hhs_load_dir
 
 ```bash
-Usage: __hhs_load_dir [-l] | [dir_alias]
+usage: __hhs_load_dir [-l] | [dir_alias]
 
 Options:
     [dir_alias] : The alias to load the path from.
@@ -287,7 +287,7 @@ DOT...................................... points to '/Users/hjunior/HomeSetup'
 #### __hhs_godir
 
 ```bash
-Usage: __hhs_godir [search_path] <dir_name>
+usage: __hhs_godir [search_path] <dir_name>
 ```
 
 ##### **Purpose**
@@ -318,7 +318,7 @@ Directory changed to: "/usr/bin"
 #### __hhs_mkcd
 
 ```bash
-Usage: __hhs_mkcd <dirtree | package>
+usage: __hhs_mkcd <dirtree | package>
 
 E.g:. __hhs_mkcd dir1/dir2/dir3 (dirtree)
 E.g:. __hhs_mkcd dir1.dir2.dir3 (FQDN)

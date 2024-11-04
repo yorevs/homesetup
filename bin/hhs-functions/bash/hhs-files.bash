@@ -22,7 +22,7 @@ function __hhs_ls_sorted() {
       \colorls --help
       return 0
     else
-      echo "Usage: ${FUNCNAME[0]} [column_name] [-reverse]"
+      echo "usage: ${FUNCNAME[0]} [column_name] [-reverse]"
       echo ''
       echo '  Columns:'
       echo '    type  : First column gives the type of the file/dir and the file permissions.'
@@ -69,7 +69,7 @@ function __hhs_del_tree() {
   local all trash_dest search_path glob dry_run='Y' ans
 
   if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: ${FUNCNAME[0]} [-n|-f|-i] <search_path> <glob_expr>"
+    echo "usage: ${FUNCNAME[0]} [-n|-f|-i] <search_path> <glob_expr>"
     echo ''
     echo '  Options:'
     echo '    -n | --dry-run      : Just show what would be deleted instead of removing it.'

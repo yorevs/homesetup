@@ -16,7 +16,7 @@ APP_NAME="${0##*/}"
 
 # Help message to be displayed by the script.
 USAGE="
-Usage: $APP_NAME
+usage: $APP_NAME
 "
 
 # Define the USER and HOME

@@ -38,7 +38,7 @@
 #### __hhs_ls_sorted
 
 ```bash
-Usage: __hhs_ls_sorted [column_name] [-reverse]
+usage: __hhs_ls_sorted [column_name] [-reverse]
 
   Columns:
     type  : First column gives the type of the file/dir and the file permissions.
@@ -106,7 +106,7 @@ List files sorted by the specified column. The following columns apply:
 #### __hhs_del_tree
 
 ```bash
-Usage: __hhs_del_tree [-n|-f|-i] <search_path> <glob_expr>
+usage: __hhs_del_tree [-n|-f|-i] <search_path> <glob_expr>
 
   Options:
     -n | --dry-run      : Just show what would be deleted instead of removing it.

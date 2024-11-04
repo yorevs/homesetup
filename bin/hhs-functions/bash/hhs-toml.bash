@@ -21,7 +21,7 @@ function __hhs_toml_get() {
   local file="${1}" key="${2}" group="${3}" re_group re_key_pair group_match
 
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
-    echo "Usage: __hhs_toml_get <file> <key> [group]"
+    echo "usage: __hhs_toml_get <file> <key> [group]"
     return 1
   fi
 
@@ -70,7 +70,7 @@ function __hhs_toml_set() {
   local re_group re_key_pair group_match
 
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
-    echo "Usage: __hhs_toml_set <file> <key=value> [group]"
+    echo "usage: __hhs_toml_set <file> <key=value> [group]"
     return 1
   fi
 
@@ -119,7 +119,7 @@ function __hhs_toml_groups() {
   local file="${1}" re_group count=0
 
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
-    echo "Usage: __hhs_toml_groups <file>"
+    echo "usage: __hhs_toml_groups <file>"
     return 1
   fi
 
@@ -151,7 +151,7 @@ function __hhs_toml_keys() {
   local file="${1}" group="${2}" re_group count=0 group_match
 
   if [[ "${#}" -eq 0 || "${1}" == '-h' || "${1}" == '--help' ]]; then
-    echo "Usage: __hhs_toml_keys <file> [group]"
+    echo "usage: __hhs_toml_keys <file> [group]"
     return 1
   fi
 

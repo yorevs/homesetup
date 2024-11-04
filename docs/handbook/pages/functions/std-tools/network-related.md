@@ -39,7 +39,7 @@
 #### __hhs_active_ifaces
 
 ```bash
-Usage: __hhs_active_ifaces [-flat]
+usage: __hhs_active_ifaces [-flat]
 ```
 
 ##### **Purpose**
@@ -84,7 +84,7 @@ en5 utun6 utun5 utun4 utun3 utun2 utun1 utun0 bridge0 en2 en1 llw0 awdl0 en0 ap1
 #### __hhs_ip
 
 ```bash
-Usage: __hhs_ip [kind]
+usage: __hhs_ip [kind]
 
     Arguments:
       type : The kind of IP to get. One of [local|external|gateway|vpn].
@@ -137,7 +137,7 @@ en5       : 192.168.100.139
 #### __hhs_ip_resolve
 
 ```bash
-Usage: __hhs_ip_resolve <IPv4_address>
+usage: __hhs_ip_resolve <IPv4_address>
 ```
 
 ##### **Purpose**
@@ -167,7 +167,7 @@ dns.google.
 #### __hhs_ip_info
 
 ```bash
-Usage: __hhs_ip_info <IPv4_address>
+usage: __hhs_ip_info <IPv4_address>
 ```
 
 ##### **Purpose**
@@ -212,7 +212,7 @@ Retrieve information about the specified IP.
 #### __hhs_ip_lookup
 
 ```bash
-Usage: __hhs_ip_lookup <domain_name>
+usage: __hhs_ip_lookup <domain_name>
 ```
 
 ##### **Purpose**
@@ -244,7 +244,7 @@ google.com mail is handled by 10 smtp.google.com.
 #### __hhs_port_check
 
 ```bash
-Usage: __hhs_port_check <port_number> [port_state] [protocol]
+usage: __hhs_port_check <port_number> [port_state] [protocol]
 
   Notes:
        States: One of [CLOSED|LISTEN|SYN_SENT|SYN_RCVD|ESTABLISHED|CLOSE_WAIT|LAST_ACK|FIN_WAIT_1|FIN_WAIT_2|CLOSING|TIME_WAIT].

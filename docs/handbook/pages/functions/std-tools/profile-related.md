@@ -39,7 +39,7 @@
 #### __hhs_activate_nvm
 
 ```bash
-Usage: __hhs_activate_nvm
+usage: __hhs_activate_nvm
 ```
 
 ##### **Purpose**
@@ -69,7 +69,7 @@ Activating NVM app... OK
 #### __hhs_activate_rvm
 
 ```bash
-Usage: __hhs_activate_rvm
+usage: __hhs_activate_rvm
 ```
 
 ##### **Purpose**
@@ -98,7 +98,7 @@ Activating RVM app... OK
 #### __hhs_activate_jenv
 
 ```bash
-Usage: __hhs_activate_jenv
+usage: __hhs_activate_jenv
 ```
 
 ##### **Purpose**
@@ -127,7 +127,7 @@ Activating JENV app... OK
 #### __hhs_activate_docker
 
 ```bash
-Usage: __hhs_activate_docker
+usage: __hhs_activate_docker
 ```
 
 ##### **Purpose**

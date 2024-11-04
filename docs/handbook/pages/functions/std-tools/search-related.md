@@ -38,7 +38,7 @@
 #### __hhs_search_file
 
 ```bash
-Usage: __hhs_search_file <search_path> [file_globs...]
+usage: __hhs_search_file <search_path> [file_globs...]
 
   Notes:
     ** <globs...>: Comma separated globs. E.g: "*.txt,*.md,*.rtf"
@@ -92,7 +92,7 @@ Search for files and links to files recursively.
 #### __hhs_search_dir
 
 ```bash
-Usage: __hhs_search_dir <search_path> [dir_globs...]
+usage: __hhs_search_dir <search_path> [dir_globs...]
 
   Notes:
   ** <dir_names...>: Comma separated directories. E.g:. "dir1,dir2,dir2"
@@ -135,7 +135,7 @@ Search for directories and links to directories recursively.
 #### __hhs_search_string
 
 ```bash
-Usage: __hhs_search_string <search_path> [options] <regex/string> [file_globs]
+usage: __hhs_search_string <search_path> [options] <regex/string> [file_globs]
 
     Options:
       -i | --ignore-case            : Makes the search case INSENSITIVE.

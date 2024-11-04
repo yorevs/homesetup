@@ -33,7 +33,7 @@
 ### "list"
 
 ```bash
-Usage: __hhs list [-flat] [-plugins] [-funcs]
+usage: __hhs list [-flat] [-plugins] [-funcs]
 ```
 
 #### **Purpose**
@@ -100,7 +100,7 @@ settings starship setup updater firebase hspm docsify board list funcs logs man 
 ### "funcs"
 
 ```bash
-Usage: __hhs funcs [regex_filter]
+usage: __hhs funcs [regex_filter]
 ```
 
 #### **Purpose**
@@ -124,7 +124,7 @@ N/A
 ### "logs"
 
 ```bash
-Usage: __hhs logs [log_level]
+usage: __hhs logs [log_level]
 ```
 
 #### **Purpose**
@@ -161,7 +161,7 @@ HomeSetup is starting: Mon Dec 18 17:23:17 -03 2023
 ### "man"
 
 ```bash
-Usage: __hhs man <bash_command>
+usage: __hhs man <bash_command>
 ```
 
 #### **Purpose**
@@ -187,7 +187,7 @@ Opening SS64 man page for grep: https://ss64.com/bash/grep.html
 ### "reset"
 
 ```bash
-Usage: __hhs reset
+usage: __hhs reset
 ```
 
 #### **Purpose**

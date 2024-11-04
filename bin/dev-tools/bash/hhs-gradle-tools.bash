@@ -17,7 +17,7 @@ if __hhs_has "gradle"; then
   # @param $1..$N [Req] : The gradle arguments to call.
   function __hhs_gradle() {
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "Usage: ${FUNCNAME[0]} [gradle_args]"
+      echo "usage: ${FUNCNAME[0]} [gradle_args]"
       return 1
     elif [[ -f "./gradlew" ]]; then
       echo "./gradlew ${*}"

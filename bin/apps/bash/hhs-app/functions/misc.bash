@@ -17,7 +17,7 @@ function host-name() {
   local cur_hostname new_hostname ret
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo -e "Usage: ${FUNCNAME[0]} [new_hostname]"
+    echo -e "usage: ${FUNCNAME[0]} [new_hostname]"
   elif [[ -z "${1}" ]]; then
     cur_hostname=$(hostname)
     [[ $ret -eq 0 ]] && echo -e "${GREEN}Your current hostname is: ${HHS_HIGHLIGHT_COLOR}$(cur_hostname)${NC}"

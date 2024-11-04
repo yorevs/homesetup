@@ -19,7 +19,7 @@
 VERSION="0.0.3" # https://semver.org/ ; major.minor.patch
 
 # Usage message
-USAGE="Usage: $0 [options]
+USAGE="usage: $0 [options]
 
 Options:
   -h, --help          Display this help message and exit
