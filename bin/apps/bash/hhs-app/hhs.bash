@@ -17,6 +17,7 @@ UNSETS+=(
   'main' 'cleanup_plugins' 'parse_args' 'list' 'has_function' 'has_plugin' 'has_command'
   'validate_plugin' 'register_plugins' 'register_functions' 'parse_args' 'has_hhs_function'
   'find_hhs_functions' 'get_desc' 'search_hhs_functions' 'invoke_command' 'display_list'
+  'search_hhs_commands'
 )
 
 # Program version.
@@ -69,6 +70,8 @@ HHS_APP_FUNCTIONS=()
 # List of HomeSetup functions available.
 HHS_FUNCTIONS=()
 
+HHS_COMMANDS=()
+
 # List of required functions a plugin must have.
 PLUGINS_FUNCS=('help' 'cleanup' 'version' 'execute')
 
@@ -116,11 +119,13 @@ function has_command() {
 function invoke_hhs_function() {
   local args=("$@") max_words=5 joined
 
+  search_hhs_commands
+
   # Loop to form combinations starting from max_words down to 1
   for ((i = (max_words < ${#args[@]}) ? max_words : ${#args[@]}; i > 0; i--)); do
       # Wrap to a probable '__hhs' command
       joined="__hhs_$(printf "%s_" "${args[@]:0:i}" | sed 's/_$//')"
-      if __hhs_has "${joined}"; then
+      if [[ " ${HHS_COMMANDS[*]} " =~ (^|[[:space:]])${joined}([[:space:]]|$) ]]; then
         "${joined}" "${args[@]:i}"  # Invoke the matched command with remaining arguments
         exit $?
       fi
@@ -276,6 +281,22 @@ function search_hhs_functions() {
   return 0
 }
 
+# @purpose: Search for all hhs-commands from compgen. Remove the aliases from the list.
+function search_hhs_commands() {
+  local hhs_aliases
+  hhs_aliases=($(alias -p | grep '^alias __hhs' | sed -E 's/^alias ([^=]+)=.*/\1/') '__hhs')
+
+  # Use `compgen` to get all `__hhs` commands, excluding those in `hhs_aliases`
+  HHS_COMMANDS+=($(compgen -c __hhs | awk -v aliases="${hhs_aliases[*]}" '
+    BEGIN {
+      # Split aliases into an array for exclusion
+      split(aliases, alias_array)
+      for (i in alias_array) alias_map[alias_array[i]] = 1
+    }
+    !($0 in alias_map)  # Only include commands not in alias_map
+  '))
+}
+
 # @purpose: Get a list, display it in columns according to the terminal width.
 # @param: $1 [Req] : The list title
 # @param $2..$N [Req] : The array list
@@ -299,12 +320,12 @@ function display_list() {
     num_columns=$(((columns / (max_width + 5) - 1)))
     num_columns=$((num_columns > 0 ? num_columns : 1))  # Ensure at least one column
 
-    echo -e "${BLUE}${title}${NC}"
+    echo -e "${ORANGE}${title}${NC}"
 
     # Print each item with its index in columns
     printf "%s\n" "${items[@]}" | awk -v cols="${num_columns}" -v width="${max_width}" '
     {
-        printf "\033[33;1m%4d\033[m. \033[99;1m%-*s\033[m", NR, width, $0  # Print index followed by item
+        printf "\033[33;1m%4d\033[m. \033[34;1m%-*s\033[m", NR, width, $0  # Print index followed by item
         if (NR % cols == 0) print ""  # Newline after every full row
     }
     END {
@@ -321,9 +342,8 @@ function command_hint() {
     shift
 
     user_input=("$@")
-    commands=("${PLUGINS[@]}" "${HHS_APP_FUNCTIONS[@]}" $(compgen -c __hhs))
+    commands=("${PLUGINS[@]}" "${HHS_APP_FUNCTIONS[@]}" "${HHS_COMMANDS[@]}")
     matches=()
-
 
     # Try to match commands by progressively reducing the user input words from the end
     while (( ${#user_input[@]} > 0 )); do

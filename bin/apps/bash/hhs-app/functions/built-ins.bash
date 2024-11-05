@@ -30,7 +30,7 @@ function list() {
   else
     columns="$(tput cols)"
     count=$((${#PLUGINS[@]} > ${#HHS_APP_FUNCTIONS[@]} ? ${#PLUGINS[@]} : ${#HHS_APP_FUNCTIONS[@]}))
-    count=$((${#count[@]} > ${#HHS_FUNCTIONS[@]} ? ${#count[@]} : ${#HHS_FUNCTIONS[@]}))
+    count=$((${#count[@]} > ${#HHS_COMMANDS[@]} ? ${#count[@]} : ${#HHS_COMMANDS[@]}))
     echo -e "\n${YELLOW}HomeSetup application commands"
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -plugins ]]; then
       display_list "\n-=- HHS Plug-ins -=-\n" "${PLUGINS[@]}"
@@ -39,8 +39,7 @@ function list() {
       display_list "\n-=- HHS Functions -=-\n" "${HHS_APP_FUNCTIONS[@]}"
     fi
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -commands ]]; then
-      HHS_FUNCTIONS=($(compgen -c __hhs))
-      display_list "\n-=- HHS Commands -=-\n" "${HHS_FUNCTIONS[@]}"
+      display_list "\n-=- HHS Commands -=-\n" "${HHS_COMMANDS[@]}"
     fi
   fi
 
