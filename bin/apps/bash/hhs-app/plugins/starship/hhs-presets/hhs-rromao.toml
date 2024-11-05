@@ -34,6 +34,7 @@ $directory\
 [](bold fg:#2AA198 bg:#859901)\
 $git_branch\
 $git_metrics\
+${custom.git_metrics_ext}\
 $git_status\
 [](bold fg:#859901)\
 $line_break\
@@ -66,22 +67,49 @@ style = "bold fg:#C4D3D4 bg:#2AA198"
 
 [git_branch]
 format = '[ $symbol$branch(:$remote_branch) ]($style)'
-symbol = "療"
+symbol = " "
 style = "bold fg:#C4D3D4 bg:#859901"
 
 [git_status]
-format = '[ $all_status]($style)'
 style = "bold fg:#C4D3D4 bg:#859901"
+format = '[($all_status[$ahead_behind](fg:red bg:#859901))]($style)'
+untracked = '?'
+modified = '!'
+deleted = '-'
+stashed = '\$'
+staged = '+'
+renamed = '^'
 
 [git_metrics]
-format = "([+$added]($added_style)[ -$deleted]($deleted_style))[]($added_style)"
-added_style = "fg:#C4D3D4 bg:#859901"
-deleted_style = "fg:#C4D3D4 bg:#859901"
+format = "([+$added]($added_style)[/-$deleted]($deleted_style))[]($added_style)"
+added_style = "fg:green bg:#859901"
+deleted_style = "fg:red bg:#859901"
 disabled = false
+
+[custom.git_metrics_ext]
+description = "Git metrics with staged and unstaged counts"
+command = '''
+#!/bin/sh
+
+STATUS=$(git status --porcelain 2>/dev/null)
+STAGED=$(echo "$STATUS" | grep -cE '^[AMDR]')
+UNSTAGED=$(echo "$STATUS" | grep -cE '^[ MARC]')
+
+if [[ $STAGED -gt 0 && $UNSTAGED -gt 0 ]]; then
+  echo " ${STAGED}  ${UNSTAGED}"
+elif [[ $STAGED -gt 0 ]]; then
+  echo " ${STAGED}"
+elif [[ $UNSTAGED -gt 0 ]]; then
+  echo " ${UNSTAGED}"
+fi
+'''
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+style = "fg:yellow bg:#859901"
+format="([ $output ]($style))[]($style)"
 
 [hg_branch]
 format = "[ $symbol$branch ]($style)"
-symbol = "療"
+symbol = " "
 
 [cmd_duration]
 format = "[ $duration ]($style)"

@@ -334,13 +334,13 @@ function __hhs_load_dir() {
 
 # @function: Search and cd into the first match of the specified directory name.
 # @param $1 [Opt] : The base search path.
-# @param $2 [Req] : The directory name to search and cd into.
+# @param $2 [Req] : The directory glob to search and cd into.
 function __hhs_godir() {
 
   local dir len mselect_file found_dirs=() search_path search_name ret_val=1 title
 
   if [[ "$#" -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} [search_path] <dir_name>"
+    echo "usage: ${FUNCNAME[0]} [search_path] <dir_glob>"
   elif [[ -d "${1}" && -z "${2}" ]]; then
     dir="${1}"
     ret_val=0
