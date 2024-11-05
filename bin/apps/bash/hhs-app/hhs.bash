@@ -114,7 +114,7 @@ function has_command() {
 # @purpose: Checks whether the command matches a __hhs function or not and invoke it.
 # @param $1..$N [Req] : The command line arguments.
 function invoke_hhs_function() {
-  local args=("$@") max_words=5 joined="" pattern functions
+  local args=("$@") max_words=5 joined
 
   # Loop to form combinations starting from max_words down to 1
   for ((i = (max_words < ${#args[@]}) ? max_words : ${#args[@]}; i > 0; i--)); do
@@ -196,18 +196,21 @@ function register_functions() {
 }
 
 # @purpose: Invoke the plugin command
+# @param $1 [Req] : The plug-in name.
+# @param $2..$N [Req] : The plug-in arguments.
 function invoke_plugin() {
 
-  local plg_cmd ret
+  local plg_cmd="${1}" ret
 
-  has_plugin "${1}" || command_hint "Plugin/Function not found: \"${1}\"" "${1}"
+  has_plugin "${plg_cmd}" || command_hint "Plugin/Function not found: \"${plg_cmd}\"" "${@}"
+  shift
+
   for idx in "${!PLUGINS[@]}"; do
-    if [[ "${PLUGINS[idx]}" == "${1}" ]]; then
+    if [[ "${PLUGINS[idx]}" == "${plg_cmd}" ]]; then
       [[ -s "${PLUGINS_LIST[idx]}" ]] || quit 1
       source "${PLUGINS_LIST[idx]}"
-      shift
       plg_cmd="${1:-execute}"
-      has_command "${plg_cmd}" || command_hint  "Command not available: ${plg_cmd}"
+      has_command "${plg_cmd}" || command_hint  "Command not available: ${plg_cmd}" "${@}"
       shift
       ${plg_cmd} "${@}"  # Execute the specified plugin
       ret=${?}
@@ -217,8 +220,9 @@ function invoke_plugin() {
       [[ $((idx + 1)) -eq ${#PLUGINS[@]} ]] && quit 255
     fi
   done
+
   ret=${?}
-  [[ ${ret} -eq 255 ]] && command_hint "Plugin/Function not found: \"${1}\"" "${1}"
+  [[ ${ret} -eq 255 ]] && command_hint "Plugin/Function not found: \"${plg_cmd}\"" "${@}"
 
   return ${ret}
 }
@@ -295,12 +299,12 @@ function display_list() {
     num_columns=$(((columns / (max_width + 5) - 1)))
     num_columns=$((num_columns > 0 ? num_columns : 1))  # Ensure at least one column
 
-    echo -e "${ORANGE}${title}${NC}"
+    echo -e "${BLUE}${title}${NC}"
 
     # Print each item with its index in columns
     printf "%s\n" "${items[@]}" | awk -v cols="${num_columns}" -v width="${max_width}" '
     {
-        printf "\033[33m%4d\033[m. \033[34m%-*s\033[m", NR, width, $0  # Print index followed by item
+        printf "\033[33;1m%4d\033[m. \033[99;1m%-*s\033[m", NR, width, $0  # Print index followed by item
         if (NR % cols == 0) print ""  # Newline after every full row
     }
     END {
@@ -311,34 +315,56 @@ function display_list() {
 
 # @purpose: Display an error message and suggest similar commands based on partial user input.
 # @param $1 [Req]: The error message to display.
-# @param $2 [Req]: The partial command the user entered.
+# @param $2..$N [Req]: The partial command the user entered.
 function command_hint() {
-    local error_message="$1" user_input="$2" commands matches
+    local error_message="$1" user_input commands matches search_string index=1
+    shift
 
-    commands=(${PLUGINS[@]} ${HHS_APP_FUNCTIONS[@]} $(compgen -c __hhs))
+    user_input=("$@")
+    commands=("${PLUGINS[@]}" "${HHS_APP_FUNCTIONS[@]}" $(compgen -c __hhs))
     matches=()
 
-    # Find commands that contain the user input as a substring
-    for cmd in "${commands[@]}"; do
-        if [[ "$cmd" == *"${user_input}"* ]]; then
-            matches+=("${cmd}")
+
+    # Try to match commands by progressively reducing the user input words from the end
+    while (( ${#user_input[@]} > 0 )); do
+        # Join the current user_input array into a single search string
+        search_string="__hhs_${user_input[*]}"
+        search_string="${search_string// /_}"
+        matches=()  # Clear matches for each iteration
+
+        # Find commands that contain the search_string as a substring
+        for cmd in "${commands[@]}"; do
+            if [[ "$cmd" == *"$search_string"* ]]; then
+                matches+=("$cmd")
+            fi
+        done
+
+        # If matches are found, stop reducing the input further
+        if (( ${#matches[@]} > 0 )); then
+            break
         fi
+
+        # Remove the last word from user_input and try again
+        unset 'user_input[-1]'
     done
 
-    # Display error message and matching commands or an appropriate message if none found
+    # Display error message and matching commands or a fallback message if no matches
     __hhs_errcho "${error_message}\n"
 
     if (( ${#matches[@]} > 0 )); then
-        echo -e "${YELLOW}Did you mean one of these commands?${NC}"
+        echo -e "${BLUE}Did you mean one of these commands?${NC}"
         for match in "${matches[@]}"; do
-            echo "  - ${BLUE}${match}${NC}"
+          match="${match//__hhs_/}"
+          printf "${YELLOW}%3d. ${WHITE}%s${NC}\n" "$index" "hhs ${match//_/ }"
+          ((index++))
         done
     else
-      echo -e "${ORANGE}> Type 'hhs list' to find out options.${NC}"
+        echo -e "${ORANGE}> Type 'hhs list' to find out options.${NC}"
     fi
 
     quit 1  # Exit with an error
 }
+
 
 
 # ------------------------------------------
