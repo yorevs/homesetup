@@ -62,7 +62,7 @@ function __hhs_sysinfo() {
       done
     fi
     if __hhs_has "docker" && __hhs_has "__hhs_docker_ps"; then
-      read -r -d '' -a containers < <(__hhs_docker_ps -a)
+      IFS=$'\n' read -r -d '' -a containers < <(__hhs_docker_ps -a)
       if [[ ${#containers[@]} -gt 0 && $(__hhs_docker_count) -ge 1 ]]; then
         echo -e "\n${GREEN}Online Docker Containers: ${BLUE}"
         for next in "${containers[@]}"; do
