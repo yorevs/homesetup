@@ -870,8 +870,8 @@ usage: $APP_NAME [OPTIONS] <args>
       # Check if the homesetup.toml is outdated
       user_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_DIR}/.homesetup.toml" | sed 's/# @version: v//')
       hhs_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_HOME}/dotfiles/homesetup.toml" | sed 's/# @version: v//')
-      user_num=$(echo "${user_version}" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
-      hhs_num=$(echo "${hhs_version}" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+      user_num=$(echo "${user_version}" | awk -F. '{ printf "%d%02d%03d", $1, $2, $3 }')
+      hhs_num=$(echo "${hhs_version}" | awk -F. '{ printf "%d%02d%03d", $1, $2, $3 }')
       if [[ "${hhs_num}" -gt "${user_num}" ]]; then
         \mv -f "$HHS_DIR/.homesetup.toml" "${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak"
         copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
@@ -967,7 +967,7 @@ usage: $APP_NAME [OPTIONS] <args>
       if \
         curl -sSL "https://github.com/umlx5h/gtrash/releases/latest/download/gtrash_$(uname -s)_$(uname -m).tar.gz" | tar xz \
         && chmod a+x ./gtrash \
-        && mv ./gtrash "${HHS_DIR}/bin/gtrash"; then
+        && \mv ./gtrash "${HHS_DIR}/bin/gtrash"; then
           echo -e "${GREEN}OK${NC}"
       else
           echo -e "${RED}FAILED${NC}"
