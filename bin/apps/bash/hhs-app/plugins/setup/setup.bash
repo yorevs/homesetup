@@ -19,7 +19,7 @@ UNSETS=(
 )
 
 # Current hhs setup version
-VERSION="1.0.7"
+VERSION="1.0.8"
 
 # Usage message
 USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [-restore]
@@ -31,7 +31,7 @@ USAGE="usage: ${APP_NAME} ${PLUGIN_NAME} [-restore]
 |____/ \___|\__|\__,_| .__/
                      |_|
 
-  HomeSetup initialization setup.
+  HomeSetup initialization setup v${VERSION}.
 
     options:
       -restore    : Restore HomeSetup defaults.
@@ -91,8 +91,8 @@ function execute() {
     fi
   done <"${HHS_SETUP_FILE}"
 
-  title="${BLUE}HomeSetup Initialization Settings${ORANGE}\n"
-  title+="Please check the desired startup settings:"
+  title="${BLUE}HomeSetup Initialization Settings${ORANGE} ${GREEN}v${VERSION}\n"
+  title+="${ORANGE}Please check the desired startup settings:"
   mchoose_file=$(mktemp)
 
   if __hhs_mchoose "${mchoose_file}" "${title}" "${all_items[@]}"; then
