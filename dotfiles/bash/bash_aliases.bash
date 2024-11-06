@@ -116,8 +116,6 @@ alias df='\df -H'
 alias du='\du -hcd 1'
 # @alias: Make `ps' command output pretty and human readable format
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
-# @alias: Display current value of IFS
-alias ifs='echo -en "${IFS}" | hexdump -C'
 # @alias: Use the assigned app to open a file
 alias open="__hhs_open"
 # @alias: Display/Set/unset current Shell Options
@@ -232,12 +230,16 @@ Darwin)
   alias show-deskicons="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
   # @alias: Hide all desktop icons
   alias hide-deskicons="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-  # @alias: Canonical hex dump; some systems have this symlinked
-  __hhs_has "hd" || alias hd='\hexdump -C'
+  if __hhs_has "hexdump"; then
+    # @alias: Display current value of IFS
+    alias ifs='echo -en "${IFS}" | hexdump -C'
+    # @alias: Canonical hex dump; some systems have this symlinked
+    __hhs_has "hd" || alias hd='hexdump -C'
+  fi
   # @alias: If `md5sum' is not available, use `md5' instead`
-  __hhs_has "md5sum" || alias md5sum='\md5'
+  __hhs_has "md5sum" || alias md5sum='md5'
   # @alias: If `sha1' is not available, use `shasum' instead`
-  __hhs_has "sha1" || alias sha1='\shasum'
+  __hhs_has "sha1" || alias sha1='shasum'
   ;;
 esac
 

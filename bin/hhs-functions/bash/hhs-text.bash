@@ -64,51 +64,55 @@ function __hhs_ascof() {
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "usage: ${FUNCNAME[0]} <string>"
     return 1
+  elif __hhs_has od; then
+    echo ''
+    echo -en "${GREEN}Dec:${NC}"
+    echo -en "${@}" | od -An -t uC | head -n 1 | sed 's/^ */ /g'
+    echo -en "${GREEN}Hex:${NC}"
+    echo -en "${@}" | od -An -t xC | head -n 1 | sed 's/^ */ /g'
+    echo -en "${GREEN}Str:${NC}"
+    echo -e " ${*}"
+    echo ''
   fi
-  echo ''
-  echo -en "${GREEN}Dec:${NC}"
-  echo -en "${@}" | od -An -t uC | head -n 1 | sed 's/^ */ /g'
-  echo -en "${GREEN}Hex:${NC}"
-  echo -en "${@}" | od -An -t xC | head -n 1 | sed 's/^ */ /g'
-  echo -en "${GREEN}Str:${NC}"
-  echo -e  " ${*}"
-  echo ''
 
   return 0
 }
 
-# @function: Convert unicode to hexadecimal.
-# @param $1..$N [Req] : The unicode values to convert.
-function __hhs_utoh() {
+if __hhs_has "hexdump"; then
 
-  local result converted uni ret_val=1
+  # @function: Convert unicode to hexadecimal.
+  # @param $1..$N [Req] : The unicode values to convert.
+  function __hhs_utoh() {
 
-  if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} <4d-unicode...>"
-    echo ''
-    echo '  Notes: '
-    echo '    - unicode is a four digits hexadecimal number. E.g:. F205'
-    echo '    - exceeding digits will be ignored'
-    return 1
-  else
-    echo ''
-    for next in "$@"; do
-      hexa="${next:0:4}"
-      # More digits will be ignored
-      uni="$(printf '%04s' "${hexa}")"
-      [[ ${uni} =~ [0-9A-Fa-f]{4} ]] || continue
-      echo -e "[${HHS_HIGHLIGHT_COLOR}Unicode:'\u${uni}'${NC}]"
-      converted=$(python3 -c "import struct; print(bytes.decode(struct.pack('<I', int('${uni}', 16)), 'utf_32_le'))" | hexdump -Cb)
-      ret_val=$?
-      result=$(awk '
-      NR == 1 {printf "  Hex => "; print "\\\\x"$2"\\\\x"$3"\\\\x"$4}
-      NR == 2 {printf "  Oct => "; print "\\"$2"\\"$3"\\"$4}
-      NR == 1 {printf "  Icn => "; print "\\x"$2"\\x"$3"\\x"$4}
-      ' <<<"${converted}")
-      echo -e "${GREEN}${result}${NC}"
+    local result converted uni ret_val=1
+
+    if [[ $# -le 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "usage: ${FUNCNAME[0]} <4d-unicode...>"
       echo ''
-    done
-  fi
+      echo '  Notes: '
+      echo '    - unicode is a four digits hexadecimal number. E.g:. F205'
+      echo '    - exceeding digits will be ignored'
+      return 1
+    else
+      echo ''
+      for next in "$@"; do
+        hexa="${next:0:4}"
+        # More digits will be ignored
+        uni="$(printf '%04s' "${hexa}")"
+        [[ ${uni} =~ [0-9A-Fa-f]{4} ]] || continue
+        echo -e "[${HHS_HIGHLIGHT_COLOR}Unicode:'\u${uni}'${NC}]"
+        converted=$(python3 -c "import struct; print(bytes.decode(struct.pack('<I', int('${uni}', 16)), 'utf_32_le'))" | hexdump -Cb)
+        ret_val=$?
+        result=$(awk '
+        NR == 1 {printf "  Hex => "; print "\\\\x"$2"\\\\x"$3"\\\\x"$4}
+        NR == 2 {printf "  Oct => "; print "\\"$2"\\"$3"\\"$4}
+        NR == 1 {printf "  Icn => "; print "\\x"$2"\\x"$3"\\x"$4}
+        ' <<<"${converted}")
+        echo -e "${GREEN}${result}${NC}"
+        echo ''
+      done
+    fi
 
-  return ${ret_val}
-}
+    return ${ret_val}
+  }
+fi

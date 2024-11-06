@@ -165,11 +165,11 @@ if [[ ${HHS_SET_LOCALES} -eq 1 ]] && __hhs_has "locale"; then
 fi
 
 # Initialize Blesh plug-in if it's enabled.
-if [[ ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
-  __hhs_log "INFO" "Loading Blesh plug-in"
+if [[ ${HHS_USE_BLESH} -eq 1 ]]; then
+  __hhs_log "INFO" "Loading Ble-sh plug-in"
   [[ $- == *i* ]] && source "${HHS_BLESH_DIR}/out/ble.sh" --noattach
 else
-  __hhs_log "WARN" "Blesh could not be initialized ! UB=${HHS_USE_BLESH}"
+  __hhs_log "WARN" "Ble-sh initialization was disabled !"
 fi
 
 # -----------------------------------------------------------------------------------
@@ -242,14 +242,14 @@ if [[ ${HHS_LOAD_COMPLETIONS} -eq 1 ]]; then
   while read -r cpl; do
     app_name="$(basename "${cpl//-completion/}")"
     app_name="${app_name//\.${HHS_MY_SHELL}/}"
-    if [[ "${app_name}" == "fzf" && ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
-      # Note: If you want to combine fzf-completion with bash_completion, you need to load bash_completion
-      # earlier than fzf-completion. This is required regardless of whether to use ble.sh or not.
-      # source /etc/profile.d/bash_completion.sh
-      ble-import -d integration/fzf-completion
-      ble-import -d integration/fzf-key-bindings
-    fi
     if __hhs_has "${app_name}"; then
+      if [[ "${app_name}" == "fzf" && ${HHS_USE_BLESH} -eq 1 ]]; then
+        # Note: If you want to combine fzf-completion with bash_completion, you need to load bash_completion
+        # earlier than fzf-completion. This is required regardless of whether to use ble.sh or not.
+        # source /etc/profile.d/bash_completion.sh
+        ble-import -d integration/fzf-completion
+        ble-import -d integration/fzf-key-bindings
+      fi
       __hhs_source "${cpl}"
       HHS_COMPLETIONS="${HHS_COMPLETIONS}${app_name} "
     else
@@ -312,10 +312,11 @@ fi
 
 # Attach ble-sh to bash if it's enabled.
 if [[ ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
-  __hhs_log "DEBUG" "Attaching Blesh plug-in"
+  __hhs_log "DEBUG" "Attaching Ble-sh plug-in"
   [[ ! ${BLE_VERSION-} ]] || ble-attach
 else
-  __hhs_log "WARN" "Blesh could not be attached !"
+  unset HHS_USE_BLESH
+  __hhs_log "WARN" "Ble-sh could not be attached !"
 fi
 
 # Attach atuin to bash if it's enabled

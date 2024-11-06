@@ -34,6 +34,7 @@ usage: $APP_NAME [OPTIONS] <args>
   else
     USER="${USER:-$(whoami)}"
     HOME="${HOME:-$(eval echo ~"${USER}")}"
+    [[ -n "${GITHUB_ACTIONS}" ]] && SUDO=sudo
   fi
 
   [[ -z "${USER}" || -z "${HOME}" ]] && quit 1 "Unable to determine USER/HOME -> ${USER}/${HOME}"
@@ -95,6 +96,9 @@ usage: $APP_NAME [OPTIONS] <args>
   # Whether to install the AskAI functionalities or not
   INSTALL_AI="${GITHUB_ACTIONS:-}"
 
+  # Streamed installation is disabled by default
+  [[ -n "${STREAMED}" && -z "${GITHUB_ACTIONS}" ]] && unset INSTALL_AI
+
   # Shell type
   SHELL_TYPE="${SHELL##*/}"
 
@@ -133,7 +137,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk' 'hexdump'
   )
 
   # Missing HomeSetup dependencies
@@ -171,7 +175,7 @@ usage: $APP_NAME [OPTIONS] <args>
   # @function: Check if a command exists
   # @param $1 [Req] : The command to check
   has() {
-    type "${1}" >/dev/null 2>&1
+    type "${1}" &>/dev/null
   }
 
   # @function: Create a directory and check for write permissions
@@ -344,7 +348,10 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Prompt the user for AskAI installation
   query_askai_install() {
-    if [[ -z "${GITHUB_ACTIONS}" ]]; then
+    PIP=$(command -v pip3 2>/dev/null)
+    if PIP show hspylib-askai &>/dev/null; then
+      INSTALL_AI=1
+    elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" ]]; then
       echo -e "${ORANGE}"
       read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
@@ -376,8 +383,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
     local pad pad_len install check_pkg
 
-    has sudo &>/dev/null && SUDO=sudo
-
     [[ -n "${INSTALL_AI}" ]] && PYTHON_MODULES+=('hspylib-askai')
 
     # macOS
@@ -387,8 +392,8 @@ usage: $APP_NAME [OPTIONS] <args>
       DEPENDENCIES+=('sudo' 'xcode-select')
       [[ -n "${INSTALL_AI}" ]] &&
         DEPENDENCIES+=('ffmpeg' 'portaudio' 'libmagic')
-      install="${SUDO} brew install -y"
-      check_pkg="brew info "
+      install="${SUDO} brew install -f"
+      check_pkg="brew list "
     # Debian: Ubuntu
     elif has 'apt'; then
       OS_TYPE='Debian'
@@ -436,7 +441,7 @@ usage: $APP_NAME [OPTIONS] <args>
     for tool_name in "${DEPENDENCIES[@]}"; do
       echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-      if has "${tool_name}" || ${check_pkg} "${tool_name}" >/dev/null 2>&1; then
+      if has "${tool_name}" || ${check_pkg} "${tool_name}" &>/dev/null; then
         echo -e " ${GREEN}√ INSTALLED${NC}"
       else
         echo -e " ${RED}X NOT INSTALLED${NC}"
@@ -855,10 +860,23 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
-    if [[ -f "${HOME}/.aliasdef" || -f "${HHS_HOME}/dotfiles/aliasdef" ]]; then
-      [[ -f "${HOME}/.aliasdef" ]] && copy_file "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
-      [[ -f "${HHS_HOME}/dotfiles/aliasdef" ]] && copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
+    if [[ -f "${HOME}/.aliasdef" ]]; then
+      \mv -f "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
+      copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
       echo -e "\n${YELLOW}Your old .aliasdef had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
+    fi
+
+    if [[ -f "${HHS_DIR}/.homesetup.toml" ]]; then
+      # Check if the homesetup.toml is outdated
+      user_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_DIR}/.homesetup.toml" | sed 's/# @version: v//')
+      hhs_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_HOME}/dotfiles/homesetup.toml" | sed 's/# @version: v//')
+      user_num=$(echo "${user_version}" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+      hhs_num=$(echo "${hhs_version}" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+      if [[ "${hhs_num}" -gt "${user_num}" ]]; then
+        \mv -f "$HHS_DIR/.homesetup.toml" "${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak"
+        copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+        echo -e "\n${YELLOW}Your old .homesetup.toml had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak ${NC}"
+      fi
     fi
 
     # Moving .path file to .hhs .
