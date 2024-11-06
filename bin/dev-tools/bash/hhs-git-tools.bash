@@ -340,10 +340,10 @@ if __hhs_has "git"; then
 
     local from_tag to_tag outfile='changelog.txt'
 
-    [[ "$1" == "-o" || "$1" == "--output" ]] && outfile="${2}" && shift 2
+    [[ "${1}" == "-o" || "$1" == "--output" ]] && outfile="${2}" && shift 2
 
     if [[ '-h' == "$1" || '--help' == "$1" ]]; then
-      echo "usage: ${FUNCNAME[0]} [options] <from_tag_or_sha> [to_tag_or_sha]"
+      echo "usage: ${FUNCNAME[0]} [options] [from_tag_or_sha] [to_tag_or_sha]"
       echo ''
       echo '    Options:'
       echo '      -o, --output <file> : Write to file instead of changelog.txt'
@@ -373,6 +373,58 @@ if __hhs_has "git"; then
     fi
 
     return 1
+  }
+
+  # @function: Replace an existing tag.
+  # @param $1 [Req] : The old tag to delete.
+  # @param $2 [Req] : The new tag to substitute the old one.
+  # @param $3 [Opt] : The commit #sha for the new tag.
+  function __hhs_git_retag() {
+
+    local old_tag new_tag commit_sha commit_msg git_log ret_val=1
+
+    [[ "${1}" == "-m" || "$1" == "--message" ]] && commit_msg="${2}" && shift 2
+
+    old_tag="${1}"
+    new_tag="${2}"
+    commit_sha="${3:-HEAD}"
+
+    if [[ '-h' == "$1" || '--help' == "$1" || -z "${old_tag}" || -z "${new_tag}" ]]; then
+      echo "usage: ${FUNCNAME[0]} <old_tag> <new_tag> [commit_sha]"
+      echo ''
+      echo '    Options:'
+      echo '      -m, --message <msg> : The new tag message.'
+      echo ''
+      echo '    Arguments:'
+      echo '      old_tag     : The old tag to delete.'
+      echo '      new_tag     : The new tag to substitute the old one.'
+      echo '      commit_sha  : The new tag commit sha.'
+      return 1
+    elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
+      __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
+      return 1
+    fi
+
+    commit_msg="${commit_msg:-$(git tag -l "${old_tag}" -n1 --format="%(contents)")}"
+    echo -en "${YELLOW}\nReplacing tag ${RED}'${old_tag}'${NC} by ${GREEN}'${new_tag}'${WHITE} -> '${commit_msg}'... "
+
+    git_log=$(mktemp)
+    if git tag --delete "${old_tag}" &>"${git_log}" \
+      && git push --delete origin "${old_tag}" &>>"${git_log}" \
+      && git tag -a "${new_tag}" "${commit_sha}" -m "${commit_msg}" &>>"${git_log}" \
+      && git push origin --tags &>>"${git_log}"; then
+        echo -e "${GREEN}√ OK${NC}\n"
+        echo -e "Successfully re-tagged: ${BLUE}${new_tag} ${WHITE}-> '$(git tag -l "${new_tag}" -n1 --format="%(contents)")'${NC}\n"
+        ret_val=0
+    else
+      echo -e "${RED}X FAILED${NC}\n"
+      __hhs_errcho "${FUNCNAME[0]}: Unable to replace git tag\n"
+      grep --color=always -E 'fatal:' "${git_log}"
+    fi
+
+    \rm -f "${git_log}"
+
+    return $ret_val
   }
 
 fi
