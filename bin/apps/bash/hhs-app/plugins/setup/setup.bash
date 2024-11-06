@@ -79,7 +79,7 @@ function execute() {
   file_ver="$(grep -E '@version:' "${HHS_SETUP_FILE}")"
   if [[ -z "${file_ver}" || "${file_ver#*: v}" != "${VERSION}" ]]; then
     \cp -f "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
-    echo "${YELLOW}HomeSetup init file has changed. Copying default one.${NC}"
+    echo "${YELLOW}HomeSetup settings required updating and have been overwritten by the new one.${NC}"
     sleep 2
   fi
 
@@ -92,7 +92,7 @@ function execute() {
   done <"${HHS_SETUP_FILE}"
 
   title="${BLUE}HomeSetup Initialization Settings${ORANGE} ${GREEN}v${VERSION}\n"
-  title+="${ORANGE}Please check the desired startup settings:"
+  title+="${ORANGE}Please mark the preferred startup settings:"
   mchoose_file=$(mktemp)
 
   if __hhs_mchoose "${mchoose_file}" "${title}" "${all_items[@]}"; then
