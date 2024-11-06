@@ -43,7 +43,7 @@ if __hhs_has "git"; then
         IFS="${OLFIFS}"
       elif [[ ${#changed_files[@]} -eq 1 ]]; then
         file="${changed_files[0]}"
-        \git add "$(awk '{print $2}' <<< "${file}")" && ret_val=$?
+        \git add "$(awk '{print $2}' <<<"${file}")" && ret_val=$?
       else
         echo -e "\n${YELLOW}Nothing has changed!${NC}\n"
         return 1
@@ -84,64 +84,62 @@ if __hhs_has "git"; then
       echo "usage: ${FUNCNAME[0]} [options]"
       echo ''
       echo '    Options:'
-      echo '      -l | --local : List only local branches. Do not fetch remote branches.'
+      echo '      -l, --local : List only local branches. Do not fetch remote branches.'
       return 1
-    elif [[ "$(git rev-parse --is-inside-work-tree &> /dev/null && echo "${?}")" != '0' ]]; then
+    elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
       __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
       return 1
-    else
-      [[ "$1" == "-l" || "$1" == "--local" ]] && unset -f all_flag && all_str='\b'
-      clear
-      if [[ -n "${all_flag}" ]]; then
-        echo -en "${YELLOW}=> Updating branches ${NC}"
-        if ! git fetch &> /dev/null; then
-          __hhs_errcho "${FUNCNAME[0]}: Unable fetch from remote"
+    fi
+    [[ "$1" == "-l" || "$1" == "--local" ]] && unset -f all_flag && all_str='\b'
+    clear
+    if [[ -n "${all_flag}" ]]; then
+      echo -en "${YELLOW}=> Updating branches ${NC}"
+      if ! git fetch &>/dev/null; then
+        __hhs_errcho "${FUNCNAME[0]}: Unable fetch from remote"
+        return 1
+      fi
+      echo -e " ... [   ${GREEN}OK${NC}   ]"
+      sleep 1
+      echo -e "\033[1J\033[H"
+    fi
+
+    while read -r branch; do
+      branch_name=${branch//\* /}
+      all_branches+=("${branch_name}")
+    done < <(git branch ${all_flag} | grep -v '\->')
+
+    clear
+    echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
+    echo -en "${WHITE}"
+
+    mchoose_file=$(mktemp)
+    if __hhs_mselect "${mchoose_file}" "Select a local ${all_str} branch to checkout" "${all_branches[@]}"; then
+      [[ -z "${sel_branch}" ]] && echo '' && return 1
+      if ! git diff-index --quiet HEAD --; then
+        echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
+        if ! git stash &>/dev/null; then
+          __hhs_errcho "${FUNCNAME[0]}: Unable to stash your changes"
           return 1
         fi
-        echo -e " ... [   ${GREEN}OK${NC}   ]"
-        sleep 1
-        echo -e "\033[1J\033[H"
+        stash_flag=1
+        echo -e " ... [   ${GREEN}OK${NC}   ]\n"
       fi
-
-      while read -r branch; do
-        branch_name=${branch//\* /}
-        all_branches+=("${branch_name}")
-      done < <(git branch ${all_flag} | grep -v '\->')
-
-      clear
-      echo -e "${YELLOW}Select a local ${all_str} branch to checkout ${NC}"
-      echo -en "${WHITE}"
-
-      mchoose_file=$(mktemp)
-      if __hhs_mselect "${mchoose_file}" "Select a local ${all_str} branch to checkout" "${all_branches[@]}"; then
-        [[ -z "${sel_branch}" ]] && echo '' && return 1
-        if ! git diff-index --quiet HEAD --; then
-          echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
-          if ! git stash &> /dev/null; then
-            __hhs_errcho "${FUNCNAME[0]}: Unable to stash your changes"
+      sel_branch=$(grep . "${mchoose_file}")
+      branch_name="${sel_branch// /}"
+      branch_name="${branch_name##*\/}"
+      if git checkout "${branch_name}"; then
+        ret_val=$?
+        if [[ -n "$stash_flag" ]]; then
+          echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
+          if ! git stash pop &>/dev/null; then
+            __hhs_errcho "${FUNCNAME[0]}: Unable to retrieve stash changes"
             return 1
           fi
-          stash_flag=1
-          echo -e " ... [   ${GREEN}OK${NC}   ]\n"
+          echo -e " ... [   ${GREEN}OK${NC}   ]"
         fi
-        sel_branch=$(grep . "${mchoose_file}")
-        branch_name="${sel_branch// /}"
-        branch_name="${branch_name##*\/}"
-        if git checkout "${branch_name}"; then
-          ret_val=$?
-          if [[ -n "$stash_flag" ]]; then
-            echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-            if ! git stash pop &> /dev/null; then
-              __hhs_errcho "${FUNCNAME[0]}: Unable to retrieve stash changes"
-              return 1
-            fi
-            echo -e " ... [   ${GREEN}OK${NC}   ]"
-          fi
-        else
-          __hhs_errcho "${FUNCNAME[0]}: Unable to checkout branch \"${sel_branch}\""
-          return
-        fi
-
+      else
+        __hhs_errcho "${FUNCNAME[0]}: Unable to checkout branch \"${sel_branch}\""
+        return
       fi
     fi
     echo ''
@@ -162,10 +160,10 @@ if __hhs_has "git"; then
     else
       git_repos_path=${1:-.}
       for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname ".git"); do
-        pushd "${repo//\/\.git/}" &> /dev/null || continue
+        pushd "${repo//\/\.git/}" &>/dev/null || continue
         echo -e "\n${BLUE}Fetching status of $(basename "$(pwd)") ...${NC}\n"
         git status | head -n 1 || continue
-        popd &> /dev/null || continue
+        popd &>/dev/null || continue
         sleep 1
       done
     fi
@@ -186,10 +184,10 @@ if __hhs_has "git"; then
     else
       git_repos_path=${1:-.}
       for repo in $(find "${git_repos_path}" -maxdepth 2 -type d -iname "*.git"); do
-        pushd "${repo//\/\.git/}" &> /dev/null || continue
+        pushd "${repo//\/\.git/}" &>/dev/null || continue
         echo -e "\n${BLUE}Fetching status of $(basename "$(pwd)") ...${NC}\n"
         git status || continue
-        popd &> /dev/null || continue
+        popd &>/dev/null || continue
         sleep 1
       done
     fi
@@ -259,7 +257,7 @@ if __hhs_has "git"; then
     # Find all git repositories
     git_repos_path="${1:-.}"
     [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
-    read -r -d '' -a all_repos <<< "$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
+    read -r -d '' -a all_repos <<<"$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
     [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
     shift
     repository="${1:-origin}"
@@ -275,9 +273,9 @@ if __hhs_has "git"; then
       repo_dir=$(dirname "${repo}")
       if [[ "${sel_repos[*]}" =~ ${repo} ]]; then
         if [[ -d "${repo_dir}" ]]; then
-          pushd "${repo_dir}" &> /dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
-          branch="$(git rev-parse --abbrev-ref HEAD 2> /dev/null)"
-          if git rev-parse --abbrev-ref "${branch}@{u}" &> /dev/null; then
+          pushd "${repo_dir}" &>/dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
+          branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+          if git rev-parse --abbrev-ref "${branch}@{u}" &>/dev/null; then
             stash_flag=0
             echo ''
             printf '%0.1s' "-"{1..80}
@@ -287,7 +285,7 @@ if __hhs_has "git"; then
             if git fetch; then
               if ! git diff-index --quiet HEAD --; then
                 echo -en "\n${YELLOW}=> Stashing your changes prior to change ... ${NC}"
-                if ! git stash &> /dev/null; then
+                if ! git stash &>/dev/null; then
                   echo -e " [ ${RED}FAILED${NC} ] => Unable to stash changes. Skipping ... \n"
                 else
                   stash_flag=1
@@ -299,7 +297,7 @@ if __hhs_has "git"; then
               if git pull "${repository}" "${gitbranch}"; then
                 if [[ ${stash_flag} -ne 0 ]]; then
                   echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
-                  if ! git stash pop &> /dev/null; then
+                  if ! git stash pop &>/dev/null; then
                     echo -e " [ ${RED}FAILED${NC} ] => Unable to retrieve stash changes. Skipping ... \n"
                   else
                     echo -e " [   ${GREEN}OK${NC}   ] \n"
@@ -315,7 +313,7 @@ if __hhs_has "git"; then
             echo ''
             echo -e "${ORANGE}@@@ The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
           fi
-          popd &> /dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
+          popd &>/dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
         else
           echo ''
           echo -e "${YELLOW}>>> Skipping: repository not found \"${repo_dir}\" ${NC}"
@@ -333,6 +331,48 @@ if __hhs_has "git"; then
     \cd "${cur_pwd}" || return 1
 
     return 0
+  }
+
+  # @function: Generate a changelog between two tags or commit sha's.
+  # @param $1 [Opt] : The From Tag or commit #sha. If not provided, last tag will be used.
+  # @param $2 [Opt] : The To Tag or commit #sha. If not provided, HEAD will be used.
+  function __hhs_git_changelog() {
+
+    local from_tag to_tag outfile='changelog.txt'
+
+    [[ "$1" == "-o" || "$1" == "--output" ]] && outfile="${2}" && shift 2
+
+    if [[ '-h' == "$1" || '--help' == "$1" ]]; then
+      echo "usage: ${FUNCNAME[0]} [options] <from_tag_or_sha> [to_tag_or_sha]"
+      echo ''
+      echo '    Options:'
+      echo '      -o, --output <file> : Write to file instead of changelog.txt'
+      echo ''
+      echo '    Arguments:'
+      echo '      from_tag_or_sha     : The From Tag or commit #sha.'
+      echo '      to_tag_or_sha       : The To Tag or commit #sha. If not provided, HEAD will be used.'
+      return 1
+    elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
+      __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
+      return 1
+    fi
+
+    from_tag="${1:-$(git describe --tags --abbrev=0)}"
+    to_tag="${2:-HEAD}"
+
+    echo -en "${YELLOW}\nGenerating Changelog [${from_tag}..${to_tag}]... "
+
+    if git log --oneline --pretty='%h %ad %s' --date=short "${from_tag}".."${to_tag}" 1>"${outfile}" 2>"${outfile}"; then
+      echo -e "${GREEN}√ OK${NC}\n"
+      grep --color=always -E '^[a-f0-9]{7}' "${outfile}"
+      return $?
+    else
+      echo -e "${RED}X FAILED${NC}\n"
+      __hhs_errcho "${FUNCNAME[0]}: Unable to generated changelog\n"
+      grep --color=always -E 'fatal:' "${outfile}"
+    fi
+
+    return 1
   }
 
 fi
