@@ -238,9 +238,9 @@ function reset() {
 
 # @purpose: Display a table of terminal shortcuts.
 function shorts() {
-  echo -e "
-  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Terminal Shortcuts -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
+  echo ''
+  echo "
+  +-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Terminal Shortcuts -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-+
   | Shortcut                | Description                                              |
   |-------------------------+----------------------------------------------------------|
   | Tab                     | Auto-complete command or file name                       |
@@ -253,7 +253,7 @@ function shorts() {
   | Ctrl + E                | Move cursor to the end of the line                       |
   | Ctrl + K                | Cut text from the cursor to the end of the line          |
   | Ctrl + U                | Cut text from the cursor to the beginning of the line    |
-  | Ctrl + Y                | Paste text that was cut with Ctrl + K or Ctrl + U        |
+  | Ctrl + Y                | Paste text that was cut with: Ctrl + K or Ctrl + U       |
   | Ctrl + L                | Clear the terminal screen                                |
   | Ctrl + C                | Cancel the current command                               |
   | Ctrl + D                | Logout of the current shell                              |
@@ -274,7 +274,8 @@ function shorts() {
   | Ctrl + X then Ctrl + E  | Edit command in the default editor                       |
   | Ctrl + X then Ctrl + C  | Close the current window                                 |
   | Ctrl + Shift + T        | Open a new terminal tab                                  |
-  | Ctrl + Shift + N        | Open a new terminal window                               |" | __hhs_highlight '(Tab|Ctrl) \+?.*\|'
+  | Ctrl + Shift + N        | Open a new terminal window                               |
+  " | __hhs_highlight '(Tab|Ctrl) [^|]*'
 
   return 0
 }

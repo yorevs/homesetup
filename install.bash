@@ -116,7 +116,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
-    'hspylib'
     'hspylib-clitt'
     'hspylib-setman'
     'hspylib-vault'
