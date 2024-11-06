@@ -33,7 +33,7 @@ function __hhs_sysinfo() {
     echo ''
     echo -e "${GREEN}System:${HHS_HIGHLIGHT_COLOR}"
     echo -e "  OS........... : ${HHS_MY_OS} $(uname -pmr)"
-    __hhs_has 'sw_vers' && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' ')"
+    __hhs_has 'sw_vers' && echo -e "  Software..... : $(sw_vers | awk '{print $2" "$3}' | tr '\n' ' '):: $(__hhs_get_codename)"
     __hhs_has 'uptime' echo -e "  Up-Time...... : $(uptime | cut -d ',' -f1)"
     __hhs_has 'ps' && echo -e "  MEM Usage.... : ~$(ps -A -o %mem | awk '{s+=$1} END {print s "%"}')"
     __hhs_has 'ps' && echo -e "  CPU Usage.... : ~$(ps -A -o %cpu | awk '{s+=$1} END {print s "%"}')"
@@ -269,11 +269,13 @@ function __hhs_os_info() {
   return 1
 }
 
-if [[ "${HHS_MY_OS}" == "Darwin" ]]; then
 
-  # @function: Get the macOS Codename.
-  function __hhs_macos_get_codename() {
+# @function: Get the OS Codename.
+function __hhs_get_codename() {
 
+  if [[ "${HHS_MY_OS}" == "Darwin" ]]; then
+
+    # Using Standard macOS software agreement.
     local line re_codename='.*SOFTWARE LICENSE AGREEMENT FOR ([a-zA-Z ]+).*'
     local os_info_file="/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf"
 
@@ -282,8 +284,17 @@ if [[ "${HHS_MY_OS}" == "Darwin" ]]; then
       echo "${BASH_REMATCH[1]//macOS /}"
       return 0
     fi
+  elif [[ "${HHS_MY_OS}" == "Linux" ]]; then
+    # Using /etc/os-release for a generic solution
+    source /etc/os-release
+    # Fallback if VERSION_CODENAME is empty
+    [[ -z "${VERSION_CODENAME}" && -z "${PRETTY_NAME}" ]] && return 1
+    echo "${VERSION_CODENAME:-$PRETTY_NAME}"
+    return 0
+  fi
 
-    return 1
-  }
+  return 1
+}
 
-fi
+
+
