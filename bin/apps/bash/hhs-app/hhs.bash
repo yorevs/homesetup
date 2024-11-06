@@ -70,7 +70,11 @@ HHS_APP_FUNCTIONS=()
 # List of HomeSetup functions available.
 HHS_FUNCTIONS=()
 
+# List of HomeSetup commands available.
 HHS_COMMANDS=()
+
+# List of HomeSetup aliases available.
+HHS_ALIASES=()
 
 # List of required functions a plugin must have.
 PLUGINS_FUNCS=('help' 'cleanup' 'version' 'execute')
@@ -126,8 +130,11 @@ function invoke_hhs_function() {
       # Wrap to a probable '__hhs' command
       joined="__hhs_$(printf "%s_" "${args[@]:0:i}" | sed 's/_$//')"
       if [[ " ${HHS_COMMANDS[*]} " =~ (^|[[:space:]])${joined}([[:space:]]|$) ]]; then
-        "${joined}" "${args[@]:i}"  # Invoke the matched command with remaining arguments
-        exit $?
+         # Invoke the matched command with remaining arguments
+        if __hhs_has "${joined}"; then
+          "${joined}" "${args[@]:i}"
+          exit $?
+        fi
       fi
   done
 
@@ -207,7 +214,7 @@ function invoke_plugin() {
 
   local plg_cmd="${1}" ret
 
-  has_plugin "${plg_cmd}" || command_hint "Plugin/Function not found: \"${plg_cmd}\"" "${@}"
+  has_plugin "${plg_cmd}" || command_hint "Plugin/Function/Command not found: \"\033[9m${plg_cmd}\033[m\"" "${@}"
   shift
 
   for idx in "${!PLUGINS[@]}"; do
@@ -227,7 +234,7 @@ function invoke_plugin() {
   done
 
   ret=${?}
-  [[ ${ret} -eq 255 ]] && command_hint "Plugin/Function not found: \"${plg_cmd}\"" "${@}"
+  [[ ${ret} -eq 255 ]] && command_hint "Plugin/Function/Command not found: \"\033[9m${plg_cmd}\033[m\"" "${@}"
 
   return ${ret}
 }
@@ -260,11 +267,32 @@ function get_desc() {
   done
 }
 
+# @purpose: Search for all hhs-commands from compgen. Remove the aliases from the list.
+function search_hhs_commands() {
+  local commands aliases
+
+  IFS=$'\n' read -r -d '' -a aliases < <(alias -p | grep '^alias __hhs' | sed -E 's/^alias ([^=]+)=.*/\1/')
+  aliases+=('__hhs')
+
+  # Use `compgen` to get all `__hhs` commands, excluding those in `aliases`
+  IFS=$'\n' read -r -d '' -a commands < <(compgen -c __hhs | awk -v aliases="${aliases[*]}" '
+    BEGIN {
+      # Split aliases into an array for exclusion
+      split(aliases, alias_array)
+      for (i in alias_array) alias_map[alias_array[i]] = 1
+    }
+    !($0 in alias_map)  # Only include commands not in alias_map
+  ')
+
+  HHS_COMMANDS+=("${commands[@]}")
+  HHS_ALIASES+=("${aliases[@]}")
+}
+
 # @purpose: Search for all hhs-functions and make them available to use.
 # @param $1..$N [Req] : The directories to search from.
 function search_hhs_functions() {
 
-  local all_hhs_fn=() filename fn_name desc
+  local all_hhs_fn filename fn_name desc
 
   IFS=$'\n' read -r -d '' -a all_hhs_fn < \
     <(grep -nR "^\( *function *__hhs_\)" "${@}" | sed -E 's/: +/:/' | awk 'NR != 0 {print $1" "$2}' | sort | uniq)
@@ -281,37 +309,27 @@ function search_hhs_functions() {
   return 0
 }
 
-# @purpose: Search for all hhs-commands from compgen. Remove the aliases from the list.
-function search_hhs_commands() {
-  local hhs_aliases
-  hhs_aliases=($(alias -p | grep '^alias __hhs' | sed -E 's/^alias ([^=]+)=.*/\1/') '__hhs')
-
-  # Use `compgen` to get all `__hhs` commands, excluding those in `hhs_aliases`
-  HHS_COMMANDS+=($(compgen -c __hhs | awk -v aliases="${hhs_aliases[*]}" '
-    BEGIN {
-      # Split aliases into an array for exclusion
-      split(aliases, alias_array)
-      for (i in alias_array) alias_map[alias_array[i]] = 1
-    }
-    !($0 in alias_map)  # Only include commands not in alias_map
-  '))
-}
-
 # @purpose: Get a list, display it in columns according to the terminal width.
 # @param: $1 [Req] : The list title
 # @param $2..$N [Req] : The array list
 function display_list() {
-    local title="$1" items columns max_width num_columns
+    local title items columns max_width num_columns keep=0
+
+    [[ "${1}" == "-k" || "${1}" == "--keep" ]] && keep=1 && shift
+
+    title="${1}"
 
     shift
     items=("$@")
     columns=$(tput cols)  # Get terminal width
 
-    # Remove '__hhs_' prefix and replace '_' with ' ' in each item
-    for i in "${!items[@]}"; do
-        items[$i]="${items[$i]//__hhs_/}"   # Remove prefix
-        items[$i]="${items[$i]//_/ }"       # Replace underscores with spaces
-    done
+    if [[ $keep -ne 1 ]]; then
+      # Remove '__hhs_' prefix and replace '_' with ' ' in each item
+      for i in "${!items[@]}"; do
+          items[$i]="${items[$i]//__hhs_/}"   # Remove prefix
+          items[$i]="${items[$i]//_/ }"       # Replace underscores with spaces
+      done
+    fi
 
     # Calculate max item length + padding
     max_width=$(printf "%s\n" "${items[@]}" | awk '{ if (length > max) max = length } END { print max + 2 }')
@@ -372,14 +390,14 @@ function command_hint() {
     __hhs_errcho "${error_message}\n"
 
     if (( ${#matches[@]} > 0 )); then
-        echo -e "${BLUE}Did you mean one of these commands?${NC}"
+        echo -e "${ORANGE} Did you mean one of these?${NC}"
         for match in "${matches[@]}"; do
           match="${match//__hhs_/}"
           printf "${YELLOW}%3d. ${WHITE}%s${NC}\n" "$index" "hhs ${match//_/ }"
           ((index++))
         done
     else
-        echo -e "${ORANGE}> Type 'hhs list' to find out options.${NC}"
+        echo -e "\033[33;1m Tip: ${YELLOW}Type 'hhs list' to find out options.${NC}"
     fi
 
     quit 1  # Exit with an error

@@ -17,7 +17,7 @@ function list() {
   local args=("${@}") columns args count line
 
   if [[ "$1" == "help" ]]; then
-    echo "usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs] [-commands]" && quit 0
+    echo "usage: __hhs ${FUNCNAME[0]} [-flat] [-plugins] [-funcs] [-commands] [-aliases]" && quit 0
   elif [[ "${args[*]}" =~ -flat ]]; then
     args=("${args[@]/'-flat'/}")
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] \
@@ -26,6 +26,8 @@ function list() {
       && for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -commands ]] \
       && for next in $(compgen -c __hhs); do echo -n "${next} "; done
+    [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -aliases ]] \
+      && for next in "${HHS_ALIASES[@]}"; do echo -n "${next} "; done
     quit 0 ''
   else
     columns="$(tput cols)"
@@ -40,6 +42,9 @@ function list() {
     fi
     if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -commands ]]; then
       display_list "\n-=- HHS Commands -=-\n" "${HHS_COMMANDS[@]}"
+    fi
+    if [[ ${#args[@]} -eq 0 || "${args[*]}" =~ -aliases ]]; then
+      display_list -k "\n-=- HHS Aliases -=-\n" "${HHS_ALIASES[@]}"
     fi
   fi
 
@@ -269,7 +274,7 @@ function shorts() {
   | Ctrl + X then Ctrl + E  | Edit command in the default editor                       |
   | Ctrl + X then Ctrl + C  | Close the current window                                 |
   | Ctrl + Shift + T        | Open a new terminal tab                                  |
-  | Ctrl + Shift + N        | Open a new terminal window                               |"
+  | Ctrl + Shift + N        | Open a new terminal window                               |" | __hhs_highlight '(Tab|Ctrl) \+?.*\|'
 
   return 0
 }

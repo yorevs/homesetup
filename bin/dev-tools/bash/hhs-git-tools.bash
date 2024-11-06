@@ -13,17 +13,17 @@
 
 
 # shellcheck disable=SC2068
-# @function: Shortcut for `git add'
+# @function: Shortcut for `git add'. Adds M - Modified, A - Added, D - Deleted, R - Renamed, C - Copied, ? - Untracked files
 function __hhs_git_add() {
 
   local changed_files mchoose_file ret_val=1 count=0 git_dir lines re_status
 
   git_dir="$(git rev-parse --show-toplevel)"
-  re_status='^ *(M|D|\?)+ *'
+  re_status='^ *(M|A|D|R|C|\?)+ *'
 
   if [[ $# -eq 0 ]]; then
     IFS=$'\n'
-    read -r -d '' -a changed_files < <(\git status --porcelain)
+    read -r -d '' -a changed_files < <(git status --porcelain)
     if [[ "${#changed_files[@]}" -gt 1 ]]; then
       mchoose_file=$(mktemp)
       if __hhs_mchoose -c "${mchoose_file}" "Add pathspecs to git" "${changed_files[@]}"; then
@@ -33,7 +33,7 @@ function __hhs_git_add() {
           if [[ ${line} =~ ${re_status} ]]; then
             continue
           elif [[ -f "${file}" ]]; then
-            \git add "${file}" && ret_val=$?
+            git add "${file}" && ret_val=$?
           else
             __hhs_errcho "File not found: F: '${file}'  L: '${line}'"
           fi
@@ -42,14 +42,14 @@ function __hhs_git_add() {
       IFS="${OLFIFS}"
     elif [[ ${#changed_files[@]} -eq 1 ]]; then
       file="${changed_files[0]}"
-      \git add "$(awk '{print $2}' <<<"${file}")" && ret_val=$?
+      git add "$(awk '{print $2}' <<<"${file}")" && ret_val=$?
     else
       echo -e "\n${YELLOW}Nothing has changed!${NC}\n"
       return 1
     fi
   else
     count=${#}
-    \git add ${@} && ret_val=$?
+    git add ${@} && ret_val=$?
   fi
   count=$(git diff --cached --numstat | wc -l | awk '{print $1}')
   [[ ${ret_val} -eq 0 ]] && echo -e "${GREEN}(${count}) file(s) has been added !${NC}"
@@ -64,10 +64,10 @@ function __hhs_git_branch_previous() {
   local cur_branch prev_branch
 
   # Get the current branch.
-  cur_branch="$(\git rev-parse --abbrev-ref HEAD)"
+  cur_branch="$(git rev-parse --abbrev-ref HEAD)"
   # Get the previous branch. Skip the same branch change (that is what is different from git checkout -).
-  prev_branch=$(\git reflog | grep 'checkout: ' | grep -v "from $cur_branch to $cur_branch" | head -n1 | awk '{ print $6 }')
-  \git checkout "$prev_branch"
+  prev_branch=$(git reflog | grep 'checkout: ' | grep -v "from $cur_branch to $cur_branch" | head -n1 | awk '{ print $6 }')
+  git checkout "$prev_branch"
 
   return $?
 }
@@ -89,8 +89,10 @@ function __hhs_git_branch_select() {
     __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
     return 1
   fi
+
   [[ "$1" == "-l" || "$1" == "--local" ]] && unset -f all_flag && all_str='\b'
   clear
+
   if [[ -n "${all_flag}" ]]; then
     echo -en "${YELLOW}=> Updating branches ${NC}"
     if ! git fetch &>/dev/null; then
@@ -112,6 +114,7 @@ function __hhs_git_branch_select() {
   echo -en "${WHITE}"
 
   mchoose_file=$(mktemp)
+
   if __hhs_mselect "${mchoose_file}" "Select a local ${all_str} branch to checkout" "${all_branches[@]}"; then
     [[ -z "${sel_branch}" ]] && echo '' && return 1
     if ! git diff-index --quiet HEAD --; then
@@ -123,9 +126,11 @@ function __hhs_git_branch_select() {
       stash_flag=1
       echo -e " ... [   ${GREEN}OK${NC}   ]\n"
     fi
+
     sel_branch=$(grep . "${mchoose_file}")
     branch_name="${sel_branch// /}"
     branch_name="${branch_name##*\/}"
+
     if git checkout "${branch_name}"; then
       ret_val=$?
       if [[ -n "$stash_flag" ]]; then
@@ -408,10 +413,10 @@ function __hhs_git_retag() {
   echo -en "${YELLOW}\nReplacing tag ${RED}'${old_tag}'${NC} by ${GREEN}'${new_tag}'${WHITE} -> '${commit_msg}'... "
 
   git_log=$(mktemp)
-  if git tag --delete "${old_tag}" &>"${git_log}" \
-    && git push --delete origin "${old_tag}" &>>"${git_log}" \
-    && git tag -a "${new_tag}" "${commit_sha}" -m "${commit_msg}" &>>"${git_log}" \
-    && git push origin --tags &>>"${git_log}"; then
+  if git tag --delete "${old_tag}" > "${git_log}" 2>&1 \
+    && git push --delete origin "${old_tag}" >> "${git_log}" 2>&1 \
+    && git tag -a "${new_tag}" "${commit_sha}" -m "${commit_msg}" >> "${git_log}" 2>&1 \
+    && git push origin --tags >> "${git_log}" 2>&1; then
       echo -e "${GREEN}√ OK${NC}\n"
       echo -e "Successfully re-tagged: ${BLUE}${new_tag} ${WHITE}-> '$(git tag -l "${new_tag}" -n1 --format="%(contents)")'${NC}\n"
       ret_val=0

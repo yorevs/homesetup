@@ -1,10 +1,6 @@
 {
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
-  "Set Local Environment Vars" : 0,
+  "Thin Strokes" : 4,
+  "ASCII Ligatures" : true,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -111,7 +107,7 @@
     "Blue Component" : 1
   },
   "Unlimited Scrollback" : false,
-  "Custom Command" : "Custom Shell",
+  "Custom Command" : "No",
   "Title Components" : 544,
   "Keyboard Map" : {
     "0xf700-0x260000" : {
@@ -323,19 +319,19 @@
     "Blue Component" : 0
   },
   "Name" : "iTerm2-HomeSetup",
+  "Guid" : "E442A700-A3C6-47E8-A199-1E9AAFDDCC02",
   "Blinking Cursor" : true,
-  "Guid" : "ADDFAB51-465E-4611-B07A-478C10698414",
-  "Idle Code" : 0,
-  "Ansi 10 Color" : {
-    "Green Component" : 1,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408
   },
+  "Ansi 10 Color" : {
+    "Green Component" : 1,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
+  "Idle Code" : 0,
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Cursor Type" : 0,
@@ -355,7 +351,7 @@
   },
   "Place Prompt at First Column" : true,
   "Space" : 0,
-  "Command" : "\/usr\/local\/opt\/bash\/bin\/bash",
+  "Command" : "\/opt\/homebrew\/opt\/bash\/bin\/bash",
   "Terminal Type" : "xterm-256color",
   "Horizontal Spacing" : 1.01,
   "Reduce Flicker" : true,
@@ -394,7 +390,11 @@
   "Unicode Normalization" : 0,
   "Use Tab Color" : false,
   "Visual Bell" : true,
-  "ASCII Ligatures" : true,
-  "Thin Strokes" : 4,
-  "Custom Directory" : "Recycle"
+  "Custom Directory" : "Recycle",
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Set Local Environment Vars" : 0
 }

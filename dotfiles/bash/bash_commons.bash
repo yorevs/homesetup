@@ -121,7 +121,7 @@ function __hhs_errcho() {
     echo "usage: ${FUNCNAME[0]} <message>"
     return 1
   else
-    echo -e "${RED}error: ${*}${NC}" 1>&2
+    echo -e "${RED}✘ Fatal: ${WHITE}${*}${NC}" 1>&2
   fi
 
   return $?
