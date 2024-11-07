@@ -120,9 +120,7 @@ function __hhs_about() {
         )
       elif [[ ${type_ret[0]} =~ ${re_function} ]]; then
         printf "${GREEN}%14s${BLUE} %s${WHITE} => \n" "Function:" "${BASH_REMATCH[1]}"
-        for line in "${type_ret[@]:2}"; do
-          printf "   %4d: %s\n" $((i += 1)) "${line}"
-        done
+        printf "%s\n" "${type_ret[@]:2}" | nl
       elif [[ ${type_ret[0]} =~ ${re_command} ]]; then
         printf "${GREEN}%14s${BLUE} %s${WHITE} => %s ${NC}\n" "Command:" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
         brew_cmd="$(brew --prefix "${cmd}" 2>/dev/null)"
@@ -204,9 +202,9 @@ function __hhs_shopt() {
     echo ' '
     for option in "${shell_options[@]}"; do
       if [[ "${option#*=}" == 'on' ]] && [[ -z "${enable}" || "${enable}" == 'on' ]]; then
-        echo -e "  ${WHITE}${ON_ICN}  ${GREEN} ON${BLUE}\t${option%%=*}"
+        echo -e "  ${WHITE}${ON_SWITCH_ICN}  ${GREEN} ON${BLUE}\t${option%%=*}"
       elif [[ "${option#*=}" == 'off' ]] && [[ -z "${enable}" || "${enable}" == 'off' ]]; then
-        echo -e "  ${WHITE}${OFF_ICN}  ${RED} OFF${BLUE}\t${option%%=*}"
+        echo -e "  ${WHITE}${OFF_SWITCH_ICN}  ${RED} OFF${BLUE}\t${option%%=*}"
       fi
     done
     echo "${NC}"

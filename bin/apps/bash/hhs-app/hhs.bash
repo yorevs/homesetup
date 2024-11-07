@@ -390,14 +390,14 @@ function command_hint() {
     __hhs_errcho "${error_message}\n"
 
     if (( ${#matches[@]} > 0 )); then
-        echo -e "${ORANGE} Did you mean one of these?${NC}\n"
+        echo -e "${ORANGE}${HELP_ICN} Did you mean one of these?${NC}\n"
         for match in "${matches[@]}"; do
           match="${match//__hhs_/}"
           printf "${YELLOW}%3d. ${WHITE}%s${NC}\n" "$index" "hhs ${match//_/ }"
           ((index++))
         done
     else
-        echo -e "\033[33;1m Tip: ${YELLOW}Type 'hhs list' to find out options.${NC}"
+        echo -e "\033[33;1m${TIP_ICON} Tip: ${YELLOW}Type 'hhs list' to find out options.${NC}"
     fi
 
     quit 1  # Exit with an error

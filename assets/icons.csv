@@ -1,14 +1,24 @@
-Icon,Hex,Oct,Name
-,F005,\xef\x80\x85,Star
-,F25B,\xef\x89\x9b,Peace Hand
-,F432,\xef\x90\xb2,Pointer Right
-,F418,\xef\x90\x98,Git Branch
-,F07B,\xef\x81\xbb,Folder Closed
-,F1FA,\xef\x87\xba,At
-,F415,\xef\x90\x95,User
-,F059,\xef\x81\x99,Help
-,F400,\xef\x90\x80,Tip
-✘,2718,\xe2\x9c\x98,Fail
-√,XXX,,Success
-,XXX,,Alert
-,XXX,,Skip
+Icon,Hex,Oct,Name,Bash
+,F46E,\xef\x91\xae,Alert,Yes
+,F061,\xef\x81\xa1,Alias,Yes
+,F058,\xef\x81\x98,Check,Yes
+,F057,\xef\x81\x97,Cross,Yes
+…,2026,\xe2\x80\xa6,Ellipsis,Yes
+✘,2718,\xe2\x9c\x98,Error,Yes
+,F467,\xef\x91\xa7,Fail,Yes
+,F121,\xef\x84\xa1,Function,Yes
+,F25B,\xef\x89\x9b,Hand Peace,Yes
+,F059,\xef\x81\x99,Help,Yes
+,F204,\xef\x88\x84,Off Switch,Yes
+,F205,\xef\x88\x85,On Switch,Yes
+,F62C,\xef\x98\xac,Pass,Yes
+,F12E,\xef\x84\xae,Plug-In,Yes
+,F432,\xef\x90\xb2,Pointer Right,Yes
+,F468,\xef\x91\xa8,Skip,Yes
+,F005,\xef\x80\x85,Star,Yes
+,F62B,\xef\x98\xab,Success,Yes
+,F400,\xef\x90\x80,Tip,Yes
+,F418,\xef\x90\x98,Git Branch,No
+,F07B,\xef\x81\xbb,Folder Closed,No
+,F1FA,\xef\x87\xba,At,No
+,F415,\xef\x90\x95,User,No

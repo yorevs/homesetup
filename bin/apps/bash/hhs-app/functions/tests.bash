@@ -14,12 +14,12 @@
 # @param $1..$N [Opt] : The bats files/folders to test.
 function tests() {
 
-  local started finished err_log badge fail=0 pass=0 skip=0 status num details re_status re_len len re_skip
-  local diff_time diff_time_sec diff_time_ms all_tests=("${@}")
+  local started finished log_file badge fail=0 pass=0 skip=0 status num details re_status re_len len re_skip
+  local diff_time diff_time_sec diff_time_ms all_tests=("${@}") range_str
 
   command -v bats &> /dev/null || quit 1 "'Bats' application not available on your PATH !"
 
-  err_log="${HHS_LOG_DIR}/hhs-tests.log"
+  log_file="${HHS_LOG_DIR}/hhs-tests.log"
   badge="${HHS_HOME}/check-badge.svg"
 
   # If no bat file is provided, then assume  that we want tio run all HHS tests.
@@ -27,7 +27,7 @@ function tests() {
   [[ ${#all_tests[@]} -eq 0 ]] && all_tests=($(find "${HHS_HOME}/tests/" -maxdepth 1  -name "*.bats"))
   # If we did not find any test.
   [[ ${#all_tests[@]} -eq 0 ]] && quit 1 "There are no tests to execute!"
-  echo -n '' > "${err_log}"
+  echo -n '' > "${log_file}"
 
   # Execute bats tests
   re_skip='^(ok|not ok) ([0-9]+) (.+) in .* # skip .*'
@@ -35,7 +35,8 @@ function tests() {
   re_len='^([0-9]+)\.\.([0-9]+)$'
   started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 
-  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running Bats tests from $(pwd)\n"
+  echo -e "\n${WHITE}[$(date +'%H:%M:%S')] Running Bats tests from $(pwd)"
+  echo -e "${WHITE}[$(date +'%H:%M:%S')] Logs will be available at:${log_file}\n"
   echo -e "  ${BLUE}|-Bats\t: ${WHITE}v$(__hhs_version bats | head -n 1)"
   echo -e "  ${BLUE}|-Bash\t: ${WHITE}v$(__hhs_version bash | head -n 1)"
   echo -e "  ${BLUE}|-User\t: ${WHITE}${USER}"
@@ -44,7 +45,7 @@ function tests() {
   for next in "${all_tests[@]}"; do
     while read -r result; do
       if [[ ${result} =~ ${re_skip} ]]; then
-        status="${YELLOW}  SKIP${NC}"
+        status="${YELLOW} ${SKIP_ICN} SKIP${NC}"
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
         ((skip += 1))
@@ -53,20 +54,21 @@ function tests() {
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
         if [[ "${status}" == 'not ok' ]]; then
-          status="${RED} ✘ FAIL${NC}"
+          status="${RED} ${FAIL_ICN} FAIL${NC}"
           ((fail += 1))
         elif [[ "${status}" == 'ok' ]]; then
-          status="${GREEN} √ PASS${NC}"
+          status="${GREEN} ${SUCCESS_ICN} PASS${NC}"
           ((pass += 1))
         else
-          status="${YELLOW}  ????${NC}"
+          status="${YELLOW} ${ALERT_ICN} Unknown${NC}"
         fi
       elif [[ ${result} =~ ${re_len} ]]; then
-        echo -en "\n${CYAN}[${next##*/}] ${WHITE}Running tests [${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}]${NC}\n\n"
+        range_str="${YELLOW}${BASH_REMATCH[1]}..${BASH_REMATCH[2]}${NC}"
+        echo -e "\n${CYAN}[${next##*/}] ${WHITE}Running tests [${range_str}]${NC}\n"
         len="${#BASH_REMATCH[2]}"
         continue
       else
-        echo -e "${result}" &> "${err_log}"
+        echo -e "${result}" >> "${log_file}"
         continue
       fi
       echo -en "${status} "
@@ -80,22 +82,23 @@ function tests() {
   diff_time_ms=$((diff_time - (diff_time_sec * 1000)))
 
   echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
-  echo -e "${GREEN}√ Passed=${pass}   ${YELLOW} Skipped=${skip}   ${RED}✘ Failed=${fail}${NC}"
+  echo -e "${GREEN}${SUCCESS_ICN} Passed=${pass}   ${YELLOW}${SKIP_ICN} Skipped=${skip}   ${RED}${FAIL_ICN} Failed=${fail}${NC}"
 
-  if [[ ${fail} -gt 0 && -s "${err_log}" ]]; then
+  if [[ ${fail} -gt 0 && -s "${log_file}" ]]; then
     echo -e "${ORANGE}"
-    echo -e "+--------------------------------------------+"
-    echo -e "|     The following errors were reported     |"
-    echo -e "+--------------------------------------------+${NC}\n"
-    __hhs_tailor "${err_log}" | nl
+    echo -e "+----------------------------------------------+"
+    echo -e "| -=- The following failures were reported -=- |"
+    echo -e "+----------------------------------------------+"
+    echo -e "${NC}"
+    __hhs_tailor "${log_file}" | nl | awk '{printf "\033[33;1m%4d\033[m  %s\n", $1, substr($0, index($0,$2))}'
     echo ''
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2> /dev/null
-    echo -e " ${RED}${TEST_FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
+    echo -e " ${RED}${FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 2
   else
     echo ''
     curl 'https://badgen.net/badge/tests/passed/green' --output "${badge}" 2> /dev/null
-    echo -e " ${GREEN}${TEST_PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
+    echo -e " ${GREEN}${PASS_ICN}${NC}  ${WHITE}All Bats tests ${GREEN}PASSED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
     quit 0
   fi
 }
