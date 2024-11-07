@@ -49,9 +49,9 @@ usage: $APP_NAME [OPTIONS] <args>
 
 
   # Awesome icons
-  STAR_ICN='\xef\x80\x85'
-  HAND_PEACE_ICN='\xef\x89\x9b'
-  POINTER_ICN='\xef\x90\xb2'
+  STAR_ICN='\xef\x80\x85'  # 
+  HAND_PEACE_ICN='\xef\x89\x9b'  # 
+  POINTER_ICN='\xef\x90\xb2'  # 
 
   # VT-100 Terminal colors
   ORANGE='\033[38;5;202m'

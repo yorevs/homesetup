@@ -1,6 +1,10 @@
 {
-  "Thin Strokes" : 4,
-  "ASCII Ligatures" : true,
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Set Local Environment Vars" : 3,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -10,7 +14,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.29999999999999999
   },
-  "Rows" : 25,
+  "Rows" : 24,
   "Ansi 11 Color" : {
     "Green Component" : 1,
     "Red Component" : 1,
@@ -60,33 +64,90 @@
   "Status Bar Layout" : {
     "components" : [
       {
-        "class" : "iTermStatusBarCPUUtilizationComponent",
+        "class" : "iTermStatusBarJobComponent",
         "configuration" : {
           "knobs" : {
             "base: priority" : 5,
-            "base: compression resistance" : 1
+            "minwidth" : 0,
+            "base: compression resistance" : 1,
+            "maxwidth" : 1.7976931348623157e+308
           },
           "layout advanced configuration dictionary value" : {
-            "algorithm" : 0
+            "auto-rainbow style" : 0,
+            "algorithm" : 0,
+            "remove empty components" : false
           }
         }
       },
       {
-        "class" : "iTermStatusBarMemoryUtilizationComponent",
+        "class" : "iTermStatusBarUsernameComponent",
+        "configuration" : {
+          "knobs" : {
+            "base: priority" : 5,
+            "path" : "username",
+            "base: compression resistance" : 1
+          },
+          "layout advanced configuration dictionary value" : {
+            "auto-rainbow style" : 0,
+            "algorithm" : 0,
+            "remove empty components" : false
+          }
+        }
+      },
+      {
+        "class" : "iTermStatusBarWorkingDirectoryComponent",
+        "configuration" : {
+          "knobs" : {
+            "path" : "path",
+            "base: priority" : 5,
+            "base: compression resistance" : 1,
+            "minwidth" : 0,
+            "maxwidth" : 1.7976931348623157e+308
+          },
+          "layout advanced configuration dictionary value" : {
+            "auto-rainbow style" : 0,
+            "algorithm" : 0,
+            "remove empty components" : false
+          }
+        }
+      },
+      {
+        "class" : "iTermStatusBarGitComponent",
+        "configuration" : {
+          "knobs" : {
+            "iTermStatusBarGitComponentPollingIntervalKey" : 2,
+            "base: priority" : 5,
+            "base: compression resistance" : 1,
+            "minwidth" : 0,
+            "maxwidth" : 1.7976931348623157e+308
+          },
+          "layout advanced configuration dictionary value" : {
+            "auto-rainbow style" : 0,
+            "algorithm" : 0,
+            "remove empty components" : false
+          }
+        }
+      },
+      {
+        "class" : "iTermStatusBarSearchFieldComponent",
         "configuration" : {
           "knobs" : {
             "base: priority" : 5,
             "base: compression resistance" : 1
           },
           "layout advanced configuration dictionary value" : {
-            "algorithm" : 0
+            "auto-rainbow style" : 0,
+            "algorithm" : 0,
+            "remove empty components" : false
           }
         }
       }
     ],
     "advanced configuration" : {
-      "font" : ".AppleSystemUIFont 12",
-      "algorithm" : 0
+      "remove empty components" : false,
+      "font" : ".SFNS-Regular 12",
+      "algorithm" : 0,
+      "auto-rainbow style" : 0
     }
   },
   "Cursor Shadow" : false,
@@ -318,20 +379,20 @@
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0
   },
-  "Name" : "iTerm2-HomeSetup",
-  "Guid" : "E442A700-A3C6-47E8-A199-1E9AAFDDCC02",
+  "Name" : "HomeSetup-iTerm2",
   "Blinking Cursor" : true,
-  "Ansi 8 Color" : {
-    "Green Component" : 0.3333333432674408,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
+  "Guid" : "E442A700-A3C6-47E8-A199-1E9AAFDDCC02",
+  "Idle Code" : 0,
   "Ansi 10 Color" : {
     "Green Component" : 1,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408
   },
-  "Idle Code" : 0,
+  "Ansi 8 Color" : {
+    "Green Component" : 0.3333333432674408,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Cursor Type" : 0,
@@ -340,9 +401,10 @@
     "Red Component" : 0,
     "Blue Component" : 0
   },
-  "Blur" : true,
+  "Left Option Key Changeable" : false,
   "Normal Font" : "DroidSansMonoNerdFontComplete- 14",
   "Vertical Spacing" : 1.1200000000000001,
+  "Blur" : true,
   "Disable Printing" : true,
   "Ansi 7 Color" : {
     "Green Component" : 0.73333334922790527,
@@ -386,15 +448,11 @@
     "Red Component" : 1,
     "Blue Component" : 1
   },
-  "Columns" : 176,
+  "Columns" : 210,
   "Unicode Normalization" : 0,
   "Use Tab Color" : false,
   "Visual Bell" : true,
-  "Custom Directory" : "Recycle",
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
-  "Set Local Environment Vars" : 0
+  "ASCII Ligatures" : true,
+  "Thin Strokes" : 4,
+  "Custom Directory" : "Recycle"
 }
