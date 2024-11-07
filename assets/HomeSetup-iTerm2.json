@@ -1,10 +1,6 @@
 {
-  "Ansi 5 Color" : {
-    "Green Component" : 0,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
-  "Set Local Environment Vars" : 3,
+  "Thin Strokes" : 4,
+  "ASCII Ligatures" : true,
   "Working Directory" : "\/Users\/hjunior",
   "Prompt Before Closing 2" : 2,
   "Selected Text Color" : {
@@ -39,7 +35,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.53517895936965942
   },
-  "Blend" : 0.050000000000000003,
+  "Blend" : 0.11571331521739127,
   "Mouse Reporting" : true,
   "Ansi 4 Color" : {
     "Green Component" : 0,
@@ -161,7 +157,7 @@
   "Icon" : 1,
   "Use Non-ASCII Font" : false,
   "Shortcut" : "E",
-  "Background Image Location" : "",
+  "Background Image Location" : "\/Users\/hjunior\/HomeSetup\/assets\/images\/hs-github-image.png",
   "Bold Color" : {
     "Green Component" : 1,
     "Red Component" : 1,
@@ -380,21 +376,22 @@
     "Blue Component" : 0
   },
   "Name" : "HomeSetup-iTerm2",
-  "Blinking Cursor" : true,
   "Guid" : "E442A700-A3C6-47E8-A199-1E9AAFDDCC02",
-  "Idle Code" : 0,
-  "Ansi 10 Color" : {
-    "Green Component" : 1,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
+  "Blinking Cursor" : true,
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408
   },
+  "Ansi 10 Color" : {
+    "Green Component" : 1,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
+  "Idle Code" : 0,
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
+  "Background Image Mode" : 2,
   "Cursor Type" : 0,
   "Ansi 0 Color" : {
     "Green Component" : 0,
@@ -452,7 +449,11 @@
   "Unicode Normalization" : 0,
   "Use Tab Color" : false,
   "Visual Bell" : true,
-  "ASCII Ligatures" : true,
-  "Thin Strokes" : 4,
-  "Custom Directory" : "Recycle"
+  "Custom Directory" : "Recycle",
+  "Ansi 5 Color" : {
+    "Green Component" : 0,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Set Local Environment Vars" : 3
 }
