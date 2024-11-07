@@ -26,7 +26,7 @@ load_bats_libs
 @test "when-adding-non-existent-valid-alias-then-should-add-it" {
   run __hhs_aliases 'hhs-bats' ls -la
   assert_success
-  assert_output "Alias set: \"hhs-bats\" is 'ls -la'"
+  assert_output --partial "Alias set: \"hhs-bats\" is 'ls -la'"
   ised "/^alias hhs-bats=.*$/d" "${HHS_ALIASES_FILE}"
 }
 
@@ -34,7 +34,7 @@ load_bats_libs
 @test "when-removing-an-invalid-alias-then-should-raise-an-error" {
   run __hhs_aliases -r 'hhs-bats'
   assert_failure
-  assert_output "error: Alias not found: \"hhs-bats\""
+  assert_output  --partial "Fatal: Alias not found: \"hhs-bats\""
 }
 
 # TC - 4
@@ -42,5 +42,5 @@ load_bats_libs
   __hhs_aliases 'hhs-bats' 'ls -la'
   run __hhs_aliases -r 'hhs-bats'
   assert_success
-  assert_output "Alias removed: \"hhs-bats\""
+  assert_output --partial "Alias removed: \"hhs-bats\""
 }

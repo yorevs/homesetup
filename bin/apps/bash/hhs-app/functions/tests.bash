@@ -53,13 +53,13 @@ function tests() {
         num="${BASH_REMATCH[2]}"
         details="${BASH_REMATCH[3]}"
         if [[ "${status}" == 'not ok' ]]; then
-          status="${RED} X FAIL${NC}"
+          status="${RED} ✘ FAIL${NC}"
           ((fail += 1))
         elif [[ "${status}" == 'ok' ]]; then
           status="${GREEN} √ PASS${NC}"
           ((pass += 1))
         else
-          status="${YELLOW} X ????${NC}"
+          status="${YELLOW}  ????${NC}"
         fi
       elif [[ ${result} =~ ${re_len} ]]; then
         echo -en "\n${CYAN}[${next##*/}] ${WHITE}Running tests [${BASH_REMATCH[1]} to ${BASH_REMATCH[2]}]${NC}\n\n"
@@ -80,7 +80,7 @@ function tests() {
   diff_time_ms=$((diff_time - (diff_time_sec * 1000)))
 
   echo -en "\n\n${WHITE}[$(date +'%H:%M:%S')] Finished running $((pass + fail + skip)) tests:\t"
-  echo -e "${GREEN}√ Passed=${pass}   ${YELLOW} Skipped=${skip}   ${RED}X Failed=${fail}${NC}"
+  echo -e "${GREEN}√ Passed=${pass}   ${YELLOW} Skipped=${skip}   ${RED}✘ Failed=${fail}${NC}"
 
   if [[ ${fail} -gt 0 && -s "${err_log}" ]]; then
     echo -e "${ORANGE}"

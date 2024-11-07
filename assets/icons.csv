@@ -1,4 +1,14 @@
 Icon,Hex,Oct,Name
 ,F005,\xef\x80\x85,Star
-,XXXX,\xef\x89\x9b,Peace Hand
-,XXXX,\xef\x90\xb2,Pointer Right
+,F25B,\xef\x89\x9b,Peace Hand
+,F432,\xef\x90\xb2,Pointer Right
+,F418,\xef\x90\x98,Git Branch
+,F07B,\xef\x81\xbb,Folder Closed
+,F1FA,\xef\x87\xba,At
+,F415,\xef\x90\x95,User
+,F059,\xef\x81\x99,Help
+,F400,\xef\x90\x80,Tip
+✘,2718,\xe2\x9c\x98,Fail
+√,XXX,,Success
+,XXX,,Alert
+,XXX,,Skip
