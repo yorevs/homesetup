@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#  Script: misc.bash
+#  Script: term.bash
 # Purpose: Contains all extra HHS-App functions
 # Created: Apr 29, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior

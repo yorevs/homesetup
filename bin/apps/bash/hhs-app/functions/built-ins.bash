@@ -28,7 +28,7 @@ function list() {
       && for next in $(compgen -c __hhs); do echo -n "${next} "; done
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -aliases ]] \
       && for next in "${HHS_ALIASES[@]}"; do echo -n "${next} "; done
-    quit 0 ''
+    quit 0
   else
     columns="$(tput cols)"
     count=$((${#PLUGINS[@]} > ${#HHS_APP_FUNCTIONS[@]} ? ${#PLUGINS[@]} : ${#HHS_APP_FUNCTIONS[@]}))
@@ -48,7 +48,7 @@ function list() {
     fi
   fi
 
-  quit 0 ''
+  quit 0
 }
 
 # @purpose: Search for all __hhs_functions describing it's containing file name and line number.
@@ -188,6 +188,36 @@ function man() {
     __hhs_errcho "Failed to open url: \"${ss63_url}\" !"
     return 1
   fi
+
+  return 0
+}
+
+# @purpose: Attempt to display the help for the given command.
+# @param $1 [Req] : The command to get help.
+function help() {
+
+  local cmd="${1}" help_msg
+  if [[ -z "${cmd}" || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: ${FUNCNAME[0]} <command>"
+    return 1
+  fi
+
+  __hhs_has "${cmd}" || { __hhs_errcho "${RED}Command not found: '${cmd}'"; return 1; }
+
+  help_msg="$(${cmd} --help 2>&1 | awk '/^usage:/ {found=1} found')"
+  if [[ -z "${help_msg}" ]]; then
+    help_msg="$(${cmd} help 2>&1 | awk '/^usage:/ {found=1} found')"
+    if [[ -z "${help_msg}" ]]; then
+      help_msg="$(${cmd} --0h012hux267844asu 2>&1 | awk '/^usage:/ {found=1} found')"
+      if [[ -z "${help_msg}" ]]; then
+        __hhs_errcho "${RED}Help not available for: '${cmd}'"
+      fi
+    fi
+    return 1
+  fi
+
+  echo -e "${YELLOW}Displaying help for: ${BLUE}'${cmd}'${NC}\n"
+  echo -e "${help_msg}\n"
 
   return 0
 }

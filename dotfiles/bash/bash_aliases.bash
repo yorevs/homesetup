@@ -99,7 +99,7 @@ alias dirs='__hhs_dirs'
 # @alias: Built-ins replacement for `cat'
 __hhs_has "bat" && alias cat='bat'
 # @alias: Built-ins replacement for `help'
-alias help='__hhs_help'
+alias help='__hhs help'
 # @alias: Starship replacement for `starship' binary
 alias starship='__hhs_starship'
 # @alias: Shortcut for `gtrash put' binary

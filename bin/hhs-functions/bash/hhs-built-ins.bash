@@ -85,7 +85,7 @@ function __hhs_edit() {
 # @param $1 [Req] : The command to check.
 function __hhs_about() {
 
-  local cmd type_ret=() i=0 re_alias re_function re_command recurse="${2}"
+  local cmd type_ret=() re_alias re_function re_command recurse="${2}"
   re_alias="(.*) is aliased to \`(.*)'"
   re_function="(.*) is a function"
   re_command="(.*) is (.*)"
@@ -128,32 +128,6 @@ function __hhs_about() {
       fi
     fi
     [[ ${recurse} -eq 0 ]] && echo -e "${NC}"
-  fi
-
-  return 0
-}
-
-# @function: Display a help for the given command.
-# @param $1 [Req] : The command to get help.
-function __hhs_help() {
-
-  local cmd
-
-  if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} <command>"
-    return 1
-  else
-    cmd="${1}"
-    if ! ${cmd} --help 2> /dev/null; then
-      if ! ${cmd} -h 2> /dev/null; then
-        if ! ${cmd} help 2> /dev/null; then
-          if ! ${cmd} /? 2> /dev/null; then
-            __hhs_errcho "${RED}Help not available for ${cmd}"
-          fi
-        fi
-        return 1
-      fi
-    fi
   fi
 
   return 0

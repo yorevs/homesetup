@@ -450,7 +450,7 @@ function cleanup_plugins() {
 # @purpose: Program entry point.
 function main() {
 
-  local fn_name
+  local fn_name="${1}"
 
   # Execute a cleanup after the application has exited.
   trap cleanup_plugins EXIT
@@ -462,16 +462,16 @@ function main() {
   register_functions
   register_plugins
 
-  fn_name="${1//help/list}"
 
   if has_function "${fn_name}"; then
     shift
-    ${fn_name} "${@}"  # Invoke internal function
+    ${fn_name} "${@}"  # Invoke internal hhs-function
     quit $?
   fi
 
   [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
 
+  fn_name="${fn_name//help/list}"
   invoke_plugin "${@}" || quit 2
 
   quit 255 "${RED}Failed to invoke hhs command: ${*} ${NC}"
