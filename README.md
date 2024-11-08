@@ -132,7 +132,7 @@ cp -f $HOME/.fonts/DroidSan-MonoforPowerlineNerdFontComplete/*.otf $HOME/Library
 
 #### Terminal App (Darwin)
 
-  [HomeSetup Terminal](assets/HomeSetup.terminal)
+  [HomeSetup Terminal](assets/terminal/HomeSetup.terminal)
 
 #### iTerm2 App (Darwin)
 
