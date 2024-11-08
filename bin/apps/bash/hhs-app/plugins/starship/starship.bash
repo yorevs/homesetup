@@ -91,6 +91,17 @@ function cleanup() {
   echo -n ''
 }
 
+# @purpose: Opens the Starship configuration page
+function configs() {
+  local page_url="https://starship.rs/config/"
+
+  echo -e "${BLUE}${GLOBE_ICN} Opening Starship config page from: ${page_url}${ELLIPSIS_ICN}${NC}"
+  __hhs_open "${page_url}" && sleep 2 && quit 0
+
+  quit 1 "Failed to open url: \"${page_url}\" !"
+}
+
+
 # @purpose: Add HomeSetup presets.
 function add_hhs_presets() {
 
@@ -108,7 +119,8 @@ function execute() {
 
   if __hhs_has starship; then
 
-    [[ $# -eq 0 ]] || list_contains "${*}" "edit" && __hhs_open "${STARSHIP_CONFIG}" && quit 0
+    [[ $# -eq 0 ]] || { list_contains "$@" "edit" && __hhs_open "${STARSHIP_CONFIG}" && quit 0; }
+    [[ $# -eq 0 ]] || { list_contains "$@" "configs" && configs; }
     list_contains "${*}" "help" && usage 0
     list_contains "${*}" "version" && version
 

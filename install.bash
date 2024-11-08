@@ -976,10 +976,14 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install GTrash application
   configure_gtrash() {
+    local arch
+
     if ! command -v gtrash &>/dev/null; then
+      arch=$(uname -m)
+      arch="${arch//aarch64/arm64}"
       echo -en "\n${WHITE}Installing ${BLUE}GTrash${NC} app... "
       if \
-        curl -sSL "https://github.com/umlx5h/gtrash/releases/latest/download/gtrash_$(uname -s)_$(uname -m).tar.gz" | tar xz \
+        curl -sSL "https://github.com/umlx5h/gtrash/releases/latest/download/gtrash_$(uname -s)_${arch}.tar.gz" | tar xz \
         && chmod a+x ./gtrash \
         && \mv ./gtrash "${HHS_DIR}/bin/gtrash"; then
           echo -e "${GREEN}OK${NC}"
@@ -992,7 +996,8 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install ble.sh plug-in
   configure_blesh() {
-    ble_repo="https://github.com/akinomyoga/ble.sh.git"
+    local ble_repo="https://github.com/akinomyoga/ble.sh.git"
+
     echo -en "\n${WHITE}Installing ${BLUE}Blesh${NC} plug-in... "
     [[ -d "${HHS_BLESH_DIR}" ]] && \rm -rfv "${HHS_BLESH_DIR:?}" &>/dev/null
     if \
@@ -1007,6 +1012,8 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Configure AskAI HomeSetup/RAG documents
   configure_askai_rag() {
+    local copy_code
+
     if [[ -n "${INSTALL_AI}" ]]; then
       # Copy HomeSetup AskAI prompts into place.
       echo -en "\n${WHITE}Copying HomeSetup RAG docs... "

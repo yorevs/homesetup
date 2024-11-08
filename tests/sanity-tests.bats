@@ -39,6 +39,8 @@ load_bats_libs
 
   [[ -f "${HOME}/.inputrc" ]] || missing+=("${HOME}/.inputrc")
   [[ -f "${HHS_DIR}/.aliasdef" ]] || missing+=("${HHS_DIR}/.aliasdef")
+  [[ -f "${HHS_DIR}/.homesetup.toml" ]] || missing+=("${HHS_DIR}/.homesetup.toml")
+  [[ -f "${HOME}/.config/nvim/init.vim" ]] || missing+=("${HOME}/.config/nvim/init.vim")
   [[ -f "${HHS_DIR}/shell-opts.toml" ]] || missing+=("${HHS_DIR}/shell-opts.toml")
   [[ -f "${HHS_DIR}/.aliases" ]] || missing+=("${HHS_DIR}/.aliases")
   [[ -f "${HHS_DIR}/.cmd_file" ]] || missing+=("${HHS_DIR}/.cmd_file")
@@ -60,8 +62,10 @@ load_bats_libs
   declare -a integrations=('starship' 'gtrash') missing=()
 
   for next in "${integrations[@]}"; do
-    command -v "${next}" &>/dev/null || missing+=("${dotfile}")
+    command -v "${next}" &>/dev/null || missing+=("${next}")
   done
+
+  [[ -f "${HHS_BLESH_DIR}/out/ble.sh" ]] || missing+=("blesh")
 
   [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: [${missing[*]}]"
   [[ ${#missing[@]} -eq 0 ]]
