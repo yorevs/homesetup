@@ -24,18 +24,18 @@ continuation_prompt = '… '
 
 format = """\
 [ BASH ](bold fg:#C4D3D4 bg:#B58901)\
-[](bold fg:#B58901 bg:#083642)\
+[](fg:#B58901 bg:#083642)\
 $username\
 $hostname\
-[](bold fg:#083642 bg:#258BD2)\
+[](fg:#083642 bg:#258BD2)\
 $time\
-[](bold fg:#258bd2 bg:#2AA198)\
+[](fg:#258BD2 bg:#2AA198)\
 $directory\
-[](bold fg:#2AA198 bg:#083642)\
+[](fg:#2AA198 bg:#083642)\
 $git_branch\
 $git_metrics\
 $git_status\
-[](bold fg:#083642)\
+[](fg:#083642)\
 $line_break\
 $character\
 """
@@ -57,8 +57,8 @@ disabled = false
 [time]
 disabled = false
 time_format = "%a %d %b - %H:%M" # DDD DD MMM - HH:MM
-style = "bold bg:#258bd2"
-format = '[[ ${time} ](bg:#258bd2 fg:#C4D3D4)](${style})'
+style = "bold bg:#258BD2"
+format = '[[ ${time} ](bg:#258BD2 fg:#C4D3D4)](${style})'
 
 [directory]
 format = "[ ${path} ](${style})"
@@ -70,7 +70,7 @@ symbol = " "
 style = "bold fg:#C4D3D4 bg:#083642"
 
 [git_metrics]
-format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+format = "[([+$added]($added_style) )([-$deleted]($deleted_style))](bg:#083642)"
 added_style = "fg:green bg:#083642"
 deleted_style = "fg:red bg:#083642"
 disabled = false

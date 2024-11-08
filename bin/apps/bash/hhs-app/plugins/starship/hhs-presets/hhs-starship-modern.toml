@@ -27,7 +27,7 @@ palette = 'homesetup'
 
 # Format the prompt.
 format = """\
-${os}${time}${username}${hostname}${directory}${git_branch}${git_metrics}${git_status}\
+${os}${time}${username}${hostname}${directory}${git_branch}${git_status}\
 ${character}"""
 
 # Define HomeSetup custom colors.
@@ -91,19 +91,13 @@ disabled = false
 
 [git_status]
 style = "cyan"
-format = '[($all_status[$ahead_behind](red) )]($style)'
+format = '[(\[$all_status[$ahead_behind](red)\] )]($style)'
 untracked = '?'
 modified = '!'
 deleted = '-'
 stashed = '\$'
 staged = '+'
 renamed = '^'
-
-[git_metrics]
-added_style = "green"
-deleted_style = "red"
-format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
-disabled = false
 
 [character]
 success_symbol = "[](white)"
