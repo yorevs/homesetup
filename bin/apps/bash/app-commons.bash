@@ -48,11 +48,13 @@ function _app_cleanups_() {
 # @param $2 [Opt] : The exit message to be displayed.
 function quit() {
 
+  local msg="${*}"
+
   exit_code=${1:-0}
   shift
 
-  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
-  [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
+  [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${ERROR_ICN} Fatal: ${APP_NAME} ${WHITE}${POINTER_ICN} " 1>&2
+  [[ ${#} -ge 1 ]] && echo -e "${msg} ${NC}" 1>&2
   [[ ${#} -gt 0 ]] && echo ''
   exit "${exit_code}"
 }

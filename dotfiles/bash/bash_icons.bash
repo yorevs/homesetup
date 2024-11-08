@@ -29,6 +29,7 @@ ELLIPSIS_ICN="\xe2\x80\xa6"  # …
 ERROR_ICN="\xe2\x9c\x98"  # ✘
 FAIL_ICN="\xef\x91\xa7"  # 
 FUNC_ICN="\xef\x84\xa1"  # 
+GLOBE_ICN="\xef\x82\xac" # 
 HAND_PEACE_ICN='\xef\x89\x9b'  # 
 HELP_ICN="\xef\x81\x99"  # 
 OFF_SWITCH_ICN="\xef\x88\x84"  # 
