@@ -14,94 +14,134 @@
 add_newline = true
 
 # Timeout for commands executed by starship (in milliseconds).
-command_timeout = 250
+command_timeout = 500
 
 # Timeout for starship to scan files (in milliseconds).
-scan_timeout = 500
+scan_timeout = 250
 
 # Continuation prompt (PS2).
 continuation_prompt = '… '
 
-# Set "homesetup" as custom color palette.
+# Set 'homesetup' as custom color palette.
+# Ref:. https://starship.rs/advanced-config/#style-strings
 palette = 'homesetup'
 
 # Format the prompt.
 format = """\
-${os}${time}${username}${hostname}${directory}${git_branch}${git_status}\
-${character}"""
+${os}\
+[](fg:seg_1 bg:seg_2)\
+${time}\
+[](fg:seg_2 bg:seg_3)\
+${username}\
+[](fg:seg_3 bg:seg_4)\
+${hostname}\
+[](fg:seg_4 bg:seg_5)\
+${directory}\
+[](fg:seg_5 bg:seg_6)\
+${git_branch}${git_metrics}${git_status}\
+[ ](fg:seg_6)\
+${python}${java}${fill}${cmd_duration}
+${history_number}${character}"""
 
 # Define HomeSetup custom colors.
 # Ref.: https://i.stack.imgur.com/KTSQa.png
 [palettes.homesetup]
-blue = '27'
-cyan = '14'
-purple = '99'
-green = '2'
-orange = '166'
-red = '9'
-white = '231'
+seg_text = '15'
+term_text = 'term_text'
+seg_1 = '21'
+seg_2 = '20'
+seg_3 = '19'
+seg_4 = '18'
+seg_5 = '17'
+seg_6 = '#010042'
+
+[os.symbols]
+Linux = ''
+Macos = ''
+CentOS = ''
+Fedora = ''
+Ubuntu = ''
+Alpine = ''
+
+[os]
+style = 'fg:seg_text bg:seg_1'
+format = '[ [${symbol}](${style}) ](${style})'
+disabled = false
 
 # Print the current time.
 [time]
+style = 'fg:seg_text bg:seg_2'
 disabled = false
-time_format = "%R" # Hour:Minute Format
-style = "white"
-format = '[$time]($style) '
-
-[os]
-style = "white"
-format = "[${symbol}](${style}) "
-disabled = false
-
-[os.symbols]
-Linux = ""
-Macos = ""
-CentOS = ""
-Fedora = ""
-Ubuntu = ""
-Alpine = ""
+time_format = '%R' # Hour:Minute Format
+format = '[$time]($style)'
 
 [username]
-style_user = "green"
-style_root = "red"
-format = "[[](white) $user](${style}) "
+style_user = 'fg:seg_text bg:seg_3'
+style_root = 'fg:red bg:seg_3'
+format = '[[ ](fg:seg_text bg:seg_3) $user ](${style})'
 show_always = true
 disabled = false
 
 [hostname]
 ssh_only = false
-ssh_symbol = " :"
-trim_at = "."
-format = "[[${ssh_symbol}](white) ${hostname}](purple) "
+ssh_symbol = ' '
+trim_at = '.'
+format = '[[  ${ssh_symbol}](fg:seg_text bg:seg_4)${hostname} ](fg:seg_text bg:seg_4)'
 disabled = false
 
 [directory]
-style = "orange"
-format = "[[](white) ${path}](${style}) "
+style = 'fg:seg_text bg:seg_5'
+format = '[[ ](fg:seg_text bg:seg_5) ${path} ](${style})'
 truncation_length = 3
 truncate_to_repo = true
 truncation_symbol = ' …/'
 disabled = false
 
 [git_branch]
-symbol = " "
-style = "cyan"
-format = "[[${symbol}](white)${branch}](${style}) "
+symbol = '  '
+style = 'fg:seg_text bg:seg_6'
+format = '[[${symbol}](fg:seg_text bg:seg_6)${branch} ](${style})'
+disabled = false
+
+[git_metrics]
+format = '([+$added ]($added_style))([-$deleted ]($deleted_style))'
+added_style = 'fg:green bg:seg_6'
+deleted_style = 'fg:red bg:seg_6'
 disabled = false
 
 [git_status]
-style = "cyan"
-format = '[(\[$all_status[$ahead_behind](red)\] )]($style)'
-untracked = '?'
-modified = '!'
-deleted = '-'
-stashed = '\$'
-staged = '+'
-renamed = '^'
+style = 'fg:seg_text bg:seg_6'
+format = '[(${all_status}[${ahead_behind}](fg:red bg:seg_6)) ](${style})'
+conflicted = ""
+ahead = ""
+behind = ""
+diverged = ""
+
+[java]
+style = 'fg:seg_1'
+symbol = ''
+detect_files = ['pom.xml', 'build.gradle.kts', 'build.sbt', '.java-version', 'deps.edn', 'project.clj', 'build.boot', '.sdkmanrc']
+format = '[[  ](fg:seg_1)(${version} )]($style)'
+disabled = false
+
+[python]
+style = 'fg:seg_1'
+symbol = ''
+detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini', 'pixi.toml']
+format = '[[  ](fg:seg_1)${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)'
+disabled = false
+
+[fill]
+symbol = ' '
+
+[cmd_duration]
+min_time = 100
+show_milliseconds = true
+format = '[in [${duration}](dimmed white)](dimmed white)'
 
 [character]
-success_symbol = "[](white)"
-error_symbol = "[](white)"
+success_symbol = '[](term_text)'
+error_symbol = '[](term_text)'
 
 #### Disabled modules ####
 
@@ -127,9 +167,6 @@ disabled = true
 disabled = true
 
 [helm]
-disabled = true
-
-[java]
 disabled = true
 
 [julia]
