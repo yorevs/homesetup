@@ -31,6 +31,7 @@ usage: $APP_NAME [OPTIONS] <args>
   if [[ -n "${SUDO_USER}" ]]; then
     USER="${SUDO_USER}"
     HOME="$(eval echo ~"${SUDO_USER}")"
+    has sudo && SUDO=sudo
   else
     USER="${USER:-$(whoami)}"
     HOME="${HOME:-$(eval echo ~"${USER}")}"
@@ -42,7 +43,7 @@ usage: $APP_NAME [OPTIONS] <args>
   # Functions to be unset after quit
   UNSETS=(
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
-    activate_dotfiles compatibility_check install_dependencies configure_python install_hspylib ensure_brew
+    activate_dotfiles compatibility_check install_packages configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
     install_tools query_askai_install create_destination_dirs configure_askai_rag configure_blesh
   )
@@ -52,6 +53,8 @@ usage: $APP_NAME [OPTIONS] <args>
   STAR_ICN='\xef\x80\x85'  # 
   HAND_PEACE_ICN='\xef\x89\x9b'  # 
   POINTER_ICN='\xef\x90\xb2'  # 
+  SUCCESS_ICN='\xef\x98\xab'  # 
+  FAIL_ICN='\xef\x91\xa7'  # 
 
   # VT-100 Terminal colors
   ORANGE='\033[38;5;202m'
@@ -59,7 +62,7 @@ usage: $APP_NAME [OPTIONS] <args>
   BLUE='\033[34m'
   CYAN='\033[36m'
   GREEN='\033[32m'
-  YELLOW='\033[93m'
+  YELLOW='\033[33m'
   RED='\033[31m'
   NC='\033[m'
 
@@ -441,44 +444,54 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}" || ${check_pkg} "${tool_name}" &>/dev/null; then
-        echo -e " ${GREEN}√ INSTALLED${NC}"
+        echo -e " ${GREEN}${SUCCESS_ICN} INSTALLED${NC}"
       else
-        echo -e " ${RED}X NOT INSTALLED${NC}"
+        echo -e " ${RED}${FAIL_ICN} NOT INSTALLED${NC}"
         MISSING_DEPS+=("${tool_name}")
       fi
     done
 
     # Install packages using the default package manager
-    install_dependencies "${install}" "${check_pkg}" "${MISSING_DEPS[@]}"
+    install_packages "${install}" "${check_pkg}" "${MISSING_DEPS[@]}"
     ensure_brew
   }
 
   # shellcheck disable=SC2206
   # Install missing required tools.
-  install_dependencies() {
+  install_packages() {
 
-    local install="${1}" check_pkg="${2}" tools pkgs
+    local install="${1}" check_pkg="${2}" tools pkgs use_sudo=
 
-    shift
-    shift
+    shift 2
     tools=(${@})
     pkgs="${tools[*]}"
     pkgs="${pkgs// /\\n  |-}"
 
     if [[ ${#tools[@]} -gt 0 ]]; then
-      [[ -n "${SUDO}" ]] &&
-        echo -e "\n${ORANGE}Using 'sudo' to install apps. You may be prompted for the password.${NC}\n"
+      # 1st Attempt to install packages without sudo.
       echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Installing required packages using: ${YELLOW}\"${install}\"${NC}"
       echo -e "  |-${pkgs}"
       for tool_name in "${tools[@]}"; do
         echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Installing: ${YELLOW}${tool_name}${NC}..."
-        if ${install} "${tool_name}" >>"${INSTALL_LOG}" 2>&1; then
+        if [[ -z "${use_sudo}" ]] && ${install} "${tool_name}" >>"${INSTALL_LOG}" 2>&1; then
           printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-          echo -e " ${GREEN}√ OK${NC}"
+          echo -e " ${GREEN}${SUCCESS_ICN} OK${NC}"
         else
-          echo -e " ${RED}X FAILED${NC}"
-          MISSING_DEPS+=("${tool_name}")
-          quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
+          [[ -z "${use_sudo}" ]] && echo -e " ${RED}${FAIL_ICN} FAILED${NC}"
+          # 2nd Attempt to install packages using sudo.
+          has 'sudo' || quit 2 "Failed to install dependencies. 'sudo' is not available"
+          [[ -z "${use_sudo}" && -n "${SUDO}" ]] && echo -e "\n${ORANGE}Retrying with 'sudo'. You may be prompted for password.${NC}\n"
+          install="${SUDO} ${install}"
+          use_sudo=1
+          echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Installing: ${YELLOW}${tool_name}${NC}..."
+          if ${install} "${tool_name}" >>"${INSTALL_LOG}" 2>&1; then
+            printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
+            echo -e " ${GREEN}${SUCCESS_ICN} OK${NC}"
+          else
+            echo -e " ${RED}${FAIL_ICN} FAILED${NC}"
+            MISSING_DEPS+=("${tool_name}")
+            quit 2 "Failed to install dependencies. Please manually install the missing tools and try again."
+          fi
         fi
       done
     fi
@@ -645,23 +658,25 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e "${BLUE}Installing HomeSetup ${YELLOW}quietly ${NC}"
     fi
 
-    # Create all user custom files.
+    # Create user dotfiles files.
     [[ -s "${HHS_DIR}/.aliases" ]] || \touch "${HHS_DIR}/.aliases"
-    [[ -s "${HHS_DIR}/.cmd_file" ]] || \touch "${HHS_DIR}/.cmd_file"
     [[ -s "${HHS_DIR}/.colors" ]] || \touch "${HHS_DIR}/.colors"
     [[ -s "${HHS_DIR}/.env" ]] || \touch "${HHS_DIR}/.env"
     [[ -s "${HHS_DIR}/.functions" ]] || \touch "${HHS_DIR}/.functions"
-    [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
     [[ -s "${HHS_DIR}/.profile" ]] || \touch "${HHS_DIR}/.profile"
     [[ -s "${HHS_DIR}/.prompt" ]] || \touch "${HHS_DIR}/.prompt"
+
+    # Create __hhs function files.
+    [[ -s "${HHS_DIR}/.cmd_file" ]] || \touch "${HHS_DIR}/.cmd_file"
+    [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
     [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
-    # Create alias and input definitions.
-    copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    # Create aliasdef, inputrc, and homesetup.toml.
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
     copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+    copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
 
-    # NeoVim integration
+    # NeoVim integration configs.
     [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
     copy_file "${HHS_HOME}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
 

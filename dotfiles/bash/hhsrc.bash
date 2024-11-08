@@ -149,19 +149,21 @@ while read -r pref; do
 done <"${HHS_SETUP_FILE}"
 __hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
 
-# Settings are available as environments variables below this point.
+# Settings are available as environment variables from this point.
 
 # Set system locale variables (defaults)
-if [[ ${HHS_SET_LOCALES} -eq 1 ]] && __hhs_has "locale"; then
+if [[ ${HHS_SET_LOCALES} -eq 1 ]]; then
   export LANGUAGE=${LANGUAGE:-en_US:en}
   export LANG=${LANG:-en_US.UTF-8}
-  export LC_ALL=${LC_ALL:-${LANG}}
-  export LC_CTYPE=${LC_CTYPE:-${LANG}}
-  export LC_COLLATE=${LC_COLLATE:-${LANG}}
-  export LC_MESSAGES=${LC_MESSAGES:-${LANG}}
-  export LC_MONETARY=${LC_MONETARY:-${LANG}}
-  export LC_NUMERIC=${LC_NUMERIC:-${LANG}}
-  export LC_TIME=${LC_TIME:-${LANG}}
+  if __hhs_has "locale"; then
+    export LC_ALL=${LC_ALL:-${LANG}}
+    export LC_CTYPE=${LC_CTYPE:-${LANG}}
+    export LC_COLLATE=${LC_COLLATE:-${LANG}}
+    export LC_MESSAGES=${LC_MESSAGES:-${LANG}}
+    export LC_MONETARY=${LC_MONETARY:-${LANG}}
+    export LC_NUMERIC=${LC_NUMERIC:-${LANG}}
+    export LC_TIME=${LC_TIME:-${LANG}}
+  fi
 fi
 
 # Initialize Blesh plug-in if it's enabled.

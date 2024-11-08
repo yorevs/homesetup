@@ -157,12 +157,10 @@ fi
 # ----------------------------------------------------------------------------
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64'
-  'shfmt' 'shellcheck' 'pylint'
-  'docker' 'colima' 'sqlite3'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'rsync'
   'perl' 'groovy' 'java' 'ruby' 'python3'
-  'gcc' 'make' 'mvn' 'gradle' 'pip3' 'gem'
-  'direnv' 'pbcopy' 'fd' 'jq'
+  'gcc' 'make' 'gradle' 'pip3' 'gem'
+  'pbcopy' 'fd' 'jq' 'sqlite3' 'gawk'
   'colorls' 'fzf' 'bat' 'starship' 'gtrash'
   'sdiff' 'colordiff' 'nvim'
 )
