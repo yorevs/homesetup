@@ -1,0 +1,184 @@
+# ~/.config/starship.toml
+# Credits to: HomeSetup team
+
+# Purpose: HomeSetup's default starship configuration file.
+# Created: Aug 26, 2018
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: homesetup@gmail.com
+#    Site: https://github.com/yorevs/homesetup
+#
+# See a the full starship reference at:
+# https://starship.rs/config/#prompt
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+# Timeout for commands executed by starship (in milliseconds).
+command_timeout = 250
+
+# Timeout for starship to scan files (in milliseconds).
+scan_timeout = 500
+
+# Continuation prompt (PS2).
+continuation_prompt = '… '
+
+# Set "homesetup" as custom color palette.
+palette = 'homesetup'
+
+# Format the prompt.
+format = """\
+${os}${time}${username}${hostname}${directory}${git_branch}${git_metrics}${git_status}\
+${character}"""
+
+# Define HomeSetup custom colors.
+# Ref.: https://i.stack.imgur.com/KTSQa.png
+[palettes.homesetup]
+blue = '27'
+cyan = '14'
+purple = '99'
+green = '2'
+orange = '166'
+red = '9'
+white = '231'
+
+# Print the current time.
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "white"
+format = '[$time]($style) '
+
+[os]
+style = "white"
+format = "[${symbol}](${style}) "
+disabled = false
+
+[os.symbols]
+Linux = ""
+Macos = ""
+CentOS = ""
+Fedora = ""
+Ubuntu = ""
+Alpine = ""
+
+[username]
+style_user = "green"
+style_root = "red"
+format = "[[](white) $user](${style}) "
+show_always = true
+disabled = false
+
+[hostname]
+ssh_only = false
+ssh_symbol = " :"
+trim_at = "."
+format = "[[${ssh_symbol}](white) ${hostname}](purple) "
+disabled = false
+
+[directory]
+style = "orange"
+format = "[[](white) ${path}](${style}) "
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = ' …/'
+disabled = false
+
+[git_branch]
+symbol = " "
+style = "cyan"
+format = "[[${symbol}](white)${branch}](${style}) "
+disabled = false
+
+[git_status]
+style = "cyan"
+format = '[($all_status[$ahead_behind](red) )]($style)'
+untracked = '?'
+modified = '!'
+deleted = '-'
+stashed = '\$'
+staged = '+'
+renamed = '^'
+
+[git_metrics]
+added_style = "green"
+deleted_style = "red"
+format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+disabled = false
+
+[character]
+success_symbol = "[](white)"
+error_symbol = "[](white)"
+
+#### Disabled modules ####
+
+[hg_branch]
+disabled = true
+
+[dart]
+disabled = true
+
+[dotnet]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[erlang]
+disabled = true
+
+[golang]
+disabled = true
+
+[helm]
+disabled = true
+
+[java]
+disabled = true
+
+[julia]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[nim]
+disabled = true
+
+[ocaml]
+disabled = true
+
+[php]
+disabled = true
+
+[purescript]
+disabled = true
+
+[swift]
+disabled = true
+
+[zig]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[openstack]
+disabled = true
+
+[crystal]
+disabled = true
+
+[lua]
+disabled = true
+
+[jobs]
+disabled = true
+
+[battery]
+disabled = true

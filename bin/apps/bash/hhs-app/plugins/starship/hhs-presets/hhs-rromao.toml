@@ -31,12 +31,11 @@ $hostname\
 $time\
 [](bold fg:#258bd2 bg:#2AA198)\
 $directory\
-[](bold fg:#2AA198 bg:#859901)\
+[](bold fg:#2AA198 bg:#083642)\
 $git_branch\
 $git_metrics\
-${custom.git_metrics_ext}\
 $git_status\
-[](bold fg:#859901)\
+[](bold fg:#083642)\
 $line_break\
 $character\
 """
@@ -44,7 +43,7 @@ $character\
 [username]
 style_user = "bold bg:#083642 fg:#C4D3D4"
 style_root = "red"
-format = "[(bold bg:#083642 fg:#C4D3D4) $user]($style)"
+format = "[(bold bg:#083642 fg:#C4D3D4) ${user}](${style})"
 show_always = true
 disabled = false
 
@@ -52,27 +51,33 @@ disabled = false
 ssh_only = false
 trim_at = "."
 style = "bold bg:#083642 fg:#C4D3D4"
-format = "[[@]($style)$hostname]($style)"
+format = "[[@](${style})${hostname}](${style})"
 disabled = false
 
 [time]
 disabled = false
 time_format = "%a %d %b - %H:%M" # DDD DD MMM - HH:MM
 style = "bold bg:#258bd2"
-format = '[[ $time ](bg:#258bd2 fg:#C4D3D4)]($style)'
+format = '[[ ${time} ](bg:#258bd2 fg:#C4D3D4)](${style})'
 
 [directory]
-format = "[ $path ]($style)"
+format = "[ ${path} ](${style})"
 style = "bold fg:#C4D3D4 bg:#2AA198"
 
 [git_branch]
-format = '[ $symbol$branch(:$remote_branch) ]($style)'
+format = '[ ${symbol}${branch}(:${remote_branch}) ](${style})'
 symbol = " "
-style = "bold fg:#C4D3D4 bg:#859901"
+style = "bold fg:#C4D3D4 bg:#083642"
+
+[git_metrics]
+format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+added_style = "fg:green bg:#083642"
+deleted_style = "fg:red bg:#083642"
+disabled = false
 
 [git_status]
-style = "bold fg:#C4D3D4 bg:#859901"
-format = '[($all_status[$ahead_behind](fg:red bg:#859901))]($style)'
+style = "bold fg:#C4D3D4 bg:#083642"
+format = '[ (${all_status}[${ahead_behind}](fg:red bg:#083642))](${style})'
 untracked = '?'
 modified = '!'
 deleted = '-'
@@ -80,39 +85,12 @@ stashed = '\$'
 staged = '+'
 renamed = '^'
 
-[git_metrics]
-format = "([+$added]($added_style)[/-$deleted]($deleted_style))[]($added_style)"
-added_style = "fg:green bg:#859901"
-deleted_style = "fg:red bg:#859901"
-disabled = false
-
-[custom.git_metrics_ext]
-description = "Git metrics with staged and unstaged counts"
-command = '''
-#!/bin/sh
-
-STATUS=$(git status --porcelain 2>/dev/null)
-STAGED=$(echo "$STATUS" | grep -cE '^[AMDR]')
-UNSTAGED=$(echo "$STATUS" | grep -cE '^[ MARC]')
-
-if [[ $STAGED -gt 0 && $UNSTAGED -gt 0 ]]; then
-  echo " ${STAGED}  ${UNSTAGED}"
-elif [[ $STAGED -gt 0 ]]; then
-  echo " ${STAGED}"
-elif [[ $UNSTAGED -gt 0 ]]; then
-  echo " ${UNSTAGED}"
-fi
-'''
-when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
-style = "fg:yellow bg:#859901"
-format="([ $output ]($style))[]($style)"
-
 [hg_branch]
-format = "[ $symbol$branch ]($style)"
+format = "[ $symbol$branch ](${style})"
 symbol = " "
 
 [cmd_duration]
-format = "[ $duration ]($style)"
+format = "[ ${duration} ](${style})"
 style = "bold fg:bright-white bg:18"
 
 [character]
