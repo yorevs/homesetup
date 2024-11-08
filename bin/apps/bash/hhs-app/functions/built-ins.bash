@@ -204,11 +204,11 @@ function help() {
 
   __hhs_has "${cmd}" || { __hhs_errcho "${RED}Command not found: '${cmd}'"; return 1; }
 
-  help_msg="$(${cmd} --help 2>&1 | awk '/^usage:/ {found=1} found')"
+  help_msg="$(${cmd} --help 2>&1 | awk '/^[Uu]sage:/ {found=1} found')"
   if [[ -z "${help_msg}" ]]; then
-    help_msg="$(${cmd} help 2>&1 | awk '/^usage:/ {found=1} found')"
+    help_msg="$(${cmd} help 2>&1 | awk '/^[Uu]sage:/ {found=1} found')"
     if [[ -z "${help_msg}" ]]; then
-      help_msg="$(${cmd} --0h012hux267844asu 2>&1 | awk '/^usage:/ {found=1} found')"
+      help_msg="$(${cmd} --0h012hux267844asu 2>&1 | awk '/^[Uu]sage:/ {found=1} found')"
       if [[ -z "${help_msg}" ]]; then
         __hhs_errcho "${RED}Help not available for: '${cmd}'"
       fi
