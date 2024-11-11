@@ -41,19 +41,33 @@ ${directory}\
 ${git_branch}${git_metrics}${git_status}\
 [ ](fg:seg_6)\
 ${python}${java}${fill}${cmd_duration}
-${history_number}${character}"""
+${character}"""
 
 # Define HomeSetup custom colors.
-# Ref.: https://i.stack.imgur.com/KTSQa.png
+# Ref.: assets/images/misc/starship-colors.png
 [palettes.homesetup]
-seg_text = '15'
-term_text = 'term_text'
+droid_text = '15'
+term_text = '15'
+tools_icon = '221'
+tools_text = '33'
+# Segment 1: OS
 seg_1 = '21'
+seg_1_text = '15'
+# Segment 2: Time
 seg_2 = '20'
+seg_2_text = '15'
+# Segment 3: Username
 seg_3 = '19'
+seg_3_text = '42'
+# Segment 4: Hostname
 seg_4 = '18'
+seg_4_text = '105'
+# # Segment 5: Directory
 seg_5 = '17'
+seg_5_text = '214'
+# Segment 6: Branch
 seg_6 = '#010042'
+seg_6_text = '45'
 
 [os.symbols]
 Linux = ''
@@ -64,34 +78,35 @@ Ubuntu = ''
 Alpine = ''
 
 [os]
-style = 'fg:seg_text bg:seg_1'
+style = 'fg:seg_1_text bg:seg_1'
 format = '[ [${symbol}](${style}) ](${style})'
 disabled = false
 
 # Print the current time.
 [time]
-style = 'fg:seg_text bg:seg_2'
+style = 'fg:seg_2_text bg:seg_2'
 disabled = false
 time_format = '%R' # Hour:Minute Format
-format = '[$time]($style)'
+format = '[ $time ]($style)'
 
 [username]
-style_user = 'fg:seg_text bg:seg_3'
+style_user = 'fg:seg_3_text bg:seg_3'
 style_root = 'fg:red bg:seg_3'
-format = '[[ ](fg:seg_text bg:seg_3) $user ](${style})'
+format = '[[ ](fg:droid_text bg:seg_3) $user ](${style})'
 show_always = true
 disabled = false
 
 [hostname]
+style = 'fg:seg_4_text bg:seg_4'
 ssh_only = false
 ssh_symbol = ' '
 trim_at = '.'
-format = '[[  ${ssh_symbol}](fg:seg_text bg:seg_4)${hostname} ](fg:seg_text bg:seg_4)'
+format = '[[  ${ssh_symbol}](fg:droid_text bg:seg_4)${hostname} ](${style})'
 disabled = false
 
 [directory]
-style = 'fg:seg_text bg:seg_5'
-format = '[[ ](fg:seg_text bg:seg_5) ${path} ](${style})'
+style = 'fg:seg_5_text bg:seg_5'
+format = '[[ ](fg:droid_text bg:seg_5) ${path} ](${style})'
 truncation_length = 3
 truncate_to_repo = true
 truncation_symbol = ' …/'
@@ -99,8 +114,8 @@ disabled = false
 
 [git_branch]
 symbol = '  '
-style = 'fg:seg_text bg:seg_6'
-format = '[[${symbol}](fg:seg_text bg:seg_6)${branch} ](${style})'
+style = 'fg:seg_6_text bg:seg_6'
+format = '[[${symbol}](fg:droid_text bg:seg_6)${branch} ](${style})'
 disabled = false
 
 [git_metrics]
@@ -110,7 +125,7 @@ deleted_style = 'fg:red bg:seg_6'
 disabled = false
 
 [git_status]
-style = 'fg:seg_text bg:seg_6'
+style = 'fg:seg_6_text bg:seg_6'
 format = '[(${all_status}[${ahead_behind}](fg:red bg:seg_6)) ](${style})'
 conflicted = ""
 ahead = ""
@@ -118,26 +133,27 @@ behind = ""
 diverged = ""
 
 [java]
-style = 'fg:seg_1'
+style = 'fg:tools_text'
 symbol = ''
 detect_files = ['pom.xml', 'build.gradle.kts', 'build.sbt', '.java-version', 'deps.edn', 'project.clj', 'build.boot', '.sdkmanrc']
-format = '[[  ](fg:seg_1)(${version} )]($style)'
+format = '[[  ](fg:tools_icon)(${version} )]($style)'
 disabled = false
 
 [python]
-style = 'fg:seg_1'
+style = 'fg:tools_text'
 symbol = ''
 detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini', 'pixi.toml']
-format = '[[  ](fg:seg_1)${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)'
+format = '[[  ](fg:tools_icon)${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)'
 disabled = false
 
 [fill]
 symbol = ' '
 
 [cmd_duration]
+style = "white"
 min_time = 100
 show_milliseconds = true
-format = '[in [${duration}](dimmed white)](dimmed white)'
+format = '[in [${duration}]($style)]($style)'
 
 [character]
 success_symbol = '[](term_text)'
