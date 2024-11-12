@@ -10,6 +10,7 @@
 #
 # Copyright (c) 2024, HomeSetup team
 
+# shellcheck disable=SC2207
 # @purpose: Run all HomeSetup automated tests.
 # @param $1..$N [Opt] : The bats files/folders to test.
 function tests() {
@@ -23,10 +24,7 @@ function tests() {
   badge="${HHS_HOME}/check-badge.svg"
 
   # If no bat file is provided, then assume  that we want tio run all HHS tests.
-  # shellcheck disable=SC2207
-  [[ ${#all_tests[@]} -eq 0 ]] && all_tests=($(find "${HHS_HOME}/tests/" -maxdepth 1  -name "*.bats"))
-  # If we did not find any test.
-  [[ ${#all_tests[@]} -eq 0 ]] && quit 1 "There are no tests to execute!"
+  [[ ${#all_tests[@]} -eq 0 ]] && all_tests=("${HHS_HOME}/tests")
   echo -n '' > "${log_file}"
 
   # Execute bats tests
@@ -41,6 +39,10 @@ function tests() {
   echo -e "  ${BLUE}|-Bash\t: ${WHITE}v$(__hhs_version bash | head -n 1)"
   echo -e "  ${BLUE}|-User\t: ${WHITE}${USER}"
   echo -en "${NC}"
+
+  [[ -d "${all_tests[*]}" ]] && all_tests=($(find "${all_tests[*]}" -maxdepth 1  -name "*.bats"))
+  # If we did not find any test.
+  [[ ${#all_tests[@]} -eq 0 ]] && quit 1 "There are no tests to execute!"
 
   for next in "${all_tests[@]}"; do
     while read -r result; do
@@ -68,7 +70,7 @@ function tests() {
         len="${#BASH_REMATCH[2]}"
         continue
       else
-        echo -e "${result}" >> "${log_file}"
+        echo -e "${result}" >> "${log_file}" 2>&1
         continue
       fi
       echo -en "${status} "
@@ -90,7 +92,7 @@ function tests() {
     echo -e "| -=- The following failures were reported -=- |"
     echo -e "+----------------------------------------------+"
     echo -e "${NC}"
-    __hhs_tailor "${log_file}" | nl | awk '{printf "\033[33;1m%4d\033[m  %s\n", $1, substr($0, index($0,$2))}'
+    cat "${log_file}" | nl | awk '{printf "\033[33;1m%4d\033[m  %s\n", $1, substr($0, index($0,$2))}'
     echo ''
     curl 'https://badgen.net/badge/tests/failed/red' --output "${badge}" 2> /dev/null
     echo -e " ${RED}${FAIL_ICN}${WHITE}  Bats tests ${RED}FAILED${WHITE} in ${diff_time_sec}s ${diff_time_ms}ms ${NC}"
