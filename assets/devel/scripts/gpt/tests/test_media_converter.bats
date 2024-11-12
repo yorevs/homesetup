@@ -59,5 +59,5 @@ setup() {
 # @purpose: Test help message output
 @test "Display help message" {
     run "${SCRIPT}" -h
-    assert_output --partial "Usage:"
+    assert_output --partial "usage:"
 }

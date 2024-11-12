@@ -12,8 +12,8 @@ setup() {
     TEST_DIR="test_directory"
     SCRIPT="${HHS_HOME}/assets/devel/scripts/gpt/src/file-archiver.bash"
     mkdir -p "$TEST_DIR"
-    touch -t 202307010000 "$TEST_DIR/old_file.txt"    # File older than 30 days
-    touch -t 202408010000 "$TEST_DIR/new_file.txt"    # Recent file
+    touch -t "$(date -v -60d '+%Y%m%d%H%M')" "$TEST_DIR/old_file.txt"  # File older than 30 days
+    touch -t "$(date '+%Y%m%d%H%M')" "$TEST_DIR/new_file.txt"  # Recent file
 }
 
 # Test Teardown

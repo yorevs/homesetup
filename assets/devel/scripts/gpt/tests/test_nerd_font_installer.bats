@@ -26,7 +26,7 @@ SCRIPT="../nerd-font-installer.bash"
 @test "Displays help message" {
   run "$SCRIPT" -h
   assert_success
-  assert_output --partial "Usage:"
+  assert_output --partial "usage:"
 }
 
 # @test: Display version information (-v option)

@@ -20,7 +20,7 @@ setup() {
 @test "Help output" {
     run bash "$SCRIPT" -h
     assert_failure
-    [[ "$output" =~ Usage:.* ]]
+    [[ "$output" =~ usage:.* ]]
 }
 
 @test "Convert ISO to cron" {

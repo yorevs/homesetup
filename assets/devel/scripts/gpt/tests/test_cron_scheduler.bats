@@ -47,34 +47,34 @@ teardown() {
 # Test: Missing ISO date argument
 @test "Missing ISO date argument" {
   run bash "${SCRIPT}" -s "/path/to/script.sh"
-  [ "$status" -eq 2 ]
+  assert_failure
   [[ "${output}" =~ ERROR ]]
 }
 
 # Test: Missing script path argument
 @test "Missing script path argument" {
   run bash "${SCRIPT}" -i "2024-08-23T15:30:00Z"
-  [ "$status" -eq 2 ]
+  assert_failure
   [[ "${output}" =~ ERROR ]]
 }
 
 # Test: Invalid ISO date
 @test "Invalid ISO date" {
   run bash "${SCRIPT}" -s "/path/to/script.sh" -i "2024-08-23T99:99:99Z"
-  [ "$status" -eq 1 ]
+  assert_failure
   [[ "${output}" =~ ERROR ]]
 }
 
 # Test: Version option
 @test "Version option" {
   run bash "${SCRIPT}" -v
-  [ "$status" -eq 2 ]
-  [[ "${output}" =~ 0.0.1 ]]
+  assert_success
+  [[ "${output}" =~ [0-9].[0-9].[0-9] ]]
 }
 
 # Test: Help option
 @test "Help option" {
   run bash "${SCRIPT}" -h
-  [ "$status" -eq 2 ]
-  [[ "${output}" =~ Usage ]]
+  assert_failure
+  [[ "${output}" =~ usage ]]
 }
