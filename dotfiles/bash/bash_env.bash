@@ -161,7 +161,7 @@ DEVELOPER_TOOLS=(
   'perl' 'groovy' 'java' 'ruby' 'python3'
   'gcc' 'make' 'gradle' 'pip3' 'gem'
   'pbcopy' 'fd' 'jq' 'sqlite3' 'gawk'
-  'colorls' 'fzf' 'bat' 'starship' 'gtrash'
+  'colorls' 'fzf' 'bat' 'starship' 'gtrash' 'atuin'
   'sdiff' 'colordiff' 'nvim'
 )
 
