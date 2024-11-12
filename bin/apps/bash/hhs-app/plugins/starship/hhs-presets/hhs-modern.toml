@@ -46,6 +46,7 @@ ${character}"""
 # Define HomeSetup custom colors.
 # Ref.: assets/images/misc/starship-colors.png
 [palettes.homesetup]
+gray = '250'
 droid_text = '15'
 term_text = '15'
 tools_icon = '221'
@@ -150,9 +151,12 @@ disabled = false
 symbol = ' '
 
 [cmd_duration]
-style = "white"
-min_time = 100
+style = "gray"
+min_time = 500
 show_milliseconds = true
+show_notifications = true
+min_time_to_notify = 300000
+notification_timeout = 1000
 format = '[in [${duration}]($style)]($style)'
 
 [character]
