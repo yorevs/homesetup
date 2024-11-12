@@ -106,22 +106,33 @@ function funcs() {
 # @param $2 [opt] : The log level to retrieve.
 function logs() {
 
-  local level logfile logs usage tail_opts="-n ${HHS_LOG_LINES:-100}"
+  local level logfile logs usage tail_opts
   local all_levels="ALL CRITICAL DEBUG ERROR FATAL FINE INFO OUT TRACE WARNING WARN SEVERE"
 
   usage="usage: __hhs ${FUNCNAME[0]} [-F] [hhs-log-file] [level]"
-
-  [[ "${1}" = '-F' ]] && tail_opts="${tail_opts} -F" && shift
   [[ "${1}" =~ -h|--help ]] && quit 0 "${usage}"
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      -F|-f|-r) tail_opts="${tail_opts} $1"; shift ;;
+      -q) tail_opts="${tail_opts} -q"; shift ;;
+      -b|-c|-n) tail_opts="${tail_opts} $1 ${2:-log_lines}"; shift 2 ;;
+      -h|--help) quit 0 "${usage}" ;;
+      *) files+=("$1"); break ;;
+    esac
+  done
+
+  tail_opts="${tail_opts} "
+  [[ ! "$tail_opts" =~ (^|[[:space:]])-n([[:space:]]|$) ]] && tail_opts="${tail_opts} -n ${HHS_LOG_LINES:-100}"
   level=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
 
   if [[ -n "${level}" ]]; then
     if ! list_contains "${all_levels}" "${level}"; then
       logfile="${HHS_LOG_DIR}/${1//.log/}.log"
       if [[ ! -f "${logfile}" ]]; then
-        logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \;)
-        echo -e "${RED}## Log file not found: ${logfile}."
-        echo -e "${ORANGE}\nAvailable log files: \n\n${logs}\n"
+        logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \; | nl)
+        __hhs_errcho "Log file not found: '${logfile}'."
+        echo -e "${YELLOW}\nAvailable log files: \n\n${BLUE}${logs}\n"
         quit 1
       fi
       level=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
@@ -133,9 +144,9 @@ function logs() {
     else
       [[ -n $2 ]] && logfile="${HHS_LOG_DIR}/${2//.log/}.log"
       if [[ -n "${logfile}" && ! -f "${logfile}" ]]; then
-        logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \;)
-        echo -e "${RED}## Log file not found: ${logfile}."
-        echo -e "${ORANGE}\nAvailable log files: \n\n${logs}\n"
+        logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \; | nl)
+        __hhs_errcho "${RED}## Log file not found: ${logfile}."
+        echo -e "${YELLOW}\nAvailable log files: \n\n${BLUE}${logs}\n"
         quit 1
       fi
     fi
@@ -144,8 +155,8 @@ function logs() {
   logfile=${logfile:="${HHS_LOG_FILE}"}
   re='-n [0-9]* -F'
 
-  [[ ${tail_opts} =~ ${re} ]] && echo -en "\n${WHITE}Tailing " || echo -en "\n${WHITE}Retrieving "
-  echo -e "[${level:-ALL}] logs from ${logfile} (last ${HHS_LOG_LINES:-100} lines):${NC}\n"
+  [[ ${tail_opts} =~ ${re} ]] && echo -en "\n${YELLOW}Tailing " || echo -en "\n${WHITE}Retrieving "
+  echo -e "[${level:-ALL}] logs from ${logfile}:${NC}\n"
 
   if [[ -z "${level}" || "${level}" == 'ALL' ]]; then
     __hhs_tailor "${tail_opts}" "${logfile}"
@@ -210,7 +221,7 @@ function help() {
     if [[ -z "${help_msg}" ]]; then
       help_msg="$(${cmd} --0h012hux267844asu 2>&1 | awk '/^[Uu]sage:/ {found=1} found')"
       if [[ -z "${help_msg}" ]]; then
-        __hhs_errcho "${RED}Help not available for: '${cmd}'"
+        __hhs_errcho "Help not available for: '${cmd}'"
       fi
     fi
     return 1
