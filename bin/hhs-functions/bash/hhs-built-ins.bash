@@ -155,6 +155,7 @@ function __hhs_where_am_i() {
     printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s${NC}" "Branch:" "${branch_name} "
     metrics=$(git diff --shortstat)
     [[ -n "${metrics}" ]] && echo -e "${WHITE}${metrics}${NC}"
+    echo ''
   fi
 }
 
