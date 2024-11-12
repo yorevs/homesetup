@@ -136,12 +136,28 @@ function __hhs_about() {
 # @function: Display the current dir (pwd) and remote repo url, if it applies.
 # @param $1 [Req] : The command to get help.
 function __hhs_where_am_i() {
+  local pad_len=20 last_commit sha commit_msg repo_url branch_name metrics
 
-  echo "${GREEN}Current directory: ${NC}$(pwd -LP)"
+  echo ' '
+  echo "${YELLOW}You are here:${NC}"
+  echo ' '
+
+  printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Current directory:" "$(pwd -LP)"
+
   if __hhs_has git && git rev-parse --is-inside-work-tree &> /dev/null; then
-    echo "${GREEN}Remote repository: ${NC}$(git remote -v | head -n 1 | awk '{print $2}')"
+    repo_url="$(git remote -v | head -n 1 | awk '{print $2}')"
+    printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Remote repository:" "${repo_url}"
+    last_commit=$(git log --oneline -n 1)
+    sha="$(echo "${last_commit}" | awk '{print $1}')"
+    commit_msg=$(echo "${last_commit}" | cut -d' ' -f2-)
+    branch_name=$(git rev-parse --abbrev-ref HEAD)
+    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s ${WHITE}%s\n${NC}" "Last commit:" "${sha}" "${commit_msg}"
+    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s${NC}" "Branch:" "${branch_name} "
+    metrics=$(git diff --shortstat)
+    [[ -n "${metrics}" ]] && echo -e "${WHITE}${metrics}${NC}"
   fi
 }
+
 
 # @function: Display/Set/unset current Shell Options.
 # @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
