@@ -21,13 +21,13 @@ function list() {
   elif [[ "${args[*]}" =~ -flat ]]; then
     args=("${args[@]/'-flat'/}")
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -plugins ]] \
-      && for next in "${PLUGINS[@]}"; do echo -n "${next} "; done
+      && { for next in "${PLUGINS[@]}"; do echo -n "${next} "; done }
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -funcs ]] \
-      && for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done
+      && { for next in "${HHS_APP_FUNCTIONS[@]}"; do echo -n "${next} "; done }
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -commands ]] \
-      && for next in $(compgen -c __hhs); do echo -n "${next} "; done
+      && { for next in "${HHS_COMMANDS[@]}"; do echo -n "${next} "; done }
     [[ ${#args[@]} -eq 1 || "${args[*]}" =~ -aliases ]] \
-      && for next in "${HHS_ALIASES[@]}"; do echo -n "${next} "; done
+      && { for next in "${HHS_ALIASES[@]}"; do echo -n "${next} "; done }
     quit 0
   else
     columns="$(tput cols)"
