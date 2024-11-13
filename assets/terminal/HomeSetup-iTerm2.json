@@ -21,12 +21,13 @@
     "Red Component" : 1
   },
   "Use Italic Font" : true,
+  "Use libtickit protocol" : true,
   "Foreground Color" : {
-    "Red Component" : 0.90000000000000002,
+    "Red Component" : 0.80000000000000004,
     "Color Space" : "P3",
-    "Blue Component" : 0.90000000000000002,
+    "Blue Component" : 0.80000000000000004,
     "Alpha Component" : 1,
-    "Green Component" : 0.90000000000000002
+    "Green Component" : 0.80000000000000004
   },
   "Use Custom Window Title" : false,
   "Right Option Key Sends" : 0,
@@ -41,6 +42,7 @@
   },
   "Blend" : 0.11571331521739127,
   "Mouse Reporting" : true,
+  "Cursor Boost" : 0.20276041666666669,
   "Ansi 4 Color" : {
     "Green Component" : 0,
     "Blue Component" : 0.73333334922790527,
@@ -64,33 +66,24 @@
   "Status Bar Layout" : {
     "components" : [
       {
-        "class" : "iTermStatusBarJobComponent",
+        "class" : "iTermStatusBarSearchFieldComponent",
         "configuration" : {
           "knobs" : {
             "base: priority" : 5,
-            "minwidth" : 0,
-            "base: compression resistance" : 1,
-            "maxwidth" : 1.7976931348623157e+308
-          },
-          "layout advanced configuration dictionary value" : {
-            "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
-          }
-        }
-      },
-      {
-        "class" : "iTermStatusBarUsernameComponent",
-        "configuration" : {
-          "knobs" : {
-            "base: priority" : 5,
-            "path" : "username",
+            "shared text color" : {
+              "Red Component" : 0.86000317335128784,
+              "Color Space" : "P3",
+              "Blue Component" : 0.63590961694717407,
+              "Alpha Component" : 1,
+              "Green Component" : 0.6414334774017334
+            },
             "base: compression resistance" : 1
           },
           "layout advanced configuration dictionary value" : {
-            "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "remove empty components" : true,
+            "font" : "DroidSansMonoNerdFontComplete- 14",
+            "algorithm" : 1,
+            "auto-rainbow style" : 0
           }
         }
       },
@@ -98,60 +91,45 @@
         "class" : "iTermStatusBarWorkingDirectoryComponent",
         "configuration" : {
           "knobs" : {
-            "path" : "path",
             "base: priority" : 5,
+            "maxwidth" : 1.7976931348623157e+308,
+            "minwidth" : 50,
+            "shared font" : "",
             "base: compression resistance" : 1,
-            "minwidth" : 0,
-            "maxwidth" : 1.7976931348623157e+308
+            "shared text color" : {
+              "Red Component" : 0.77340084314346313,
+              "Color Space" : "P3",
+              "Blue Component" : 0.18675747513771057,
+              "Alpha Component" : 1,
+              "Green Component" : 0.53116852045059204
+            },
+            "path" : "path"
           },
           "layout advanced configuration dictionary value" : {
-            "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
-          }
-        }
-      },
-      {
-        "class" : "iTermStatusBarGitComponent",
-        "configuration" : {
-          "knobs" : {
-            "iTermStatusBarGitComponentPollingIntervalKey" : 2,
-            "base: priority" : 5,
-            "base: compression resistance" : 1,
-            "minwidth" : 0,
-            "maxwidth" : 1.7976931348623157e+308
-          },
-          "layout advanced configuration dictionary value" : {
-            "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
-          }
-        }
-      },
-      {
-        "class" : "iTermStatusBarSearchFieldComponent",
-        "configuration" : {
-          "knobs" : {
-            "base: priority" : 5,
-            "base: compression resistance" : 1
-          },
-          "layout advanced configuration dictionary value" : {
-            "remove empty components" : false,
-            "auto-rainbow style" : 0,
-            "algorithm" : 0
+            "remove empty components" : true,
+            "font" : "DroidSansMonoNerdFontComplete- 14",
+            "algorithm" : 1,
+            "auto-rainbow style" : 0
           }
         }
       }
     ],
     "advanced configuration" : {
-      "remove empty components" : false,
-      "font" : ".SFNS-Regular 12",
-      "algorithm" : 0,
+      "remove empty components" : true,
+      "font" : "DroidSansMonoNerdFontComplete- 14",
+      "algorithm" : 1,
       "auto-rainbow style" : 0
     }
   },
   "Cursor Shadow" : false,
   "Flashing Bell" : true,
+  "Cursor Guide Color" : {
+    "Red Component" : 0,
+    "Color Space" : "P3",
+    "Blue Component" : 0,
+    "Alpha Component" : 1,
+    "Green Component" : 0
+  },
   "BM Growl" : true,
   "Ansi 3 Color" : {
     "Green Component" : 0.73333334922790527,
@@ -160,13 +138,17 @@
   },
   "Icon" : 1,
   "Use Non-ASCII Font" : false,
+  "Use Custom Tab Title" : false,
   "Shortcut" : "E",
   "Background Image Location" : "\/Users\/hjunior\/HomeSetup\/assets\/images\/hs-github-image.png",
   "Bold Color" : {
-    "Green Component" : 1,
+    "Red Component" : 1,
+    "Color Space" : "P3",
     "Blue Component" : 1,
-    "Red Component" : 1
+    "Alpha Component" : 1,
+    "Green Component" : 1
   },
+  "Use Cursor Guide" : false,
   "Unlimited Scrollback" : false,
   "Custom Command" : "Custom Shell",
   "Title Components" : 544,
@@ -364,15 +346,19 @@
   "Allow Title Reporting" : true,
   "Use Bright Bold" : true,
   "Cursor Text Color" : {
-    "Green Component" : 1,
-    "Blue Component" : 1,
-    "Red Component" : 1
+    "Red Component" : 0.80000000000000004,
+    "Color Space" : "P3",
+    "Blue Component" : 0.80000000000000004,
+    "Alpha Component" : 1,
+    "Green Component" : 0.80000000000000004
   },
   "Default Bookmark" : "No",
   "Cursor Color" : {
-    "Green Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527,
-    "Red Component" : 0.73333334922790527
+    "Red Component" : 0.80000000000000004,
+    "Color Space" : "P3",
+    "Blue Component" : 0.80000000000000004,
+    "Alpha Component" : 1,
+    "Green Component" : 0.80000000000000004
   },
   "Ansi 1 Color" : {
     "Green Component" : 0,
@@ -382,17 +368,18 @@
   "Name" : "HomeSetup-iTerm2",
   "Blinking Cursor" : true,
   "Guid" : "E442A700-A3C6-47E8-A199-1E9AAFDDCC02",
-  "Idle Code" : 0,
-  "Ansi 10 Color" : {
-    "Green Component" : 1,
-    "Blue Component" : 0.3333333432674408,
-    "Red Component" : 0.3333333432674408
-  },
   "Ansi 8 Color" : {
     "Green Component" : 0.3333333432674408,
     "Blue Component" : 0.3333333432674408,
     "Red Component" : 0.3333333432674408
   },
+  "Ansi 10 Color" : {
+    "Green Component" : 1,
+    "Blue Component" : 0.3333333432674408,
+    "Red Component" : 0.3333333432674408
+  },
+  "Idle Code" : 0,
+  "Smart Cursor Color" : false,
   "Ambiguous Double Width" : false,
   "Blur Radius" : 3.1928696065989848,
   "Background Image Mode" : 2,
@@ -421,7 +408,7 @@
   "Option Key Sends" : 0,
   "Only The Default BG Color Uses Transparency" : false,
   "Blink Allowed" : true,
-  "Minimum Contrast" : 0.050000000000000003,
+  "Minimum Contrast" : 0.24683225235849038,
   "Ansi 15 Color" : {
     "Green Component" : 1,
     "Blue Component" : 1,
@@ -433,6 +420,7 @@
     "Red Component" : 0
   },
   "Transparency" : 0.061147668716755331,
+  "Faint Text Alpha" : 0.05219487028301887,
   "Background Color" : {
     "Red Component" : 0.10000000000000001,
     "Color Space" : "P3",
@@ -441,6 +429,7 @@
     "Green Component" : 0.10000000000000001
   },
   "Screen" : 0,
+  "Custom Tab Title" : "HomeSetup",
   "Initial Use Transparency" : false,
   "Load Shell Integration Automatically" : false,
   "Non Ascii Font" : "Monaco 12",
