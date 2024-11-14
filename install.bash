@@ -1022,6 +1022,7 @@ usage: $APP_NAME [OPTIONS] <args>
       from askai.core.component.rag_provider import RAGProvider
       if __name__ == '__main__':
         RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
+        RAGProvider.copy_rag('${HHS_HOME}/README.md', 'homesetup-docs/README.md')
       "
       PYTHON=$(command -v python3 2>/dev/null)
       # Dedent the python code above, 6 spaces for now
