@@ -37,7 +37,6 @@ export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL##*/}"
 
 export INPUTRC="${INPUTRC:-${HOME}/.inputrc}"
-export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
 
 # Detect if HomeSetup was installed using an installation prefix.
 export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -62,6 +61,7 @@ export HHS_MOTD_DIR="${HHS_DIR}/motd"
 export HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
 export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 export HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
+export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -136,7 +136,15 @@ if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
 fi
 
 # Initialize HomeSetup key bindings.
-[[ -s "${HHS_KEY_BINDINGS}" ]] && bind -f "${HHS_KEY_BINDINGS}"
+if ! [[ -f "${HHS_KEY_BINDINGS}" ]]; then
+  __hhs_log "WARN" "'${HHS_KEY_BINDINGS}' file was copied because it was not found at: ${HHS_DIR}"
+fi
+
+if bind -f "${HHS_KEY_BINDINGS}"; then
+  __hhs_log "INFO" "HomeSetup key bindings loaded: ${HHS_KEY_BINDINGS}"
+else
+  __hhs_log "WARN" "HomeSetup key bindings failed to load: ${HHS_KEY_BINDINGS}"
+fi
 
 # Load initialization setup.
 if [[ ! -s "${HHS_SETUP_FILE}" ]]; then
