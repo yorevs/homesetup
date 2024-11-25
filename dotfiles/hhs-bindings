@@ -1,0 +1,23 @@
+# HomeSetup Key bindings
+
+# [TAB] press
+TAB: complete
+
+# [Shift + TAB] press -> menu complete.
+"\e[Z": menu-complete
+
+# Arrows UP & DOWN to search from history.
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+# bind Alt + Arrows to navigate through words.
+
+# Alt + left
+"\e[1;3D": backward-word
+"\e\e[D": backward-word
+
+# Alt + right
+"\e[1;3C": forward-word
+"\e\e[C": forward-word
+
+# Launch $EDITOR on the current command and execute when finished editing.
+"\ee": edit-and-execute-command

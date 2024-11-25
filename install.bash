@@ -680,6 +680,9 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
     copy_file "${HHS_HOME}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
 
+    # HomeSetup key bindings.
+    copy_file "${HHS_HOME}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
+
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 
     echo ">>> Linked dotfiles:" >>"${INSTALL_LOG}"

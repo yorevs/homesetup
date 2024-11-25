@@ -37,6 +37,7 @@ export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL##*/}"
 
 export INPUTRC="${INPUTRC:-${HOME}/.inputrc}"
+export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
 
 # Detect if HomeSetup was installed using an installation prefix.
 export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -133,6 +134,9 @@ if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
   __hhs_log "WARN" "'.aliasdef' file was copied because it was not found at: ${HHS_DIR}"
   \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
 fi
+
+# Initialize HomeSetup key bindings.
+[[ -s "${HHS_KEY_BINDINGS}" ]] && bind -f "${HHS_KEY_BINDINGS}"
 
 # Load initialization setup.
 if [[ ! -s "${HHS_SETUP_FILE}" ]]; then

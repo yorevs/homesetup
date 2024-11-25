@@ -242,8 +242,9 @@ function reset() {
     "${HHS_LOG_DIR}/*.log"
     "${HHS_BACKUP_DIR}/*.bak"
     "${HHS_CACHE_DIR}/*.cache"
-    "${HOME}/.inputrc"
     "${HHS_DIR}/.aliasdef"
+    "${HHS_DIR}/.hhs-bindings"
+    "${HOME}/.inputrc"
     "${HHS_SETUP_FILE}"
     "${HHS_SHOPTS_FILE}"
   )

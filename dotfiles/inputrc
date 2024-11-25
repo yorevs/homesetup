@@ -31,21 +31,6 @@ set colored-completion-prefix on
 # Do not bell on tab-completion (use the visible bell).
 set bell-style visible
 
-# Key binds -------------------------------------------------------------
-
-# [TAB] press
-TAB: complete
-
-# [Shift + TAB] press -> menu complete.
-"\e[Z": menu-complete
-
-# Arrows UP & DOWN to search from history.
-"\e[A": history-search-backward
-"\e[B": history-search-forward
-
-# Launch $EDITOR on the current command and execute when finished editing.
-"\ee": edit-and-execute-command
-
 # Complete Options -------------------------------------------------------
 
 # Treat hypen and underscores as equivalent.
@@ -70,4 +55,3 @@ set show-all-if-ambiguous on
 
 # Smartly complete items when the cursor is not at the end of the line.
 set skip-completed-text on
-
