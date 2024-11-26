@@ -254,19 +254,15 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
 fi
 
 # Load system settings using setman.
-if __hhs_has_module hspylib-clitt; then
-  if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
-    # Update the settings configuration.
-    echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
-    tmp_file="$(mktemp)"
-    if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
-      __hhs_log "INFO" "System settings loaded !"
-    else
-      __hhs_log "ERROR" "Failed to load system settings !"
-    fi
+if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
+  # Update the settings configuration.
+  echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
+  tmp_file="$(mktemp)"
+  if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
+    __hhs_log "INFO" "System settings loaded !"
+  else
+    __hhs_log "ERROR" "Failed to load system settings !"
   fi
-else
-  __hhs_log "WARN" "Clitt is not installed. Settings will be disabled !"
 fi
 
 # Load bash completions.
