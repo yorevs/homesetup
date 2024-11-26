@@ -136,6 +136,9 @@ Linux)
   ;;
 esac
 
+# Set the terminal title and prompt.
+# Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details.
+
 # Terminal title.
 TITLE="HomeSetup-v${HHS_VERSION}"
 ESCAPED_TITLE="\[\e]2;${TITLE}\a\]"
@@ -167,18 +170,6 @@ GIT_STYLE="${PROMPT_COLOR}\$(__hhs_git_prompt \" ${GIT_ICN} ${GIT_COLOR}\")"
 # User prompt format.
 PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} ${PROMPT_ICN} "
 
-# Set the terminal title and prompt.
-# Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details.
-
-# PS1 Style: Color and icons (default).
-PS1_STYLE=$"${HIST_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
-
-# PS2 Style: Continuation prompt.
-PS2_STYLE=$'... '
-
-export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
-export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
-
 # Initialize Starship prompt if it is set to.
 if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
 
@@ -204,6 +195,17 @@ if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   else
     __hhs_log "ERROR" "Starship failed to start!"
   fi
+fi
+
+if [[ -z "${STARSHIP_SESSION_KEY}" ]]; then
+    # PS1 Style: Color and icons (default).
+  PS1_STYLE=$"${HIST_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
+
+  # PS2 Style: Continuation prompt.
+  PS2_STYLE=$'... '
+
+  export PS1=${HHS_CUSTOM_PS1:-$PS1_STYLE}
+  export PS2=${HHS_CUSTOM_PS2:-$PS2_STYLE}
 fi
 
 # ColorLS integration. Copy HomeSetup config files if they are not found.

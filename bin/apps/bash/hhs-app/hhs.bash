@@ -383,7 +383,7 @@ function command_hint() {
         fi
 
         # Remove the last word from user_input and try again
-        unset 'user_input[-1]'
+        unset 'user_input[-1]' &>/dev/null || break
     done
 
     # Display error message and matching commands or a fallback message if no matches

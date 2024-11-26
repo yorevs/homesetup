@@ -45,7 +45,7 @@ usage: $APP_NAME [OPTIONS] <args>
     quit usage has check_current_shell check_inst_method install_dotfiles clone_repository check_required_tools
     activate_dotfiles compatibility_check install_packages configure_python install_hspylib ensure_brew
     copy_file create_directory install_homesetup abort_install check_prefix configure_starship install_brew
-    install_tools query_askai_install create_destination_dirs configure_askai_rag configure_blesh
+    install_tools query_askai_install create_destination_dirs configure_askai_rag configure_blesh create_venv
   )
 
 
@@ -119,6 +119,8 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
+    'hspylib'
+    'hspylib-datasource'
     'hspylib-clitt'
     'hspylib-setman'
     'hspylib-vault'
@@ -139,7 +141,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk' 'make'
   )
 
   # Missing HomeSetup dependencies
@@ -307,6 +309,9 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Ble Bash plug installation in location
     HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
+
+    # HomeSetup virtual environment path.
+    HHS_VENV_PATH="${HHS_DIR}/venv"
 
     # Fonts destination location
     if [[ "Darwin" == "${MY_OS}" ]]; then
@@ -791,29 +796,57 @@ usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     PIP=$(command -v pip3 2>/dev/null)
-    [[ -z "${PYTHON}" ]] && quit 2 "Python3 is required to install HomeSetup !"
-    [[ -z "${PIP}" ]] && quit 2 "Pip3 is required to install HomeSetup !"
-    python_version="$(${PYTHON} -V)"
-    pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
-    ${PIP} freeze >>"${INSTALL_LOG}"  2>&1 || quit 2 "PIP3 is required to install HomeSetup !"
+    has "${PYTHON}" || quit 2 "Python3 is required to install HomeSetup !"
+    has "${PIP}" || quit 2 "Pip3 is required to install HomeSetup !"
     echo -e "${GREEN}OK${NC}"
     echo ''
-    echo -e "${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
-    install_hspylib "${PYTHON}" "${PIP}"
+    create_venv "${PYTHON}" "${PIP}"
+    install_hspylib
+  }
+
+  # Create HomeSetup virtual environment.
+  create_venv() {
+    # Identified python tools
+    PYTHON="${1}"
+    PIP="${2}"
+    if [[ ! -d "${HHS_VENV_PATH}" ]]; then
+      echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Creating virtual environment... "
+      if ${PYTHON} -m venv "${HHS_VENV_PATH}" &>/dev/null; then
+        echo -e "${GREEN}OK${NC}"
+        echo -e "${BLUE}[$(basename "${PYTHON}")] Virtual environment created in: '${HHS_VENV_PATH}'."
+      else
+        echo -e "${RED}FAILED${NC}"
+        quit 2 "Unable to create virtual environment!"
+      fi
+    else
+      echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'"
+    fi
+
+    # Activate the virtual environment.
+    echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Activating virtual environment ...${NC}"
+    if source "${HHS_VENV_PATH}"/bin/activate; then
+      echo -e "${GREEN}OK${NC}"
+    else
+      echo -e "${RED}FAILED${NC}"
+      quit 2 "Unable to activate virtual environment!"
+    fi
   }
 
   # Install HomeSetup python libraries.
   install_hspylib() {
-    # Define python tools
-    PYTHON="${1}"
-    PIP="${2}"
-    echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... "
+    python_version="$(${PYTHON} -V)"
+    pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
+    PYTHON=$(command -v python3 2>/dev/null)
+    PIP=$(command -v pip3 2>/dev/null)
+    echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
+    echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... "
     pkgs=$(mktemp)
-    echo "${PYTHON_MODULES[*]}" | tr ' ' '\n' >"${pkgs}"
+    echo "$pkgs"
+    printf "%s\n" "${PYTHON_MODULES[@]}" >"${pkgs}"
+    printf "\t|-%s\n" "${PYTHON_MODULES[@]}"
     if \
       ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
-      echo -e "${GREEN}OK${NC}"
       \rm -f  "$(mktemp)"
       echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
       ${PIP} freeze | grep hspylib >>"${INSTALL_LOG}"
@@ -838,8 +871,8 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e "This is to avoid invoking dotfiles multiple times. If you are sure that your .profile don't source either"
       echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
       echo -e "$ mv ${HHS_BACKUP_DIR}/profile.orig ${HOME}/.profile"
-      echo ''
-      [[ -z "${STREAMED}" ]] && read -rn 1 -p "Press any key to continue...${NC}"
+      echo "${NC}"
+      [[ -z "${STREAMED}" ]] && read -rn 1 -p "Press any key to continue..."
     fi
 
     # Moving old hhs files into the proper directory.
