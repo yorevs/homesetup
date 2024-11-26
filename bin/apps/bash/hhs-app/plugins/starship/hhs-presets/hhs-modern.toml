@@ -144,7 +144,7 @@ disabled = false
 style = 'fg:tools_text'
 symbol = ''
 detect_files = ['.python-version', 'Pipfile', '__init__.py', 'pyproject.toml', 'requirements.txt', 'setup.py', 'tox.ini', 'pixi.toml']
-format = '[[  ](fg:tools_icon)${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)'
+format = '[[  ](fg:tools_icon)${pyenv_prefix}(${version} )(\[($virtualenv\]) )]($style)'
 disabled = false
 
 [fill]
