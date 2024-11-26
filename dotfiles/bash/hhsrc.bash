@@ -62,6 +62,7 @@ export HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
 export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 export HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
 export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
+export HHS_VENV_PATH="${HHS_VENV_PATH:-${HHS_DIR}/venv}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -110,20 +111,38 @@ CUSTOM_DOTFILES=(
    'functions'
 )
 
-# Add custom paths to the system `$PATH`.
-if [[ -f "${HHS_DIR}/.path" ]]; then
-  all="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
-  for f_path in ${all}; do
-    [[ -n "${f_path}" ]] && PATH="${f_path}:${PATH}"
-  done
-fi
+# Source the bash common functions. Logs are available below here.
+source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 # Re-create the HomeSetup log file.
 started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
-# Source the bash common functions. Logs are available below here.
-source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
+# HomeSetup initialization.
+if [[ ! -s "${HHS_SETUP_FILE}" ]]; then
+  __hhs_log "WARN" "HomeSetup initialization file not found. Using defaults."
+  \cp "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
+fi
+re='^([a-zA-Z0-9_.]+) *= *(.*)'
+while read -r pref; do
+  if [[ ${pref} =~ $re ]]; then
+    pref="$(tr '[:lower:]' '[:upper:]' <<<"${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")"
+    pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
+    export "${pref?}"
+  fi
+done <"${HHS_SETUP_FILE}"
+__hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
+
+# !!!Settings are available as environment variables from this point.!!!
+
+# Add custom paths to the system `$PATH`.
+if [[ -f "${HHS_DIR}/.path" ]]; then
+  __hhs_log "DEBUG" "Adding custom system $$PATH's"
+  all="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
+  for f_path in ${all}; do
+    [[ -n "${f_path}" ]] && PATH="${f_path}:${PATH}"
+  done
+fi
 
 if ! [[ -s "${INPUTRC}" ]]; then
   __hhs_log "WARN" "'.inputrc' file was copied because it was not found at: ${HOME}"
@@ -146,23 +165,6 @@ else
   __hhs_log "WARN" "HomeSetup key bindings failed to load: ${HHS_KEY_BINDINGS}"
 fi
 
-# Load initialization setup.
-if [[ ! -s "${HHS_SETUP_FILE}" ]]; then
-  __hhs_log "WARN" "HomeSetup initialization file not found. Using defaults."
-  \cp "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
-fi
-re='^([a-zA-Z0-9_.]+) *= *(.*)'
-while read -r pref; do
-  if [[ ${pref} =~ $re ]]; then
-    pref="$(tr '[:lower:]' '[:upper:]' <<<"${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")"
-    pref="${pref//TRUE/1}" && pref="${pref//FALSE/}"
-    export "${pref?}"
-  fi
-done <"${HHS_SETUP_FILE}"
-__hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
-
-# Settings are available as environment variables from this point.
-
 # Set system locale variables (defaults)
 if [[ ${HHS_SET_LOCALES} -eq 1 ]]; then
   export LANGUAGE=${LANGUAGE:-en_US:en}
@@ -184,6 +186,19 @@ if [[ ${HHS_USE_BLESH} -eq 1 ]]; then
   [[ $- == *i* ]] && source "${HHS_BLESH_DIR}/out/ble.sh" --noattach
 else
   __hhs_log "WARN" "Ble-sh initialization was disabled !"
+fi
+
+# Activate HomeSetup Python venv.
+if [[ ${HHS_ACTIVATE_PYTHON_VENV:-1} -eq 1 ]]; then
+  __hhs_log "DEBUG" "Activating virtual env... "
+  if source "${HHS_VENV_PATH}"/bin/activate; then
+    __hhs_log "INFO" "HomeSetup Python venv has been activated: ${HHS_VENV_PATH}"
+  else
+    __hhs_log "ERROR" "Unable to activate HomeSetup Python venv!"
+  fi
+else
+  echo -e "${YELLOW}SKIPPED${NC}"
+  __hhs_log "WARN" "HomeSetup Python venv skipped!"
 fi
 
 # -----------------------------------------------------------------------------------
@@ -238,16 +253,20 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
   __hhs_log "INFO" "Shell options activated !"
 fi
 
-# Load system settings.
-if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
-  # Update the settings configuration.
-  echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
-  tmp_file="$(mktemp)"
-  if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
-    __hhs_log "INFO" "System settings loaded !"
-  else
-    __hhs_log "ERROR" "Failed to load system settings !"
+# Load system settings using setman.
+if __hhs_has_module hspylib-clitt; then
+  if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
+    # Update the settings configuration.
+    echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
+    tmp_file="$(mktemp)"
+    if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
+      __hhs_log "INFO" "System settings loaded !"
+    else
+      __hhs_log "ERROR" "Failed to load system settings !"
+    fi
   fi
+else
+  __hhs_log "WARN" "Clitt is not installed. Settings will be disabled !"
 fi
 
 # Load bash completions.
@@ -289,32 +308,48 @@ if [[ ${HHS_LOAD_KEY_BINDINGS} -eq 1 ]]; then
   export HHS_BINDINGS
 fi
 
+# shellcheck disable=2164
+if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
+  last_dir="$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
+  cd "${last_dir}" 2> /dev/null ||
+    __hhs_log "WARN" "Last directory ${last_dir} is not available !"
+fi
+
+# Attach ble-sh to bash if it's enabled.
+if [[ ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
+  __hhs_log "DEBUG" "Attaching Ble-sh plug-in"
+  [[ ! ${BLE_VERSION-} ]] || ble-attach
+else
+  unset HHS_USE_BLESH
+  __hhs_log "WARN" "Ble-sh was not enabled !"
+fi
+
+# Attach atuin to bash if it's enabled
+if __hhs_has "atuin" && [[ ${HHS_USE_ATUIN} -eq 1 ]]; then
+  __hhs_log "DEBUG" "Attaching Atuin plug-in"
+  if ! eval "$(atuin init bash)" || ! atuin import auto &>/dev/null; then
+    __hhs_log "WARN" "Atuin was not enabled !"
+  fi
+fi
+
 # Check for HomeSetup updates.
 if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
   if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
     echo
-    __hhs_log "INFO" "Home setup is checking for updates ..."
+    echo -e "${BLUE}HomeSetup is checking for updates ...${NC}"
     if __hhs_is_reachable 'github.com'; then
       __hhs updater execute check
     else
-      __hhs_log "WARN" "GitHub website is not reachable !"
+      __hhs_errcho "HomeSetup GitHub website is unreachable !"
     fi
+  else
+    echo -en "\033[1J\033[H"
   fi
 fi
 
-finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
-diff_time=$((finished - started))
-diff_time_sec=$((diff_time/1000))
-diff_time_ms=$((diff_time-(diff_time_sec*1000)))
-
-echo -e "\nHomeSetup initialization complete in ${diff_time_sec}s ${diff_time_ms}ms\n" >>"${HHS_LOG_FILE}"
-
-# shellcheck disable=2164
-if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
-  last_dir="$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
-  cd "${last_dir}" 2> /dev/null
-  __hhs_log "WARN" "Last directory ${last_dir} is not available !"
-fi
+# Remove PATH duplicates.
+PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
+export PATH
 
 # Print HomeSetup MOTDs.
 if [[ -d "${HHS_MOTD_DIR}" ]]; then
@@ -324,26 +359,12 @@ if [[ -d "${HHS_MOTD_DIR}" ]]; then
   done
 fi
 
-# Attach ble-sh to bash if it's enabled.
-if [[ ${HHS_USE_BLESH} -eq 1 && -d "${HHS_BLESH_DIR}" ]]; then
-  __hhs_log "DEBUG" "Attaching Ble-sh plug-in"
-  [[ ! ${BLE_VERSION-} ]] || ble-attach
-else
-  unset HHS_USE_BLESH
-  __hhs_log "WARN" "Ble-sh could not be attached !"
-fi
+finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
+diff_time=$((finished - started))
+diff_time_sec=$((diff_time/1000))
+diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
-# Attach atuin to bash if it's enabled
-if __hhs_has "atuin" && [[ ${HHS_USE_ATUIN} -eq 1 ]]; then
-  __hhs_log "DEBUG" "Attaching Atuin plug-in"
-  if ! eval "$(atuin init bash)" || ! atuin import auto &>/dev/null; then
-    __hhs_log "WARN" "Atuin could not be attached !"
-  fi
-fi
-
-# Remove PATH duplicates.
-PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
-export PATH
+__hhs_log "INFO" "HomeSetup initialization complete in ${diff_time_sec}s ${diff_time_ms}ms" >>"${HHS_LOG_FILE}"
 
 unset -f started finished diff_time diff_time_sec diff_time_ms state option line file all
-unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name last_dir
+unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name last_dir re

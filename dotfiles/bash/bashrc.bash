@@ -21,8 +21,20 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
+
+if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
+  echo -e "\033[33mStarting HomeSetup in debug mode\033[m"
+  PS4='+ $(date "+%s.%S")\011 '
+  exec 3>&2 2>~/hhsrc.$$.log
+  set -x
+else
+  echo -e "\033[34mStarting HomeSetup ...\033[m"
+fi
+
+__hhs_has python3 || { echo -e "\033[31mPython is required to boot HomeSetup\033[m"; exit 1; }
+
 # Unset all HHS_ variables
-unset "${!HHS_@}"
+unset "${!HHS_@}" "${!PS@}"
 
 # If not running interactively and if it is not a Jenkins build, skip it.
 [[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
@@ -46,3 +58,8 @@ case "${SHELL##*\/}" in
     echo ''
     ;;
 esac
+
+if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
+  set +x
+  exec 2>&3 3>&-
+fi
