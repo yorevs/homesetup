@@ -254,7 +254,7 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
 fi
 
 # Load system settings using setman.
-if pip show hapylib-clitt &>/dev/null; then
+if __hhs_has_module hspylib-clitt; then
   if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
     # Update the settings configuration.
     echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
@@ -308,19 +308,6 @@ if [[ ${HHS_LOAD_KEY_BINDINGS} -eq 1 ]]; then
   export HHS_BINDINGS
 fi
 
-# Check for HomeSetup updates.
-if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
-  if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
-    echo
-    echo -e "${YELLOW}Home setup is checking for updates ...${NC}"
-    if __hhs_is_reachable 'github.com'; then
-      __hhs updater execute check
-    else
-      __hhs_log "WARN" "GitHub website is not reachable !"
-    fi
-  fi
-fi
-
 # shellcheck disable=2164
 if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   last_dir="$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
@@ -345,11 +332,24 @@ if __hhs_has "atuin" && [[ ${HHS_USE_ATUIN} -eq 1 ]]; then
   fi
 fi
 
+# Check for HomeSetup updates.
+if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
+  if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
+    echo
+    echo -e "${BLUE}HomeSetup is checking for updates ...${NC}"
+    if __hhs_is_reachable 'github.com'; then
+      __hhs updater execute check
+    else
+      __hhs_errcho "HomeSetup GitHub website is unreachable !"
+    fi
+  else
+    echo -en "\033[1J\033[H"
+  fi
+fi
+
 # Remove PATH duplicates.
 PATH=$(awk -F: '{for (i=1;i<=NF;i++) { if ( !x[$i]++ ) printf("%s:",$i); }}' <<<"${PATH}")
 export PATH
-
-echo -en "\033[1J\033[H"
 
 # Print HomeSetup MOTDs.
 if [[ -d "${HHS_MOTD_DIR}" ]]; then

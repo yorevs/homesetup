@@ -32,6 +32,21 @@ function __hhs_has() {
   return $?
 }
 
+# @function: Check if a python module is installed.
+# @param $1 [Req] : The python module to check.
+function __hhs_has_module() {
+  local module="$1"
+
+  if [[ $# -eq 0 || '-h' == "$1" ]]; then
+    echo "usage: ${FUNCNAME[0]} <python module/package>"
+  return 1
+  fi
+
+  pip show "${module}" &>/dev/null
+
+  return $?
+}
+
 # @function: Log a message to the HomeSetup log file.
 # @param $1 [Req] : The log level.
 # @param $* [Req] : The log level. One of ["WARN", "DEBUG", "INFO", "ERROR", "ALL"].

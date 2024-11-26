@@ -105,7 +105,7 @@ is_updated() {
     fi
   done
 
-  echo -e "${GREEN}Your version of HomeSetup is up-to-date v${HHS_VERSION}${NC}"
+  echo -e "${WHITE}Your version of ${GREEN}HomeSetup is up-to-date ${YELLOW}v${HHS_VERSION}${NC}"
 
   return 0
 }
