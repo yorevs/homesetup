@@ -813,7 +813,7 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Creating virtual environment... "
       if ${PYTHON} -m venv "${HHS_VENV_PATH}" &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
-        echo -e "${BLUE}[$(basename "${PYTHON}")] Virtual environment created in: '${HHS_VENV_PATH}'."
+        echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
       else
         echo -e "${RED}FAILED${NC}"
         quit 2 "Unable to create virtual environment!"
@@ -839,11 +839,10 @@ usage: $APP_NAME [OPTIONS] <args>
     PYTHON=$(command -v python3 2>/dev/null)
     PIP=$(command -v pip3 2>/dev/null)
     echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
-    echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... "
+    echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
-    echo "$pkgs"
     printf "%s\n" "${PYTHON_MODULES[@]}" >"${pkgs}"
-    printf "\t|-%s\n" "${PYTHON_MODULES[@]}"
+    printf "${BLUE}[$(basename "${PYTHON}")] ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
     if \
       ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
