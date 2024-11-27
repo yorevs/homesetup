@@ -136,12 +136,14 @@ function __hhs_about() {
 # @function: Display the current dir (pwd) and remote repo url, if it applies.
 # @param $1 [Req] : The command to get help.
 function __hhs_where_am_i() {
-  local pad_len=20 last_commit sha commit_msg repo_url branch_name metrics
+  local pad_len=24 last_commit sha commit_msg repo_url branch_name metrics
 
   echo ' '
   echo "${YELLOW}You are here:${NC}"
   echo ' '
 
+  [[ ${HHS_PYTHON_VENV_ACTIVE:-0} -eq 1 ]] &&
+    printf "${GREEN}%${pad_len}s ${CYAN}%s ${WHITE}%s\n${NC}" "Virtual Environment:" "$(python -V)" "=> ${HHS_VENV_PATH}"
   printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Current directory:" "$(pwd -LP)"
 
   if __hhs_has git && git rev-parse --is-inside-work-tree &> /dev/null; then
@@ -151,7 +153,7 @@ function __hhs_where_am_i() {
     sha="$(echo "${last_commit}" | awk '{print $1}')"
     commit_msg=$(echo "${last_commit}" | cut -d' ' -f2-)
     branch_name=$(git rev-parse --abbrev-ref HEAD)
-    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s ${WHITE}%s\n${NC}" "Last commit:" "${sha}" "${commit_msg}"
+    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s ${WHITE}%s\n${NC}" "Last commit sha:" "${sha}" "${commit_msg}"
     printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s${NC}" "Branch:" "${branch_name} "
     metrics=$(git diff --shortstat)
     [[ -n "${metrics}" ]] && echo -e "${WHITE}${metrics}${NC}"
@@ -164,7 +166,7 @@ function __hhs_where_am_i() {
 # @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
 function __hhs_shopt() {
 
-  local shell_options option enable
+  local shell_options option enable color
 
   enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
 
@@ -201,9 +203,12 @@ function __hhs_shopt() {
     echo "${NC}"
     return 0
   elif [[ ${#} -ge 1 && ${enable} =~ -(s|u|p|q|o) ]]; then
-      # shellcheck disable=SC2068
-      \shopt ${@}
-      return $?
+    if \shopt "${1}" "${2}"; then
+      read -r option enable < <(\shopt "${2}" | awk '{print $1, $2}')
+      [[ 'off' == "${enable}" ]] && color="${RED}"
+      __hhs_toml_set "${HHS_SHOPTS_FILE}" "${option}=${enable}" &&
+        { echo -e "${WHITE}Shell option ${CYAN}${option}${WHITE} set to ${color:-${GREEN}}${enable} ${NC}"; return 0; }
+    fi
   fi
 
   return 1

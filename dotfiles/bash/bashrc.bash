@@ -34,7 +34,7 @@ fi
 __hhs_has python3 || { echo -e "\033[31mPython is required to boot HomeSetup\033[m"; exit 1; }
 
 # Unset all HHS_ variables
-unset "${!HHS_@}" "${!PS@}"
+unset "${!HHS_@}" "${!PS@}" "${!LC_@}"
 
 # If not running interactively and if it is not a Jenkins build, skip it.
 [[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return

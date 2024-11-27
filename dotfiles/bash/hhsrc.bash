@@ -189,15 +189,15 @@ else
 fi
 
 # Activate HomeSetup Python venv.
-if [[ ${HHS_ACTIVATE_PYTHON_VENV:-1} -eq 1 ]]; then
+if [[ ${HHS_PYTHON_VENV_ENABLED:-1} -eq 1 ]]; then
   __hhs_log "DEBUG" "Activating virtual env... "
   if source "${HHS_VENV_PATH}"/bin/activate; then
     __hhs_log "INFO" "HomeSetup Python venv has been activated: ${HHS_VENV_PATH}"
+    export HHS_PYTHON_VENV_ACTIVE=1
   else
     __hhs_log "ERROR" "Unable to activate HomeSetup Python venv!"
   fi
 else
-  echo -e "${YELLOW}SKIPPED${NC}"
   __hhs_log "WARN" "HomeSetup Python venv skipped!"
 fi
 
@@ -238,7 +238,7 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
     \shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
        quit 2 "Unable to create the Shell Options file !"
   fi
-  re_key_pair="^([a-zA-Z0-9]*) *= *(.*)$"
+  re_key_pair="^([a-zA-Z0-9]*) *= *([Oo]n|[Oo]ff)$"
   while read -r line; do
     if [[ ${line} =~ ${re_key_pair} ]]; then
       option="${BASH_REMATCH[1]}"

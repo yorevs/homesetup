@@ -139,37 +139,6 @@ esac
 # Set the terminal title and prompt.
 # Check ${HHS_HOME}/docs/devel/bash-prompt-codes.md for more details.
 
-# Terminal title.
-TITLE="HomeSetup-v${HHS_VERSION}"
-ESCAPED_TITLE="\[\e]2;${TITLE}\a\]"
-
-# The history number of this command.
-HIST_STYLE="${PROMPT_COLOR}${MY_OS_ICN} (\!)"
-
-# Logged username. Highlight when logged in as root.
-if [[ "${USER}" == "root" ]]; then
-  USER_STYLE="${PROMPT_COLOR} ${ROOT_ICN}${ALERT_COLOR} \u"
-else
-  USER_STYLE="${PROMPT_COLOR} ${USER_ICN}${OK_COLOR} \u"
-fi
-
-# The hostname. Highlight when connected via SSH.
-if [[ -n "${SSH_TTY}" ]]; then
-  HOST_STYLE="${PROMPT_COLOR} ${NET_ICN}${NET_COLOR} \H"
-else
-  HOST_STYLE="${PROMPT_COLOR} ${AT_ICN}${HOST_COLOR} \h"
-fi
-
-# Working directory base path.
-PATH_STYLE="${PROMPT_COLOR} ${FOLDER_ICN} ${DIR_COLOR} \W"
-
-# Git repository details.
-# Check if the current directory is a Git repository.
-GIT_STYLE="${PROMPT_COLOR}\$(__hhs_git_prompt \" ${GIT_ICN} ${GIT_COLOR}\")"
-
-# User prompt format.
-PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} ${PROMPT_ICN} "
-
 # Initialize Starship prompt if it is set to.
 if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
 
@@ -197,7 +166,40 @@ if __hhs_has "starship" && [[ ${HHS_USE_STARSHIP} -eq 1 ]]; then
   fi
 fi
 
+# If Starship did not start, configure classic HomeSetup prompt.
 if [[ -z "${STARSHIP_SESSION_KEY}" ]]; then
+
+  # Terminal title.
+  TITLE="HomeSetup-v${HHS_VERSION}"
+  ESCAPED_TITLE="\[\e]2;${TITLE}\a\]"
+
+  # The history number of this command.
+  HIST_STYLE="${PROMPT_COLOR}${MY_OS_ICN} (\!)"
+
+  # Logged username. Highlight when logged in as root.
+  if [[ "${USER}" == "root" ]]; then
+    USER_STYLE="${PROMPT_COLOR} ${ROOT_ICN}${ALERT_COLOR} \u"
+  else
+    USER_STYLE="${PROMPT_COLOR} ${USER_ICN}${OK_COLOR} \u"
+  fi
+
+  # The hostname. Highlight when connected via SSH.
+  if [[ -n "${SSH_TTY}" ]]; then
+    HOST_STYLE="${PROMPT_COLOR} ${NET_ICN}${NET_COLOR} \H"
+  else
+    HOST_STYLE="${PROMPT_COLOR} ${AT_ICN}${HOST_COLOR} \h"
+  fi
+
+  # Working directory base path.
+  PATH_STYLE="${PROMPT_COLOR} ${FOLDER_ICN} ${DIR_COLOR} \W"
+
+  # Git repository details.
+  # Check if the current directory is a Git repository.
+  GIT_STYLE="${PROMPT_COLOR}\$(__hhs_git_prompt \" ${GIT_ICN} ${GIT_COLOR}\")"
+
+  # User prompt format.
+  PROMPT="${PROMPT_COLOR}${ESCAPED_TITLE} ${PROMPT_ICN} "
+
     # PS1 Style: Color and icons (default).
   PS1_STYLE=$"${HIST_STYLE}${USER_STYLE}${HOST_STYLE}${PATH_STYLE}${GIT_STYLE}${PROMPT}"
 
@@ -209,7 +211,7 @@ if [[ -z "${STARSHIP_SESSION_KEY}" ]]; then
 fi
 
 # ColorLS integration. Copy HomeSetup config files if they are not found.
-if __hhs_has 'gem' && gem which colorls &>/dev/null; then
+if gem which colorls &>/dev/null; then
   colorls_dir="$(dirname "$(gem which colorls)")/yaml"
   hhs_colorls_dir="${HHS_HOME}/assets/colorls/hhs-preset"
   [[ -d "${colorls_dir}" ]] || \mkdir -p "${colorls_dir}"
