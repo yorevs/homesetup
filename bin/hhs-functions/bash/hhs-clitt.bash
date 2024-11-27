@@ -11,10 +11,10 @@
 
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
-
 # @function: Choose options from a list using a navigable menu.
 # @param $1 [Req] : The response file.
-# @param $2 [Req] : The array of items.
+# @param $2 [Req] : The render title.
+# @param $3 [Req] : The array of items.
 function __hhs_mchoose() {
 
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
@@ -24,9 +24,9 @@ function __hhs_mchoose() {
     echo '      -c  : All options are initially checked instead of unchecked.'
     echo ''
     echo '    Arguments: '
-    echo '      output_file : The output file where the results will be stored.'
-    echo '      title       : The text to be displayed before rendering the items.'
-    echo '      items       : The items to be displayed for choosing. Must be greater than 1.'
+    echo '      output_file : The output file where the result will be stored.'
+    echo '            title : The text to be displayed before rendering the items.'
+    echo '            items : The items to be displayed for selecting.'
     echo ''
     echo '    Examples: '
     echo '      Choose numbers from 1 to 20 (start with all options checked):'
@@ -41,13 +41,14 @@ function __hhs_mchoose() {
     return 1
   fi
 
-  local outfile title all_options all_items=() all_checks=() len all_items_str all_checks_str ret_val checked=False
+  local outfile title all_options all_items=() all_checks=() len all_options_str all_checks_str ret_val checked=False
 
   [[ '-c' = "${1}" ]] && shift && checked='True'
 
   HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
-  outfile="${1}" && shift
-  title="${1}" && shift
+  outfile="${1}"
+  title="${2:-Please mark the desired choices}"
+  shift 2
   all_options=("${@}")
   len=${#all_options[@]}
 
@@ -67,9 +68,9 @@ function __hhs_mchoose() {
     fi
   done
 
-  printf -v all_items_str '%s,' "${all_items[@]}"
-  all_items_str="${all_items_str%,}"
-  all_items_str="${all_items_str//,/\",\"}"
+  printf -v all_options_str '%s,' "${all_items[@]}"
+  all_options_str="${all_options_str%,}"
+  all_options_str="${all_options_str//,/\",\"}"
   printf -v all_checks_str '%s,' "${all_checks[@]}"
   all_checks_str="${all_checks_str%,}"
   all_checks_str="${all_checks_str//on/True}"
@@ -77,35 +78,42 @@ function __hhs_mchoose() {
 
   echo '' >"${outfile}"
 
-  python3 -c "
+  if __hhs_is_venv; then
+
+    python3 -c "
 from clitt.core.tui.mchoose.mchoose import mchoose
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-items = [\"${all_items_str}\"]
-checks = [${all_checks_str}]
-ret = mchoose(items, checks, \"${title}\", \"${outfile}\")
-exit(1 if ret is None else 0)
+  items = [\"${all_options_str}\"]
+  checks = [${all_checks_str}]
+  ret = mchoose(items, checks, \"${title}\", \"${outfile}\")
+  exit(1 if ret is None else 0)
 "
-  ret_val=$?
+    ret_val=$?
+
+  else
+    __hhs_classic_mchoose "${outfile}" "${title}" "${all_items[@]}"
+  fi
 
   return $ret_val
 }
 
 # @function: Select an option from a list using a navigable menu.
 # @param $1 [Req] : The response file.
-# @param $2 [Req] : The array of items.
+# @param $2 [Req] : The render title.
+# @param $3 [Req] : The array of items.
 function __hhs_mselect() {
 
-  local outfile all_options=() all_items_str len
+  local outfile all_options=() all_options_str len
 
   if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} <output_file> <title> <items...>"
     echo ''
     echo '    Arguments: '
     echo '      output_file : The output file where the result will be stored.'
-    echo '      title       : The text to be displayed before rendering the items.'
-    echo '      items       : The items to be displayed for selecting.'
+    echo '            title : The text to be displayed before rendering the items.'
+    echo '            items : The items to be displayed for selecting.'
     echo ''
     echo '    Examples: '
     echo '      Select a number from 1 to 100:'
@@ -118,36 +126,42 @@ function __hhs_mselect() {
     return 1
   fi
 
-  outfile="$1"
-  shift
-  title="$1"
-  shift
+  outfile="${1}"
+  title="${2:-Please selected the desired option}"
+  shift 2
   all_options=("${@}")
   len=${#all_options[@]}
 
   [[ "${len}" -le 1 ]] && echo "${all_options[0]}" >"${outfile}" && return 0
 
-  printf -v all_items_str '%s,' "${all_options[@]}"
-  all_items_str="${all_items_str%,}"
+  printf -v all_options_str '%s,' "${all_options[@]}"
+  all_options_str="${all_options_str%,}"
 
   echo '' >"${outfile}"
 
-  python3 -c """
+  if __hhs_is_venv; then
+
+    python3 -c """
 from clitt.core.tui.mselect.mselect import mselect
 from clitt.core.tui.tui_preferences import TUIPreferences
 
 if __name__ == \"__main__\":
-  it = [\"${all_items_str//,/\",\"}\"]
+  it = [\"${all_options_str//,/\",\"}\"]
   ret = mselect(it, \"${title}\", \"${outfile}\")
   exit(1 if ret is None else 0)
 """
+
+  else
+    __hhs_classic_mselect "${outfile}" "${title}" "${all_options[@]}"
+  fi
 
   return $?
 }
 
 # @function: Provide a terminal form input with simple validation.
 # @param $1 [Req] : The response file.
-# @param $2 [Req] : The form fields.
+# @param $2 [Req] : The render title.
+# @param $3 [Req] : The form fields.
 function __hhs_minput() {
 
   local outfile title all_fields=() len
@@ -157,16 +171,16 @@ function __hhs_minput() {
     echo ''
     echo '    Arguments: '
     echo '      output_file : The output file where the results will be stored.'
-    echo '      title       : The text to be displayed before rendering the items.'
+    echo '            title : The text to be displayed before rendering the items.'
     echo '           fields : A list of form fields: Label|Mode|Type|Min/Max len|Perm|Value'
     echo ''
     echo '    Fields: '
-    echo '      Field tokens (in-order):'
-    echo '                    <Label> : The field label. Consisting only of alphanumeric characters and under‐scores.'
-    echo '                     [Mode] : The input mode. One of {[text]|password|checkbox|select|masked}.'
-    echo '                     [Type] : The input type. One of {letters|numbers|words|masked|[anything]}.'
-    echo '              [Min/Max len] : The minimum and maximum length of characters allowed. Defaults to [0/30].'
-    echo '                     [Perm] : The field permissions. One of {r|[rw]}. Where \"r\" for Read Only ; \"rw\" for Read & Write.'
+    echo '      Field tokens (in-order): '
+    echo '              <Label> => The field label. Consisting only of alphanumeric characters and under‐scores.'
+    echo '               [Mode] => The input mode. One of {[text]|password|checkbox|select|masked}.'
+    echo '               [Type] => The input type. One of {letters|numbers|words|masked|[anything]}.'
+    echo '        [Min/Max len] => The minimum and maximum length of characters allowed. Defaults to [0/30].'
+    echo '               [Perm] => The field permissions. One of {r|[rw]}. Where \"r\" for Read Only ; \"rw\" for Read & Write.'
     echo ''
     echo '    Examples: '
     echo '      Form with 4 fields (Name,Age,Password,Role,Accept Conditions): '
@@ -178,8 +192,9 @@ function __hhs_minput() {
     return 1
   fi
 
-  outfile="${1}" && shift
-  title="${1:-Please fill all fields of the form below}" && shift
+  outfile="${1}"
+  title="${2:-Please fill all fields of the form below}"
+  shift 2
 
   all_fields=("${@}")
   len=${#all_fields[*]}
@@ -189,12 +204,14 @@ function __hhs_minput() {
     return 1
   fi
 
-  printf -v all_fields_str '%s,' "${all_fields[@]}"
-  all_fields_str="${all_fields_str%,}"
-
   echo '' >"${outfile}"
 
-  python3 -c """
+  if __hhs_is_venv; then
+
+    printf -v all_fields_str '%s,' "${all_fields[@]}"
+    all_fields_str="${all_fields_str%,}"
+
+    python3 -c """
 from clitt.core.tui.minput.input_validator import InputValidator
 from clitt.core.tui.minput.minput import MenuInput, minput
 
@@ -206,6 +223,10 @@ if __name__ == \"__main__\":
   ret=minput(form_fields, \"${title}\", \"${outfile}\")
   exit(1 if ret is None else 0)
 """
+
+  else
+    __hhs_classic_minput "${outfile}" "${title}" "${all_fields[*]}"
+  fi
 
   return $?
 }

@@ -18,7 +18,9 @@ Icon,Hex,Oct,Name,Bash
 ,F005,\xef\x80\x85,Star,Yes
 ,F62B,\xef\x98\xab,Success,Yes
 ,F400,\xef\x90\x80,Tip,Yes
-,F0AC,\xef\x82\xac,Yes
+,F0AC,\xef\x82\xac,Globe,Yes
+,F630,\xef\x98\xb0,Unmarked,Yes
+,F634,\xef\x98\xb4,Marked,Yes
 ,F418,\xef\x90\x98,Git Branch,No
 ,F07B,\xef\x81\xbb,Folder Closed,No
 ,F1FA,\xef\x87\xba,At,No
