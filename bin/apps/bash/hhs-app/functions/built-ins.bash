@@ -131,8 +131,8 @@ function logs() {
       logfile="${HHS_LOG_DIR}/${1//.log/}.log"
       if [[ ! -f "${logfile}" ]]; then
         logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \; | nl)
-        __hhs_errcho "Log file not found: '${logfile}'."
-        echo -e "${YELLOW}\nAvailable log files: \n\n${BLUE}${logs}\n"
+        __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} Log file not found: ${YELLOW}'${logfile}'."
+        echo -e "${BLUE}\nAvailable log files: \n\n${CYAN}${logs}\n"
         quit 1
       fi
       level=$(echo "${2}" | tr '[:lower:]' '[:upper:]')
@@ -145,8 +145,8 @@ function logs() {
       [[ -n $2 ]] && logfile="${HHS_LOG_DIR}/${2//.log/}.log"
       if [[ -n "${logfile}" && ! -f "${logfile}" ]]; then
         logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \; | nl)
-        __hhs_errcho "${RED}## Log file not found: ${logfile}."
-        echo -e "${YELLOW}\nAvailable log files: \n\n${BLUE}${logs}\n"
+        __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} Log file not found: ${YELLOW}'${logfile}'."
+        echo -e "${BLUE}\nAvailable log files: \n\n${CYAN}${logs}\n"
         quit 1
       fi
     fi
@@ -196,11 +196,10 @@ function man() {
     echo -e "${ORANGE}Opening SS64 man page for '${cmd}': ${ss63_url}"
     sleep 2
     __hhs_open "${ss63_url}" && quit 0 ''
-    __hhs_errcho "Failed to open url: \"${ss63_url}\" !"
-    return 1
+    quit 1 "Failed to open url: \"${ss63_url}\" !"
   fi
 
-  return 0
+  quit 0
 }
 
 # @purpose: Attempt to display the help for the given command.
@@ -210,10 +209,10 @@ function help() {
   local cmd="${1}" help_msg
   if [[ -z "${cmd}" || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} <command>"
-    return 1
+    quit 1
   fi
 
-  __hhs_has "${cmd}" || { __hhs_errcho "${RED}Command not found: '${cmd}'"; return 1; }
+  __hhs_has "${cmd}" || quit 1 "Command not found: '${cmd}'"
 
   help_msg="$(${cmd} --help 2>&1 | awk '/^[Uu]sage:/ {found=1} found')"
   if [[ -z "${help_msg}" ]]; then
@@ -221,16 +220,15 @@ function help() {
     if [[ -z "${help_msg}" ]]; then
       help_msg="$(${cmd} --0h012hux267844asu 2>&1 | awk '/^[Uu]sage:/ {found=1} found')"
       if [[ -z "${help_msg}" ]]; then
-        __hhs_errcho "Help not available for: '${cmd}'"
+        quit 1 "Help not available for: '${cmd}'"
       fi
     fi
-    return 1
   fi
 
   echo -e "${YELLOW}Displaying help for: ${BLUE}'${cmd}'${NC}\n"
   echo -e "${help_msg}\n"
 
-  return 0
+  quit 0
 }
 
 # @purpose: Clear HomeSetup logs, backups and caches and restore original HomeSetup files.

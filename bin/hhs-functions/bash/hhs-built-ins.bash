@@ -159,6 +159,8 @@ function __hhs_where_am_i() {
     [[ -n "${metrics}" ]] && echo -e "${WHITE}${metrics}${NC}"
     echo ''
   fi
+
+  return 0
 }
 
 

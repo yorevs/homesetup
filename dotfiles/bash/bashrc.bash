@@ -31,8 +31,6 @@ else
   echo -e "\033[34mStarting HomeSetup ...\033[m"
 fi
 
-command -v python3 &>/dev/null || { echo -e "\033[31mPython is required to boot HomeSetup\033[m"; exit 1; }
-
 # Unset all HHS_ variables
 unset "${!HHS_@}" "${!PS@}" "${!LC_@}"
 

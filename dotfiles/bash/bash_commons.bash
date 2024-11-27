@@ -47,6 +47,14 @@ function __hhs_has_module() {
   return $?
 }
 
+# @function: Check if HomeSetup venv is active.
+function __hhs_is_venv() {
+
+  [[ "${HHS_VENV_PATH}/bin/python3" == "$(command -v python3)" ]] && return 0
+
+  return 1
+}
+
 # @function: Log a message to the HomeSetup log file.
 # @param $1 [Req] : The log level.
 # @param $* [Req] : The log level. One of ["WARN", "DEBUG", "INFO", "ERROR", "ALL"].
@@ -72,6 +80,20 @@ function __hhs_log() {
       return 1
       ;;
   esac
+
+  return 0
+}
+
+# @function: Echo a message in red color into stderr.
+# @param $1 [Req] : The message to be echoed.
+function __hhs_errcho() {
+
+  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: ${FUNCNAME[0]} <message>"
+    return 1
+  fi
+
+  echo -e "${RED}✘ Fatal: ${APP_NAME}: ${WHITE}${POINTER_ICN} ${*}${NC}" 1>&2
 
   return 0
 }
@@ -119,27 +141,13 @@ function __hhs_alias() {
     if alias "${alias_name}"="${alias_expr}" >/dev/null 2>&1; then
       return 0
     else
-      echo "${RED}Failed to alias: \"${alias_name}\" !${NC}" 2>&1
+      __hhs_errcho "Failed to alias: \"${alias_name}\" !" 2>&1
     fi
   else
     __hhs_log "WARN" "Setting alias: \"${alias_name}\" was skipped because it already exists !"
   fi
 
   return 1
-}
-
-# @function: Echo a message in red color into stderr.
-# @param $1 [Req] : The message to be echoed.
-function __hhs_errcho() {
-
-  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} <message>"
-    return 1
-  else
-    echo -e "${RED}✘ Fatal: ${WHITE}${*}${NC}" 1>&2
-  fi
-
-  return $?
 }
 
 # @function: Check whether an URL is reachable.
@@ -150,40 +158,48 @@ function __hhs_is_reachable() {
     return 1
   fi
 
-  \curl --output /dev/null --silent --connect-timeout 1 --max-time 2 --head --fail "${1}"
+  \curl --output /dev/null --silent --connect-timeout 1 --max-time 1 --head --fail "${1}"
 
   return $?
 }
 
-# @function: In-place sed.
-# @param $1..$N [Req] : Sed parameters.
-function ised() {
-  case "${HHS_MY_OS}" in
-    Darwin)
-      sed -i '' -E "${@}"
-      ;;
-    Linux)
-      sed -i'' -r "${@}"
-      ;;
-  esac
+if ! __hhs_has 'ised'; then
 
-  return $?
-}
+  # @function: In-place sed.
+  # @param $1..$N [Req] : Sed parameters.
+  function ised() {
+    case "${HHS_MY_OS}" in
+      Darwin)
+        sed -i '' -E "${@}"
+        ;;
+      Linux)
+        sed -i'' -r "${@}"
+        ;;
+    esac
 
-# @function: Regex sed. Same as sed -r.
-# @param $1..$N [Req] : Sed parameters.
-function esed() {
-  case "${HHS_MY_OS}" in
-    Darwin)
-      sed -E "${@}"
-      ;;
-    Linux)
-      sed -r "${@}"
-      ;;
-  esac
+    return $?
+  }
 
-  return $?
-}
+fi
+
+if ! __hhs_has 'esed'; then
+
+  # @function: Regex sed. Same as sed -r.
+  # @param $1..$N [Req] : Sed parameters.
+  function esed() {
+    case "${HHS_MY_OS}" in
+      Darwin)
+        sed -E "${@}"
+        ;;
+      Linux)
+        sed -r "${@}"
+        ;;
+    esac
+
+    return $?
+  }
+
+fi
 
 # @purpose: `trim' all leading and trailing whitespaces.
 # @param $1..$N [Req] : The text to be trimmed.
@@ -206,5 +222,6 @@ function trim() {
 # @param $2 [Req] : The string to be checked.
 function list_contains() {
   [[ ${1} =~ (^|[[:space:]])${2}($|[[:space:]]) ]] && return 0
+
   return 1
 }

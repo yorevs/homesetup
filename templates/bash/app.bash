@@ -25,15 +25,13 @@ UNSETS=('quit' 'usage' 'version' 'parse_args' 'cleanup')
 # @param $2 [Opt] : The exit message to be displayed.
 function quit() {
 
-  local exit_code=${1:-0}
+  local msg exit_code=${1:-0}
 
   shift
-  if [[ ${exit_code} -ne 0 && ${#} -ge 1 ]]; then
-    echo -en "${RED}error: ${APP_NAME} => " 1>&2
-  fi
-  [[ ${#} -eq 0 ]] && echo -e "${NC}"
-  [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
+  msg="${*}"
 
+  [[ ${exit_code} -ne 0 && -n "${msg}" ]] && __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} ${msg}${NC}\n" 1>&2
+  [[ ${exit_code} -eq 0 && -n "${msg}" ]] && echo -e "${msg} \n" 1>&2
   exit "${exit_code}"
 }
 

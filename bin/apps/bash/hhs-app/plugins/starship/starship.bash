@@ -129,7 +129,7 @@ function execute() {
       if \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" "${STARSHIP_CONFIG}" &> /dev/null; then
         echo -e "${GREEN}Your starship prompt changed to HomeSetup defaults!${NC}" && quit 0
       else
-        echo -e "${RED}Unable to restore HomeSetup starship preset${NC}" && quit 1
+        __hhs_errcho "Unable to restore HomeSetup starship preset" && quit 1
       fi
     elif list_contains "${*}" "preset"; then
       add_hhs_presets
@@ -153,15 +153,15 @@ function execute() {
         elif bash -c "starship preset \"${preset_val}\" -o ${STARSHIP_CONFIG}" &> /dev/null; then
           echo -e "${GREEN}Your starship prompt changed to preset: ${preset_val} !${NC}" && quit 0
         else
-          echo -e "${RED}Unable to set starship preset: ${preset_val} ${NC}" && quit 1
+          __hhs_errcho "Unable to set starship preset: ${preset_val} " && quit 1
         fi
       fi
     else
-      echo -e "${RED}Command not found: ${*} ${NC}" && quit 1
+      __hhs_errcho "Command not found: ${*} " && quit 1
     fi
 
   else
     echo -e "${ORANGE}Starship is not installed. You can install it by:"
-    echo -e "$ curl -sS https://starship.rs/install.sh${NC}"
+    echo -e "${CYAN}$ curl -sS https://starship.rs/install.sh${NC}"
   fi
 }

@@ -211,7 +211,7 @@ main() {
       [[ ${EXTRA_INFO} -eq 0 ]] || __hhs_ip_info "${IP_ADDRESS}"
     fi
   else
-    [[ ${SILENT} -eq 0 ]] && echo "${RED}## Invalid IP: ${IP_ADDRESS} ##${NC}"
+    [[ ${SILENT} -eq 0 ]] && __hhs_errcho "Invalid IP: ${IP_ADDRESS}"
   fi
 }
 

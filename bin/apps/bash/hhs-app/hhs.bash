@@ -10,7 +10,7 @@
 #
 # Copyright (c) 2024, HomeSetup team
 
-APP_NAME="__hhs"
+APP_NAME="hhs"
 
 # Functions to be unset after quit.
 UNSETS+=(
@@ -387,7 +387,7 @@ function command_hint() {
     done
 
     # Display error message and matching commands or a fallback message if no matches
-    __hhs_errcho "${error_message}\n"
+    __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} ${error_message}\n"
 
     if (( ${#matches[@]} > 0 )); then
         echo -e "${ORANGE}${HELP_ICN} Did you mean one of these?${NC}\n"
@@ -469,12 +469,12 @@ function main() {
     quit $?
   fi
 
-  [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${RED}${INVALID[*]}${NC}]"
+  [[ ${#INVALID[@]} -gt 0 ]] && quit 1 "Invalid plugins found: [${INVALID[*]}]"
 
   fn_name="${fn_name//help/list}"
   invoke_plugin "${@}" || quit 2
 
-  quit 255 "${RED}Failed to invoke hhs command: ${*} ${NC}"
+  quit 255 "Failed to invoke hhs command: ${*}"
 }
 
 source "${HHS_DIR}/bin/app-commons.bash"

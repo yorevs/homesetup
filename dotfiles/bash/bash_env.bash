@@ -42,9 +42,7 @@ if __hhs_has java; then
 fi
 
 # Python
-if __hhs_has python3; then
-  export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
-fi
+export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 
 # ----------------------------------------------------------------------------
 # OS Release
