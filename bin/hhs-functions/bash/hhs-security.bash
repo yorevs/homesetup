@@ -26,9 +26,9 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
       return 1
     else
       if [[ ! -f "${file}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: File not found: \"${file}\" !"
+        __hhs_errcho "${FUNCNAME[0]}" "File not found: \"${file}\" !"
       elif [[ -z "${passwd}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: Passphrase can't be blank !"
+        __hhs_errcho "${FUNCNAME[0]}" "Passphrase can't be blank !"
       elif gpg --yes --batch --passphrase="${passwd}" -c "${file}" &>/dev/null; then
         if encode -i "${file}.gpg" -o "${file}"; then
           [[ ${keep_file} =~ --[kK][eE]{2}[pP] ]] || rm -f "${file}.gpg" &>/dev/null
@@ -36,7 +36,7 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
           return 0
         fi
       else
-        __hhs_errcho "${FUNCNAME[0]}: Unable to encrypt file: \"$1\" ${NC}"
+        __hhs_errcho "${FUNCNAME[0]}" "Unable to encrypt file: \"$1\" ${NC}"
       fi
     fi
 
@@ -56,9 +56,9 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
       return 1
     else
       if [[ ! -f "${file}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: File not found: \"${file}\" !"
+        __hhs_errcho "${FUNCNAME[0]}" "File not found: \"${file}\" !"
       elif [[ -z "${passwd}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: Passphrase can't be blank !"
+        __hhs_errcho "${FUNCNAME[0]}" "Passphrase can't be blank !"
       elif decode -i "${file}" -o "${file}.gpg"; then
         if gpg --yes --batch --passphrase="${passwd}" "${file}.gpg" &>/dev/null; then
           [[ ${keep_file} =~ --[kK][eE]{2}[pP]keep ]] || rm -f "${file}.gpg" &>/dev/null
@@ -66,7 +66,7 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
           return 0
         fi
       else
-        __hhs_errcho "${FUNCNAME[0]}: Unable to decrypt file: \"${file}\""
+        __hhs_errcho "${FUNCNAME[0]}" "Unable to decrypt file: \"${file}\""
       fi
     fi
 

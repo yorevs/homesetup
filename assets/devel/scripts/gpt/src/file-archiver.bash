@@ -19,7 +19,7 @@
 VERSION="0.0.1"
 
 # Usage message
-USAGE="usage: file-archiver.bash -d directory [-n days] [-h] [-v]
+USAGE="usage: $(basename "$0") -d directory [-n days] [-h] [-v]
 
   Options:
     -d, --directory   Specify the directory to search (mandatory).
@@ -28,7 +28,7 @@ USAGE="usage: file-archiver.bash -d directory [-n days] [-h] [-v]
     -v, --version     Print version information and exit.
 
   Example:
-    ./file-archiver.bash -d /path/to/directory -n 60
+    $(basename "$0") -d /path/to/directory -n 60
 "
 
 # List of guarded directories

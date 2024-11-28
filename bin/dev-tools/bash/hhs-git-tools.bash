@@ -35,7 +35,7 @@ function __hhs_git_add() {
           elif [[ -f "${file}" ]]; then
             git add "${file}" && ret_val=$?
           else
-            __hhs_errcho "File not found: F: '${file}'  L: '${line}'"
+            __hhs_errcho "${FUNCNAME[0]}" "File not found: F: '${file}'  L: '${line}'"
           fi
         done
       fi
@@ -86,7 +86,7 @@ function __hhs_git_branch_select() {
     echo '      -l, --local : List only local branches. Do not fetch remote branches.'
     return 1
   elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
-    __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
+    __hhs_errcho "${FUNCNAME[0]}" "Not a git repository"
     return 1
   fi
 
@@ -96,7 +96,7 @@ function __hhs_git_branch_select() {
   if [[ -n "${all_flag}" ]]; then
     echo -en "${YELLOW}=> Updating branches ${NC}"
     if ! git fetch &>/dev/null; then
-      __hhs_errcho "${FUNCNAME[0]}: Unable fetch from remote"
+      __hhs_errcho "${FUNCNAME[0]}" "Unable fetch from remote"
       return 1
     fi
     echo -e " ... [   ${GREEN}OK${NC}   ]"
@@ -120,7 +120,7 @@ function __hhs_git_branch_select() {
     if ! git diff-index --quiet HEAD --; then
       echo -en "${YELLOW}=> Stashing your changes prior to change ${NC}"
       if ! git stash &>/dev/null; then
-        __hhs_errcho "${FUNCNAME[0]}: Unable to stash your changes"
+        __hhs_errcho "${FUNCNAME[0]}" "Unable to stash your changes"
         return 1
       fi
       stash_flag=1
@@ -136,13 +136,13 @@ function __hhs_git_branch_select() {
       if [[ -n "$stash_flag" ]]; then
         echo -en "${YELLOW}\n=> Retrieving changes from stash ${NC}"
         if ! git stash pop &>/dev/null; then
-          __hhs_errcho "${FUNCNAME[0]}: Unable to retrieve stash changes"
+          __hhs_errcho "${FUNCNAME[0]}" "Unable to retrieve stash changes"
           return 1
         fi
         echo -e " ... [   ${GREEN}OK${NC}   ]"
       fi
     else
-      __hhs_errcho "${FUNCNAME[0]}: Unable to checkout branch \"${sel_branch}\""
+      __hhs_errcho "${FUNCNAME[0]}" "Unable to checkout branch \"${sel_branch}\""
       return
     fi
   fi
@@ -260,7 +260,7 @@ function __hhs_git_pull_all() {
   cur_pwd=$(pwd)
   # Find all git repositories
   git_repos_path="${1:-.}"
-  [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}: Repository path \"${git_repos_path}\" was not found ! " && return 1
+  [[ ! -d "${git_repos_path}" ]] && __hhs_errcho "${FUNCNAME[0]}" "Repository path \"${git_repos_path}\" was not found ! " && return 1
   read -r -d '' -a all_repos <<<"$(find "${git_repos_path}" -maxdepth 3 -type d -iname ".git")"
   [[ ${#all_repos[@]} -eq 0 ]] && echo "${ORANGE}No GIT repositories found at \"${git_repos_path}\" ! ${NC}" && return 0
   shift
@@ -277,7 +277,7 @@ function __hhs_git_pull_all() {
     repo_dir=$(dirname "${repo}")
     if [[ "${sel_repos[*]}" =~ ${repo} ]]; then
       if [[ -d "${repo_dir}" ]]; then
-        pushd "${repo_dir}" &>/dev/null || __hhs_errcho "${FUNCNAME[0]}:  Unable to enter directory: \"${repo_dir}\" !"
+        pushd "${repo_dir}" &>/dev/null || __hhs_errcho "${FUNCNAME[0]}" " Unable to enter directory: \"${repo_dir}\" !"
         branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
         if git rev-parse --abbrev-ref "${branch}@{u}" &>/dev/null; then
           stash_flag=0
@@ -308,16 +308,16 @@ function __hhs_git_pull_all() {
                 fi
               fi
             else
-              __hhs_errcho "${FUNCNAME[0]}: Unable to pull the code. Skipping ..."
+              __hhs_errcho "${FUNCNAME[0]}" "Unable to pull the code. Skipping ..."
             fi
           else
-            __hhs_errcho "${FUNCNAME[0]}: Unable to fetch repository updates. Skipping ..."
+            __hhs_errcho "${FUNCNAME[0]}" "Unable to fetch repository updates. Skipping ..."
           fi
         else
           echo ''
           echo -e "${ORANGE}@@@ The project \"${repo_dir}\" on \"${repository}/${branch}\" is not being TRACKED on remote !${NC}"
         fi
-        popd &>/dev/null || __hhs_errcho "${FUNCNAME[0]}: Unable to leave directory: \"${repo_dir}\" !"
+        popd &>/dev/null || __hhs_errcho "${FUNCNAME[0]}" "Unable to leave directory: \"${repo_dir}\" !"
       else
         echo ''
         echo -e "${YELLOW}>>> Skipping: repository not found \"${repo_dir}\" ${NC}"
@@ -357,7 +357,7 @@ function __hhs_git_changelog() {
     echo '      to_tag_or_sha       : The To Tag or commit #sha. If not provided, HEAD will be used.'
     return 1
   elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
-    __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
+    __hhs_errcho "${FUNCNAME[0]}" "Not a git repository"
     return 1
   fi
 
@@ -372,7 +372,7 @@ function __hhs_git_changelog() {
     return $?
   else
     echo -e "${RED}X FAILED${NC}\n"
-    __hhs_errcho "${FUNCNAME[0]}: Unable to generated changelog\n"
+    __hhs_errcho "${FUNCNAME[0]}" "Unable to generated changelog\n"
     grep --color=always -E 'fatal:' "${outfile}"
   fi
 
@@ -405,7 +405,7 @@ function __hhs_git_retag() {
     echo '      commit_sha  : The new tag commit sha.'
     return 1
   elif [[ "$(git rev-parse --is-inside-work-tree &>/dev/null && echo "${?}")" != '0' ]]; then
-    __hhs_errcho "${FUNCNAME[0]}: Not a git repository"
+    __hhs_errcho "${FUNCNAME[0]}" "Not a git repository"
     return 1
   fi
 
@@ -422,7 +422,7 @@ function __hhs_git_retag() {
       ret_val=0
   else
     echo -e "${RED}X FAILED${NC}\n"
-    __hhs_errcho "${FUNCNAME[0]}: Unable to replace git tag\n"
+    __hhs_errcho "${FUNCNAME[0]}" "Unable to replace git tag\n"
     grep --color=always -E 'fatal:' "${git_log}"
   fi
 

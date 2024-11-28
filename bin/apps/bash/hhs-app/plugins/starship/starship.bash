@@ -127,13 +127,13 @@ function execute() {
     if list_contains "${*}" "restore"; then
       echo -e "${GREEN}Restoring HomeSetup starship configuration...${NC}"
       if \cp "${HHS_STARSHIP_PRESETS_DIR}/hhs-starship.toml" "${STARSHIP_CONFIG}" &> /dev/null; then
-        echo -e "${GREEN}Your starship prompt changed to HomeSetup defaults!${NC}" && quit 0
+        quit 0 "${GREEN}Your starship prompt changed to HomeSetup defaults!${NC}"
       else
-        __hhs_errcho "Unable to restore HomeSetup starship preset" && quit 1
+        quit 1 "Unable to restore HomeSetup starship preset"
       fi
     elif list_contains "${*}" "preset"; then
       add_hhs_presets
-      preset_val="${2}"
+      preset_val="${2//.toml}.toml"
       if [[ -z ${preset_val} ]]; then
         mselect_file=$(mktemp)
         title="Please select one Starship preset (${#STARSHIP_PRESETS[@]})"
@@ -142,22 +142,23 @@ function execute() {
         fi
       fi
       if [[ -n "${preset_val}" ]] && ! list_contains "${STARSHIP_PRESETS[*]}" "${preset_val}"; then
-        echo -e "${YELLOW}\nPlease choose one valid Starship preset: "
-        for preset in "${STARSHIP_PRESETS[@]}"; do echo "  |-${preset}"; done
+        __hhs_errcho "${PLUGIN_NAME}" "Starship preset not found: \033[9m'${preset_val}'\033[m!\n"
+        echo -e "${YELLOW}${TIP_ICON} Tip: Please choose one valid Starship preset: ${BLUE}"
+        for preset in "${STARSHIP_PRESETS[@]}"; do echo "  |-${preset}" | nl; done
         quit 1
       fi
       if [[ -n "${preset_val}" ]]; then
         echo -e "${GREEN}Setting starship preset \"${preset_val}\"...${NC}"
         if [[ "${preset_val}" == *'hhs-'* ]] && \cp "${HHS_STARSHIP_PRESETS_DIR}/${preset_val}" "${STARSHIP_CONFIG}"; then
-          echo -e "${GREEN}Your starship prompt changed to HomeSetup preset: ${preset_val} !${NC}" && quit 0
+          quit 0 "${GREEN}Your starship prompt changed to HomeSetup preset: ${preset_val} !${NC}"
         elif bash -c "starship preset \"${preset_val}\" -o ${STARSHIP_CONFIG}" &> /dev/null; then
-          echo -e "${GREEN}Your starship prompt changed to preset: ${preset_val} !${NC}" && quit 0
+          quit 0 "${GREEN}Your starship prompt changed to preset: ${preset_val} !${NC}"
         else
-          __hhs_errcho "Unable to set starship preset: ${preset_val} " && quit 1
+          quit 1 "Unable to set starship preset: ${preset_val} "
         fi
       fi
     else
-      __hhs_errcho "Command not found: ${*} " && quit 1
+      quit 1 "Command not found: ${*} "
     fi
 
   else

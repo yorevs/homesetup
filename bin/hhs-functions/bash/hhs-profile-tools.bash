@@ -27,7 +27,7 @@ if [[ -d "${HOME}/.nvm" ]]; then
       fi
       echo "${GREEN} OK${NC}" && return 0
     else
-      __hhs_errcho " FAIL => NVM could not be started !"
+      __hhs_errcho "${FUNCNAME[0]}" "FAILED => NVM could not be started !"
     fi
 
     return 1
@@ -41,13 +41,13 @@ if [[ -d "${HOME}/.rvm" ]]; then
 
     echo -en "Activating RVM app..."
     # RVM setup
-    [[ ! -d "${HOME}/.rvm" ]] || __hhs_errcho " FAIL => Can't find RVM_HOME => \"${HOME}/.rvm\" !" && return 1
+    [[ ! -d "${HOME}/.rvm" ]] || __hhs_errcho "${FUNCNAME[0]}" "FAILED => Can't find RVM_HOME => \"${HOME}/.rvm\" !" && return 1
     export RVM_DIR="${HOME}/.rvm"
     if [[ -s "$RVM_DIR/scripts/rvm" ]] && __hhs_source "$RVM_DIR/scripts/rvm"; then
       export PATH="$PATH:$RVM_DIR/bin"
       echo "${GREEN} OK${NC}" && return 0
     else
-      __hhs_errcho " FAIL => RVM could not be started !"
+      __hhs_errcho "${FUNCNAME[0]}" "FAILED => RVM could not be started !"
     fi
 
     return 1
@@ -64,7 +64,7 @@ if __hhs_has jenv; then
     if eval "$(jenv init -)" &>/dev/null; then
       echo "${GREEN} OK${NC}" && return 0
     else
-      __hhs_errcho " FAIL => JENV could not be started !" && return 1
+      __hhs_errcho "${FUNCNAME[0]}" "FAILED => JENV could not be started !" && return 1
     fi
   }
 fi
@@ -87,7 +87,7 @@ if [[ -z "${HHS_HAS_DOCKER}" ]]; then
         echo "${GREEN} OK${NC}" && return 0
       fi
     else
-      __hhs_errcho " FAIL => Neither Docker or Colima could be started !"
+      __hhs_errcho "${FUNCNAME[0]}" "FAILED => Docker/Colima could not be started !"
     fi
 
     return 1

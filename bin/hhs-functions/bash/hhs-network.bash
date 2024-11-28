@@ -200,7 +200,7 @@ if __hhs_has netstat; then
         | __hhs_highlight "${state}"
       ret_val=$?
     else
-      __hhs_errcho "${FUNCNAME[0]}: ## Invalid state or protocol ($2 $3)!"
+      __hhs_errcho "${FUNCNAME[0]}" "Invalid state or protocol ($2 $3)!"
     fi
 
     echo ''

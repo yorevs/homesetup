@@ -41,7 +41,7 @@ function __hhs_open() {
   elif __hhs_has vi && \vi "${filename}"; then
     return $?
   else
-    __hhs_errcho "${FUNCNAME[0]}: Unable to open \"${filename}\". No suitable application found !"
+    __hhs_errcho "${FUNCNAME[0]}" "Unable to open \"${filename}\". No suitable application found !"
   fi
 
   return 1
@@ -58,7 +58,7 @@ function __hhs_edit() {
     return 1
   else
     [[ -s "${filename}" ]] || touch "${filename}" > /dev/null 2>&1
-    [[ -s "${filename}" ]] || __hhs_errcho "${FUNCNAME[0]}: Unable to create file \"${filename}\""
+    [[ -s "${filename}" ]] || __hhs_errcho "${FUNCNAME[0]}" "Unable to create file \"${filename}\""
 
     if [[ -n "${editor}" ]] && __hhs_has "${editor}" && ${editor} "${filename}"; then
       return $?
@@ -73,7 +73,7 @@ function __hhs_edit() {
     elif __hhs_has cat && \cat > "${filename}"; then
       return $?
     else
-      __hhs_errcho "${FUNCNAME[0]}: Unable to find a suitable editor for the file \"${filename}\" !"
+      __hhs_errcho "${FUNCNAME[0]}" "Unable to find a suitable editor for the file \"${filename}\" !"
     fi
   fi
 
@@ -133,6 +133,52 @@ function __hhs_about() {
   return 0
 }
 
+# @function: Display all alias definitions using filter.
+# @param $1 [Opt] : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
+function __hhs_defs() {
+
+  local pad pad_len filter name value columns ret_val=0 next
+
+  HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: ${FUNCNAME[0]} [regex_filters]"
+    return 1
+  else
+    if [[ "$1" == '-e' ]]; then
+      __hhs_edit "${HHS_ALIASDEF_FILE}"
+      ret_val=$?
+    else
+      pad=$(printf '%0.1s' "."{1..30})
+      pad_len=26
+      columns="$(($(tput cols) - pad_len - 10))"
+      filter="$*"
+      filter=${filter// /\|}
+      [[ -z "${filter}" ]] && filter=".*"
+      echo -e "\n${YELLOW}Listing all alias definitions matching [${filter}]:\n"
+      IFS=$'\n'
+      for next in $(grep -i '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
+        name=${next%%=*}
+        name="$(trim <<< "${name}" | awk '{print $2}')"
+        value=${next#*=}
+        value=${value//[\'\"]/}
+        if [[ ${name} =~ ${filter} ]]; then
+          echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
+          printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
+          echo -en "${GREEN} defined as => ${NC}"
+          echo -n "${value:0:${columns}}"
+          [[ ${#value} -ge ${columns} ]] && echo -n "..."
+          echo "${NC}"
+        fi
+      done
+      IFS="${OLDIFS}"
+      echo ' '
+    fi
+  fi
+
+  return ${ret_val}
+}
+
 # @function: Display the current dir (pwd) and remote repo url, if it applies.
 # @param $1 [Req] : The command to get help.
 function __hhs_where_am_i() {
@@ -161,57 +207,4 @@ function __hhs_where_am_i() {
   fi
 
   return 0
-}
-
-
-# @function: Display/Set/unset current Shell Options.
-# @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
-function __hhs_shopt() {
-
-  local shell_options option enable color
-
-  enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
-
-  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} [on|off] | [-pqsu] [-o] [optname ...]"
-    echo ''
-    echo '    Options:'
-    echo '      off : Display all unset options.'
-    echo '      on  : Display all set options.'
-    echo '      -s  : Enable (set) each optname.'
-    echo '      -u  : Disable (unset) each optname.'
-    echo '      -p  : Display a list of all settable options, with an indication of whether or not each is set.'
-    echo '            The output is displayed in a form that can be reused as input. (-p is the default action).'
-    echo '      -q  : Suppresses normal output; the return status indicates whether the optname is set or unset.'
-    echo "            If multiple optname arguments are given with '-q', the return status is zero if all optnames"
-    echo '            are enabled; non-zero otherwise.'
-    echo "      -o  : Restricts the values of optname to be those defined for the '-o' option to the set builtin."
-    echo ''
-    echo '  Notes:'
-    echo '    If no option is provided, then, display all set & unset options.'
-  elif [[ ${#} -eq 0 || ${enable} =~ on|off ]]; then
-    IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
-    IFS="${OLDIFS}"
-    echo ' '
-    echo "${YELLOW}Available shell ${enable:-on and off} options (${#shell_options[@]}):"
-    echo ' '
-    for option in "${shell_options[@]}"; do
-      if [[ "${option#*=}" == 'on' ]] && [[ -z "${enable}" || "${enable}" == 'on' ]]; then
-        echo -e "  ${WHITE}${ON_SWITCH_ICN}  ${GREEN} ON${BLUE}\t${option%%=*}"
-      elif [[ "${option#*=}" == 'off' ]] && [[ -z "${enable}" || "${enable}" == 'off' ]]; then
-        echo -e "  ${WHITE}${OFF_SWITCH_ICN}  ${RED} OFF${BLUE}\t${option%%=*}"
-      fi
-    done
-    echo "${NC}"
-    return 0
-  elif [[ ${#} -ge 1 && ${enable} =~ -(s|u|p|q|o) ]]; then
-    if \shopt "${1}" "${2}"; then
-      read -r option enable < <(\shopt "${2}" | awk '{print $1, $2}')
-      [[ 'off' == "${enable}" ]] && color="${RED}"
-      __hhs_toml_set "${HHS_SHOPTS_FILE}" "${option}=${enable}" &&
-        { echo -e "${WHITE}Shell option ${CYAN}${option}${WHITE} set to ${color:-${GREEN}}${enable} ${NC}"; return 0; }
-    fi
-  fi
-
-  return 1
 }

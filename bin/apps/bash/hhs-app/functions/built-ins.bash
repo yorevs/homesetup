@@ -131,7 +131,7 @@ function logs() {
       logfile="${HHS_LOG_DIR}/${1//.log/}.log"
       if [[ ! -f "${logfile}" ]]; then
         logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \; | nl)
-        __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} Log file not found: ${YELLOW}'${logfile}'."
+        __hhs_errcho "${APP_NAME}" "${WHITE}${POINTER_ICN} Log file not found: ${YELLOW}'${logfile}'."
         echo -e "${BLUE}\nAvailable log files: \n\n${CYAN}${logs}\n"
         quit 1
       fi
@@ -145,7 +145,7 @@ function logs() {
       [[ -n $2 ]] && logfile="${HHS_LOG_DIR}/${2//.log/}.log"
       if [[ -n "${logfile}" && ! -f "${logfile}" ]]; then
         logs=$(find "${HHS_LOG_DIR}" -type f -name '*.log' -exec basename {} \; | nl)
-        __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} Log file not found: ${YELLOW}'${logfile}'."
+        __hhs_errcho "${APP_NAME}" "${WHITE}${POINTER_ICN} Log file not found: ${YELLOW}'${logfile}'."
         echo -e "${BLUE}\nAvailable log files: \n\n${CYAN}${logs}\n"
         quit 1
       fi

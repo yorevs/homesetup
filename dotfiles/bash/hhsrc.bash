@@ -336,7 +336,7 @@ if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
     if __hhs_is_reachable 'github.com'; then
       __hhs updater execute check
     else
-      __hhs_errcho "HomeSetup GitHub website is unreachable !"
+      __hhs_errcho 'hhsrc' "HomeSetup GitHub website is unreachable !"
     fi
   else
     echo -en "\033[1J\033[H"

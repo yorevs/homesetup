@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-#  Script: sample-tests.bats
-# Purpose: HomeSetup sanity tests.
+#  Script: sanity-tests.bats
+# Purpose: HomeSetup installation sanity tests.
 # Created: Mar 02, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com

@@ -53,7 +53,7 @@ function quit() {
   shift
   msg="${*}"
 
-  [[ ${exit_code} -ne 0 && -n "${msg}" ]] && __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} ${msg}${NC}\n" 1>&2
+  [[ ${exit_code} -ne 0 && -n "${msg}" ]] && __hhs_errcho "${APP_NAME}" "${msg}${NC}\n" 1>&2
   [[ ${exit_code} -eq 0 && -n "${msg}" ]] && echo -e "${msg} \n" 1>&2
   exit "${exit_code}"
 }

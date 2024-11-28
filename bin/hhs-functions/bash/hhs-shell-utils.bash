@@ -58,7 +58,7 @@ function __hhs_hist_stats() {
   IFS="${OLDIFS}"
   echo "${NC}"
 
-  return $?
+  return 0
 }
 
 # @function: Display all environment variables using filter.
@@ -114,51 +114,6 @@ function __hhs_envs() {
   return ${ret_val}
 }
 
-# @function: Display all alias definitions using filter.
-# @param $1 [Opt] : If -e is present, edit the .aliasdef file, otherwise a case-insensitive filter to be used when listing.
-function __hhs_defs() {
-
-  local pad pad_len filter name value columns ret_val=0 next
-
-  HHS_ALIASDEF_FILE="${HHS_DIR}/.aliasdef"
-
-  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} [regex_filters]"
-    return 1
-  else
-    if [[ "$1" == '-e' ]]; then
-      __hhs_edit "${HHS_ALIASDEF_FILE}"
-      ret_val=$?
-    else
-      pad=$(printf '%0.1s' "."{1..30})
-      pad_len=26
-      columns="$(($(tput cols) - pad_len - 10))"
-      filter="$*"
-      filter=${filter// /\|}
-      [[ -z "${filter}" ]] && filter=".*"
-      echo -e "\n${YELLOW}Listing all alias definitions matching [${filter}]:\n"
-      IFS=$'\n'
-      for next in $(grep -i '^ *__hhs_alias' "${HHS_ALIASDEF_FILE}" | sed 's/^ *//g' | sort | uniq); do
-        name=${next%%=*}
-        name="$(trim <<< "${name}" | awk '{print $2}')"
-        value=${next#*=}
-        value=${value//[\'\"]/}
-        if [[ ${name} =~ ${filter} ]]; then
-          echo -en "${HHS_HIGHLIGHT_COLOR}${name//__hhs_alias/}${NC} "
-          printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
-          echo -en "${GREEN} defined as => ${NC}"
-          echo -n "${value:0:${columns}}"
-          [[ ${#value} -ge ${columns} ]] && echo -n "..."
-          echo "${NC}"
-        fi
-      done
-      IFS="${OLDIFS}"
-      echo ' '
-    fi
-  fi
-
-  return ${ret_val}
-}
 
 # @function: Select a shell from the existing shell list.
 function __hhs_shell_select() {
@@ -187,7 +142,7 @@ function __hhs_shell_select() {
           echo "${GREEN}Your default shell has changed to => '${sel_shell}'"
           echo "${ORANGE}Next time you open a terminal window you will use \"${sel_shell}\" as your default shell"
         else
-          __hhs_errcho "${FUNCNAME[0]}: Unable to change shell to ${sel_shell}. You may have to add it to /etc/shells and try again!"
+          __hhs_errcho "${FUNCNAME[0]}" "Unable to change shell to ${sel_shell}. \n\n${YELLOW}${TIP_ICON} Tip: Try adding it to /etc/shells and try again!${NC}"
         fi
         [[ -f "${mselect_file}" ]] && \rm -f "${mselect_file}"
       fi
@@ -196,4 +151,62 @@ function __hhs_shell_select() {
   fi
 
   return ${ret_val}
+}
+
+
+# @function: Display/Set/unset current Shell Options.
+# @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
+function __hhs_shopt() {
+
+  local shell_options option enable color
+
+  enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
+  option="${2}"
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: ${FUNCNAME[0]} [on|off] | [-pqsu] [-o] [optname ...]"
+    echo ''
+    echo '    Options:'
+    echo '      off : Display all unset options.'
+    echo '      on  : Display all set options.'
+    echo '      -s  : Enable (set) each optname.'
+    echo '      -u  : Disable (unset) each optname.'
+    echo '      -p  : Display a list of all settable options, with an indication of whether or not each is set.'
+    echo '            The output is displayed in a form that can be reused as input. (-p is the default action).'
+    echo '      -q  : Suppresses normal output; the return status indicates whether the optname is set or unset.'
+    echo "            If multiple optname arguments are given with '-q', the return status is zero if all optnames"
+    echo '            are enabled; non-zero otherwise.'
+    echo "      -o  : Restricts the values of optname to be those defined for the '-o' option to the set builtin."
+    echo ''
+    echo '  Notes:'
+    echo '    If no option is provided, then, display all set & unset options.'
+  elif [[ ${#} -eq 0 || ${enable} =~ on|off|-p ]]; then
+    IFS=$'\n' read -r -d '' -a shell_options < <(\shopt | awk '{print $1"="$2}')
+    IFS="${OLDIFS}"
+    echo ' '
+    echo "${YELLOW}Available shell ${enable:-on and off} options (${#shell_options[@]}):"
+    echo ' '
+    for option in "${shell_options[@]}"; do
+      if [[ "${option#*=}" == 'on' ]] && [[ -z "${enable}" || "${enable}" =~ on|-p ]]; then
+        echo -e "  ${WHITE}${ON_SWITCH_ICN}  ${GREEN} ON${BLUE}\t${option%%=*}"
+      elif [[ "${option#*=}" == 'off' ]] && [[ -z "${enable}" || "${enable}" =~ off|-p ]]; then
+        echo -e "  ${WHITE}${OFF_SWITCH_ICN}  ${RED} OFF${BLUE}\t${option%%=*}"
+      fi
+    done
+    echo "${NC}"
+    return 0
+  elif [[ ${#} -ge 1 && ${enable} =~ -(s|u) ]]; then
+    [[ -z "${option}" ]] && return 1
+    if \shopt "${enable}" "${option}"; then
+      read -r option enable < <(\shopt "${option}" | awk '{print $1, $2}')
+      [[ 'off' == "${enable}" ]] && color="${RED}"
+      __hhs_toml_set "${HHS_SHOPTS_FILE}" "${option}=${enable}" &&
+        { echo -e "${WHITE}Shell option ${CYAN}${option}${WHITE} set to ${color:-${GREEN}}${enable} ${NC}"; return 0; }
+    fi
+  elif [[ ${#} -ge 1 && ${enable} =~ -(q|o) ]]; then
+    \shopt "${@}"
+    return $?
+  fi
+
+  return 1
 }

@@ -54,7 +54,7 @@ function __hhs_change_dir() {
   path="${path//\~/${HOME}}"
 
   if [[ ! -d "${path}" ]]; then
-    __hhs_errcho "${FUNCNAME[0]}: Directory \"${path}\" was not found !"
+    __hhs_errcho "${FUNCNAME[0]}" "Directory \"${path}\" was not found !"
   else
     # shellcheck disable=SC2086
     if
@@ -65,7 +65,7 @@ function __hhs_change_dir() {
       export CURPWD="${path}"
       return 0
     else
-      __hhs_errcho "${FUNCNAME[0]}: Unable to change to directory \"${path}\" !"
+      __hhs_errcho "${FUNCNAME[0]}" "Unable to change to directory \"${path}\" !"
     fi
   fi
 
@@ -124,7 +124,7 @@ function __hhs_dirs() {
     if __hhs_mselect "${mselect_file}" "Please choose one directory to change into (${len}) found:" "${results[@]}"; then
       sel_dir=$(grep . "${mselect_file}")
       if [[ -n "${sel_dir}" ]]; then
-        [[ ! -d "${sel_dir}" ]] && __hhs_errcho "${FUNCNAME[0]}: Directory \"${sel_dir}\" was not found !" && ret_val=1
+        [[ ! -d "${sel_dir}" ]] && __hhs_errcho "${FUNCNAME[0]}" "Directory \"${sel_dir}\" was not found !" && ret_val=1
       else
         ret_val=1
       fi
@@ -221,7 +221,7 @@ function __hhs_save_dir() {
       if [[ -n "${dir}" && "${dir}" == ".." ]]; then dir=${dir//../$(pwd)}; fi
       if [[ -n "${dir}" && "${dir}" == "-" ]]; then dir=${dir//-/$OLDPWD}; fi
       if [[ -n "${dir}" && ! -d "${dir}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist !"
+        __hhs_errcho "${FUNCNAME[0]}" "Directory \"${dir}\" does not exist !"
         ret_val=0
       else
         # Remove the old saved directory aliased
@@ -236,7 +236,7 @@ function __hhs_save_dir() {
         fi
       fi
     else
-      __hhs_errcho "${FUNCNAME[0]}: Invalid alias \"${2}\" !"
+      __hhs_errcho "${FUNCNAME[0]}" "Invalid alias \"${2}\" !"
     fi
   fi
 
@@ -309,7 +309,7 @@ function __hhs_load_dir() {
           ret_val=0
           ;;
         *)
-          __hhs_errcho "${FUNCNAME[0]}: Invalid arguments: \"$1\""
+          __hhs_errcho "${FUNCNAME[0]}" "Invalid arguments: \"$1\""
           ;;
       esac
 
@@ -320,11 +320,11 @@ function __hhs_load_dir() {
         echo "${GREEN}Directory changed to: ${WHITE}\"$(pwd)\""
         ret_val=0
       elif [[ -n "${dir}" && ! -d "${dir}" ]]; then
-        __hhs_errcho "${FUNCNAME[0]}: Directory \"${dir}\" does not exist!"
+        __hhs_errcho "${FUNCNAME[0]}" "Directory \"${dir}\" does not exist!"
         echo -e "${YELLOW}Hint: Type '$ save -r ${dir_alias}' to remove it."
       fi
     else
-      echo "${YELLOW}No saved directories available yet \"${HHS_SAVED_DIRS_FILE}\" !"
+      echo "${YELLOW}No directories saved yet: \"${HHS_SAVED_DIRS_FILE}\" !"
     fi
     echo "${NC}"
   fi

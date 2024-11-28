@@ -53,28 +53,28 @@ teardown() {
 @test "when-invoking-with-missing-file-then-toml-get-should-raise-an-error" {
   run __hhs_toml_get ''
   assert_failure
-  assert_output --partial "Fatal: The file parameter must be provided."
+  assert_output --partial "The file parameter must be provided."
 }
 
 # TC - 3
 @test "when-invoking-with-missing-key-then-toml-get-should-raise-an-error" {
   run __hhs_toml_get "${test_file}" ''
   assert_failure
-  assert_output --partial "Fatal: The key parameter must be provided."
+  assert_output --partial "The key parameter must be provided."
 }
 
 # TC - 4
 @test "when-invoking-with-invalid-file-then-toml-get-should-raise-an-error" {
   run __hhs_toml_get "non-existent.toml" "any_key"
   assert_failure
-  assert_output --partial "Fatal: The file \"non-existent.toml\" does not exists or is empty."
+  assert_output --partial "The file \"non-existent.toml\" does not exists or is empty."
 }
 
 # TC - 5
 @test "when-invoking-with-with-incorrect-key-value-pair-then-should-raise-an-error" {
   run __hhs_toml_set "${test_file}" "test.key.1" "tests"
   assert_failure
-  assert_output --partial "Fatal: The key/value parameter must be on the form of 'key=value', but it was 'test.key.1'."
+  assert_output --partial "The key/value parameter must be on the form of 'key=value', but it was 'test.key.1'."
 }
 
 # TC - 6

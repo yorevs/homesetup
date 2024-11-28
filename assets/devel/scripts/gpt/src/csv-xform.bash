@@ -7,7 +7,7 @@ VERSION="0.0.3" # https://semver.org/ ; major.minor.patch
 # Display usage information
 usage() {
     cat << EOF
-Usage: $0 [OPTIONS] [<input_file>] <output_columns>
+Usage: $(basename "$0") [OPTIONS] [<input_file>] <output_columns>
 
 Transform an N-column CSV into a grid format with a specified number of output columns.
 Both input and output columns must be even numbers.
@@ -27,9 +27,9 @@ Options:
   -v, --version        Display the script version and exit.
 
 Examples:
-  $0 Icons.csv 4               # Transform Icons.csv into a 4-column format and print to stdout.
-  $0 -o output.csv Icons.csv 4 # Transform Icons.csv into a 4-column format and save to output.csv.
-  echo "1234,4567,7890,asdf,fghj,jklk" | $0 4  # Pipe comma-separated values and transform into 4 columns.
+  $(basename "$0") Icons.csv 4               # Transform Icons.csv into a 4-column format and print to stdout.
+  $(basename "$0") -o output.csv Icons.csv 4 # Transform Icons.csv into a 4-column format and save to output.csv.
+  echo "1234,4567,7890,asdf,fghj,jklk" | $(basename "$0") 4  # Pipe comma-separated values and transform into 4 columns.
 
 EOF
     exit 1

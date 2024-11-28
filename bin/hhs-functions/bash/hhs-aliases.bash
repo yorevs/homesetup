@@ -49,10 +49,10 @@ function __hhs_aliases() {
           echo -e "${YELLOW}Alias removed: ${WHITE}\"${alias_name}\"${NC}"
           return 0
         else
-          __hhs_errcho "Failed to remove alias: \"${alias_name}\""
+          __hhs_errcho "${FUNCNAME[0]}" "Failed to remove alias: \"${alias_name}\""
         fi
       else
-        __hhs_errcho "Alias not found: \"${alias_name}\""
+        __hhs_errcho "${FUNCNAME[0]}" "Alias not found: \"${alias_name}\""
         return 1
       fi
     elif [[ "$1" == '-l' || "$1" == "--list" ]] && [[ -z "$2" ]]; then

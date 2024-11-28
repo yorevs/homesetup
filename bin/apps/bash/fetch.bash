@@ -14,6 +14,9 @@
 # Current script version.
 VERSION=1.0.0
 
+# Application name.
+APP_NAME="$(basename "$0")"
+
 # Help message to be displayed by the application.
 USAGE="usage: ${APP_NAME} <method> [options] <url>
 
@@ -165,7 +168,7 @@ main() {
   else
     if [[ -z "${SILENT}" ]]; then
       msg="Failed to process request: (Status=${STATUS})"
-      __hhs_errcho "${msg} => [resp:${RESPONSE:-<empty>}]"
+      __hhs_errcho "${APP_NAME}" "${msg} => [resp:${RESPONSE:-<empty>}]"
     else
       echo "${RET_VAL}" 1>&2
       quit 0

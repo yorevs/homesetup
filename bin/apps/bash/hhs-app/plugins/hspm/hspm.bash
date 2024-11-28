@@ -236,7 +236,7 @@ function install_recipe() {
     add_breadcrumb "${package}"
     _which_ "${package}" || echo -e "${YELLOW}WARN: Package \"${package}\" did not provide a known binary!${NC}"
   else
-    __hhs_errcho "${PLUGIN_NAME}: Failed to install \"${package}\"! Please type __hhs logs hspm to find out details\n"
+    __hhs_errcho "${PLUGIN_NAME}" "Failed to install \"${package}\"! Please type __hhs logs hspm to find out details\n"
   fi
 }
 
@@ -266,7 +266,7 @@ function uninstall_recipe() {
     del_breadcrumb "${package}"
     _which_ "${package}" && echo -e "${YELLOW}WARN: Package \"${package}\" is yet a known binary !${NC}"
   else
-    __hhs_errcho "${PLUGIN_NAME}: Failed to uninstall \"${package}\" ! Please type __hhs logs hspm to find out details\n"
+    __hhs_errcho "${PLUGIN_NAME}" "Failed to uninstall \"${package}\" ! Please type __hhs logs hspm to find out details\n"
   fi
 }
 

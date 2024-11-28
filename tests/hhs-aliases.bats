@@ -34,7 +34,7 @@ load_bats_libs
 @test "when-removing-an-invalid-alias-then-should-raise-an-error" {
   run __hhs_aliases -r 'hhs-bats'
   assert_failure
-  assert_output  --partial "Fatal: Alias not found: \"hhs-bats\""
+  assert_output  --partial "Alias not found: \"hhs-bats\""
 }
 
 # TC - 4

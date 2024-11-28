@@ -26,13 +26,13 @@ function __hhs_toml_get() {
   fi
 
   if [[ -z "${file}" ]]; then
-    __hhs_errcho "The file parameter must be provided."
+    __hhs_errcho "${FUNCNAME[0]}" "The file parameter must be provided."
     return 1
   elif [[ -z "${key}" ]]; then
-    __hhs_errcho "The key parameter must be provided."
+    __hhs_errcho "${FUNCNAME[0]}" "The key parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    __hhs_errcho "The file \"${file}\" does not exists or is empty."
+    __hhs_errcho "${FUNCNAME[0]}" "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 
@@ -75,13 +75,13 @@ function __hhs_toml_set() {
   fi
 
   if [[ -z "${file}" ]]; then
-    __hhs_errcho "The file parameter must be provided."
+    __hhs_errcho "${FUNCNAME[0]}" "The file parameter must be provided."
     return 1
   elif [[ -z "${key}" ]]; then
-    __hhs_errcho "The key parameter must be provided."
+    __hhs_errcho "${FUNCNAME[0]}" "The key parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    __hhs_errcho "The file \"${file}\" does not exists or is empty."
+    __hhs_errcho "${FUNCNAME[0]}" "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 
@@ -89,7 +89,7 @@ function __hhs_toml_set() {
   re_key_pair="^(${key}) *= *(.*)?"
 
   if ! [[ ${2} =~ ${re_key_pair} ]]; then
-    __hhs_errcho "The key/value parameter must be on the form of 'key=value', but it was '${2}'."
+    __hhs_errcho "${FUNCNAME[0]}" "The key/value parameter must be on the form of 'key=value', but it was '${2}'."
     return 1
   fi
 
@@ -124,10 +124,10 @@ function __hhs_toml_groups() {
   fi
 
   if [[ -z "${file}" ]]; then
-    __hhs_errcho "The file parameter must be provided."
+    __hhs_errcho "${FUNCNAME[0]}" "The file parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    __hhs_errcho "The file \"${file}\" does not exists or is empty."
+    __hhs_errcho "${FUNCNAME[0]}" "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 
@@ -156,10 +156,10 @@ function __hhs_toml_keys() {
   fi
 
   if [[ -z "${file}" ]]; then
-    __hhs_errcho "The file parameter must be provided."
+    __hhs_errcho "${FUNCNAME[0]}" "The file parameter must be provided."
     return 1
   elif [[ ! -s "${file}" ]]; then
-    __hhs_errcho "The file \"${file}\" does not exists or is empty."
+    __hhs_errcho "${FUNCNAME[0]}" "The file \"${file}\" does not exists or is empty."
     return 1
   fi
 

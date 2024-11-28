@@ -387,17 +387,17 @@ function command_hint() {
     done
 
     # Display error message and matching commands or a fallback message if no matches
-    __hhs_errcho "${APP_NAME}: ${WHITE}${POINTER_ICN} ${error_message}\n"
+    __hhs_errcho "${APP_NAME}" "${error_message}\n"
 
     if (( ${#matches[@]} > 0 )); then
-        echo -e "${ORANGE}${HELP_ICN} Did you mean one of these?${NC}\n"
+        echo -e "${YELLOW}${TIP_ICON} Tip: Did you mean one of these?${NC}\n"
         for match in "${matches[@]}"; do
           match="${match//__hhs_/}"
-          printf "${YELLOW}%3d. ${WHITE}%s${NC}\n" "$index" "hhs ${match//_/ }"
+          printf "%3d. ${BLUE}%s${NC}\n" "$index" "hhs ${match//_/ }"
           ((index++))
         done
     else
-        echo -e "\033[33;1m${TIP_ICON} Tip: ${YELLOW}Type 'hhs list' to find out options.${NC}"
+        echo -e "${YELLOW}${TIP_ICON} Tip: Type 'hhs list' to find out options.${NC}"
     fi
 
     quit 1  # Exit with an error

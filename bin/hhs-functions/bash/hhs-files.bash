@@ -96,7 +96,7 @@ function __hhs_del_tree() {
     esac
 
     if [[ "$1" == '/' ]] || [[ "$(pwd)" == '/' && "$1" == '.' ]]; then
-      __hhs_errcho "${FUNCNAME[0]}: Can't del-tree the root folder"
+      __hhs_errcho "${FUNCNAME[0]}" "Can't del-tree the root folder"
       return 1
     fi
 
@@ -117,7 +117,7 @@ function __hhs_del_tree() {
             if \mv "${next}" "${TRASH}/${trash_dest}" &>/dev/null; then
               echo -e "${ORANGE}Trashed => ${WHITE}${next} -> ${TRASH}/${trash_dest}${NC}"
             else
-              __hhs_errcho "${FUNCNAME[0]}: Could not move \"${next}\" to ${TRASH}/${trash_dest}"
+              __hhs_errcho "${FUNCNAME[0]}" "Could not move \"${next}\" to ${TRASH}/${trash_dest}"
             fi
           fi
         done

@@ -13,6 +13,9 @@
 # Current script version.
 VERSION=2.0.0
 
+# Application name.
+APP_NAME="$(basename "$0")"
+
 # Help message to be displayed by the application.
 USAGE="usage: ${APP_NAME} [Options] <ip_address>
 
@@ -144,6 +147,7 @@ check_valid() {
   # On Mac option -r does not exist, -E on linux option does not exist.
   [[ "$(uname -s)" == "Linux" ]] && sflag='-r'
   [[ "$(uname -s)" == "Darwin" ]] && sflag='-E'
+  # shellcheck disable=SC2086
   is_valid=$(echo "${IP_ADDRESS}" | sed ${sflag} "s/${ip_regex}/VALID_IP/")
 
   # Inverted because we will use it as exit code.

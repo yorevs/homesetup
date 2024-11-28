@@ -85,15 +85,20 @@ function __hhs_log() {
 }
 
 # @function: Echo a message in red color into stderr.
-# @param $1 [Req] : The message to be echoed.
+# @param $1 [Req] : The application name.
+# @param $2..$N [Req] : The message to be echoed.
 function __hhs_errcho() {
 
-  if [[ "$#" -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
+  local app_name="${1:-$$}"
+
+  if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} <message>"
     return 1
   fi
 
-  echo -e "${RED}✘ Fatal: ${APP_NAME}: ${WHITE}${POINTER_ICN} ${*}${NC}" 1>&2
+  shift
+
+  echo -e "${RED}✘ Fatal: ${WHITE}${app_name} ${POINTER_ICN} ${*}${NC}" 1>&2
 
   return 0
 }
@@ -141,7 +146,7 @@ function __hhs_alias() {
     if alias "${alias_name}"="${alias_expr}" >/dev/null 2>&1; then
       return 0
     else
-      __hhs_errcho "Failed to alias: \"${alias_name}\" !" 2>&1
+      __hhs_errcho "${FUNCNAME[0]}" "Failed to alias: \"${alias_name}\" !" 2>&1
     fi
   else
     __hhs_log "WARN" "Setting alias: \"${alias_name}\" was skipped because it already exists !"

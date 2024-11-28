@@ -19,8 +19,8 @@
 VERSION="0.0.1" # https://semver.org/ ; major.minor.patch
 
 # Usage message
-USAGE="usage: $0 -s <script_path> -i <iso_date> [-u <user>]
-Example: $0 -s /path/to/script.sh -i 2024-08-23T15:30:00Z -u username"
+USAGE="usage: $(basename "$0") -s <script_path> -i <iso_date> [-u <user>]
+Example: $(basename "$0") -s /path/to/script.sh -i 2024-08-23T15:30:00Z -u username"
 
 # @purpose: Display help message and exit
 usage() {

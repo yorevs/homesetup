@@ -19,7 +19,7 @@
 VERSION="0.0.3" # https://semver.org/ ; major.minor.patch
 
 # Usage message
-USAGE="usage: $0 [options]
+USAGE="usage: $(basename "$0") [options]
 
 Options:
   -h, --help          Display this help message and exit
@@ -28,8 +28,8 @@ Options:
   -c, --cron-to-iso   Convert cron expression to ISO date
 
 Examples:
-  $0 -i \"2024-08-23T15:30:00\"
-  $0 -c \"30 15 23 8 *\"
+  $(basename "$0") -i \"2024-08-23T15:30:00\"
+  $(basename "$0") -c \"30 15 23 8 *\"
 "
 
 # @purpose: Display usage message

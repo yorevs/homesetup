@@ -52,7 +52,7 @@ function __hhs_mchoose() {
   len=${#all_options[@]}
 
   if [[ ${len} -le 1 ]]; then
-    __hhs_errcho "${FUNCNAME[0]}: Invalid number of items: \"${len}\""
+    __hhs_errcho "${FUNCNAME[0]}" "Invalid number of items: \"${len}\""
     return 1
   fi
 
@@ -201,7 +201,7 @@ function __hhs_minput() {
   len=${#all_fields[*]}
 
   if [[ ${len} -lt 1 ]]; then
-    __hhs_errcho "${FUNCNAME[0]}: Invalid number of fields: \"${len}\""
+    __hhs_errcho "${FUNCNAME[0]}" "Invalid number of fields: \"${len}\""
     return 1
   fi
 

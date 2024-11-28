@@ -31,8 +31,8 @@
     -d, --droid           Install HomeSetup provided nerd font
 
   Examples:
-    ./nerd-font-installer.bash
-    ./nerd-font-installer.bash -f 'Droid'
+    $(basename "$0")
+    $(basename "$0") -f 'Droid'
   "
 
   # Nerd font version

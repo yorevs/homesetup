@@ -79,7 +79,7 @@ function __hhs_paths() {
       __hhs_edit "${HHS_PATHS_FILE}"
       return 0
     elif [[ "-a" == "$1" ]]; then
-      [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
+      [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}" "Path \"$2\" is not valid" && return 1
       grep -qxF "$2" "${HHS_PATHS_FILE}" && return 0
       ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"
       if [[ -d "$2" ]]; then
@@ -87,17 +87,17 @@ function __hhs_paths() {
         export PATH="$2:${PATH}"
         [[ -z "${quiet}" ]] && echo "${GREEN}Path was added: ${WHITE}\"$2\" ${NC}"
       else
-        __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" does not exist" && return 1
+        __hhs_errcho "${FUNCNAME[0]}" "Path \"$2\" does not exist" && return 1
       fi
     elif [[ "-r" == "$1" ]]; then
-      [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
+      [[ -z "$2" ]] && __hhs_errcho "${FUNCNAME[0]}" "Path \"$2\" is not valid" && return 1
       if grep -qxF "$2" "${HHS_PATHS_FILE}" && [[ -z ${quiet} ]]; then
         if ised -e "s#(^$2$)*##g" -e '/^\s*$/d' "${HHS_PATHS_FILE}"; then
           export PATH=${PATH//$2:/}
           echo "${YELLOW}Path was removed: ${WHITE}\"$2\" ${NC}"
         fi
       else
-        __hhs_errcho "${FUNCNAME[0]}: Path \"$2\" is not valid" && return 1
+        __hhs_errcho "${FUNCNAME[0]}" "Path \"$2\" is not valid" && return 1
       fi
     fi
   fi
