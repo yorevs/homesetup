@@ -28,18 +28,18 @@ if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
   exec 3>&2 2>~/hhsrc.$$.log
   set -x
 else
-  echo -e "\033[34mStarting HomeSetup ...\033[m"
+  echo -e "\033[34m[${SHELL##*\/}] HomeSetup is starting...\033[m"
 fi
 
-# Unset all HHS_ variables
+# Unset all HomeSetup variables
 unset "${!HHS_@}" "${!PS@}" "${!LC_@}"
 
-# If not running interactively and if it is not a Jenkins build, skip it.
+# If not running interactively or as a CI build, skip it.
 [[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 
-# Load the profile according to the user's SHELL.
+# Load the dotfiles according to the user's SHELL.
 case "${SHELL##*\/}" in
   'bash')
     if [[ -s "${HOME}/.hhsrc" ]]; then

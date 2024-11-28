@@ -98,7 +98,7 @@ is_updated() {
   for idx in "${!repo_versions[@]}"; do
     if [[ ${repo_versions[idx]} -gt ${curr_versions[idx]} ]]; then
       echo ''
-      echo -e "${ORANGE}Your version of HomeSetup is not up-to-date: ${NC}"
+      echo -e "${ORANGE}Updates Available: ${NC}"
       echo -e "  => Repository: ${GREEN}v${repo_ver}${NC}, Yours: ${RED}v${HHS_VERSION}${NC}"
       echo ''
       return 1
@@ -124,7 +124,7 @@ update_hhs() {
 
     if [[ ${repo_ver} =~ $re ]]; then
       if ! is_updated "${repo_ver}"; then
-        read -r -n 1 -sp "${YELLOW}Would you like to update it now (y/[n])? " ANS
+        read -r -n 1 -sp "${YELLOW}Do you want to install the updates now (y/[n])? " ANS
         [[ -n "$ANS" ]] && echo "${ANS}${NC}"
         if [[ "${ANS}" =~ ^[yY]$ ]]; then
           pushd "${HHS_HOME}" &>/dev/null || quit 1
@@ -133,7 +133,7 @@ update_hhs() {
           if do_update && "${HHS_HOME}/install.bash" -q -r; then
             echo -e "${GREEN}Successfully updated HomeSetup !${NC}"
             echo ''
-            echo -e "${YELLOW}${POINTER_ICN}  The new version will become active once you restart your terminal!${NC}"
+            echo -e "${YELLOW}${POINTER_ICN}  The updated version will activate after restarting your terminal!${NC}"
             quit 0
           else
             quit 1 "${PLUGIN_NAME}: Failed to update HomeSetup !${NC}"
@@ -146,7 +146,7 @@ update_hhs() {
       quit 1 "${PLUGIN_NAME}: Unable to fetch '.VERSION' from git repository !"
     fi
   else
-    quit 1 "${PLUGIN_NAME}: HHS_VERSION is undefined. HomeSetup is not properly installed !"
+    quit 1 "${PLUGIN_NAME}: HHS_VERSION is undefined. HomeSetup installation is incomplete!"
   fi
   echo -e "${NC}"
 

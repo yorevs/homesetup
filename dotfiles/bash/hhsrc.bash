@@ -120,7 +120,7 @@ echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
 # HomeSetup initialization.
 if [[ ! -s "${HHS_SETUP_FILE}" ]]; then
-  __hhs_log "WARN" "HomeSetup initialization file not found. Using defaults."
+  __hhs_log "WARN" "HomeSetup initialization file '${HHS_SETUP_FILE}' was not found. Using defaults."
   \cp "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
 fi
 re='^([a-zA-Z0-9_.]+) *= *(.*)'
@@ -131,7 +131,7 @@ while read -r pref; do
     export "${pref?}"
   fi
 done <"${HHS_SETUP_FILE}"
-__hhs_log "INFO" "Initialization settings loaded: ${HHS_SETUP_FILE}"
+__hhs_log "INFO" "Initialization settings have been loaded from '${HHS_SETUP_FILE}'"
 
 # !!!Settings are available as environment variables from this point.!!!
 
@@ -160,9 +160,9 @@ if ! [[ -f "${HHS_KEY_BINDINGS}" ]]; then
 fi
 
 if bind -f "${HHS_KEY_BINDINGS}"; then
-  __hhs_log "INFO" "HomeSetup key bindings loaded: ${HHS_KEY_BINDINGS}"
+  __hhs_log "INFO" "Key bindings loaded: ${HHS_KEY_BINDINGS}"
 else
-  __hhs_log "WARN" "HomeSetup key bindings failed to load: ${HHS_KEY_BINDINGS}"
+  __hhs_log "WARN" "Key bindings failed to load: ${HHS_KEY_BINDINGS}"
 fi
 
 # Set system locale variables (defaults)
@@ -180,7 +180,7 @@ if [[ ${HHS_SET_LOCALES} -eq 1 ]]; then
   fi
 fi
 
-# Initialize Blesh plug-in if it's enabled.
+# Initialize Ble-sh plug-in if it's enabled.
 if [[ ${HHS_USE_BLESH} -eq 1 ]]; then
   __hhs_log "INFO" "Loading Ble-sh plug-in"
   [[ $- == *i* ]] && source "${HHS_BLESH_DIR}/out/ble.sh" --noattach
@@ -198,7 +198,7 @@ if [[ ${HHS_PYTHON_VENV_ENABLED:-1} -eq 1 ]]; then
     __hhs_log "ERROR" "Unable to activate HomeSetup Python venv!"
   fi
 else
-  __hhs_log "WARN" "HomeSetup Python venv skipped!"
+  __hhs_log "WARN" "HomeSetup Python venv activation was disabled !"
 fi
 
 # -----------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ fi
 if [[ ${HHS_NO_AUTO_UPDATE} -ne 1 ]]; then
   if [[ ! -s "${HHS_DIR}/.last_update" || $(date "+%s%S") -ge $(grep . "${HHS_DIR}/.last_update") ]]; then
     echo
-    echo -e "${BLUE}HomeSetup is checking for updates ...${NC}"
+    echo -e "${BLUE}Checking for updates ...${NC}"
     if __hhs_is_reachable 'github.com'; then
       __hhs updater execute check
     else
@@ -360,7 +360,7 @@ diff_time=$((finished - started))
 diff_time_sec=$((diff_time/1000))
 diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
-__hhs_log "INFO" "HomeSetup initialization complete in ${diff_time_sec}s ${diff_time_ms}ms" >>"${HHS_LOG_FILE}"
+__hhs_log "INFO" "HomeSetup initialization completed in ${diff_time_sec}s ${diff_time_ms}ms" >>"${HHS_LOG_FILE}"
 
 unset -f started finished diff_time diff_time_sec diff_time_ms state option line file all
 unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name last_dir re

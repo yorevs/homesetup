@@ -73,5 +73,5 @@ else
   __hhs_log "DEBUG" "Bash colors loaded using '\033['"
 fi
 
-# Color used to highlight text: Default is BLUE
-export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-${BLUE}}
+# Color used to highlight text: Default is CYAN
+export HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-${CYAN}}

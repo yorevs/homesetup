@@ -45,7 +45,6 @@ function __hhs_mchoose() {
 
   [[ '-c' = "${1}" ]] && shift && checked='True'
 
-  HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=15}
   outfile="${1}"
   title="${2:-Please mark the desired choices}"
   shift 2
@@ -57,28 +56,28 @@ function __hhs_mchoose() {
     return 1
   fi
 
-  re_prop='^([a-zA-Z0-9_]*)=(.*)$'
-  for option in "${all_options[@]}"; do
-    if [[ ${option} =~ ${re_prop} ]]; then
-      all_items+=("${BASH_REMATCH[1]}")
-      all_checks+=("${BASH_REMATCH[2]}")
-    else
-      all_items+=("${option}")
-      all_checks+=("${checked}")
-    fi
-  done
-
-  printf -v all_options_str '%s,' "${all_items[@]}"
-  all_options_str="${all_options_str%,}"
-  all_options_str="${all_options_str//,/\",\"}"
-  printf -v all_checks_str '%s,' "${all_checks[@]}"
-  all_checks_str="${all_checks_str%,}"
-  all_checks_str="${all_checks_str//on/True}"
-  all_checks_str="${all_checks_str//off/False}"
-
   echo '' >"${outfile}"
 
   if __hhs_is_venv; then
+
+    re_prop='^([a-zA-Z0-9_]*)=(.*)$'
+    for option in "${all_options[@]}"; do
+      if [[ ${option} =~ ${re_prop} ]]; then
+        all_items+=("${BASH_REMATCH[1]}")
+        all_checks+=("${BASH_REMATCH[2]}")
+      else
+        all_items+=("${option}")
+        all_checks+=("${checked}")
+      fi
+    done
+
+    printf -v all_options_str '%s,' "${all_items[@]}"
+    all_options_str="${all_options_str%,}"
+    all_options_str="${all_options_str//,/\",\"}"
+    printf -v all_checks_str '%s,' "${all_checks[@]}"
+    all_checks_str="${all_checks_str%,}"
+    all_checks_str="${all_checks_str//on/True}"
+    all_checks_str="${all_checks_str//off/False}"
 
     python3 -c "
 from clitt.core.tui.mchoose.mchoose import mchoose
@@ -93,7 +92,7 @@ if __name__ == \"__main__\":
     ret_val=$?
 
   else
-    __hhs_classic_mchoose "${outfile}" "${title}" "${all_items[@]}"
+    __hhs_classic_mchoose "${outfile}" "${title}" "${all_options[@]}"
   fi
 
   return $ret_val
@@ -134,12 +133,12 @@ function __hhs_mselect() {
 
   [[ "${len}" -le 1 ]] && echo "${all_options[0]}" >"${outfile}" && return 0
 
-  printf -v all_options_str '%s,' "${all_options[@]}"
-  all_options_str="${all_options_str%,}"
-
   echo '' >"${outfile}"
 
   if __hhs_is_venv; then
+
+    printf -v all_options_str '%s,' "${all_options[@]}"
+    all_options_str="${all_options_str%,}"
 
     python3 -c """
 from clitt.core.tui.mselect.mselect import mselect
