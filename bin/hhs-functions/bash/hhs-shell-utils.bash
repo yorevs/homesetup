@@ -203,9 +203,10 @@ function __hhs_shopt() {
       __hhs_toml_set "${HHS_SHOPTS_FILE}" "${option}=${enable}" &&
         { echo -e "${WHITE}Shell option ${CYAN}${option}${WHITE} set to ${color:-${GREEN}}${enable} ${NC}"; return 0; }
     fi
-  elif [[ ${#} -ge 1 && ${enable} =~ -(q|o) ]]; then
-    \shopt "${@}"
-    return $?
+  else
+    \shopt "${@}" 2>/dev/null && return 0
+    [[ "${enable}" == '-q' ]] && return 1
+    __hhs_errcho "${FUNCNAME[0]}" "${enable}: invalid option"
   fi
 
   return 1
