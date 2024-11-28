@@ -165,6 +165,8 @@ function __hhs_minput() {
 
   local outfile title all_fields=() len
 
+  __hhs_is_venv || { __hhs_errcho "This feature is not available when venv is deactivated!"; return 1; }
+
   if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"
     echo ''
@@ -205,27 +207,21 @@ function __hhs_minput() {
 
   echo '' >"${outfile}"
 
-  if __hhs_is_venv; then
+  printf -v all_fields_str '%s,' "${all_fields[@]}"
+  all_fields_str="${all_fields_str%,}"
 
-    printf -v all_fields_str '%s,' "${all_fields[@]}"
-    all_fields_str="${all_fields_str%,}"
-
-    python3 -c """
+  python3 -c """
 from clitt.core.tui.minput.input_validator import InputValidator
 from clitt.core.tui.minput.minput import MenuInput, minput
 
 if __name__ == \"__main__\":
   it = [\"${all_fields_str//,/\",\"}\"]
   form_fields = MenuInput.builder() \
-      .from_tokenized(it) \
-      .build()
+    .from_tokenized(it) \
+    .build()
   ret=minput(form_fields, \"${title}\", \"${outfile}\")
   exit(1 if ret is None else 0)
 """
-
-  else
-    __hhs_classic_minput "${outfile}" "${title}" "${all_fields[*]}"
-  fi
 
   return $?
 }
