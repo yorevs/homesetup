@@ -15,7 +15,7 @@
 function __hhs_classic_mchoose() {
 
   local outfile title ret_val=1 all_options=() all_checks=() cur_index=0 show_from=0 re_render=1 selector
-  local index_len len show_to diff_index typed_index columns option_line init_value=0 mark
+  local index_len len show_to diff_index typed_index max_columns option_line init_value=0 mark col_offset=8
 
   if [[ $# -eq 0 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} <output_file> <title> <items...>"
@@ -42,6 +42,7 @@ function __hhs_classic_mchoose() {
 
   [[ '-c' = "${1}" ]] && shift && init_value=1
 
+  HHS_HIGHLIGHT_COLOR=${HHS_HIGHLIGHT_COLOR:-${CYAN}}
   HHS_TUI_MAX_ROWS=${HHS_TUI_MAX_ROWS:=10}
   outfile="${1}" && shift
   title="${1}" && shift
@@ -49,6 +50,7 @@ function __hhs_classic_mchoose() {
   diff_index="$((show_to - show_from))"
   all_options=("${@}")
   len=${#all_options[*]}
+  max_columns="$(($(tput cols) - col_offset))"
 
   # Initialize all options
   re_prop='^([a-zA-Z0-9_]*)=(.*)$'
@@ -74,7 +76,6 @@ function __hhs_classic_mchoose() {
 
     # Menu Renderization {
     if [[ -n "$re_render" ]]; then
-      columns="$(($(tput cols) - 7))"
       tput civis
       # Restore the cursor to the home position
       tput rc
@@ -83,14 +84,14 @@ function __hhs_classic_mchoose() {
         selector=' '
         mark="${UNMARKED_ICN}"
         [[ ${idx} -ge ${len} ]] && break # When the number of items is lower than the max rows, skip the other lines
-        option_line="${all_items[idx]:0:${columns}}"
+        option_line="${all_items[idx]:0:${max_columns}}"
         # Erase current line before repaint
         echo -ne "\033[2K\r"
         [[ $idx -eq $cur_index ]] && echo -en "${HHS_HIGHLIGHT_COLOR}" && selector="${POINTER_ICN}"
         [[ ${all_checks[idx]} -eq 1 ]] && mark="${MARKED_ICN}"
         printf "  %${#len}s  %0.4b  %0.4b  %s" "$((idx + 1))" "${selector}" "${mark}" "${option_line}"
         # Check if the text fits the screen and print it, otherwise print '...'
-        [[ ${#option_line} -ge ${columns} ]] && echo -e "\033[4D\033[K..."
+        [[ ${#option_line} -ge ${max_columns} ]] && echo -en "\033[4D\033[K..."
         echo -e "${NC}"
       done
       echo ''
