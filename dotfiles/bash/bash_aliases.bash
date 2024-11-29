@@ -151,38 +151,6 @@ alias ps1='export PS1=$PS1_STYLE'
 # @alias: Make PS2 prompt active (continuation prompt)
 alias ps2='export PS1=$PS2_STYLE'
 
-# -----------------------------------------------------------------------------------
-# @category: HomeSetup
-
-# @alias: Reload HomeSetup
-alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
-# @alias: Clear and reset all cursor attributes and IFS
-alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${OLDIFS}"'
-# @alias: Clear the screen and reset the terminal
-alias __hhs_reset="__hhs_clear; \reset"
-# @alias: Shortcut for hhs hspm plug-in
-alias __hhs_hspm='__hhs hspm execute'
-# @alias: Shortcut for hhs updater plug-in
-alias __hhs_hhu='__hhs updater execute'
-# @alias: Shortcut for hhs starship plug-in
-alias __hhs_starship='__hhs starship execute'
-# @alias: Shortcut for hhs setup plug-in
-alias __hhs_setup='__hhs setup execute'
-# @alias: Shortcut for hhs firebase plug-in
-alias __hhs_firebase='__hhs firebase execute'
-# @alias: Shortcut for hhs settings plug-in
-alias __hhs_settings='__hhs settings execute'
-
-# -----------------------------------------------------------------------------------
-# @category: External tools aliases
-
-if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
-  # @alias: Shortcut for hhs ask plug-in
-  alias __hhs_ask='__hhs ask execute'
-  # @alias: Shortcut for the AskAI python module
-  alias taius='python3 -m askai'
-fi
-
 # @alias: Jenv - Set JAVA_HOME using jenv
 __hhs_has "jenv" && alias jenv_set_java_home='export JAVA_HOME="${HOME}/.jenv/versions/`jenv version-name`"'
 
@@ -275,20 +243,34 @@ bash)
 esac
 
 # -----------------------------------------------------------------------------------
-# @category: Python aliases
+# @category: Python & HomeSetup aliases
 
-if __hhs_has "python3"; then
+# @alias: Evaluate mathematical expressions
+alias __hhs_calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+# @alias: URL-encode strings
+alias __hhs_urle='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+# @alias: URL-decode strings
+alias __hhs_urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+# @alias: Generate a UUID
+alias __hhs_uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
 
-  # @alias: Evaluate mathematical expressions
-  alias __hhs_calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
-  # @alias: URL-encode strings
-  alias __hhs_urle='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-  # @alias: URL-decode strings
-  alias __hhs_urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
-  # @alias: Generate a UUID
-  alias __hhs_uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
-  # @alias: Shortcut for the HomeSetup TimeCalc widget
-  alias __hhs_tcalc="hspylib widgets TimeCalc"
+# @alias: Reload HomeSetup
+alias __hhs_reload='__hhs_clear; source "${HOME}/.bashrc"'
+# @alias: Clear and reset all cursor attributes and IFS
+alias __hhs_clear='reset-cursor-attrs; echo -en "\033[2J\033[H${NC}"; export IFS="${OLDIFS}"'
+# @alias: Clear the screen and reset the terminal
+alias __hhs_reset="__hhs_clear; \reset"
+# @alias: Shortcut for hhs hspm plug-in
+alias __hhs_hspm='__hhs hspm execute'
+# @alias: Shortcut for hhs updater plug-in
+alias __hhs_hhu='__hhs updater execute'
+# @alias: Shortcut for hhs starship plug-in
+alias __hhs_starship='__hhs starship execute'
+# @alias: Shortcut for hhs setup plug-in
+alias __hhs_setup='__hhs setup execute'
+
+# The following aliases requires HomeSetup python venv to be active
+if __hhs_is_venv; then
   # @alias: Shortcut for hspylib-clitt module
   alias __hhs_clitt='python3 -m clitt'
   # @alias: Shortcut for hspylib-vault module
@@ -297,6 +279,19 @@ if __hhs_has "python3"; then
   alias __hhs_cfman='python3 -m cfman'
   # @alias: Shortcut for hspylib-kafman module
   alias __hhs_kafman='python3 -m kafman'
+  # @alias: Shortcut for hhs firebase plug-in
+  alias __hhs_firebase='__hhs firebase execute'
+  # @alias: Shortcut for hhs settings plug-in
+  alias __hhs_settings='__hhs settings execute'
+  # @alias: Shortcut for the HomeSetup TimeCalc widget
+  alias __hhs_tcalc="hspylib widgets TimeCalc"
+fi
+
+if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
+  # @alias: Shortcut for hhs ask plug-in
+  alias __hhs_ask='__hhs ask execute'
+  # @alias: Shortcut for the AskAI python module
+  alias taius='python3 -m askai'
 fi
 
 # -----------------------------------------------------------------------------------

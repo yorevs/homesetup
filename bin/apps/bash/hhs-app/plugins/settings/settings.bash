@@ -40,6 +40,8 @@ function execute() {
 
   local args env_file ret_val=0 num
 
+  __hhs_is_venv || quit 1 "Not available when HomeSetup python venv is not active!"
+
   args=()
   arg_n=${#}
 

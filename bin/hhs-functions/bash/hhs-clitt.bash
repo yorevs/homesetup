@@ -165,7 +165,7 @@ function __hhs_minput() {
 
   local outfile title all_fields=() len
 
-  __hhs_is_venv || { __hhs_errcho "This feature is not available when venv is deactivated!"; return 1; }
+  __hhs_is_venv || { __hhs_errcho "Not available when HomeSetup python venv is not active!"; return 1; }
 
   if [[ $# -lt 3 || "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} <output_file> <title> <form_fields...>"

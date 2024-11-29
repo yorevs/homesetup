@@ -58,6 +58,8 @@ function cleanup() {
 function execute() {
   local args
 
+  __hhs_is_venv || quit 1 "Not available when HomeSetup python venv is not active!"
+
   [[ -z "$1" || "$1" == "-h" || "$1" == "--help" ]] && usage 0
   [[ "$1" == "-v" || "$1" == "--version" ]] && version
 

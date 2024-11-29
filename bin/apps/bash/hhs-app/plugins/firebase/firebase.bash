@@ -40,6 +40,8 @@ function execute() {
 
   local args action db_alias dotfiles=()
 
+  __hhs_is_venv || quit 1 "Not available when HomeSetup python venv is not active!"
+
   # shellcheck disable=SC2206
   args=(${@})
   action="${args[0]}"
