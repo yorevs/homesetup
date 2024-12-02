@@ -245,9 +245,6 @@ esac
 # -----------------------------------------------------------------------------------
 # @category: Python & HomeSetup aliases
 
-# @alias: Shorthand for __hhs_venv
-alias venv="__hhs_venv"
-
 # @alias: Evaluate mathematical expressions
 alias __hhs_calc='python3 -c "import sys, math; print(eval(\"\".join(sys.argv[1:])))"'
 # @alias: URL-encode strings

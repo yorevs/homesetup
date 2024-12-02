@@ -232,3 +232,46 @@ function __hhs_envs() {
 
   return ${ret_val}
 }
+
+# @function: Activate/Deactivate the HomeSetup python venv.
+function __hhs_venv() {
+
+  local ret_val=1 enable="${1}" active
+
+  if [[ '-h' == "${enable}" || '--help' == "${enable}" ]]; then
+    echo "usage: ${FUNCNAME[0]} [-a|-d|-t]"
+    echo ''
+    echo '    Options: '
+    echo '      -a | --activate     : Makes the venv active.'
+    echo '      -d | --deactivate   : Makes the venv inactive.'
+    echo '      -t | --toggle       : Toggles the venv between active/inactive.'
+    echo ''
+    echo '  Notes: '
+    echo '    - if no option is specified, it will check whether it is active/inactive.'
+    return 1
+  fi
+
+  active="$(__hhs_is_venv && echo -e "${GREEN}Active")"
+  active="${active:-${RED}Inactive}"
+
+
+  [[ -z "${enable}" ]] && { echo -e "${WHITE}Virtual environment is ${active} ${YELLOW}[$(python3 -V)] -> $(command -v python3)."; return 0; }
+
+  if [[ "$(ps -p "$PPID" -o comm=)" != "/usr/bin/login" ]]; then
+    __hhs_errcho "${FUNCNAME[0]}" "Can't Activate/Deactivate in a sub-shell!"
+  elif [[ "${enable}" =~ -d|-t ]] && declare -F deactivate &> /dev/null; then
+    deactivate && \
+      { echo -e "${WHITE}Virtual environment ${RED}deactivated ${YELLOW}[$(python3 -V)] -> $(command -v python3)."; ret_val=0; }
+  elif [[ "${enable}" =~ -a|-t ]] && ! declare -F deactivate &> /dev/null; then
+    source "${HHS_VENV_PATH}"/bin/activate &> /dev/null && \
+      { echo "${WHITE}Virtual environment ${GREEN}activated ${YELLOW}[$(python3 -V)] -> $(command -v python3)."; ret_val=0; }
+  else
+    echo -e "${WHITE}Virtual environment is ${active} ${YELLOW}[$(python3 -V)] -> $(command -v python3)."
+  fi
+
+  echo -e "${NC}"
+  # shellcheck disable=SC2155
+  export HHS_PYTHON_VENV_ACTIVE="$(__hhs_is_venv && echo '1')"
+
+  return $ret_val
+}
