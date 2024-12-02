@@ -21,6 +21,10 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
+# If not running interactively or as a CI build, skip it.
+[[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
+
+export HHS_ACTIVE_DOTFILES='bashrc'
 
 if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
   echo -e "\033[33mStarting HomeSetup in debug mode\033[m"
@@ -30,14 +34,6 @@ if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
 else
   echo -e "\033[34m[${SHELL##*\/}] HomeSetup is starting...\033[m"
 fi
-
-# Unset all HomeSetup variables
-unset "${!HHS_@}" "${!PS@}" "${!LC_@}"
-
-# If not running interactively or as a CI build, skip it.
-[[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
-
-export HHS_ACTIVE_DOTFILES='bashrc'
 
 # Load the dotfiles according to the user's SHELL.
 case "${SHELL##*\/}" in

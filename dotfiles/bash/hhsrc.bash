@@ -25,12 +25,15 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
-# Do not change this formatting, it is required to proper reset IFS to it's defaults
-# The Internal Field Separator (IFS). The default value is <space><tab><newline>
-export OLDIFS="${IFS}"
+# Unset all HomeSetup variables
+unset "${!HHS_@}" "${!PS@}" "${!LC_@}"
 
 # Unset all aliases before setting them again.
 unalias -a
+
+# Do not change this formatting, it is required to proper reset IFS to it's defaults
+# The Internal Field Separator (IFS). The default value is <space><tab><newline>
+export OLDIFS="${IFS}"
 
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"

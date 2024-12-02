@@ -245,12 +245,15 @@ esac
 # -----------------------------------------------------------------------------------
 # @category: Python & HomeSetup aliases
 
+# @alias: Shorthand for __hhs_venv
+alias venv="__hhs_venv"
+
 # @alias: Evaluate mathematical expressions
-alias __hhs_calc='python3 -c "import sys,math; print(eval(\" \".join(sys.argv[1:])));"'
+alias __hhs_calc='python3 -c "import sys, math; print(eval(\"\".join(sys.argv[1:])))"'
 # @alias: URL-encode strings
-alias __hhs_urle='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+alias __hhs_urle='python3 -c "import sys; from urllib import parse as ul; print(ul.quote(\" \".join(sys.argv[1:])))"'
 # @alias: URL-decode strings
-alias __hhs_urld='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1]);"'
+alias __hhs_urld='python3 -c "import sys; from urllib import parse as ul; print(ul.unquote(\" \".join(sys.argv[1:])))"'
 # @alias: Generate a UUID
 alias __hhs_uuid='python3 -c "import uuid as ul; print(ul.uuid4())"'
 
@@ -272,26 +275,27 @@ alias __hhs_setup='__hhs setup execute'
 # The following aliases requires HomeSetup python venv to be active
 if __hhs_is_venv; then
   # @alias: Shortcut for hspylib-clitt module
-  alias __hhs_clitt='python3 -m clitt'
+  alias __hhs_clitt='__hhs_is_venv && python3 -m clitt'
+  # @alias: Shortcut for the HomeSetup TimeCalc widget
+  alias __hhs_tcalc="__hhs_is_venv && __hhs_clitt widgets TimeCalc"
   # @alias: Shortcut for hspylib-vault module
-  alias __hhs_vault='python3 -m vault'
+  alias __hhs_vault='__hhs_is_venv && python3 -m vault'
   # @alias: Shortcut for hspylib-cfman module
-  alias __hhs_cfman='python3 -m cfman'
+  alias __hhs_cfman='__hhs_is_venv && python3 -m cfman'
   # @alias: Shortcut for hspylib-kafman module
-  alias __hhs_kafman='python3 -m kafman'
+  alias __hhs_kafman='__hhs_is_venv && python3 -m kafman'
   # @alias: Shortcut for hhs firebase plug-in
   alias __hhs_firebase='__hhs firebase execute'
   # @alias: Shortcut for hhs settings plug-in
   alias __hhs_settings='__hhs settings execute'
-  # @alias: Shortcut for the HomeSetup TimeCalc widget
-  alias __hhs_tcalc="hspylib widgets TimeCalc"
-fi
 
-if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
-  # @alias: Shortcut for hhs ask plug-in
-  alias __hhs_ask='__hhs ask execute'
-  # @alias: Shortcut for the AskAI python module
-  alias taius='python3 -m askai'
+  # AI Enabled aliases
+  if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
+    # @alias: Shortcut for hhs ask plug-in
+    alias __hhs_ask='__hhs ask execute'
+    # @alias: Shortcut for the AskAI python module
+    alias taius='__hhs_is_venv && python3 -m askai'
+  fi
 fi
 
 # -----------------------------------------------------------------------------------
@@ -310,37 +314,34 @@ fi
 # -----------------------------------------------------------------------------------
 # @category: Git aliases
 
-if __hhs_has "git"; then
-
-  # @alias: Git - Enhancement for `git status'
-  alias __hhs_git_status='git status && gl -n 1'
-  # @alias: Git - Shortcut for `git fetch'
-  alias __hhs_git_fetch='git fetch -p'
-  # @alias: Git - Shortcut for `git log'
-  alias __hhs_git_history='git log -p'
-  # @alias: Git - Shortcut for `git branch'
-  alias __hhs_git_branch='git branch'
-  # @alias: Git - Shortcut for `git diff'
-  alias __hhs_git_diff='git diff'
-  # @alias: Git - Shortcut for `git pull'
-  alias __hhs_git_pull='git pull'
-  # @alias: Git - Enhancement for `git log'
-  alias __hhs_git_log='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
-  # @alias: Git - Shortcut for `git checkout'
-  alias __hhs_git_checkout='git checkout'
-  # @alias: Git - Shortcut for `git commit'
-  alias __hhs_git_commit='git commit -m'
-  # @alias: Git - Shortcut for `git commit amend'
-  alias __hhs_git_amend='git commit --amend --no-edit'
-  # @alias: Git - Shortcut for `git pull rebase'
-  alias __hhs_git_pull_rebase='git pull --rebase --autostash --all --verbose --no-recurse-submodules'
-  # @alias: Git - Shortcut for `git push'
-  alias __hhs_git_push='git push origin HEAD'
-  # @alias: Git - Enhancement for `git diff-tree'
-  alias __hhs_git_show='git diff-tree --no-commit-id --name-status -r'
-  # @alias: Git - Enhancement for `git difftool'
-  alias __hhs_git_difftool='git difftool -t opendiff'
-fi
+# @alias: Git - Enhancement for `git status'
+alias __hhs_git_status='git status && gl -n 1'
+# @alias: Git - Shortcut for `git fetch'
+alias __hhs_git_fetch='git fetch -p'
+# @alias: Git - Shortcut for `git log'
+alias __hhs_git_history='git log -p'
+# @alias: Git - Shortcut for `git branch'
+alias __hhs_git_branch='git branch'
+# @alias: Git - Shortcut for `git diff'
+alias __hhs_git_diff='git diff'
+# @alias: Git - Shortcut for `git pull'
+alias __hhs_git_pull='git pull'
+# @alias: Git - Enhancement for `git log'
+alias __hhs_git_log='git log --oneline --graph --decorate --pretty=format:"%C(blue)%h%C(red)%d %C(yellow)(%cr) %C(cyan)<%ce> %C(white)\"%s\"%Creset"'
+# @alias: Git - Shortcut for `git checkout'
+alias __hhs_git_checkout='git checkout'
+# @alias: Git - Shortcut for `git commit'
+alias __hhs_git_commit='git commit -m'
+# @alias: Git - Shortcut for `git commit amend'
+alias __hhs_git_amend='git commit --amend --no-edit'
+# @alias: Git - Shortcut for `git pull rebase'
+alias __hhs_git_pull_rebase='git pull --rebase --autostash --all --verbose --no-recurse-submodules'
+# @alias: Git - Shortcut for `git push'
+alias __hhs_git_push='git push origin HEAD'
+# @alias: Git - Enhancement for `git diff-tree'
+alias __hhs_git_show='git diff-tree --no-commit-id --name-status -r'
+# @alias: Git - Enhancement for `git difftool'
+alias __hhs_git_difftool='git difftool -t opendiff'
 
 # -----------------------------------------------------------------------------------
 # @category: Gradle aliases

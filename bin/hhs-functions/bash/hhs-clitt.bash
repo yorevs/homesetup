@@ -230,6 +230,8 @@ if __name__ == \"__main__\":
 # @param $1 [Con] : The week list punches from.
 function __hhs_punch() {
 
+  __hhs_is_venv || { __hhs_errcho "${FUNCNAME[0]}" "Not available when HomeSetup python venv is not active!"; return 1; }
+
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} [options] <args>"
     echo ''
