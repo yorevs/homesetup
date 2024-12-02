@@ -47,9 +47,9 @@ function __hhs_command() {
       ;;
     -a | --add)
       shift
-      cmd_name=$(echo -en "$1" | tr -s '[:space:]' '_' | tr '[:lower:]' '[:upper:]')
+      cmd_name=$(echo -en "${1//[:space:]/_}" | tr '[:lower:]' '[:upper:]')
       shift
-      cmd_expr="$*"
+      cmd_expr="${*//\"/\\\"}"
       if [[ -z "${cmd_name}" || -z "${cmd_expr}" ]]; then
         __hhs_errcho "${FUNCNAME[0]}" "Invalid arguments: \"${cmd_name}\"\t\"${cmd_expr}\"${NC}"
       fi

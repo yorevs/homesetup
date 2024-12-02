@@ -61,59 +61,35 @@ function __hhs_hist_stats() {
   return 0
 }
 
-# @function: Display all environment variables using filter.
-# @param $1 [Opt] : If -e is present, edit the env file, otherwise a case-insensitive filter to be used when listing.
-function __hhs_envs() {
+# @function: Display the current dir (pwd) and remote repo url, if it applies.
+# @param $1 [Req] : The command to get help.
+function __hhs_where_am_i() {
+  local pad_len=24 last_commit sha commit_msg repo_url branch_name metrics
 
-  local pad pad_len filter name value ret_val=0 columns col_offset=8
+  echo ' '
+  echo "${YELLOW}You are here:${NC}"
+  echo ' '
 
-  HHS_ENV_FILE=${HHS_ENV_FILE:-$HHS_DIR/.env}
+  [[ ${HHS_PYTHON_VENV_ACTIVE:-0} -eq 1 ]] &&
+    printf "${GREEN}%${pad_len}s ${CYAN}%s ${WHITE}%s\n${NC}" "Virtual Environment:" "$(python -V)" "=> ${HHS_VENV_PATH}"
+  printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Current directory:" "$(pwd -LP)"
 
-  touch "${HHS_ENV_FILE}"
-
-  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} [options] [regex_filters]"
+  if __hhs_has git && git rev-parse --is-inside-work-tree &> /dev/null; then
+    repo_url="$(git remote -v | head -n 1 | awk '{print $2}')"
+    printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Remote repository:" "${repo_url}"
+    last_commit=$(git log --oneline -n 1)
+    sha="$(echo "${last_commit}" | awk '{print $1}')"
+    commit_msg=$(echo "${last_commit}" | cut -d' ' -f2-)
+    branch_name=$(git rev-parse --abbrev-ref HEAD)
+    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s ${WHITE}%s\n${NC}" "Last commit sha:" "${sha}" "${commit_msg}"
+    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s${NC}" "Branch:" "${branch_name} "
+    metrics=$(git diff --shortstat)
+    [[ -n "${metrics}" ]] && echo -e "${WHITE}${metrics}${NC}"
     echo ''
-    echo '    Options: '
-    echo '      -e : Edit current HHS_ENV_FILE.'
-    return 1
-  else
-    if [[ "$1" == '-e' ]]; then
-      __hhs_edit "${HHS_ENV_FILE}"
-      ret_val=$?
-    else
-      pad=$(printf '%0.1s' "."{1..60})
-      pad_len=40
-      columns="$(($(tput cols) - pad_len - col_offset))"
-      filter="$*"
-      filter=${filter// /\|}
-      [[ -z "${filter}" ]] && filter=".*"
-      echo ' '
-      echo -e "${YELLOW}Listing all exported environment variables matching [ ${filter} ]:${NC}"
-      echo ' '
-      IFS=$'\n'
-      \shopt -s nocasematch
-      for v in $(env | sort); do
-        name=${v%%=*}
-        value=${v#*=}
-        if [[ ${name} =~ ${filter} ]]; then
-          echo -en "${HHS_HIGHLIGHT_COLOR}${name}${NC} "
-          printf '%*.*s' 0 $((pad_len - ${#name})) "${pad}"
-          echo -en " ${GREEN}=> ${NC}"
-          echo -n "${value:0:${columns}}"
-          [[ ${#value} -ge ${columns} ]] && echo -n "..."
-          echo -e "${NC}"
-        fi
-      done
-      IFS="${OLDIFS}"
-      \shopt -u nocasematch
-      echo ' '
-    fi
   fi
 
-  return ${ret_val}
+  return 0
 }
-
 
 # @function: Select a shell from the existing shell list.
 function __hhs_shell_select() {
