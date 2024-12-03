@@ -17,8 +17,7 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
 
     ### Removed
 
-
-## 1.6.1 - 2023-09-19
+## 1.8.1 - 2024-11-26
 
 ## Unreleased
 
@@ -29,6 +28,245 @@ The format is based on [Keep a Changelog][kac] and this project adheres to [Sema
 ### Updated
 
 ### Removed
+
+
+## 1.7.1 - 2023-12-28
+
+### Added
+
+* Added python venv
+* Added README to hhs AskAi rag docs
+* Added new gpt script , the csv xform. Also fixed the failing tests
+* Added hhs starship modern
+* Added wezterm.lua config for HomeSetup
+* Added New git command __hhs_git_retag
+* Added __hhs_git_changelog
+* Added ble-sh integration
+* Added Oh My ZSH starship prompt
+* Added README.md section about how to install the Nerd Font
+* Added the nerd font installer script
+* Added upload assets to release to upload the fonts
+* Added zipped fonts for download
+* Added the Nerd Font installer
+* Added new aliases for nvim and sdiff
+* Added Neovim integration
+* Added hhs shorts
+* Added AI gif
+* Added try first gif
+* Added HomeSetup asciicast intro
+* Added Call to Medieval game GPT
+* Added new Gherkin GPT logo
+* Added the gherkin GPT
+* Added CURPWD for the last changed firectory
+* Added the GPT scripts
+* Added HomeSetup GPT prompt
+* Added gtrash completions
+* Added readme cover image
+* Added HomeSetup github profile image
+* Added some dev docs
+* Added hhs sponsor
+* Added __hhs_os_info function
+
+### Fixed
+
+* Fixed Key bindings
+* Fixed hhs tests functions
+* Fixed installation sudo problems
+* Fixed bats tests
+* Bugfixes and improve hhs app output
+* Fixed __hhs_sysinfo
+* Fixed the current version
+* Fixed installation script and add homesetup.toml update check
+* Fixed/Improved GPT scripts.
+* Fixed GPT tests/src
+* Fixed GitHub pages
+* Fixed docker publish
+* Fixed the hhs firebase not finding any dotfile
+* Fixed AI install
+* Fixed MAINTAINER and removed alpine from github actions
+* Fixed LC_ALL problem detecting locale and language
+* Fixed the installation script askai module
+* Fixed AI aliases
+* Fixed AskAI integration
+* Fixed build by adding the missing required packages
+* Bugfixes and gtrash integration
+* Fixed brew installation: missing sudo
+* Fixed colima hspm recipe
+* Fixed save_dir saving non-existing dirs
+* Fixed tools due to IFS
+* Fixed publish issue: missing python3
+* Fixed fzf integration
+* Fixed hspm and docker
+
+### Updated
+
+* Updated iTerm2 profile
+* Moved HHS keybindings to a new separate file
+* Updated hhs logs
+* Updated modern preset
+* Improved where_am_i
+* Updated hhs modern starship preset
+* Improved tests, modern starship and install
+* Improved tests, modern starship and install
+* Renamed modern starship prompt
+* Improved the rromao starship preset
+* Updated iTerm2 and Terminal settings
+* Improved icons and add iterm2 bg image
+* Minor improvements. Updated iterm2 profile
+* Moved __hhs_get_macos_codename to __hhs_get_codename (macos and linux)
+* Show version for hhs setup
+* Filtered the aliases from command hint because they are not available in hhs-app
+* Improved rromao prompt with git metrics ext
+* Improved hhs hints
+* Improved error message from hhs app
+* HHS app enhancement. Allow invoking any __hhs command with hhs
+* Adjusted the rromao starship prompt: Add git metrics
+* Integrated Atuin
+* Minor adjustments
+* Updated install to always install blesh
+* Improved about
+* Improved shell select
+* Renamed the oh-my-zsh prompt , so hhs starship will find the preset
+* Adjusted iTerm2 profile and add bat integration to README
+* Improved docsify
+* Updater adjustments
+* Improved and update more docs
+* Improved docker build and push
+* Updated the GHA build to include API keys
+* Updated the install script to copy rag docs only if AI is enabled
+* Improved tests
+* Improved homesetup prompts
+* Improved docker builds. Preparation for arch builds
+* Improved HomeSetup prompt
+* Improved GitHub actions
+* Improved gradle by adding gw install and fixing check
+* Conditional hhs askai plugin
+* Improved AI installation
+* Improved bats tests
+* Improved install script for AskAI
+* Improved HomeSetup prompt
+* Changed some colorls icons and adjusted locale vars
+* Updated usage docs
+* Updated Copyright year
+* Updated os-info details
+* Separated docker-build-and-push workflow
+
+### Removed
+
+* Removed old and hhs completions
+* Removed __hhs_help. It was moved to hhs app: 'hhs help' and re-aliases help to hhs help
+* Removed if __hhs_has 'git' and 'python' since they are, now, required tools for HHS
+* Removed check-badge from git
+* Removed upload asset
+* Removed GPTs moving to private project
+
+
+## 1.6.1 - 2023-12-28
+
+### Added
+
+* Added asciicast for hhs introduction
+* Added GitHub sponsors link
+* Added FZF Integration
+* Added key-bindings and adjust auto-completions.
+* Added ColorLS Integration
+* Added bats as submodule
+* Added shell options new function
+* Added configurable shell options
+* Added hspm catalog
+* Added trim function to bash_commons
+* Added option to create or not a release on publish
+* Added starship prompt as default
+* Added hhs setup function
+* Added docker build image action
+
+### Fixed
+
+* Fixed docker build for Alpine
+* Fixed file permissions
+* Fixed __hhs_shopt
+* Fixed macos github install
+* Fixed dotfiles export default paths
+* Fixed Dockerfiles and installation
+* Fixed Selectable os from matrix
+* Fixed github actions. Add fetch submodules
+* Fixed build and starship is now default
+* Fixed __hhs_toml*, hhs shopts and hhs setup
+* Fixed hhs funcs and defs filtering
+* Fixed network and other utils
+* Fixed hspm problems
+* Fixed centos missing sqlite3 python module
+* Fixed/improved hhs funcs, invalidate and caches
+* Fixed/improved help and about. Move those functions to built-ins
+* Fixed hhs funcs not using correct IFS
+* Fixed and improve network tools
+* Fixed completions
+* Fixed hhs update check running every time
+* Fixed nothing to commit by checking status porcelain
+* Fixed synchronizing versioning.gradle
+* Fixed docker build images job
+* Fixed the strategy matrix for containers
+
+### Updated
+
+* Small improvements and more doc updates
+* Small network bugfixes and some doc updates
+* Improved git add and help docs
+* Updated handbook
+* Updated asciicast for hhs introduction
+* Updated README.md with fzf docs
+* Updated funding with github sponsor page
+* Improved README and documentations
+* Moved HHS_DIR to ~/.config/hhs
+* Moved devel and other stuff into assets
+* Moved images folders into assets
+* Renamed folder misc to assets
+* Customized HomeSetup pages
+* Improved motds and shopt
+* Replaced sort --unique by sort | uniq to match alpine compatibility
+* Improved about to show function code when its  __hhs
+* Updated hspm and hhs app
+* Updated installation script to install required packages
+* Forced python update --break-packages
+* Improved hhs tests
+* Normalized __hhs_errcho in all functions
+* Initialization adjustments
+* Starship is now default - toml file
+* Finished terminal options
+* Small refactorings
+* Small bash select fixes
+* Preparation for brew as main package manager
+* Preparation for HomeSetup upgrade to 1.7
+* Rename back bash_completions -> bash_completion
+* Updated some hhs docs
+* Improved hhs invalidate
+* Improved hhs starship plugin
+* Moved hhs starship and setup to hhs plugins like
+* Improved starship config and prompt
+* Changed the starship window title
+* Changed directory starship config
+* Enhanced history sharing among sessions
+* Improved inputrc even more
+* Improved inputrc to cycle through history
+* Renamed RESET_IFS to OLDIFS
+* Workflow adjustments
+* Improved the publish workflow
+* Updated README.md
+* Improved github actions
+* Improved the action names
+* Renamed version.gradle to versioning.gradle and add no-patch option when publishing
+* Updated action adjustments
+* Updated README.md with the tests badge
+* AUTO updated build & check badges
+* Updated install action to commit the check badges
+* Updated gradle wrapper to match the same version on Github actions
+
+### Removed
+* Removed tools that are not part of hhs
+* Removed bats setup from build workflow
+* Unset PROMPT_COMMAND
+* Removed .github folder from excluded dirs
+* Removed static badge generation and commits
 
 
 ## 1.5.1 - 2020-01-21
