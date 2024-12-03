@@ -16,9 +16,7 @@
 # improved with: https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
 # Do not source this file multiple times
-if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_colors"; then
-  __hhs_log "DEBUG" "bash_colors was already loaded!"
-fi
+list_contains "${HHS_ACTIVE_DOTFILES}" "bash_colors" && __hhs_log "DEBUG" "$0 was already loaded!"
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_colors"
 

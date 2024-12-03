@@ -15,9 +15,7 @@
 # inspiRED by: https://github.com/mathiasbynens/dotfiles
 
 # Do not source this file multiple times
-if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_aliases"; then
-  __hhs_log "DEBUG" "bash_aliases was already loaded!"
-fi
+list_contains "${HHS_ACTIVE_DOTFILES}" "bash_aliases" && __hhs_log "DEBUG" "$0 was already loaded!"
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_aliases"
 

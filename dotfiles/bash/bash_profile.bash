@@ -22,39 +22,5 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-# If not running interactively or as a CI build, skip it.
-[[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
-
-export HHS_ACTIVE_DOTFILES='bashrc'
-
-if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
-  echo -e "\033[33mStarting HomeSetup in debug mode\033[m"
-  PS4='+ $(date "+%s.%S")\011 '
-  exec 3>&2 2>~/hhsrc.$$.log
-  set -x
-else
-  echo -e "\033[1;34m[${SHELL##*\/}] HomeSetup is starting...\033[m"
-fi
-
-# Load the dotfiles according to the user's SHELL.
-case "${SHELL##*\/}" in
-  'bash')
-    if [[ -s "${HOME}/.hhsrc" ]]; then
-      source "${HOME}/.hhsrc"
-    else
-      echo "HomeSetup was not loaded because it's resource file was not found: ${HOME}/.hhsrc"
-    fi
-    ;;
-  *)
-    echo ''
-    echo "Sorry ! HomeSetup is not compatible with ${SHELL##*\/} for now."
-    echo 'You can change your default shell by typing: '
-    echo "$ sudo chsh -s $(command -v bash)"
-    echo ''
-    ;;
-esac
-
-if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
-  set +x
-  exec 2>&3 3>&-
-fi
+# Do not source this file multiple times
+source "${HOME}/.bashrc"

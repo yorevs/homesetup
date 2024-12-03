@@ -25,8 +25,8 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} hhsrc"
 
-# Unset all HomeSetup variables
-unset "${!HHS_@}" "${!PS@}" "${!LC_@}"
+# Unset other used variables
+unset "${!PS@}" "${!LC_@}" OLDIFS
 
 # Unset all aliases before setting them again.
 unalias -a
@@ -121,7 +121,7 @@ source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
-# HomeSetup initialization.
+# Initialization setup.
 if [[ ! -s "${HHS_SETUP_FILE}" ]]; then
   __hhs_log "WARN" "HomeSetup initialization file '${HHS_SETUP_FILE}' was not found. Using defaults."
   \cp "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_SETUP_FILE}"
@@ -140,7 +140,7 @@ __hhs_log "INFO" "Initialization settings have been loaded from '${HHS_SETUP_FIL
 
 # Add custom paths to the system `$PATH`.
 if [[ -f "${HHS_DIR}/.path" ]]; then
-  __hhs_log "DEBUG" "Adding custom system $$PATH's"
+  __hhs_log "DEBUG" "Adding custom system PATH's"
   all="$(grep . "${HHS_DIR}/.path" | grep -v -e '^$')"
   for f_path in ${all}; do
     [[ -n "${f_path}" ]] && PATH="${f_path}:${PATH}"
@@ -194,7 +194,7 @@ fi
 
 # Activate HomeSetup Python venv.
 if [[ ${HHS_PYTHON_VENV_ENABLED} -eq 1 ]]; then
-  __hhs_log "DEBUG" "Activating virtual env... "
+  __hhs_log "DEBUG" "Activating python virtual environment"
   if source "${HHS_VENV_PATH}"/bin/activate; then
     __hhs_log "INFO" "HomeSetup Python venv has been activated: ${HHS_VENV_PATH}"
     export HHS_PYTHON_VENV_ACTIVE=1
@@ -209,10 +209,11 @@ fi
 # Load dotfiles
 
 # Load all HomeSetup dotfiles.
+__hhs_log "INFO" "Loading HomeSetup dotfiles"
 for file in "${DOTFILES[@]}"; do
   f_path="${HOME}/.${file}"
   if [[ -s "${f_path}" ]]; then
-    __hhs_log "INFO" "Loading dotfile: ${f_path}"
+    __hhs_log "DEBUG" "Loading dotfile: ${f_path}"
     __hhs_source "${f_path}"
   else
     __hhs_log "WARN" "Skipped dotfile :: Not found -> ${f_path}"
@@ -363,6 +364,7 @@ diff_time_sec=$((diff_time/1000))
 diff_time_ms=$((diff_time-(diff_time_sec*1000)))
 
 __hhs_log "INFO" "HomeSetup initialization completed in ${diff_time_sec}s ${diff_time_ms}ms" >>"${HHS_LOG_FILE}"
+echo '' >>"${HHS_LOG_FILE}"
 
 unset -f started finished diff_time diff_time_sec diff_time_ms state option line file all
 unset -f f_path tmp_file re_key_pair prefs cpl bnd pref re motd all app_name last_dir re

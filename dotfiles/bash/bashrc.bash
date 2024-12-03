@@ -22,7 +22,10 @@
 #   ~/.path       : To customize your paths
 
 # If not running interactively or as a CI build, skip it.
-[[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
+[[ -z "${JOB_NAME}" && -z "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
+
+# Unset all HomeSetup variables
+unset "${!HHS_@}"
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 
@@ -41,7 +44,7 @@ case "${SHELL##*\/}" in
     if [[ -s "${HOME}/.hhsrc" ]]; then
       source "${HOME}/.hhsrc"
     else
-      echo "HomeSetup was not loaded because it's resource file was not found: ${HOME}/.hhsrc"
+      echo -e "\033[31mHomeSetup was not loaded because it's resource file was not found:' ${HOME}/.hhsrc' \033[m"
     fi
     ;;
   *)

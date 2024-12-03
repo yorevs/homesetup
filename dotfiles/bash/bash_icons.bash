@@ -14,9 +14,7 @@
 # !NOTICE: Do not change this file. To customize your icons edit the file ~/.env
 
 # Do not source this file multiple times
-if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_icons"; then
-  __hhs_log "DEBUG" "bash_icons was already loaded!"
-fi
+list_contains "${HHS_ACTIVE_DOTFILES}" "bash_icons" && __hhs_log "DEBUG" "$0 was already loaded!"
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_icons"
 

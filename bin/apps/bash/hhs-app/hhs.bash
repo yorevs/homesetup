@@ -452,6 +452,9 @@ function main() {
 
   local fn_name="${1}"
 
+  # Lazy load application commons.
+  source "${HHS_DIR}/bin/app-commons.bash"
+
   # Execute a cleanup after the application has exited.
   trap cleanup_plugins EXIT
 
@@ -476,8 +479,6 @@ function main() {
 
   quit 255 "Failed to invoke hhs command: ${*}"
 }
-
-source "${HHS_DIR}/bin/app-commons.bash"
 
 main "${@}"
 quit 1

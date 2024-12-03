@@ -19,9 +19,7 @@
 # - If you are using Starship, you have to edit the ${STARSHIP_CONFIG} file
 
 # Do not source this file multiple times
-if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_prompt"; then
-  __hhs_log "DEBUG" "bash_prompt was already loaded!"
-fi
+list_contains "${HHS_ACTIVE_DOTFILES}" "bash_prompt" && __hhs_log "DEBUG" "$0 was already loaded!"
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_prompt"
 

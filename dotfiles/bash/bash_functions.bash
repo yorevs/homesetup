@@ -14,9 +14,7 @@
 # !NOTICE: Do not change this file. To customize your functions edit the file ~/.functions
 
 # Do not source this file multiple times.
-if list_contains "${HHS_ACTIVE_DOTFILES}" "bash_functions"; then
-  __hhs_log "DEBUG" "bash_functions was already loaded!"
-fi
+list_contains "${HHS_ACTIVE_DOTFILES}" "bash_functions" && __hhs_log "DEBUG" "$0 was already loaded!"
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_functions"
 
