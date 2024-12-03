@@ -272,26 +272,26 @@ alias __hhs_setup='__hhs setup execute'
 # The following aliases requires HomeSetup python venv to be active
 if __hhs_is_venv; then
   # @alias: Shortcut for hspylib-clitt module
-  alias __hhs_clitt='__hhs_is_venv && python3 -m clitt'
+  alias __hhs_clitt="__hhs_ensure_venv '__hhs_clitt' && python3 -m clitt"
   # @alias: Shortcut for the HomeSetup TimeCalc widget
-  alias __hhs_tcalc="__hhs_is_venv && __hhs_clitt widgets TimeCalc"
+  alias __hhs_tcalc="__hhs_ensure_venv '__hhs_tcalc' && __hhs_clitt widgets TimeCalc"
   # @alias: Shortcut for hspylib-vault module
-  alias __hhs_vault='__hhs_is_venv && python3 -m vault'
+  alias __hhs_vault="__hhs_ensure_venv '__hhs_vault' && python3 -m vault"
   # @alias: Shortcut for hspylib-cfman module
-  alias __hhs_cfman='__hhs_is_venv && python3 -m cfman'
+  alias __hhs_cfman="__hhs_ensure_venv '__hhs_cfman' && python3 -m cfman"
   # @alias: Shortcut for hspylib-kafman module
-  alias __hhs_kafman='__hhs_is_venv && python3 -m kafman'
+  alias __hhs_kafman="__hhs_ensure_venv '__hhs_kafman' && python3 -m kafman"
   # @alias: Shortcut for hhs firebase plug-in
-  alias __hhs_firebase='__hhs firebase execute'
+  alias __hhs_firebase="__hhs_ensure_venv '__hhs_firebase' && __hhs firebase execute"
   # @alias: Shortcut for hhs settings plug-in
-  alias __hhs_settings='__hhs settings execute'
+  alias __hhs_settings="__hhs_ensure_venv '__hhs_settings' && __hhs settings execute"
 
   # AI Enabled aliases
   if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
     # @alias: Shortcut for hhs ask plug-in
-    alias __hhs_ask='__hhs ask execute'
+    alias __hhs_ask="__hhs_ensure_venv '__hhs_ask' &&__hhs ask execute"
     # @alias: Shortcut for the AskAI python module
-    alias taius='__hhs_is_venv && python3 -m askai'
+    alias taius="__hhs_ensure_venv 'taius' && python3 -m askai"
   fi
 fi
 

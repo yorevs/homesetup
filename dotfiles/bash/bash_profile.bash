@@ -2,7 +2,8 @@
 
 #  Script: bash_profile.bash
 # Purpose: This is user specific file that gets loaded each time user creates a new non-login
-#          shell. It simply loads the required HomeSetup dotfiles and set some required paths.
+#          shell. It simply loads the required HomeSetup dotfiles and set some required paths. Some OSs
+#          use bash_profile instead of bashrc, so just keep this a copy of bashrc.
 # Created: Aug 26, 2018
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: homesetup@gmail.com
@@ -21,15 +22,21 @@
 #   ~/.profile    : To customize your profile
 #   ~/.path       : To customize your paths
 
-# Unset all HHS_ variables
-unset "${!HHS_@}"
-
-# If not running interactively and if it is not a Jenkins build, skip it.
-[[ -z "${JOB_NAME}" && -z "${PS1}" && -z "${PS2}" ]] && return
+# If not running interactively or as a CI build, skip it.
+[[ -z "${JOB_NAME}" && "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 
-# Load the profile according to the user's SHELL.
+if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
+  echo -e "\033[33mStarting HomeSetup in debug mode\033[m"
+  PS4='+ $(date "+%s.%S")\011 '
+  exec 3>&2 2>~/hhsrc.$$.log
+  set -x
+else
+  echo -e "\033[1;34m[${SHELL##*\/}] HomeSetup is starting...\033[m"
+fi
+
+# Load the dotfiles according to the user's SHELL.
 case "${SHELL##*\/}" in
   'bash')
     if [[ -s "${HOME}/.hhsrc" ]]; then
@@ -46,3 +53,8 @@ case "${SHELL##*\/}" in
     echo ''
     ;;
 esac
+
+if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
+  set +x
+  exec 2>&3 3>&-
+fi

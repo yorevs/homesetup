@@ -32,7 +32,7 @@ if [[ ${HHS_SET_DEBUG} -eq 1 ]]; then
   exec 3>&2 2>~/hhsrc.$$.log
   set -x
 else
-  echo -e "\033[34m[${SHELL##*\/}] HomeSetup is starting...\033[m"
+  echo -e "\033[1;34m[${SHELL##*\/}] HomeSetup is starting...\033[m"
 fi
 
 # Load the dotfiles according to the user's SHELL.

@@ -73,7 +73,7 @@ __hhs_alias minput='__hhs_minput'
 __hhs_alias sysinfo='__hhs_sysinfo'
 __hhs_alias del-tree='__hhs_del_tree'
 __hhs_alias os-info='__hhs_os_info'
-__hhs_alias venv="__hhs_venv"
+__hhs_alias venv='__hhs_venv'
 
 # Network shortcuts
 __hhs_has 'netstat' && __hhs_alias port-check='__hhs_port_check'

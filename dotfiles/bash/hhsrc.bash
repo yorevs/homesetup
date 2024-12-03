@@ -39,8 +39,6 @@ export OLDIFS="${IFS}"
 export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL##*/}"
 
-export INPUTRC="${INPUTRC:-${HOME}/.inputrc}"
-
 # Detect if HomeSetup was installed using an installation prefix.
 export HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
 
@@ -64,8 +62,10 @@ export HHS_MOTD_DIR="${HHS_DIR}/motd"
 export HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
 export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
 export HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
-export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
 export HHS_VENV_PATH="${HHS_VENV_PATH:-${HHS_DIR}/venv}"
+export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
+export HHS_INPUTRC="${HHS_INPUTRC:-${HOME}/.inputrc}"
+export HHS_ALIASDEF="${HHS_ALIASDEF:-"${HHS_DIR}"/.aliasdef}"
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
@@ -147,19 +147,20 @@ if [[ -f "${HHS_DIR}/.path" ]]; then
   done
 fi
 
-if ! [[ -s "${INPUTRC}" ]]; then
+if ! [[ -s "${HHS_INPUTRC}" ]]; then
   __hhs_log "WARN" "'.inputrc' file was copied because it was not found at: ${HOME}"
-  \cp "${HHS_HOME}/dotfiles/inputrc" "${INPUTRC}"
+  \cp "${HHS_HOME}/dotfiles/inputrc" "${HHS_INPUTRC}"
 fi
 
-if ! [[ -f "${HHS_DIR}"/.aliasdef ]]; then
+if ! [[ -s "${HHS_ALIASDEF}" ]]; then
   __hhs_log "WARN" "'.aliasdef' file was copied because it was not found at: ${HHS_DIR}"
-  \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}"/.aliasdef
+  \cp "${HHS_HOME}/dotfiles/aliasdef" "${HHS_ALIASDEF}"
 fi
 
 # Initialize HomeSetup key bindings.
-if ! [[ -f "${HHS_KEY_BINDINGS}" ]]; then
+if ! [[ -s "${HHS_KEY_BINDINGS}" ]]; then
   __hhs_log "WARN" "'${HHS_KEY_BINDINGS}' file was copied because it was not found at: ${HHS_DIR}"
+  \cp "${HHS_HOME}/dotfiles/hhs-bindings" "${HHS_KEY_BINDINGS}"
 fi
 
 if bind -f "${HHS_KEY_BINDINGS}"; then
@@ -192,7 +193,7 @@ else
 fi
 
 # Activate HomeSetup Python venv.
-if [[ ${HHS_PYTHON_VENV_ENABLED:-1} -eq 1 ]]; then
+if [[ ${HHS_PYTHON_VENV_ENABLED} -eq 1 ]]; then
   __hhs_log "DEBUG" "Activating virtual env... "
   if source "${HHS_VENV_PATH}"/bin/activate; then
     __hhs_log "INFO" "HomeSetup Python venv has been activated: ${HHS_VENV_PATH}"
@@ -201,7 +202,7 @@ if [[ ${HHS_PYTHON_VENV_ENABLED:-1} -eq 1 ]]; then
     __hhs_log "ERROR" "Unable to activate HomeSetup Python venv!"
   fi
 else
-  __hhs_log "WARN" "HomeSetup Python venv activation was disabled !"
+  __hhs_log "WARN" "HomeSetup Python venv auto-activation was disabled !"
 fi
 
 # -----------------------------------------------------------------------------------
@@ -239,9 +240,9 @@ done
 if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
   if [[ ! -s "${HHS_SHOPTS_FILE}" ]]; then
     \shopt | awk '{print $1" = "$2}' >"${HHS_SHOPTS_FILE}" ||
-       quit 2 "Unable to create the Shell Options file !"
+       __hhs_log "ERROR" "Unable to create the Shell Options file !"
   fi
-  re_key_pair="^([a-zA-Z0-9]*) *= *([Oo]n|[Oo]ff)$"
+  re_key_pair="^([a-zA-Z0-9]*) *= *([Oo][Nn]|[Oo][Ff][Ff])$"
   while read -r line; do
     if [[ ${line} =~ ${re_key_pair} ]]; then
       option="${BASH_REMATCH[1]}"
@@ -253,11 +254,11 @@ if [[ ${HHS_LOAD_SHELL_OPTIONS} -eq 1 ]]; then
       fi
     fi
   done <"${HHS_SHOPTS_FILE}"
-  __hhs_log "INFO" "Shell options activated !"
+  __hhs_log "INFO" "Shell options are set !"
 fi
 
 # Load system settings using setman.
-if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]]; then
+if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]] && __hhs_is_venv; then
   # Update the settings configuration.
   echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
   tmp_file="$(mktemp)"
@@ -275,15 +276,14 @@ if [[ ${HHS_LOAD_COMPLETIONS} -eq 1 ]]; then
     app_name="$(basename "${cpl//-completion/}")"
     app_name="${app_name//\.${HHS_MY_SHELL}/}"
     if __hhs_has "${app_name}"; then
-      if [[ "${app_name}" == "fzf" && ${HHS_USE_BLESH} -eq 1 ]]; then
+      if [[ ${HHS_USE_BLESH} -eq 1 && "${app_name}" == "fzf" ]]; then
         # Note: If you want to combine fzf-completion with bash_completion, you need to load bash_completion
         # earlier than fzf-completion. This is required regardless of whether to use ble.sh or not.
         # source /etc/profile.d/bash_completion.sh
         ble-import -d integration/fzf-completion
         ble-import -d integration/fzf-key-bindings
       fi
-      __hhs_source "${cpl}"
-      HHS_COMPLETIONS="${HHS_COMPLETIONS}${app_name} "
+      __hhs_source "${cpl}" && HHS_COMPLETIONS="${HHS_COMPLETIONS}${app_name} "
     else
       __hhs_log "WARN" "Skipping completion \"${app_name}\" because the application was not detected!"
     fi
@@ -293,13 +293,12 @@ fi
 
 # Load bash key bindings.
 if [[ ${HHS_LOAD_KEY_BINDINGS} -eq 1 ]]; then
-  __hhs_log "INFO" "Loading bash key bindings!"
+  __hhs_log "INFO" "Loading bash HomeSetup key bindings"
   while read -r bnd; do
     app_name="$(basename "${bnd//-key-bindings/}")"
     app_name="${app_name//\.${HHS_MY_SHELL}/}"
     if __hhs_has "${app_name}"; then
-      __hhs_source "${bnd}"
-      HHS_BINDINGS="${HHS_BINDINGS}${app_name} "
+      __hhs_source "${bnd}" && HHS_BINDINGS="${HHS_BINDINGS}${app_name} "
     else
       __hhs_log "WARN" "Skipping key binding \"${app_name}\" because the application was not detected!"
     fi
@@ -311,7 +310,7 @@ fi
 if [[ ${HHS_RESTORE_LAST_DIR} -eq 1 && -s "${HHS_DIR}/.last_dirs" ]]; then
   last_dir="$(grep -m 1 . "${HHS_DIR}/.last_dirs")"
   cd "${last_dir}" 2> /dev/null ||
-    __hhs_log "WARN" "Last directory ${last_dir} is not available !"
+    { __hhs_log "WARN" "Unable to enter last directory: '${last_dir}' because it was not found !"; cd "${HOME}"; }
 fi
 
 # Attach ble-sh to bash if it's enabled.
@@ -324,7 +323,7 @@ else
 fi
 
 # Attach atuin to bash if it's enabled
-if __hhs_has "atuin" && [[ ${HHS_USE_ATUIN} -eq 1 ]]; then
+if [[ ${HHS_USE_ATUIN} -eq 1 ]] && __hhs_has "atuin"; then
   __hhs_log "DEBUG" "Attaching Atuin plug-in"
   if ! eval "$(atuin init bash)" || ! atuin import auto &>/dev/null; then
     __hhs_log "WARN" "Atuin was not enabled !"

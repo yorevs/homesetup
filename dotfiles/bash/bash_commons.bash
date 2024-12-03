@@ -16,6 +16,25 @@
 
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_commons"
 
+# @function: Echo an error message, using red color, into stderr.
+# @param $1 [Req] : The application or function name.
+# @param $2..$N [Req] : The message to be echoed.
+function __hhs_errcho() {
+
+  local app_name="${1:-$$}"
+
+  if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: ${FUNCNAME[0]} <message>"
+    return 1
+  fi
+
+  shift
+
+  echo -e "${RED}✘ Fatal: ${WHITE}${app_name} ${POINTER_ICN} ${*}${NC}" 1>&2
+
+  return 0
+}
+
 # @function: Check if a command is available on the current shell session.
 # @param $1 [Req] : The command to check.
 function __hhs_has() {
@@ -55,6 +74,17 @@ function __hhs_is_venv() {
   return 1
 }
 
+# @function: Make sure HomeSetup venv is active.
+# @param $1 [Req] : The application or function name.
+function __hhs_ensure_venv() {
+
+  __hhs_is_venv && return 0
+
+  __hhs_errcho "${1:-${FUNCNAME[1]}}" "Not available when HomeSetup python venv is not active!"
+
+  return 1
+}
+
 # @function: Log a message to the HomeSetup log file.
 # @param $1 [Req] : The log level.
 # @param $* [Req] : The log level. One of ["WARN", "DEBUG", "INFO", "ERROR", "ALL"].
@@ -80,25 +110,6 @@ function __hhs_log() {
       return 1
       ;;
   esac
-
-  return 0
-}
-
-# @function: Echo a message in red color into stderr.
-# @param $1 [Req] : The application name.
-# @param $2..$N [Req] : The message to be echoed.
-function __hhs_errcho() {
-
-  local app_name="${1:-$$}"
-
-  if [[ "$#" -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "usage: ${FUNCNAME[0]} <message>"
-    return 1
-  fi
-
-  shift
-
-  echo -e "${RED}✘ Fatal: ${WHITE}${app_name} ${POINTER_ICN} ${*}${NC}" 1>&2
 
   return 0
 }

@@ -21,12 +21,6 @@ fi
 export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 
 # ----------------------------------------------------------------------------
-# Starship variables
-export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
-export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
-export HHS_STARSHIP_PRESETS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/starship/hhs-presets"
-
-# ----------------------------------------------------------------------------
 # System folders
 export TEMP="${TEMP:-${TMPDIR:-$(dirname "$(mktemp)")}}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
@@ -36,13 +30,13 @@ export EDITOR="${EDITOR:-vi}"
 # Home Sweet Home
 
 # Java
-if __hhs_has java; then
+if [[ -z "${JAVA_HOME}" ]] && __hhs_has java; then
   export JAVA_HOME=${JAVA_HOME:-"/Library/Java/JavaVirtualMachines/Current/Contents/Home"}
   export JDK_HOME="${JDK_HOME:-$JAVA_HOME}"
 fi
 
 # Python
-export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
+[[ -z "${PYTHON_HOME}" && -d "${PYTHON_HOME}" ]] && export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 
 # ----------------------------------------------------------------------------
 # OS Release
@@ -50,7 +44,7 @@ export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 # Darwin
 if [[ "Darwin" == "$(uname -s)" ]]; then
   # Hide the annoying warning about zsh
-  export BASH_SILENCE_DEPRECATION_WARNING=1
+  export BASH_SILENCE_DEPRECATION_WARNING=${BASH_SILENCE_DEPRECATION_WARNING:-1}
   # OS Release - Darwin
   export HHS_MY_OS_RELEASE="$(sw_vers -productName)"
   export HHS_MY_OS_PACKMAN='brew'
@@ -86,19 +80,19 @@ fi
 # ----------------------------------------------------------------------------
 # Bash History
 
-# History control ( ignore duplicates and spaces )
+# History control ( ignore duplicates and spaces ).
 export HISTCONTROL=${HISTCONTROL:-"ignoreboth:erasedups"}
 # Ignored history commands
 export HISTIGNORE="?:??:exit:pwd:clear"
-# Max. history size
+# Max. history size.
 export HISTSIZE=2000
-# Max. history file size
+# Max. history file size.
 export HISTFILESIZE=2000
 # Setting history format: Index [<User>, <Date> <Time>] command
 export HISTTIMEFORMAT="[${USER}, %F %T]  "
 # Bash history file.
 export HISTFILE="${HOME}/.bash_history"
-# Do not share history between concurrent Bash sessions
+# Do not share history between concurrent Bash sessions do speedup initialization.
 unset PROMPT_COMMAND
 
 # ----------------------------------------------------------------------------
@@ -107,7 +101,7 @@ unset PROMPT_COMMAND
 export HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
 export HHS_ASKAI_URL='https://github.com/yorevs/askai'
 export HHS_HAS_DOCKER=$(__hhs_has docker && docker info &> /dev/null && echo '1')
-export HHS_AI_ENABLED=$(python3 -m pip show hspylib-askai &>/dev/null && echo '1')
+export HHS_AI_ENABLED=$(__hhs_has_module hspylib-askai &>/dev/null && echo '1')
 
 # ----------------------------------------------------------------------------
 # Module configs
@@ -128,17 +122,24 @@ export HHS_VAULT_USER="${USER}"
 # ----------------------------------------------------------------------------
 # Directories
 
-__hhs_has git && [[ -d "${HOME}"/GIT-Repository ]] && export GIT_REPOS="${HOME}"/GIT-Repository
-__hhs_has svn && [[ -d "${HOME}"/SVN-Repository ]] && export SVN_REPOS="${HOME}"/SVN-Repository
+[[ -z "${GIT_REPOS}" && -d "${HOME}"/GIT-Repository ]] && export GIT_REPOS="${HOME}"/GIT-Repository
 [[ -d "${HOME}"/Desktop ]] && export DESKTOP="${HOME}/Desktop"
 [[ -d "${HOME}"/Documents ]] && export DOCUMENTS="${HOME}/Documents"
 [[ -d "${HOME}"/Downloads ]] && export DOWNLOADS="${HOME}/Downloads"
 [[ -d "${HOME}"/Dropbox ]] && export DROPBOX="${HOME}/Dropbox"
 [[ -d "${HOME}"/Workspace ]] && export WORKSPACE="${HOME}/Workspace"
+[[ -d "${HOME}"/Music ]] && export MUSIC="${HOME}/Music"
+[[ -d "${HOME}"/Pictures ]] && export PICTURES="${HOME}/Pictures"
 
 # ----------------------------------------------------------------------------
 # Integrations
 
+# Starship variables
+export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
+export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
+export HHS_STARSHIP_PRESETS_DIR="${HHS_HOME}/bin/apps/bash/hhs-app/plugins/starship/hhs-presets"
+
+# FZF variables
 if __hhs_has 'fzf'; then
   if __hhs_has 'bat'; then
     export FZF_DEFAULT_OPTS="--preview 'bat --color=always {}'"

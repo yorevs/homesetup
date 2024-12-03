@@ -70,7 +70,7 @@ else
   export WHITE='\033[0;97m'
   export YELLOW='\033[0;93m'
   export VIOLET='\033[0;95m'
-  __hhs_log "DEBUG" "Bash colors loaded using '\033['"
+  __hhs_log "DEBUG" "Bash colors loaded using 'Esc['"
 fi
 
 # Color used to highlight text: Default is CYAN
