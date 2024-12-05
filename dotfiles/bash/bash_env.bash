@@ -34,7 +34,8 @@ if [[ -z "${JAVA_HOME}" ]] && __hhs_has java; then
 fi
 
 # Python
-[[ -z "${PYTHON_HOME}" && -d "${PYTHON_HOME}" ]] && export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
+[[ -z "${PYTHON_HOME}" && -d "/Library/Python/Current" ]] \
+  && export PYTHON_HOME=${PYTHON_HOME:-"/Library/Python/Current"}
 
 # ----------------------------------------------------------------------------
 # OS Release

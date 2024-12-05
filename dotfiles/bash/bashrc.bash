@@ -25,7 +25,7 @@
 [[ -z "${JOB_NAME}" && -z "${GITHUB_ACTIONS}" && -z "${PS1}" && -z "${PS2}" ]] && return
 
 # Unset all HomeSetup variables
-unset "${!HHS_@}"
+unset "${!HHS_@}" "${!__hhs@}"
 
 export HHS_ACTIVE_DOTFILES='bashrc'
 
