@@ -7,7 +7,9 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     ".vscode": true,
-    "**/*.pyc": true
+    "**/*.pyc": true,
+    ".gradle": true,
+    ".idea": true
   },
   "hide-files.files": []
 }
