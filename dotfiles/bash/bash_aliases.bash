@@ -77,8 +77,11 @@ else
   alias lld='ls -d -lah .??*/ 2> /dev/null'
 fi
 
-if __hhs_has 'sdiff' && __hhs_has 'colordiff'; then
-  # @alias: Replacement for diff using colors and split panels
+if __hhs_has 'delta'; then
+  # @alias: Replacement for diff using colors and split panels using delta
+  alias diff='delta'
+elif __hhs_has 'sdiff' && __hhs_has 'colordiff'; then
+  # @alias: Replacement for diff using colors and split panels using sdiff + colordiff
   alias diff='sdiff --diff-program=colordiff'
 fi
 

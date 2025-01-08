@@ -220,6 +220,13 @@ for file in "${DOTFILES[@]}"; do
   fi
 done
 
+# Zoxide integration
+if __hhs_has 'zoxide'; then
+  if ! eval "$(zoxide init bash)"; then
+    __hhs_log "WARN" "Zoxide was not enabled !"
+  fi
+fi
+
 # Load all Custom dotfiles:
 #   source -> ~/.hhs/.env can be used to extend/override .bash_env
 #   source -> ~/.hhs/.colors can be used to extend/override .bash_colors

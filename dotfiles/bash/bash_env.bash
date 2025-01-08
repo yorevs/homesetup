@@ -146,9 +146,17 @@ if __hhs_has 'fzf'; then
     export FZF_DEFAULT_OPTS="--preview 'cat --color=always {}'"
   fi
   if __hhs_has 'fd'; then
-    export FZF_DEFAULT_COMMAND="fd --type f"
+    export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+    export FZF_CTRL_COMMAND="${FZF_DEFAULT_COMMAND}"
+    export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+    _fzf_compgen_path() {
+      fd --hidden --exclude .git . "$1"
+    }
+    _fzf_compgen_dir() {
+      fd --type=d --hidden --exclude .git . "$1"
+    }
   else
-    export FZF_DEFAULT_COMMAND="find --type f"
+    export FZF_DEFAULT_COMMAND="find "
   fi
 fi
 
@@ -160,7 +168,7 @@ DEVELOPER_TOOLS=(
   'gcc' 'make' 'gradle' 'pip3' 'gem'
   'pbcopy' 'fd' 'jq' 'sqlite3' 'gawk'
   'colorls' 'fzf' 'bat' 'starship' 'gtrash' 'atuin'
-  'sdiff' 'colordiff' 'nvim'
+  'sdiff' 'colordiff' 'nvim' 'delta' 'tldr' 'zoxide'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then

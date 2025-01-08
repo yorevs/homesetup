@@ -54,7 +54,9 @@ function __hhs_change_dir() {
   path="${path//\~/${HOME}}"
 
   if [[ ! -d "${path}" ]]; then
-    __hhs_errcho "${FUNCNAME[0]}" "Directory \"${path}\" was not found !"
+    if ! __hhs_has 'z' || ! z "$path" &> /dev/null; then
+      __hhs_errcho "${FUNCNAME[0]}" "Directory \"${path}\" was not found !"
+    fi
   else
     # shellcheck disable=SC2086
     if
@@ -410,7 +412,7 @@ function __hhs_mkcd() {
     last_pwd=$(pwd)
     IFS=$'/'
     for dir in ${dir_tree}; do
-      cd "${dir}" || return 1
+      \cd "${dir}" || return 1
     done
     IFS="${OLDIFS}"
     export OLDPWD=${last_pwd}

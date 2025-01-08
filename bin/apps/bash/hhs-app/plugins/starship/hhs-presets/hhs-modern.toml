@@ -128,7 +128,7 @@ disabled = false
 [git_status]
 style = 'fg:seg_6_text bg:seg_6'
 format = '[(${all_status}[${ahead_behind}](fg:red bg:seg_6)) ](${style})'
-conflicted = ""
+conflicted = " "
 ahead = ""
 behind = ""
 diverged = ""

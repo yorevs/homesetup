@@ -33,9 +33,9 @@ homebrew_no_auto_update = true
 # Set to disable HomeSetup updates.
 hhs_no_auto_update = false
 # Set to enable auto-completions.
-hhs_load_completions = false
+hhs_load_completions = true
 # Set to enable key-bindings.
-hhs_load_key_bindings = false
+hhs_load_key_bindings = true
 # Set to enable auto-activate HomeSetup python venv.
 hhs_python_venv_enabled = true
 # Set to enable starship prompt.
