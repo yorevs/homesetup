@@ -288,9 +288,9 @@ if __hhs_is_venv; then
   alias __hhs_settings="__hhs_ensure_venv '__hhs_settings' && __hhs settings execute"
 
   # AI Enabled aliases
-  if [[ ${HHS_AI_ENABLED} -eq 1 ]]; then
+  if [[ ${HHS_AI_ENABLED} -eq 1 ]] && __hhs_has_module 'hspylib-askai'; then
     # @alias: Shortcut for hhs ask plug-in
-    alias __hhs_ask="__hhs_ensure_venv '__hhs_ask' &&__hhs ask execute"
+    alias __hhs_ask="__hhs_ensure_venv '__hhs_ask' && __hhs ask execute"
     # @alias: Shortcut for the AskAI python module
     alias taius="__hhs_ensure_venv 'taius' && python3 -m askai"
   fi
