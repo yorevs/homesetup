@@ -164,11 +164,11 @@ fi
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
   'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'rsync'
-  'perl' 'groovy' 'java' 'ruby' 'python3'
+  'perl' 'java' 'ruby' 'python3'
   'gcc' 'make' 'gradle' 'pip3' 'gem'
-  'pbcopy' 'fd' 'jq' 'sqlite3' 'gawk'
-  'colorls' 'fzf' 'bat' 'starship' 'gtrash' 'atuin'
-  'sdiff' 'colordiff' 'nvim' 'delta' 'tldr' 'zoxide'
+  'pbcopy' 'jq' 'sqlite3' 'gawk'
+  'bat' 'fd' 'nvim' 'delta' 'tldr' 'zoxide'
+  'colorls' 'fzf' 'starship' 'gtrash' 'atuin'
 )
 
 if [[ "Darwin" == "${HHS_MY_OS}" ]]; then
