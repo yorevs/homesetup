@@ -64,7 +64,13 @@ function __hhs_hist_stats() {
 # @function: Display the current dir (pwd) and remote repo url, if it applies.
 # @param $1 [Req] : The command to get help.
 function __hhs_where_am_i() {
+
   local pad_len=24 last_commit sha commit_msg repo_url branch_name metrics
+
+  if [[ -n "$1" ]] && __hhs_has "$1"; then
+    __hhs_has 'tldr' && { tldr "$1"; return $?; }
+    __hhs_help "$1" && return $?
+  fi
 
   echo ' '
   echo "${YELLOW}You are here:${NC}"
