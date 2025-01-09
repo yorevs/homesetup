@@ -356,7 +356,7 @@ usage: $APP_NAME [OPTIONS] <args>
   # Prompt the user for AskAI installation
   query_askai_install() {
     PIP=$(command -v pip3 2>/dev/null)
-    if PIP show hspylib-askai &>/dev/null; then
+    if [[ "$OPT" == 'all' ]] || PIP show hspylib-askai &>/dev/null; then
       INSTALL_AI=1
     elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" ]]; then
       echo -e "${ORANGE}"
@@ -796,8 +796,11 @@ usage: $APP_NAME [OPTIONS] <args>
     # Detecting system python and pip versions.
     PYTHON=$(command -v python3 2>/dev/null)
     PIP=$(command -v pip3 2>/dev/null)
-    has "${PYTHON}" || quit 2 "Python3 is required to install HomeSetup !"
-    has "${PIP}" || quit 2 "Pip3 is required to install HomeSetup !"
+    [[ -z "${PYTHON}" || -z "${PIP}" ]] \
+      && quit 2 "Python >= 3.10 <= 3.11 and Pip3 are required to install HomeSetup!"
+    python_version=$("${PYTHON}" --version 2>&1 | awk '{print $2}')
+    [[ ! "${python_version}" =~ ^3\.1[01] ]] \
+      && quit 2 "Python >= 3.10 <= 3.11 is required to install HomeSetup! Found version: ${python_version}"
     echo -e "${GREEN}OK${NC}"
     echo ''
     create_venv "${PYTHON}" "${PIP}"
