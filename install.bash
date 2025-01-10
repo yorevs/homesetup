@@ -1063,6 +1063,9 @@ usage: $APP_NAME [OPTIONS] <args>
         RAGProvider.copy_rag('${HHS_HOME}/README.md', 'homesetup-docs/README.md')
       "
       PYTHON=$(command -v python3 2>/dev/null)
+      export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
+      export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
+      export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
       # Dedent the python code above, 6 spaces for now
       if ${PYTHON} -c "${copy_code//      /}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
