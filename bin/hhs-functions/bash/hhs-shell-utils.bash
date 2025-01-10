@@ -69,7 +69,7 @@ function __hhs_where_am_i() {
 
   if [[ -n "$1" ]] && __hhs_has "$1"; then
     __hhs_has 'tldr' && { tldr "$1"; return $?; }
-    __hhs_help "$1" && return $?
+    __hhs help "$1" && return $?
   fi
 
   echo ' '
