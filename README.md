@@ -224,6 +224,8 @@ HomeSetup provides the capability to utilize your Firebase account for uploading
 
 HomeSetup, now, bundles starship prompt. It's has an out-of-the-box configuration. For a full list of features and configurations please checkout the [Starship](https://starship.rs/) website. Please check the [Starship Plugin](docs/handbook/pages/applications/bash/hhs-app/plugins/starship.md) document for mode details about HomeSetup / Starship integration.
 
+<img src="https://iili.io/24QCWuf.gif">
+
 ### Other integrations
 
 #### ColorLS
