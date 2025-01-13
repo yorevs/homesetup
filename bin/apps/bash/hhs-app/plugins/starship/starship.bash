@@ -133,7 +133,8 @@ function execute() {
       fi
     elif list_contains "${*}" "preset"; then
       add_hhs_presets
-      preset_val="${2//.toml}.toml"
+      preset_val="$2"
+      [[ -n "${preset_val}" && "${2}" == hhs-* ]] && preset_val="${preset_val//.toml}.toml"
       if [[ -z ${preset_val} ]]; then
         mselect_file=$(mktemp)
         title="Please select one Starship preset (${#STARSHIP_PRESETS[@]})"
@@ -142,7 +143,7 @@ function execute() {
         fi
       fi
       if [[ -n "${preset_val}" ]] && ! list_contains "${STARSHIP_PRESETS[*]}" "${preset_val}"; then
-        __hhs_errcho "${PLUGIN_NAME}" "Starship preset not found: \033[9m'${preset_val}'\033[m!\n"
+        __hhs_errcho "${PLUGIN_NAME}" "Starship preset not found: \033[9m'${preset_val}'\033[m!\n${STARSHIP_PRESETS[*]}"
         echo -e "${YELLOW}${TIP_ICON} Tip: Please choose one valid Starship preset: ${BLUE}"
         for preset in "${STARSHIP_PRESETS[@]}"; do echo "  |-${preset}" | nl; done
         quit 1
