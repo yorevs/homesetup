@@ -23,21 +23,21 @@
 #%
 #================================================================
 #- IMPLEMENTATION
-#-    version         ${SCRIPT_NAME} (www.uxora.com) 0.0.4
-#-    author          Michel VONGVILAY
-#-    copyright       Copyright (c) http://www.uxora.com
-#-    license         GNU General Public License
+#-    version         ${SCRIPT_NAME} (www.example.com) 0.0.4
+#-    author          Hugo Saporetti Junior
+#-    copyright       Copyright (c) http://www.example.com
+#-    license         MIT <https://opensource.org/licenses/MIT>
 #-    script_id       12345
 #-
 #================================================================
 #  HISTORY
-#     2015/03/01 : yorevs : Script creation
-#     2015/04/01 : yorevs : Add long options and improvements
+#     2025/03/01 : username : Script creation
+#     2025/04/01 : username : Add long options and improvements
 #
 #================================================================
 #  DEBUG OPTION
 #    set -n  # Uncomment to check your syntax, without execution.
-#    set -x  # Uncomment to debug this shell script
+#    set -x  # Uncomment to debug this shell script.
 #
 #================================================================
 # END_OF_HEADER

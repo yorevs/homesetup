@@ -1,7 +1,7 @@
 <img src="https://iili.io/HvtxC1S.png" width="64" height="64" align="right" />
 
 # HomeSetup
->
+
 > The ultimate Terminal experience
 
 [![Terminal](https://badgen.net/badge/icon/terminal?icon=terminal&label)](https://github.com/yorevs/homesetup)
@@ -28,11 +28,9 @@ With **HomeSetup**, you can enhance your terminal experience, boost productivity
 - See the [Showcase](docs/SHOWCASE.md) page to see some HomeSetup demos.
 - For the full documentation, access the [HomeSetup usage manual](docs/USAGE.md).
 
-
 **🔥 HOT** AI is here ! **HomesSetup** has integrated AI with RAG capabilities.
 
 <img src="https://iili.io/dy2Ga6u.gif">
-
 
 ## Key Features
 
@@ -68,7 +66,6 @@ HomeSetup offers seamless integration with a variety of tools to enhance product
 - **[Zoxide](https://github.com/ajeetdsouza/zoxide):** A smarter cd command. Supports all major shells.
 - **[TLDR](https://github.com/tldr-pages/tldr):** Collaborative cheatsheets for console commands.
 
-
 ## Catalina moved from bash to zsh
 
 Starting with the _Catalina_ version of macOS, the default shell has been switched to **Zsh**. Nonetheless, you retain the flexibility to change the default shell back to bash. To accomplish this, you can utilize the following command:
@@ -77,7 +74,7 @@ Starting with the _Catalina_ version of macOS, the default shell has been switch
 sudo chsh -s /bin/bash
 ```
 
-If Apple removes **Bash** from future *macOS* releases, you can rely on Homebrew's version. The path to the shell may differ. For example:
+If Apple removes **Bash** from future _macOS_ releases, you can rely on Homebrew's version. The path to the shell may differ. For example:
 
 ```bash
 brew install bash
@@ -90,7 +87,7 @@ If Homebrew is used, determine the correct Bash path by running:
 brew --prefix bash
 ```
 
-For terminals like **iTerm2**, you can configure the interpreter path in your *profile settings*. Set the login shell to the desired **Bash** path (e.g., the one provided by Homebrew). After updating the interpreter path, restart the terminal to apply changes.
+For terminals like **iTerm2**, you can configure the interpreter path in your _profile settings_. Set the login shell to the desired **Bash** path (e.g., the one provided by Homebrew). After updating the interpreter path, restart the terminal to apply changes.
 
 ## Installation
 
@@ -100,7 +97,7 @@ For terminals like **iTerm2**, you can configure the interpreter path in your *p
   - High Sierra and higher
 - Linux
   - Ubuntu 16 and higher
-  - CentOS  7 and higher
+  - CentOS 7 and higher
   - Fedora 31 and higher
   - Alpine (jenkins-agent)
 
@@ -115,7 +112,7 @@ For terminals like **iTerm2**, you can configure the interpreter path in your *p
 
 To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font. We recommend using the font we provide with the installation:
 
-  [Droid font](assets/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
+[Droid font](assets/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf).
 
 **Linux users**: Some terminals already support icons, but if not, you can manually install the font.
 
@@ -135,11 +132,11 @@ cp -f $HOME/.fonts/DroidSan-MonoforPowerlineNerdFontComplete/*.otf $HOME/Library
 
 #### Terminal App (Darwin)
 
-  [HomeSetup Terminal](assets/terminal/HomeSetup.terminal)
+[HomeSetup Terminal](assets/terminal/HomeSetup.terminal)
 
 #### iTerm2 App (Darwin)
 
-  [HomeSetup iTerm2](assets/iTerm2-HomeSetup.json)
+[HomeSetup iTerm2](assets/iTerm2-HomeSetup.json)
 
 When your terminal is set, then you should see something like this:
 
@@ -197,6 +194,7 @@ git clone https://github.com/yorevs/homesetup.git ~/HomeSetup
 And then install all dotfiles using the following command:
 
 **To install all files at once**
+
 ```bash
 cd ~/HomeSetup && ./install.bash
 ```
@@ -204,6 +202,7 @@ cd ~/HomeSetup && ./install.bash
 or
 
 **To install one by one**
+
 ```bash
 cd ~/HomeSetup && ./install.bash -i
 ```
@@ -216,7 +215,7 @@ Once the installation is completed successfully, you should see the following we
 
 ### Firebase setup
 
-HomeSetup provides the capability to utilize your Firebase account for uploading and downloading your custom files (dotfiles file synchronization) to your *Real-time Database*. To utilize this feature, you must first configure your Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.md) document for instructions.
+HomeSetup provides the capability to utilize your Firebase account for uploading and downloading your custom files (dotfiles file synchronization) to your _Real-time Database_. To utilize this feature, you must first configure your Google Firebase account. Please check the [Firebase Setup](docs/FIREBASE_SETUP.md) document for instructions.
 
 <img src="https://iili.io/dbXM29a.gif">
 
@@ -289,7 +288,7 @@ HomeSetup integrates the powerful [Zoxide](https://github.com/ajeetdsouza/zoxide
 
 The integration sets up necessary environment variables and aliases for rapid directory navigation. After installing Zoxide, simply restart your shell or source your profile to enable the new configurations.
 
-HomeSetup integrates it's built-in **__hhs_change_dir** with the zoxide `z` command. Once installed, `cd` command automatically leverages `z`. The `z` command will also work.
+HomeSetup integrates it's built-in **\_\_hhs_change_dir** with the zoxide `z` command. Once installed, `cd` command automatically leverages `z`. The `z` command will also work.
 
 Please refer to the [Zoxide Docs](https://github.com/ajeetdsouza/zoxide) for more information and advanced usage examples.
 
@@ -297,7 +296,7 @@ Please refer to the [Zoxide Docs](https://github.com/ajeetdsouza/zoxide) for mor
 
 HomeSetup integrates with [TLDR](https://github.com/tldr-pages/tldr), providing community-driven cheatsheets for console commands. While HomeSetup does not install TLDR, once it is installed, the system supports its use. Common configurations such as setting up aliases, automatic updates, and managing cache paths can be customized in your shell configuration.
 
-HomeSetup integrates it's built-in **__hhs_where_am_i** (? command) with the `tldr` command. Once installed, `?` command automatically leverages `tldr`. The `tldr` command will also work.
+HomeSetup integrates it's built-in **\_\_hhs_where_am_i** (? command) with the `tldr` command. Once installed, `?` command automatically leverages `tldr`. The `tldr` command will also work.
 
 Examples:
 
@@ -369,6 +368,6 @@ This will install the latest version of HomeSetup, keeping your setup current an
 - Issue tracker: [ISSUES](https://github.com/yorevs/homesetup/issues)
 - Official chat: [GITTER](https://gitter.im/yorevs-homesetup/community)
 - Maintainer: [REDDIT](https://www.reddit.com/user/yorevs)
-- Mailto: [HomeSetup](mailto:homesetup@gmail.com)
+- Mailto: [HomeSetup](mailto:taius.hhs@gmail.com)
 
 Enjoy!

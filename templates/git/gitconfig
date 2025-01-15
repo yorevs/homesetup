@@ -40,7 +40,7 @@ side-by-side = true
 [sendemail]
 smtpencryption = tls
 smtpserver = smtp.gmail.com
-smtpuser = yorevs@gmail.com
+smtpuser = taius.hhs@gmail.com
 smtppass = password
 smtpserverport = 587
 

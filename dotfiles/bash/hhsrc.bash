@@ -7,7 +7,7 @@
 #          created in this file would take effect every time a new local session is started.
 # Created: Apr 29, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: homesetup@gmail.com
+#  Mailto: taius.hhs@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #

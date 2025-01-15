@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
+#  Script: cleanup-packages.bash
 # Purpose: Cleanup all python packages, leaving default packages installed.
+# Created: Oct 29, 2024
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: taius.hhs@gmail.com
+#    Site: https://github.com/yorevs#homesetup
+# License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2024, HomeSetup team
+
 RED="\033[31m"
 GREEN="\033[32m"
 BLUE="\033[34m"

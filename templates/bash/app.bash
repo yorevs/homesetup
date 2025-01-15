@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2317
 
 #  Script: ${app.name}.bash
 # Purpose: ${app.purpose}
 # Created: Mon DD, YYYY
 #  Author: ${author}
 #  Mailto: ${author.mail}
+#    Site: https://github.com/yorevs/homesetup
+# License: Please refer to <https://opensource.org/licenses/MIT>
 
 # Current application version.
-VERSION=${VERSION:-0.9.0}
+VERSION=${VERSION:-0.0.1}
 
 # This application name.
 APP_NAME="${APP_NAME:-${0##*/}}"

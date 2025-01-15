@@ -4,7 +4,7 @@
 # Purpose: Manager for HomeSetup AskAI integration
 # Created: Aug 19, 2024
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: homesetup@gmail.com
+#  Mailto: taius.hhs@gmail.com
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #

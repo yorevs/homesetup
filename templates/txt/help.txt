@@ -1,6 +1,13 @@
 Help template
 -------------------------------------------------------------------------------
 ```
+ _____ _       _      _     ____
+|  ___(_) __ _| | ___| |_  |  _ \  ___  ___  ___
+| |_  | |/ _` | |/ _ \ __| | | | |/ _ \/ __|/ __|
+|  _| | | (_| | |  __/ |_  | |_| |  __/\__ \ (__
+|_|   |_|\__, |_|\___|\__| |____/ \___||___/\___|
+         |___/
+
 usage: ${APP_NAME} <arg_name> [options]
     # Optional: App. SYNOPSIS.
     # Optional: App. DESCRIPTION.
@@ -27,11 +34,13 @@ usage: ${APP_NAME} <arg_name> [options]
 
 Notes
 -------------------------------------------------------------------------------
-# Uses [options] to indicate where the options go
-# - arg_name for a required, singular arg
-# - [arg_name] for an optional, singular arg
-# - arg_name... for a required arg of which there can be many (this is rare)
-# - [arg_name...] for an arg for which any number can be supplied
-# - {arg_name} for a set of required items; choose one
-# - {arg1_name|arg2_name} for mutually exclusive items; choose one
-# @@ arg_name should be a descriptive, short name, in lower, snake case
+1. Uses [options] to indicate where the options go.
+2. arg_name for a required, singular arg.
+3. [arg_name] for an optional, singular arg.
+4. arg_name... for a required arg of which there can be many.
+5. [arg_name...] for an arg for which any number can be supplied.
+6. {arg_name} for a set of required items; choose one.
+7. {arg1_name|arg2_name} for mutually exclusive items; choose one.
+8. @@ arg_name should be a descriptive, short name, in lower, snake case.
+9. Figlet description is optional (use the default font).
+10. Feel free to include your name/email in the end of the help.

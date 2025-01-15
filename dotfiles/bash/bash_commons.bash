@@ -6,7 +6,7 @@
 #          to be available for use. It is sources from the first loaded dotfile.
 # Created: Apr 26, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: homesetup@gmail.com
+#  Mailto: taius.hhs@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #

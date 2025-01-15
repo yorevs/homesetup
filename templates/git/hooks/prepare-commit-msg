@@ -4,16 +4,16 @@
   @purpose: Prevents a user to commit on master branch, unless unlocked.
   @created: Oct 30, 2019
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-   @mailto: yorevs@gmail.com
+   @mailto: taius.hhs@gmail.com
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <https://opensource.org/licenses/MIT>
+
+  # Git provided parameters:
+  # $1 - the temporary file for the commit message.
+  # $2 - the source of the commit message.
+  # $3 - the commit SHA-1.
 """
 import re
-# Git provided parameters:
-# $1 - the temporary file for the commit message
-# $2 - the source of the commit message
-# $3 - the commit SHA-1
-
 import sys
 from os import path, remove
 from subprocess import check_output

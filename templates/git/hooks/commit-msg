@@ -4,13 +4,13 @@
   @purpose: Prepares a git commit message to conform with the message format rules
   @created: Oct 30, 2019
    @author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-   @mailto: yorevs@gmail.com
+   @mailto: taius.hhs@gmail.com
      @site: https://github.com/yorevs/homesetup
   @license: Please refer to <https://opensource.org/licenses/MIT>
-"""
 
-# Git provided parameters:
-# $1 - the temporary file for the commit message
+  # Git provided parameters:
+  # $1 - the temporary file for the commit message.
+"""
 
 import getpass
 import os.path

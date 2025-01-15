@@ -1,6 +1,8 @@
-CENTOS ['centos-release','os-release','redhat-release','system-release']
+# CENTOS ['centos-release','os-release','redhat-release','system-release']
 
-os-release >>>
+## File: os-release
+
+```bash
 NAME="CentOS Linux"
 VERSION="8"
 ID="centos"
@@ -14,11 +16,13 @@ HOME_URL="https://centos.org/"
 BUG_REPORT_URL="https://bugs.centos.org/"
 CENTOS_MANTISBT_PROJECT="CentOS-8"
 CENTOS_MANTISBT_PROJECT_VERSION="8"
-os-release
+```
 
-FEDORA ['fedora-release','os-release','redhat-release','system-release']
+# FEDORA ['fedora-release','os-release','redhat-release','system-release']
 
-os-release >>>
+## File: os-release
+
+```bash
 NAME="Fedora Linux"
 VERSION="38 (Container Image)"
 ID=fedora
@@ -41,11 +45,13 @@ REDHAT_SUPPORT_PRODUCT_VERSION=38
 SUPPORT_END=2024-05-14
 VARIANT="Container Image"
 VARIANT_ID=container
-<<< os-release
+```
 
-UBUNTU ['lsb-release', 'os-release']
+# UBUNTU ['lsb-release', 'os-release']
 
-os-release >>>
+## File: os-release
+
+```bash
 PRETTY_NAME="Ubuntu 22.04.2 LTS"
 NAME="Ubuntu"
 VERSION_ID="22.04"
@@ -58,4 +64,4 @@ SUPPORT_URL="https://help.ubuntu.com/"
 BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
 PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
 UBUNTU_CODENAME=jammy
-<<< os-release
+```

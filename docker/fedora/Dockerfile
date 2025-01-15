@@ -1,6 +1,6 @@
 FROM fedora
 
-LABEL maintainer="Hugo Saporetti Junior<homesetup@gmail.com>"
+LABEL maintainer="Hugo Saporetti Junior<taius.hhs@gmail.com>"
 
 USER root
 

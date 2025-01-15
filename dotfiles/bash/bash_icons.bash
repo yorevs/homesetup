@@ -5,7 +5,7 @@
 # Purpose: This file is used to hold all terminal icon definitions
 # Created: Nov 28, 2023
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: homesetup@gmail.com
+#  Mailto: taius.hhs@gmail.com
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #

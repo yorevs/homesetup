@@ -4,7 +4,7 @@
 # Purpose: Contains HomeSetup test functions
 # Created: Mar 04, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
-#  Mailto: homesetup@gmail.com
+#  Mailto: taius.hhs@gmail.com
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
