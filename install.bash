@@ -20,10 +20,10 @@
   USAGE="
 usage: $APP_NAME [OPTIONS] <args>
 
-  -l | --local          : Local installation. This is just going to replace the dotfiles.
+  -l | --local          : Local installation. This is just going to replace the dotfiles (default).
   -r | --repair         : Repair current installation.
   -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
-  -p | --prefix         : HomeSetup installation prefix. Defaults to USER's HOME directory '~/'.
+  -p | --prefix          : HomeSetup installation prefix. Defaults to USER's HOME directory '~/'.
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
 
@@ -313,6 +313,9 @@ usage: $APP_NAME [OPTIONS] <args>
     # HomeSetup virtual environment path.
     HHS_VENV_PATH="${HHS_DIR}/venv"
 
+    # Hunspell dictionary location.
+    HHS_DICT_DIR="${HHS_DIR}/hunspell-dicts"
+
     # Fonts destination location
     if [[ "Darwin" == "${MY_OS}" ]]; then
       FONTS_DIR="${HOME}/Library/Fonts"
@@ -347,6 +350,8 @@ usage: $APP_NAME [OPTIONS] <args>
         METHOD='local'
       elif [[ -n "${STREAMED}" ]]; then
         METHOD='remote'
+      elif [[ -z "${STREAMED}" && ! -d "${HHS_HOME}" || -d "${HHS_DIR}" ]]; then
+        METHOD='fresh'
       else
         METHOD='repair'
       fi
@@ -383,6 +388,8 @@ usage: $APP_NAME [OPTIONS] <args>
     create_directory "${HHS_LOG_DIR}"
     # Create fonts destination directory
     create_directory "${FONTS_DIR}"
+    # Create hunspell dictionaries destination directory
+    create_directory "${HHS_DICT_DIR}"
   }
 
   # Check HomeSetup required tools
@@ -552,7 +559,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
-      remote)
+      remote|fresh)
         query_askai_install
         check_required_tools
         create_destination_dirs
@@ -647,7 +654,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}       Streamed: ${YELLOW}${is_streamed:=Yes}"
     echo -e "${NC}"
 
-    if [[ "${METHOD}" != "local" && -z "${QUIET}" && -z "${STREAMED}" ]]; then
+    if [[ "${METHOD}" == 'fresh' && -z "${QUIET}" && -z "${STREAMED}" ]]; then
       echo -e "${ORANGE}"
       if [[ -z "${ANS}" ]]; then
         read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue (y/[n])? ' ANS
@@ -716,7 +723,7 @@ usage: $APP_NAME [OPTIONS] <args>
     # Remove old apps.
     echo -en "\n${WHITE}Removing old links... ${BLUE}"
     echo ">>> Removed old links:" >>"${INSTALL_LOG}"
-    if find "${HHS_BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}"  2>&1; then
+    if find "${HHS_BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}" 2>&1; then
       echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to remove old app links from \"${HHS_BIN_DIR}\" directory !"
@@ -769,6 +776,16 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
+    fi
+
+    # Copy hunspell dictionaries.
+    echo -en "\n${WHITE}Copying Hunspell dictionaries into ${BLUE}${HHS_DICT_DIR}... "
+    echo ">>> Copied Hunspell dictionaries" >>"${INSTALL_LOG}"
+    [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate hunspell dictionaries (${HHS_DICT_DIR}) directory !"
+    if unzip -jo "${HHS_HOME}"/assets/artifacts/hunspell-dicts.zip -d "${HHS_DICT_DIR}" >>"${INSTALL_LOG}" 2>&1; then
+      echo -e "${GREEN}OK${NC}"
+    else
+      quit 2 "Unable to extract Hunspell files into dictionaries(${HHS_DICT_DIR}) directory !"
     fi
 
     # -----------------------------------------------------------------------------------

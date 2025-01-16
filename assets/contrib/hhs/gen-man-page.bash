@@ -29,6 +29,10 @@ USAGE="
                           is to use the same name of the script + '.man'.
 "
 
+RED="\033[31m"
+GREEN="\033[32m"
+NC="\033[m"
+
 TODAY=$(date +'%m-%d-%Y')
 
 SCRIPT="${SCRIPT:-MyScript}"
@@ -55,7 +59,6 @@ MAN_DATA="
 15 ${TODOS:-Todo section}
 16 .SH AUTHOR
 17 ${AUTHOR_INFO:-Author information}
-18
 "
 
 # Check program options.
@@ -70,13 +73,13 @@ do
       exit 0
     ;;
     -f | --manfile)
-      [[ -z "$2" ]] && { echo "Man file must be specified!"; exit 1; }
+      [[ -z "$2" ]] && { echo "${RED}Man file must be specified!${NC}"; exit 1; }
       MAN_FILE="$2"
       shift
     ;;
 
     *)
-      echo "Invalid option: \"$1\" !"
+      echo "${RED}Invalid option: \"$1\" !${NC}"
       exit 1
     ;;
 
@@ -91,7 +94,7 @@ while IFS= read -r line; do
   [[ $line =~ ^[0-9]+\ + ]] && { echo "${line#?? }"; continue; }
 done <<< "${MAN_DATA}" > "${MAN_DIR}/${MAN_FILE}"
 
-echo "your man page is located at: ${MAN_DIR}/${MAN_FILE}"
+echo "${GREEN}Man page created at at: ${MAN_DIR}/${MAN_FILE}${NC}"
 man "${MAN_DIR}/${MAN_FILE}"
 
 echo ''

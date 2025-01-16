@@ -10,6 +10,11 @@
 #
 # Copyright (c) 2025, HomeSetup team
 
+RED="\033[31m"
+GREEN="\033[32m"
+BLUE="\033[34m"
+NC="\033[m"
+
 HHS_GITHUB_URL='https://github.com/yorevs/homesetup'
 
 HHS_GROUP="${HHS_GROUP:-homesetup}"
@@ -25,45 +30,47 @@ if [[ $# -le 1 || ${#HHS_USERS[@]} -eq 0 ]]; then
 fi
 
 if [ "${EUID}" -ne 0 ]; then
-    echo -e "\033[31mPlease execute as root (sudo)\033[m"
+    echo -e "${RED}Please execute as root (sudo)${NC}"
     exit 127
 fi
 
 # Add the HomeSetup group
 if [[ -z $(getent group "${HHS_GROUP}") ]]; then
-  echo -e "\033[31m==> Adding HomeSetup group\033[m"
+  echo -e "${BLUE}==> Adding HomeSetup group${NC}"
   groupadd "${HHS_GROUP}"
 fi
 
 # Clone/Pull the repository
 if [[ -d "${INSTALL_DIR}" ]]; then
   pushd "${INSTALL_DIR}" &>/dev/null || exit 1
-  echo -e "\033[31m==> Pulling HomeSetup project\033[m"
+  echo -e "${BLUE}==> Pulling HomeSetup project${NC}"
   git pull &>/dev/null
   popd &>/dev/null || exit 1
 else
-  echo -e "\033[31m==> Cloning HomeSetup project\033[m"
+  echo -e "${BLUE}==> Cloning HomeSetup project${NC}"
   git clone "${HHS_GITHUB_URL}.git" "${INSTALL_DIR}" &>/dev/null
 fi
 
 # Change the group of HomeSetup files
-echo -e "\033[31m==> Changing the group of HomeSetup files\033[m"
+echo -e "${BLUE}==> Changing the group of HomeSetup files${NC}"
 chgrp -R "${HHS_GROUP}" "${INSTALL_DIR}"
 
 # Change the group of /temp dir
-echo -e "\033[31m==> Changing the group of /temp dir\033[m"
+echo -e "${BLUE}==> Changing the group of /temp dir${NC}"
 chgrp -R "${HHS_GROUP}" "${TEMP}"
 
 # Give read permissions to HomeSetup group
-echo -e "\033[31m==> Giving read permissions to HomeSetup group\033[m"
+echo -e "${BLUE}==> Giving read permissions to '${HHS_GROUP}' group${NC}"
 chmod g+r -R "${INSTALL_DIR}"
 
 # Give read permissions to HomeSetup group
-echo -e "\033[31m==> Giving read permissions to HomeSetup group\033[m"
+echo -e "${BLUE}==> Giving read permissions to '${HHS_GROUP}' group${NC}"
 chmod g+r -R "${TEMP}"
 
 # Add users to the HomeSetup group
 for usr in "${HHS_USERS[@]}"; do
-  echo -e "\033[31m==> Adding ${usr} to HomeSetup group\033[m"
+  echo -e "${BLUE}==> Adding '${usr}' to '${HHS_GROUP}' group${NC}"
   usermod -a -G "${HHS_GROUP}" "${usr}"
 done
+
+echo -e "${GREEN}Installation succeeded !${NC}"

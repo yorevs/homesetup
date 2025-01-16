@@ -133,6 +133,12 @@ export HHS_VAULT_USER="${USER}"
 # ----------------------------------------------------------------------------
 # Integrations
 
+# Hunspell
+if __hhs_has 'hunspell'; then
+  export DICPATH="${HHS_DIR}/hunspell-dicts"
+  export DICTIONARY="en_US,es_ES,pt_BR,fr_FR"
+fi
+
 # Starship variables
 export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
 export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
@@ -166,7 +172,7 @@ DEVELOPER_TOOLS=(
   'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'rsync'
   'perl' 'java' 'ruby' 'python3'
   'gcc' 'make' 'gradle' 'pip3' 'gem'
-  'pbcopy' 'jq' 'sqlite3' 'gawk'
+  'pbcopy' 'jq' 'sqlite3' 'gawk' 'hunspell'
   'bat' 'fd' 'nvim' 'delta' 'tldr' 'zoxide'
   'colorls' 'fzf' 'starship' 'gtrash' 'atuin'
 )

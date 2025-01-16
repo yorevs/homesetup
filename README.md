@@ -121,22 +121,24 @@ To visualize the Font-Awesome unicode icons, you'll need a compatible nerd font.
 You can execute the following commands to install it even before installing HomeSetup:
 
 ```bash
-curl -L https://github.com/yorevs/homesetup/releases/download/v1.8.14/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.zip -o /tmp/Droid-Sans-Mono.zip && unzip -o /tmp/Droid-Sans-Mono.zip -d $HOME/.fonts/DroidSan-MonoforPowerlineNerdFontComplete && fc-cache -f
+curl -L https://github.com/yorevs/homesetup/releases/download/v1.8.14/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.zip -o ${TEMP}/Droid-Sans-Mono.zip && unzip -o ${TEMP}/Droid-Sans-Mono.zip -d ${HOME}/.fonts/DroidSan-MonoforPowerlineNerdFontComplete && fc-cache -f
 ```
 
 **Mac users**: There is one additional step:
 
 ```bash
-cp -f $HOME/.fonts/DroidSan-MonoforPowerlineNerdFontComplete/*.otf $HOME/Library/Fonts  && fc-cache -f
+cp -f ${HOME}/.fonts/DroidSan-MonoforPowerlineNerdFontComplete/*.otf ${HOME}/Library/Fonts  && fc-cache -f
 ```
+
+After HomeSetup installation, the Nerd font will be available at: `${HHS_HOME}/assets/fonts`
 
 #### Terminal App (Darwin)
 
-[HomeSetup Terminal](assets/terminal/HomeSetup.terminal)
+[HomeSetup Terminal](assets/term-configs/HomeSetup.terminal)
 
 #### iTerm2 App (Darwin)
 
-[HomeSetup iTerm2](assets/iTerm2-HomeSetup.json)
+[HomeSetup iTerm2](assets/term-configs/HomeSetup-iTerm2.json)
 
 When your terminal is set, then you should see something like this:
 

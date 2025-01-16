@@ -14,8 +14,13 @@ JDK_SEARCH_DIR=${JDK_SEARCH_DIR:-"/Library/Java/JavaVirtualMachines"}
 
 USAGE="usage: sudo java-switch <jdk_ver>"
 
+RED="\033[31m"
+GREEN="\033[32m"
+BLUE="\033[34m"
+NC="\033[m"
+
 if [[ ! -d "${JDK_SEARCH_DIR}" && ! -L "${JDK_SEARCH_DIR}" ]]; then
-    echo -e "\033[31mUnable to find the JDK search dir: '${JDK_SEARCH_DIR}'\033[m" && exit 1
+    echo -e "${RED}Unable to find the JDK search dir: '${JDK_SEARCH_DIR}'${NC}" && exit 1
 fi
 
 if [[ $# -ne 1 ]]; then
@@ -23,11 +28,11 @@ if [[ $# -ne 1 ]]; then
 fi
 
 if [ "${EUID}" -ne 0 ]; then
-    echo -e "\033[31mPlease execute as root (sudo)\033[m"
+    echo -e "${RED}Please execute as root (sudo)${NC}"
     exit 127
 fi
 
-echo -e "[JDK] Checking for installed JDK versions at: '\033[34m${JDK_SEARCH_DIR}\033[m'..."
+echo -e "${BLUE}[JDK] Checking for installed JDK versions at: '\033[34m${JDK_SEARCH_DIR}${NC}'..."
 for jdk_ver in "${JDK_SEARCH_DIR}"/**.jdk; do
 
     jdk="$(basename "${jdk_ver}")"
@@ -37,17 +42,17 @@ for jdk_ver in "${JDK_SEARCH_DIR}"/**.jdk; do
     [[ "$jdk_ver" -eq "$1" ]] && TO_JDK="${jdk}"
 
     if [[ -n "${TO_JDK}" ]]; then
-        echo -e "[JDK] Switching to JDK: '\033[32m${TO_JDK}\033[m'"
+        echo -e "${BLUE}[JDK] Switching to JDK: '${GREEN}${TO_JDK}${NC}'"
         [[ -L "${JDK_SEARCH_DIR}/Current" ]] && sudo rm -f "${JDK_SEARCH_DIR}/Current"
         if [[ -d "${JDK_SEARCH_DIR}/${TO_JDK}" || -L "${JDK_SEARCH_DIR}/${TO_JDK}" ]]; then
-            echo -n "[JDK] "
+            echo -n "${BLUE}[JDK] "
             sudo ln -sfv "${JDK_SEARCH_DIR}/${TO_JDK}" "${JDK_SEARCH_DIR}/Current"
-            [[ -d "${JDK_SEARCH_DIR}/Current" || -L "${JDK_SEARCH_DIR}/Current" ]] && exit 0
+            [[ -d "${JDK_SEARCH_DIR}/Current" || -L "${JDK_SEARCH_DIR}/Current" ]] && { echo -e "${NC}"; exit 0; }
         else
-            echo -e "\033[31m[JDK] Unable to find required JDK -> ${TO_JDK}\033[m" && exit 1
+            echo -e "${RED}[JDK] Unable to find required JDK -> ${TO_JDK}${NC}" && exit 1
         fi
     fi
 
 done
 
-echo -e "\033[31m[JDK] Unable to find required JDK -> ${1}\033[m" && exit 1
+echo -e "${RED}[JDK] Unable to find required JDK -> ${1}${NC}" && exit 1
