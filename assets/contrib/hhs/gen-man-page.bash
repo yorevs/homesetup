@@ -19,14 +19,13 @@ VERSION="1.0.0"
 USAGE="
     Manual Generator for Shell Scripts.
 
-    usage: $(basename "$0") [OPTION <ARGS>]
+    usage: $(basename "$0") [options] <ARGS>
 
     Options:
 
-        -h, --help      : Show this help message.
-        -f, --manfile   : Indicate the '.man' file to be used for the
-                          manual generation. If not specified, the default
-                          is to use the same name of the script + '.man'.
+        -h | --help             : Show this help message.
+        -v | --version          : Display current program version.
+        -s | --script <path>    : Parse the specified script to find out man information.
 "
 
 RED="\033[31m"
@@ -34,67 +33,145 @@ GREEN="\033[32m"
 NC="\033[m"
 
 TODAY=$(date +'%m-%d-%Y')
-
 SCRIPT="${SCRIPT:-MyScript}"
+MAN_DATA=
 
-MAN_FILE="${SCRIPT//\.*/}"
+# @purpose: Parse command line arguments.
+parse_args() {
 
-MAN_DIR="${TEMP:-/tmp}/${MAN_FILE}.1"
+  # If no argument is passed, just enter HomeSetup directory.
+  if [[ ${#} -eq 0 ]]; then
+    echo "${USAGE}"
+    exit 0
+  fi
 
-MAN_DATA="
-01 .\" ${TITLE:-Manual title}
-02 .\" ${CONTACT_INFO:-Contact information}
-03 .TH man 8 ${TODAY} ${VERSION} ${SCRIPT} Manual
-04 .SH NAME
-05 ${SCRIPT} \- ${PURPOSE:-Script purpose}
-06 .SH SYNOPSIS
-07 ${SCRIPT} ${SYNOPSIS:-Synopsis here}
-08 .SH DESCRIPTION
-09 ${DESCRIPTION:-Description here}
-10 .SH OPTIONS
-11 ${OPTIONS:-Script options}
-12 .SH SEE ALSO
-13 ${SEE_ALSO:-See also section}
-14 .SH TODO
-15 ${TODOS:-Todo section}
-16 .SH AUTHOR
-17 ${AUTHOR_INFO:-Author information}
-"
+  # Loop through the command line options.
+  # Short opts: -<C>, Long opts: --<Word>.
+  while [[ ${#} -gt 0 ]]; do
+    case "${1}" in
+      -h | --help)
+        echo "${USAGE}" && exit 0
+        ;;
+      -v | --version)
+        echo "$(basename "$0") v${VERSION}" && exit 0
+        ;;
+      -s | --script)
+        [[ -z "${2}" ]] && { echo -e "${RED}Script path must be specified!${NC}\n\n${USAGE}"; exit 1; }
+        SCRIPT="${2}"
+        shift
+        ;;
 
-# Check program options.
-while test -n "$1"
-do
+      *)
+        echo -e "${RED}## Invalid option: '${1}' ${NC}"
+        break
+        ;;
+    esac
+    shift
+  done
+}
 
-  # Execute the requested action.
-  case "$1" in
+#!/bin/bash
 
-    -h | --help)
-      echo "$USAGE"
-      exit 0
-    ;;
-    -f | --manfile)
-      [[ -z "$2" ]] && { echo "${RED}Man file must be specified!${NC}"; exit 1; }
-      MAN_FILE="$2"
-      shift
-    ;;
+# Function: generate_man_data
+# Description: Parses a script file to extract metadata and populate MAN_DATA variables for manual page generation.
+generate_man_data() {
+  local script_file="$1"
 
-    *)
-      echo "${RED}Invalid option: \"$1\" !${NC}"
-      exit 1
-    ;;
+  if [[ ! -f "$script_file" ]]; then
+      echo "Error: File '$script_file' does not exist."
+      return 1
+  fi
 
-  esac
-  shift
+  # Extract header comments (lines starting with #)
+  while IFS= read -r line; do
 
-done
+    # Skip empty lines
+    [[ ! "$line" =~ ^#\s*(.+:.+) ]] && continue
 
-mkdir -p "${MAN_DIR}"
+    # Remove leading '#', spaces
+    clean_line="$(echo "${line}" | awk '{$1=$1};1')"
+    clean_line="${clean_line//# /}"
 
-while IFS= read -r line; do
-  [[ $line =~ ^[0-9]+\ + ]] && { echo "${line#?? }"; continue; }
-done <<< "${MAN_DATA}" > "${MAN_DIR}/${MAN_FILE}"
+    case "${clean_line//# /}" in
+      Script:*)
+        SCRIPT_NAME="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+        SCRIPT="${SCRIPT_NAME##*/}"
+        TITLE="${SCRIPT%.*}"
+        ;;
+      Purpose:*)
+        PURPOSE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+        ;;
+      Created:*)
+        CREATED_DATE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+        TODAY="$CREATED_DATE"
+        ;;
+      Author:*)
+        AUTHOR_INFO="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+        ;;
+      Mailto:*)
+        MAILTO="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+        ;;
+      Site:*)
+        SITE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+        ;;
+      *)
+        # You can handle additional fields here if needed
+        ;;
+    esac
+  done < "$script_file"
 
-echo "${GREEN}Man page created at at: ${MAN_DIR}/${MAN_FILE}${NC}"
-man "${MAN_DIR}/${MAN_FILE}"
+  # Combine CONTACT_INFO from Mailto and Site
+  CONTACT_INFO=()
+  [[ -n "${MAILTO}" ]] && CONTACT_INFO+=("Mailto: ${MAILTO}" '.br')
+  [[ -n "${SITE}" ]] && CONTACT_INFO+=("Site: ${SITE}")
+
+  # Extract variables from the script file
+  # VERSION
+  VERSION_LINE="$(grep -E '^VERSION=' "$script_file" | head -n1)"
+  if [[ -n "$VERSION_LINE" ]]; then
+    VERSION="${VERSION_LINE#VERSION=}"
+    VERSION="${VERSION//\"/}"  # Remove quotes if any
+  fi
+
+  # Populate MAN_DATA
+  MAN_DATA=$(echo -e "
+  .\" ${TITLE:-Manual title}
+  .TH ${SCRIPT} 8 \"${TODAY}\" v\"${VERSION}\" \"${TITLE}\" Manual
+  .SH NAME
+  ${SCRIPT} \- ${PURPOSE:-Script purpose}
+  .SH SYNOPSIS
+  ${SCRIPT} ${SYNOPSIS:-Synopsis here}
+  .SH DESCRIPTION
+  ${DESCRIPTION:-Description here}
+  .SH OPTIONS
+  ${OPTIONS:-Script options}
+  .SH SEE ALSO
+  ${SEE_ALSO:-See also section}
+  .SH TODO
+  ${TODOS:-Todo section}
+  .SH AUTHOR
+  ${AUTHOR_INFO:-Author information}
+  .SH CONTACT INFO
+  ${CONTACT_INFO[*]//.br/$'\n.br\n'}" | awk '{$1=$1};1')
+}
+
+parse_args "${@}"
+
+# Extract variables from the script file
+SCRIPT="${SCRIPT:-MyScript}"
+MAN_DIR="${TEMP:-/tmp}/${SCRIPT//\.*/}.8"
+mkdir -p "${MAN_DIR}" || { echo -e "${RED}Unable to create man dir: ${MAN_DIR}!${NC}"; exit 1; }
+MAN_FILE="${MAN_DIR}/$(basename "${SCRIPT//\.*/}")"
+
+generate_man_data "${SCRIPT}"
+
+OLD_IFS="${IFS}"
+while IFS=$'\n' read -r line; do
+  echo -e "${line}"
+done <<< "${MAN_DATA#?? }" > "${MAN_FILE}"
+IFS="${OLD_IFS}"
+
+echo -e "${GREEN}Man page created at at: ${MAN_FILE}${NC}"
+man "${MAN_FILE}"
 
 echo ''
