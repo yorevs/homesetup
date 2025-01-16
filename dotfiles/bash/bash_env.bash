@@ -22,7 +22,15 @@ export HHS_ACTIVE_DOTFILES="${HHS_ACTIVE_DOTFILES} bash_env"
 # System folders
 export TEMP="${TEMP:-${TMPDIR:-$(dirname "$(mktemp)")}}"
 export TRASH="${TRASH:-${HOME}/.Trash}"
-export EDITOR="${EDITOR:-vi}"
+
+# Preferred editor
+if [[ -z "${EDITOR}" ]]; then
+  __hhs_has "nvim" && export EDITOR="nvim"
+elif [[ -z "${EDITOR}" ]]; then
+  __hhs_has "vim" && export EDITOR="vim"
+else
+  __hhs_has "vi" && export EDITOR="${EDITOR:-vi}"
+fi
 
 # ----------------------------------------------------------------------------
 # Home Sweet Home
@@ -139,6 +147,9 @@ if __hhs_has 'hunspell'; then
   export DICTIONARY="en_US,es_ES,pt_BR,fr_FR"
 fi
 
+# Glow
+export GLOW_CONFIG_FILE="${HHS_DIR}/.glow.yml"
+
 # Starship variables
 export STARSHIP_CONFIG="${STARSHIP_CONFIG=${HHS_DIR}/.starship.toml}"
 export STARSHIP_CACHE="${STARSHIP_CACHE=${HHS_CACHE_DIR}}"
@@ -169,7 +180,7 @@ fi
 # ----------------------------------------------------------------------------
 # Development tools. To override it please export HHS_DEV_TOOLS variable at ${HHS_ENV_FILE}
 DEVELOPER_TOOLS=(
-  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'rsync'
+  'git' 'hexdump' 'vim' 'tree' 'pcregrep' 'gpg' 'base64' 'rsync' 'glow'
   'perl' 'java' 'ruby' 'python3'
   'gcc' 'make' 'gradle' 'pip3' 'gem'
   'pbcopy' 'jq' 'sqlite3' 'gawk' 'hunspell'

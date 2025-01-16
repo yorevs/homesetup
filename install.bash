@@ -141,7 +141,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HomeSetup application dependencies
   DEPENDENCIES=(
-    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk' 'make'
+    'git' 'curl' 'ruby' 'rsync' 'mkdir' 'vim' 'gawk' 'make' 'glow'
   )
 
   # Missing HomeSetup dependencies
@@ -683,9 +683,10 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
     [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
-    # Create aliasdef, inputrc, and homesetup.toml.
+    # Create aliasdef, inputrc, glow.yml, and homesetup.toml.
     copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
     copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+    copy_file "${HHS_HOME}/dotfiles/glow.yml" "${HHS_DIR}/.glow.yml"
     copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
 
     # NeoVim integration configs.
@@ -1131,7 +1132,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${WHITE}hhu update"
     echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${WHITE}hhs logs install"
-    echo -e "${YELLOW}${STAR_ICN} For details about your new Terminal type: ${WHITE}more ${README_LINK}"
+    echo -e "${YELLOW}${STAR_ICN} To learn more about your new Terminal, type: ${WHITE}glow ${README_LINK}"
     echo -e "${YELLOW}${STAR_ICN} Report issues at: ${WHITE}${ISSUES_URL}"
     echo -e "${NC}"
 
