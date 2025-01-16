@@ -1145,7 +1145,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${WHITE}hhu update"
     echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${WHITE}hhs logs install"
-    echo -e "${YELLOW}${STAR_ICN} To learn more about your new Terminal, type: ${WHITE}glow ${README_LINK}"
+    echo -e "${YELLOW}${STAR_ICN} To learn more about your new Terminal, type: ${WHITE}cat ${README_LINK}"
     echo -e "${YELLOW}${STAR_ICN} Report issues at: ${WHITE}${ISSUES_URL}"
     echo -e "${NC}"
 
