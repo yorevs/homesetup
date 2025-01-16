@@ -314,7 +314,7 @@ usage: $APP_NAME [OPTIONS] <args>
     HHS_VENV_PATH="${HHS_DIR}/venv"
 
     # Hunspell dictionary location.
-    HHS_DICT_DIR="${HHS_DIR}/hunspell-dicts"
+    HUNSPELL_DIR="${HHS_DIR}/hunspell-dicts"
 
     # Fonts destination location
     if [[ "Darwin" == "${MY_OS}" ]]; then
@@ -389,7 +389,7 @@ usage: $APP_NAME [OPTIONS] <args>
     # Create fonts destination directory
     create_directory "${FONTS_DIR}"
     # Create hunspell dictionaries destination directory
-    create_directory "${HHS_DICT_DIR}"
+    create_directory "${HUNSPELL_DIR}"
   }
 
   # Check HomeSetup required tools
@@ -585,6 +585,7 @@ usage: $APP_NAME [OPTIONS] <args>
         configure_askai_rag
         ;;
       local)
+        create_destination_dirs
         install_dotfiles
         configure_starship
         configure_askai_rag
@@ -780,13 +781,16 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Copy hunspell dictionaries.
-    echo -en "\n${WHITE}Copying Hunspell dictionaries into ${BLUE}${HHS_DICT_DIR}... "
+    echo -en "\n${WHITE}Copying Hunspell dictionaries into ${BLUE}${HUNSPELL_DIR}... "
     echo ">>> Copied Hunspell dictionaries" >>"${INSTALL_LOG}"
-    [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate hunspell dictionaries (${HHS_DICT_DIR}) directory !"
-    if unzip -jo "${HHS_HOME}"/assets/artifacts/hunspell-dicts.zip -d "${HHS_DICT_DIR}" >>"${INSTALL_LOG}" 2>&1; then
+    [[ -d "${HUNSPELL_DIR}" ]] || quit 2 "Unable to locate hunspell (${HUNSPELL_DIR}) directory !"
+    if find "${HHS_HOME}"/assets/hunspell-dicts -maxdepth 1 -type f \( -iname "*.aff" -o -iname "*.dic" \) \
+      -print \
+      -exec rsync --archive {} "${HUNSPELL_DIR}" \; \
+      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
       echo -e "${GREEN}OK${NC}"
     else
-      quit 2 "Unable to extract Hunspell files into dictionaries(${HHS_DICT_DIR}) directory !"
+      quit 2 "Unable to extract Hunspell files into dictionaries(${HUNSPELL_DIR}) directory !"
     fi
 
     # -----------------------------------------------------------------------------------
@@ -900,7 +904,7 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e "This is to avoid invoking dotfiles multiple times. If you are sure that your .profile don't source either"
       echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
       echo -e "$ mv ${HHS_BACKUP_DIR}/profile.orig ${HOME}/.profile"
-      echo "${NC}"
+      echo -e "${NC}"
       [[ -z "${STREAMED}" ]] && read -rn 1 -p "Press any key to continue..."
     fi
 

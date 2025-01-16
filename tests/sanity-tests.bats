@@ -38,9 +38,10 @@ load_bats_libs
   done
 
   [[ -f "${HOME}/.inputrc" ]] || missing+=("${HOME}/.inputrc")
+  [[ -f "${HOME}/.config/nvim/init.vim" ]] || missing+=("${HOME}/.config/nvim/init.vim")
+  [[ -d "${HHS_DIR}/hunspell-dicts" ]] || missing+=("${HHS_DIR}/hunspell-dicts")
   [[ -f "${HHS_DIR}/.aliasdef" ]] || missing+=("${HHS_DIR}/.aliasdef")
   [[ -f "${HHS_DIR}/.homesetup.toml" ]] || missing+=("${HHS_DIR}/.homesetup.toml")
-  [[ -f "${HOME}/.config/nvim/init.vim" ]] || missing+=("${HOME}/.config/nvim/init.vim")
   [[ -f "${HHS_DIR}/shell-opts.toml" ]] || missing+=("${HHS_DIR}/shell-opts.toml")
   [[ -f "${HHS_DIR}/.aliases" ]] || missing+=("${HHS_DIR}/.aliases")
   [[ -f "${HHS_DIR}/.cmd_file" ]] || missing+=("${HHS_DIR}/.cmd_file")
@@ -51,6 +52,7 @@ load_bats_libs
   [[ -f "${HHS_DIR}/.profile" ]] || missing+=("${HHS_DIR}/.profile")
   [[ -f "${HHS_DIR}/.prompt" ]] || missing+=("${HHS_DIR}/.prompt")
   [[ -f "${HHS_DIR}/.saved_dirs" ]] || missing+=("${HHS_DIR}/.saved_dirs")
+  [[ -f "${HHS_DIR}/.glow.yml" ]] || missing+=("${HHS_DIR}/.glow.yml")
 
   [[ ${#missing[@]} -eq 0 ]] || echo "Missing dotfiles: [${missing[*]}]"
   [[ ${#missing[@]} -eq 0 ]]
