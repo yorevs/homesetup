@@ -8,7 +8,7 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2024, HomeSetup team
+# Copyright (c) 2025, HomeSetup team
 
 load test_helper
 load "${HHS_FUNCTIONS_DIR}/hhs-text.bash"

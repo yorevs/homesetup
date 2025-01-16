@@ -9,7 +9,7 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2024, HomeSetup team
+# Copyright (c) 2025, HomeSetup team
 
 # !NOTICE: Do not change this file. To customize your shell create/change the following files:
 #   ~/.colors     : To customize your colors

@@ -8,7 +8,7 @@
 #    Site: https://github.com/yorevs#homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2024, HomeSetup team
+# Copyright (c) 2025, HomeSetup team
 
 # @purpose: Retrieve/Get/Set the current hostname.
 # @param $1 [opt] : The new hostname. If not provided, current hostname is retrieved.

@@ -9,7 +9,7 @@
 #    Site: https://github.com/yorevs/homesetup
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2024, HomeSetup team
+# Copyright (c) 2025, HomeSetup team
 
 # This script name.
 APP_NAME="${0##*/}"

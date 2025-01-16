@@ -8,7 +8,7 @@
 #  Mailto: taius.hhs@gmail.com
 # License: Please refer to <https://opensource.org/licenses/MIT>
 #
-# Copyright (c) 2024, HomeSetup team
+# Copyright (c) 2025, HomeSetup team
 
 APP_NAME="hhs"
 

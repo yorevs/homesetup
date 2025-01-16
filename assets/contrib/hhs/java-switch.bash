@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+#  Script: java-switch.bash
+# Purpose: Seamless switch between installed JDK versions.
+# Created: Mar 29, 2022
+#  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
+#  Mailto: taius.hhs@gmail.com
+#    Site: https://github.com/yorevs#homesetup
+# License: Please refer to <https://opensource.org/licenses/MIT>
+#
+# Copyright (c) 2025, HomeSetup team
+
 JDK_SEARCH_DIR=${JDK_SEARCH_DIR:-"/Library/Java/JavaVirtualMachines"}
 
 USAGE="usage: sudo java-switch <jdk_ver>"
