@@ -804,6 +804,15 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -d "${HHS_MOTD_DIR}" ]] || create_directory "${HHS_MOTD_DIR}"
     \cp "${HHS_HOME}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd &>/dev/null
 
+    # Cleanup old files (older than 30 days)
+    echo -en "\n${WHITE}Cleaning up old cache and log files... "
+    if find "${HHS_DIR?}/cache" "${HHS_LOG_DIR?}" -type f -mtime +30 -exec rm -f {} \;; then
+      echo -e "${GREEN}OK${NC}"
+    else
+      echo -e "${RED}FAILED${NC}"
+      echo -e "${YELLOW}Cache and logs files untouched!${NC}"
+    fi
+
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }
 
