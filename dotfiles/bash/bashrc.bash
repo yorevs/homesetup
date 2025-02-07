@@ -51,7 +51,7 @@ case "${SHELL##*\/}" in
     echo ''
     echo "Sorry ! HomeSetup is not compatible with ${SHELL##*\/} for now."
     echo 'You can change your default shell by typing: '
-    echo "$ sudo chsh -s $(command -v bash)"
+    echo "$ sudo chsh -s $(command -v "${SHELL##*\/}")"
     echo ''
     ;;
 esac

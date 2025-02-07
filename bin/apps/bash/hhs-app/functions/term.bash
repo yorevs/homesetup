@@ -129,6 +129,8 @@ function shorts() {
   | Ctrl + X then Ctrl + C  | Close the current window                                 |
   | Ctrl + Shift + T        | Open a new terminal tab                                  |
   | Ctrl + Shift + N        | Open a new terminal window                               |
+  |-------------------------+--------------------------------------------------------- |
+  | Alt +
   " | __hhs_highlight '(Tab|Ctrl) [^|]*'
 
   return 0

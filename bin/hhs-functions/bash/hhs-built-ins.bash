@@ -257,9 +257,7 @@ function __hhs_venv() {
 
   [[ -z "${enable}" ]] && { echo -e "${WHITE}Virtual environment is ${active} ${YELLOW}[$(python3 -V)] -> $(command -v python3)."; return 0; }
 
-  if [[ "$(ps -p "$PPID" -o comm=)" != "/usr/bin/login" ]]; then
-    __hhs_errcho "${FUNCNAME[0]}" "Can't Activate/Deactivate in a sub-shell!"
-  elif [[ "${enable}" =~ -d|-t ]] && declare -F deactivate &> /dev/null; then
+  if [[ "${enable}" =~ -d|-t ]] && declare -F deactivate &> /dev/null; then
     deactivate && \
       { echo -e "${WHITE}Virtual environment ${RED}deactivated ${YELLOW}[$(python3 -V)] -> $(command -v python3)."; ret_val=0; }
   elif [[ "${enable}" =~ -a|-t ]] && ! declare -F deactivate &> /dev/null; then
