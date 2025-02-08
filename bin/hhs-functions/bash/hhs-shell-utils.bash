@@ -18,7 +18,9 @@ function __hhs_history() {
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} [regex_filter]"
     return 1
-  elif [[ "$#" -eq 0 ]]; then
+  fi
+  echo ''
+  if [[ "$#" -eq 0 ]]; then
     history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | __hhs_highlight -i "^ *[0-9]*  "
   else
     history | sort -k2 -k 1,1nr | uniq -f 1 | sort -n | __hhs_highlight -i "${*}"
@@ -32,29 +34,37 @@ function __hhs_history() {
 # @param $1 [Opt] : Limit to the top N commands.
 function __hhs_hist_stats() {
 
-  local top_n=${1:-10} i=1 cmd_name cmd_qty cmd_chart
+  local top_n=${1:-10} i=1 width=30 cmd_name cmd_qty
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} [top_N]"
     return 1
   fi
 
-  pad=$(printf '%0.1s' "."{1..60})
-  pad_len=30
+  pad=$(printf '%0.1s' "."{1..41})
+  pad_len=41
+  max_size=$(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $1}')
 
-  echo -e "\n${ORANGE}Top '${top_n}' used commands in bash history ...\n"
-  IFS=$'\n'
-  for cmd in $(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}" \
-      | perl -lane 'printf "%s %03d %s \n", $F[1], $F[0], "▄" x ($F[0] / 5)'); do
-    cmd_name=$(echo "${cmd}" | cut -d ' ' -f1)
-    cmd_qty=$(echo "${cmd}" | cut -d ' ' -f2)
-    cmd_chart=$(echo "${cmd}" | cut -d ' ' -f3-)
-    printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} " $i
-    echo -n "${cmd_name} "
-    printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
-    printf "${GREEN}%s ${CYAN}|%s \n" " ${cmd_qty}" "${cmd_chart}"
-    ((i += 1))
+  echo ' '
+  echo "${YELLOW}Top ${top_n} used commands in history:"
+  echo ' '
+
+  hist_output="$(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}")"
+
+  echo "${hist_output}" | while read -r line; do
+    if [[ ${line} =~ ^[[:space:]]*([0-9]+)[[:space:]]*([a-zA-Z0-9]+)$ ]]; then
+      cmd_qty="${BASH_REMATCH[1]}"
+      cmd_name="${BASH_REMATCH[2]}"
+      bar_len=$(( cmd_qty * width / max_size ))
+      bar=$(printf '▄%.0s' $(seq 1 "${bar_len}"))
+      printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} " "${i}"
+      printf "%s" "${cmd_name} "
+      printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
+      printf "${GREEN}%3d ${ORANGE}|%s\n" " ${cmd_qty}" "${bar}"
+      ((i += 1))
+    fi
   done
+
   IFS="${OLDIFS}"
   echo "${NC}"
 
@@ -192,4 +202,55 @@ function __hhs_shopt() {
   fi
 
   return 1
+}
+
+
+# @function: Display 'du' output formatted as a horizontal bar chart.
+# @param $1 [Opt] : Directory path (default: current directory)
+# @param $2 [Opt] : Number of top entries to display (default: 10)
+function __hhs_du() {
+  local dir="${1:-.}" i=1 top_n="${2:-10}" width=30 max_size
+
+  if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "usage: ${FUNCNAME[0]} [path] [top_N]"
+    return 1
+  fi
+
+  [[ ! -d "${dir}" ]] && { __hhs_errcho  "${FUNCNAME[0]}" "Directory not found: \"${dir}\""; return 1; }
+
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    du_output="$(\du -hkd 1 "${dir}" 2>/dev/null | sort -rn | head -n "$((top_n + 1))")"
+  else
+    du_output="$(\du -hk --max-depth=1 "${dir}" 2>/dev/null | sort -rn | head -n "$((top_n + 1))")"
+  fi
+
+  max_size=$(echo "${du_output}" | awk 'NR==1 {print $1}')
+  pad_len=60
+  pad=$(printf '%0.1s' "."{1..60})
+  columns=66
+
+  echo ' '
+  echo "${YELLOW}Top ${top_n} disk usage at: ${BLUE}\"${dir//\./$(pwd)}\""
+  echo ' '
+
+  echo "${du_output}" | while read -r size path; do
+    [[ -z "${size}" || -z "${path}" || "${path}" == '.' || "${path}" == 'total' ]] && continue
+    bar_len=$(( size * width / max_size ))
+    bar=$(printf '▄%.0s' $(seq 1 "${bar_len}"))
+    path="${path//\.\//}"
+    path="${path//\/\//\/}"
+    path="${path:0:$columns}"
+    printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} " "${i}"
+    printf "%s" "${path}"
+    printf '%*.*s' 0 $((pad_len - ${#path})) "${pad}"
+    [[ "${#path}" -ge "${columns}" ]] && echo -en "${NC}" || echo -en "${NC}"
+    printf "${GREEN}%$((${#max_size} + 1))d KB ${ORANGE}|%s\n" " ${size}" "${bar}"
+    ((i += 1))
+  done
+
+  echo ''
+  echo "${WHITE}Total: ${ORANGE}$(\du -hc "${dir}" | grep total | cut -f1)"
+  unset TOTAL
+
+  echo "${NC}"
 }

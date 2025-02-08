@@ -452,6 +452,9 @@ function main() {
 
   local fn_name="${1}"
 
+  # enable history in a non-interactive shell.
+  history -r "${HISTFILE}"
+
   # Lazy load application commons.
   source "${HHS_DIR}/bin/app-commons.bash"
 

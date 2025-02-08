@@ -113,10 +113,10 @@ alias cp='\cp -iv'
 alias mv='\mv -iv'
 # @alias: Make `df' command output pretty and human readable format
 alias df='\df -H'
-# @alias: Make `du' command output pretty and human readable format
-alias du='\du -hcd 1'
 # @alias: Make `ps' command output pretty and human readable format
 alias psg='\ps aux | \grep -v grep | \grep -i -e VSZ -e'
+# @alias: Make `du' command output pretty and human readable format
+alias du='__hhs_du'
 # @alias: Use the assigned app to open a file
 alias open="__hhs_open"
 # @alias: Display/Set/unset current Shell Options
