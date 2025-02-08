@@ -112,13 +112,13 @@ jobs:
           exit 1
       - name: Upload installation logs (success)
         if: ${{ success() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "success-install-logs"
           path: "${{ env.HHS_LOG_DIR }}"
       - name: Upload installation logs (failure)
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "failure-install-logs"
           path: "${{ env.HHS_LOG_DIR }}"
