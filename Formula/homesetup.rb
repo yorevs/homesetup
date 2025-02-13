@@ -22,7 +22,6 @@ class Homesetup < Formula
   depends_on "perl"
   depends_on "ruby"
   depends_on "python@3.11"
-  depends_on "pbcopy"
   depends_on "jq"
   depends_on "sqlite3"
   depends_on "hunspell"
