@@ -21,11 +21,14 @@ class Homesetup < Formula
   depends_on "base64"
   depends_on "perl"
   depends_on "ruby"
+  depends_on "gawk"
   depends_on "python@3.11"
   depends_on "jq"
   depends_on "sqlite3"
   depends_on "hunspell"
-
+  depends_on "ffmpeg"
+  depends_on "portaudio"
+  depends_on "libmagic"
 
   def install
     system "bash", "-c", "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash"
