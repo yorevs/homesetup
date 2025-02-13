@@ -523,7 +523,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     if [[ ${OS_TYPE} == macOS ]]; then
       echo ''
-      if ! has 'brew'; then
+      if [[ -z "${HOMEBREW_INSTALLING}" ]] && ! has 'brew'; then
         echo -en "${YELLOW}HomeBrew is not installed!${NC}"
         install_brew || quit 2 "### Failed to install HomeBrew !"
       else
