@@ -1,11 +1,10 @@
-class HomeSetup < Formula
+class Homesetup < Formula
   desc "HomeSetup - The ultimate Terminal experience"
-  homepage "https://github.com/yorevs/homesetup"
-  url "https://github.com/yorevs/homesetup/archive/v1.8.22.tar.gz"
+  homepage "https://github.com/HS-Teams/homebrew-homesetup"
+  url "https://github.com/HS-Teams/homebrew-homesetup/archive/v1.8.22.tar.gz"
   sha256 "your_tarball_sha256_here"
   license "MIT"
-
-  depends_on "dependency" => :build
+  head "https://github.com/HS-Teams/homebrew-homesetup.git", branch: "master"
 
   def install
     system "bash", "-c", "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash"
