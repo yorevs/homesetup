@@ -6,6 +6,7 @@ class Homesetup < Formula
   license "MIT"
   head "https://github.com/HS-Teams/homebrew-homesetup.git", branch: "master"
 
+  depends_on xcode: ["12.0", :build]
   depends_on :macos
 
   depends_on "git"
@@ -31,7 +32,11 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "bash", "-c", "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash"
+    system "bash", "-c", "install.bash"
+  end
+
+  def install
+    system "bash", "-c", "uninstall.bash"
   end
 
   test do
