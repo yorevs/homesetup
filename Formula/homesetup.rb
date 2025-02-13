@@ -14,7 +14,7 @@ class Homesetup < Formula
   depends_on "make"
   depends_on "gcc"
   depends_on "tree"
-  depends_on "pcregrep"
+  depends_on "pcre2"
   depends_on "gpg"
   depends_on "base64"
   depends_on "perl"
