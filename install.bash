@@ -447,21 +447,24 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     echo -e "\nUsing ${YELLOW}\"${OS_APP_MAN}\"${NC} application manager!\n"
-    echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Checking required tools using ${YELLOW}'${check_pkg}'${WHITE} ...${NC}\n"
-
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
-    for tool_name in "${DEPENDENCIES[@]}"; do
-      echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name} ...${NC}"
-      printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
-      if has "${tool_name}" || ${check_pkg} "${tool_name}" &>/dev/null; then
-        echo -e " ${GREEN}${SUCCESS_ICN} INSTALLED${NC}"
-      else
-        echo -e " ${RED}${FAIL_ICN} NOT INSTALLED${NC}"
-        MISSING_DEPS+=("${tool_name}")
-      fi
-    done
+    if [[ -n "$HOMEBREW_INSTALLING" ]]; then
+      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Using ${GREEN}HomeBrew${WHITE} dependency management ...${NC}\n"
+    else
+      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Checking required tools using ${YELLOW}'${check_pkg}'${WHITE} ...${NC}\n"
+      for tool_name in "${DEPENDENCIES[@]}"; do
+        echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name} ...${NC}"
+        printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
+        if has "${tool_name}" || ${check_pkg} "${tool_name}" &>/dev/null; then
+          echo -e " ${GREEN}${SUCCESS_ICN} INSTALLED${NC}"
+        else
+          echo -e " ${RED}${FAIL_ICN} NOT INSTALLED${NC}"
+          MISSING_DEPS+=("${tool_name}")
+        fi
+      done
+    fi
 
     # Install packages using the default package manager
     install_packages "${install}" "${check_pkg}" "${MISSING_DEPS[@]}"

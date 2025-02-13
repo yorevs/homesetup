@@ -1,10 +1,10 @@
 class Homesetup < Formula
   desc "HomeSetup - The ultimate Terminal experience"
   homepage "https://github.com/HS-Teams/homebrew-homesetup"
-  url "https://github.com/HS-Teams/homebrew-homesetup/archive/v1.8.22.tar.gz"
-  sha256 "761272f74cd81c0388359b19cb41233d4f6cbce18e27a2ed77b6e2978e6ae6b8"
+  url "https://github.com/mavlink/MAVSDK.git",
+      tag:      "v1.8.22",
+      revision: "e0e4ffb34a1913960f6c9ccdc8bcbea0447d26ad"
   license "MIT"
-  head "https://github.com/HS-Teams/homebrew-homesetup.git", branch: "master"
 
   depends_on xcode: ["12.0", :build]
   depends_on :macos
@@ -32,11 +32,11 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash"
+    system "bash", "-c", "HOMEBREW_INSTALLING=1 ./install.bash"
   end
 
   def uninstall
-    system "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/uninstall.bash | bash"
+    system "bash", "-c", "HOMEBREW_UNINSTALLING=1 ./uninstall.bash"
   end
 
   test do
