@@ -21,7 +21,7 @@ UNSETS+=(
 )
 
 # Program version.
-VERSION=1.0.0
+VERSION="1.1.0 built on HomeSetup v${HHS_VERSION}"
 
 # Help message to be displayed by the application.
 USAGE="usage: ${APP_NAME} [option] {function | plugin {task} <command>} [args...]

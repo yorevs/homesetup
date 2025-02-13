@@ -59,7 +59,7 @@ function _install_() {
   sed -i'' -e 's|"credsStore": ".*"|"credsStore": "osxkeychain"|g' ~/.docker/config.json
 
   # Configure plugins
-  [[ -d "${HOME}/.docker/cli-plugins" ]] || \mkdir "-p ${HOME}/.docker/cli-plugins"
+  [[ -d "${HOME}/.docker/cli-plugins" ]] || \mkdir -p "${HOME}/.docker/cli-plugins"
   find "${HOME}/.docker/cli-plugins/" -type f -print -delete
   [[ -L "$(brew --prefix)/opt/docker-compose/bin/docker-compose" ]] ||
     ln -sfn "$(brew --prefix)/opt/docker-compose/bin/docker-compose" "${HOME}"/.docker/cli-plugins/docker-compose

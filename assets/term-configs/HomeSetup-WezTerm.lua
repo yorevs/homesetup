@@ -93,7 +93,7 @@ local config = {
     -- Existing shortcuts
     { key = "t", mods = "CMD", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
     { key = "w", mods = "CMD", action = wezterm.action.CloseCurrentTab({ confirm = true }) },
-    { key = "k", mods = "CMD", action = wezterm.action.SendString("clear\n") },
+    { key = "k", mods = "CMD", action = wezterm.action.SendString("echo -e '\033[J'; clear\n") },
     { key = "1", mods = "CMD", action = wezterm.action.ActivateTab(0) },
     { key = "2", mods = "CMD", action = wezterm.action.ActivateTab(1) },
     { key = "3", mods = "CMD", action = wezterm.action.ActivateTab(2) },

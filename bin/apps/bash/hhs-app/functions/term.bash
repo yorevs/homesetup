@@ -90,43 +90,17 @@ function shopts() {
   quit 0
 }
 
-# @purpose: Display a table of terminal shortcuts.
+# @purpose: Display HomeSetup shortcuts/cheatsheets.
 function shorts() {
-  echo ''
-  echo -e "
-  Tab                     \t Auto-complete command or file name
-  Ctrl + _                \t Undo the last action
-  Ctrl + T (with fzf)     \t Select a file using fzf TUI
-  Ctrl + R (with fzf)     \t Search the history using fzf TUI
-  Ctrl + A                \t Move cursor to the beginning of the line
-  Ctrl + E                \t Move cursor to the end of the line
-  Ctrl + K                \t Cut text from the cursor to the end of the line
-  Ctrl + U                \t Cut text from the cursor to the beginning of the line
-  Ctrl + Y                \t Paste text that was cut with: Ctrl + K or Ctrl + U
-  Ctrl + L                \t Clear the terminal screen
-  Ctrl + C                \t Cancel the current command
-  Ctrl + D                \t Logout of the current shell
-  Ctrl + Z                \t Suspend the current command
-  Ctrl + R (no fzf)       \t Reverse search through command history
-  Ctrl + F                \t Move cursor forward one character
-  Ctrl + B                \t Move cursor backward one character
-  Ctrl + P                \t Previous command in command history
-  Ctrl + N                \t Next command in command history
-  Ctrl + S                \t Stop output to the terminal
-  Ctrl + Q                \t Resume output to the terminal
-  Ctrl + W                \t Cut the word before the cursor
-  Ctrl + T (no fzf)       \t Swap the last two characters before the cursor
-  Ctrl + H                \t Delete the character before the cursor
-  Ctrl + J                \t Equivalent to Enter key
-  Ctrl + V                \t Insert a literal character (used for special characters)
-  Ctrl + X then Ctrl + E  \t Edit command in the default editor
-  Ctrl + X then Ctrl + C  \t Close the current window
-  Ctrl + Shift + T        \t Open a new terminal tab
-  Ctrl + Shift + N        \t Open a new terminal window
-  Alt + ←                 \t Navigate to the previous word
-  Alt + →                 \t Navigate to the next word
-  Alt + Backspace         \t Erase the previous word
-  " | nl | __hhs_highlight '  (Tab|Ctrl)([\\+ a-zA-Z]+)+'
+  local CAT='cat'
+
+  __hhs_has bat && CAT='bat'
+  for file in "${HHS_HOME}"/docs/misc/cheatsheets/*.md; do
+    n_sheet="$(basename "$file" | sed 's/\.[^.]*$//' | tr '-' ' ' | awk '{for(i=1;i<=NF;i++){$i=toupper(substr($i,1,1)) substr($i,2)}; print}')"
+    shopt -s nocasematch
+    [[ -z "${1}" || "${n_sheet}" =~ ${1} ]] && { ${CAT} --paging=never --style=header,grid "${file}"; echo ''; }
+    shopt -u nocasematch
+  done
 
   return 0
 }

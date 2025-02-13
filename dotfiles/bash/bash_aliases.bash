@@ -98,7 +98,7 @@ alias cd='__hhs_change_dir'
 # @alias: Built-ins replacement for `dirs'
 alias dirs='__hhs_dirs'
 # @alias: Built-ins replacement for `cat'
-__hhs_has "bat" && alias cat='bat'
+__hhs_has "bat" && alias cat='bat --paging=never --style=header,grid'
 # @alias: Built-ins replacement for `help'
 alias help='__hhs help'
 # @alias: Starship replacement for `starship' binary
