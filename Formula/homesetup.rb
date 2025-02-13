@@ -2,7 +2,7 @@ class Homesetup < Formula
   desc "HomeSetup - The ultimate Terminal experience"
   homepage "https://github.com/HS-Teams/homebrew-homesetup"
   url "https://github.com/HS-Teams/homebrew-homesetup/archive/v1.8.22.tar.gz"
-  sha256 "5a2f2c42f0038167fccdaf59cc8af59cc3aa7c2c2d0f3532e5724098196bff7f"
+  sha256 "761272f74cd81c0388359b19cb41233d4f6cbce18e27a2ed77b6e2978e6ae6b8"
   license "MIT"
   head "https://github.com/HS-Teams/homebrew-homesetup.git", branch: "master"
 
