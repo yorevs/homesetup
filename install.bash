@@ -450,8 +450,8 @@ usage: $APP_NAME [OPTIONS] <args>
     pad=$(printf '%0.1s' "."{1..60})
     pad_len=20
 
-    if [[ -n "$HOMEBREW_INSTALLING" ]]; then
-      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Using ${GREEN}HomeBrew${WHITE} dependency management ...${NC}\n"
+    if [[ -n "${HOMEBREW_INSTALLING}" ]]; then
+      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Using ${GREEN}HomeBrew${WHITE} dependency management ...${NC}"
     else
       echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Checking required tools using ${YELLOW}'${check_pkg}'${WHITE} ...${NC}\n"
       for tool_name in "${DEPENDENCIES[@]}"; do
