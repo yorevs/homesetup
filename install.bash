@@ -453,7 +453,7 @@ usage: $APP_NAME [OPTIONS] <args>
     pad_len=20
 
     for tool_name in "${DEPENDENCIES[@]}"; do
-      echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name}${NC}..."
+      echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Checking: ${YELLOW}${tool_name} ...${NC}"
       printf '%*.*s' 0 $((pad_len - ${#tool_name})) "${pad}"
       if has "${tool_name}" || ${check_pkg} "${tool_name}" &>/dev/null; then
         echo -e " ${GREEN}${SUCCESS_ICN} INSTALLED${NC}"
