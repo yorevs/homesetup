@@ -3,7 +3,7 @@ class Homesetup < Formula
   homepage "https://github.com/yorevs/homesetup"
   url "https://github.com/HS-Teams/homebrew-homesetup.git",
       tag: "v1.8.22",
-      revision: "d03829f3b0e60ec5e43ddf24a27f1daaf42538f1"
+      revision: "06201dd714977165e1a5d68a2eecf766e1175e1d"
   license "MIT"
 
   depends_on xcode: ["12.0", :build]
