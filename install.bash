@@ -366,10 +366,10 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Prompt the user for AskAI installation
   query_askai_install() {
-    PIP=$(command -v pip3 2>/dev/null)
+    PIP=$(command -v pip3.11 2>/dev/null)
     if [[ "$OPT" == 'all' ]] || PIP show hspylib-askai &>/dev/null; then
       INSTALL_AI=1
-    elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" ]]; then
+    elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" && -z "${HOMEBREW_INSTALLING}" ]]; then
       echo -e "${ORANGE}"
       read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
@@ -666,7 +666,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}       HomeBrew: ${YELLOW}${is_brew:=Yes}"
     echo -e "${NC}"
 
-    if [[ "${METHOD}" == 'fresh' && -z "${QUIET}" && -z "${STREAMED}" ]]; then
+    if [[ "${METHOD}" == 'fresh' && -z "${QUIET}" && -z "${STREAMED}" && -z "${HOMEBREW_INSTALLING}" ]]; then
       echo -e "${ORANGE}"
       if [[ -z "${ANS}" ]]; then
         read -rn 1 -p 'Your current .dotfiles will be replaced and your old files backed up. Continue (y/[n])? ' ANS
@@ -836,8 +836,8 @@ usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -en "${WHITE}Detecting local python environment... ${NC}"
     # Detecting system python and pip versions.
-    PYTHON=$(command -v python3 2>/dev/null)
-    PIP=$(command -v pip3 2>/dev/null)
+    PYTHON=$(command -v python3.11 2>/dev/null)
+    PIP=$(command -v pip3.11 2>/dev/null)
     [[ -z "${PYTHON}" || -z "${PIP}" ]] \
       && quit 2 "Python >= 3.10 <= 3.11 and Pip3 are required to install HomeSetup!"
     python_version=$("${PYTHON}" --version 2>&1 | awk '{print $2}')
@@ -881,8 +881,8 @@ usage: $APP_NAME [OPTIONS] <args>
   install_hspylib() {
     python_version="$(${PYTHON} -V)"
     pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
-    PYTHON=$(command -v python3 2>/dev/null)
-    PIP=$(command -v pip3 2>/dev/null)
+    PYTHON=$(command -v python3.11 2>/dev/null)
+    PIP=$(command -v pip3.11 2>/dev/null)
     echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
     echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
@@ -916,7 +916,7 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
       echo -e "$ mv ${HHS_BACKUP_DIR}/profile.orig ${HOME}/.profile"
       echo -e "${NC}"
-      [[ -z "${STREAMED}" ]] && read -rn 1 -p "Press any key to continue..."
+      [[ -z "${STREAMED}" && -z "${HOMEBREW_INSTALLING}" ]] && read -rn 1 -p "Press any key to continue..."
     fi
 
     # Moving old hhs files into the proper directory.
@@ -1104,7 +1104,7 @@ usage: $APP_NAME [OPTIONS] <args>
         RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
         RAGProvider.copy_rag('${HHS_HOME}/README.md', 'homesetup-docs/README.md')
       "
-      PYTHON=$(command -v python3 2>/dev/null)
+      PYTHON=$(command -v python3.11 2>/dev/null)
       export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
       export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
       export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
