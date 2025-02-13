@@ -1,6 +1,6 @@
 class Homesetup < Formula
   desc "HomeSetup - The ultimate Terminal experience"
-  homepage "https://github.com/HS-Teams/homebrew-homesetup"
+  homepage "https://github.com/HS-Teams/homebrew-homesetup.git"
   url "https://github.com/mavlink/MAVSDK.git",
       tag:      "v1.8.22",
       revision: "e0e4ffb34a1913960f6c9ccdc8bcbea0447d26ad"
