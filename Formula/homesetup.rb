@@ -6,6 +6,8 @@ class Homesetup < Formula
   license "MIT"
   head "https://github.com/HS-Teams/homebrew-homesetup.git", branch: "master"
 
+  depends_on :macos
+
   depends_on "git"
   depends_on "curl"
   depends_on "ruby"
@@ -20,7 +22,6 @@ class Homesetup < Formula
   depends_on "perl"
   depends_on "ruby"
   depends_on "python@3.11"
-  depends_on "pip3"
   depends_on "pbcopy"
   depends_on "jq"
   depends_on "sqlite3"
