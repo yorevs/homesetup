@@ -32,11 +32,11 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "./install.bash"
+    system "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash"
   end
 
   def uninstall
-    system "./uninstall.bash"
+    system "curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/uninstall.bash | bash"
   end
 
   test do
