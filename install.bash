@@ -96,6 +96,9 @@ usage: $APP_NAME [OPTIONS] <args>
   # Whether the script is running from a stream
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
+  # Whether being installed by HomeBrew
+  HOMEBREW_INSTALLING="${HOMEBREW_INSTALLING:-}"
+
   # Whether to install the AskAI functionalities or not
   INSTALL_AI="${GITHUB_ACTIONS:-}"
 
@@ -272,6 +275,9 @@ usage: $APP_NAME [OPTIONS] <args>
           ;;
         -q | --quiet)
           QUIET=1
+          ;;
+        -h | --homebrew)
+          HOMEBREW_INSTALLING=1
           ;;
         *)
           quit 2 "Invalid option: \"$1\""

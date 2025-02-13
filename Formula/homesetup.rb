@@ -31,11 +31,11 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "HOMEBREW_INSTALLING=1 ./install.bash"
+    system "./install.bash --homebrew"
   end
 
   def uninstall
-    system "HOMEBREW_UNINSTALLING=1 ./uninstall.bash"
+    system "./uninstall.bash --homebrew"
   end
 
   test do
