@@ -2,7 +2,7 @@ class Homesetup < Formula
   desc "HomeSetup - The ultimate Terminal experience"
   homepage "https://github.com/yorevs/homesetup"
   url "https://github.com/HS-Teams/homebrew-homesetup.git",
-      tag: "'v1.8.22",
+      tag: "v1.8.22",
       revision: "82f725ece4189cc4e65a30482db64b0e72532f55"
   license "MIT"
 
