@@ -32,11 +32,11 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "bash", "-c", "install.bash"
+    system "./install.bash"
   end
 
-  def install
-    system "bash", "-c", "uninstall.bash"
+  def uninstall
+    system "./uninstall.bash"
   end
 
   test do
