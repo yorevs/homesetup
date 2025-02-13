@@ -97,7 +97,7 @@ usage: $APP_NAME [OPTIONS] <args>
   STREAMED="$([[ -t 0 ]] || echo 'Yes')"
 
   # Whether being installed by HomeBrew
-  HOMEBREW_INSTALLING="${HOMEBREW_INSTALLING:-}"
+  HOMEBREW_INSTALLING=
 
   # Whether to install the AskAI functionalities or not
   INSTALL_AI="${GITHUB_ACTIONS:-}"
@@ -649,6 +649,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     [[ -z ${STREAMED} ]] && is_streamed='No'
     [[ -z ${INSTALL_AI} ]] && is_askai='No'
+    [[ -z ${HOMEBREW_INSTALLING} ]] && is_brew='No'
 
     echo ''
     echo -e "${WHITE}### ${GREEN}HomeSetup© ${WHITE}Installation Settings ###${NC}"
@@ -662,6 +663,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}  PyPi Packages: ${YELLOW}${PYTHON_MODULES[*]}"
     echo -e "${WHITE}     User/Group: ${YELLOW}${USER}:${GROUP}"
     echo -e "${WHITE}       Streamed: ${YELLOW}${is_streamed:=Yes}"
+    echo -e "${WHITE}       HomeBrew: ${YELLOW}${is_brew:=Yes}"
     echo -e "${NC}"
 
     if [[ "${METHOD}" == 'fresh' && -z "${QUIET}" && -z "${STREAMED}" ]]; then
