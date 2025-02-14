@@ -167,9 +167,10 @@ usage: $APP_NAME [OPTIONS] <args>
     # Unset all declared functions
     unset -f "${UNSETS[*]}"
     exit_code=${1:-0}
+    last_log_lines="  Last 5 log lines:\n$(tail -n 5 "${INSTALL_LOG}" | sed '/^[[:space:]]*$/d; s/^/  => /' | nl)"
     shift
     [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
-    [[ ${#} -ge 1 ]] && echo -e "${*} ${NC}" 1>&2
+    [[ ${#} -ge 1 ]] && echo -e "${*} \n${last_log_lines}${NC}" 1>&2
     [[ ${#} -gt 0 ]] && echo ''
     exit "${exit_code}"
   }
@@ -617,21 +618,21 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ ! -d "${PREFIX}" ]]; then
-      echo -en "${WHITE}Cloning HomeSetup repository... ${NC}"
+      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Cloning ${GREEN}HomeSetup${NC} repository... "
       if git clone "${HHS_REPO_URL}" "${PREFIX}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
       fi
     else
-      cd "${PREFIX}" &>/dev/null  || quit 1 "Unable to enter \"${PREFIX}\" directory !"
-      echo -e "${WHITE}Pulling HomeSetup repository... ${NC}"
+      pushd "${PREFIX}" &>/dev/null || quit 1 "Unable to enter \"${PREFIX}\" directory !"
+      echo -e "${BLUE}[${OS_TYPE}] ${CYAN}Pulling ${GREEN}HomeSetup${NC} repository... "
       if git pull --rebase >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly update HomeSetup repository !"
       fi
-      cd - &>/dev/null  || quit 1 "Unable to leave \"${PREFIX}\" directory !"
+      popd &>/dev/null  || quit 1 "Unable to leave \"${PREFIX}\" directory !"
     fi
 
     [[ -d "${DOTFILES_DIR}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
@@ -668,13 +669,13 @@ usage: $APP_NAME [OPTIONS] <args>
       fi
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
       if [[ ! "${ANS}" =~ ^[yY]$ ]]; then
-        echo "Installation cancelled:  " >>"${INSTALL_LOG}"  2>&1
+        echo "Installation aborted!" >>"${INSTALL_LOG}"  2>&1
         echo ">> ANS=${ANS}  QUIET=${QUIET}  METHOD=${METHOD}  STREAM=${STREAMED}" >>"${INSTALL_LOG}"
-        quit 1 "${RED}Installation cancelled !${NC}"
+        quit 1 "Installation aborted!"
       fi
-      echo -e "${BLUE}Installing HomeSetup ...${NC}"
+      echo -e "${BLUE}[${METHOD}]${WHITE}Installing HomeSetup... ${NC}"
     else
-      echo -e "${BLUE}Installing HomeSetup ${YELLOW}quietly ${NC}"
+      echo -e "${BLUE}[${METHOD}]${WHITE}Installing HomeSetup quietly... ${NC}"
     fi
 
     # Create user dotfiles files.
@@ -1016,7 +1017,7 @@ usage: $APP_NAME [OPTIONS] <args>
     # Init submodules case it's not there yet
     if [[ ! -s "${PREFIX}/tests/bats/bats-core/bin/bats" ]]; then
       pushd "${PREFIX}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${PREFIX}\" !"
-      echo -en "\n${YELLOW}Pulling bats submodules... ${NC}"
+      echo -en "\n${WHITE}Pulling ${GREEN}bats ${NC} submodules..."
       if git submodule update --init &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
       else
