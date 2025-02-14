@@ -70,7 +70,7 @@ usage: $APP_NAME [OPTIONS] <args>
   NC='\033[m'
 
   # Installation log file
-  INSTALL_LOG="${HOME}/install.log"
+  INSTALL_LOG="$(mktemp -t install.XXXXXX).log"
   touch "${INSTALL_LOG}"
   [[ -f "${INSTALL_LOG}" ]] || quit 1 "Unable initialize installation logs -> ${INSTALL_LOG}"
   [[ -f "${INSTALL_LOG}" ]] && echo -e "${ORANGE}Installation logs can be accessed here: ${BLUE}${INSTALL_LOG}${NC}"

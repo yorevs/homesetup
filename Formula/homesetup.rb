@@ -34,12 +34,11 @@ class Homesetup < Formula
   def install
     prefix.install Dir["*"]
     prefix.install Dir[".*"].reject { |f| [".", ".."].include?(File.basename(f)) }
-    system prefix/"install.bash", "-r", "--homebrew", "--prefix", prefix
   end
 
   def caveats
     <<~EOS
-      You need to execute: "#{prefix}/install.bash -r --prefix #{prefix}" to finish the installation!
+      You need to execute: "#{prefix}/(un)install.bash -r --prefix #{prefix}" to finish the (un)installation!
     EOS
   end
 
