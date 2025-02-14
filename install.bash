@@ -293,7 +293,7 @@ usage: $APP_NAME [OPTIONS] <args>
     INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
 
     # Installation source
-    INSTALL_SRC="$(dirname "${0}")"
+    INSTALL_SRC="$(cd "$(dirname "$0")" && pwd)"
 
     # README link for HomeSetup
     README="${INSTALL_DIR}/README.MD"
