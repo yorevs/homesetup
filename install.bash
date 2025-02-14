@@ -270,7 +270,9 @@ usage: $APP_NAME [OPTIONS] <args>
           ;;
         -p | --prefix)
           HHS_PREFIX="${2}"
-          [[ -d "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory \"${HHS_PREFIX}\""
+          if [[ -d "${HHS_PREFIX}" ]] || ! create_directory "${HHS_PREFIX}"; then
+            quit 2 "Installation prefix is not a valid directory and could not be created: \"${HHS_PREFIX}\""
+          fi
           shift
           ;;
         -q | --quiet)
