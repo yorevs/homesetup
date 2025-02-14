@@ -660,8 +660,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e ""
     echo -e "${WHITE}          Shell: ${YELLOW}${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
-    echo -e "${WHITE} Install Prefix: ${YELLOW}${HHS_PREFIX:-none}"
-    echo -e "${WHITE}    Install Dir: ${YELLOW}${HHS_HOME}"
+    echo -e "${WHITE}         Prefix: ${YELLOW}${HHS_PREFIX:-${HHS_HOME}}"
     echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
     echo -e "${WHITE}  PyPi Packages: ${YELLOW}${PYTHON_MODULES[*]}"
@@ -870,7 +869,7 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Activate the virtual environment.
-    echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Activating virtual environment ...${NC}"
+    echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Activating virtual environment... ${NC}"
     if source "${HHS_VENV_PATH}"/bin/activate; then
       echo -e "${GREEN}OK${NC}"
     else
@@ -904,7 +903,7 @@ usage: $APP_NAME [OPTIONS] <args>
   # Check for backward HomeSetup backward compatibility.
   compatibility_check() {
 
-    echo -e "\n${WHITE}Checking HomeSetup backward compatibility${BLUE}"
+    echo -e "\n${WHITE}Checking HomeSetup backward compatibility... ${BLUE}"
 
     # Cleaning up old dotfiles links
     [[ -d "${HHS_BIN_DIR}" ]] && rm -f "${HHS_BIN_DIR:?}/*.*"
