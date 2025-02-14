@@ -1007,7 +1007,7 @@ usage: $APP_NAME [OPTIONS] <args>
     # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
     # common the standard.
     if [[ -d "${HOME}/.hhs" ]]; then
-      if rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
+      if \rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
         echo -e "\n${YELLOW}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
           "${RED}Unable to delete the old .hhs directory. It was moved to ~/.config. Feel free to wipe it out!${NC}"
@@ -1019,8 +1019,8 @@ usage: $APP_NAME [OPTIONS] <args>
   configure_starship() {
     if ! command -v starship &>/dev/null; then
       echo -en "\n${WHITE}Installing Starship prompt... "
-      if curl -sSL "https://starship.rs/install.sh" 1>"${HHS_DIR}/install_starship.sh" \
-        && chmod a+x "${HHS_DIR}"/install_starship.sh \
+      if \curl -sSL "https://starship.rs/install.sh" 1>"${HHS_DIR}/install_starship.sh" \
+        && \chmod a+x "${HHS_DIR}"/install_starship.sh \
         && "${HHS_DIR}"/install_starship.sh -y -b "${HHS_BIN_DIR}" &>/dev/null; then
           echo -e "${GREEN}OK${NC}"
       else
@@ -1140,7 +1140,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Move the installation log to logs folder
     [[ -f "${INSTALL_LOG}" && -d "${HHS_LOG_DIR}" ]] &&
-      \rsync --archive "${INSTALL_LOG}" "${HHS_LOG_DIR}"
+      \cp -f "${INSTALL_LOG}" "${HHS_LOG_DIR}/install.log"
   }
 
   # shellcheck disable=SC2317
