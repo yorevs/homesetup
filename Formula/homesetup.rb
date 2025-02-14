@@ -31,7 +31,7 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "./install.bash --homebrew"
+    system "./install.bash --homebrew --prefix #{prefix}"
   end
 
   def uninstall
@@ -39,6 +39,6 @@ class Homesetup < Formula
   end
 
   test do
-    system "#{ENV['HOME']}/HomeSetup/bin/apps/bash/hhs-app/hhs.bash", "--version"
+    system "#{prefix}/HomeSetup/bin/apps/bash/hhs-app/hhs.bash", "--version"
   end
 end
