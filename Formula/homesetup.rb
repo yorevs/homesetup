@@ -31,17 +31,19 @@ class Homesetup < Formula
   depends_on "libmagic"
 
   def install
-    system "./install.bash --homebrew --prefix #{prefix}"
     prefix.install Dir["*"]
+    Dir.chdir(prefix) do
+      system "bash", "install.bash", "--homebrew", "--prefix", prefix
+    end
   end
 
   def caveats
-  <<~EOS
-    system "./uninstall.bash --homebrew"
-  EOS
+    <<~EOS
+      system "./uninstall.bash --homebrew"
+    EOS
   end
 
   test do
-    system "#{prefix}/HomeSetup/bin/apps/bash/hhs-app/hhs.bash", "--version"
+    system "#{prefix}/bin/apps/bash/hhs-app/hhs.bash", "--version"
   end
 end
