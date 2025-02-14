@@ -33,7 +33,9 @@ class Homesetup < Formula
 
   def install
     prefix.install Dir["*"]
-    system "#{prefix}/install.bash", "--homebrew", "--prefix", prefix
+    Dir.chdir(prefix) do
+      system "bash", "install.bash", "--homebrew", "--prefix", prefix
+    end
   end
 
   def caveats
