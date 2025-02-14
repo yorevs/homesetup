@@ -6,8 +6,8 @@ local brew_prefix = "/opt/homebrew/bin/brew"
 
 local mux = wezterm.mux
 wezterm.on("gui-startup", function(cmd)
-    local tab, pane, window = mux.spawn_window(cmd or {})
-    window:gui_window():maximize()
+  local tab, pane, window = mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
 end)
 
 local config = {
@@ -49,9 +49,9 @@ local config = {
   }),
   font_rules = {
     {
-        italic = true,
-        font = wezterm.font("DroidSansMono Nerd Font", {italic=true}),
-        font = wezterm.font("MesloLGS Nerd Font Mono", {italic=true}),
+      italic = true,
+      font = wezterm.font("DroidSansMono Nerd Font", { italic = true }),
+      font = wezterm.font("MesloLGS Nerd Font Mono", { italic = true }),
     }
   },
 
@@ -92,15 +92,12 @@ local config = {
   keys = {
     -- Existing shortcuts
     { key = "t", mods = "CMD", action = wezterm.action.SpawnTab("CurrentPaneDomain") },
-    { key = "w", mods = "CMD", action = wezterm.action.CloseCurrentTab({ confirm = true }) },
-    { key = "k", mods = "CMD", action = wezterm.action.SendString("echo -e '\033[J'; clear\n") },
+    { key = "w", mods = "CMD", action = wezterm.action.CloseCurrentTab({ confirm = false }) },
+    { key = "k", mods = "CMD", action = wezterm.action { ClearScrollback = "ScrollbackAndViewport" } },
     { key = "1", mods = "CMD", action = wezterm.action.ActivateTab(0) },
     { key = "2", mods = "CMD", action = wezterm.action.ActivateTab(1) },
     { key = "3", mods = "CMD", action = wezterm.action.ActivateTab(2) },
     { key = "4", mods = "CMD", action = wezterm.action.ActivateTab(3) },
-    { key = "c", mods = "CMD", action = wezterm.action.SendKey{ key = "c", mods = "CMD" } },
-    { key = "d", mods = "CMD", action = wezterm.action.SendKey{ key = "d", mods = "CMD" } },
-    { key = "z", mods = "CMD", action = wezterm.action.SendKey{ key = "z", mods = "CMD" } },
   },
 }
 
