@@ -76,7 +76,7 @@ usage: $APP_NAME [OPTIONS] <args>
   [[ -f "${INSTALL_LOG}" ]] && echo -e "${ORANGE}Installation logs can be accessed here: ${BLUE}${INSTALL_LOG}${NC}"
 
   # HomeSetup GitHub repository URL
-  HHS_REPO_URL='https://github.com/yorevs/homesetup.git'
+  GITHUB_URL='https://github.com/yorevs/homesetup.git'
 
   # HomeSetup GitHub issues URL
   ISSUES_URL="https://github.com/yorevs/homesetup/issues"
@@ -290,13 +290,13 @@ usage: $APP_NAME [OPTIONS] <args>
     PREFIX="${PREFIX:-$([[ -s "${PREFIX_FILE}" ]] && \grep . "${PREFIX_FILE}")}"
 
     # Installation destination
-    PREFIX="${PREFIX:-${HOME}/HomeSetup}"
+    INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
 
     # Installation source
     INSTALL_SRC="$(pwd)"
 
     # README link for HomeSetup
-    README="${PREFIX}/README.MD"
+    README="${INSTALL_DIR}/README.MD"
 
     # Configuration files location
     HHS_DIR="${HOME}/.config/hhs"
@@ -355,11 +355,11 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then
-      if [[ -d "${PREFIX}" || -f "${PREFIX}/.VERSION" ]]; then
+      if [[ -d "${INSTALL_DIR}" || -f "${INSTALL_DIR}/.VERSION" ]]; then
         METHOD='local'
       elif [[ -n "${STREAMED}" ]]; then
         METHOD='remote'
-      elif [[ -z "${STREAMED}" && ! -d "${HHS_DIR}" && ! -d "${PREFIX}" ]]; then
+      elif [[ -z "${STREAMED}" && ! -d "${HHS_DIR}" && ! -d "${INSTALL_DIR}" ]]; then
         METHOD='fresh'
       else
         METHOD='repair'
@@ -603,22 +603,22 @@ usage: $APP_NAME [OPTIONS] <args>
 
     echo -e "${NC}"
 
-    if [[ ! -d "${PREFIX}" ]]; then
+    if [[ ! -d "${INSTALL_DIR}" ]]; then
       echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Cloning ${GREEN}HomeSetup${NC} repository... "
-      if git clone "${HHS_REPO_URL}" "${PREFIX}" >>"${INSTALL_LOG}" 2>&1; then
+      if git clone "${GITHUB_URL}" "${INSTALL_DIR}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
       fi
     else
-      pushd "${PREFIX}" &>/dev/null || quit 1 "Unable to enter \"${PREFIX}\" directory !"
+      pushd "${INSTALL_DIR}" &>/dev/null || quit 1 "Unable to enter \"${INSTALL_DIR}\" directory !"
       echo -e "${BLUE}[${OS_TYPE}] ${CYAN}Pulling ${GREEN}HomeSetup${NC} repository... "
       if git pull --rebase >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly update HomeSetup repository !"
       fi
-      popd &>/dev/null  || quit 1 "Unable to leave \"${PREFIX}\" directory !"
+      popd &>/dev/null  || quit 1 "Unable to leave \"${INSTALL_DIR}\" directory !"
     fi
 
     [[ -d "${DOTFILES_DIR}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
@@ -970,12 +970,12 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -L "${HOME}/.bash_completion" ]] && \rm -f "${HOME}/.bash_completion"
 
     # Removing the old python lib directories and links.
-    [[ -d "${PREFIX}/bin/apps/bash/hhs-app/lib" ]] &&
-      \rm -rf "${PREFIX}/bin/apps/bash/hhs-app/lib"
-    [[ -L "${PREFIX}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
-      \rm -rf "${PREFIX}/bin/apps/bash/hhs-app/plugins/firebase/lib"
-    [[ -L "${PREFIX}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
-      \rm -rf "${PREFIX}/bin/apps/bash/hhs-app/plugins/vault/lib"
+    [[ -d "${INSTALL_DIR}/bin/apps/bash/hhs-app/lib" ]] &&
+      \rm -rf "${INSTALL_DIR}/bin/apps/bash/hhs-app/lib"
+    [[ -L "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
+      \rm -rf "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/firebase/lib"
+    [[ -L "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
+      \rm -rf "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/vault/lib"
 
     # Moving orig and bak files to backup folder.
     find "${HHS_DIR}" -maxdepth 1 \
@@ -1001,8 +1001,8 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Init submodules case it's not there yet
-    if [[ ! -s "${PREFIX}/tests/bats/bats-core/bin/bats" ]]; then
-      pushd "${PREFIX}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${PREFIX}\" !"
+    if [[ ! -s "${INSTALL_DIR}/tests/bats/bats-core/bin/bats" ]]; then
+      pushd "${INSTALL_DIR}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${INSTALL_DIR}\" !"
       echo -en "\n${WHITE}Pulling ${GREEN}bats ${NC} submodules..."
       if git submodule update --init &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
@@ -1010,7 +1010,7 @@ usage: $APP_NAME [OPTIONS] <args>
         echo -e "${RED}FAILED${NC}"
         echo -e "${YELLOW}Bats test will not be available${NC}"
       fi
-      popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${PREFIX}\" !"
+      popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${INSTALL_DIR}\" !"
     fi
 
     # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
@@ -1086,8 +1086,8 @@ usage: $APP_NAME [OPTIONS] <args>
       copy_code="
       from askai.core.component.rag_provider import RAGProvider
       if __name__ == '__main__':
-        RAGProvider.copy_rag('${PREFIX}/docs', 'homesetup-docs')
-        RAGProvider.copy_rag('${PREFIX}/README.md', 'homesetup-docs/README.md')
+        RAGProvider.copy_rag('${INSTALL_DIR}/docs', 'homesetup-docs')
+        RAGProvider.copy_rag('${INSTALL_DIR}/README.md', 'homesetup-docs/README.md')
       "
       PYTHON=$(command -v python3.11 2>/dev/null)
       export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
@@ -1125,7 +1125,7 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     echo ''
-    echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${PREFIX}/.VERSION") !"
+    echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${INSTALL_DIR}/.VERSION") !"
     echo -e "${CYAN}"
     echo '888       888          888                                          '
     echo '888   o   888          888                                          '
