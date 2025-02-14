@@ -30,6 +30,9 @@ usage: $APP_NAME [OPTIONS] <args>
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
 
+  # Installation log file
+  INSTALL_LOG="$(mktemp -t install.XXXXXX).log"
+
   # Define USER and HOME variables
   if [[ -n "${SUDO_USER}" ]]; then
     USER="${SUDO_USER}"
@@ -69,8 +72,6 @@ usage: $APP_NAME [OPTIONS] <args>
   RED='\033[31m'
   NC='\033[m'
 
-  # Installation log file
-  INSTALL_LOG="$(mktemp -t install.XXXXXX).log"
   touch "${INSTALL_LOG}"
   [[ -f "${INSTALL_LOG}" ]] || quit 1 "Unable initialize installation logs -> ${INSTALL_LOG}"
   [[ -f "${INSTALL_LOG}" ]] && echo -e "${ORANGE}Installation logs can be accessed here: ${BLUE}${INSTALL_LOG}${NC}"
