@@ -33,8 +33,9 @@ class Homesetup < Formula
 
   def install
     prefix.install Dir["*"]
-    Dir.chdir(prefix) do
-      system "bash", "install.bash", "--homebrew", "--prefix", prefix
+    cd prefix do
+      FileUtils.chmod("+x", "install.bash")  # ensure script is executable
+      system "bash", "./install.bash", "--homebrew", "--prefix", prefix
     end
   end
 
