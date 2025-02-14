@@ -273,7 +273,7 @@ usage: $APP_NAME [OPTIONS] <args>
           if [[ -d "${HHS_PREFIX}" ]]; then
             echo -e "Creating application prefix: \"${HHS_PREFIX}\" ...\n"
             create_directory "${HHS_PREFIX}"
-            quit 2 "Installation prefix is not a valid directory and could not be created: \"${HHS_PREFIX}\""
+            [[ -d "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory and could not be created: \"${HHS_PREFIX}\""
           fi
           shift
           ;;
