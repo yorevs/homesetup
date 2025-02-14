@@ -828,8 +828,7 @@ usage: $APP_NAME [OPTIONS] <args>
     if find "${HHS_DIR?}/cache" "${HHS_LOG_DIR?}" -type f -mtime +30 -exec rm -f {} \;; then
       echo -e "${GREEN}OK${NC}"
     else
-      echo -e "${RED}FAILED${NC}"
-      echo -e "${YELLOW}Cache and logs files untouched!${NC}"
+      echo -e "${YELLOW}SKIPPED${NC}"
     fi
 
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
@@ -843,10 +842,10 @@ usage: $APP_NAME [OPTIONS] <args>
     PYTHON=$(command -v python3.11 2>/dev/null)
     PIP=$(command -v pip3.11 2>/dev/null)
     [[ -z "${PYTHON}" || -z "${PIP}" ]] \
-      && quit 2 "Python >= 3.10 <= 3.11 and Pip3 are required to install HomeSetup!"
+      && quit 2 "Python == 3.11 and Pip == 3.11 are required to install HomeSetup. None found!"
     python_version=$("${PYTHON}" --version 2>&1 | awk '{print $2}')
     [[ ! "${python_version}" =~ ^3\.1[01] ]] \
-      && quit 2 "Python >= 3.10 <= 3.11 is required to install HomeSetup! Found version: ${python_version}"
+      && quit 2 "Python == 3.11 and Pip == 3.11 is required to install HomeSetup! Found version: ${python_version}"
     echo -e "${GREEN}OK${NC}"
     echo ''
     create_venv "${PYTHON}" "${PIP}"
