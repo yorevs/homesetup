@@ -293,7 +293,7 @@ usage: $APP_NAME [OPTIONS] <args>
     INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
 
     # Installation source
-    INSTALL_SRC="$(pwd)"
+    INSTALL_SRC="$(dirname "${0}")"
 
     # README link for HomeSetup
     README="${INSTALL_DIR}/README.MD"
@@ -629,7 +629,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e ""
     echo -e "${WHITE}          Shell: ${YELLOW}${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
-    echo -e "${WHITE}     Repository: ${YELLOW}${INSTALL_SRC}"
+    echo -e "${WHITE}         Source: ${YELLOW}${INSTALL_SRC}"
     echo -e "${WHITE}         Prefix: ${YELLOW}${PREFIX:-${PREFIX}}"
     echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
