@@ -8,6 +8,7 @@ class Homesetup < Formula
   depends_on xcode: ["12.0", :build]
   depends_on :macos
 
+  depends_on "bash"
   depends_on "git"
   depends_on "curl"
   depends_on "ruby"
@@ -32,18 +33,17 @@ class Homesetup < Formula
 
   def install
     prefix.install Dir["*"]
-    Dir.chdir(prefix) do
-      system "bash", "install.bash", "--homebrew", "--prefix", prefix
-    end
+    system "#{prefix}/install.bash", "--homebrew", "--prefix", prefix
   end
 
   def caveats
     <<~EOS
-      system "./uninstall.bash --homebrew"
+      You need to execute #{prefix}/install.bash -r to finish the installation!
     EOS
   end
 
   test do
-    system "#{prefix}/bin/apps/bash/hhs-app/hhs.bash", "--version"
+    output = shell_output("#{prefix}/bin/apps/bash/hhs-app/hhs.bash --version")
+    assert_match "hhs v1.1.0 built on HomeSetup v1.8.22", output
   end
 end
