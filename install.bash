@@ -608,17 +608,8 @@ usage: $APP_NAME [OPTIONS] <args>
       if git clone "${GITHUB_URL}" "${INSTALL_DIR}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
-        quit 2 "Unable to properly clone HomeSetup repository !"
+        quit 2 "Unable to clone HomeSetup repository !"
       fi
-    else
-      pushd "${INSTALL_DIR}" &>/dev/null || quit 1 "Unable to enter \"${INSTALL_DIR}\" directory !"
-      echo -e "${BLUE}[${OS_TYPE}] ${CYAN}Pulling ${GREEN}HomeSetup${NC} repository... "
-      if git pull --rebase >>"${INSTALL_LOG}" 2>&1; then
-        echo -e "${GREEN}OK${NC}"
-      else
-        quit 2 "Unable to properly update HomeSetup repository !"
-      fi
-      popd &>/dev/null  || quit 1 "Unable to leave \"${INSTALL_DIR}\" directory !"
     fi
 
     [[ -d "${DOTFILES_DIR}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
