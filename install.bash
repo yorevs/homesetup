@@ -192,7 +192,7 @@ usage: $APP_NAME [OPTIONS] <args>
     local dir="${1}"
 
     if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
-      echo -en "\n${WHITE}Creating: ${dir} directory... "
+      echo -en "\n${WHITE}Creating: \"${dir}\" directory... "
       \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
       echo -e "${GREEN}OK${NC}"
     else
@@ -270,7 +270,9 @@ usage: $APP_NAME [OPTIONS] <args>
           ;;
         -p | --prefix)
           HHS_PREFIX="${2}"
-          if [[ -d "${HHS_PREFIX}" ]] || ! create_directory "${HHS_PREFIX}"; then
+          if [[ -d "${HHS_PREFIX}" ]]; then
+            echo -e "Creating application prefix: \"${HHS_PREFIX}\" ...\n"
+            create_directory "${HHS_PREFIX}"
             quit 2 "Installation prefix is not a valid directory and could not be created: \"${HHS_PREFIX}\""
           fi
           shift
