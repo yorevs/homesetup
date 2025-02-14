@@ -38,7 +38,8 @@ class Homesetup < Formula
 
   def caveats
     <<~EOS
-      You need to execute: "#{prefix}/(un)install.bash -r --prefix #{prefix}" to finish the (un)installation!
+      You need to execute: "#{prefix}/install.bash -r --prefix #{prefix}" to finish the installation!
+      To uninstall it, execute "#{prefix}/uninstall.bash -r --prefix #{prefix}" to finish the uninstallation!
     EOS
   end
 
