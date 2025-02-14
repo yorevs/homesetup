@@ -32,10 +32,13 @@ class Homesetup < Formula
 
   def install
     system "./install.bash --homebrew --prefix #{prefix}"
+    prefix.install Dir["*"]
   end
 
-  def uninstall
+  def caveats
+  <<~EOS
     system "./uninstall.bash --homebrew"
+  EOS
   end
 
   test do
