@@ -571,20 +571,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Select the installation method and call the underlying functions
     case "${METHOD}" in
-      remote|fresh)
-        query_askai_install
-        check_required_tools
-        create_destination_dirs
-        clone_repository
-        install_dotfiles
-        compatibility_check
-        configure_python
-        configure_starship
-        configure_gtrash
-        configure_blesh
-        configure_askai_rag
-        ;;
-      repair)
+      remote|repair|fresh)
         query_askai_install
         check_required_tools
         create_destination_dirs
@@ -600,7 +587,6 @@ usage: $APP_NAME [OPTIONS] <args>
       local)
         create_destination_dirs
         install_dotfiles
-        configure_starship
         configure_askai_rag
         ;;
       *)
