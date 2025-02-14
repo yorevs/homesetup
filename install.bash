@@ -16,6 +16,9 @@
   # This script name
   APP_NAME="${0##*/}"
 
+  # HomeSetup Version
+  VERSION="1.8.22"
+
   # Help message to be displayed by the script
   USAGE="
 usage: $APP_NAME [OPTIONS] <args>
@@ -78,11 +81,11 @@ usage: $APP_NAME [OPTIONS] <args>
   # HomeSetup GitHub issues URL
   ISSUES_URL="https://github.com/yorevs/homesetup/issues"
 
-  # HomeSetup installation prefix file
-  HHS_PREFIX_FILE="${HOME}/.hhs-prefix"
-
   # Define the user HomeSetup installation prefix
-  HHS_PREFIX=
+  PREFIX=
+
+  # HomeSetup installation prefix file
+  PREFIX_FILE="${HOME}/.hhs-prefix"
 
   # Option to allow install to be interactive or not
   OPT='all'
@@ -116,9 +119,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
-
-  # README link for HomeSetup
-  README_LINK="${HHS_HOME}/README.MD"
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
@@ -192,8 +192,8 @@ usage: $APP_NAME [OPTIONS] <args>
     local dir="${1}"
 
     if [[ ! -d "${dir}" && ! -L "${dir}" ]]; then
-      echo -en "\n${WHITE}Creating: \"${dir}\" directory... "
-      \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}"
+      echo -en "\n${WHITE}Creating: ${BLUE}\"${dir}\"${WHITE} directory... "
+      \mkdir -p "${dir}" || quit 2 "Unable to create directory ${dir}!"
       echo -e "${GREEN}OK${NC}"
     else
       # Trying to write at the created directory to validate write permissions.
@@ -269,12 +269,7 @@ usage: $APP_NAME [OPTIONS] <args>
           OPT=''
           ;;
         -p | --prefix)
-          HHS_PREFIX="${2}"
-          if [[ -d "${HHS_PREFIX}" ]]; then
-            echo -e "Creating application prefix: \"${HHS_PREFIX}\" ...\n"
-            create_directory "${HHS_PREFIX}"
-            [[ -d "${HHS_PREFIX}" ]] || quit 2 "Installation prefix is not a valid directory and could not be created: \"${HHS_PREFIX}\""
-          fi
+          PREFIX="${2}"
           shift
           ;;
         -q | --quiet)
@@ -291,10 +286,16 @@ usage: $APP_NAME [OPTIONS] <args>
     done
 
     # Installation prefix
-    HHS_PREFIX="${HHS_PREFIX:-$([[ -s "${HHS_PREFIX_FILE}" ]] && \grep . "${HHS_PREFIX_FILE}")}"
+    PREFIX="${PREFIX:-$([[ -s "${PREFIX_FILE}" ]] && \grep . "${PREFIX_FILE}")}"
 
-    # Installation location
-    HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
+    # Installation destination
+    PREFIX="${PREFIX:-${HOME}/HomeSetup}"
+
+    # Installation source
+    INSTALL_SRC="$(pwd)"
+
+    # README link for HomeSetup
+    README="${PREFIX}/README.MD"
 
     # Configuration files location
     HHS_DIR="${HOME}/.config/hhs"
@@ -314,9 +315,6 @@ usage: $APP_NAME [OPTIONS] <args>
     # Shell options file
     HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
 
-    # Version file
-    HHS_VERSION_FILE="${HHS_HOME}/.VERSION"
-
     # Ble Bash plug installation in location
     HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
 
@@ -334,33 +332,33 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Dotfiles source location
-    DOTFILES_DIR="${HHS_HOME}/dotfiles/${SHELL_TYPE}"
+    DOTFILES_DIR="${INSTALL_SRC}/dotfiles/${SHELL_TYPE}"
 
     # Applications source location
-    APPS_DIR="${HHS_HOME}/bin/apps"
+    APPS_DIR="${INSTALL_SRC}/bin/apps"
 
     # Auto-completions source location
-    COMPLETIONS_DIR="${HHS_HOME}/bin/completions"
+    COMPLETIONS_DIR="${INSTALL_SRC}/bin/completions"
 
     # Key-Bindings source location
-    BINDINGS_DIR="${HHS_HOME}/bin/key-bindings"
+    BINDINGS_DIR="${INSTALL_SRC}/bin/key-bindings"
 
     # Check if the user passed help or version options
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
-    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${HHS_VERSION_FILE}")"
+    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${INSTALL_VERSION}")"
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
     [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
-    [[ -s "${HHS_HOME}/.VERSION" ]] &&
-      echo -e "\n${GREEN}HomeSetup© ${YELLOW}v$(grep . "${HHS_VERSION_FILE}") ${GREEN}installation ${NC}"
+    [[ -s "${INSTALL_SRC}" ]] || quit 2 "Unable to find HomeSetup source files!"
+    echo -e "\n${GREEN}HomeSetup© ${VERSION} installation ${NC}"
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then
-      if [[ -d "${HHS_HOME}" || -f "${HHS_HOME}/.VERSION" ]]; then
+      if [[ -d "${PREFIX}" || -f "${PREFIX}/.VERSION" ]]; then
         METHOD='local'
       elif [[ -n "${STREAMED}" ]]; then
         METHOD='remote'
-      elif [[ -z "${STREAMED}" && ! -d "${HHS_HOME}" || -d "${HHS_DIR}" ]]; then
+      elif [[ -z "${STREAMED}" && ! -d "${HHS_DIR}" && ! -d "${PREFIX}" ]]; then
         METHOD='fresh'
       else
         METHOD='repair'
@@ -531,12 +529,12 @@ usage: $APP_NAME [OPTIONS] <args>
         echo -en "${YELLOW}HomeBrew is not installed!${NC}"
         install_brew || quit 2 "### Failed to install HomeBrew !"
       else
-        echo -e "${BLUE}HomeBrew is already installed -> $(brew --prefix) ${NC}"
+        echo -e "${BLUE}[${OS_TYPE}] ${WHITE}HomeBrew is already installed -> ${GREEN}$(brew --prefix) ${NC}"
       fi
     elif [[ ${OS_TYPE} =~ Debian|RedHat ]]; then
-     echo -e "${YELLOW}Skipping brew installation (not enforced): \"${OS_TYPE}\""
+     echo -e "${BLUE}[${OS_TYPE}] ${YELLOW}Skipping brew installation (not enforced)."
     else
-      echo -e "${YELLOW}Skipping brew installation (not supported OS): \"${OS_TYPE}\""
+      echo -e "${BLUE}[${OS_TYPE}] ${YELLOW}Skipping brew installation (not supported OS)."
     fi
   }
 
@@ -589,6 +587,7 @@ usage: $APP_NAME [OPTIONS] <args>
         query_askai_install
         check_required_tools
         create_destination_dirs
+        clone_repository
         install_dotfiles
         compatibility_check
         configure_python
@@ -615,27 +614,24 @@ usage: $APP_NAME [OPTIONS] <args>
   # Clone the repository and install dotfiles.
   clone_repository() {
 
-    has git || quit 2 "You need git installed in order to install HomeSetup remotely !"
-    [[ -d "${HHS_HOME}" ]] && echo -e "\n${YELLOW}Installation directory was already created: \"${HHS_HOME}\" !"
-
     echo -e "${NC}"
 
-    if [[ ! -d "${HHS_HOME}" ]]; then
+    if [[ ! -d "${PREFIX}" ]]; then
       echo -en "${WHITE}Cloning HomeSetup repository... ${NC}"
-      if git clone "${HHS_REPO_URL}" "${HHS_HOME}" >>"${INSTALL_LOG}" 2>&1; then
+      if git clone "${HHS_REPO_URL}" "${PREFIX}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly clone HomeSetup repository !"
       fi
     else
-      cd "${HHS_HOME}" &>/dev/null  || quit 1 "Unable to enter \"${HHS_HOME}\" directory !"
+      cd "${PREFIX}" &>/dev/null  || quit 1 "Unable to enter \"${PREFIX}\" directory !"
       echo -e "${WHITE}Pulling HomeSetup repository... ${NC}"
       if git pull --rebase >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to properly update HomeSetup repository !"
       fi
-      cd - &>/dev/null  || quit 1 "Unable to leave \"${HHS_HOME}\" directory !"
+      cd - &>/dev/null  || quit 1 "Unable to leave \"${PREFIX}\" directory !"
     fi
 
     [[ -d "${DOTFILES_DIR}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
@@ -646,11 +642,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
     local dotfile is_streamed
 
-    # Find all dotfiles used by HomeSetup according to the current shell type
-    while read -r dotfile; do
-      ALL_DOTFILES+=("${dotfile}")
-    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
-
     [[ -z ${STREAMED} ]] && is_streamed='No'
     [[ -z ${INSTALL_AI} ]] && is_askai='No'
     [[ -z ${HOMEBREW_INSTALLING} ]] && is_brew='No'
@@ -660,7 +651,8 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e ""
     echo -e "${WHITE}          Shell: ${YELLOW}${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
-    echo -e "${WHITE}         Prefix: ${YELLOW}${HHS_PREFIX:-${HHS_HOME}}"
+    echo -e "${WHITE}     Repository: ${YELLOW}${INSTALL_SRC}"
+    echo -e "${WHITE}         Prefix: ${YELLOW}${PREFIX:-${PREFIX}}"
     echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
     echo -e "${WHITE}  PyPi Packages: ${YELLOW}${PYTHON_MODULES[*]}"
@@ -699,17 +691,22 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
     # Create aliasdef, inputrc, glow.yml, and homesetup.toml.
-    copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
-    copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
-    copy_file "${HHS_HOME}/dotfiles/glow.yml" "${HHS_DIR}/.glow.yml"
-    copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+    copy_file "${INSTALL_SRC}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
+    copy_file "${INSTALL_SRC}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+    copy_file "${INSTALL_SRC}/dotfiles/glow.yml" "${HHS_DIR}/.glow.yml"
+    copy_file "${INSTALL_SRC}/dotfiles/inputrc" "${HOME}/.inputrc"
 
     # NeoVim integration configs.
     [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
-    copy_file "${HHS_HOME}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
+    copy_file "${INSTALL_SRC}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
 
     # HomeSetup key bindings.
-    copy_file "${HHS_HOME}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
+    copy_file "${INSTALL_SRC}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
+
+    # Find all dotfiles used by HomeSetup according to the current shell type
+    while read -r dotfile; do
+      ALL_DOTFILES+=("${dotfile}")
+    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
     pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
 
@@ -785,7 +782,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR}... "
     echo ">>> Copied HomeSetup fonts" >>"${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${HHS_HOME}"/assets/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
+    if find "${INSTALL_SRC}"/assets/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
       -exec rsync --archive {} "${FONTS_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
@@ -798,7 +795,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying Hunspell dictionaries into ${BLUE}${HUNSPELL_DIR}... "
     echo ">>> Copied Hunspell dictionaries" >>"${INSTALL_LOG}"
     [[ -d "${HUNSPELL_DIR}" ]] || quit 2 "Unable to locate hunspell (${HUNSPELL_DIR}) directory !"
-    if find "${HHS_HOME}"/assets/hunspell-dicts -maxdepth 1 -type f \( -iname "*.aff" -o -iname "*.dic" \) \
+    if find "${INSTALL_SRC}"/assets/hunspell-dicts -maxdepth 1 -type f \( -iname "*.aff" -o -iname "*.dic" \) \
       -print \
       -exec rsync --archive {} "${HUNSPELL_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
@@ -820,7 +817,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Copy MOTDs file into place
     [[ -d "${HHS_MOTD_DIR}" ]] || create_directory "${HHS_MOTD_DIR}"
-    \cp "${HHS_HOME}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd &>/dev/null
+    \cp "${INSTALL_SRC}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd &>/dev/null
 
     # Cleanup old files (older than 30 days)
     echo -en "\n${WHITE}Cleaning up old cache and log files... "
@@ -950,26 +947,26 @@ usage: $APP_NAME [OPTIONS] <args>
     # .inputrc Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.inputrc" ]]; then
       \mv -f "${HOME}/.inputrc" "${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak"
-      copy_file "${HHS_HOME}/dotfiles/inputrc" "${HOME}/.inputrc"
+      copy_file "${INSTALL_SRC}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${YELLOW}Your old ${HOME}/.inputrc had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.aliasdef" ]]; then
       \mv -f "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
-      copy_file "${HHS_HOME}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
+      copy_file "${INSTALL_SRC}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
       echo -e "\n${YELLOW}Your old .aliasdef had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     if [[ -f "${HHS_DIR}/.homesetup.toml" ]]; then
       # Check if the homesetup.toml is outdated
       user_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_DIR}/.homesetup.toml" | sed 's/# @version: v//')
-      hhs_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_HOME}/dotfiles/homesetup.toml" | sed 's/# @version: v//')
+      hhs_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${INSTALL_SRC}/dotfiles/homesetup.toml" | sed 's/# @version: v//')
       user_num=$(echo "${user_version}" | awk -F. '{ printf "%d%02d%03d", $1, $2, $3 }')
       hhs_num=$(echo "${hhs_version}" | awk -F. '{ printf "%d%02d%03d", $1, $2, $3 }')
       if [[ "${hhs_num}" -gt "${user_num}" ]]; then
         \mv -f "$HHS_DIR/.homesetup.toml" "${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak"
-        copy_file "${HHS_HOME}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+        copy_file "${INSTALL_SRC}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
         echo -e "\n${YELLOW}Your old .homesetup.toml had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak ${NC}"
       fi
     fi
@@ -986,12 +983,12 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -L "${HOME}/.bash_completion" ]] && \rm -f "${HOME}/.bash_completion"
 
     # Removing the old python lib directories and links.
-    [[ -d "${HHS_HOME}/bin/apps/bash/hhs-app/lib" ]] &&
-      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/lib"
-    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
-      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/firebase/lib"
-    [[ -L "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
-      \rm -rf "${HHS_HOME}/bin/apps/bash/hhs-app/plugins/vault/lib"
+    [[ -d "${PREFIX}/bin/apps/bash/hhs-app/lib" ]] &&
+      \rm -rf "${PREFIX}/bin/apps/bash/hhs-app/lib"
+    [[ -L "${PREFIX}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
+      \rm -rf "${PREFIX}/bin/apps/bash/hhs-app/plugins/firebase/lib"
+    [[ -L "${PREFIX}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
+      \rm -rf "${PREFIX}/bin/apps/bash/hhs-app/plugins/vault/lib"
 
     # Moving orig and bak files to backup folder.
     find "${HHS_DIR}" -maxdepth 1 \
@@ -1017,8 +1014,8 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Init submodules case it's not there yet
-    if [[ ! -s "${HHS_HOME}/tests/bats/bats-core/bin/bats" ]]; then
-      pushd "${HHS_HOME}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${HHS_HOME}\" !"
+    if [[ ! -s "${PREFIX}/tests/bats/bats-core/bin/bats" ]]; then
+      pushd "${PREFIX}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${PREFIX}\" !"
       echo -en "\n${YELLOW}Pulling bats submodules... ${NC}"
       if git submodule update --init &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
@@ -1026,7 +1023,7 @@ usage: $APP_NAME [OPTIONS] <args>
         echo -e "${RED}FAILED${NC}"
         echo -e "${YELLOW}Bats test will not be available${NC}"
       fi
-      popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${HHS_HOME}\" !"
+      popd &>/dev/null || quit 1 "Unable to leave homesetup directory \"${PREFIX}\" !"
     fi
 
     # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
@@ -1102,8 +1099,8 @@ usage: $APP_NAME [OPTIONS] <args>
       copy_code="
       from askai.core.component.rag_provider import RAGProvider
       if __name__ == '__main__':
-        RAGProvider.copy_rag('${HHS_HOME}/docs', 'homesetup-docs')
-        RAGProvider.copy_rag('${HHS_HOME}/README.md', 'homesetup-docs/README.md')
+        RAGProvider.copy_rag('${PREFIX}/docs', 'homesetup-docs')
+        RAGProvider.copy_rag('${PREFIX}/README.md', 'homesetup-docs/README.md')
       "
       PYTHON=$(command -v python3.11 2>/dev/null)
       export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
@@ -1121,9 +1118,9 @@ usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup installation prefix
   check_prefix() {
     # Create the prefix file to be used
-    [[ -n "${HHS_PREFIX}" ]] && echo "${HHS_PREFIX}" >"${HHS_PREFIX_FILE}"
+    [[ -n "${PREFIX}" ]] && echo "${PREFIX}" >"${PREFIX_FILE}"
     # Delete the useless prefix file
-    [[ -z "${HHS_PREFIX}" && -f "${HHS_PREFIX_FILE}" ]] && \rm -f "${HHS_PREFIX_FILE}"
+    [[ -z "${PREFIX}" && -f "${PREFIX_FILE}" ]] && \rm -f "${PREFIX_FILE}"
   }
 
   # Reload the terminal and apply installed files.
@@ -1141,7 +1138,7 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     echo ''
-    echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${HHS_HOME}/.VERSION") !"
+    echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${PREFIX}/.VERSION") !"
     echo -e "${CYAN}"
     echo '888       888          888                                          '
     echo '888   o   888          888                                          '
@@ -1157,7 +1154,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To check for updates type: ${WHITE}hhu update"
     echo -e "${YELLOW}${STAR_ICN} For details about the installation type: ${WHITE}hhs logs install"
-    echo -e "${YELLOW}${STAR_ICN} To learn more about your new Terminal, type: ${WHITE}cat ${README_LINK}"
+    echo -e "${YELLOW}${STAR_ICN} To learn more about your new Terminal, type: ${WHITE}cat ${README}"
     echo -e "${YELLOW}${STAR_ICN} Report issues at: ${WHITE}${ISSUES_URL}"
     echo -e "${NC}"
 

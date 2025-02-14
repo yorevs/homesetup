@@ -11,3 +11,4 @@ push = false
 "gradle.properties" = ["app_version = '{version}'"]
 ".VERSION" = ["{version}"]
 "README.md" = ["release/v{version}/gray"]
+"install.bash" = ["VERSION=\"1.8.22\""]
