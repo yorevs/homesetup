@@ -164,10 +164,10 @@ usage: $APP_NAME [OPTIONS] <args>
   # @param $2 [Opt] : The exit message to be displayed.
   quit() {
 
-    # Unset all declared functions
+    log_count=10
     unset -f "${UNSETS[*]}"
     exit_code=${1:-0}
-    last_log_lines="  Last 5 log lines:\n$(tail -n 5 "${INSTALL_LOG}" | sed '/^[[:space:]]*$/d; s/^/  => /' | nl)"
+    last_log_lines="  Last ${log_count} log lines:\n$(tail -n ${log_count} "${INSTALL_LOG}" | sed '/^[[:space:]]*$/d; s/^/  => /' | nl)"
     shift
     [[ ${exit_code} -ne 0 && ${#} -ge 1 ]] && echo -en "${RED}${APP_NAME}: " 1>&2
     [[ ${#} -ge 1 ]] && echo -e "${*} \n${last_log_lines}${NC}" 1>&2
