@@ -28,6 +28,8 @@ RUN gem update --system
 RUN gem install rdoc colorls
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
+RUN adduser -D -u 1000 hhs
+RUN echo "hhs ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER hhs
 WORKDIR "${HOME}"
 

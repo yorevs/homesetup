@@ -14,6 +14,8 @@ RUN yum clean all
 RUN gem install colorls
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
+RUN useradd -ms /bin/bash -u 1000 hhs
+RUN echo "hhs ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER hhs
 WORKDIR "${HOME}"
 
