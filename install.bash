@@ -83,7 +83,7 @@ usage: $APP_NAME [OPTIONS] <args>
   ISSUES_URL="https://github.com/yorevs/homesetup/issues"
 
   # Define the user HomeSetup installation prefix
-  PREFIX="${PREFIX:-${HOME}/HomeSetup}"
+  PREFIX=
 
   # HomeSetup installation prefix file
   PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -289,6 +289,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Installation prefix
     PREFIX="${PREFIX:-$([[ -s "${PREFIX_FILE}" ]] && \grep . "${PREFIX_FILE}")}"
+    [[ -d "${PREFIX}" ]] || unset PREFIX
 
     # Installation destination
     INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
@@ -360,7 +361,7 @@ usage: $APP_NAME [OPTIONS] <args>
         METHOD='local'
       elif [[ -n "${STREAMED}" ]]; then
         METHOD='remote'
-      elif [[ -z "${STREAMED}" && ! -d "${HHS_DIR}" && ! -d "${INSTALL_DIR}" ]]; then
+      elif [[ ! -f "${PREFIX_FILE}" &&  ! -d "${HHS_DIR}" && ! -d "${INSTALL_DIR}" ]]; then
         METHOD='fresh'
       else
         METHOD='repair'
