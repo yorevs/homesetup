@@ -5,6 +5,7 @@ LABEL maintainer="Hugo Saporetti Junior<taius.hhs@gmail.com>"
 USER root
 
 ENV SHELL='/bin/bash'
+ENV HOME='/home/hhs'
 
 RUN apk -U upgrade
 RUN apk add --no-cache python3
@@ -27,6 +28,7 @@ RUN gem update --system
 RUN gem install rdoc colorls
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
+USER hhs
 WORKDIR "${HOME}"
 
 RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
