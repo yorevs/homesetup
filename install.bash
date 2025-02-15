@@ -352,7 +352,7 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
     [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
-    [[ -s "${INSTALL_DIR}" ]] || quit 2 "Unable to find HomeSetup source files!"
+    [[ -s "${INSTALL_DIR}" ]] || quit 2 "Unable to find HomeSetup source files at: \"${INSTALL_DIR}\"!"
     echo -e "\n${GREEN}HomeSetup© ${VERSION} installation ${NC}"
 
     # Check the installation method
