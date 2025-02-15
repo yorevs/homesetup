@@ -22,13 +22,13 @@ read -r -d '' -a images < <(find "${HHS_HOME}/docker" -mindepth 1 -type d -exec 
 IFS="${OLDIFS}"
 
 USAGE="
-usage: usage: ${APP_NAME} [Options] image_type
+usage: usage: ${APP_NAME} [Options] <image_type..>
 
   Options
     -p | --push   : Push the image after a successful build
 
   Arguments
-    - image_type  : The OS to be installed. One of [${images[*]}]
+    - image_type  : The images to be installed. One or more of [${images[*]}]
 "
 
 declare -a platforms
@@ -49,7 +49,7 @@ else
     # shellcheck disable=SC2199
     if [[ ${images[@]} =~ ${next_image} ]]; then
       image_dir="${HHS_HOME}/docker/${next_image}"
-      [[ -d "${image_dir}/" ]] || __hhs_errcho "${APP_NAME}" "Unable to find directory: ${image_dir}/"
+      [[ -d "${image_dir}/" ]] || { __hhs_errcho "${APP_NAME}" "Unable to find directory: ${image_dir}/"; exit 1; }
       # Docker build tag: ${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
       echo ''
       echo -e "${PURPLE}Building ${BLUE}[${next_image}-arm64:latest] ... ${NC}"
@@ -57,6 +57,7 @@ else
       if ! docker buildx build --no-cache --progress=plain -t "yorevs/hhs-${next_image}-arm64:latest" \
            --platform linux/arm64/v8 "${image_dir}/"; then
             __hhs_errcho "${APP_NAME}" "Failed to build image: \"${next_image}\" !"
+            exit 1
       fi
       echo ''
       echo -e "${PURPLE}Building ${BLUE}[${next_image}-amd64:latest] ... ${NC}"
@@ -64,13 +65,15 @@ else
       if ! docker buildx build --no-cache --progress=plain -t "yorevs/hhs-${next_image}-amd64:latest" \
            --platform linux/amd64 "${image_dir}/"; then
             __hhs_errcho "${APP_NAME}" "Failed to build image: \"${next_image}\" !"
+            exit 1
+      else
+        echo "Finished building \"${next_image}\""
       fi
-      echo "Finished"
-      exit 0
     else
       __hhs_errcho "${APP_NAME}" "Invalid container type: \"${next_image}\". Please use one of [${images[*]}] !"
+      exit 1
     fi
   done
 fi
 
-exit 1
+exit 0

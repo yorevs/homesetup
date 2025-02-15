@@ -296,10 +296,6 @@ usage: $APP_NAME [OPTIONS] <args>
     INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
     INSTALL_DIR="${INSTALL_DIR/#~/$HOME}"
 
-    # Installation source
-    INSTALL_SRC="$(\cd "$(dirname "$0")" && \pwd)"
-    INSTALL_SRC="${INSTALL_SRC/#~/$HOME}"
-
     # README link for HomeSetup
     README="${INSTALL_DIR}/README.MD"
 
@@ -339,16 +335,16 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # Dotfiles source location
-    DOTFILES_DIR="${INSTALL_SRC}/dotfiles/${SHELL_TYPE}"
+    DOTFILES_SRC="${INSTALL_DIR}/dotfiles/${SHELL_TYPE}"
 
     # Applications source location
-    APPS_DIR="${INSTALL_SRC}/bin/apps"
+    APPS_DIR="${INSTALL_DIR}/bin/apps"
 
     # Auto-completions source location
-    COMPLETIONS_DIR="${INSTALL_SRC}/bin/completions"
+    COMPLETIONS_DIR="${INSTALL_DIR}/bin/completions"
 
     # Key-Bindings source location
-    BINDINGS_DIR="${INSTALL_SRC}/bin/key-bindings"
+    BINDINGS_DIR="${INSTALL_DIR}/bin/key-bindings"
 
     # Check if the user passed help or version options
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
@@ -356,7 +352,7 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
     [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
-    [[ -s "${INSTALL_SRC}" ]] || quit 2 "Unable to find HomeSetup source files!"
+    [[ -s "${INSTALL_DIR}" ]] || quit 2 "Unable to find HomeSetup source files!"
     echo -e "\n${GREEN}HomeSetup© ${VERSION} installation ${NC}"
 
     # Check the installation method
@@ -610,15 +606,16 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ ! -d "${INSTALL_DIR}" ]]; then
-      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Cloning HomeSetup from ${BLUE}${GITHUB_URL}${WHITE} into ${GREEN}${INSTALL_DIR}... ${NC}"
+      echo -en "${BLUE}[${OS_TYPE}] ${WHITE}Cloning HomeSetup from ${BLUE}${GITHUB_URL}${WHITE} into ${GREEN}${INSTALL_DIR}... ${NC}"
       if git clone "${GITHUB_URL}" "${INSTALL_DIR}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
+        echo -e "${RED}FAILED${NC}"
         quit 2 "Unable to clone HomeSetup repository !"
       fi
     fi
 
-    [[ -d "${DOTFILES_DIR}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_DIR}\" !"
+    [[ -d "${DOTFILES_SRC}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_SRC}\" !"
   }
 
   # Install all dotfiles.
@@ -635,7 +632,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e ""
     echo -e "${WHITE}          Shell: ${YELLOW}${MY_OS}-${MY_OS_NAME}/${SHELL_TYPE}"
     echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
-    echo -e "${WHITE}         Source: ${YELLOW}${INSTALL_SRC}"
+    echo -e "${WHITE}         Source: ${YELLOW}${INSTALL_DIR}"
     echo -e "${WHITE}         Prefix: ${YELLOW}${PREFIX:-${PREFIX}}"
     echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
@@ -675,24 +672,24 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
     # Create aliasdef, inputrc, glow.yml, and homesetup.toml.
-    copy_file "${INSTALL_SRC}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
-    copy_file "${INSTALL_SRC}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
-    copy_file "${INSTALL_SRC}/dotfiles/glow.yml" "${HHS_DIR}/.glow.yml"
-    copy_file "${INSTALL_SRC}/dotfiles/inputrc" "${HOME}/.inputrc"
+    copy_file "${INSTALL_DIR}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
+    copy_file "${INSTALL_DIR}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+    copy_file "${INSTALL_DIR}/dotfiles/glow.yml" "${HHS_DIR}/.glow.yml"
+    copy_file "${INSTALL_DIR}/dotfiles/inputrc" "${HOME}/.inputrc"
 
     # NeoVim integration configs.
     [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
-    copy_file "${INSTALL_SRC}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
+    copy_file "${INSTALL_DIR}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
 
     # HomeSetup key bindings.
-    copy_file "${INSTALL_SRC}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
+    copy_file "${INSTALL_DIR}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
     while read -r dotfile; do
       ALL_DOTFILES+=("${dotfile}")
-    done < <(find "${DOTFILES_DIR}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
+    done < <(find "${DOTFILES_SRC}" -maxdepth 1 -type f -name "*.${SHELL_TYPE}" -exec basename {} \;)
 
-    pushd "${DOTFILES_DIR}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_DIR}\" !"
+    pushd "${DOTFILES_SRC}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_SRC}\" !"
 
     echo ">>> Linked dotfiles:" >>"${INSTALL_LOG}"
     # If `all' option is used, copy all files.
@@ -700,8 +697,8 @@ usage: $APP_NAME [OPTIONS] <args>
       # Link all dotfiles
       for next in "${ALL_DOTFILES[@]}"; do
         dotfile="${HOME}/.${next//\.${SHELL_TYPE}/}"
-        link_file "${DOTFILES_DIR}/${next}" "${dotfile}"
-        echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
+        link_file "${DOTFILES_SRC}/${next}" "${dotfile}"
+        echo "${next} -> ${DOTFILES_SRC}/${next}" >>"${INSTALL_LOG}"
       done
     # If `all' option is NOT used, prompt for confirmation.
     else
@@ -712,8 +709,8 @@ usage: $APP_NAME [OPTIONS] <args>
         [[ -z ${QUIET} && -z "${STREAMED}" ]] && read -rn 1 -sp "Link ${dotfile} (y/[n])? " ANS
         [[ ! "${ANS}" =~ ^[yY]$ ]] && continue
         echo ''
-        link_file "${DOTFILES_DIR}/${next}" "${dotfile}"
-        echo "${next} -> ${DOTFILES_DIR}/${next}" >>"${INSTALL_LOG}"
+        link_file "${DOTFILES_SRC}/${next}" "${dotfile}"
+        echo "${next} -> ${DOTFILES_SRC}/${next}" >>"${INSTALL_LOG}"
       done
     fi
 
@@ -766,7 +763,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR}... "
     echo ">>> Copied HomeSetup fonts" >>"${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
-    if find "${INSTALL_SRC}"/assets/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
+    if find "${INSTALL_DIR}"/assets/fonts -maxdepth 1 -type f \( -iname "*.otf" -o -iname "*.ttf" \) \
       -print \
       -exec rsync --archive {} "${FONTS_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
@@ -779,7 +776,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -en "\n${WHITE}Copying Hunspell dictionaries into ${BLUE}${HUNSPELL_DIR}... "
     echo ">>> Copied Hunspell dictionaries" >>"${INSTALL_LOG}"
     [[ -d "${HUNSPELL_DIR}" ]] || quit 2 "Unable to locate hunspell (${HUNSPELL_DIR}) directory !"
-    if find "${INSTALL_SRC}"/assets/hunspell-dicts -maxdepth 1 -type f \( -iname "*.aff" -o -iname "*.dic" \) \
+    if find "${INSTALL_DIR}"/assets/hunspell-dicts -maxdepth 1 -type f \( -iname "*.aff" -o -iname "*.dic" \) \
       -print \
       -exec rsync --archive {} "${HUNSPELL_DIR}" \; \
       -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
@@ -801,7 +798,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Copy MOTDs file into place
     [[ -d "${HHS_MOTD_DIR}" ]] || create_directory "${HHS_MOTD_DIR}"
-    \cp "${INSTALL_SRC}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd &>/dev/null
+    \cp "${INSTALL_DIR}"/.MOTD "${HHS_MOTD_DIR}"/000-hhs-motd &>/dev/null
 
     # Cleanup old files (older than 30 days)
     echo -en "\n${WHITE}Cleaning up old cache and log files... "
@@ -930,26 +927,26 @@ usage: $APP_NAME [OPTIONS] <args>
     # .inputrc Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.inputrc" ]]; then
       \mv -f "${HOME}/.inputrc" "${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak"
-      copy_file "${INSTALL_SRC}/dotfiles/inputrc" "${HOME}/.inputrc"
+      copy_file "${INSTALL_DIR}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${YELLOW}Your old ${HOME}/.inputrc had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
     # .aliasdef Needs to be updated, so, we need to replace it.
     if [[ -f "${HOME}/.aliasdef" ]]; then
       \mv -f "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
-      copy_file "${INSTALL_SRC}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
+      copy_file "${INSTALL_DIR}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
       echo -e "\n${YELLOW}Your old .aliasdef had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak ${NC}"
     fi
 
     if [[ -f "${HHS_DIR}/.homesetup.toml" ]]; then
       # Check if the homesetup.toml is outdated
       user_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${HHS_DIR}/.homesetup.toml" | sed 's/# @version: v//')
-      hhs_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${INSTALL_SRC}/dotfiles/homesetup.toml" | sed 's/# @version: v//')
+      hhs_version=$(grep -o '^# @version: v[0-9]*\.[0-9]*\.[0-9]*' "${INSTALL_DIR}/dotfiles/homesetup.toml" | sed 's/# @version: v//')
       user_num=$(echo "${user_version}" | awk -F. '{ printf "%d%02d%03d", $1, $2, $3 }')
       hhs_num=$(echo "${hhs_version}" | awk -F. '{ printf "%d%02d%03d", $1, $2, $3 }')
       if [[ "${hhs_num}" -gt "${user_num}" ]]; then
         \mv -f "$HHS_DIR/.homesetup.toml" "${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak"
-        copy_file "${INSTALL_SRC}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
+        copy_file "${INSTALL_DIR}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
         echo -e "\n${YELLOW}Your old .homesetup.toml had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/homesetup-${TIMESTAMP}.toml.bak ${NC}"
       fi
     fi
