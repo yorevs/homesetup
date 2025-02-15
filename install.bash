@@ -27,6 +27,7 @@ usage: $APP_NAME [OPTIONS] <args>
   -r | --repair         : Repair current installation.
   -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
   -p | --prefix          : HomeSetup installation prefix. Defaults to USER's HOME directory '~/'.
+  -b | --homebrew       | HomeBrew installation. This makes the installation skip the dependencies
   -q | --quiet          : Do not prompt for questions, use all defaults.
 "
 
@@ -274,11 +275,11 @@ usage: $APP_NAME [OPTIONS] <args>
           PREFIX="${2}"
           shift
           ;;
+        -b | --homebrew)
+          HOMEBREW_INSTALLING=1
+          ;;
         -q | --quiet)
           QUIET=1
-          ;;
-        -h | --homebrew)
-          HOMEBREW_INSTALLING=1
           ;;
         *)
           quit 2 "Invalid option: \"$1\""
@@ -293,15 +294,18 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Installation destination
     INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
+    INSTALL_DIR="${INSTALL_DIR/#~/$HOME}"
 
     # Installation source
-    INSTALL_SRC="$(cd "$(dirname "$0")" && pwd)"
+    INSTALL_SRC="$(\cd "$(dirname "$0")" && \pwd)"
+    INSTALL_SRC="${INSTALL_SRC/#~/$HOME}"
 
     # README link for HomeSetup
     README="${INSTALL_DIR}/README.MD"
 
     # Configuration files location
-    HHS_DIR="${HOME}/.config/hhs"
+    HHS_DIR="${HOME}/.hhs"
+    [[ -d "${HOME}/.config" ]] && HHS_DIR="${HOME}/.config/hhs"
 
     # Binaries location
     HHS_BIN_DIR="${HHS_DIR}/bin"
@@ -894,7 +898,6 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e ".bash_profile or .bashrc, then, you can rename it back to .profile: "
       echo -e "$ mv ${HHS_BACKUP_DIR}/profile.orig ${HOME}/.profile"
       echo -e "${NC}"
-      [[ -z "${STREAMED}" && -z "${HOMEBREW_INSTALLING}" ]] && read -rn 1 -p "Press any key to continue..."
     fi
 
     # Moving old hhs files into the proper directory.
@@ -958,8 +961,8 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # .bash_completions was renamed to .bash_completion. #e6ce231 .
-    # .bash_completion was deleted.
     [[ -L "${HOME}/.bash_completions" ]] && \rm -f "${HOME}/.bash_completions"
+    # .bash_completion was deleted.
     [[ -L "${HOME}/.bash_completion" ]] && \rm -f "${HOME}/.bash_completion"
 
     # Removing the old python lib directories and links.
@@ -1034,8 +1037,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install GTrash application
   configure_gtrash() {
-    local arch
-
     if ! command -v gtrash &>/dev/null; then
       arch=$(uname -m)
       arch="${arch//aarch64/arm64}"
@@ -1054,8 +1055,8 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install ble.sh plug-in
   configure_blesh() {
-    local ble_repo="https://github.com/akinomyoga/ble.sh.git"
 
+    ble_repo="https://github.com/akinomyoga/ble.sh.git"
     echo -en "\n${WHITE}Installing ${BLUE}Blesh${NC} plug-in... "
     [[ -d "${HHS_BLESH_DIR}" ]] && \rm -rfv "${HHS_BLESH_DIR:?}" &>/dev/null
     if \
@@ -1070,7 +1071,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Configure AskAI HomeSetup/RAG documents
   configure_askai_rag() {
-    local copy_code
 
     if [[ -n "${INSTALL_AI}" ]]; then
       # Copy HomeSetup AskAI prompts into place.
@@ -1095,8 +1095,9 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Check HomeSetup installation prefix
+  # Check installation prefix
   check_prefix() {
+
     # Create the prefix file to be used
     [[ -n "${PREFIX}" ]] && echo "${PREFIX}" >"${PREFIX_FILE}"
     # Delete the useless prefix file
@@ -1110,12 +1111,13 @@ usage: $APP_NAME [OPTIONS] <args>
     if [[ "${OS_TYPE}" == "macOS" ]]; then
       \date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
     elif [[ "${OS_TYPE}" == "Alpine" ]]; then
-      \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))"  '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
+      \date -d "@$(($( \date +%s) - 3 * 24 * 60 * 60))" '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
     elif [[ "${OS_TYPE}" =~ Debian|RedHat ]]; then
       \date -d '+7 days' '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
     else
       \date '+%s' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
     fi
+
 
     echo ''
     echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${INSTALL_DIR}/.VERSION") !"

@@ -34,13 +34,16 @@ class Homesetup < Formula
   def install
     prefix.install Dir["*"]
     prefix.install Dir[".*"].reject { |f| [".", ".."].include?(File.basename(f)) }
-    system prefix/"install.bash", "--homebrew", "--repair", "--prefix", prefix
   end
 
   def caveats
     <<~EOS
-      You need to execute: "#{prefix}/install.bash" to finish the installation!
-      To uninstall it, execute "#{prefix}/uninstall.bash" to finish the uninstallation!
+      Welcome to HomeSetup - The ultimate Terminal experience !"
+
+      To enable HomeSetup for your user, type:
+        $ #{prefix}/install.bash -r -b -p #{prefix}
+      To uninstall, type:
+        $ #{prefix}/uninstall.bash
     EOS
   end
 

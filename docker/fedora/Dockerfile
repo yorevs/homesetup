@@ -11,7 +11,7 @@ RUN yum clean all
 RUN gem install colorls
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
-WORKDIR ~
+WORKDIR "${HOME}"
 
 RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
 
