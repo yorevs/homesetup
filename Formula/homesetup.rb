@@ -10,8 +10,6 @@ class Homesetup < Formula
 
   depends_on "bash"
   depends_on "git"
-  depends_on "curl"
-  depends_on "ruby"
   depends_on "rsync"
   depends_on "vim"
   depends_on "make"
@@ -20,16 +18,23 @@ class Homesetup < Formula
   depends_on "pcre2"
   depends_on "gpg"
   depends_on "base64"
-  depends_on "perl"
   depends_on "ruby"
   depends_on "gawk"
   depends_on "python@3.11"
   depends_on "jq"
-  depends_on "sqlite3"
   depends_on "hunspell"
   depends_on "ffmpeg"
   depends_on "portaudio"
-  depends_on "libmagic"
+
+  uses_from_macos "ruby"
+  uses_from_macos "curl"
+  uses_from_macos "perl"
+  uses_from_macos "libmagic"
+  uses_from_macos "sqlite3"
+
+  def python3
+    "python3.11"
+  end
 
   def install
     prefix.install Dir["*"]

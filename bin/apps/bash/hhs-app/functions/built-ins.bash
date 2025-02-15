@@ -107,7 +107,7 @@ function funcs() {
 function logs() {
 
   local level logfile logs usage tail_opts
-  local all_levels="ALL CRITICAL DEBUG ERROR FATAL FINE INFO OUT TRACE WARNING WARN SEVERE"
+  local all_levels="ALL_LEVELS CRITICAL DEBUG ERROR FATAL FINE INFO OUT TRACE WARNING WARN SEVERE"
 
   usage="usage: __hhs ${FUNCNAME[0]} [-F] [hhs-log-file] [level]"
   [[ "${1}" =~ -h|--help ]] && quit 0 "${usage}"
@@ -123,7 +123,7 @@ function logs() {
   done
 
   tail_opts="${tail_opts} "
-  [[ ! "$tail_opts" =~ (^|[[:space:]])-n([[:space:]]|$) ]] && tail_opts="${tail_opts} -n ${HHS_LOG_LINES:-100}"
+  [[ ! "$tail_opts" =~ (^|[[:space:]])-n([[:space:]]|$) ]] && tail_opts="${tail_opts} -n +1"
   level=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
 
   if [[ -n "${level}" ]]; then
@@ -156,9 +156,9 @@ function logs() {
   re='-n [0-9]* -F'
 
   [[ ${tail_opts} =~ ${re} ]] && echo -en "\n${YELLOW}Tailing " || echo -en "\n${WHITE}Retrieving "
-  echo -e "[${level:-ALL}] logs from ${logfile}:${NC}\n"
+  echo -e "logs [${level:-ALL_LEVELS}] from ${logfile}:${NC}\n"
 
-  if [[ -z "${level}" || "${level}" == 'ALL' ]]; then
+  if [[ -z "${level}" || "${level}" == 'ALL_LEVELS' ]]; then
     __hhs_tailor "${tail_opts}" "${logfile}"
   else
     __hhs_tailor "${tail_opts}" "${logfile}" | grep -i "${level}"
