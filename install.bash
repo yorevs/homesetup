@@ -1098,7 +1098,9 @@ usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup installation prefix
   check_prefix() {
     # Create the prefix file to be used
-    echo "${INSTALL_DIR}" >"${PREFIX_FILE}"
+    [[ -n "${PREFIX}" ]] && echo "${PREFIX}" >"${PREFIX_FILE}"
+    # Delete the useless prefix file
+    [[ -z "${PREFIX}" && -f "${PREFIX_FILE}" ]] && \rm -f "${PREFIX_FILE}"
   }
 
   # Reload the terminal and apply installed files.
