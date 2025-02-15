@@ -34,7 +34,7 @@ class Homesetup < Formula
   def install
     prefix.install Dir["*"]
     prefix.install Dir[".*"].reject { |f| [".", ".."].include?(File.basename(f)) }
-    system prefix/"install.bash", "-r", "--prefix", prefix
+    system prefix/"install.bash", "--homebrew", "--repair", "--prefix", prefix
   end
 
   def caveats
