@@ -83,7 +83,7 @@ usage: $APP_NAME [OPTIONS] <args>
   ISSUES_URL="https://github.com/yorevs/homesetup/issues"
 
   # Define the user HomeSetup installation prefix
-  PREFIX=
+  PREFIX="${PREFIX:-${HOME}/HomeSetup}"
 
   # HomeSetup installation prefix file
   PREFIX_FILE="${HOME}/.hhs-prefix"
@@ -605,7 +605,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${NC}"
 
     if [[ ! -d "${INSTALL_DIR}" ]]; then
-      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Cloning ${GREEN}HomeSetup${NC} repository... "
+      echo -e "${BLUE}[${OS_TYPE}] ${WHITE}Cloning HomeSetup from ${BLUE}${GITHUB_URL}${WHITE} into ${GREEN}${INSTALL_DIR}... ${NC}"
       if git clone "${GITHUB_URL}" "${INSTALL_DIR}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
@@ -1097,9 +1097,7 @@ usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup installation prefix
   check_prefix() {
     # Create the prefix file to be used
-    [[ -n "${PREFIX}" ]] && echo "${PREFIX}" >"${PREFIX_FILE}"
-    # Delete the useless prefix file
-    [[ -z "${PREFIX}" && -f "${PREFIX_FILE}" ]] && \rm -f "${PREFIX_FILE}"
+    echo "${INSTALL_DIR}" >"${PREFIX_FILE}"
   }
 
   # Reload the terminal and apply installed files.
@@ -1158,7 +1156,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   check_current_shell
   check_inst_method "$@"
-  install_homesetup
   check_prefix
+  install_homesetup
   quit 0
 }
