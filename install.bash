@@ -693,8 +693,8 @@ usage: $APP_NAME [OPTIONS] <args>
     copy_file "${INSTALL_DIR}/dotfiles/inputrc" "${HOME}/.inputrc"
 
     # NeoVim integration configs.
-    [[ -d "${HOME}/.config/nvim" ]] || \mkdir -p "${HOME}/.config/nvim"
-    copy_file "${INSTALL_DIR}/dotfiles/nvim-init" "${HOME}/.config/nvim/init.vim"
+    [[ -d "${HHS_DIR}/nvim" ]] || \mkdir -p "${HHS_DIR}/nvim"
+    copy_file "${INSTALL_DIR}/dotfiles/nvim-init" "${HHS_DIR}/nvim/init.vim"
 
     # HomeSetup key bindings.
     copy_file "${INSTALL_DIR}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
