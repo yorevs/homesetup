@@ -23,16 +23,17 @@
   USAGE="
 usage: $APP_NAME [OPTIONS] <args>
 
-  -l | --local          : Local installation. This is just going to replace the dotfiles (default).
-  -r | --repair         : Repair current installation.
-  -i | --interactive    : Install all scripts into the user HomeSetup directory interactively.
-  -p | --prefix          : HomeSetup installation prefix. Defaults to USER's HOME directory '~/'.
-  -b | --homebrew       | HomeBrew installation. This makes the installation skip the dependencies
-  -q | --quiet          : Do not prompt for questions, use all defaults.
+  -l | --local          : Local installation (default). Replaces existing dotfiles.
+  -r | --repair         : Repair the current installation.
+  -i | --interactive    : Interactive installation of all scripts in the user HomeSetup directory.
+  -p | --prefix         : HomeSetup installation prefix. Defaults to user's HOME directory '~/HomeSetup'.
+  -b | --homebrew       : Homebrew-based installation. Skips dependency checks.
+  -q | --quiet          : Non-interactive mode using all defaults.
 "
 
+
   # Installation log file
-  INSTALL_LOG="$(mktemp -t install.XXXXXX).log"
+  INSTALL_LOG="$(mktemp -t install-homesetup.XXXXXX).log"
 
   # Define USER and HOME variables
   if [[ -n "${SUDO_USER}" ]]; then
@@ -121,6 +122,12 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Timestamp used to backup files
   TIMESTAMP=$(\date "+%s%S")
+
+  # Python executable
+  PYTHON3=
+
+  # Pip executable
+  PIP3=
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
@@ -365,6 +372,14 @@ usage: $APP_NAME [OPTIONS] <args>
       else
         METHOD='repair'
       fi
+    fi
+
+    echo ''
+    echo -en "${WHITE}Detecting local python environment... ${NC}"
+    # Detecting system python and pip versions.
+    if [[ -z "${PYTHON3}" || -z "${PIP}" ]]; then
+      PYTHON3=$(command -v python3 2>/dev/null)
+      PIP3=$(command -v pip3 2>/dev/null)
     fi
   }
 
@@ -812,41 +827,33 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Configure python and HomeSetup python library.
   configure_python() {
-    echo ''
-    echo -en "${WHITE}Detecting local python environment... ${NC}"
-    # Detecting system python and pip versions.
-    PYTHON=$(command -v python3 2>/dev/null)
-    PIP=$(command -v pip3 2>/dev/null)
-    [[ -z "${PYTHON}" || -z "${PIP}" ]] \
+    [[ -z "${PYTHON3}" || -z "${PIP3}" ]] \
       && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup. None has been found!"
-    python_version=$("${PYTHON}" --version 2>&1 | awk '{print $2}')
+    python_version=$("${PYTHON3}" --version 2>&1 | awk '{print $2}')
     [[ ! "${python_version}" =~ ^3\.1[01] ]] \
-      && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup! Found version: ${python_version}"
+      && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup! Found: ${python_version}"
     echo -e "${GREEN}OK${NC}"
-    create_venv "${PYTHON}" "${PIP}"
+    create_venv
     install_hspylib
   }
 
   # Create HomeSetup virtual environment.
   create_venv() {
-    # Identified python tools
-    PYTHON="${1}"
-    PIP="${2}"
     if [[ ! -d "${HHS_VENV_PATH}" ]]; then
-      echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Creating virtual environment... "
-      if ${PYTHON} -m venv "${HHS_VENV_PATH}" &>/dev/null; then
+      echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Creating virtual environment... "
+      if ${PYTHON3} -m venv "${HHS_VENV_PATH}" &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
-        echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
+        echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
       else
         echo -e "${RED}FAILED${NC}"
         quit 2 "Unable to create virtual environment!"
       fi
     else
-      echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'"
+      echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'"
     fi
 
     # Activate the virtual environment.
-    echo -en "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Activating virtual environment... ${NC}"
+    echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Activating virtual environment... ${NC}"
     if source "${HHS_VENV_PATH}"/bin/activate; then
       echo -e "${GREEN}OK${NC}"
     else
@@ -857,15 +864,13 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install HomeSetup python libraries.
   install_hspylib() {
-    python_version="$(${PYTHON} -V)"
+    python_version="$(${PYTHON3} -V)"
     pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
-    PYTHON=$(command -v python3 2>/dev/null)
-    PIP=$(command -v pip3 2>/dev/null)
-    echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
-    echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... \n"
+    echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
+    echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
     printf "%s\n" "${PYTHON_MODULES[@]}" >"${pkgs}"
-    printf "${BLUE}[$(basename "${PYTHON}")] ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
+    printf "${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
     if \
       ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
@@ -1078,12 +1083,11 @@ usage: $APP_NAME [OPTIONS] <args>
         RAGProvider.copy_rag('${INSTALL_DIR}/docs', 'homesetup-docs')
         RAGProvider.copy_rag('${INSTALL_DIR}/README.md', 'homesetup-docs/README.md')
       "
-      PYTHON=$(command -v python3 2>/dev/null)
       export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
       export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
       export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
       # Dedent the python code above, 6 spaces for now
-      if ${PYTHON} -c "${copy_code//      /}" 2>&1; then
+      if ${PYTHON3} -c "${copy_code//      /}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"

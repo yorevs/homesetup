@@ -104,6 +104,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       IMAGE_TAG: ${{ inputs.image_tag || needs.detect-version.outputs.app_version }}
+      PYTHON: python3.11
     steps:
       - name: Print matrix
         run: |

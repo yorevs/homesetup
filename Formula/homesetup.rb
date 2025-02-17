@@ -37,6 +37,9 @@ class Homesetup < Formula
   end
 
   def install
+    py3ver = Language::Python.major_minor_version python3
+    ENV["PYTHONPATH"] = site_packages = prefix/Language::Python.site_packages(python3)
+    ENV["PYTHON"] = python3
     prefix.install Dir["*"]
     prefix.install Dir[".*"].reject { |f| [".", ".."].include?(File.basename(f)) }
   end
