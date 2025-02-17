@@ -128,14 +128,3 @@ task publish(type: Task) {
     }
   }
 }
-
-/* Publish a new HomeSetup version */
-task dockerBuild(type: Task) {
-  group = 'Docker'
-  description = "Build a docker image with HomeSetup installed"
-  doLast {
-    exec {
-      commandLine "${project.rootDir}/bin/apps/bash/docker-build.bash", 'ubuntu', 'fedora', 'centos', 'alpine'
-    }
-  }
-}

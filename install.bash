@@ -46,6 +46,7 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -n "${GITHUB_ACTIONS}" ]] && SUDO=sudo
   fi
 
+
   [[ -z "${USER}" || -z "${HOME}" ]] && quit 1 "Unable to determine USER/HOME -> ${USER}/${HOME}"
 
   # Functions to be unset after quit
@@ -301,7 +302,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Installation destination
     INSTALL_DIR="${PREFIX:-${HOME}/HomeSetup}"
-    INSTALL_DIR="${INSTALL_DIR/#~/$HOME}"
+    INSTALL_DIR="${INSTALL_DIR/#~/${HOME}}"
 
     # README link for HomeSetup
     README="${INSTALL_DIR}/README.MD"
@@ -793,7 +794,7 @@ usage: $APP_NAME [OPTIONS] <args>
     if find "${INSTALL_DIR}"/assets/hunspell-dicts -maxdepth 1 -type f \( -iname "*.aff" -o -iname "*.dic" \) \
       -print \
       -exec rsync --archive {} "${HUNSPELL_DIR}" \; \
-      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}"  2>&1; then
+      -exec chown "${USER}":"${GROUP}" {} \; >>"${INSTALL_LOG}" 2>&1; then
       echo -e "${GREEN}OK${NC}"
     else
       quit 2 "Unable to extract Hunspell files into dictionaries(${HUNSPELL_DIR}) directory !"
@@ -816,7 +817,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Cleanup old files (older than 30 days)
     echo -en "\n${WHITE}Cleaning up old cache and log files... "
-    if find "${HHS_DIR?}/cache" "${HHS_LOG_DIR?}" -type f -mtime +30 -exec rm -f {} \;; then
+    if find "${HHS_DIR?}/cache" "${HHS_LOG_DIR?}" -type f -mtime +30 -exec rm -f {} \; 2>/dev/null; then
       echo -e "${GREEN}OK${NC}"
     else
       echo -e "${YELLOW}SKIPPED${NC}"
@@ -841,7 +842,7 @@ usage: $APP_NAME [OPTIONS] <args>
   create_venv() {
     if [[ ! -d "${HHS_VENV_PATH}" ]]; then
       echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Creating virtual environment... "
-      if ${PYTHON3} -m venv "${HHS_VENV_PATH}" &>/dev/null; then
+      if ${PYTHON3} -m venv "${HHS_VENV_PATH}" >> "${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
         echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
       else
@@ -1012,7 +1013,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
     # common the standard.
-    if [[ -d "${HOME}/.hhs" ]]; then
+    if [[ -d "${HOME}/.config" && -d "${HOME}/.hhs" ]]; then
       if \rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
         echo -e "\n${YELLOW}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \

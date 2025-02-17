@@ -7,8 +7,13 @@ USER root
 ENV SHELL='/bin/bash'
 ENV HOME='/root'
 
+# Enable edge repositories and install python3.11
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN apk update
+RUN apk add --no-cache python3.11
 RUN apk -U upgrade
-RUN apk add --no-cache python3
+RUN apk add --no-cache python3.11
 RUN apk add --no-cache py3-pip
 RUN apk add --no-cache curl
 RUN apk add --no-cache rsync

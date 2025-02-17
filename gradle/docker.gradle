@@ -1,0 +1,38 @@
+/* Build a docker image with HomeSetup installed */
+task dockerBuild(type: Task) {
+  group = 'Docker'
+  description = "Build a docker image with HomeSetup installed"
+  doLast {
+    def images = ['ubuntu', 'fedora', 'centos', 'alpine']
+    def versionOutput = new ByteArrayOutputStream()
+    def archOutput = new ByteArrayOutputStream()
+    def PYTHON3 = System.getenv('PYTHON3') ?: 'python3.11'
+    def PIP3 = System.getenv('PIP3') ?: 'pip3.11'
+    exec {
+      commandLine 'bash', '-c', "${PYTHON3} -V"
+      standardOutput = versionOutput
+      errorOutput = versionOutput
+    }
+    def versionString = versionOutput.toString().trim()
+    def matcher = (versionString =~ /Python (\d+)\.(\d+)\.(\d+)/)
+    if (!matcher.matches()) {
+      throw new GradleException("Unable to parse python version: '${versionString}'")
+    }
+    def major = matcher[0][1].toInteger()
+    def minor = matcher[0][2].toInteger()
+    if (!(major == 3 && minor >= 10 && minor <= 11)) {
+      throw new GradleException("Python version must be >= 3.10 and <= 3.11, found: ${versionString}")
+    }
+    exec {
+      commandLine 'uname', '-m'
+      standardOutput = archOutput
+      errorOutput = archOutput
+    }
+    println("Building docker images...")
+    println("Python: ${PYTHON3}  Pip: ${PIP3}")
+    println("Arch: ${archOutput}")
+    exec {
+      commandLine "${project.rootDir}/bin/apps/bash/docker-build.bash", *images
+    }
+  }
+}
