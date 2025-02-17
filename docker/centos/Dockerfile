@@ -5,7 +5,7 @@ LABEL maintainer="Hugo Saporetti Junior<taius.hhs@gmail.com>"
 USER root
 
 ENV SHELL='/bin/bash'
-ENV HOME='/home/hhs'
+ENV HOME='/root'
 
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
@@ -23,9 +23,6 @@ RUN make install
 RUN python3 -m pip install --upgrade pip
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 
-RUN useradd -ms /bin/bash hhs
-RUN echo "hhs ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-USER hhs
 WORKDIR "${HOME}"
 
 RUN curl -o- https://raw.githubusercontent.com/yorevs/homesetup/master/install.bash | bash
