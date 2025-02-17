@@ -109,7 +109,12 @@ jobs:
     steps:
       - name: Print matrix
         run: |
-          echo "Building for OS: ${{ matrix.os }}, Docker: ${{ matrix.container }}, Arch: ${{ matrix.arch }}"
+          echo "## Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- OS: ${{ matrix.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Arch: ${{ matrix.arch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Image-Tag: ${{ inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Docker-Container: ${{ matrix.container }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Python: $PYTHON3, Pip: $PIP3" >> $GITHUB_STEP_SUMMARY
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
         with:
