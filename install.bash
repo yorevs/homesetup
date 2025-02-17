@@ -352,7 +352,6 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
     [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
-    [[ -s "${INSTALL_DIR}" ]] || quit 2 "Unable to find HomeSetup source files at: \"${INSTALL_DIR}\"!"
     echo -e "\n${GREEN}HomeSetup© ${VERSION} installation ${NC}"
 
     # Check the installation method
@@ -615,7 +614,7 @@ usage: $APP_NAME [OPTIONS] <args>
       fi
     fi
 
-    [[ -d "${DOTFILES_SRC}" ]] || quit 2 "Unable to find dotfiles directories \"${DOTFILES_SRC}\" !"
+    [[ -s "${INSTALL_DIR}" && -f "${INSTALL_DIR}/.VERSION" ]] || quit 2 "Unable to find HomeSetup source files at: \"${INSTALL_DIR}\"!"
   }
 
   # Install all dotfiles.
