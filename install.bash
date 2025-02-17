@@ -124,10 +124,10 @@ usage: $APP_NAME [OPTIONS] <args>
   TIMESTAMP=$(\date "+%s%S")
 
   # Python executable
-  PYTHON3=
+  PYTHON3="${PYTHON3:-$(command -v python3.11)}"
 
   # Pip executable
-  PIP3=
+  PIP3="${PIP3:-$(command -v pip3.11)}"
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
