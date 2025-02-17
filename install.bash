@@ -132,6 +132,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
+    'virtualenv'
     'hspylib'
     'hspylib-datasource'
     'hspylib-clitt'
@@ -308,8 +309,11 @@ usage: $APP_NAME [OPTIONS] <args>
     README="${INSTALL_DIR}/README.MD"
 
     # Configuration files location
-    HHS_DIR="${HOME}/.hhs"
-    [[ -d "${HOME}/.config" ]] && HHS_DIR="${HOME}/.config/hhs"
+    if [[ -d "${HOME}/.config" ]]; then
+      HHS_DIR="${HOME}/.config/hhs"
+    else
+      HHS_DIR="${HOME}/.hhs"
+    fi
 
     # Binaries location
     HHS_BIN_DIR="${HHS_DIR}/bin"
@@ -686,17 +690,17 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -s "${HHS_DIR}/.path" ]] || \touch "${HHS_DIR}/.path"
     [[ -s "${HHS_DIR}/.saved_dirs" ]] || \touch "${HHS_DIR}/.saved_dirs"
 
-    # Create aliasdef, inputrc, glow.yml, and homesetup.toml.
+    # Create aliasdef, inputrc, glow.yml, and homesetup.toml
     copy_file "${INSTALL_DIR}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
     copy_file "${INSTALL_DIR}/dotfiles/homesetup.toml" "${HHS_DIR}/.homesetup.toml"
     copy_file "${INSTALL_DIR}/dotfiles/glow.yml" "${HHS_DIR}/.glow.yml"
     copy_file "${INSTALL_DIR}/dotfiles/inputrc" "${HOME}/.inputrc"
 
-    # NeoVim integration configs.
+    # NeoVim integration configs
     [[ -d "${HHS_DIR}/nvim" ]] || \mkdir -p "${HHS_DIR}/nvim"
     copy_file "${INSTALL_DIR}/dotfiles/nvim-init" "${HHS_DIR}/nvim/init.vim"
 
-    # HomeSetup key bindings.
+    # HomeSetup key bindings
     copy_file "${INSTALL_DIR}/dotfiles/hhs-bindings" "${HHS_DIR}/.hhs-bindings"
 
     # Find all dotfiles used by HomeSetup according to the current shell type
@@ -707,7 +711,7 @@ usage: $APP_NAME [OPTIONS] <args>
     pushd "${DOTFILES_SRC}" &>/dev/null || quit 1 "Unable to enter dotfiles directory \"${DOTFILES_SRC}\" !"
 
     echo ">>> Linked dotfiles:" >>"${INSTALL_LOG}"
-    # If `all' option is used, copy all files.
+    # If `all' option is used, copy all files
     if [[ "$OPT" == 'all' ]]; then
       # Link all dotfiles
       for next in "${ALL_DOTFILES[@]}"; do
@@ -715,7 +719,7 @@ usage: $APP_NAME [OPTIONS] <args>
         link_file "${DOTFILES_SRC}/${next}" "${dotfile}"
         echo "${next} -> ${DOTFILES_SRC}/${next}" >>"${INSTALL_LOG}"
       done
-    # If `all' option is NOT used, prompt for confirmation.
+    # If `all' option is NOT used, prompt for confirmation
     else
       # Link all dotfiles
       for next in "${ALL_DOTFILES[@]}"; do
@@ -729,7 +733,7 @@ usage: $APP_NAME [OPTIONS] <args>
       done
     fi
 
-    # Remove old apps.
+    # Remove old apps
     echo -en "\n${WHITE}Removing old links... ${BLUE}"
     echo ">>> Removed old links:" >>"${INSTALL_LOG}"
     if find "${HHS_BIN_DIR}" -maxdepth 1 -type l -delete -print >>"${INSTALL_LOG}" 2>&1; then
@@ -738,7 +742,7 @@ usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to remove old app links from \"${HHS_BIN_DIR}\" directory !"
     fi
 
-    # Link apps into place.
+    # Link apps into place
     echo -en "\n${WHITE}Linking apps from ${BLUE}${APPS_DIR} to ${HHS_BIN_DIR}..."
     echo ">>> Linked apps:" >>"${INSTALL_LOG}"
     if find "${APPS_DIR}" -maxdepth 3 -type f -iname "**.${SHELL_TYPE}" \
@@ -750,7 +754,7 @@ usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link apps into \"${HHS_BIN_DIR}\" directory !"
     fi
 
-    # Link auto-completes into place.
+    # Link auto-completes into place
     echo -en "\n${WHITE}Linking auto-completes from ${BLUE}${COMPLETIONS_DIR} to ${HHS_BIN_DIR}... "
     echo ">>> Linked auto-completes:" >>"${INSTALL_LOG}"
     if find "${COMPLETIONS_DIR}" -maxdepth 2 -type f -iname "**-completion.${SHELL_TYPE}" \
@@ -762,7 +766,7 @@ usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link auto-completes into bin (${HHS_BIN_DIR}) directory !"
     fi
 
-    # Link key-bindings into place.
+    # Link key-bindings into place
     echo -en "\n${WHITE}Linking key-bindings from ${BLUE}${BINDINGS_DIR} to ${HHS_BIN_DIR}... "
     echo ">>> Linked key-bindings:" >>"${INSTALL_LOG}"
     if find "${BINDINGS_DIR}" -maxdepth 2 -type f -iname "**-key-bindings.${SHELL_TYPE}" \
@@ -774,7 +778,7 @@ usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to link key-bindings into bin (${HHS_BIN_DIR}) directory !"
     fi
 
-    # Copy HomeSetup fonts into place.
+    # Copy HomeSetup fonts into place
     echo -en "\n${WHITE}Copying HomeSetup fonts into ${BLUE}${FONTS_DIR}... "
     echo ">>> Copied HomeSetup fonts" >>"${INSTALL_LOG}"
     [[ -d "${FONTS_DIR}" ]] || quit 2 "Unable to locate fonts (${FONTS_DIR}) directory !"
@@ -787,7 +791,7 @@ usage: $APP_NAME [OPTIONS] <args>
       quit 2 "Unable to copy HHS fonts into fonts (${FONTS_DIR}) directory !"
     fi
 
-    # Copy hunspell dictionaries.
+    # Copy hunspell dictionaries
     echo -en "\n${WHITE}Copying Hunspell dictionaries into ${BLUE}${HUNSPELL_DIR}... "
     echo ">>> Copied Hunspell dictionaries" >>"${INSTALL_LOG}"
     [[ -d "${HUNSPELL_DIR}" ]] || quit 2 "Unable to locate hunspell (${HUNSPELL_DIR}) directory !"
@@ -826,7 +830,7 @@ usage: $APP_NAME [OPTIONS] <args>
     \popd &>/dev/null || quit 1 "Unable to leave dotfiles directory !"
   }
 
-  # Configure python and HomeSetup python library.
+  # Configure python and HomeSetup python library
   configure_python() {
     [[ -z "${PYTHON3}" || -z "${PIP3}" ]] \
       && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup. None has been found!"
@@ -838,11 +842,11 @@ usage: $APP_NAME [OPTIONS] <args>
     install_hspylib
   }
 
-  # Create HomeSetup virtual environment.
+  # Create HomeSetup virtual environment
   create_venv() {
     if [[ ! -d "${HHS_VENV_PATH}" ]]; then
       echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Creating virtual environment... "
-      if ${PYTHON3} -m venv "${HHS_VENV_PATH}" >> "${INSTALL_LOG}" 2>&1; then
+      if ${PYTHON3} -m virtualenv "${HHS_VENV_PATH}" >> "${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
         echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
       else
@@ -850,10 +854,10 @@ usage: $APP_NAME [OPTIONS] <args>
         quit 2 "Unable to create virtual environment!"
       fi
     else
-      echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'"
+      echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'."
     fi
 
-    # Activate the virtual environment.
+    # Activate the virtual environment
     echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Activating virtual environment... ${NC}"
     if source "${HHS_VENV_PATH}"/bin/activate; then
       echo -e "${GREEN}OK${NC}"
@@ -863,7 +867,7 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Install HomeSetup python libraries.
+  # Install HomeSetup python libraries
   install_hspylib() {
     python_version="$(${PYTHON3} -V)"
     pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
@@ -883,7 +887,7 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Check for backward HomeSetup backward compatibility.
+  # Check for backward HomeSetup backward compatibility
   compatibility_check() {
 
     echo -e "\n${WHITE}Checking HomeSetup backward compatibility... ${BLUE}"
@@ -891,7 +895,7 @@ usage: $APP_NAME [OPTIONS] <args>
     # Cleaning up old dotfiles links
     [[ -d "${HHS_BIN_DIR}" ]] && rm -f "${HHS_BIN_DIR:?}/*.*"
 
-    # .profile Needs to be renamed, so, we guarantee that no dead lock occurs.
+    # .profile Needs to be renamed, so, we guarantee that no dead lock occurs
     if [[ -f "${HOME}/.profile" ]]; then
       \mv -f "${HOME}/.profile" "${HHS_BACKUP_DIR}/profile.orig"
       echo ''
@@ -902,7 +906,7 @@ usage: $APP_NAME [OPTIONS] <args>
       echo -e "${NC}"
     fi
 
-    # Moving old hhs files into the proper directory.
+    # Moving old hhs files into the proper directory
     [[ -f "${HOME}/.cmd_file" ]] && \mv -f "${HOME}/.cmd_file" "${HHS_DIR}/.cmd_file"
     [[ -f "${HOME}/.saved_dir" ]] && \mv -f "${HOME}/.saved_dir" "${HHS_DIR}/.saved_dirs"
     [[ -f "${HOME}/.punches" ]] && \mv -f "${HOME}/.punches" "${HHS_DIR}/.punches"
@@ -917,26 +921,26 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -f "${HOME}/.profile" ]] && \mv -f "${HOME}/.profile" "${HHS_DIR}/.profile"
     [[ -f "${HOME}/.prompt" ]] && \mv -f "${HOME}/.prompt" "${HHS_DIR}/.prompt"
 
-    # Removing the old ${HOME}/bin folder.
+    # Removing the old ${HOME}/bin folder
     if [[ -L "${HOME}/bin" ]]; then
       \rm -f "${HOME:?}/bin"
       echo -e "\n${YELLOW}Your old ${HOME}/bin link had to be removed. ${NC}"
     fi
 
-    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0 .
+    # .bash_aliasdef was renamed to .aliasdef and it is only copied if it does not exist. #9c592e0
     if [[ -L "${HOME}/.bash_aliasdef" ]]; then
       \rm -f "${HOME}/.bash_aliasdef"
       echo -e "\n${YELLOW}Your old ${HOME}/.bash_aliasdef link had to be removed. ${NC}"
     fi
 
-    # .inputrc Needs to be updated, so, we need to replace it.
+    # .inputrc Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.inputrc" ]]; then
       \mv -f "${HOME}/.inputrc" "${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak"
       copy_file "${INSTALL_DIR}/dotfiles/inputrc" "${HOME}/.inputrc"
       echo -e "\n${YELLOW}Your old ${HOME}/.inputrc had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/inputrc-${TIMESTAMP}.bak ${NC}"
     fi
 
-    # .aliasdef Needs to be updated, so, we need to replace it.
+    # .aliasdef Needs to be updated, so, we need to replace it
     if [[ -f "${HOME}/.aliasdef" ]]; then
       \mv -f "${HOME}/.aliasdef" "${HHS_BACKUP_DIR}/aliasdef-${TIMESTAMP}.bak"
       copy_file "${INSTALL_DIR}/dotfiles/aliasdef" "${HHS_DIR}/.aliasdef"
@@ -956,18 +960,18 @@ usage: $APP_NAME [OPTIONS] <args>
       fi
     fi
 
-    # Moving .path file to .hhs .
+    # Moving .path file to .hhs
     if [[ -f "${HOME}/.path" ]]; then
       \mv -f "${HOME}/.path" "${HHS_DIR}/.path"
       echo -e "\n${YELLOW}Moved file ${HOME}/.path into ${HHS_DIR}/.path"
     fi
 
-    # .bash_completions was renamed to .bash_completion. #e6ce231 .
+    # .bash_completions was renamed to .bash_completion. #e6ce231
     [[ -L "${HOME}/.bash_completions" ]] && \rm -f "${HOME}/.bash_completions"
     # .bash_completion was deleted.
     [[ -L "${HOME}/.bash_completion" ]] && \rm -f "${HOME}/.bash_completion"
 
-    # Removing the old python lib directories and links.
+    # Removing the old python lib directories and links
     [[ -d "${INSTALL_DIR}/bin/apps/bash/hhs-app/lib" ]] &&
       \rm -rf "${INSTALL_DIR}/bin/apps/bash/hhs-app/lib"
     [[ -L "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/firebase/lib" ]] &&
@@ -975,12 +979,12 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -L "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/vault/lib" ]] &&
       \rm -rf "${INSTALL_DIR}/bin/apps/bash/hhs-app/plugins/vault/lib"
 
-    # Moving orig and bak files to backup folder.
+    # Moving orig and bak files to backup folder
     find "${HHS_DIR}" -maxdepth 1 \
       -type f \( -name '*.bak' -o -name '*.orig' \) \
       -print -exec mv {} "${HHS_BACKUP_DIR}" \;
 
-    # .tailor Needs to be updated, so, we need to replace it.
+    # .tailor Needs to be updated, so, we need to replace it
     if [[ -f "${HHS_DIR}/.tailor" ]]; then
       \mv -f "${HHS_DIR}/.tailor" "${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak"
       echo -e "\n${YELLOW}Your old .tailor had to be replaced by a newer version. Your old file it located at ${HHS_BACKUP_DIR}/tailor-${TIMESTAMP}.bak ${NC}"
@@ -1012,10 +1016,9 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
 
     # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
-    # common the standard.
+    # common the standard
     if [[ -d "${HOME}/.config" ]]; then
-      [[ -d "${HOME}/.hhs" ]] || quit 1 "Unable to find HomeSetup configuration dir: \"${HOME}/.hhs\""
-      if \rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
+      if [[ -d "${HOME}/.hhs" ]] && \rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
         echo -e "\n${YELLOW}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
           "${RED}Unable to delete the old .hhs directory. It was moved to ~/.config. Feel free to wipe it out!${NC}"
@@ -1023,7 +1026,7 @@ usage: $APP_NAME [OPTIONS] <args>
     fi
   }
 
-  # Install Starship prompt.
+  # Install Starship prompt
   configure_starship() {
     if ! command -v starship &>/dev/null; then
       echo -en "\n${WHITE}Installing Starship prompt... "
