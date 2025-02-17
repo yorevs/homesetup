@@ -23,6 +23,17 @@ on:
           - linux/amd64,linux/arm64
           - linux/amd64
           - linux/arm64
+      container:
+        description: 'Docker container (Operating Systems)'
+        default: 'fedora'
+        required: true
+        type: choice
+        options:
+          - all
+          - alpine
+          - ubuntu
+          - fedora
+          - centos
 
   workflow_call:
     inputs:
@@ -50,32 +61,43 @@ jobs:
     outputs:
       app_version: ${{ steps.detect-version.outputs.app_version }}
 
-  set-matrix:
+  set-plat-matrix:
     runs-on: ubuntu-latest
     outputs:
-      arch-matrix: ${{ steps.set-matrix.outputs.arch-matrix }}
+      arch-matrix: ${{ steps.set-plat-matrix.outputs.arch-matrix }}
     steps:
       - name: Set matrix based on input
-        id: set-matrix
+        id: set-plat-matrix
         shell: bash
         run: |
           platforms="${{ github.event.inputs.platforms }}"
           archs=$(echo '["'${platforms//,/\",\"}'"]')
           echo "arch-matrix=$archs" >> "$GITHUB_OUTPUT"
 
+  set-os-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      os-matrix: ${{ steps.set-os-matrix.outputs.os-matrix }}
+    steps:
+      - name: Set matrix based on input
+        id: set-os-matrix
+        shell: bash
+        run: |
+          os="${{ github.event.inputs.container }}"
+          container=$(echo '["'${os//,/\",\"}'"]')
+          echo "os-matrix=$container" >> "$GITHUB_OUTPUT"
+
   build-docker-images:
     needs:
       - detect-version
-      - set-matrix
+      - set-plat-matrix
+      - set-os-matrix
     strategy:
       matrix:
         os:
           - "ubuntu-latest"
-        docker-container:
-          - "ubuntu"
-          - "fedora"
-          - "centos"
-        arch: ${{ fromJSON(needs.set-matrix.outputs.arch-matrix) }}
+        container: ${{ fromJSON(needs.set-os-matrix.outputs.os-matrix) }}
+        arch: ${{ fromJSON(needs.set-plat-matrix.outputs.arch-matrix) }}
     runs-on: ${{ matrix.os }}
     environment: homesetup
     env:
@@ -85,7 +107,7 @@ jobs:
     steps:
       - name: Print matrix
         run: |
-          echo "Building for OS: ${{ matrix.os }}, Docker: ${{ matrix.docker-container }}, Arch: ${{ matrix.arch }}"
+          echo "Building for OS: ${{ matrix.os }}, Docker: ${{ matrix.container }}, Arch: ${{ matrix.arch }}"
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
         with:
@@ -106,7 +128,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           platforms: "${{ inputs.platforms }}"
-          context: "docker/${{ matrix.docker-container }}"
-          file: "docker/${{ matrix.docker-container }}/Dockerfile"
+          context: "docker/${{ matrix.container }}"
+          file: "docker/${{ matrix.container }}/Dockerfile"
           push: true
-          tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.docker-container }}:${{ env.ARCH }}-${{ env.IMAGE_TAG }}"
+          tags: "${{ env.DOCKERHUB_USERNAME }}/hhs-${{ matrix.container }}:${{ env.ARCH }}-${{ env.IMAGE_TAG }}"
