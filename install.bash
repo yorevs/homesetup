@@ -370,7 +370,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Prompt the user for AskAI installation
   query_askai_install() {
-    PIP=$(command -v pip3.11 2>/dev/null)
+    PIP=$(command -v pip3 2>/dev/null)
     if [[ "$OPT" == 'all' ]] || PIP show hspylib-askai &>/dev/null; then
       INSTALL_AI=1
     elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" && -z "${HOMEBREW_INSTALLING}" ]]; then
@@ -815,8 +815,8 @@ usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -en "${WHITE}Detecting local python environment... ${NC}"
     # Detecting system python and pip versions.
-    PYTHON=$(command -v python3.11 2>/dev/null)
-    PIP=$(command -v pip3.11 2>/dev/null)
+    PYTHON=$(command -v python3 2>/dev/null)
+    PIP=$(command -v pip3 2>/dev/null)
     [[ -z "${PYTHON}" || -z "${PIP}" ]] \
       && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup. None has been found!"
     python_version=$("${PYTHON}" --version 2>&1 | awk '{print $2}')
@@ -859,8 +859,8 @@ usage: $APP_NAME [OPTIONS] <args>
   install_hspylib() {
     python_version="$(${PYTHON} -V)"
     pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
-    PYTHON=$(command -v python3.11 2>/dev/null)
-    PIP=$(command -v pip3.11 2>/dev/null)
+    PYTHON=$(command -v python3 2>/dev/null)
+    PIP=$(command -v pip3 2>/dev/null)
     echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
     echo -e "\n${BLUE}[$(basename "${PYTHON}")] ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
@@ -1078,7 +1078,7 @@ usage: $APP_NAME [OPTIONS] <args>
         RAGProvider.copy_rag('${INSTALL_DIR}/docs', 'homesetup-docs')
         RAGProvider.copy_rag('${INSTALL_DIR}/README.md', 'homesetup-docs/README.md')
       "
-      PYTHON=$(command -v python3.11 2>/dev/null)
+      PYTHON=$(command -v python3 2>/dev/null)
       export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
       export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
       export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
