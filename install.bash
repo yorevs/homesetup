@@ -1013,7 +1013,8 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # From HomeSetup 1.7+, we changed the HomeSetup config dir from $HOME/.hhs to $HOME/.config/hhs to match
     # common the standard.
-    if [[ -d "${HOME}/.config" && -d "${HOME}/.hhs" ]]; then
+    if [[ -d "${HOME}/.config" ]]; then
+      [[ -d "${HOME}/.hhs" ]] || quit 1 "Unable to find HomeSetup configuration dir: \"${HOME}/.hhs\""
       if \rsync --archive "${HOME}/.hhs" "${HOME}/.config"; then
         echo -e "\n${YELLOW}Your old ~/.hhs folder was moved to ~/.config/hhs !${NC}"
         \rm -rf "${HOME}/.hhs" &>/dev/null || echo -e \
