@@ -432,25 +432,25 @@ usage: $APP_NAME [OPTIONS] <args>
     elif has 'apt'; then
       OS_TYPE='Debian'
       OS_APP_MAN='apt'
-      DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3' 'python3-pip')
+      DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3.11' 'python3.11-pip')
       [[ -n "${INSTALL_AI}" ]] &&
-        DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio19-dev' 'libasound-dev' 'libmagic-dev')
+        DEPENDENCIES+=('ffmpeg' 'python3.11-pyaudio' 'portaudio19-dev' 'libasound-dev' 'libmagic-dev')
       install="${SUDO} apt install -y"
       check_pkg="apt list --installed | grep"
     # RedHat: Fedora, CentOS
     elif has 'dnf'; then
       OS_TYPE='RedHat'
       OS_APP_MAN='dnf'
-      DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3' 'python3-pip')
+      DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3.11' 'python3.11-pip')
       [[ -n "${INSTALL_AI}" ]] &&
-        DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev')
+        DEPENDENCIES+=('ffmpeg' 'python3.11-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev')
       install="${SUDO} yum install -y"
       check_pkg="dnf list installed | grep"
     # Alpine: Busybox
     elif has 'apk'; then
       OS_TYPE='Alpine'
       OS_APP_MAN='apk'
-      DEPENDENCIES+=('file' 'python3' 'pip3')
+      DEPENDENCIES+=('file' 'python3.11' 'pip3.11')
       unset INSTALL_AI  # AskAI is not tested on Alpine
       install="apk add --no-cache"
       check_pkg="apk list | grep"
@@ -458,7 +458,7 @@ usage: $APP_NAME [OPTIONS] <args>
     elif has 'pacman'; then
       OS_TYPE='ArchLinux'
       OS_APP_MAN='pacman'
-      DEPENDENCIES+=('sudo' 'file' 'python3' 'python3-pip')
+      DEPENDENCIES+=('sudo' 'file' 'python3.11' 'python3.11-pip')
       unset INSTALL_AI  # AskAI is not tested on ArchLinux
       install="${SUDO} pacman -Sy"
       check_pkg="pacman -Q | grep"

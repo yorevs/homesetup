@@ -7,18 +7,16 @@ USER root
 ENV SHELL='/bin/bash'
 ENV HOME='/root'
 
-RUN apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get update && \
-    apt-get install -y sudo build-essential curl procps file vim git rsync file cmake ruby ruby-dev \
-            bat fd-find fzf bsdmainutils gawk locales libpq-dev python3.11 python3-dev portaudio19-dev && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
-    gem install colorls && \
-    locale-gen "en_US.UTF-8"
-
-RUN ln -sf "$(command -v python3.11)" "$(dirname $(command -v python3.11))/python"
-RUN ln -sf "$(command -v python3.11)" "$(dirname $(command -v python3.11))/python3"
+RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa -y
+RUN apt-get update
+RUN apt-get install -y sudo build-essential curl procps file vim git rsync file cmake ruby ruby-dev bsdmainutils
+RUN apt-get install -y bat fd-find fzf gawk locales libpq-dev
+RUN apt-get install -y python3.11 python3.11-dev portaudio19-dev
+RUN gem install colorls
+RUN locale-gen "en_US.UTF-8"
+RUN ln -sf "/usr/bin/python3.11" "/usr/bin/python3"
 
 WORKDIR "${HOME}"
 
