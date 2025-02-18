@@ -33,7 +33,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
 
   # Installation log file
-  INSTALL_LOG="$(mktemp -t install-homesetup.XXXXXX).log"
+  INSTALL_LOG="/tmp/install.log"
 
   # Define USER and HOME variables
   if [[ -n "${SUDO_USER}" ]]; then
