@@ -38,7 +38,7 @@ load_bats_libs
   done
 
   [[ -f "${HOME}/.inputrc" ]] || missing+=("${HOME}/.inputrc")
-  [[ -f "${HOME}/.config/nvim/init.vim" ]] || missing+=("${HOME}/.config/nvim/init.vim")
+  [[ -f "${HHS_DIR}/nvim/init.vim" ]] || missing+=("${HHS_DIR}/nvim/init.vim")
   [[ -d "${HHS_DIR}/hunspell-dicts" ]] || missing+=("${HHS_DIR}/hunspell-dicts")
   [[ -f "${HHS_DIR}/.aliasdef" ]] || missing+=("${HHS_DIR}/.aliasdef")
   [[ -f "${HHS_DIR}/.homesetup.toml" ]] || missing+=("${HHS_DIR}/.homesetup.toml")
