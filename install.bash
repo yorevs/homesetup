@@ -125,10 +125,10 @@ usage: $APP_NAME [OPTIONS] <args>
   TIMESTAMP=$(\date "+%s%S")
 
   # Python executable
-  PYTHON3="${PYTHON3:-$(command -v python3.11)}"
+  PYTHON3="${PYTHON3:-$(command -v python3)}"
 
   # Pip executable
-  PIP3="${PIP3:-$(command -v pip3.11)}"
+  PIP3="${PIP3:-$(command -v pip3)}"
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
@@ -378,19 +378,10 @@ usage: $APP_NAME [OPTIONS] <args>
         METHOD='repair'
       fi
     fi
-
-    echo ''
-    echo -en "${WHITE}Detecting local python environment... ${NC}"
-    # Detecting system python and pip versions.
-    if [[ -z "${PYTHON3}" || -z "${PIP}" ]]; then
-      PYTHON3=$(command -v python3 2>/dev/null)
-      PIP3=$(command -v pip3 2>/dev/null)
-    fi
   }
 
   # Prompt the user for AskAI installation
   query_askai_install() {
-    PIP=$(command -v pip3 2>/dev/null)
     if [[ "$OPT" == 'all' ]] || PIP show hspylib-askai &>/dev/null; then
       INSTALL_AI=1
     elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" && -z "${HOMEBREW_INSTALLING}" ]]; then
@@ -640,8 +631,6 @@ usage: $APP_NAME [OPTIONS] <args>
   # Install all dotfiles.
   install_dotfiles() {
 
-    local dotfile is_streamed
-
     [[ -z ${STREAMED} ]] && is_streamed='No'
     [[ -z ${INSTALL_AI} ]] && is_askai='No'
     [[ -z ${HOMEBREW_INSTALLING} ]] && is_brew='No'
@@ -654,10 +643,10 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}   Install Type: ${YELLOW}${METHOD}"
     echo -e "${WHITE}         Source: ${YELLOW}${INSTALL_DIR}"
     echo -e "${WHITE}         Prefix: ${YELLOW}${PREFIX:-${PREFIX}}"
-    echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE} Configurations: ${YELLOW}${HHS_DIR}"
     echo -e "${WHITE}  PyPi Packages: ${YELLOW}${PYTHON_MODULES[*]}"
     echo -e "${WHITE}     User/Group: ${YELLOW}${USER}:${GROUP}"
+    echo -e "${WHITE}      Enable AI: ${YELLOW}${is_askai:=Yes}"
     echo -e "${WHITE}       Streamed: ${YELLOW}${is_streamed:=Yes}"
     echo -e "${WHITE}       HomeBrew: ${YELLOW}${is_brew:=Yes}"
     echo -e "${WHITE} GitHub Actions: ${YELLOW}${is_gha:=Yes}"
@@ -871,19 +860,20 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install HomeSetup python libraries
   install_hspylib() {
+    p_str="$(basename "${PYTHON3}")"
     python_version="$(${PYTHON3} -V)"
-    pip_version="$(${PIP} -V | \cut -d ' ' -f2)"
-    echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Using Python ${YELLOW}v${python_version}${WHITE} and Pip ${YELLOW}v${pip_version}${NC}"
-    echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Installing HSPyLib packages... \n"
+    pip_version="$(${PIP3} -V | \cut -d ' ' -f1,2)"
+    echo -e "\n${BLUE}[${p_str}] ${WHITE}Using ${YELLOW}v${python_version}${WHITE} and ${YELLOW}v${pip_version}${NC}"
+    echo -e "\n${BLUE}[${p_str}] ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
     printf "%s\n" "${PYTHON_MODULES[@]}" >"${pkgs}"
-    printf "${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
+    printf "${BLUE}[${p_str}] ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
     if \
-      ${PIP} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
-      ${PIP} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
+      ${PIP3} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
+      ${PIP3} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
       \rm -f  "$(mktemp)"
       echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
-      ${PIP} freeze | grep hspylib >>"${INSTALL_LOG}"
+      ${PIP3} freeze | grep hspylib >>"${INSTALL_LOG}"
     else
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     fi
