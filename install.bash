@@ -33,7 +33,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
 
   # Installation log file
-  INSTALL_LOG="/tmp/install.log"
+  INSTALL_LOG="${HOME}/install-hhs.log"
 
   # Define USER and HOME variables
   if [[ -n "${SUDO_USER}" ]]; then
@@ -865,6 +865,7 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install HomeSetup python libraries
   install_hspylib() {
+
     python3_str="${BLUE}[$(basename "${PYTHON3}")]"
     python_version="$(${PYTHON3} -V)"
     pip_version="$(${PIP3} -V | \cut -d ' ' -f1,2)"
@@ -903,7 +904,7 @@ usage: $APP_NAME [OPTIONS] <args>
       export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
       export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
       # Dedent the python code above, 6 spaces for now
-      if ${PYTHON3} -c "${copy_code//      /}" 2>&1; then
+      if ${PYTHON3} -c "${copy_code//      /}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
