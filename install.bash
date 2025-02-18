@@ -415,8 +415,6 @@ usage: $APP_NAME [OPTIONS] <args>
   # Check HomeSetup required tools
   check_required_tools() {
 
-    local pad pad_len install check_pkg
-
     [[ -n "${INSTALL_AI}" ]] && PYTHON_MODULES+=('hspylib-askai')
 
     # macOS
@@ -438,14 +436,14 @@ usage: $APP_NAME [OPTIONS] <args>
       install="${SUDO} apt install -y"
       check_pkg="apt list --installed | grep"
     # RedHat: Fedora, CentOS
-    elif has 'dnf'; then
+    elif has 'yum'; then
       OS_TYPE='RedHat'
-      OS_APP_MAN='dnf'
+      OS_APP_MAN='yum'
       DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3.11' 'python3-pip')
       [[ -n "${INSTALL_AI}" ]] &&
         DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev')
       install="${SUDO} yum install -y"
-      check_pkg="dnf list installed | grep"
+      check_pkg="yum list installed | grep"
     # Alpine: Busybox
     elif has 'apk'; then
       OS_TYPE='Alpine'
