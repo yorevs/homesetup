@@ -12,7 +12,7 @@ RUN apt-get update && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update && \
     apt-get install -y sudo build-essential curl procps file vim git rsync file cmake ruby ruby-dev \
-            bat fd-find fzf bsdmainutils gawk locales libpq-dev python3.11 && \
+            bat fd-find fzf bsdmainutils gawk locales libpq-dev python3.11 python3-dev portaudio19-dev && \
     curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
     gem install colorls && \
     locale-gen "en_US.UTF-8"
