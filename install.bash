@@ -645,6 +645,7 @@ usage: $APP_NAME [OPTIONS] <args>
     [[ -z ${STREAMED} ]] && is_streamed='No'
     [[ -z ${INSTALL_AI} ]] && is_askai='No'
     [[ -z ${HOMEBREW_INSTALLING} ]] && is_brew='No'
+    [[ -z ${GITHUB_ACTIONS} ]] && is_gha='No'
 
     echo ''
     echo -e "${WHITE}### ${GREEN}HomeSetup© ${WHITE}Installation Settings ###${NC}"
@@ -659,6 +660,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo -e "${WHITE}     User/Group: ${YELLOW}${USER}:${GROUP}"
     echo -e "${WHITE}       Streamed: ${YELLOW}${is_streamed:=Yes}"
     echo -e "${WHITE}       HomeBrew: ${YELLOW}${is_brew:=Yes}"
+    echo -e "${WHITE} GitHub Actions: ${YELLOW}${is_gha:=Yes}"
     echo -e "${NC}"
 
     if [[ "${METHOD}" == 'fresh' && -z "${QUIET}" && -z "${STREAMED}" && -z "${HOMEBREW_INSTALLING}" ]]; then
