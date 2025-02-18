@@ -51,7 +51,7 @@ fi
 
 # Defined by the installation.
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
-if [[ -f "${HOME}/.config" ]]; then
+if [[ -d "${HOME}/.config/hhs" ]]; then
   export HHS_DIR="${HOME}/.config/hhs"
 else
   export HHS_DIR="${HOME}/.hhs"
