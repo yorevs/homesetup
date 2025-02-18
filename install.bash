@@ -832,26 +832,31 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Create HomeSetup virtual environment
   create_venv() {
+    python3_str="${BLUE}[$(basename "${PYTHON3}")]"
     if [[ ! -d "${HHS_VENV_PATH}" ]]; then
-      echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Creating virtual environment... "
+      echo -en "\n${python3_str} ${WHITE}Creating virtual environment... "
 
       if \
         ${PIP3} install --upgrade --break-system-packages "virtualenv" >>"${INSTALL_LOG}" 2>&1 && \
         ${PYTHON3} -m virtualenv "${HHS_VENV_PATH}" >> "${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
-        echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
+        echo -e "\n${python3_str} ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
       else
         echo -e "${RED}FAILED${NC}"
         quit 2 "Unable to create virtual environment!"
       fi
     else
-      echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'."
+      echo -e "\n${python3_str} ${YELLOW}Virtual environment already exists at '${HHS_VENV_PATH}'."
     fi
 
     # Activate the virtual environment
-    echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Activating virtual environment... ${NC}"
+    echo -en "\n${python3_str} ${WHITE}Activating virtual environment... ${NC}"
     if source "${HHS_VENV_PATH}"/bin/activate; then
       echo -e "${GREEN}OK${NC}"
+      # Python executable from venv
+      PYTHON3="${PYTHON3:-$(command -v python3)}"
+      # Pip executable from venv
+      PIP3="${PIP3:-python3 -m pip}"
     else
       echo -e "${RED}FAILED${NC}"
       quit 2 "Unable to activate virtual environment!"
@@ -860,24 +865,49 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Install HomeSetup python libraries
   install_hspylib() {
-    p_str="$(basename "${PYTHON3}")"
+    python3_str="${BLUE}[$(basename "${PYTHON3}")]"
     python_version="$(${PYTHON3} -V)"
     pip_version="$(${PIP3} -V | \cut -d ' ' -f1,2)"
-    echo -e "\n${BLUE}[${p_str}] ${WHITE}Using ${YELLOW}v${python_version}${WHITE} and ${YELLOW}v${pip_version}${NC}"
-    echo -e "\n${BLUE}[${p_str}] ${WHITE}Installing HSPyLib packages... \n"
+    echo -e "\n${python3_str} ${WHITE}Using ${YELLOW}v${python_version}${WHITE} and ${YELLOW}v${pip_version} from ${BLUE}\"${PYTHON3}\" ${NC}"
+    echo -e "\n${python3_str} ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
     printf "%s\n" "${PYTHON_MODULES[@]}" >"${pkgs}"
-    printf "${BLUE}[${p_str}] ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
+    printf "${python3_str} ${WHITE}Module: ${YELLOW}%s${NC}\n" "${PYTHON_MODULES[@]}"
     if \
       ${PIP3} install --upgrade --break-system-packages -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1 ||
       ${PIP3} install --upgrade -r "${pkgs}" >>"${INSTALL_LOG}" 2>&1; then
       \rm -f  "$(mktemp)"
       echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
       ${PIP3} freeze | grep hspylib >>"${INSTALL_LOG}"
-      echo -e "\nInstalled ${BLUE}HSPyLib${NC} python modules:"
+      echo -e "\n${python3_str} Installed ${BLUE}HSPyLib${NC} python modules:"
       pip freeze | grep hspylib | sed 's/^/  |-/'
     else
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
+    fi
+  }
+
+  # Configure AskAI HomeSetup/RAG documents
+  configure_askai_rag() {
+
+    if [[ -n "${INSTALL_AI}" ]]; then
+      # Copy HomeSetup AskAI prompts into place.
+      echo -en "\n${python3_str} ${WHITE}Copying HomeSetup RAG docs... "
+      echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
+      copy_code="
+      from askai.core.component.rag_provider import RAGProvider
+      if __name__ == '__main__':
+        RAGProvider.copy_rag('${INSTALL_DIR}/docs', 'homesetup-docs')
+        RAGProvider.copy_rag('${INSTALL_DIR}/README.md', 'homesetup-docs/README.md')
+      "
+      export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
+      export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
+      export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
+      # Dedent the python code above, 6 spaces for now
+      if ${PYTHON3} -c "${copy_code//      /}" 2>&1; then
+        echo -e "${GREEN}OK${NC}"
+      else
+        quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
+      fi
     fi
   }
 
@@ -1066,31 +1096,6 @@ usage: $APP_NAME [OPTIONS] <args>
     else
         echo -e "${RED}FAILED${NC}"
         echo -e "${YELLOW}Ble-sh will not be available${NC}"
-    fi
-  }
-
-  # Configure AskAI HomeSetup/RAG documents
-  configure_askai_rag() {
-
-    if [[ -n "${INSTALL_AI}" ]]; then
-      # Copy HomeSetup AskAI prompts into place.
-      echo -en "\n${WHITE}Copying HomeSetup RAG docs... "
-      echo ">>> Copied HomeSetup RAG docs" >>"${INSTALL_LOG}"
-      copy_code="
-      from askai.core.component.rag_provider import RAGProvider
-      if __name__ == '__main__':
-        RAGProvider.copy_rag('${INSTALL_DIR}/docs', 'homesetup-docs')
-        RAGProvider.copy_rag('${INSTALL_DIR}/README.md', 'homesetup-docs/README.md')
-      "
-      export OPENAI_API_KEY="${OPENAI_API_KEY:-your openai api key}"
-      export GOOGLE_API_KEY="${GOOGLE_API_KEY:-your google api key}"
-      export DEEPL_API_KEY="${DEEPL_API_KEY:-your deepl api key}"
-      # Dedent the python code above, 6 spaces for now
-      if ${PYTHON3} -c "${copy_code//      /}" 2>&1; then
-        echo -e "${GREEN}OK${NC}"
-      else
-        quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
-      fi
     fi
   }
 

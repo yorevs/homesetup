@@ -74,7 +74,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PREFIX: "${{ github.workspace }}"
-      HHS_LOG_DIR: "${{ matrix.os == 'macos-latest' && '/Users/runner/.config/hhs/log' || '/home/runner/.config/hhs/log' }}"
+      HHS_LOG_DIR: "/tmp"
       LC_ALL: "${{ vars.LC_ALL }}"
       GOOGLE_API_KEY: "${{ secrets.GOOGLE_API_KEY }}"
       DEEPL_API_KEY: "${{ secrets.DEEPL_API_KEY }}"
@@ -107,7 +107,7 @@ jobs:
               echo -e "${GREEN}FAILED${NC}"
             fi
           else
-            echo "HHS_LOG_DIR=$(echo ${HOME}/install.log)" >> $GITHUB_ENV
+            echo "HHS_LOG_DIR=$(echo /tmp/install.log)" >> $GITHUB_ENV
           fi
           exit 1
       - name: Upload installation logs (success)
