@@ -381,14 +381,14 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # Prompt the user for AskAI installation
   query_askai_install() {
-    if [[ "$OPT" == 'all' ]] || PIP show hspylib-askai &>/dev/null; then
-      INSTALL_AI=1
-    elif [[ -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" && -z "${HOMEBREW_INSTALLING}" ]]; then
+    if ${PIP3} show hspylib-askai &>/dev/null; then
+      INSTALL_AI='Yes'
+    elif [[ -z "${INSTALL_AI}" && -z "${STREAMED}" && -z "${GITHUB_ACTIONS}" && -z "${HOMEBREW_INSTALLING}" ]]; then
       echo -e "${ORANGE}"
       read -rn 1 -p 'Would you like to install HomeSetup AI capabilities (y/[n])? ' ANS
       echo -e "${NC}" && [[ -n "${ANS}" ]] && echo ''
       if [[ "${ANS}" =~ ^[yY]$ ]]; then
-        INSTALL_AI=1
+        INSTALL_AI='Yes'
       fi
       unset ANS
     fi
@@ -434,7 +434,7 @@ usage: $APP_NAME [OPTIONS] <args>
       OS_APP_MAN='apt'
       DEPENDENCIES+=('sudo' 'file' 'build-essential' 'python3.11' 'python3-pip')
       [[ -n "${INSTALL_AI}" ]] &&
-        DEPENDENCIES+=('ffmpeg' 'python3.11-pyaudio' 'portaudio19-dev' 'libasound-dev' 'libmagic-dev')
+        DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio19-dev' 'libasound-dev' 'libmagic-dev')
       install="${SUDO} apt install -y"
       check_pkg="apt list --installed | grep"
     # RedHat: Fedora, CentOS
@@ -443,7 +443,7 @@ usage: $APP_NAME [OPTIONS] <args>
       OS_APP_MAN='dnf'
       DEPENDENCIES+=('sudo' 'file' 'make' 'automake' 'gcc' 'gcc-c++' 'kernel-devel' 'python3.11' 'python3-pip')
       [[ -n "${INSTALL_AI}" ]] &&
-        DEPENDENCIES+=('ffmpeg' 'python3.11-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev')
+        DEPENDENCIES+=('ffmpeg' 'python3-pyaudio' 'portaudio-devel' 'redhat-rpm-config' 'libmagic-dev')
       install="${SUDO} yum install -y"
       check_pkg="dnf list installed | grep"
     # Alpine: Busybox
