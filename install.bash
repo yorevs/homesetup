@@ -881,7 +881,7 @@ usage: $APP_NAME [OPTIONS] <args>
       echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
       ${PIP3} freeze | grep hspylib >>"${INSTALL_LOG}"
       echo -e "\n${python3_str} Installed ${BLUE}HSPyLib${NC} python modules:"
-      pip freeze | grep hspylib | sed 's/^/  |-/'
+      ${PIP3} freeze | grep hspylib | sed 's/^/  |-/'
     else
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     fi
@@ -906,6 +906,9 @@ usage: $APP_NAME [OPTIONS] <args>
       # Dedent the python code above, 6 spaces for now
       if ${PYTHON3} -c "${copy_code//      /}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
+        echo -en "\n${WHITE}Checking AI capabilities... ${CYAN}"
+        ${PYTHON3} -m askai "What is HomeSetup?" 2>&1
+        echo -e "${NC}"
       else
         quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
       fi
