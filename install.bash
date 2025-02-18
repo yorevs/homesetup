@@ -874,6 +874,8 @@ usage: $APP_NAME [OPTIONS] <args>
       \rm -f  "$(mktemp)"
       echo "Installed HSPyLib python modules:" >>"${INSTALL_LOG}"
       ${PIP3} freeze | grep hspylib >>"${INSTALL_LOG}"
+      echo -e "\nInstalled ${BLUE}HSPyLib${NC} python modules:"
+      pip freeze | grep hspylib | sed 's/^/  |-/'
     else
         quit 2 "${RED}FAILED${NC} Unable to install PyPi packages!"
     fi
