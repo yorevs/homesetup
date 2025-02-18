@@ -821,10 +821,10 @@ usage: $APP_NAME [OPTIONS] <args>
   # Configure python and HomeSetup python library
   configure_python() {
     [[ -z "${PYTHON3}" || -z "${PIP3}" ]] \
-      && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup. None has been found!"
+      && quit 2 "Python and Pip >= 3.10 <= 3.12 are required to use HomeSetup. None has been found!"
     python_version=$("${PYTHON3}" --version 2>&1 | awk '{print $2}')
-    [[ ! "${python_version}" =~ ^3\.1[01] ]] \
-      && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup! Found: ${python_version}"
+    [[ ! "${python_version}" =~ ^3\.1[012] ]] \
+      && quit 2 "Python and Pip >= 3.10 <= 3.12 are required to use HomeSetup! Found: ${python_version}"
     echo -e "${GREEN}OK${NC}"
     create_venv
     install_hspylib
