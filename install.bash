@@ -128,7 +128,7 @@ usage: $APP_NAME [OPTIONS] <args>
   PYTHON3="${PYTHON3:-$(command -v python3)}"
 
   # Pip executable
-  PIP3="${PIP3:-python3 -m pip}"
+  PIP3="${PIP3:-${PYTHON3} -m pip}"
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
@@ -174,7 +174,7 @@ usage: $APP_NAME [OPTIONS] <args>
   # @param $2 [Opt] : The exit message to be displayed.
   quit() {
 
-    log_count=10
+    log_count=15
     unset -f "${UNSETS[*]}"
     exit_code=${1:-0}
     last_log_lines="  Last ${log_count} log lines:\n$(tail -n ${log_count} "${INSTALL_LOG}" | sed '/^[[:space:]]*$/d; s/^/  => /' | nl)"
@@ -856,7 +856,7 @@ usage: $APP_NAME [OPTIONS] <args>
       # Python executable from venv
       PYTHON3="${PYTHON3:-$(command -v python3)}"
       # Pip executable from venv
-      PIP3="${PIP3:-python3 -m pip}"
+      PIP3="${PIP3:-${PYTHON3} -m pip}"
     else
       echo -e "${RED}FAILED${NC}"
       quit 2 "Unable to activate virtual environment!"
