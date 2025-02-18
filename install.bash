@@ -132,7 +132,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
   # HSPyLib python modules to install
   PYTHON_MODULES=(
-    'virtualenv'
     'hspylib'
     'hspylib-datasource'
     'hspylib-clitt'
@@ -837,7 +836,10 @@ usage: $APP_NAME [OPTIONS] <args>
   create_venv() {
     if [[ ! -d "${HHS_VENV_PATH}" ]]; then
       echo -en "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Creating virtual environment... "
-      if ${PYTHON3} -m virtualenv "${HHS_VENV_PATH}" >> "${INSTALL_LOG}" 2>&1; then
+
+      if \
+        ${PIP3} install --upgrade --break-system-packages "virtualenv" >>"${INSTALL_LOG}" 2>&1 && \
+        ${PYTHON3} -m virtualenv "${HHS_VENV_PATH}" >> "${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
         echo -e "\n${BLUE}[$(basename "${PYTHON3}")] ${WHITE}Virtual environment created -> ${CYAN}'${HHS_VENV_PATH}'."
       else
