@@ -104,8 +104,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       IMAGE_TAG: ${{ inputs.image_tag || needs.detect-version.outputs.app_version }}
-      PYTHON3: python3.11
-      PIP: pip3.11
+      PYTHON3: ${{ vars.PYTHON_VERSION }}
     steps:
       - name: Print matrix
         run: |
@@ -114,7 +113,7 @@ jobs:
           echo "- Arch: ${{ matrix.arch }}" >> $GITHUB_STEP_SUMMARY
           echo "- Image-Tag: ${{ inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- Docker-Container: ${{ matrix.container }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Python: $PYTHON3, Pip: $PIP3" >> $GITHUB_STEP_SUMMARY
+          echo "- Python: ${PYTHON3}, Pip: $(${PYTHON3} -m pip -V)" >> $GITHUB_STEP_SUMMARY
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
         with:
@@ -134,7 +133,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          platforms: "${{ inputs.platforms }}"
+          platforms: ${{ inputs.platforms }}
           context: "docker/${{ matrix.container }}"
           file: "docker/${{ matrix.container }}/Dockerfile"
           push: true

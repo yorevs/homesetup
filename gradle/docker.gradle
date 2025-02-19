@@ -3,34 +3,30 @@ task dockerBuild(type: Task) {
   group = 'Docker'
   description = "Build a docker image with HomeSetup installed"
   doLast {
-    def images = ['ubuntu', 'fedora', 'centos', 'alpine']
-    def versionOutput = new ByteArrayOutputStream()
-    def archOutput = new ByteArrayOutputStream()
-    def PYTHON3 = System.getenv('PYTHON3') ?: 'python3.11'
-    def PIP3 = System.getenv('PIP3') ?: 'pip3.11'
-    exec {
-      commandLine 'bash', '-c', "${PYTHON3} -V"
-      standardOutput = versionOutput
-      errorOutput = versionOutput
-    }
-    def versionString = versionOutput.toString().trim()
-    def matcher = (versionString =~ /Python (\d+)\.(\d+)\.(\d+)/)
+    def images = (project.findProperty('images') ?: 'ubuntu,fedora,centos,alpine').tokenize(',')
+    def versionOutput = "python3 -V".execute().text.trim()
+    def matcher = versionOutput =~ /Python (\d+)\.(\d+)\.(\d+)/
     if (!matcher.matches()) {
-      throw new GradleException("Unable to parse python version: '${versionString}'")
+      throw new GradleException("Unable to parse python version: '${versionOutput}'")
     }
+
+    def osOutput = "uname -s".execute().text.trim()
+    def archOutput = "uname -m".execute().text.trim()
     def major = matcher[0][1].toInteger()
     def minor = matcher[0][2].toInteger()
-    if (!(major == 3 && minor >= 10 && minor <= 11)) {
-      throw new GradleException("Python version must be >= 3.10 and <= 3.11, found: ${versionString}")
+    def pythonVersion = matcher ? "${major}.${minor}" : '3.11'
+    def PYTHON3 = System.getenv('PYTHON3') ?: "${pythonVersion}"
+    def PIP3 = System.getenv('PIP3') ?: "python3 -m pip -V".execute().text.trim()
+
+    if (!(major == 3 && minor >= 10 && minor <= 12)) {
+      throw new GradleException("Python version must be >= 3.10 and <= 3.12, found: ${versionString}")
     }
-    exec {
-      commandLine 'uname', '-m'
-      standardOutput = archOutput
-      errorOutput = archOutput
-    }
-    println("Building docker images...")
-    println("Python: ${PYTHON3}  Pip: ${PIP3}")
+
+    println("Building docker images: ${images.flatten().toString()} ...")
+    println("OS: ${osOutput}")
     println("Arch: ${archOutput}")
+    println("Python: ${PYTHON3}  ${PIP3}")
+
     exec {
       commandLine "${project.rootDir}/bin/apps/bash/docker-build.bash", *images
     }
