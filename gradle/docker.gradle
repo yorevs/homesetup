@@ -4,17 +4,18 @@ task dockerBuild(type: Task) {
   description = "Build a docker image with HomeSetup installed"
   doLast {
     def images = (project.findProperty('images') ?: 'ubuntu,fedora,centos,alpine').tokenize(',')
+    def osOutput = "uname -s".execute().text.trim()
+    def archOutput = "uname -m".execute().text.trim()
     def versionOutput = "python3 -V".execute().text.trim()
     def matcher = versionOutput =~ /Python (\d+)\.(\d+)\.(\d+)/
     if (!matcher.matches()) {
       throw new GradleException("Unable to parse python version: '${versionOutput}'")
     }
 
-    def osOutput = "uname -s".execute().text.trim()
-    def archOutput = "uname -m".execute().text.trim()
     def major = matcher[0][1].toInteger()
     def minor = matcher[0][2].toInteger()
     def pythonVersion = matcher ? "${major}.${minor}" : '3.11'
+
     def PYTHON3 = System.getenv('PYTHON3') ?: "${pythonVersion}"
     def PIP3 = System.getenv('PIP3') ?: "python3 -m pip -V".execute().text.trim()
 

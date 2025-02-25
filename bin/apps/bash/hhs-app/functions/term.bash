@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  Script: term.bash
-# Purpose: Contains all extra HHS-App functions
+# Purpose: Contains HHS-App terminal related functions.
 # Created: Apr 29, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: taius.hhs@gmail.com

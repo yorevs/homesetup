@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  Script: built-ins.bash
-# Purpose: Contains all HHS-App built-in functions
+# Purpose: Contains HHS-App built-in functions.
 # Created: Jan 06, 2020
 #  Author: <B>H</B>ugo <B>S</B>aporetti <B>J</B>unior
 #  Mailto: taius.hhs@gmail.com

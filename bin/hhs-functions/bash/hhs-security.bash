@@ -74,3 +74,65 @@ if __hhs_has 'gpg' && __hhs_has 'base64'; then
   }
 
 fi
+
+# @purpose: Generate a strong password using SHA-256
+# @param $1 [Req] : Password length (default 15)
+# @param $2 [Req] : Password type (1..4 default 4)
+function __hhs_pwgen() {
+    local hash charset index length=15 type=4 password
+    local letters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    local numbers="0123456789"
+    local alphanum="${letters}${numbers}"
+    local printable="!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz{|}~"
+
+    local usage="
+usage: ${FUNCNAME[0]} -l <password_length> -t <password_type>
+
+    Options:
+      -l, --length <number>     : Length of the password (Required) - default 15
+      -t, --type <1|2|3|4>      : Password type (Required)
+                                   1 → Letters (A-Z, a-z)
+                                   2 → Numbers (0-9)
+                                   3 → Alphanumeric (A-Z, a-z, 0-9)
+                                   4 → Printable characters (!-~) - default
+      -h, --help                : Show this help message and exit"
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -l|--length) shift; length="$1" ;;
+            -t|--type) shift; type="$1" ;;
+            -h|--help) quit 0 "${usage}" ;;
+            *) quit 1 "Unknown option: $1 \n${usage}" ;;
+        esac
+        shift
+    done
+
+    if [[ -z "${length}" || -z "${type}" ]]; then
+        quit 1 "Missing required arguments. \n${usage}"
+    fi
+    if ! [[ "${length}" =~ ^[0-9]+$ ]]; then
+        quit 1 "Password length must be a positive integer. \n${usage}"
+    fi
+    if ! [[ "${type}" =~ ^[1-4]$ ]]; then
+        quit 1 "Password type must be between [1..4]. \n${usage}"
+    fi
+
+    # Generate a SHA-256 hash from random data
+    hash=$(date +%s%N | shasum -a 256 | awk '{print $1}')
+
+    case "${type}" in
+        1) charset="${letters}" ;;
+        2) charset="${numbers}" ;;
+        3) charset="${alphanum}" ;;
+        4) charset="${printable}" ;;
+        *) quit 1 "Invalid password type. Use -h for help."; ;;
+    esac
+
+    # Convert hash to usable characters
+    for ((i=0; i<length; i++)); do
+        index=$(( 16#${hash:i:2} % ${#charset} ))
+        password+="${charset:index:1}"
+    done
+
+    echo "${password}"
+}
