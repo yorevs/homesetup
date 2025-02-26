@@ -279,6 +279,8 @@ if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]] && __hhs_is_venv; then
   else
     __hhs_log "ERROR" "Failed to load system settings !"
   fi
+else
+  __hhs_log "WARN" "System settings skipped !"
 fi
 
 # Load bash completions.
