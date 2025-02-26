@@ -79,83 +79,98 @@ fi
 # @param $1 [Req] : Password length (default 15)
 # @param $2 [Req] : Password type (1..4 default 4)
 function __hhs_pwgen() {
-    local hash charset index length=15 type=4 password rand_index num_letters num_symbols
-    local letters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local numbers="0123456789"
-    local alphanum="${letters}${numbers}"
-    local symbols="!@#\$%^&*()-_=+[]{}<>?/"
+  local hash charset index length=15 type=4 password rand_index num_letters num_symbols
+  local letters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  local numbers="0123456789"
+  local alphanum="${letters}${numbers}"
+  local symbols="!@#\$%^&*()-_=+[]{}<>?/"
 
-    local usage="
+  local usage="
 usage: ${FUNCNAME[0]} [-l <password_length>] [-t <password_type>]
 
     Options:
-      -l, --length <number>     : Length of the password - default 15
-      -t, --type <1|2|3|4>      : Password type
-                                   1 → Letters (A-Z, a-z)
-                                   2 → Numbers (0-9)
-                                   3 → Alphanumeric (A-Z, a-z, 0-9)
-                                   4 → Mixed with at least 70% letters/numbers and 30% symbols - default
+      -l, --length <number>     : Length of the password → default is 15
+      -t, --type <1|2|3|4>      : Password type:
+                                   1 - Letters (A-Z, a-z)
+                                   2 - Numbers (0-9)
+                                   3 - Alphanumeric (A-Z, a-z, 0-9)
+                                   4 - Strong. Mixed with 70% letters/numbers and 30% symbols → default
       -h, --help                : Show this help message and exit"
 
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -l|--length) shift; length="$1" ;;
-            -t|--type) shift; type="$1" ;;
-            -h|--help) quit 0 "${usage}" ;;
-            *) quit 1 "Unknown option: $1 \n${usage}" ;;
-        esac
-        shift
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -l | --length)
+      shift
+      length="$1"
+      ;;
+    -t | --type)
+      shift
+      type="$1"
+      ;;
+    -h | --help) quit 0 "${usage}" ;;
+    *) quit 1 "Unknown option: $1 \n${usage}" ;;
+    esac
+    shift
+  done
+
+  if [[ -z "${length}" || -z "${type}" ]]; then
+    __hhs_errcho "${FUNCNAME[0]}" "Missing required arguments. \n${usage}"
+    return 1
+  elif ! [[ "${length}" =~ ^[0-9]+$ ]]; then
+    __hhs_errcho "${FUNCNAME[0]}" "Password length must be a positive integer. \n${usage}"
+    return 1
+  elif ! [[ "${type}" =~ ^[1-4]$ ]]; then
+    __hhs_errcho "${FUNCNAME[0]}" "Password type must be between [1..4]. \n${usage}"
+    return 1
+  fi
+
+  # Generate a SHA-256 hash from random data
+  hash=$(date +%s%N | shasum -a 256 | awk '{print $1}')
+
+  case "${type}" in
+  1) charset="${letters}" ;;
+  2) charset="${numbers}" ;;
+  3) charset="${alphanum}" ;;
+  4)
+    num_letters=$((length * 70 / 100))    # 70% letters/numbers
+    num_symbols=$((length - num_letters)) # 30% symbols
+
+    # Generate 70% alphanumeric characters
+    for ((i = 0; i < num_letters; i++)); do
+      rand_index=$((16#${hash:index:2} % ${#alphanum}))
+      password+="${alphanum:rand_index:1}"
+      index=$((index + 2))
     done
 
-    if [[ -z "${length}" || -z "${type}" ]]; then
-        quit 1 "Missing required arguments. \n${usage}"
-    fi
-    if ! [[ "${length}" =~ ^[0-9]+$ ]]; then
-        quit 1 "Password length must be a positive integer. \n${usage}"
-    fi
-    if ! [[ "${type}" =~ ^[1-4]$ ]]; then
-        quit 1 "Password type must be between [1..4]. \n${usage}"
-    fi
+    # Generate 30% symbols
+    for ((i = 0; i < num_symbols; i++)); do
+      rand_index=$((16#${hash:index:2} % ${#symbols}))
+      password+="${symbols:rand_index:1}"
+      index=$((index + 2))
+    done
 
-    # Generate a SHA-256 hash from random data
-    hash=$(date +%s%N | shasum -a 256 | awk '{print $1}')
+    # Shuffle the password to mix letters and symbols
+    password=$(echo "${password}" | awk 'BEGIN{srand()} {for(i=1;i<=length($0);i++) a[i]=substr($0,i,1);} END{for(i=length($0);i>0;i--) {j=int(rand()*i)+1; printf "%s", a[j]; a[j]=a[i];}}')
+    ;;
+  *)
+    __hhs_errcho "${FUNCNAME[0]}" "Invalid password type. Use -h for help."
+    return 1
+    ;;
+  esac
 
-    case "${type}" in
-        1) charset="${letters}" ;;
-        2) charset="${numbers}" ;;
-        3) charset="${alphanum}" ;;
-        4)
-            num_letters=$(( length * 70 / 100 ))  # 70% letters/numbers
-            num_symbols=$(( length - num_letters ))  # 30% symbols
+  if [[ -z "${password}" ]]; then
+    # Convert hash to usable characters
+    for ((i = 0; i < length; i++)); do
+      index=$((16#${hash:i:2} % ${#charset}))
+      password+="${charset:index:1}"
+    done
+  fi
 
-            # Generate 70% alphanumeric characters
-            for ((i=0; i<num_letters; i++)); do
-                rand_index=$(( 16#${hash:index:2} % ${#alphanum} ))
-                password+="${alphanum:rand_index:1}"
-                index=$(( index + 2 ))
-            done
-
-            # Generate 30% symbols
-            for ((i=0; i<num_symbols; i++)); do
-                rand_index=$(( 16#${hash:index:2} % ${#symbols} ))
-                password+="${symbols:rand_index:1}"
-                index=$(( index + 2 ))
-            done
-
-            # Shuffle the password to mix letters and symbols
-            password=$(echo "${password}" | awk 'BEGIN{srand()} {for(i=1;i<=length($0);i++) a[i]=substr($0,i,1);} END{for(i=length($0);i>0;i--) {j=int(rand()*i)+1; printf "%s", a[j]; a[j]=a[i];}}')
-            ;;
-        *) quit 1 "Invalid password type. Use -h for help."; ;;
-    esac
-
-    if [[ -z "${password}" ]]; then
-      # Convert hash to usable characters
-      for ((i=0; i<length; i++)); do
-          index=$(( 16#${hash:i:2} % ${#charset} ))
-          password+="${charset:index:1}"
-      done
-    fi
-
-    echo "${password}"
+  if [[ -n "${password}" ]]; then
+    echo -n "${password}" | __hhs_clipboard
+    echo -e "${GREEN}Password copied to the clipboard!${NC}"
     return 0
+  fi
+
+  return 1
 }

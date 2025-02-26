@@ -58,7 +58,7 @@ function __hhs_has_module() {
 
   if [[ $# -eq 0 || '-h' == "$1" ]]; then
     echo "usage: ${FUNCNAME[0]} <python module/package>"
-  return 1
+    return 1
   fi
 
   pip show "${module}" &>/dev/null
@@ -98,17 +98,17 @@ function __hhs_log() {
   fi
 
   case "${level}" in
-    'INFO' | 'WARN' | 'ERROR' | 'ALL')
+  'INFO' | 'WARN' | 'ERROR' | 'ALL')
+    printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
+    ;;
+  'DEBUG')
+    [[ "${HHS_VERBOSE_LOGS}" -eq 1 ]] &&
       printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
-      ;;
-    'DEBUG')
-      [[ "${HHS_VERBOSE_LOGS}" -eq 1 ]] && \
-         printf "%s %5.5s  %s\n" "$(date +'%m-%d-%y %H:%M:%S ')" "${level}" "${message}" >>"${HHS_LOG_FILE}"
-      ;;
-    *)
-      echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
-      return 1
-      ;;
+    ;;
+  *)
+    echo "${FUNCNAME[0]}: invalid log level \"${level}\" !" 2>&1
+    return 1
+    ;;
   esac
 
   return 0
@@ -185,12 +185,12 @@ if ! __hhs_has 'ised'; then
   # @param $1..$N [Req] : Sed parameters.
   function ised() {
     case "${HHS_MY_OS}" in
-      Darwin)
-        sed -i '' -E "${@}"
-        ;;
-      Linux)
-        sed -i'' -r "${@}"
-        ;;
+    Darwin)
+      sed -i '' -E "${@}"
+      ;;
+    Linux)
+      sed -i'' -r "${@}"
+      ;;
     esac
 
     return $?
@@ -204,12 +204,12 @@ if ! __hhs_has 'esed'; then
   # @param $1..$N [Req] : Sed parameters.
   function esed() {
     case "${HHS_MY_OS}" in
-      Darwin)
-        sed -E "${@}"
-        ;;
-      Linux)
-        sed -r "${@}"
-        ;;
+    Darwin)
+      sed -E "${@}"
+      ;;
+    Linux)
+      sed -r "${@}"
+      ;;
     esac
 
     return $?
@@ -224,10 +224,10 @@ function trim() {
   file=${1:-/dev/stdin}
   if [[ "${file}" == '/dev/stdin' ]]; then
     while read -r stream; do
-      echo "${stream}" | esed -E 's/^[[:blank:]]*|[[:blank:]]*$//g'
+      echo -n "${stream}" | esed 's/^[[:blank:]]*|[[:blank:]]*$//g'
     done <"${file}"
   else
-    esed -E 's/^[[:blank:]]*|[[:blank:]]*$//g' "${file}"
+    esed 's/^[[:blank:]]*|[[:blank:]]*$//g' "${file}"
   fi
 
   return 0
@@ -237,7 +237,33 @@ function trim() {
 # @param $1 [Req] : The list to check against.
 # @param $2 [Req] : The string to be checked.
 function list_contains() {
+  [[ -z "${1}" || -z "${2}" ]] && return 1
   [[ ${1} =~ (^|[[:space:]])${2}($|[[:space:]]) ]] && return 0
 
   return 1
+}
+
+function __hhs_clean_escapes() {
+  sed -E 's/\x1b(\[[0-9;]*[a-zA-Z]|\([a-zA-Z])//g'
+}
+
+# @purpose: Copy text to clipboard in a cross-platform manner (macOS & Linux).
+function __hhs_clipboard() {
+  local cb_copy
+
+  if command -v pbcopy >/dev/null 2>&1; then
+    cb_copy='pbcopy'
+  elif command -v xclip >/dev/null 2>&1; then
+    cb_copy='xclip -selection clipboard'
+  elif command -v xsel >/dev/null 2>&1; then
+    cb_copy='xsel --clipboard --input'
+  elif command -v wl-copy >/dev/null 2>&1; then
+    cb_copy='wl-copy'
+  else
+    __hhs_errcho "${FUNCNAME[0]}" "Clipboard copy not supported. Install xclip, xsel, or wl-copy."
+    return 1
+  fi
+  ${cb_copy}
+
+  return 0
 }

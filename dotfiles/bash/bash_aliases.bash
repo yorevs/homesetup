@@ -296,18 +296,10 @@ if __hhs_is_venv; then
   fi
 fi
 
-# -----------------------------------------------------------------------------------
-# @category: Perl aliases
-
-if __hhs_has "perl"; then
-
-  # @alias: Remove escape (\EscXX) codes from text
-  alias clean_escapes="perl -pe 's/\x1b((\[[0-9;]*[a-zA-Z])|(\([a-zA-Z]))*//g'"
-  if __hhs_has "pbcopy"; then
-    # @alias: Copy to clipboard removing any escape sequences. pbcopy is required
-    alias clipboard="clean_escapes | pbcopy"
-  fi
-fi
+# @alias: Remove escape (\EscXX) codes from text
+alias clean_escapes="__hhs_clean_escapes"
+# @alias: Copy to clipboard removing any escape sequences
+alias clipboard="__hhs_clean_escapes | __hhs_clipboard"
 
 # -----------------------------------------------------------------------------------
 # @category: Git aliases
