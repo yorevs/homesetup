@@ -11,7 +11,6 @@
 #
 # Copyright (c) 2025, HomeSetup team
 
-
 # Current Version
 VERSION="1.0.0"
 
@@ -49,22 +48,25 @@ parse_args() {
   # Short opts: -<C>, Long opts: --<Word>.
   while [[ ${#} -gt 0 ]]; do
     case "${1}" in
-      -h | --help)
-        echo "${USAGE}" && exit 0
-        ;;
-      -v | --version)
-        echo "$(basename "$0") v${VERSION}" && exit 0
-        ;;
-      -s | --script)
-        [[ -z "${2}" ]] && { echo -e "${RED}Script path must be specified!${NC}\n\n${USAGE}"; exit 1; }
-        SCRIPT="${2}"
-        shift
-        ;;
+    -h | --help)
+      echo "${USAGE}" && exit 0
+      ;;
+    -v | --version)
+      echo "$(basename "$0") v${VERSION}" && exit 0
+      ;;
+    -s | --script)
+      [[ -z "${2}" ]] && {
+        echo -e "${RED}Script path must be specified!${NC}\n\n${USAGE}"
+        exit 1
+      }
+      SCRIPT="${2}"
+      shift
+      ;;
 
-      *)
-        echo -e "${RED}## Invalid option: '${1}' ${NC}"
-        break
-        ;;
+    *)
+      echo -e "${RED}## Invalid option: '${1}' ${NC}"
+      break
+      ;;
     esac
     shift
   done
@@ -78,8 +80,8 @@ generate_man_data() {
   local script_file="$1"
 
   if [[ ! -f "$script_file" ]]; then
-      echo "Error: File '$script_file' does not exist."
-      return 1
+    echo "Error: File '$script_file' does not exist."
+    return 1
   fi
 
   # Extract header comments (lines starting with #)
@@ -93,32 +95,32 @@ generate_man_data() {
     clean_line="${clean_line//# /}"
 
     case "${clean_line//# /}" in
-      Script:*)
-        SCRIPT_NAME="$(echo "$clean_line" | awk -F': ' '{print $2}')"
-        SCRIPT="${SCRIPT_NAME##*/}"
-        TITLE="${SCRIPT%.*}"
-        ;;
-      Purpose:*)
-        PURPOSE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
-        ;;
-      Created:*)
-        CREATED_DATE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
-        TODAY="$CREATED_DATE"
-        ;;
-      Author:*)
-        AUTHOR_INFO="$(echo "$clean_line" | awk -F': ' '{print $2}')"
-        ;;
-      Mailto:*)
-        MAILTO="$(echo "$clean_line" | awk -F': ' '{print $2}')"
-        ;;
-      Site:*)
-        SITE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
-        ;;
-      *)
-        # You can handle additional fields here if needed
-        ;;
+    Script:*)
+      SCRIPT_NAME="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+      SCRIPT="${SCRIPT_NAME##*/}"
+      TITLE="${SCRIPT%.*}"
+      ;;
+    Purpose:*)
+      PURPOSE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+      ;;
+    Created:*)
+      CREATED_DATE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+      TODAY="$CREATED_DATE"
+      ;;
+    Author:*)
+      AUTHOR_INFO="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+      ;;
+    Mailto:*)
+      MAILTO="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+      ;;
+    Site:*)
+      SITE="$(echo "$clean_line" | awk -F': ' '{print $2}')"
+      ;;
+    *)
+      # You can handle additional fields here if needed
+      ;;
     esac
-  done < "$script_file"
+  done <"$script_file"
 
   # Combine CONTACT_INFO from Mailto and Site
   CONTACT_INFO=()
@@ -130,7 +132,7 @@ generate_man_data() {
   VERSION_LINE="$(grep -E '^VERSION=' "$script_file" | head -n1)"
   if [[ -n "$VERSION_LINE" ]]; then
     VERSION="${VERSION_LINE#VERSION=}"
-    VERSION="${VERSION//\"/}"  # Remove quotes if any
+    VERSION="${VERSION//\"/}" # Remove quotes if any
   fi
 
   # Populate MAN_DATA
@@ -160,16 +162,19 @@ parse_args "${@}"
 # Extract variables from the script file
 SCRIPT="${SCRIPT:-MyScript}"
 MAN_DIR="${TEMP:-/tmp}/${SCRIPT//\.*/}.8"
-mkdir -p "${MAN_DIR}" || { echo -e "${RED}Unable to create man dir: ${MAN_DIR}!${NC}"; exit 1; }
+mkdir -p "${MAN_DIR}" || {
+  echo -e "${RED}Unable to create man dir: ${MAN_DIR}!${NC}"
+  exit 1
+}
 MAN_FILE="${MAN_DIR}/$(basename "${SCRIPT//\.*/}")"
 
 generate_man_data "${SCRIPT}"
 
-OLD_IFS="${IFS}"
+OLDIFS="${IFS}"
 while IFS=$'\n' read -r line; do
   echo -e "${line}"
-done <<< "${MAN_DATA#?? }" > "${MAN_FILE}"
-IFS="${OLD_IFS}"
+done <<<"${MAN_DATA#?? }" >"${MAN_FILE}"
+IFS="${OLDIFS}"
 
 echo -e "${GREEN}Man page created at at: ${MAN_FILE}${NC}"
 man "${MAN_FILE}"

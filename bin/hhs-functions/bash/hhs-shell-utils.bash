@@ -34,33 +34,50 @@ function __hhs_history() {
 # @param $1 [Opt] : Limit to the top N commands.
 function __hhs_hist_stats() {
 
-  local top_n=${1:-10} i=1 width=30 cmd_name cmd_qty
+  local top_n=${1:-10} width=${2:-30} i=1 cmd_name cmd_qty hist_output bar_len bar columns pad_len pad
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} [top_N]"
     return 1
   fi
 
+  hist_output="$(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr)"
+
+  columns=$(tput cols)
   pad=$(printf '%0.1s' "."{1..41})
   pad_len=41
-  max_size=$(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $1}')
+  max_size=$(echo "${hist_output}" | head -n 1 | awk '{print $1}')
 
   echo ' '
   echo "${YELLOW}Top ${top_n} used commands in history:"
   echo ' '
 
-  hist_output="$(history | tr -s ' ' | cut -d ' ' -f6 | sort | uniq -c | sort -nr | head -n "${top_n}")"
+  hist_output="$(echo "${hist_output}" | head -n "${top_n}")"
 
   echo "${hist_output}" | while read -r line; do
-    if [[ ${line} =~ ^[[:space:]]*([0-9]+)[[:space:]]*([a-zA-Z0-9]+)$ ]]; then
+    if [[ "${line}" =~ ^[[:space:]]*([0-9]+)[[:space:]]*([a-zA-Z0-9]+)$ ]]; then
+
       cmd_qty="${BASH_REMATCH[1]}"
       cmd_name="${BASH_REMATCH[2]}"
-      bar_len=$(( cmd_qty * width / max_size ))
-      bar=$(printf '▄%.0s' $(seq 1 "${bar_len}"))
+      cmd_name="${cmd_name:0:$columns}"
+
+      bar_len=$(((cmd_qty * width) / max_size))
+      [[ $bar_len -gt 0 && $bar_len -lt 2 ]] && bar_len=2
+
+      if __hhs_has seq; then
+        bar=$(printf '▄%.0s' $(seq 1 "${bar_len}"))
+      elif __hhs_has jot; then
+        bar=$(printf '▄%.0s' "$(jot - 1 "${bar_len}")")
+      else
+        __hhs_errcho "${FUNCNAME[0]}" "Neither seq nor jot is available."
+        return 1
+      fi
+
       printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} " "${i}"
-      printf "%s" "${cmd_name} "
+      printf "%s " "${cmd_name}"
+      [[ "${#cmd_name}" -ge "${columns}" ]] && echo -en "${NC}" || echo -en "${NC}"
       printf '%*.*s' 0 $((pad_len - ${#cmd_name})) "${pad}"
-      printf "${GREEN}%3d ${ORANGE}|%s\n" " ${cmd_qty}" "${bar}"
+      printf "${GREEN}%3d ${ORANGE}|%s\n" "${cmd_qty}" "${bar}"
       ((i += 1))
     fi
   done
@@ -74,34 +91,46 @@ function __hhs_hist_stats() {
 # @function: Display the current dir (pwd) and remote repo url, if it applies.
 # @param $1 [Req] : The command to get help.
 function __hhs_where_am_i() {
-
-  local pad_len=24 last_commit sha commit_msg repo_url branch_name metrics
+  local pad_len=24 last_commit sha commit_msg repo_url branch_name metrics current_dir
+  local os
+  os="$(uname)"
 
   if [[ -n "$1" ]] && __hhs_has "$1"; then
-    __hhs_has 'tldr' && { tldr "$1"; return $?; }
+    __hhs_has 'tldr' && {
+      tldr "$1"
+      return $?
+    }
     __hhs help "$1" && return $?
   fi
 
-  echo ' '
-  echo "${YELLOW}You are here:${NC}"
-  echo ' '
+  echo " "
+  echo "${YELLOW}-=- You are here -=-${NC}"
+  echo " "
 
-  [[ ${HHS_PYTHON_VENV_ACTIVE:-0} -eq 1 ]] &&
-    printf "${GREEN}%${pad_len}s ${CYAN}%s ${WHITE}%s\n${NC}" "Virtual Environment:" "$(python -V)" "=> ${HHS_VENV_PATH}"
-  printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Current directory:" "$(pwd -LP)"
+  if [[ ${HHS_PYTHON_VENV_ACTIVE:-0} -eq 1 ]]; then
+    printf "${WHITE}%${pad_len}s ${HHS_HIGHLIGHT_COLOR}%s %s\n${NC}" \
+      "Virtual Environment:" "$(python -V 2>&1)" "=>${BLUE} ${HHS_VENV_PATH}"
+  fi
 
-  if __hhs_has git && git rev-parse --is-inside-work-tree &> /dev/null; then
+  if [[ "$os" == "Darwin" ]]; then
+    current_dir=$(pwd -P)
+  else
+    current_dir=$(pwd -LP)
+  fi
+  printf "${WHITE}%${pad_len}s ${HHS_HIGHLIGHT_COLOR}%s\n${NC}" "Current directory:" "${current_dir}"
+
+  if __hhs_has git && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     repo_url="$(git remote -v | head -n 1 | awk '{print $2}')"
-    printf "${GREEN}%${pad_len}s ${WHITE}%s\n${NC}" "Remote repository:" "${repo_url}"
+    printf "${WHITE}%${pad_len}s ${HHS_HIGHLIGHT_COLOR}%s\n${NC}" "Remote repository:" "${repo_url}"
     last_commit=$(git log --oneline -n 1)
     sha="$(echo "${last_commit}" | awk '{print $1}')"
-    commit_msg=$(echo "${last_commit}" | cut -d' ' -f2-)
-    branch_name=$(git rev-parse --abbrev-ref HEAD)
-    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s ${WHITE}%s\n${NC}" "Last commit sha:" "${sha}" "${commit_msg}"
-    printf "${GREEN}%${pad_len}s ${CYAN}%${#branch_name}s${NC}" "Branch:" "${branch_name} "
+    commit_msg="$(echo "${last_commit}" | cut -d' ' -f2-)"
+    branch_name="$(git rev-parse --abbrev-ref HEAD)"
+    printf "${WHITE}%${pad_len}s ${HHS_HIGHLIGHT_COLOR}%s %s\n${NC}" "Last commit sha:" "${sha}" "${commit_msg}"
+    printf "${WHITE}%${pad_len}s ${HHS_HIGHLIGHT_COLOR}%s" "Branch:" " ${branch_name}"
     metrics=$(git diff --shortstat)
-    [[ -n "${metrics}" ]] && echo -e "${WHITE}${metrics}${NC}"
-    echo ''
+    [[ -n "${metrics}" ]] && echo -e " =>${BLUE}${metrics}${NC}"
+    echo ""
   fi
 
   return 0
@@ -115,7 +144,7 @@ function __hhs_shell_select() {
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} "
   else
-    read -d '' -r -a avail_shells <<< "$(grep '/.*' '/etc/shells')"
+    read -d '' -r -a avail_shells <<<"$(grep '/.*' '/etc/shells')"
     if __hhs_has brew; then
       echo "${BLUE}Checking: HomeBrew's shells...${NC}"
       for next_sh in "${avail_shells[@]}"; do
@@ -145,14 +174,13 @@ function __hhs_shell_select() {
   return ${ret_val}
 }
 
-
 # @function: Display/Set/unset current Shell Options.
 # @param $1 [Req] : Same as shopt, ref: https://ss64.com/bash/shopt.html
 function __hhs_shopt() {
 
   local shell_options option enable color
 
-  enable=$(tr '[:upper:]' '[:lower:]' <<< "${1}")
+  enable=$(tr '[:upper:]' '[:lower:]' <<<"${1}")
   option="${2}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
@@ -193,7 +221,10 @@ function __hhs_shopt() {
       read -r option enable < <(\shopt "${option}" | awk '{print $1, $2}')
       [[ 'off' == "${enable}" ]] && color="${RED}"
       __hhs_toml_set "${HHS_SHOPTS_FILE}" "${option}=${enable}" &&
-        { echo -e "${WHITE}Shell option ${CYAN}${option}${WHITE} set to ${color:-${GREEN}}${enable} ${NC}"; return 0; }
+        {
+          echo -e "${WHITE}Shell option ${CYAN}${option}${WHITE} set to ${color:-${GREEN}}${enable} ${NC}"
+          return 0
+        }
     fi
   else
     \shopt "${@}" 2>/dev/null && return 0
@@ -204,19 +235,21 @@ function __hhs_shopt() {
   return 1
 }
 
-
 # @function: Display 'du' output formatted as a horizontal bar chart.
 # @param $1 [Opt] : Directory path (default: current directory)
 # @param $2 [Opt] : Number of top entries to display (default: 10)
 function __hhs_du() {
-  local dir="${1:-.}" i=1 top_n="${2:-10}" width=30 max_size
+  local dir="${1:-.}" i=1 top_n=${2:-10} width=${3:-30} max_size du_output columns pad_len pad bar_len bar path
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     echo "usage: ${FUNCNAME[0]} [path] [top_N]"
     return 1
   fi
 
-  [[ ! -d "${dir}" ]] && { __hhs_errcho  "${FUNCNAME[0]}" "Directory not found: \"${dir}\""; return 1; }
+  [[ ! -d "${dir}" ]] && {
+    __hhs_errcho "${FUNCNAME[0]}" "Directory not found: \"${dir}\""
+    return 1
+  }
 
   if [[ "$(uname -s)" == "Darwin" ]]; then
     du_output="$(\du -hkd 1 "${dir}" 2>/dev/null | sort -rn | head -n "$((top_n + 1))")"
@@ -224,29 +257,49 @@ function __hhs_du() {
     du_output="$(\du -hk --max-depth=1 "${dir}" 2>/dev/null | sort -rn | head -n "$((top_n + 1))")"
   fi
 
-  max_size=$(echo "${du_output}" | awk 'NR==1 {print $1}')
+  columns=$(tput cols)
   pad_len=60
   pad=$(printf '%0.1s' "."{1..60})
-  columns=66
+  max_size=$(echo "${du_output}" | awk '{print $1}' | sort -n | awk '{
+  a[NR]=$1
+  } END {
+    idx = int(NR * 0.9)
+    if (idx < 1) idx = 1
+    print a[idx]
+  }')
 
   echo ' '
   echo "${YELLOW}Top ${top_n} disk usage at: ${BLUE}\"${dir//\./$(pwd)}\""
   echo ' '
 
-  echo "${du_output}" | while read -r size path; do
+  while read -r size path; do
+    size=$(echo "${size}" | tr -d '[:space:]')
     [[ -z "${size}" || -z "${path}" || "${path}" == '.' || "${path}" == 'total' ]] && continue
-    bar_len=$(( size * width / max_size ))
-    bar=$(printf '▄%.0s' $(seq 1 "${bar_len}"))
+    bar_len=$(((size * width) / max_size))
+    [[ $bar_len -gt 0 && $bar_len -lt 2 ]] && bar_len=2
+
+    if [[ $bar_len -gt 0 ]]; then
+      if __hhs_has seq; then
+        bar=$(printf '▄%.0s' $(seq 1 "${bar_len}"))
+      elif __hhs_has jot; then
+        bar=$(printf '▄%.0s' "$(jot - 1 "${bar_len}")")
+      else
+        __hhs_errcho "${FUNCNAME[0]}" "Neither seq nor jot is available."
+        return 1
+      fi
+    fi
+
     path="${path//\.\//}"
     path="${path//\/\//\/}"
     path="${path:0:$columns}"
+
     printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} " "${i}"
     printf "%s" "${path}"
     printf '%*.*s' 0 $((pad_len - ${#path})) "${pad}"
     [[ "${#path}" -ge "${columns}" ]] && echo -en "${NC}" || echo -en "${NC}"
-    printf "${GREEN}%$((${#max_size} + 1))d KB ${ORANGE}|%s\n" " ${size}" "${bar}"
+    printf "${GREEN}%$((${#max_size} + 1))d KB ${ORANGE}|%s \n" " ${size}" "${bar}"
     ((i += 1))
-  done
+  done <<<"${du_output}"
 
   echo ''
   echo "${WHITE}Total: ${ORANGE}$(\du -hc "${dir}" | grep total | cut -f1)"
