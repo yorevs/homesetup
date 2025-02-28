@@ -125,7 +125,7 @@ usage: $APP_NAME [OPTIONS] <args>
   TIMESTAMP=$(\date "+%s%S")
 
   # Python executable
-  PYTHON3="${PYTHON3:-$(command -v python3)}"
+  PYTHON3="${PYTHON3:-$(command -v python3.11)}"
 
   # Pip executable
   PIP3="${PIP3:-${PYTHON3} -m pip}"
@@ -821,10 +821,10 @@ usage: $APP_NAME [OPTIONS] <args>
   # Configure python and HomeSetup python library
   configure_python() {
     [[ -z "${PYTHON3}" || -z "${PIP3}" ]] \
-      && quit 2 "Python and Pip >= 3.10 <= 3.13 are required to use HomeSetup. None has been found!"
+      && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup. None has been found!"
     python_version=$("${PYTHON3}" --version 2>&1 | awk '{print $2}')
-    [[ ! "${python_version}" =~ ^3\.1[0123] ]] \
-      && quit 2 "Python and Pip >= 3.10 <= 3.13 are required to use HomeSetup! Found: ${python_version}"
+    [[ ! "${python_version}" =~ ^3\.1[01] ]] \
+      && quit 2 "Python and Pip >= 3.10 <= 3.11 are required to use HomeSetup! Found: ${python_version}"
     echo -e "${GREEN}OK${NC}"
     create_venv
     install_hspylib
@@ -907,7 +907,7 @@ usage: $APP_NAME [OPTIONS] <args>
       if ${PYTHON3} -c "${copy_code//      /}" >>"${INSTALL_LOG}" 2>&1; then
         echo -e "${GREEN}OK${NC}"
         echo -en "\n${WHITE}Checking AI capabilities... ${CYAN}"
-        ${PYTHON3} -m askai "What is HomeSetup?" 2>&1
+        ${PYTHON3} -m askai -r rag  "What is HomeSetup?" 2>&1
         echo -e "${NC}"
       else
         quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"

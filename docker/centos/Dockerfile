@@ -13,13 +13,13 @@ RUN yum update -y
 RUN yum install -y sudo curl vim wget procps-ng glibc-common libpq-devel file cmake git openssl-devel bzip2-devel
 RUN yum install -y libffi-devel rsync sqlite-devel
 RUN yum groupinstall -y "Development Tools"
-RUN wget https://www.python.org/ftp/python/3.10.2/Python-3.10.2.tgz
-RUN tar -xzf Python-3.10.2.tgz
+RUN wget https://www.python.org/ftp/python/3.11.0/Python-3.11.0a4.tgz
+RUN tar -xzf Python-3.11.0a4.tgz
 
-WORKDIR "Python-3.10.2"
+WORKDIR "Python-3.11.0a4"
 
 RUN ./configure --enable-optimizations --enable-loadable-sqlite-extensions
-RUN make install
+RUN make altinstall
 RUN python3 -m pip install --upgrade pip
 RUN ln -sf "$(command -v python3)" "$(dirname $(command -v python3))/python"
 

@@ -16,7 +16,7 @@ RUN apt-get install -y bat fd-find fzf gawk locales libpq-dev
 RUN apt-get install -y python3.11 python3.11-dev portaudio19-dev python3-pip
 RUN gem install colorls
 RUN locale-gen "en_US.UTF-8"
-RUN ln -sf "/usr/bin/python3.11" "/usr/bin/python3"
+RUN $(which python3.11) -m pip install --upgrade pip setuptools wheel
 
 WORKDIR "${HOME}"
 
