@@ -91,16 +91,39 @@ function shopts() {
 }
 
 # @purpose: Display HomeSetup shortcuts/cheatsheets.
-function shorts() {
-  local CAT='cat'
+function sheets() {
+  local filters=("${@}") all_files all_sheets=() mselect_file sel_sheet filter_re mselect_file sheet
+  local cheatsheets_dir="${HHS_HOME}/docs/misc/cheatsheets"
 
-  __hhs_has bat && CAT='bat'
-  for file in "${HHS_HOME}"/docs/misc/cheatsheets/*.md; do
-    n_sheet="$(basename "$file" | sed 's/\.[^.]*$//' | tr '-' ' ' | awk '{for(i=1;i<=NF;i++){$i=toupper(substr($i,1,1)) substr($i,2)}; print}')"
+  # shellcheck disable=SC2207,SC2211
+  all_files=( $(find "${cheatsheets_dir}" -type f -iname "*.*") )
+  for file in "${all_files[@]}"; do
+    sheet=$(basename "${file}")
+    sheet_name=$(echo "${sheet}" | sed 's/\.[^.]*$//' | tr '-' ' ' | awk '{for(i=1;i<=NF;i++){$i=toupper(substr($i,1,1)) substr($i,2)}; print}')
+    filter_re=".*${filters[*]// /|}.*"
     shopt -s nocasematch
-    [[ -z "${1}" || "${n_sheet}" =~ ${1} ]] && { ${CAT} --paging=never --style=header,grid "${file}"; echo ''; }
+    if [[ -z "${filters[*]}" || ${sheet} =~ ${filter_re} || ${sheet_name,,} =~ ${filter_re} ]]; then
+      all_sheets+=( "${sheet}" )
+    fi
     shopt -u nocasematch
   done
 
-  return 0
+  mselect_file=$(mktemp)
+  if __hhs_mselect "${mselect_file}" "Available Cheatsheets (${filter_re}):" "${all_sheets[@]}"; then
+    sel_sheet=$(grep . "${mselect_file}")
+    sel_file="${cheatsheets_dir}/${sel_sheet}"
+    if __hhs_has glow && [[ ${sel_sheet#*.} =~ [Mm][Dd] ]]; then
+      glow --style "auto" --mouse --pager --width 120 --all "${sel_file}"
+    elif [[ ${sel_sheet#*.} =~ [Pp][Dd][Ff] ]]; then
+      open "${sel_file}"
+    elif __hhs_has bat; then
+      bat --theme "auto" --paging=always --terminal-width=120 "${sel_file}"
+    else
+      cat "${cheatsheets_dir}/${sel_sheet}"
+    fi
+    echo ''
+    return 0
+  fi
+
+  return 1
 }

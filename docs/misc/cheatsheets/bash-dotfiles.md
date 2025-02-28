@@ -20,12 +20,12 @@ _B1, B2, B3 means it executes only the first of those files found_
 
 When you login into the computer or change user (su <user>)
 
-`/etc/profile >>> ~/.bash_profile >>> ~/.profile >>> ~/.bash_login`
+`/etc/profile` → `~/.bash_profile` → `~/.profile` → `~/.bash_login`
 
 
 ## Non-Login Shell
 
-`/etc/bash.bashrc >>> ~/.bashrc`
+`/etc/bash.bashrc` → `~/.bashrc`
 
 ## References:
 
