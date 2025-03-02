@@ -226,13 +226,12 @@ usage: $APP_NAME [OPTIONS] <args>
     echo ''
     if [[ -f "${dest_file}" || -d "${dest_file}" ]]; then
       echo -e "${WHITE}Skipping: ${YELLOW}${dest_file} file/dir was not copied because destination exists. ${NC}"
-    else
-      echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file}... "
-      \rsync --archive "${src_file}" "${dest_file}" >>"${INSTALL_LOG}" 2>&1
-      \chown "${USER}":"${GROUP}" "${dest_file}" >>"${INSTALL_LOG}" 2>&1
-      [[ -f "${dest_file}" ]] && echo -e "${GREEN}OK${NC}"
-      [[ -f "${dest_file}" ]] || quit 1 " ${RED}FAILED${NC}"
     fi
+    echo -en "${WHITE}Copying: ${BLUE} ${src_file} -> ${dest_file}... "
+    \rsync --archive "${src_file}" "${dest_file}" >>"${INSTALL_LOG}" 2>&1
+    \chown "${USER}":"${GROUP}" "${dest_file}" >>"${INSTALL_LOG}" 2>&1
+    [[ -f "${dest_file}" ]] && echo -e "${GREEN}OK${NC}"
+    [[ -f "${dest_file}" ]] || quit 1 " ${RED}FAILED${NC}"
   }
 
   # @function: Link file from source to destination.
@@ -244,13 +243,13 @@ usage: $APP_NAME [OPTIONS] <args>
 
     echo ''
     if [[ -s "${dest_file}" && ! -L "${dest_file}" ]]; then
-      echo -e "${WHITE}Skipping: ${YELLOW}${dest_file} file/dir was not copied because destination exists. ${NC}"
-    else
-      echo -en "${WHITE}Linking: ${BLUE}"
-      echo -en "$(\ln -sfv "${src_file}" "${dest_file}")...${NC}"
-      [[ -L "${dest_file}" ]] && echo -e " ${GREEN}OK${NC}"
-      [[ -L "${dest_file}" ]] || quit 1 " ${RED}FAILED${NC}"
+      echo -e "${WHITE}Backing up: ${YELLOW}${dest_file} file/dir was not copied because destination exists. ${NC}"
+      \mv "${dest_file}" "${HHS_BACKUP_DIR}/$(basename "${dest_file}".orig)"
     fi
+    echo -en "${WHITE}Linking: ${BLUE}"
+    echo -en "$(\ln -sfv "${src_file}" "${dest_file}")...${NC}"
+    [[ -L "${dest_file}" ]] && echo -e " ${GREEN}OK${NC}"
+    [[ -L "${dest_file}" ]] || quit 1 " ${RED}FAILED${NC}"
   }
 
   # shellcheck disable=SC2199,SC2076
