@@ -1033,7 +1033,7 @@ usage: $APP_NAME [OPTIONS] <args>
     # Init submodules case it's not there yet
     if [[ ! -s "${INSTALL_DIR}/tests/bats/bats-core/bin/bats" ]]; then
       pushd "${INSTALL_DIR}" &>/dev/null || quit 1 "Unable to enter homesetup directory \"${INSTALL_DIR}\" !"
-      echo -en "\n${WHITE}Pulling ${GREEN}bats ${NC} submodules..."
+      echo -en "\n${WHITE}Pulling ${GREEN}bats ${WHITE} submodules... "
       if git submodule update --init &>/dev/null; then
         echo -e "${GREEN}OK${NC}"
       else
