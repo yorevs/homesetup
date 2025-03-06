@@ -16,8 +16,8 @@
   # This script name
   APP_NAME="${0##*/}"
 
-  # HomeSetup Version
-
+  # HomeSetup Installation version
+  VERSION="1.8.24"
 
   # Help message to be displayed by the script
   USAGE="
@@ -367,11 +367,11 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Check if the user passed help or version options
     [[ "$1" == '-h' || "$1" == '--help' ]] && quit 0 "${USAGE}"
-    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${INSTALL_VERSION}")"
+    [[ "$1" == '-v' || "$1" == '--version' ]] && quit 0 "HomeSetup v$(\grep . "${VERSION}")"
     [[ -z "${USER}" || -z "${GROUP}" ]] && quit 1 "Unable to detect USER:GROUP => [${USER}:${GROUP}]"
     [[ -z "${HOME}" || -z "${SHELL}" ]] && quit 1 "Unable to detect HOME/SHELL => [${HOME}:${SHELL}]"
 
-    echo -e "\n${GREEN}HomeSetup© ${VERSION} installation ${NC}"
+    echo -e "\n${GREEN}HomeSetup© v${VERSION} installation ${NC}"
 
     # Check the installation method
     if [[ -z "${METHOD}" ]]; then

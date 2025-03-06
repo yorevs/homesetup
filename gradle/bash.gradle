@@ -107,7 +107,7 @@ task publish(type: Task) {
     def commit_logs = out.toString()
     def prefix = commit_logs?.trim() ? commit_logs?.split('\n').size() + ' commits' : ' No commits'
     def commitMsg = "New HomeSetup revision: v'${version}' >> ${prefix}"
-    println("Revision commits: ${commitMsg}  Tag: ${tag}")
+    println("Revision commits: ${commitMsg}  Tag: v${version}")
     exec {
       commandLine 'git', 'tag', '-a', "v${version}", '-m', "New HomeSetup release v${version}"
     }
