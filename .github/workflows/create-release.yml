@@ -9,6 +9,13 @@ on:
       - "v?[0-9]+.[0-9]+.[0-9]+b[0-9]+"
       - "v?[0-9]+.[0-9]+.[0-9]+rc[0-9]+"
 
+  workflow_dispatch:
+    inputs:
+      tag-name:
+        description: 'Release Tag name ?'
+        required: true
+        type: string
+
 permissions:
   contents: write
 
@@ -26,6 +33,8 @@ jobs:
         run: |
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             TAG_NAME="${GITHUB_REF#refs/tags/}"
+          elif [[ -n "${{ inputs.tag-name }}" ]]; then
+            TAG_NAME="${{ inputs.tag-name }}"
           else
             echo "No tags found!"
             exit 1
@@ -54,18 +63,11 @@ jobs:
         id: change-log
         uses: yorevs/hspylib/.github/actions/changelog@master
         with:
-          tag-name: "v${{ needs.details.outputs.tag_name }}"
+          tag-name: ${{ needs.details.outputs.new_version }}
       - name: Create GitHub Release
         id: create_release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create ${{ needs.details.outputs.tag_name }} dist/* --title "${{ vars.PACKAGE_NAME }}-${{ needs.details.outputs.tag_name }}-rc${{ github.run_number }}" --generate-notes
-
-  build-docker-images:
-    name: Create Docker Hub Images
-    needs: details
-    uses: yorevs/homesetup/.github/workflows/docker-deploy.yml@master
-    with:
-      image_tag: ${{ needs.publish.outputs.version }}
-    secrets: inherit
+          echo "${{ steps.change-log.outputs.changelog }}" > changelog
+          gh release create "${{ needs.details.outputs.tag_name }}" --title "${{ vars.APP_NAME }}-${{ needs.details.outputs.tag_name }}-rc${{ github.run_number }}" --notes-file changelog "assets/fonts/Droid-Sans-Mono-for-Powerline-Nerd-Font-Complete.otf"
