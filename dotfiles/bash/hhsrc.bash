@@ -51,25 +51,21 @@ fi
 
 # Defined by the installation.
 export HHS_HOME="${HHS_PREFIX:-${HOME}/HomeSetup}"
-if [[ -d "${HOME}/.config/hhs" ]]; then
-  export HHS_DIR="${HOME}/.config/hhs"
-else
-  export HHS_DIR="${HOME}/.hhs"
-fi
+export HHS_DIR="${HOME}"/.config/hhs
 export HHS_VERSION="$(grep -m 1 . "${HHS_HOME}"/.VERSION)"
-export HHS_SHOPTS_FILE="${HHS_DIR}/shell-opts.toml"
-export HHS_BACKUP_DIR="${HHS_DIR}/backup"
-export HHS_CACHE_DIR="${HHS_DIR}/cache"
-export HHS_LOG_DIR="${HHS_DIR}/log"
-export HHS_LOG_FILE="${HHS_LOG_DIR}/hhsrc.log"
-export HHS_MOTD_DIR="${HHS_DIR}/motd"
-export HHS_PROMPTS_DIR="${HHS_DIR}/askai/prompts"
-export HHS_SETUP_FILE="${HHS_DIR}/.homesetup.toml"
-export HHS_BLESH_DIR="${HHS_DIR}/ble-sh"
-export HHS_VENV_PATH="${HHS_VENV_PATH:-${HHS_DIR}/venv}"
-export HHS_KEY_BINDINGS="${HHS_KEY_BINDINGS:-${HHS_DIR}/.hhs-bindings}"
-export HHS_INPUTRC="${HHS_INPUTRC:-${HOME}/.inputrc}"
-export HHS_ALIASDEF="${HHS_ALIASDEF:-"${HHS_DIR}"/.aliasdef}"
+export HHS_SHOPTS_FILE="${HHS_DIR}"/shell-opts.toml
+export HHS_BACKUP_DIR="${HHS_DIR}"/backup
+export HHS_CACHE_DIR="${HHS_DIR}"/cache
+export HHS_LOG_DIR="${HHS_DIR}"/log
+export HHS_LOG_FILE="${HHS_LOG_DIR}"/hhsrc.log
+export HHS_MOTD_DIR="${HHS_DIR}"/motd
+export HHS_PROMPTS_DIR="${HHS_DIR}"/askai/prompts
+export HHS_SETUP_FILE="${HHS_DIR}"/.homesetup.toml
+export HHS_BLESH_DIR="${HHS_DIR}"/ble-sh
+export HHS_VENV_PATH="${HHS_DIR}"/venv
+export HHS_KEY_BINDINGS="${HHS_DIR}"/.hhs-bindings
+export HHS_INPUTRC="${HOME}"/.inputrc
+export HHS_ALIASDEF="${HHS_DIR}"/.aliasdef
 
 # if the log directory is not found, we have to create it.
 [[ -d "${HHS_LOG_DIR}" ]] || mkdir -p "${HHS_LOG_DIR}"
