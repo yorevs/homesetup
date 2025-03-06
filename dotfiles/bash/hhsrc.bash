@@ -163,7 +163,7 @@ if ! [[ -s "${HHS_KEY_BINDINGS}" ]]; then
   \cp "${HHS_HOME}/dotfiles/hhs-bindings" "${HHS_KEY_BINDINGS}"
 fi
 
-if bind -f "${HHS_KEY_BINDINGS}"; then
+if bind -f "${HHS_KEY_BINDINGS}" &>/dev/null; then
   __hhs_log "INFO" "Key bindings loaded: ${HHS_KEY_BINDINGS}"
 else
   __hhs_log "WARN" "Key bindings failed to load: ${HHS_KEY_BINDINGS}"

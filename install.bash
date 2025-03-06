@@ -17,7 +17,7 @@
   APP_NAME="${0##*/}"
 
   # HomeSetup Version
-  
+
 
   # Help message to be displayed by the script
   USAGE="
@@ -1135,6 +1135,8 @@ usage: $APP_NAME [OPTIONS] <args>
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
 
+    JOB_NAME='HomeSetup restart!' source "${HOME}/.bashrc"
+
     # Set the auto-update timestamp.
     if [[ "${OS_TYPE}" == "macOS" ]]; then
       date -v+7d '+%s%S' 1>"${HHS_DIR}/.last_update" 2>>"${INSTALL_LOG}"
@@ -1160,7 +1162,7 @@ usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${HAND_PEACE_ICN} The ultimate Terminal experience !"
     echo ''
-    echo -e "${YELLOW}${STAR_ICN} To activate your dotfiles, type: ${WHITE}source ${HOME}/.bashrc"
+    echo -e "${YELLOW}${STAR_ICN} To reload your dotfiles, type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To configure your HomeSetup initialization: ${WHITE}hhs setup"
     echo -e "${YELLOW}${STAR_ICN} To check for updates, type: ${WHITE}hhu update"
     echo -e "${YELLOW}${STAR_ICN} To learn more about your new Terminal, type: ${WHITE}cat ${README}"
