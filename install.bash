@@ -61,6 +61,7 @@ usage: $APP_NAME [OPTIONS] <args>
   POINTER_ICN='\xef\x90\xb2'    # 
   SUCCESS_ICN='\xef\x98\xab'    # 
   FAIL_ICN='\xef\x91\xa7'       # 
+  AI_ICN='\xef\x89\xa0'         # 
 
   # VT-100 Terminal colors
   ORANGE='\033[38;5;202m'
@@ -70,6 +71,7 @@ usage: $APP_NAME [OPTIONS] <args>
   GREEN='\033[32m'
   YELLOW='\033[33m'
   RED='\033[31m'
+  MAGENTA='\033[35m'
   NC='\033[m'
 
   touch "${INSTALL_LOG}"
@@ -599,6 +601,7 @@ usage: $APP_NAME [OPTIONS] <args>
       configure_gtrash
       configure_blesh
       configure_python
+      install_hspylib
       configure_askai_rag
       ;;
     local)
@@ -842,7 +845,6 @@ usage: $APP_NAME [OPTIONS] <args>
 
     echo -e "${GREEN}OK${NC}"
     create_venv
-    install_hspylib
   }
 
   # Create HomeSetup virtual environment
@@ -867,16 +869,18 @@ usage: $APP_NAME [OPTIONS] <args>
 
     # Activate the virtual environment
     echo -en "\n${python3_str} ${WHITE}Activating virtual environment... ${NC}"
-    if source "${HHS_VENV_PATH}"/bin/activate; then
+    if source "${HHS_VENV_PATH}"/bin/activate && [[ -n "${VIRTUAL_ENV}" ]]; then
       echo -e "${GREEN}OK${NC}"
-      # Python executable from venv
-      VENV_PYTHON3="${PYTHON3:-$(command -v python3)}"
-      # Pip executable from venv
-      VENV_PIP3="${PIP3:-${PYTHON3} -m pip}"
+      echo -e "\n${python3_str} ${WHITE}Virtual environment activated: ${CYAN}${VENV_PYTHON3}${NC}"
     else
       echo -e "${RED}FAILED${NC}"
       quit 2 "Unable to activate virtual environment!"
     fi
+
+    # Python executable from venv
+    VENV_PYTHON3="${VIRTUAL_ENV}/bin/$(basename "${PYTHON3}")"
+    # Pip executable from venv
+    VENV_PIP3="${VENV_PYTHON3} -m pip"
   }
 
   # Install HomeSetup python libraries
@@ -885,7 +889,7 @@ usage: $APP_NAME [OPTIONS] <args>
     python3_str="${BLUE}[$(basename "${VENV_PYTHON3}")]"
     python_version="$(${VENV_PYTHON3} -V)"
     pip_version="$(${VENV_PIP3} -V | \cut -d ' ' -f1,2)"
-    echo -e "\n${python3_str} ${WHITE}Using ${YELLOW}v${python_version}${WHITE} and ${YELLOW}v${pip_version} from ${BLUE}\"${VENV_PYTHON3}\" ${NC}"
+    echo -e "\n${python3_str} ${WHITE}Using ${YELLOW}${python_version}${WHITE} and ${YELLOW}P${pip_version:1} ${WHITE}from ${BLUE}\"${VIRTUAL_ENV}\" ${NC}"
     echo -e "\n${python3_str} ${WHITE}Installing HSPyLib packages... \n"
     pkgs=$(mktemp)
     printf "%s\n" "${PYTHON_MODULES[@]}" >"${pkgs}"
@@ -927,7 +931,6 @@ usage: $APP_NAME [OPTIONS] <args>
         echo -en "\n${WHITE}Checking AI capabilities... ${CYAN}"
         # TODO: Uncomment when device checks are implemented
         # ${VENV_PYTHON3} -m askai -r rag  "What is HomeSetup?" 2>&1
-        ${VENV_PYTHON3} -m askai -v
         echo -e "${GREEN}OK${NC}"
       else
         quit 2 "Unable to copy HomeSetup docs into AskAI RAG directory !"
@@ -1135,7 +1138,9 @@ usage: $APP_NAME [OPTIONS] <args>
   # Reload the terminal and apply installed files.
   activate_dotfiles() {
 
-    JOB_NAME='HomeSetup restart!' source "${HOME}/.bashrc"
+    JOB_NAME='HomeSetup restart!' PYTHON3="${VENV_PYTHON3}" source "${HOME}/.bashrc"
+    PYTHON3="${PYTHON3:-$(command -v python3.11)}"
+    PIP3="${PIP3:-${PYTHON3} -m pip}"
 
     # Set the auto-update timestamp.
     if [[ "${OS_TYPE}" == "macOS" ]]; then
@@ -1151,16 +1156,16 @@ usage: $APP_NAME [OPTIONS] <args>
     echo ''
     echo -e "${GREEN}${POINTER_ICN} Done installing HomeSetup v$(cat "${INSTALL_DIR}/.VERSION") !"
     echo -e "${CYAN}"
-    echo '888       888          888                                          '
-    echo '888   o   888          888                                          '
-    echo '888  d8b  888          888                                          '
-    echo '888 d888b 888  .d88b.  888  .d8888b  .d88b.  88888b.d88b.   .d88b.  '
-    echo '888d88888b888 d8P  Y8b 888 d88P"    d88""88b 888 "888 "88b d8P  Y8b '
-    echo '88888P Y88888 88888888 888 888      888  888 888  888  888 88888888 '
-    echo '8888P   Y8888 Y8b.     888 Y88b.    Y88..88P 888  888  888 Y8b.     '
-    echo '888P     Y888  "Y8888  888  "Y8888P  "Y88P"  888  888  888  "Y8888  '
+    echo "____    __    ____  _______  __        ______   ______   .___  ___.  _______ "
+    echo "\   \  /  \  /   / |   ____||  |      /      | /  __  \  |   \/   | |   ____|"
+    echo " \   \/    \/   /  |  |__   |  |     |  ,----'|  |  |  | |  \  /  | |  |__   "
+    echo "  \            /   |   __|  |  |     |  |     |  |  |  | |  |\/|  | |   __|  "
+    echo "   \    /\    /    |  |____ |  \`----.|  \`----.|  \`--'  | |  |  |  | |  |____ "
+    echo "    \__/  \__/     |_______||_______| \______| \______/  |__|  |__| |_______|"
     echo ''
-    echo -e "${HAND_PEACE_ICN} The ultimate Terminal experience !"
+    echo -e "${MAGENTA}${HAND_PEACE_ICN} The ultimate Terminal experience !"
+    ${PIP3} show hspylib-askai >>"${INSTALL_LOG}" 2>&1 \
+      && echo -en "${AI_ICN} Empowered with ${GREEN}$(${PYTHON3} -m askai -v)"
     echo ''
     echo -e "${YELLOW}${STAR_ICN} To reload your dotfiles, type: ${WHITE}source ${HOME}/.bashrc"
     echo -e "${YELLOW}${STAR_ICN} To configure your HomeSetup initialization: ${WHITE}hhs setup"

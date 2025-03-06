@@ -35,6 +35,8 @@ unalias -a
 # The Internal Field Separator (IFS). The default value is <space><tab><newline>
 export OLDIFS="${IFS}"
 
+export PYTHON3="${PYTHON3:-python3}"
+
 # The following variables are not inside the bash_env because we need them in the early load process.
 export HHS_MY_OS="${HHS_MY_OS:-$(uname -s)}"
 export HHS_MY_SHELL="${SHELL##*/}"
@@ -118,7 +120,7 @@ CUSTOM_DOTFILES=(
 source "${HHS_HOME}/dotfiles/bash/bash_commons.bash"
 
 # Re-create the HomeSetup log file.
-started="$(python3 -c 'import time; print(int(time.time() * 1000))')"
+started="$(${PYTHON3} -c 'import time; print(int(time.time() * 1000))')"
 echo -e "HomeSetup is starting: $(date)\n" >"${HHS_LOG_FILE}"
 
 # Initialization setup.
@@ -270,7 +272,7 @@ if [[ ${HHS_EXPORT_SETTINGS} -eq 1 ]] && __hhs_is_venv; then
   # Update the settings configuration.
   echo "hhs.setman.database = ${HHS_SETMAN_DB_FILE}" >"${HHS_SETMAN_CONFIG_FILE}"
   tmp_file="$(mktemp)"
-  if python3 -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
+  if ${PYTHON3} -m setman source -n hhs -f "${tmp_file}" && source "${tmp_file}"; then
     __hhs_log "INFO" "System settings loaded !"
   else
     __hhs_log "ERROR" "Failed to load system settings !"
@@ -367,7 +369,7 @@ if [[ -d "${HHS_MOTD_DIR}" ]]; then
   done
 fi
 
-finished="$(python3 -c 'import time; print(int(time.time() * 1000))')"
+finished="$(${PYTHON3} -c 'import time; print(int(time.time() * 1000))')"
 diff_time=$((finished - started))
 diff_time_sec=$((diff_time/1000))
 diff_time_ms=$((diff_time-(diff_time_sec*1000)))
