@@ -34,13 +34,7 @@ function __hhs_history() {
   fi
 
   echo ''
-  terminal_columns="${COLUMNS:-}"
-  if [[ -t 1 ]]; then
-    terminal_columns="$(tput cols 2>/dev/null || true)"
-    if [[ ! "${terminal_columns}" =~ ^[1-9][0-9]*$ ]]; then
-      terminal_columns="${COLUMNS:-}"
-    fi
-  fi
+  terminal_columns="$(__hhs_terminal_columns)" || terminal_columns=""
   if [[ "${terminal_columns}" =~ ^[1-9][0-9]*$ ]]; then
     columns="$((terminal_columns - pad_len - col_offset))"
     ((columns < 1)) && columns=1
@@ -147,7 +141,7 @@ function __hhs_history() {
 # @param $1 [Opt] : Limit to the top N commands.
 function __hhs_hist_stats() {
   local top_n=${1:-10} width=${2:-30} i=1
-  local cmd_name cmd_qty hist_output bar_len bar columns pad_len pad max_size
+  local cmd_name cmd_qty hist_output bar_len bar columns pad_len pad max_size max_label_width
   local histtimeformat="${HISTTIMEFORMAT-}"
 
   if [[ "$1" == "-h" || "$1" == "--help" ]]; then
@@ -188,9 +182,10 @@ function __hhs_hist_stats() {
     return 1
   }
 
-  columns=80
+  columns="$(__hhs_terminal_columns)" || return 1
   pad_len=$((columns / 2))
-  pad=$(printf '%0.1s' "."{1..80})
+  printf -v pad '%*s' "${pad_len}" ''
+  pad=${pad// /.}
 
   max_size=$(echo "${hist_output}" | head -n 1 | awk '{print $1}')
   [[ -z "${max_size}" || "${max_size}" -le 0 ]] && max_size=1
@@ -215,7 +210,9 @@ function __hhs_hist_stats() {
     fi
 
     # Trim overly long names
-    [[ ${#cmd_name} -gt $((columns - 20)) ]] && cmd_name="${cmd_name:0:$((columns - 20))}…"
+    max_label_width=$((columns - 20))
+    ((max_label_width < 1)) && max_label_width=1
+    [[ ${#cmd_name} -gt ${max_label_width} ]] && cmd_name="${cmd_name:0:${max_label_width}}…"
 
     # Command label + dotted pad + count + bar
     printf "${WHITE}%3d: ${HHS_HIGHLIGHT_COLOR} %s" "${i}" "${cmd_name}"
@@ -427,9 +424,10 @@ function __hhs_du() {
 
   du_output=$(echo "${du_output}" | head -n "${top_n}")
 
-  columns=80
+  columns="$(__hhs_terminal_columns)" || return 1
   pad_len=$((columns / 2))
-  pad=$(printf '%0.1s' "."{1..80})
+  printf -v pad '%*s' "${pad_len}" ''
+  pad=${pad// /.}
 
   # Compute max size in KiB for bar scaling
   max_val=$(echo "${du_output}" | awk '

@@ -410,7 +410,7 @@ function display_list() {
 
     shift
     items=("$@")
-    columns=$(tput cols)  # Get terminal width
+    columns="$(__hhs_terminal_columns)" || return 1
 
     if [[ $keep -ne 1 ]]; then
       # Remove '__hhs_' prefix and replace '_' with ' ' in each item

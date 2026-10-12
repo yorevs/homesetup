@@ -103,7 +103,7 @@ function __hhs_changeback_ndirs() {
 # @function: Display the list of currently remembered directories or select one to switch into.
 # @param $1..$N [Opt]: Optional flags or arguments passed to the builtin 'dirs' command.
 function __hhs_dirs() {
-  local mselect_file sel_dir len ret_val=0 max_len columns=80 type_icon=" "
+  local mselect_file sel_dir len ret_val=0 max_len columns type_icon=" "
   local line opt="${1}"
   local -a results=() all_dirs=()
 
@@ -146,10 +146,9 @@ function __hhs_dirs() {
       echo "No directories recorded yet"
       return 0
     fi
-    columns=$(tput cols)
-    columns=${columns:-80}
+    columns="$(__hhs_terminal_columns)" || return 1
     max_len=$((columns - 10))
-    max_len=${max_len:-10}
+    ((max_len < 1)) && max_len=1
     for ((i = 0; i < ${#all_dirs[@]}; i++)); do
       dir="${all_dirs[i]}"
       [[ -L "${dir}" && -d "${dir}" ]] && type_icon=" "

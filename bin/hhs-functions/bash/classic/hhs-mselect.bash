@@ -43,7 +43,9 @@ function __hhs_classic_mselect() {
   diff_index="$((show_to - show_from))"
   all_options=("${@}")
   len=${#all_options[*]}
-  max_columns="$(($(tput cols) - col_offset))"
+  max_columns="$(__hhs_terminal_columns)" || return 1
+  max_columns=$((max_columns - col_offset))
+  ((max_columns < 1)) && max_columns=1
 
   # When only one option is provided, select the typed_index 0 and return
   [[ "$len" -eq 1 ]] && echo "0" >"$outfile" && return 0

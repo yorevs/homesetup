@@ -100,7 +100,9 @@ function __hhs_command() {
       if [[ ${#all_cmds[@]} -ne 0 ]]; then
         pad=$(printf '%0.1s' "."{1..60})
         pad_len=35
-        columns="$(($(tput cols) - pad_len - col_offset))"
+        columns="$(__hhs_terminal_columns)" || return 1
+        columns=$((columns - pad_len - col_offset))
+        ((columns < 1)) && columns=1
         echo ' '
         echo "${YELLOW}Available commands (${#all_cmds[@]}):"
         echo ' '

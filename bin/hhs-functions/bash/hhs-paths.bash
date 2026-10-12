@@ -116,10 +116,7 @@ function __hhs_paths() {
   # Listing / Clean mode
   [[ -f "${HHS_PATHS_FILE}" ]] || touch "${HHS_PATHS_FILE}"
 
-  if [[ -t 1 ]]; then
-    columns=$(tput cols)
-  fi
-  columns=${columns:-80}
+  columns="$(__hhs_terminal_columns)" || return 1
   truncate_col=$((columns - 50))
 
   # First pass: find longest raw path (assume 2-char prefix)

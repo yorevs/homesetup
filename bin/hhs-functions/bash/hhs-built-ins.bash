@@ -150,7 +150,9 @@ function __hhs_defs() {
     else
       pad=$(printf '%0.1s' "."{1..30})
       pad_len=26
-      columns="$(($(tput cols) - pad_len - 10))"
+      columns="$(__hhs_terminal_columns)" || return 1
+      columns=$((columns - pad_len - 10))
+      ((columns < 1)) && columns=1
       filters="$*"
       filters=${filters// /\|}
       [[ -z "${filters}" ]] && filters=".*"
@@ -280,7 +282,9 @@ function __hhs_envs() {
   filters="${*}"
   pad=$(printf '%0.1s' "."{1..60})
   pad_len=41
-  columns="$(($(tput cols) - pad_len - col_offset))"
+  columns="$(__hhs_terminal_columns)" || return 1
+  columns=$((columns - pad_len - col_offset))
+  ((columns < 1)) && columns=1
 
   filters="${filters[*]}"
   filters=${filters// /\|}

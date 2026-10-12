@@ -57,6 +57,23 @@ function __hhs_has() {
   return $?
 }
 
+# @function: Print the detected terminal columns; fail when no valid width is available.
+function __hhs_terminal_columns() {
+  local terminal_columns="${COLUMNS:-}" terminal_size
+
+  # Command substitution captures stdout, so inspect the controlling terminal directly.
+  if command -v stty >/dev/null 2>&1 &&
+    terminal_size="$(stty size 2>/dev/null </dev/tty)" 2>/dev/null; then
+    terminal_columns="${terminal_size##* }"
+  fi
+
+  if [[ ! "${terminal_columns}" =~ ^[1-9][0-9]*$ ]]; then
+    return 1
+  fi
+
+  printf '%s\n' "${terminal_columns}"
+}
+
 # @function: Check if a python module is installed.
 # @param $1 [Req] : The python module to check.
 function __hhs_has_module() {

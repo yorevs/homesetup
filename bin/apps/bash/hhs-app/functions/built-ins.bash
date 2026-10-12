@@ -34,7 +34,7 @@ function list() {
       && { for next in "${HHS_ALIASES[@]}"; do echo -n "${next} "; done }
     quit 0
   else
-    columns="$(tput cols)"
+    columns="$(__hhs_terminal_columns)" || return 1
     count=$((${#PLUGINS[@]} > ${#HHS_APP_FUNCTIONS[@]} ? ${#PLUGINS[@]} : ${#HHS_APP_FUNCTIONS[@]}))
     count=$((${#count[@]} > ${#HHS_COMMANDS[@]} ? ${#count[@]} : ${#HHS_COMMANDS[@]}))
     echo -e "\n${YELLOW}HomeSetup application commands"
@@ -88,7 +88,7 @@ function funcs() {
     IFS="${OLDIFS}"
   fi
 
-  columns="$(tput cols)"
+  columns="$(__hhs_terminal_columns)" || return 1
   count="${#HHS_FUNCTIONS[@]}"
   for line in "${HHS_FUNCTIONS[@]}"; do
     fn_name=$(awk 'BEGIN { FS = "" } ; { print $2 }' <<< "${line}")

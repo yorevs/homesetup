@@ -83,7 +83,9 @@ function __hhs_aliases() {
         echo ' '
         echo "${YELLOW}Available custom aliases matching [${filter}]:"
         echo ' '
-        columns="$(($(tput cols) - pad_len - col_offset))"
+        columns="$(__hhs_terminal_columns)" || return 1
+        columns=$((columns - pad_len - col_offset))
+        ((columns < 1)) && columns=1
         IFS=$'\n'
         for next in "${all_aliases[@]}"; do
           re="^alias .+=.+"
