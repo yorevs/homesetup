@@ -18,11 +18,6 @@ load_bats_libs
 # Avoid terminal-specific side effects during tests.
 clear() { :; }
 
-# shellcheck disable=SC2120
-tput() {
-  echo 120
-}
-
 setup_file() {
   if [[ -z "${HHS_HOME}" ]]; then
     export HHS_HOME="$(cd "${BATS_TEST_DIRNAME}/.." && pwd)"
@@ -30,6 +25,9 @@ setup_file() {
 }
 
 setup() {
+  # Use a deterministic width without depending on the runner's terminal.
+  stty() { return 1; }
+  export COLUMNS=120
   export OLDIFS="${IFS}"
   unset EDITOR
 

@@ -12,8 +12,11 @@ load test_helper
 load "${HHS_FUNCTIONS_DIR}/hhs-shell-utils.bash"
 load_bats_libs
 
-# Set an explicit output width for deterministic truncation checks.
-export COLUMNS=60
+setup() {
+  # Ignore the runner's terminal size so truncation checks use the declared width.
+  stty() { return 1; }
+  export COLUMNS=60
+}
 
 # @function: Stub the shell history builtin so tests can control the input.
 # shellcheck disable=SC2329

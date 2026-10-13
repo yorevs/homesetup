@@ -27,6 +27,9 @@ missing_path=""
 original_path=""
 
 setup() {
+  # Use a deterministic width without depending on the runner's terminal.
+  stty() { return 1; }
+  export COLUMNS=120
   original_path="${PATH}"
   tmp_root="/tmp/hhs-tests-$$"
   mkdir -p "${tmp_root}"
